@@ -1,8 +1,10 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
+﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MasterCOA;
 using Com.Moonlay.NetCore.Lib;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -79,6 +81,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Facades.Mast
         {
             UpdateModelAsync(id, model);
             return await DbContext.SaveChangesAsync();
+        }
+
+        public async Task UploadData(List<COAViewModel> data)
+        {
+            var modelData = Mapper.Map<List<COAViewModel>, List<COAModel>>(data);
+
+            DbContext.ChartsOfAccounts.AddRange(modelData);
+
+            await DbContext.SaveChangesAsync();
         }
     }
 }
