@@ -12,6 +12,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MasterCOA
 
         public string Path { get; set; }
 
+        public string ReportType { get; set; }
+
+        public string Nature { get; set; }
+
+        public string CashAccount { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

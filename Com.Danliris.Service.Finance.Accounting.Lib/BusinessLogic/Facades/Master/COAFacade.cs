@@ -15,11 +15,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Facades.Mast
 {
     public class COAFacade : BaseLogic<COAModel>, ICOAFacade
     {
-        private readonly FinanceDbContext DbContext;
-
         public COAFacade(IIdentityService identityService, FinanceDbContext dbContext) : base(identityService, dbContext)
         {
-            DbContext = dbContext;
+
         }
 
         public async Task<int> CreateAsync(COAModel model)
@@ -50,7 +48,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Facades.Mast
 
             List<string> selectedFields = new List<string>()
                 {
-                    "Id", "Name", "Code", "Path", "LastModifiedUtc"
+                    "Id", "Name", "Code", "Path", "Nature", "CashAccount", "ReportType", "LastModifiedUtc"
                 };
 
             Dictionary<string, string> orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
@@ -62,6 +60,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Facades.Mast
                 Name = x.Name,
                 Code = x.Code,
                 Path = x.Path,
+                CashAccount = x.CashAccount,
+                Nature = x.Nature,
+                ReportType = x.ReportType,
                 LastModifiedUtc = x.LastModifiedUtc
             });
 
@@ -87,9 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Facades.Mast
         {
             var modelData = Mapper.Map<List<COAViewModel>, List<COAModel>>(data);
 
-            DbContext.ChartsOfAccounts.AddRange(modelData);
-
-            await DbContext.SaveChangesAsync();
+            await BulkInsert(modelData);
         }
     }
 }
