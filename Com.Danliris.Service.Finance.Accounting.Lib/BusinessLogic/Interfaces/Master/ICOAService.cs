@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master
 {
-    public interface ICOAFacade : IBaseFacade<COAModel>
+    public interface ICOAService : IBaseService<COAModel>
     {
         Task UploadData(List<COAViewModel> data);
     }

@@ -20,9 +20,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
     [ApiVersion("1.0")]
     [Route("v{version:apiVersion}/master/chart-of-accounts")]
     [Authorize]
-    public class COAController : BaseController<COAModel, COAViewModel, ICOAFacade>
+    public class COAController : BaseController<COAModel, COAViewModel, ICOAService>
     {
-        public COAController(IIdentityService identityService, IValidateService validateService, ICOAFacade facade, IMapper mapper, string apiVersion) : base(identityService, validateService, facade, mapper, apiVersion)
+        public COAController(IIdentityService identityService, IValidateService validateService, ICOAService service, IMapper mapper, string apiVersion) : base(identityService, validateService, service, mapper, apiVersion)
         {
 
         }
@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
             try
             {
                 var data = CSV<COAViewModel>.ReadFile(file);
-                await Facade.UploadData(data.ToList());
+                await Service.UploadData(data.ToList());
 
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)

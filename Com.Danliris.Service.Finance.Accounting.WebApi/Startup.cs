@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -45,9 +47,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddScoped<IValidateService, ValidateService>();
         }
 
-        private void RegisterFacades(IServiceCollection services)
+        private void RegisterBusinessServices(IServiceCollection services)
         {
-            
+            services
+                .AddTransient<ICOAService, COAService>();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -61,7 +64,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             #region Register
             RegisterServices(services);
 
-            RegisterFacades(services);
+            RegisterBusinessServices(services);
             
             RegisterEndpoint();
 

@@ -15,22 +15,22 @@ using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Production.WebApi.Utilities
 {
-    public abstract class BaseController<TModel, TViewModel, IFacade> : Controller
+    public abstract class BaseController<TModel, TViewModel, IService> : Controller
         where TModel : StandardEntity, IValidatableObject
         where TViewModel : BaseViewModel, IValidatableObject
-        where IFacade : IBaseFacade<TModel>
+        where IService : IBaseService<TModel>
     {
         protected IIdentityService IdentityService;
         protected readonly IValidateService ValidateService;
-        protected readonly IFacade Facade;
+        protected readonly IService Service;
         protected readonly IMapper Mapper;
         protected readonly string ApiVersion;
 
-        public BaseController(IIdentityService identityService, IValidateService validateService, IFacade facade, IMapper mapper, string apiVersion)
+        public BaseController(IIdentityService identityService, IValidateService validateService, IService service, IMapper mapper, string apiVersion)
         {
             IdentityService = identityService;
             ValidateService = validateService;
-            Facade = facade;
+            Service = service;
             Mapper = mapper;
             ApiVersion = apiVersion;
         }
@@ -46,7 +46,7 @@ namespace Com.Danliris.Service.Production.WebApi.Utilities
         {
             try
             {
-                ReadResponse<TModel> read = Facade.Read(page, size, order, select, keyword, filter);
+                ReadResponse<TModel> read = Service.Read(page, size, order, select, keyword, filter);
 
                 List<TViewModel> dataVM = Mapper.Map<List<TViewModel>>(read.Data);
 
@@ -73,7 +73,7 @@ namespace Com.Danliris.Service.Production.WebApi.Utilities
                 ValidateService.Validate(viewModel);
 
                 TModel model = Mapper.Map<TModel>(viewModel);
-                await Facade.CreateAsync(model);
+                await Service.CreateAsync(model);
 
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
@@ -101,7 +101,7 @@ namespace Com.Danliris.Service.Production.WebApi.Utilities
         {
             try
             {
-                TModel model = await Facade.ReadByIdAsync(id);
+                TModel model = await Service.ReadByIdAsync(id);
 
                 if (model == null)
                 {
@@ -146,7 +146,7 @@ namespace Com.Danliris.Service.Production.WebApi.Utilities
 
                 TModel model = Mapper.Map<TModel>(viewModel);
 
-                await Facade.UpdateAsync(id, model);
+                await Service.UpdateAsync(id, model);
 
                 return NoContent();
             }
@@ -173,7 +173,7 @@ namespace Com.Danliris.Service.Production.WebApi.Utilities
             {
                 VerifyUser();
 
-                await Facade.DeleteAsync(id);
+                await Service.DeleteAsync(id);
 
                 return NoContent();
             }
