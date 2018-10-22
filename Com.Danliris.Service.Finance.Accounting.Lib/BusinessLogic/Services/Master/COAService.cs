@@ -3,12 +3,13 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Maste
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MasterCOA;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,11 +23,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
         protected IIdentityService IdentityService;
         protected FinanceDbContext DbContext;
 
-        public COAService(IIdentityService identityService, FinanceDbContext dbContext)
+        public COAService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
             DbContext = dbContext;
             this.DbSet = dbContext.Set<COAModel>();
-            this.IdentityService = identityService;
+            this.IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
         public async Task<int> CreateAsync(COAModel model)
@@ -93,31 +94,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
             return await DbContext.SaveChangesAsync();
         }
 
-        public async Task UploadData(List<COAViewModel> data)
+        public async Task UploadData(List<COAModel> data)
         {
-            var modelData = Mapper.Map<List<COAViewModel>, List<COAModel>>(data);
 
-            await BulkInsert(modelData);
+            await BulkInsert(data);
         }
 
-        public virtual void CreateModel(COAModel model)
+        public void CreateModel(COAModel model)
         {
             EntityExtension.FlagForCreate(model, IdentityService.Username, UserAgent);
             DbSet.Add(model);
         }
 
-        public virtual Task<COAModel> ReadModelById(int id)
+        public Task<COAModel> ReadModelById(int id)
         {
             return DbSet.FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
         }
 
-        public virtual void UpdateModelAsync(int id, COAModel model)
+        public void UpdateModelAsync(int id, COAModel model)
         {
             EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
             DbSet.Update(model);
         }
 
-        public virtual async Task DeleteModel(int id)
+        public async Task DeleteModel(int id)
         {
             COAModel model = await ReadModelById(id);
             EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);

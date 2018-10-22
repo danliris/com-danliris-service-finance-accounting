@@ -8,6 +8,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.M
 {
     public interface ICOAService : IBaseService<COAModel>
     {
-        Task UploadData(List<COAViewModel> data);
+        Task UploadData(List<COAModel> data);
     }
 }

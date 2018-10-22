@@ -22,7 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
     [Authorize]
     public class COAController : BaseController<COAModel, COAViewModel, ICOAService>
     {
-        public COAController(IIdentityService identityService, IValidateService validateService, ICOAService service, IMapper mapper, string apiVersion) : base(identityService, validateService, service, mapper, apiVersion)
+        public COAController(IIdentityService identityService, IValidateService validateService, ICOAService service, IMapper mapper) : base(identityService, validateService, service, mapper, "1.0.0")
         {
 
         }
@@ -32,7 +32,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
         {
             try
             {
-                var data = CSV<COAViewModel>.ReadFile(file);
+                var viewModels = CSV<COAViewModel>.ReadFile(file);
+                var data = Mapper.Map<List<COAModel>>(viewModels);
                 await Service.UploadData(data.ToList());
 
                 Dictionary<string, object> Result =
