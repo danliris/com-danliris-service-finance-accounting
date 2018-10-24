@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
@@ -50,6 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
         private void RegisterBusinessServices(IServiceCollection services)
         {
             services
+                .AddTransient<IDailyBankTransactionService, DailyBankTransactionService>()
                 .AddTransient<ICOAService, COAService>();
         }
 

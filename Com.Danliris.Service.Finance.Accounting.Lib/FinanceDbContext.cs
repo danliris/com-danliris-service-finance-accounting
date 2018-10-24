@@ -1,9 +1,7 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Moonlay.Data.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -13,6 +11,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         {
         }
 
+        //Master
         public DbSet<COAModel> ChartsOfAccounts { get; set; }
+
+        //Manager
+        public DbSet<DailyBankTransactionModel> DailyBankTransactions { get; set; }
+        public DbSet<BankTransactionMonthlyBalance> BankTransactionMonthlyBalances { get; set; }
     }
 }
