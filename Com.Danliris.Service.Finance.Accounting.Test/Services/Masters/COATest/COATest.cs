@@ -138,5 +138,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
             await service.UploadData(coa);
             Assert.True(true);
         }
+
+        [Fact]
+        public void Should_Success_Upload_Validate_Data()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
+
+            List<COAViewModel> coa = new List<COAViewModel>() { viewModel };
+            var Response = service.UploadValidate(coa, null);
+            Assert.True(Response.Item1);
+        }
+
+        [Fact]
+        public void Should_Fail_Double_Upload_Validate_Data()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            
+            COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
+            COAViewModel viewModel2 = _dataUtil(service).GetNewViewModel();
+            List<COAViewModel> coa = new List<COAViewModel>() { viewModel, viewModel2 };
+            var Response = service.UploadValidate(coa, null);
+            Assert.False(Response.Item1);
+        }
+
+        [Fact]
+        public void Should_Fail_Empty_Code_Upload_Validate_Data()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
+            viewModel.Name = null;
+            viewModel.Code = null;
+            List<COAViewModel> coa = new List<COAViewModel>() { viewModel };
+            var Response = service.UploadValidate(coa, null);
+            Assert.False(Response.Item1);
+        }
     }
 }
