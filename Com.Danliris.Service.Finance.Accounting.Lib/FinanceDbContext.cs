@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Moonlay.Data.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,5 +15,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         }
 
         public DbSet<COAModel> ChartsOfAccounts { get; set; }
+
+        public DbSet<CreditorAccountModel> CreditorAccounts { get; set; }
+        
     }
 }
