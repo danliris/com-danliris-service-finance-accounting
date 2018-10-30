@@ -140,8 +140,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                     _id = ""
                 },
                 Date = DateTime.Now.AddYears(1),
+                Nominal = 0,
                 Status = "IN",
-                SourceType = "Non Operasional"
+                SourceType = "Investasi"
             };
 
 
@@ -173,7 +174,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                 },
                 Date = DateTime.Now.AddYears(1),
                 Status = "OUT",
-                SourceType = "Non Operasional",
+                SourceType = "Investasi",
                 Supplier = new SupplierViewModel()
                 {
                     _id = ""
