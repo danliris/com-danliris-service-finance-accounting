@@ -17,6 +17,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using System.Text;
+using MongoDB.Bson.Serialization;
+using Com.DanLiris.Service.Finance.Accounting.Lib.Serializers;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.UnitReceiptNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.Serializers;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.Integration;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.PurchaseOrder;
+using Com.DanLiris.Service.Purchasing.Lib;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -53,6 +60,24 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<ICOAService, COAService>();
         }
 
+        private void RegisterSerializationProvider()
+        {
+            BsonSerializer.RegisterSerializationProvider(new SerializationProvider());
+        }
+
+        private void RegisterClassMap()
+        {
+            ClassMap<UnitReceiptNoteViewModel>.Register();
+            ClassMap<UnitReceiptNoteItemViewModel>.Register();
+            ClassMap<UnitViewModel>.Register();
+            ClassMap<DivisionViewModel>.Register();
+            ClassMap<CategoryViewModel>.Register();
+            ClassMap<ProductViewModel>.Register();
+            ClassMap<UomViewModel>.Register();
+            ClassMap<PurchaseOrderViewModel>.Register();
+            ClassMap<SupplierViewModel>.Register();
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -69,6 +94,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             RegisterEndpoint();
 
             services.AddAutoMapper();
+
+            RegisterSerializationProvider();
+            RegisterClassMap();
+
+            MongoDbContext.connectionString = Configuration.GetConnectionString(Constant.MONGODB_CONNECTION) ?? Configuration[Constant.MONGODB_CONNECTION];
             #endregion
 
             #region Authentication
