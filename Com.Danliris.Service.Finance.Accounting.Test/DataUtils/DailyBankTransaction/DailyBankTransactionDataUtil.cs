@@ -78,6 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                   code = "BuyerCode",
                   name = "BuyerName"
                 },
+                Code = "Code",
                 Date = DateTimeOffset.UtcNow,
                 Nominal = 1000,
                 ReferenceNo = "ReferenceNo",

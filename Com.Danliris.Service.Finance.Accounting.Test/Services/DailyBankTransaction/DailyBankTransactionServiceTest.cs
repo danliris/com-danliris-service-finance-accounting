@@ -72,8 +72,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         public async void Should_Success_Get_Data_In()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            await _dataUtil(service).GetTestDataIn();
-            var Response = service.Read(1, 25, "{}", null, null, "{}");
+            var data = await _dataUtil(service).GetTestDataIn();
+            var Response = service.Read(1, 25, "{}", null, data.Code, "{}");
+            Assert.NotEmpty(Response.Data);
+        }
+
+        [Fact]
+        public async void Should_Success_Get_Report()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var Response = service.GetReport(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
             Assert.NotEmpty(Response.Data);
         }
 
