@@ -105,6 +105,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public void Should_No_Error_Validate_Data()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionViewModel vm = _dataUtil(service).GetDataToValidate();
+
+            Assert.True(vm.Validate(null).Count() == 0);
+        }
+
+        [Fact]
         public void Should_Success_Validate_All_Null_Data()
         {
             DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel();
