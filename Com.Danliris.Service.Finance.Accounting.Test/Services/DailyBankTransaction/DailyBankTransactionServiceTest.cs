@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -107,6 +108,78 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         public void Should_Success_Validate_All_Null_Data()
         {
             DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel();
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_With_Invalid_Input_Data_In_Buyer_Null_Operasional()
+        {
+            DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
+            {
+                Date = DateTime.Now.AddYears(1),
+                Status = "IN",
+                SourceType = "Operasional"
+            };
+
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_With_Invalid_Input_Data_In_Buyer_NotNull_NonOperasional()
+        {
+            DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
+            {
+                Bank = new AccountBankViewModel()
+                {
+                    _id = ""
+                },
+                Buyer = new BuyerViewModel()
+                {
+                    _id = ""
+                },
+                Date = DateTime.Now.AddYears(1),
+                Status = "IN",
+                SourceType = "Non Operasional"
+            };
+
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_With_Invalid_Input_Data_Out_Supplier_Null_Operasional()
+        {
+            DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
+            {
+                Date = DateTime.Now.AddYears(1),
+                Status = "OUT",
+                SourceType = "Operasional"
+            };
+
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_With_Invalid_Input_Data_Out_Supplier_NotNull_NonOperasional()
+        {
+            DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
+            {
+                Bank = new AccountBankViewModel()
+                {
+                    _id = ""
+                },
+                Date = DateTime.Now.AddYears(1),
+                Status = "OUT",
+                SourceType = "Non Operasional",
+                Supplier = new SupplierViewModel()
+                {
+                    _id = ""
+                }
+            };
+
 
             Assert.True(vm.Validate(null).Count() > 0);
         }

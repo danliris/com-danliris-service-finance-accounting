@@ -1,5 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
 using System;
 using System.Threading.Tasks;
 
@@ -41,6 +43,54 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 SupplierCode = "SupplierCode",
                 SupplierName = "SupplierName",
                 SupplierId = "SupplierId"
+            };
+
+            return TestData;
+        }
+
+        public DailyBankTransactionViewModel GetDataToValidate()
+        {
+            DailyBankTransactionViewModel TestData = new DailyBankTransactionViewModel()
+            {
+                Bank = new AccountBankViewModel()
+                {
+                    _id = "BankId",
+                    accountCurrencyId = "CurrencyId",
+                    accountName = "AccountName",
+                    accountNumber = "AccountNumber",
+                    bankCode = "BankCode",
+                    bankName = "Name",
+                    code = "Code",
+                    currency = new CurrencyViewModel()
+                    {
+                        _id = "CurrencyId",
+                        code = "Code",
+                        description = "Description",
+                        rate = 1,
+                        symbol = "Symbol"
+                    }
+                },
+                AfterNominal = 0,
+                BeforeNominal = 0,
+                Buyer = new BuyerViewModel()
+                {
+                   _id = "BuyerId",
+                  code = "BuyerCode",
+                  name = "BuyerName"
+                },
+                Date = DateTimeOffset.UtcNow,
+                Nominal = 1000,
+                ReferenceNo = "ReferenceNo",
+                ReferenceType = "ReferenceType",
+                Remark = "Remark",
+                SourceType = "Operasional",
+                Status = "IN",
+                Supplier = new SupplierViewModel()
+                {
+                    _id = "SupplierId",
+                    code = "SupplierCode",
+                    name = "SupplierName"
+                }
             };
 
             return TestData;
