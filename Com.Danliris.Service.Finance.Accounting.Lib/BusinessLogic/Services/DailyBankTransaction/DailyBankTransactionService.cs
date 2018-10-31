@@ -57,6 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             var BankId = model.AccountBankId;
             var ActualBalance = _DbMonthlyBalanceSet.Where(w => w.Month.Equals(Month) && w.Year.Equals(Year) && w.AccountBankId.Equals(BankId)).FirstOrDefault();
             var Nominal = model.Status.Equals("IN") ? model.Nominal : model.Nominal * -1;
+            var NextMonthBalance = GetNextMonthBalance(Month, Year);
 
             if (ActualBalance == null)
             {
@@ -70,23 +71,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     AccountBankId = model.AccountBankId
                 };
 
-                var NewNextMonthBalance = new BankTransactionMonthlyBalanceModel
+                if (NextMonthBalance == null)
                 {
-                    Month = Month != 12 ? Month + 1 : 1,
-                    Year = Month != 12 ? Year : Year + 1,
-                    InitialBalance = model.Nominal,
-                    RemainingBalance = Nominal,
-                    AccountBankId = model.AccountBankId
-                };
+                    var NewNextMonthBalance = new BankTransactionMonthlyBalanceModel
+                    {
+                        Month = Month != 12 ? Month + 1 : 1,
+                        Year = Month != 12 ? Year : Year + 1,
+                        InitialBalance = model.Nominal,
+                        RemainingBalance = Nominal,
+                        AccountBankId = model.AccountBankId
+                    };
+                    EntityExtension.FlagForCreate(NewNextMonthBalance, _IdentityService.Username, _UserAgent);
+                    _DbMonthlyBalanceSet.Add(NewNextMonthBalance);
+                }
+
 
                 EntityExtension.FlagForCreate(NewMonthBalance, _IdentityService.Username, _UserAgent);
-                EntityExtension.FlagForCreate(NewNextMonthBalance, _IdentityService.Username, _UserAgent);
                 _DbMonthlyBalanceSet.Add(NewMonthBalance);
-                _DbMonthlyBalanceSet.Add(NewNextMonthBalance);
             }
             else
             {
-                var NextMonthBalance = GetNextMonthBalance(Month, Year);
                 var SumInByMonth = GetSumInByMonth(Month, Year, BankId);
                 var SumOutByMonth = GetSumOutByMonth(Month, Year, BankId);
 
