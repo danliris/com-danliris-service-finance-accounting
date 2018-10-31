@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -11,7 +13,6 @@ using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,15 +20,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using System.Text;
-using MongoDB.Bson.Serialization;
-using Com.DanLiris.Service.Finance.Accounting.Lib.Serializers;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.UnitReceiptNote;
-using Com.Danliris.Service.Finance.Accounting.Lib.Serializers;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.PurchaseOrder;
-using Com.DanLiris.Service.Purchasing.Lib;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -47,8 +39,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
         {
             APIEndpoint.Core = Configuration.GetValue<string>("CoreEndpoint") ?? Configuration["CoreEndpoint"];
             APIEndpoint.Inventory = Configuration.GetValue<string>("InventoryEndpoint") ?? Configuration["InventoryEndpoint"];
+            APIEndpoint.Purchasing = Configuration.GetValue<string>("PurchasingEndpoint") ?? Configuration["PurchasingEndpoint"];
+            APIEndpoint.Finishing = Configuration.GetValue<string>("FinishingEndpoint") ?? Configuration["FinishingEndpoint"];
             //APIEndpoint.Production = Configuration.GetValue<string>("ProductionEndpoint") ?? Configuration["ProductionEndpoint"];
-            //APIEndpoint.Purchasing = Configuration.GetValue<string>("PurchasingEndpoint") ?? Configuration["PurchasingEndpoint"];
         }
 
         private void RegisterServices(IServiceCollection services)
@@ -66,23 +59,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IDailyBankTransactionService, DailyBankTransactionService>();
         }
 
-        private void RegisterSerializationProvider()
-        {
-            BsonSerializer.RegisterSerializationProvider(new SerializationProvider());
-        }
-
-        private void RegisterClassMap()
-        {
-            ClassMap<UnitReceiptNoteViewModel>.Register();
-            ClassMap<UnitReceiptNoteItemViewModel>.Register();
-            ClassMap<UnitViewModel>.Register();
-            ClassMap<DivisionViewModel>.Register();
-            ClassMap<CategoryViewModel>.Register();
-            ClassMap<ProductViewModel>.Register();
-            ClassMap<UomViewModel>.Register();
-            ClassMap<PurchaseOrderViewModel>.Register();
-            ClassMap<SupplierViewModel>.Register();
-        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -96,15 +72,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             RegisterServices(services);
 
             RegisterBusinessServices(services);
-            
+
             RegisterEndpoint();
 
             services.AddAutoMapper();
 
-            RegisterSerializationProvider();
-            RegisterClassMap();
-
-            MongoDbContext.connectionString = Configuration.GetConnectionString(Constant.MONGODB_CONNECTION) ?? Configuration[Constant.MONGODB_CONNECTION];
             #endregion
 
             #region Authentication
