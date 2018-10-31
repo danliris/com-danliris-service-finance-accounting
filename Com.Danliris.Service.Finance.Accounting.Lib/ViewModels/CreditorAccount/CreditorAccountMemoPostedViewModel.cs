@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
 {
-    public class CreditorAccountUnitReceiptNotePostedViewModel : CreditorAccountPostedViewModel
+    public class CreditorAccountMemoPostedViewModel : CreditorAccountPostedViewModel
     {
         public long DPP { get; set; }
 

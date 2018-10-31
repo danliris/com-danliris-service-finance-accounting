@@ -1,19 +1,26 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
+﻿
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseInterface;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount
 {
-    public interface ICreditorAccountService : IBaseService<CreditorAccountModel>
+    public interface ICreditorAccountService
     {
         ReadResponse<CreditorAccountViewModel> GetReport(int page, int size, string suplierName, int month, int year, int offSet);
         MemoryStream GenerateExcel(string suplierName, int month, int year, int offSet);
-        Task<int> UpdateFromUnitReceiptNoteAsync(string supplierCode, string unitReceiptNote, string invoiceNo, CreditorAccountModel model);
+        Task<int> CreateFromUnitReceiptNoteAsync(CreditorAccountUnitReceiptNotePostedViewModel viewModel);
+        Task<int> UpdateFromUnitReceiptNoteAsync(CreditorAccountUnitReceiptNotePostedViewModel viewModel);
+        Task<int> DeleteFromUnitReceiptNoteAsync(int id);
+        Task<int> CreateFromBankExpenditureNoteAsync(CreditorAccountBankExpenditureNotePostedViewModel viewModel);
+        Task<int> UpdateFromBankExpenditureNoteAsync(CreditorAccountBankExpenditureNotePostedViewModel viewModel);
+        Task<int> DeleteFromBankExpenditureNoteAsync(int id);
+        Task<CreditorAccountUnitReceiptNotePostedViewModel> GetByUnitReceiptNote(string supplierCode, string unitReceiptNote, string invoiceNo);
+        Task<CreditorAccountBankExpenditureNotePostedViewModel> GetByBankExpenditureNote(string supplierCode, string bankExpenditureNote, string invoiceNo);
+        Task<CreditorAccountMemoPostedViewModel> GetByMemo(string supplierCode, string memoNo, string invoiceNo);
     }
 }

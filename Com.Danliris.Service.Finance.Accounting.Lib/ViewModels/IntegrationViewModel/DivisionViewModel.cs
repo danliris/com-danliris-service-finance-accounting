@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.Integration
+namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel
 {
-    public class CategoryViewModel
+    public class DivisionViewModel
     {
         public string _id { get; set; }
         public string code { get; set; }

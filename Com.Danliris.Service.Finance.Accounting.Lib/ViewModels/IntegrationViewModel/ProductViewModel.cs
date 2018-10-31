@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.Integration
+namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel
 {
     public class ProductViewModel
     {

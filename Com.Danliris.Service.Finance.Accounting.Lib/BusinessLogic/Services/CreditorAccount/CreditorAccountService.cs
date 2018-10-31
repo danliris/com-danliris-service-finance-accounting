@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -58,63 +59,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             await DeleteModel(id);
             return await DbContext.SaveChangesAsync();
         }
-
-        public ReadResponse<CreditorAccountModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
-        {
-            IQueryable<CreditorAccountModel> query = DbSet;
-
-            List<string> searchAttributes = new List<string>()
-            {
-                "Code", "Name"
-            };
-
-            query = QueryHelper<CreditorAccountModel>.Search(query, searchAttributes, keyword);
-
-            Dictionary<string, object> filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
-            query = QueryHelper<CreditorAccountModel>.Filter(query, filterDictionary);
-
-            List<string> selectedFields = new List<string>()
-                {
-                    "Id", "Name", "Code", "Path", "Nature", "CashAccount", "ReportType", "LastModifiedUtc"
-                };
-
-            Dictionary<string, string> orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
-            query = QueryHelper<CreditorAccountModel>.Order(query, orderDictionary);
-
-            query = query.Select(x => new CreditorAccountModel()
-            {
-                Id = x.Id,
-                BankExpenditureNoteDate = x.BankExpenditureNoteDate,
-                BankExpenditureNoteId = x.BankExpenditureNoteId,
-                BankExpenditureNoteNo = x.BankExpenditureNoteNo,
-                FinalBalance = x.FinalBalance,
-                InvoiceNo = x.InvoiceNo,
-                MemoDate = x.MemoDate,
-                MemoNo = x.MemoNo,
-                SupplierCode = x.SupplierCode,
-                SupplierName = x.SupplierName,
-                UnitReceiptNoteDate = x.UnitReceiptNoteDate,
-                UnitReceiptNoteNo = x.UnitReceiptNoteNo,
-                LastModifiedUtc = x.LastModifiedUtc
-            });
-
-            Pageable<CreditorAccountModel> pageable = new Pageable<CreditorAccountModel>(query, page - 1, size);
-            List<CreditorAccountModel> data = pageable.Data.ToList();
-            int totalData = pageable.TotalCount;
-
-            return new ReadResponse<CreditorAccountModel>(data, totalData, orderDictionary, selectedFields);
-        }
-
+        
         public Task<CreditorAccountModel> ReadModelById(int id)
         {
             return DbSet.FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
         }
-
-        public async Task<CreditorAccountModel> ReadByIdAsync(int id)
-        {
-            return await ReadModelById(id);
-        }
-
+        
         public async Task<int> UpdateAsync(int id, CreditorAccountModel model)
         {
             UpdateModel(id, model);
@@ -141,25 +91,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             return new ReadResponse<CreditorAccountViewModel>(queries, pageable.TotalCount, new Dictionary<string, string>(), new List<string>());
         }
-
-        public async Task<BankExpenditureNoteViewModel> GetBankExpenditureNote(long bankExpenditureNoteId)
-        {
-            using (var client = new HttpClient() { Timeout = Timeout.InfiniteTimeSpan })
-            {
-                string relativePath = "bank-expenditure-notes/" + bankExpenditureNoteId;
-                Uri serverUri = new Uri(APIEndpoint.Purchasing);
-                Uri relativePathUri = new Uri(relativePath, UriKind.Relative);
-
-                var uri = new Uri(serverUri, relativePathUri);
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", IdentityService.Token);
-                var response = await client.GetAsync(uri);
-                response.EnsureSuccessStatusCode();
-                var stringContent = await response.Content.ReadAsStringAsync();
-                var data = JsonConvert.DeserializeObject<APIWrapper>(stringContent);
-                return JsonConvert.DeserializeObject<BankExpenditureNoteViewModel>(data.Data);
-            }
-        }
-
+        
         public List<CreditorAccountViewModel> GetReport(string suplierName, int month, int year, int offSet)
         {
             IQueryable<CreditorAccountModel> query = DbContext.CreditorAccounts.AsQueryable();
@@ -239,26 +171,178 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             return result;
         }
 
-        public async Task<int> UpdateFromUnitReceiptNoteAsync(string supplierCode, string unitReceiptNote, string invoiceNo, CreditorAccountModel model)
+        public async Task<int> UpdateFromUnitReceiptNoteAsync(CreditorAccountUnitReceiptNotePostedViewModel viewModel)
         {
-            var data = await DbSet.FirstOrDefaultAsync(x => x.SupplierCode == supplierCode && x.UnitReceiptNoteNo == unitReceiptNote && x.InvoiceNo == invoiceNo);
-
+            CreditorAccountModel data = await DbSet.FirstOrDefaultAsync(x => x.Id == viewModel.CreditorAccountId);
             if (data == null)
-                throw new NullReferenceException();
+                throw new NotFoundException();
 
-            data.UnitReceiptNotePPN = model.UnitReceiptNotePPN;
-            data.UnitReceiptNoteNo = model.UnitReceiptNoteNo;
-            data.UnitReceiptNoteDPP = model.UnitReceiptNoteDPP;
-            data.UnitReceiptNoteDate = model.UnitReceiptNoteDate;
-            data.UnitReceiptMutation = model.UnitReceiptMutation;
-            data.SupplierName = model.SupplierName;
-            data.SupplierCode = model.SupplierCode;
-            data.InvoiceNo = model.InvoiceNo;
+            data.UnitReceiptNotePPN = viewModel.PPN;
+            data.UnitReceiptNoteNo = viewModel.Code;
+            data.UnitReceiptNoteDPP = viewModel.DPP;
+            data.UnitReceiptNoteDate = viewModel.Date;
+            data.UnitReceiptMutation = viewModel.DPP + viewModel.PPN;
+            data.SupplierName = viewModel.SupplierName;
+            data.SupplierCode = viewModel.SupplierCode;
+            data.InvoiceNo = viewModel.InvoiceNo;
             data.FinalBalance = data.UnitReceiptMutation + data.BankExpenditureNoteMutation + data.MemoMutation;
 
 
             UpdateModel(data.Id, data);
             return await DbContext.SaveChangesAsync();
+        }
+        
+        public async Task<CreditorAccountUnitReceiptNotePostedViewModel> GetByUnitReceiptNote(string supplierCode, string unitReceiptNote, string invoiceNo)
+        {
+            CreditorAccountModel data;
+
+            if (string.IsNullOrEmpty(invoiceNo))
+                data = await DbSet.FirstOrDefaultAsync(x => x.SupplierCode == supplierCode && x.UnitReceiptNoteNo == unitReceiptNote && string.IsNullOrEmpty(x.InvoiceNo));
+            else
+                data = await DbSet.FirstOrDefaultAsync(x => x.SupplierCode == supplierCode && x.UnitReceiptNoteNo == unitReceiptNote && x.InvoiceNo == invoiceNo);
+
+            if (data == null)
+                return null;
+
+            return new CreditorAccountUnitReceiptNotePostedViewModel()
+            {
+                CreditorAccountId = data.Id,
+                Code = data.UnitReceiptNoteNo,
+                Date = data.UnitReceiptNoteDate.Value,
+                DPP = data.UnitReceiptNoteDPP,
+                PPN = data.UnitReceiptNotePPN,
+                InvoiceNo = data.InvoiceNo,
+                SupplierCode = data.SupplierCode,
+                SupplierName = data.SupplierName
+            };
+        }
+
+        public async Task<CreditorAccountBankExpenditureNotePostedViewModel> GetByBankExpenditureNote(string supplierCode, string bankExpenditureNote, string invoiceNo)
+        {
+            CreditorAccountModel data= await DbSet.FirstOrDefaultAsync(x => x.SupplierCode == supplierCode && x.BankExpenditureNoteNo == bankExpenditureNote && x.InvoiceNo == invoiceNo);
+
+            if (data == null)
+                return null;
+
+            return new CreditorAccountBankExpenditureNotePostedViewModel()
+            {
+                CreditorAccountId = data.Id,
+                Mutation = data.BankExpenditureNoteMutation,
+                Id = data.BankExpenditureNoteId,
+                Code = data.BankExpenditureNoteNo,
+                Date = data.BankExpenditureNoteDate.Value,
+                InvoiceNo = data.InvoiceNo,
+                SupplierCode = data.SupplierCode,
+                SupplierName = data.SupplierName
+            };
+        }
+
+        public async Task<CreditorAccountMemoPostedViewModel> GetByMemo(string supplierCode, string memoNo, string invoiceNo)
+        {
+            CreditorAccountModel data= await DbSet.FirstOrDefaultAsync(x => x.SupplierCode == supplierCode && x.MemoNo == memoNo && x.InvoiceNo == invoiceNo);
+
+            if (data == null)
+                return null;
+
+            return new CreditorAccountMemoPostedViewModel()
+            {
+                CreditorAccountId = data.Id,
+                Code = data.MemoNo,
+                Date = data.MemoDate.Value,
+                DPP = data.MemoDPP,
+                PPN = data.MemoPPN,
+                InvoiceNo = data.InvoiceNo,
+                SupplierCode = data.SupplierCode,
+                SupplierName = data.SupplierName
+            };
+        }
+
+        public async Task<int> CreateFromBankExpenditureNoteAsync(CreditorAccountBankExpenditureNotePostedViewModel viewModel)
+        {
+            CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.SupplierCode == viewModel.SupplierCode && x.InvoiceNo == viewModel.InvoiceNo);
+
+            if (model == null)
+                throw new NotFoundException();
+
+            model.BankExpenditureNoteDate = viewModel.Date;
+            model.BankExpenditureNoteId = viewModel.Id;
+            model.BankExpenditureNoteMutation = viewModel.Mutation * -1;
+            model.BankExpenditureNoteNo = viewModel.Code;
+            model.FinalBalance = model.UnitReceiptMutation + model.BankExpenditureNoteMutation + model.MemoMutation;
+
+            UpdateModel(model.Id, model);
+            return await DbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> UpdateFromBankExpenditureNoteAsync(CreditorAccountBankExpenditureNotePostedViewModel viewModel)
+        {
+            CreditorAccountModel data = await DbSet.FirstOrDefaultAsync(x => x.Id == viewModel.CreditorAccountId);
+            
+            if (data == null)
+                throw new NotFoundException();
+            
+            data.BankExpenditureNoteNo = viewModel.Code;
+            data.BankExpenditureNoteDate = viewModel.Date;
+            data.BankExpenditureNoteMutation = viewModel.Mutation * -1;
+            data.FinalBalance = data.UnitReceiptMutation + data.BankExpenditureNoteMutation + data.MemoMutation;
+
+
+            UpdateModel(data.Id, data);
+            return await DbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> CreateFromUnitReceiptNoteAsync(CreditorAccountUnitReceiptNotePostedViewModel viewModel)
+        {
+            CreditorAccountModel model = new CreditorAccountModel()
+            {
+                UnitReceiptNotePPN = viewModel.PPN,
+                FinalBalance = viewModel.DPP + viewModel.PPN,
+                InvoiceNo = viewModel.InvoiceNo,
+                SupplierCode = viewModel.SupplierCode,
+                SupplierName = viewModel.SupplierName,
+                UnitReceiptMutation = viewModel.DPP + viewModel.PPN,
+                UnitReceiptNoteDate = viewModel.Date,
+                UnitReceiptNoteDPP = viewModel.DPP,
+                UnitReceiptNoteNo = viewModel.Code
+            };
+
+            return await CreateAsync(model);
+        }
+
+        public async Task<int> DeleteFromUnitReceiptNoteAsync(int id)
+        {
+            CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.Id == id);
+
+            if(!string.IsNullOrEmpty(model.BankExpenditureNoteNo) || !string.IsNullOrEmpty(model.MemoNo))
+            {
+                return await DeleteAsync(model.Id);
+            }
+            else
+            {
+                model.UnitReceiptMutation = 0;
+                model.UnitReceiptNoteDate = null;
+                model.UnitReceiptNoteDPP = 0;
+                model.UnitReceiptNoteNo = null;
+                model.UnitReceiptNotePPN = 0;
+                model.FinalBalance = model.UnitReceiptMutation + model.BankExpenditureNoteMutation + model.MemoMutation;
+
+                return await UpdateAsync(model.Id, model);
+            }
+        }
+
+        public async Task<int> DeleteFromBankExpenditureNoteAsync(int id)
+        {
+            CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.Id == id);
+
+            model.BankExpenditureNoteDate = null;
+            model.BankExpenditureNoteDPP = 0;
+            model.BankExpenditureNoteId = 0;
+            model.BankExpenditureNoteMutation = 0;
+            model.BankExpenditureNoteNo = null;
+            model.BankExpenditureNotePPN = 0;
+            model.FinalBalance = model.UnitReceiptMutation + model.BankExpenditureNoteMutation + model.MemoMutation;
+
+            return await UpdateAsync(model.Id, model);
         }
     }
 }

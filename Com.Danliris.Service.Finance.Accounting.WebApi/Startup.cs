@@ -23,9 +23,11 @@ using MongoDB.Bson.Serialization;
 using Com.DanLiris.Service.Finance.Accounting.Lib.Serializers;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.UnitReceiptNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Serializers;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.Integration;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.PurchaseOrder;
 using Com.DanLiris.Service.Purchasing.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -60,6 +62,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
         {
             services
                 .AddTransient<ICOAService, COAService>()
+                .AddTransient<ICreditorAccountService, CreditorAccountService>()
                 .AddTransient<IDailyBankTransactionService, DailyBankTransactionService>();
         }
 

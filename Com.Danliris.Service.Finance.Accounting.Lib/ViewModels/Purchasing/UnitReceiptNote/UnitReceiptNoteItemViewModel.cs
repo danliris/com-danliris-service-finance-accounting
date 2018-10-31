@@ -1,4 +1,4 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.Integration;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.PurchaseOrder;
 using System;
 using System.Collections.Generic;

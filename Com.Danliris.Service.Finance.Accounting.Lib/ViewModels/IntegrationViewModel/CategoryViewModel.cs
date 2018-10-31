@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Purchasing.Integration
+namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel
 {
-    public class UnitViewModel
+    public class CategoryViewModel
     {
         public string _id { get; set; }
         public string code { get; set; }
         public string name { get; set; }
-        public DivisionViewModel division { get; set; }
     }
 }

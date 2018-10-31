@@ -31,14 +31,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
-        public static MemoryStream CreateExcel(List<(DataTable dataTable, string sheetName, List<(string cells, Enum hAlign, Enum vAlign)> mergeCells)> dtSourceList, bool styling = false)
+        public static MemoryStream CreateExcel(List<(DataTable dataTable, string sheetName, List<(string cells, System.Enum hAlign, System.Enum vAlign)> mergeCells)> dtSourceList, bool styling = false)
         {
             ExcelPackage package = new ExcelPackage();
-            foreach ((DataTable dataTable, string sheetName, List<(string, Enum, Enum)> mergeCells) in dtSourceList)
+            foreach ((DataTable dataTable, string sheetName, List<(string, System.Enum, System.Enum)> mergeCells) in dtSourceList)
             {
                 var sheet = package.Workbook.Worksheets.Add(sheetName);
                 sheet.Cells["A1"].LoadFromDataTable(dataTable, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
-                foreach ((string cells, Enum hAlign, Enum vAlign) in mergeCells)
+                foreach ((string cells, System.Enum hAlign, System.Enum vAlign) in mergeCells)
                 {
                     sheet.Cells[cells].Merge = true;
                     sheet.Cells[cells].Style.HorizontalAlignment = (OfficeOpenXml.Style.ExcelHorizontalAlignment)hAlign;
