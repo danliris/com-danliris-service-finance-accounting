@@ -31,6 +31,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 SupplierName = "SupplierName"
             };
         }
-        
+
+
+        public CreditorAccountBankExpenditureNotePostedViewModel GetBankExpenditureNotePostedViewModel()
+        {
+            return new CreditorAccountBankExpenditureNotePostedViewModel()
+            {
+                Code = "Code",
+                CreditorAccountId = 1,
+                Date = DateTimeOffset.UtcNow,
+                Id = 1,
+                Mutation = 5500,
+                InvoiceNo = "InvoiceNo",
+                SupplierCode = "SupplierCode",
+                SupplierName = "SupplierName"
+            };
+        }
     }
 }

@@ -237,25 +237,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             };
         }
 
-        public async Task<CreditorAccountMemoPostedViewModel> GetByMemo(string supplierCode, string memoNo, string invoiceNo)
-        {
-            CreditorAccountModel data= await DbSet.FirstOrDefaultAsync(x => x.SupplierCode == supplierCode && x.MemoNo == memoNo && x.InvoiceNo == invoiceNo);
+        //public async Task<CreditorAccountMemoPostedViewModel> GetByMemo(string supplierCode, string memoNo, string invoiceNo)
+        //{
+        //    CreditorAccountModel data= await DbSet.FirstOrDefaultAsync(x => x.SupplierCode == supplierCode && x.MemoNo == memoNo && x.InvoiceNo == invoiceNo);
 
-            if (data == null)
-                return null;
+        //    if (data == null)
+        //        return null;
 
-            return new CreditorAccountMemoPostedViewModel()
-            {
-                CreditorAccountId = data.Id,
-                Code = data.MemoNo,
-                Date = data.MemoDate.Value,
-                DPP = data.MemoDPP,
-                PPN = data.MemoPPN,
-                InvoiceNo = data.InvoiceNo,
-                SupplierCode = data.SupplierCode,
-                SupplierName = data.SupplierName
-            };
-        }
+        //    return new CreditorAccountMemoPostedViewModel()
+        //    {
+        //        CreditorAccountId = data.Id,
+        //        Code = data.MemoNo,
+        //        Date = data.MemoDate.Value,
+        //        DPP = data.MemoDPP,
+        //        PPN = data.MemoPPN,
+        //        InvoiceNo = data.InvoiceNo,
+        //        SupplierCode = data.SupplierCode,
+        //        SupplierName = data.SupplierName
+        //    };
+        //}
 
         public async Task<int> CreateFromBankExpenditureNoteAsync(CreditorAccountBankExpenditureNotePostedViewModel viewModel)
         {
@@ -313,7 +313,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         {
             CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.Id == id);
 
-            if(!string.IsNullOrEmpty(model.BankExpenditureNoteNo) || !string.IsNullOrEmpty(model.MemoNo))
+            if(string.IsNullOrEmpty(model.BankExpenditureNoteNo) && string.IsNullOrEmpty(model.MemoNo))
             {
                 return await DeleteAsync(model.Id);
             }
