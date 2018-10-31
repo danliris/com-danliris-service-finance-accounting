@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -11,7 +13,6 @@ using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -38,8 +39,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
         {
             APIEndpoint.Core = Configuration.GetValue<string>("CoreEndpoint") ?? Configuration["CoreEndpoint"];
             APIEndpoint.Inventory = Configuration.GetValue<string>("InventoryEndpoint") ?? Configuration["InventoryEndpoint"];
+            APIEndpoint.Purchasing = Configuration.GetValue<string>("PurchasingEndpoint") ?? Configuration["PurchasingEndpoint"];
+            APIEndpoint.Finishing = Configuration.GetValue<string>("FinishingEndpoint") ?? Configuration["FinishingEndpoint"];
             //APIEndpoint.Production = Configuration.GetValue<string>("ProductionEndpoint") ?? Configuration["ProductionEndpoint"];
-            //APIEndpoint.Purchasing = Configuration.GetValue<string>("PurchasingEndpoint") ?? Configuration["PurchasingEndpoint"];
         }
 
         private void RegisterServices(IServiceCollection services)
@@ -53,8 +55,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
         {
             services
                 .AddTransient<ICOAService, COAService>()
+                .AddTransient<ICreditorAccountService, CreditorAccountService>()
                 .AddTransient<IDailyBankTransactionService, DailyBankTransactionService>();
         }
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -68,10 +72,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             RegisterServices(services);
 
             RegisterBusinessServices(services);
-            
+
             RegisterEndpoint();
 
             services.AddAutoMapper();
+
             #endregion
 
             #region Authentication
