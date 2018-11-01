@@ -242,5 +242,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var Response = await service.CreateAsync(model);
             Assert.NotEqual(0, Response);
         }
+
+        [Fact]
+        public async void Should_Success_Create_December()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Date = new DateTime(2018, 1, 1);
+            var modelResponse = await service.CreateAsync(model);
+            DailyBankTransactionModel previousMonthModel = _dataUtil(service).GetNewData();
+            previousMonthModel.Date = new DateTime(2017, 12, 1);
+
+            var Response = await service.CreateAsync(previousMonthModel);
+            Assert.NotEqual(0, Response);
+        }
     }
 }
