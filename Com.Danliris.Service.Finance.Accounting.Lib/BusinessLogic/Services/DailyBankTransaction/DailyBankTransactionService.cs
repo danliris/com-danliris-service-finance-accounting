@@ -42,6 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             }
             while (_DbSet.Any(d => d.Code.Equals(model.Code)));
 
+            model.Date = model.Date.AddHours(_IdentityService.TimezoneOffset);
             UpdateRemainingBalance(model);
 
             EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
@@ -55,53 +56,55 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             var Month = model.Date.Month;
             var Year = model.Date.Year;
             var BankId = model.AccountBankId;
-            var ActualBalance = _DbMonthlyBalanceSet.Where(w => w.Month.Equals(Month) && w.Year.Equals(Year) && w.AccountBankId.Equals(BankId)).FirstOrDefault();
+            var ActualBalanceByMonth = _DbMonthlyBalanceSet.Where(w => w.Month.Equals(Month) && w.Year.Equals(Year) && w.AccountBankId.Equals(BankId)).FirstOrDefault();
             var Nominal = model.Status.Equals("IN") ? model.Nominal : model.Nominal * -1;
-            var NextMonthBalance = GetNextMonthBalance(Month, Year);
 
-            if (ActualBalance == null)
+            if (ActualBalanceByMonth == null)
             {
-                var PreviousMonthBalance = GetPreviousMonthBalance(Month, Year);
-                var NewMonthBalance = new BankTransactionMonthlyBalanceModel
-                {
-                    Month = Month,
-                    Year = Year,
-                    InitialBalance = PreviousMonthBalance != null ? Nominal : 0,
-                    RemainingBalance = PreviousMonthBalance != null ? PreviousMonthBalance.RemainingBalance + Nominal : Nominal,
-                    AccountBankId = model.AccountBankId
-                };
-
-                if (NextMonthBalance == null)
-                {
-                    var NewNextMonthBalance = new BankTransactionMonthlyBalanceModel
-                    {
-                        Month = Month != 12 ? Month + 1 : 1,
-                        Year = Month != 12 ? Year : Year + 1,
-                        InitialBalance = model.Nominal,
-                        RemainingBalance = Nominal,
-                        AccountBankId = model.AccountBankId
-                    };
-                    EntityExtension.FlagForCreate(NewNextMonthBalance, _IdentityService.Username, _UserAgent);
-                    _DbMonthlyBalanceSet.Add(NewNextMonthBalance);
-                }
-
-
-                EntityExtension.FlagForCreate(NewMonthBalance, _IdentityService.Username, _UserAgent);
-                _DbMonthlyBalanceSet.Add(NewMonthBalance);
+                SetNewActualBalanceByMonth(Month, Year, model, Nominal);
             }
             else
             {
+                var NextMonthBalance = GetNextMonthBalance(Month, Year);
                 var SumInByMonth = GetSumInByMonth(Month, Year, BankId);
                 var SumOutByMonth = GetSumOutByMonth(Month, Year, BankId);
 
-                ActualBalance.RemainingBalance = ActualBalance.InitialBalance + (SumInByMonth + Nominal - SumOutByMonth);
+                ActualBalanceByMonth.RemainingBalance = ActualBalanceByMonth.InitialBalance + (SumInByMonth + Nominal - SumOutByMonth);
 
-                NextMonthBalance.InitialBalance = ActualBalance.RemainingBalance;
+                if (NextMonthBalance != null)
+                {
+                    NextMonthBalance.InitialBalance = ActualBalanceByMonth.RemainingBalance;
+                    EntityExtension.FlagForUpdate(NextMonthBalance, _IdentityService.Username, _UserAgent);
+                    _DbMonthlyBalanceSet.Update(NextMonthBalance);
+                }
+
+                EntityExtension.FlagForUpdate(ActualBalanceByMonth, _IdentityService.Username, _UserAgent);
+                _DbMonthlyBalanceSet.Update(ActualBalanceByMonth);
+            }
+        }
+
+        private void SetNewActualBalanceByMonth(int month, int year, DailyBankTransactionModel model, double nominal)
+        {
+            var PreviousMonthBalance = GetPreviousMonthBalance(month, year);
+            var NextMonthBalance = GetNextMonthBalance(month, year);
+            var NewMonthBalance = new BankTransactionMonthlyBalanceModel
+            {
+                Month = month,
+                Year = year,
+                InitialBalance = PreviousMonthBalance != null ? PreviousMonthBalance.RemainingBalance : 0,
+                RemainingBalance = PreviousMonthBalance != null ? PreviousMonthBalance.RemainingBalance + nominal : nominal,
+                AccountBankId = model.AccountBankId
+            };
+
+            EntityExtension.FlagForCreate(NewMonthBalance, _IdentityService.Username, _UserAgent);
+            _DbMonthlyBalanceSet.Add(NewMonthBalance);
+
+            if (NextMonthBalance != null)
+            {
+                NextMonthBalance.InitialBalance = NewMonthBalance.RemainingBalance;
+                NextMonthBalance.RemainingBalance += nominal;
                 EntityExtension.FlagForUpdate(NextMonthBalance, _IdentityService.Username, _UserAgent);
                 _DbMonthlyBalanceSet.Update(NextMonthBalance);
-
-                EntityExtension.FlagForUpdate(ActualBalance, _IdentityService.Username, _UserAgent);
-                _DbMonthlyBalanceSet.Update(ActualBalance);
             }
         }
 
