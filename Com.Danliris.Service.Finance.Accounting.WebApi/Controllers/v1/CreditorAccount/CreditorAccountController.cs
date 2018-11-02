@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
-using Com.Danliris.Service.Finance.Accounting.Lib.Enums;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -10,6 +8,7 @@ using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,19 +25,112 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
         private readonly string ApiVersion;
         private readonly IMapper Mapper;
 
-        public CreditorAccountController(IIdentityService identityService, IValidateService validateService, IMapper mapper, ICreditorAccountService service, string apiVersion)
+        public CreditorAccountController(IIdentityService identityService, IValidateService validateService, IMapper mapper, ICreditorAccountService service)
         {
             IdentityService = identityService;
             ValidateService = validateService;
             Service = service;
             Mapper = mapper;
-            ApiVersion = apiVersion;
+            ApiVersion = "1.0.0";
         }
 
         private void VerifyUser()
         {
             IdentityService.Username = User.Claims.ToArray().SingleOrDefault(p => p.Type.Equals("username")).Value;
             IdentityService.Token = Request.Headers["Authorization"].FirstOrDefault().Replace("Bearer ", "");
+        }
+
+        [HttpGet("reports")]
+        public IActionResult GetReport([FromQuery] string supplierName, [FromQuery]int month, [FromQuery]int year, int page = 1, int size = 25)
+        {
+            try
+            {
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                //int offSet = 7;
+                var data = Service.GetReport(page, size, supplierName, month, year, offSet);
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    finalBalance = data.Item2,
+                    data = data.Item1.Data,
+                    info = new
+                    {
+                        data.Item1.Count,
+                        data.Item1.Order,
+                        data.Item1.Selected
+                    },
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                   new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                   .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("reports/downloads/xls")]
+        public IActionResult GetXls([FromQuery]string supplierName, [FromQuery]int month, [FromQuery]int year)
+        {
+            try
+            {
+                byte[] xlsInBytes;
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                var xls = Service.GenerateExcel(supplierName, month, year, offSet);
+
+                string fileName = string.Format("Kartu Hutang Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+
+                xlsInBytes = xls.ToArray();
+
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                return file;
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                  new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                  .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("unit-payment-order")]
+        public async Task<IActionResult> UnitPaymentOrderPut([FromBody] CreditorAccountUnitPaymentOrderPostedViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                ValidateService.Validate(viewModel.CreditorAccounts);
+
+                await Service.UpdateFromUnitPaymentOrderAsync(viewModel);
+
+                return NoContent();
+            }
+            catch (NotFoundException)
+            {
+                Dictionary<string, object> Result =
+                       new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                       .Fail();
+                return BadRequest(Result);
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
         }
 
         [HttpPost("unit-receipt-note")]
@@ -48,7 +140,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
             {
                 VerifyUser();
                 ValidateService.Validate(viewModel);
-                
+
                 await Service.CreateFromUnitReceiptNoteAsync(viewModel);
 
                 Dictionary<string, object> Result =
@@ -79,7 +171,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
             {
                 VerifyUser();
                 ValidateService.Validate(viewModel);
-                
+
                 await Service.UpdateFromUnitReceiptNoteAsync(viewModel);
 
                 return NoContent();
@@ -112,7 +204,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
         {
             try
             {
-                CreditorAccountUnitReceiptNotePostedViewModel vm = await Service.GetByUnitReceiptNote(supplierCode,  code, invoiceNo);
+                CreditorAccountUnitReceiptNotePostedViewModel vm = await Service.GetByUnitReceiptNote(supplierCode, code, invoiceNo);
 
                 if (vm == null)
                 {
@@ -138,7 +230,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
             }
         }
 
-        [HttpDelete("unit-receipt-note/{Id}")]
+        [HttpDelete("unit-receipt-note/{id}")]
         public async Task<IActionResult> UnitReceiptNoteDelete([FromRoute] int id)
         {
             try
@@ -165,7 +257,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
             {
                 VerifyUser();
                 ValidateService.Validate(viewModel);
-                
+
 
                 await Service.CreateFromBankExpenditureNoteAsync(viewModel);
 
@@ -197,7 +289,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
             {
                 VerifyUser();
                 ValidateService.Validate(viewModel);
-                
+
                 await Service.UpdateFromBankExpenditureNoteAsync(viewModel);
 
                 return NoContent();
@@ -230,7 +322,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
         {
             try
             {
-                CreditorAccountBankExpenditureNotePostedViewModel vm = await Service.GetByBankExpenditureNote(supplierCode,  code, invoiceNo);
+                CreditorAccountBankExpenditureNotePostedViewModel vm = await Service.GetByBankExpenditureNote(supplierCode, code, invoiceNo);
 
                 if (vm == null)
                 {
@@ -256,7 +348,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
             }
         }
 
-        [HttpDelete("bank-expenditure-note/{Id}")]
+        [HttpDelete("bank-expenditure-note/{id}")]
         public async Task<IActionResult> BankExpenditureNoteDelete([FromRoute] int id)
         {
             try
