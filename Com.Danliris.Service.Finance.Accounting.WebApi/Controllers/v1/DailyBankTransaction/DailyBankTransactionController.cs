@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBankTransaction
 {
@@ -56,6 +57,26 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
                 var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
                 return file;
 
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpDelete("by-reference-no/{referenceNo}")]
+        public async Task<IActionResult> DeleteByReferenceNo([FromRoute] string referenceNo)
+        {
+            try
+            {
+                VerifyUser();
+
+                await Service.DeleteByReferenceNoAsync(referenceNo);
+
+                return NoContent();
             }
             catch (Exception e)
             {

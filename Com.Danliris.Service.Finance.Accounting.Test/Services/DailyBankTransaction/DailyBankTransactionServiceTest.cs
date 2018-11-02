@@ -256,5 +256,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var Response = await service.CreateAsync(previousMonthModel);
             Assert.NotEqual(0, Response);
         }
+
+        [Fact]
+        public async void Should_Success_Delete_By_ReferenceNo()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Date = new DateTime(2018, 1, 1);
+            model.Status = "IN";
+            var modelResponse = await service.CreateAsync(model);
+
+            var Response = await service.DeleteByReferenceNoAsync(model.ReferenceNo);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async void Should_Success_Delete_By_ReferenceNo_NextMonth_Exist()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Date = new DateTime(2018, 1, 1);
+            model.Status = "OUT";
+            model.ReferenceNo = model.Date.ToString();
+            var modelResponse = await service.CreateAsync(model);
+
+            DailyBankTransactionModel modelNextMonth = _dataUtil(service).GetNewData();
+            modelNextMonth.Date = new DateTime(2018, 2, 1);
+            var modelNextMonthResponse = await service.CreateAsync(modelNextMonth);
+
+            var Response = await service.DeleteByReferenceNoAsync(model.ReferenceNo);
+            Assert.NotEqual(0, Response);
+        }
     }
 }

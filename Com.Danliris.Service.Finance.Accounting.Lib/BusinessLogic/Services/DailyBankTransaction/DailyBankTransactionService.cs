@@ -324,5 +324,50 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             var result = await _DbSet.Where(w => w.Id.Equals(id)).FirstOrDefaultAsync();
             return result.Id;
         }
+
+        public async Task<int> DeleteByReferenceNoAsync(string referenceNo)
+        {
+            var bankTransaction = _DbSet.Where(w => w.ReferenceNo.Equals(referenceNo)).FirstOrDefault();
+
+            if (bankTransaction != null)
+            {
+                EntityExtension.FlagForDelete(bankTransaction, _IdentityService.Username, _UserAgent);
+                _DbSet.Update(bankTransaction);
+
+                var monthlyBalance = _DbMonthlyBalanceSet.Where(w => w.Month.Equals(bankTransaction.Date.Month) && w.Year.Equals(bankTransaction.Date.Year) && w.AccountBankId.Equals(bankTransaction.AccountBankId)).FirstOrDefault();
+                var nextMonthBalance = GetNextMonthBalance(bankTransaction.Date.Month, bankTransaction.Date.Year);
+
+                if (monthlyBalance != null)
+                {
+                    if (bankTransaction.Status.Equals("IN"))
+                    {
+                        monthlyBalance.RemainingBalance -= bankTransaction.Nominal;
+                        if (nextMonthBalance != null)
+                        {
+                            nextMonthBalance.InitialBalance = monthlyBalance.RemainingBalance;
+                            nextMonthBalance.RemainingBalance -= bankTransaction.Nominal;
+                            EntityExtension.FlagForUpdate(nextMonthBalance, _IdentityService.Username, _UserAgent);
+                            _DbMonthlyBalanceSet.Update(nextMonthBalance);
+                        }
+                    }
+                    else
+                    {
+                        monthlyBalance.RemainingBalance += bankTransaction.Nominal;
+                        if (nextMonthBalance != null)
+                        {
+                            nextMonthBalance.InitialBalance = monthlyBalance.RemainingBalance;
+                            nextMonthBalance.RemainingBalance += bankTransaction.Nominal;
+                            EntityExtension.FlagForUpdate(nextMonthBalance, _IdentityService.Username, _UserAgent);
+                            _DbMonthlyBalanceSet.Update(nextMonthBalance);
+                        }
+                    }
+
+                    EntityExtension.FlagForUpdate(monthlyBalance, _IdentityService.Username, _UserAgent);
+                    _DbMonthlyBalanceSet.Update(monthlyBalance);
+                }
+            }
+
+            return await _DbContext.SaveChangesAsync();
+        }
     }
 }
