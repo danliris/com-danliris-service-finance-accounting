@@ -62,7 +62,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
-                .Returns(new IdentityService() { Token = "Token", Username = "Test" });
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
 
 
             return serviceProvider;
@@ -221,6 +221,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var newModel = await service.ReadByIdAsync(model.Id);
 
             var Response = await service.DeleteAsync(newModel.Id);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async void Should_Succes_When_Create_New_Data_With_Non_Exist_Next_Month_Or_Previous_Month_Balance()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+
+            if (DateTime.Now.Month < 7)
+            {
+                model.Date = new DateTime(DateTime.Now.Year - 1, 8, 1);
+            }
+            else
+            {
+                model.Date = model.Date.AddMonths(-6);
+            }
+
+            var Response = await service.CreateAsync(model);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async void Should_Success_Create_December()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Date = new DateTime(2018, 1, 1);
+            var modelResponse = await service.CreateAsync(model);
+            DailyBankTransactionModel previousMonthModel = _dataUtil(service).GetNewData();
+            previousMonthModel.Date = new DateTime(2017, 12, 1);
+
+            var Response = await service.CreateAsync(previousMonthModel);
             Assert.NotEqual(0, Response);
         }
     }

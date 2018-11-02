@@ -76,6 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controller.Utils
                 }
             };
             controller.ControllerContext.HttpContext.Request.Headers["Authorization"] = "Bearer unittesttoken";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "7";
             controller.ControllerContext.HttpContext.Request.Path = new PathString("/v1/unit-test");
             return controller;
         }
