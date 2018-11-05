@@ -202,6 +202,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 CreditorAccountViewModel resultVM = new CreditorAccountViewModel()
                 {
                     InvoiceNo = item.InvoiceNo,
+                    Mutation = unitReceiptMutaion + bankExpenditureMutation + memoMutation,
                     FinalBalance = unitReceiptMutaion + bankExpenditureMutation + memoMutation
                 };
                 result.Add(resultVM);
