@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -65,7 +66,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
 
             return serviceProvider;
         }
-           
+
+        [Fact]
+        public async void Should_Success_Put_UnitPaymentOrder()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            data.SupplierCode = "UPOputTest";
+            data.Code = "UPOcodePutTest";
+            data.InvoiceNo = null;
+            var Response = await service.CreateFromUnitReceiptNoteAsync(data);
+            var newData = await service.GetByUnitReceiptNote(data.SupplierCode, data.Code, data.InvoiceNo);
+            Assert.Null(newData.InvoiceNo);
+            CreditorAccountUnitPaymentOrderPostedViewModel postedData = new CreditorAccountUnitPaymentOrderPostedViewModel()
+            {
+                InvoiceNo = "InvoiceNo",
+                CreditorAccounts = new List<CreditorAccountPostedViewModel>() { newData }
+            };
+            var updateResponse = await service.UpdateFromUnitPaymentOrderAsync(postedData);
+            var updateData = await service.GetByUnitReceiptNote(data.SupplierCode, data.Code, data.InvoiceNo);
+            Assert.NotNull(updateData);
+        }
+
         [Fact]
         public async void Should_Null_Get_UnitReceiptNote()
         {
@@ -102,6 +124,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            data.SupplierCode = "putTest";
+            data.Code = "codePutTest";
             data.InvoiceNo = null;
             var Response = await service.CreateFromUnitReceiptNoteAsync(data);
             var newData = await service.GetByUnitReceiptNote(data.SupplierCode, data.Code, data.InvoiceNo);
@@ -201,7 +225,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             var Response = await service.CreateFromBankExpenditureNoteAsync(data);
 
             var reportResponse = service.GetReport(1, 25, data.SupplierName, data.Date.Month, data.Date.Year, 7);
-            Assert.NotEmpty(reportResponse.Data);
+            Assert.NotEmpty(reportResponse.Item1.Data);
+        }
+
+        [Fact]
+        public async void Should_Success_Get_Excel()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
+            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            data.SupplierCode = unitData.SupplierCode;
+            data.SupplierName = unitData.SupplierName;
+            data.InvoiceNo = unitData.InvoiceNo;
+            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
+            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+
+            var reportResponse = service.GenerateExcel(data.SupplierName, data.Date.Month, data.Date.Year, 7);
+            Assert.NotNull(reportResponse);
         }
     }
 }

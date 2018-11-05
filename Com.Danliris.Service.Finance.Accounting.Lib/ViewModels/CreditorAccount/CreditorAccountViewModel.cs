@@ -7,7 +7,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
 {
     public class CreditorAccountViewModel : BaseViewModel
     {
-        public DateTimeOffset Date { get; set; }
+        public DateTimeOffset? Date { get; set; }
 
         public string UnitReceiptNoteNo { get; set; }
         
@@ -17,13 +17,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
 
         public string InvoiceNo { get; set; }
 
-        public long DPP { get; set; }
+        public long? DPP { get; set; }
 
-        public long PPN { get; set; }
+        public long? PPN { get; set; }
 
-        public long Total { get; set; }
+        public long? Total { get; set; }
 
-        public long Mutation { get; set; }
+        public long? Mutation { get; set; }
+
+        public long? FinalBalance { get; set; }
         
     }
 }
