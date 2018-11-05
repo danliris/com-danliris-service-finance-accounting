@@ -22,7 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
     {
         private const string ENTITY = "DailyBankTransactions";
         //private PurchasingDocumentAcceptanceDataUtil pdaDataUtil;
-        private readonly IIdentityService identityService;
+        //private readonly IIdentityService identityService;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public string GetCurrentMethod()
@@ -47,8 +47,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         private DailyBankTransactionDataUtil _dataUtil(DailyBankTransactionService service)
         {
-
-            GetServiceProvider();
             return new DailyBankTransactionDataUtil(service);
         }
 
