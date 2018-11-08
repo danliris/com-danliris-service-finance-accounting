@@ -26,6 +26,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
         public long? Mutation { get; set; }
 
         public long? FinalBalance { get; set; }
+
+        public string Currency { get; set; }
         
     }
 }

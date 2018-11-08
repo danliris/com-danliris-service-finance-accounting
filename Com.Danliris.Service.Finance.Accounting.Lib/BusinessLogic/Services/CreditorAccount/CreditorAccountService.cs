@@ -203,7 +203,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     InvoiceNo = item.InvoiceNo,
                     Mutation = unitReceiptMutaion + bankExpenditureMutation + memoMutation,
-                    FinalBalance = unitReceiptMutaion + bankExpenditureMutation + memoMutation
+                    FinalBalance = unitReceiptMutaion + bankExpenditureMutation + memoMutation,
+                    Currency = item.CurrencyCode
                 };
                 result.Add(resultVM);
             }
@@ -225,6 +226,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             data.SupplierName = viewModel.SupplierName;
             data.SupplierCode = viewModel.SupplierCode;
             data.InvoiceNo = viewModel.InvoiceNo;
+            data.CurrencyCode = viewModel.Currency;
             data.FinalBalance = data.UnitReceiptMutation + data.BankExpenditureNoteMutation + data.MemoMutation;
 
 
@@ -253,7 +255,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 PPN = data.UnitReceiptNotePPN,
                 InvoiceNo = data.InvoiceNo,
                 SupplierCode = data.SupplierCode,
-                SupplierName = data.SupplierName
+                SupplierName = data.SupplierName,
+                Currency = data.CurrencyCode
             };
         }
 
@@ -343,7 +346,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 UnitReceiptMutation = viewModel.DPP + viewModel.PPN,
                 UnitReceiptNoteDate = viewModel.Date,
                 UnitReceiptNoteDPP = viewModel.DPP,
-                UnitReceiptNoteNo = viewModel.Code
+                UnitReceiptNoteNo = viewModel.Code,
+                CurrencyCode = viewModel.Currency
             };
 
             return await CreateAsync(model);
