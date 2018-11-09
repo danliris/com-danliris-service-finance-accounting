@@ -9,10 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance

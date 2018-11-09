@@ -5,17 +5,14 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBalance;
-using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditorAccount;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
 using System.Security.Claims;
-using System.Text;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
