@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
@@ -56,6 +58,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             services
                 .AddTransient<ICOAService, COAService>()
                 .AddTransient<ICreditorAccountService, CreditorAccountService>()
+                .AddTransient<ICreditBalanceService, CreditBalanceService>()
                 .AddTransient<IDailyBankTransactionService, DailyBankTransactionService>();
         }
 

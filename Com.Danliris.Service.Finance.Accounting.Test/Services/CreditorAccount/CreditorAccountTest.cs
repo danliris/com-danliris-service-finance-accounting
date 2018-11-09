@@ -12,14 +12,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
 {
     public class CreditorAccountTest
     {
-        private const string ENTITY = "DailyBankTransactions";
+        private const string ENTITY = "CreditorAccount";
         //private PurchasingDocumentAcceptanceDataUtil pdaDataUtil;
         private readonly IIdentityService identityService;
 
@@ -158,7 +157,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             var newData = await service.GetByBankExpenditureNote(data.SupplierCode, data.Code, data.InvoiceNo);
             Assert.Null(newData);
         }
-        
+
 
         [Fact]
         public async void Should_Success_Post_BankExpenditureNote()
@@ -227,7 +226,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             var reportResponse = service.GetReport(1, 25, data.SupplierName, data.Date.Month, data.Date.Year, 7);
             Assert.NotEmpty(reportResponse.Item1.Data);
         }
-
+        
         [Fact]
         public async void Should_Success_Get_Excel()
         {
