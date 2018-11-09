@@ -11,7 +11,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditorAccount
+namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBalance
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
