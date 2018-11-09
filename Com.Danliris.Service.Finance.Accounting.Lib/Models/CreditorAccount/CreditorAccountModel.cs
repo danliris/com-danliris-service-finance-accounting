@@ -19,11 +19,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
 
         public DateTimeOffset? UnitReceiptNoteDate { get; set; }
 
-        public long UnitReceiptNoteDPP { get; set; }
+        public double UnitReceiptNoteDPP { get; set; }
 
-        public long UnitReceiptNotePPN { get; set; }
+        public double UnitReceiptNotePPN { get; set; }
 
-        public long UnitReceiptMutation { get; set; }
+        public double UnitReceiptMutation { get; set; }
         #endregion
 
         #region BankExpenditureNote
@@ -33,11 +33,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
 
         public DateTimeOffset? BankExpenditureNoteDate { get; set; }
 
-        public long BankExpenditureNoteDPP { get; set; }
+        public double BankExpenditureNoteDPP { get; set; }
 
-        public long BankExpenditureNotePPN { get; set; }
+        public double BankExpenditureNotePPN { get; set; }
 
-        public long BankExpenditureNoteMutation { get; set; }
+        public double BankExpenditureNoteMutation { get; set; }
         #endregion
 
         #region Memo
@@ -45,16 +45,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
 
         public DateTimeOffset? MemoDate { get; set; }
 
-        public long MemoDPP { get; set; }
+        public double MemoDPP { get; set; }
 
-        public long MemoPPN { get; set; }
+        public double MemoPPN { get; set; }
 
-        public long MemoMutation { get; set; }
+        public double MemoMutation { get; set; }
         #endregion
         
         public string InvoiceNo { get; set; }
 
-        public long FinalBalance { get; set; }
+        public double FinalBalance { get; set; }
 
         public string CurrencyCode { get; set; }
 

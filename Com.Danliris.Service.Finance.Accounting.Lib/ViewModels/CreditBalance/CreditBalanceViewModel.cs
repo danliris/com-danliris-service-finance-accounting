@@ -6,12 +6,12 @@
 
         public string SupplierName { get; set; }
 
-        public long StartBalance { get; set; }
+        public double StartBalance { get; set; }
 
-        public long Purchase { get; set; }
+        public double Purchase { get; set; }
 
-        public long Payment { get; set; }
+        public double Payment { get; set; }
 
-        public long FinalBalance { get; set; }
+        public double FinalBalance { get; set; }
     }
 }

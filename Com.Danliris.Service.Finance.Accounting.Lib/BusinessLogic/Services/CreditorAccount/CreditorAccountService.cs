@@ -96,7 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             }
             else
             {
-                long totalBalance = 0;
+                double totalBalance = 0;
                 foreach (var item in data)
                 {
                     totalBalance += item.FinalBalance.GetValueOrDefault();
@@ -109,7 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, true);
         }
 
-        public (ReadResponse<CreditorAccountViewModel>, long) GetReport(int page, int size, string suplierName, int month, int year, int offSet)
+        public (ReadResponse<CreditorAccountViewModel>, double) GetReport(int page, int size, string suplierName, int month, int year, int offSet)
         {
             var queries = GetReport(suplierName, month, year, offSet);
 
@@ -119,7 +119,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             return (new ReadResponse<CreditorAccountViewModel>(queries.Item1, pageable.TotalCount, new Dictionary<string, string>(), new List<string>()), queries.Item2);
         }
 
-        public (List<CreditorAccountViewModel>, long) GetReport(string suplierName, int month, int year, int offSet)
+        public (List<CreditorAccountViewModel>, double) GetReport(string suplierName, int month, int year, int offSet)
         {
             IQueryable<CreditorAccountModel> query = DbContext.CreditorAccounts.AsQueryable();
             List<CreditorAccountViewModel> result = new List<CreditorAccountViewModel>();
@@ -138,9 +138,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             foreach (var item in query.OrderBy(x => x.UnitReceiptNoteDate.GetValueOrDefault()).ToList())
             {
-                long unitReceiptMutaion = 0;
-                long bankExpenditureMutation = 0;
-                long memoMutation = 0;
+                double unitReceiptMutaion = 0;
+                double bankExpenditureMutation = 0;
+                double memoMutation = 0;
                 if (!string.IsNullOrEmpty(item.UnitReceiptNoteNo))
                 {
                     CreditorAccountViewModel vm = new CreditorAccountViewModel
