@@ -45,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
-                    data = data,
+                    data = data.Data,
                     info = new
                     {
                         data.Count,
