@@ -7,6 +7,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditBalance;
 using Com.Moonlay.NetCore.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -33,10 +34,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         {
             IQueryable<CreditorAccountModel> query = DbContext.CreditorAccounts.AsQueryable();
             List<CreditBalanceViewModel> result = new List<CreditBalanceViewModel>();
-            int previousMonth = month - 1 ;
+            int previousMonth = month - 1;
             int previousYear = year;
 
-            if(previousMonth == 0)
+            if (previousMonth == 0)
             {
                 previousMonth = 12;
                 previousYear = year - 1;
@@ -46,9 +47,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             if (!string.IsNullOrEmpty(suplierName))
                 query = query.Where(x => x.SupplierName == suplierName);
 
-            
 
-            foreach(var item in query.GroupBy(x => x.SupplierCode).ToList())
+
+            foreach (var item in query.GroupBy(x => x.SupplierCode).ToList())
             {
                 var creditBalance = new CreditBalanceViewModel()
                 {
@@ -58,8 +59,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     Purchase = item.Sum(x => x.UnitReceiptMutation),
                     Payment = item.Sum(x => x.BankExpenditureNoteMutation),
                     FinalBalance = item.Sum(x => x.FinalBalance),
-                    SupplierName = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().SupplierName,
-                    Currency = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().CurrencyCode
+                    SupplierName = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().SupplierName ?? "",
+                    Currency = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().CurrencyCode ?? ""
                 };
                 result.Add(creditBalance);
             }
@@ -81,13 +82,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             dt.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(string) });
 
 
-            if(data.Count == 0)
+            if (data.Count == 0)
             {
                 dt.Rows.Add("", "", "", "", "", "");
             }
             else
             {
-                foreach(var item in data)
+                foreach (var item in data)
                 {
                     dt.Rows.Add(item.Currency, item.SupplierName, item.StartBalance.ToString("#,##0"), item.Purchase.ToString("#,##0"),
                         item.Payment.ToString("#,##0"), item.FinalBalance.ToString("#,##0"));
