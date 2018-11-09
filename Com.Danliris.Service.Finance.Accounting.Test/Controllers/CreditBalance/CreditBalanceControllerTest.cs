@@ -21,19 +21,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
 {
     public class CreditBalanceControllerTest
     {
-        protected CreditBalanceViewModel ViewModel
-        {
-            get { return new CreditBalanceViewModel(); }
-        }
-
-        public ServiceValidationException GetServiceValidationExeption()
-        {
-            Mock<IServiceProvider> serviceProvider = new Mock<IServiceProvider>();
-            List<ValidationResult> validationResults = new List<ValidationResult>();
-            System.ComponentModel.DataAnnotations.ValidationContext validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(ViewModel, serviceProvider.Object, null);
-            return new ServiceValidationException(validationContext, validationResults);
-        }
-
         public (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<ICreditBalanceService> Service, Mock<IMapper> Mapper) GetMocks()
         {
             return (IdentityService: new Mock<IIdentityService>(), ValidateService: new Mock<IValidateService>(), Service: new Mock<ICreditBalanceService>(), Mapper: new Mock<IMapper>());
