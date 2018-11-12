@@ -11,8 +11,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
     {
         public COAViewModel COA { get; set; }
         public string Remark { get; set; }
-        public double Debit { get; set; }
-        public double Credit { get; set; }
+        public double? Debit { get; set; }
+        public double? Credit { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

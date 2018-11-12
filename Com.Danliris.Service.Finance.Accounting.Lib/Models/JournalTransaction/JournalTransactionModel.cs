@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction
         public DateTimeOffset Date { get; set; }
         [MaxLength(250)]
         public string ReferenceNo { get; set; }
-        public List<JournalTransactionItemModel> Items { get; set; }
+        public ICollection<JournalTransactionItemModel> Items { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

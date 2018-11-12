@@ -24,7 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
     {
         private const string ENTITY = "JournalTransaction";
         //private PurchasingDocumentAcceptanceDataUtil pdaDataUtil;
-        private readonly IIdentityService identityService;
+        //private readonly IIdentityService identityService;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public string GetCurrentMethod()
@@ -130,10 +130,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = await _dataUtil(service).GetTestData();
-            var newModel = await service.ReadByIdAsync(model.Id);
+            //var modelToDelete = await service.ReadByIdAsync(model.Id);
 
-            var Response = await service.DeleteAsync(newModel.Id);
+            var Response = await service.DeleteAsync(model.Id);
             Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public void Should_Error_Validate_Data_NotEqual_Total()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var vm = _dataUtil(service).GetDataToValidate();
+            vm.Items[1].Credit = 5000;
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Error_Validate_Data_Debit_And_Credit_Exist()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var vm = _dataUtil(service).GetDataToValidate();
+            vm.Items[1].Credit = 5000;
+            vm.Items[1].Credit = 1000;
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Error_Validate_Data_Debit_And_Credit_EqualsZero()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var vm = _dataUtil(service).GetDataToValidate();
+            vm.Items[1].Credit = 0;
+            vm.Items[1].Credit = 0;
+
+            Assert.True(vm.Validate(null).Count() > 0);
         }
     }
 }
