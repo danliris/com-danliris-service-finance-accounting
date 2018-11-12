@@ -6,8 +6,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
 {
     public class CreditorAccountMemoPostedViewModel : CreditorAccountPostedViewModel
     {
-        public long DPP { get; set; }
+        public double DPP { get; set; }
 
-        public long PPN { get; set; }
+        public double PPN { get; set; }
     }
 }

@@ -5,17 +5,14 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBalance;
-using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditorAccount;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
 using System.Security.Claims;
-using System.Text;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
@@ -59,7 +56,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new ReadResponse<CreditBalanceViewModel>(new List<CreditBalanceViewModel>(), 1, new Dictionary<string, string>(), new List<string>()));
 
-            var response = GetController(mocks).GetReport(null, 1, 2018);
+            var response = GetController(mocks).GetReport(1, 2018);
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
@@ -69,7 +66,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
 
-            var response = GetController(mocks).GetReport(null, 1, 2018);
+            var response = GetController(mocks).GetReport(1, 2018);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
@@ -79,7 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new MemoryStream());
 
-            var response = GetController(mocks).GetXls(null, 1, 2018);
+            var response = GetController(mocks).GetXls(1, 2018);
             Assert.NotNull(response);
         }
 
@@ -89,7 +86,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
 
-            var response = GetController(mocks).GetXls(null, 1, 2018);
+            var response = GetController(mocks).GetXls(1, 2018);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
