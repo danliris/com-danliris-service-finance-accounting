@@ -1,6 +1,8 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction;
@@ -142,6 +144,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var vm = _dataUtil(service).GetDataToValidate();
             vm.Items[1].Credit = 5000;
+            vm.Date = DateTimeOffset.UtcNow.AddDays(2);
 
             Assert.True(vm.Validate(null).Count() > 0);
         }
@@ -151,8 +154,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var vm = _dataUtil(service).GetDataToValidate();
-            vm.Items[1].Credit = 5000;
+            vm.Items[1].Debit = 5000;
             vm.Items[1].Credit = 1000;
+            vm.Items[1].COA = null;
 
             Assert.True(vm.Validate(null).Count() > 0);
         }
@@ -166,6 +170,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             vm.Items[1].Credit = 0;
 
             Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async void Should_Success_Update_Data_NewItem()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = await _dataUtil(service).GetTestData();
+            model.Description = "NewDescription";
+
+            var newItemDebit = new JournalTransactionItemModel()
+            {
+                COA = new COAModel()
+                {
+                    Id = 1,
+                    Code = ""
+                },
+                Debit = 100
+            };
+            model.Items.Add(newItemDebit);
+
+            var newItemCredit = new JournalTransactionItemModel()
+            {
+                COA = new COAModel()
+                {
+                    Id = 1,
+                    Code = ""
+                },
+                Credit = 100
+            };
+            model.Items.Add(newItemCredit);
+
+            var Response = await service.UpdateAsync(model.Id, model);
+            Assert.NotEqual(0, Response);
         }
     }
 }
