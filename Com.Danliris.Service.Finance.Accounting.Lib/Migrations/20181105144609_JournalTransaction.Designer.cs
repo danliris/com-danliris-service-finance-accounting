@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181105144609_JournalTransaction")]
+    partial class JournalTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,17 +29,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<double>("BankExpenditureNoteDPP");
+                    b.Property<long>("BankExpenditureNoteDPP");
 
                     b.Property<DateTimeOffset?>("BankExpenditureNoteDate");
 
                     b.Property<int>("BankExpenditureNoteId");
 
-                    b.Property<double>("BankExpenditureNoteMutation");
+                    b.Property<long>("BankExpenditureNoteMutation");
 
                     b.Property<string>("BankExpenditureNoteNo");
 
-                    b.Property<double>("BankExpenditureNotePPN");
+                    b.Property<long>("BankExpenditureNotePPN");
 
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
@@ -49,8 +51,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("CreatedUtc");
 
-                    b.Property<string>("CurrencyCode");
-
                     b.Property<string>("DeletedAgent")
                         .IsRequired()
                         .HasMaxLength(255);
@@ -61,7 +61,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("DeletedUtc");
 
-                    b.Property<double>("FinalBalance");
+                    b.Property<long>("FinalBalance");
 
                     b.Property<string>("InvoiceNo");
 
@@ -77,29 +77,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<double>("MemoDPP");
+                    b.Property<long>("MemoDPP");
 
                     b.Property<DateTimeOffset?>("MemoDate");
 
-                    b.Property<double>("MemoMutation");
+                    b.Property<long>("MemoMutation");
 
                     b.Property<string>("MemoNo");
 
-                    b.Property<double>("MemoPPN");
+                    b.Property<long>("MemoPPN");
 
                     b.Property<string>("SupplierCode");
 
                     b.Property<string>("SupplierName");
 
-                    b.Property<double>("UnitReceiptMutation");
+                    b.Property<long>("UnitReceiptMutation");
 
-                    b.Property<double>("UnitReceiptNoteDPP");
+                    b.Property<long>("UnitReceiptNoteDPP");
 
                     b.Property<DateTimeOffset?>("UnitReceiptNoteDate");
 
                     b.Property<string>("UnitReceiptNoteNo");
 
-                    b.Property<double>("UnitReceiptNotePPN");
+                    b.Property<long>("UnitReceiptNotePPN");
 
                     b.HasKey("Id");
 
@@ -311,7 +311,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<int>("JournalTransactionId");
+                    b.Property<int?>("JournalTransactionModelId");
 
                     b.Property<string>("LastModifiedAgent")
                         .IsRequired()
@@ -329,7 +329,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.HasIndex("COAId");
 
-                    b.HasIndex("JournalTransactionId");
+                    b.HasIndex("JournalTransactionModelId");
 
                     b.ToTable("JournalTransactionItems");
                 });
@@ -453,10 +453,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasForeignKey("COAId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction.JournalTransactionModel", "JournalTransaction")
+                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction.JournalTransactionModel")
                         .WithMany("Items")
-                        .HasForeignKey("JournalTransactionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("JournalTransactionModelId");
                 });
 #pragma warning restore 612, 618
         }
