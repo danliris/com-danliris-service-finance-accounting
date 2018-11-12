@@ -28,7 +28,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 PPN = 100,
                 InvoiceNo = "InvoiceNo",
                 SupplierCode = "SupplierCode",
-                SupplierName = "SupplierName"
+                SupplierName = "SupplierName",
+                Currency = "Currency"
             };
         }
 
