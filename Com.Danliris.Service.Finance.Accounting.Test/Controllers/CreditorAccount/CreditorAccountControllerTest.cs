@@ -13,6 +13,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
@@ -49,7 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
                 new Claim("username", "unittestusername")
             };
             user.Setup(u => u.Claims).Returns(claims);
-            CreditorAccountController controller = new CreditorAccountController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Mapper.Object, mocks.Service.Object, "1.0.0");
+            CreditorAccountController controller = new CreditorAccountController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Mapper.Object, mocks.Service.Object);
             controller.ControllerContext = new ControllerContext()
             {
                 HttpContext = new DefaultHttpContext()
@@ -66,7 +67,47 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
         {
             return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
         }
-        
+
+        [Fact]
+        public void GetReport_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns((new ReadResponse<CreditorAccountViewModel>(new List<CreditorAccountViewModel>(), 1, new Dictionary<string, string>(), new List<string>()), 1));
+
+            var response = GetController(mocks).GetReport("code", 1, 2018);
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetReport_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).GetReport("code", 1, 2018);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetReportExcel_ReturnFile()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new MemoryStream());
+
+            var response = GetController(mocks).GetXls("code", 1, 2018);
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void GetReportExcel_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).GetXls("code", 1, 2018);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
         [Fact]
         public async Task GetByUnitReceiptNote_ReturnOK()
         {
@@ -172,6 +213,53 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             mocks.Service.Setup(f => f.UpdateFromUnitReceiptNoteAsync(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Throws(new Exception());
 
             var response = await GetController(mocks).UnitReceiptNotePut(new CreditorAccountUnitReceiptNotePostedViewModel());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+
+        [Fact]
+        public async Task PutByUnitPaymentOrder_ReturnNoContent()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountUnitPaymentOrderPostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.UpdateFromUnitPaymentOrderAsync(It.IsAny<CreditorAccountUnitPaymentOrderPostedViewModel>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).UnitPaymentOrderPut(new CreditorAccountUnitPaymentOrderPostedViewModel());
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutByUnitPaymentOrder_ThrowNotFound()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountUnitPaymentOrderPostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.UpdateFromUnitPaymentOrderAsync(It.IsAny<CreditorAccountUnitPaymentOrderPostedViewModel>())).Throws(new NotFoundException());
+
+            var response = await GetController(mocks).UnitPaymentOrderPut(new CreditorAccountUnitPaymentOrderPostedViewModel());
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutByUnitPaymentOrder_ThrowServiceValidationException()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountUnitPaymentOrderPostedViewModel>())).Throws(GetServiceValidationExeption());
+
+            var response = await GetController(mocks).UnitPaymentOrderPut(new CreditorAccountUnitPaymentOrderPostedViewModel());
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutByUnitPaymentOrder_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountUnitPaymentOrderPostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.UpdateFromUnitPaymentOrderAsync(It.IsAny<CreditorAccountUnitPaymentOrderPostedViewModel>())).Throws(new Exception());
+
+            var response = await GetController(mocks).UnitPaymentOrderPut(new CreditorAccountUnitPaymentOrderPostedViewModel());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
