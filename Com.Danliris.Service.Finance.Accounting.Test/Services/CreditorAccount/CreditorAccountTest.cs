@@ -226,9 +226,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             var reportResponse = service.GetReport(1, 25, data.SupplierName, data.Date.Month, data.Date.Year, 7);
             Assert.NotEmpty(reportResponse.Item1.Data);
         }
-        
+
         [Fact]
-        public async void Should_Success_Get_Excel()
+        public async void Should_Success_Get_Report_Include_Previous_Month()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
@@ -236,8 +236,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
             data.InvoiceNo = unitData.InvoiceNo;
+            data.Mutation = unitData.DPP + unitData.PPN;
+            data.Date = data.Date.AddMonths(1);
+            var memoData = _dataUtil(service).GetMemoPostedViewModel();
+            memoData.SupplierCode = unitData.SupplierCode;
+            memoData.SupplierName = unitData.SupplierName;
+            memoData.InvoiceNo = unitData.InvoiceNo;
             var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
             var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+            var nextMonthUnitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            nextMonthUnitData.Date = nextMonthUnitData.Date.AddMonths(1);
+            await service.CreateFromUnitReceiptNoteAsync(nextMonthUnitData);
+            await service.CreateFromMemoAsync(memoData);
+            var reportResponse = service.GetReport(1, 25, data.SupplierName, nextMonthUnitData.Date.Month, nextMonthUnitData.Date.Year, 7);
+            Assert.NotEmpty(reportResponse.Item1.Data);
+        }
+
+        [Fact]
+        public async void Should_Success_Get_Excel()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
+            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+
+            data.SupplierCode = unitData.SupplierCode;
+            data.SupplierName = unitData.SupplierName;
+            data.InvoiceNo = unitData.InvoiceNo;
+            data.Mutation = unitData.DPP + unitData.PPN;
+
+            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
+            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+
 
             var reportResponse = service.GenerateExcel(data.SupplierName, data.Date.Month, data.Date.Year, 7);
             Assert.NotNull(reportResponse);

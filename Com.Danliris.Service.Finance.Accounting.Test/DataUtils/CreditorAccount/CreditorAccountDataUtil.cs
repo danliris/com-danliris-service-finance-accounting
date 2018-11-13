@@ -48,5 +48,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 SupplierName = "SupplierName"
             };
         }
+
+        public CreditorAccountMemoPostedViewModel GetMemoPostedViewModel()
+        {
+            return new CreditorAccountMemoPostedViewModel()
+            {
+                Code = "Code",
+                CreditorAccountId = 1,
+                Date = DateTimeOffset.UtcNow,
+                DPP = 1000,
+                PPN = 100,
+                InvoiceNo = "InvoiceNo",
+                SupplierCode = "SupplierCode",
+                SupplierName = "SupplierName"
+            };
+        }
     }
 }
