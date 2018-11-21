@@ -382,9 +382,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             model.BankExpenditureNoteDate = viewModel.Date;
             model.BankExpenditureNoteId = viewModel.Id;
-            model.BankExpenditureNoteMutation = viewModel.Mutation * -1;
+            model.BankExpenditureNoteMutation = viewModel.Mutation;
             model.BankExpenditureNoteNo = viewModel.Code;
-            model.FinalBalance = model.UnitReceiptMutation + model.BankExpenditureNoteMutation + model.MemoMutation;
+            model.FinalBalance = model.UnitReceiptMutation + (model.BankExpenditureNoteMutation * -1) + model.MemoMutation;
 
             UpdateModel(model.Id, model);
             return await DbContext.SaveChangesAsync();
@@ -399,8 +399,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             data.BankExpenditureNoteNo = viewModel.Code;
             data.BankExpenditureNoteDate = viewModel.Date;
-            data.BankExpenditureNoteMutation = viewModel.Mutation * -1;
-            data.FinalBalance = data.UnitReceiptMutation + data.BankExpenditureNoteMutation + data.MemoMutation;
+            data.BankExpenditureNoteMutation = viewModel.Mutation;
+            data.FinalBalance = data.UnitReceiptMutation + (data.BankExpenditureNoteMutation * -1) + data.MemoMutation;
 
 
             UpdateModel(data.Id, data);
@@ -446,6 +446,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             model.FinalBalance = model.UnitReceiptMutation + model.BankExpenditureNoteMutation + model.MemoMutation;
 
             return await UpdateAsync(model.Id, model);
+        }
+
+        public async Task<int> DeleteFromBankExpenditureNoteListAsync(string code)
+        {
+            var models = await DbSet.Where(x => x.BankExpenditureNoteNo == code).ToListAsync();
+            foreach (var model in models)
+            {
+                model.BankExpenditureNoteDate = null;
+                model.BankExpenditureNoteDPP = 0;
+                model.BankExpenditureNoteId = 0;
+                model.BankExpenditureNoteMutation = 0;
+                model.BankExpenditureNoteNo = null;
+                model.BankExpenditureNotePPN = 0;
+                model.FinalBalance = model.UnitReceiptMutation + model.BankExpenditureNoteMutation + model.MemoMutation;
+                await UpdateAsync(model.Id, model);
+            }
+            return 1;
         }
 
         public async Task<int> UpdateFromUnitPaymentOrderAsync(CreditorAccountUnitPaymentOrderPostedViewModel viewModel)

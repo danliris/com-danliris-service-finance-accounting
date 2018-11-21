@@ -489,5 +489,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             var response = await GetController(mocks).BankExpenditureNoteDelete(1);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
+
+        [Fact]
+        public async Task DeleteByBankExpenditureListNote_ReturnNoContent()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.DeleteFromBankExpenditureNoteListAsync(It.IsAny<string>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).BankExpenditureNoteDeleteList("code");
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task DeleteByBankExpenditureNoteList_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.DeleteFromBankExpenditureNoteListAsync(It.IsAny<string>())).Throws(new Exception());
+
+            var response = await GetController(mocks).BankExpenditureNoteDeleteList("code");
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
     }
 }
