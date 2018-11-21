@@ -199,7 +199,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
             var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            unitData.SupplierCode += "deleted";
             unitData.SupplierName += "deleted";
+            unitData.InvoiceNo += "deletd";
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
             data.InvoiceNo = unitData.InvoiceNo;

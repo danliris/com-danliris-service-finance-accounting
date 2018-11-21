@@ -282,6 +282,40 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
             }
         }
 
+        [HttpPost("bank-expenditure-note/list")]
+        public async Task<ActionResult> BankExpenditureNoteListPost([FromBody] List<CreditorAccountBankExpenditureNotePostedViewModel> viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                foreach(var item in viewModel)
+                {
+                    ValidateService.Validate(item);
+
+
+                    await Service.CreateFromBankExpenditureNoteAsync(item);
+                }
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return Created(string.Concat(Request.Path, "/", 0), Result);
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpPut("bank-expenditure-note")]
         public async Task<IActionResult> BankExpenditureNotePut([FromBody] CreditorAccountBankExpenditureNotePostedViewModel viewModel)
         {
@@ -310,9 +344,46 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
             }
             catch (Exception e)
             {
-                Dictionary<string, object> Result =
+                    Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
                     .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("bank-expenditure-note/list")]
+        public async Task<IActionResult> BankExpenditureNoteListPut([FromBody] List<CreditorAccountBankExpenditureNotePostedViewModel> viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                foreach(var item in viewModel)
+                {
+                    ValidateService.Validate(item);
+
+                    await Service.UpdateFromBankExpenditureNoteAsync(item);
+                }
+                return NoContent();
+            }
+            catch (NotFoundException)
+            {
+                Dictionary<string, object> Result =
+                       new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                       .Fail();
+                return BadRequest(Result);
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
