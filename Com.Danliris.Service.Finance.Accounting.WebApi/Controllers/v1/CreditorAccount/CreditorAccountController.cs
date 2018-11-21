@@ -438,5 +438,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+
+        [HttpDelete("bank-expenditure-note/list/{code}")]
+        public async Task<IActionResult> BankExpenditureNoteDeleteList([FromRoute] string code)
+        {
+            try
+            {
+                VerifyUser();
+
+                await Service.DeleteFromBankExpenditureNoteListAsync(code);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }
