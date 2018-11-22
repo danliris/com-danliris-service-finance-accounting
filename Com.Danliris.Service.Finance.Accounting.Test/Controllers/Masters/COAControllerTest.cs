@@ -27,10 +27,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithoutException_ReturnOK()
         {
-            string header = "Kode; Nama;Path;Report Type;Nature;Cash Account";
+            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
-            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(';').ToList());
+            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
             
             mockFacade.Setup(f => f.UploadValidate(ref It.Ref<List<COAViewModel>>.IsAny, It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(true, new List<object>()));
             COAProfile profile = new COAProfile();
@@ -74,10 +74,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithException_FileNotFound()
         {
-            string header = "Kode; Nama;Path;Report Type;Nature;Cash Account";
+            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
-            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(';').ToList());
+            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
             mockFacade.Setup(f => f.UploadValidate(ref It.Ref<List<COAViewModel>>.IsAny, It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(false, new List<object>()));
             COAProfile profile = new COAProfile();
 
@@ -101,10 +101,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithException_CSVError()
         {
-            string header = "Kode; Nama;Path;Report Type;Nature;Cash Account";
+            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
-            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
+            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(';').ToList());
             var data = It.IsAny<List<COAViewModel>>();
             mockFacade.Setup(f => f.UploadValidate(ref It.Ref<List<COAViewModel>>.IsAny, It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(false, new List<object>()));
             COAProfile profile = new COAProfile();
@@ -129,10 +129,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithException_ErrorInFile()
         {
-            string header = "Kode; Nama;Path;Report Type;Nature;Cash Account";
+            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
-            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(';').ToList());
+            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
             var data = It.IsAny<List<COAViewModel>>();
             mockFacade.Setup(f => f.UploadValidate(ref It.Ref<List<COAViewModel>>.IsAny, It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(false, new List<object>()));
             COAProfile profile = new COAProfile();
@@ -152,6 +152,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
 
             var response = controller.PostCSVFileAsync();
             Assert.NotNull(response.Result);
+        }
+
+        [Fact]
+        public void GetCSV_ReturnFile()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.DownloadTemplate()).Returns(new MemoryStream());
+
+            var response = GetController(mocks).DownloadTemplate();
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void GetCSV_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.DownloadTemplate()).Throws(new Exception());
+
+            var response = GetController(mocks).DownloadTemplate();
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
 }

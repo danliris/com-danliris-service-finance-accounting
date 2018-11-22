@@ -6,6 +6,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MasterCOA;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
+using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -74,7 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
             List<string> searchAttributes = new List<string>()
             {
-                "Code", "Name"
+                "Code", "Name", "Nature", "ReportType"
             };
 
             query = QueryHelper<COAModel>.Search(query, searchAttributes, keyword);
@@ -112,7 +114,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
             List<COAModel> data = pageable.Data.ToList();
             int totalData = pageable.TotalCount;
 
-            return new ReadResponse<COAModel>(query.ToList(), totalData, orderDictionary, selectedFields);
+            return new ReadResponse<COAModel>(data, totalData, orderDictionary, selectedFields);
         }
 
         public async Task<COAModel> ReadByIdAsync(int id)
@@ -271,7 +273,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                     ErrorMessage = string.Concat(ErrorMessage, "Nama tidak boleh duplikat, ");
                 }
 
-                
+
 
 
                 if (!string.IsNullOrEmpty(ErrorMessage))
@@ -299,7 +301,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
             return Tuple.Create(Valid, ErrorList);
         }
 
+        public MemoryStream DownloadTemplate()
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                using (var streamWriter = new StreamWriter(stream))
+                {
 
-        
+                    using (var csvWriter = new CsvWriter(streamWriter))
+                    {
+                        foreach(var item in CsvHeader)
+                        {
+                            csvWriter.WriteField(item);
+                        }
+                        csvWriter.NextRecord();
+                    }
+                }
+                return stream;
+            }
+        }
+
     }
 }

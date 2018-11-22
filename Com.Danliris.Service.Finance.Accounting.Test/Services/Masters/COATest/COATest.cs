@@ -232,5 +232,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
             var Response = service.UploadValidate(ref coa, null);
             Assert.False(Response.Item1);
         }
+
+        [Fact]
+        public void Should_Success_Get_CSV()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            
+            var reportResponse = service.DownloadTemplate();
+            Assert.NotNull(reportResponse);
+        }
     }
 }
