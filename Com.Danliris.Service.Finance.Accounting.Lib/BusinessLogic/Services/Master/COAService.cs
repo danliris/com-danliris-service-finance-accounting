@@ -100,6 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                 Code2 = x.Code2,
                 Code3 = x.Code3,
                 Code4 = x.Code4,
+                Code = x.Code,
                 Header = x.Header,
                 Subheader = x.Subheader,
                 Path = x.Path,
