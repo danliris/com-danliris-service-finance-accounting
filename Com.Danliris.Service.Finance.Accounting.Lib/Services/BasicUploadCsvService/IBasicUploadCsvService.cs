@@ -7,7 +7,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.BasicUploadCsvSer
 {
     public interface IBasicUploadCsvService<TViewModel>
     {
-        Tuple<bool, List<object>> UploadValidate(List<TViewModel> Data, List<KeyValuePair<string, StringValues>> Body);
+        Tuple<bool, List<object>> UploadValidate(ref List<TViewModel> Data, List<KeyValuePair<string, StringValues>> Body);
 
         List<string> CsvHeader { get; }
     }

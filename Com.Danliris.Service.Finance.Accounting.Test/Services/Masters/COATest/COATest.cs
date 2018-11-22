@@ -146,7 +146,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
             COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
 
             List<COAViewModel> coa = new List<COAViewModel>() { viewModel };
-            var Response = service.UploadValidate(coa, null);
+            var Response = service.UploadValidate(ref coa, null);
             Assert.True(Response.Item1);
         }
 
@@ -158,7 +158,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
             COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
             COAViewModel viewModel2 = _dataUtil(service).GetNewViewModel();
             List<COAViewModel> coa = new List<COAViewModel>() { viewModel, viewModel2 };
-            var Response = service.UploadValidate(coa, null);
+            var Response = service.UploadValidate(ref coa, null);
             Assert.False(Response.Item1);
         }
 
@@ -171,7 +171,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
             viewModel.Name = null;
             viewModel.Code = null;
             List<COAViewModel> coa = new List<COAViewModel>() { viewModel };
-            var Response = service.UploadValidate(coa, null);
+            var Response = service.UploadValidate(ref coa, null);
             Assert.False(Response.Item1);
         }
     }

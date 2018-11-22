@@ -27,11 +27,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithoutException_ReturnOK()
         {
-            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
+            string header = "Kode; Nama;Path;Report Type;Nature;Cash Account";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
-            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
-            mockFacade.Setup(f => f.UploadValidate(It.IsAny<List<COAViewModel>>(), It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(true, new List<object>()));
+            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(';').ToList());
+            
+            mockFacade.Setup(f => f.UploadValidate(ref It.Ref<List<COAViewModel>>.IsAny, It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(true, new List<object>()));
             COAProfile profile = new COAProfile();
 
             var mockMapper = new Mock<IMapper>();
@@ -41,14 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
             var mockIdentityService = new Mock<IIdentityService>();
             var mockValidateService = new Mock<IValidateService>();
 
-            COAController controller = new COAController(mockIdentityService.Object, mockValidateService.Object, mockFacade.Object, mockMapper.Object)
-            {
-                ControllerContext = new ControllerContext()
-                {
-                    HttpContext = new DefaultHttpContext()
-
-                }
-            };
+            var controller = GetController((mockIdentityService, mockValidateService, mockFacade, mockMapper));
             controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = $"{It.IsAny<int>()}";
             controller.ControllerContext.HttpContext.Request.Headers.Add("Content-Type", "multipart/form-data");
             var file = new FormFile(new MemoryStream(Encoding.UTF8.GetBytes(header + "\n" + header)), 0, Encoding.UTF8.GetBytes(header + "\n" + header).LongLength, "Data", "test.csv");
@@ -70,13 +64,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
 
             var mockValidateService = new Mock<IValidateService>();
 
-            COAController controller = new COAController(mockIdentityService.Object, mockValidateService.Object, mockFacade.Object, mockMapper.Object)
-            {
-                ControllerContext = new ControllerContext()
-                {
-                    HttpContext = new DefaultHttpContext()
-                }
-            };
+            var controller = GetController((mockIdentityService, mockValidateService, mockFacade, mockMapper));
             controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = $"{It.IsAny<int>()}";
 
             var response = controller.PostCSVFileAsync();
@@ -86,11 +74,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithException_FileNotFound()
         {
-            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
+            string header = "Kode; Nama;Path;Report Type;Nature;Cash Account";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
-            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
-            mockFacade.Setup(f => f.UploadValidate(It.IsAny<List<COAViewModel>>(), It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(false, new List<object>()));
+            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(';').ToList());
+            mockFacade.Setup(f => f.UploadValidate(ref It.Ref<List<COAViewModel>>.IsAny, It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(false, new List<object>()));
             COAProfile profile = new COAProfile();
 
             var mockMapper = new Mock<IMapper>();
@@ -100,14 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
             var mockIdentityService = new Mock<IIdentityService>();
             var mockValidateService = new Mock<IValidateService>();
 
-            COAController controller = new COAController(mockIdentityService.Object, mockValidateService.Object, mockFacade.Object, mockMapper.Object)
-            {
-                ControllerContext = new ControllerContext()
-                {
-                    HttpContext = new DefaultHttpContext()
-
-                }
-            };
+            var controller = GetController((mockIdentityService, mockValidateService, mockFacade, mockMapper));
             controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = $"{It.IsAny<int>()}";
             controller.ControllerContext.HttpContext.Request.Headers.Add("Content-Type", "multipart/form-data");
             var file = new FormFile(new MemoryStream(Encoding.UTF8.GetBytes(header + "\n" + header)), 0, Encoding.UTF8.GetBytes(header + "\n" + header).LongLength, "Data", "test.csv");
@@ -120,11 +101,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithException_CSVError()
         {
-            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
+            string header = "Kode; Nama;Path;Report Type;Nature;Cash Account";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
-            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(';').ToList());
-            mockFacade.Setup(f => f.UploadValidate(It.IsAny<List<COAViewModel>>(), It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(false, new List<object>()));
+            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
+            var data = It.IsAny<List<COAViewModel>>();
+            mockFacade.Setup(f => f.UploadValidate(ref It.Ref<List<COAViewModel>>.IsAny, It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(false, new List<object>()));
             COAProfile profile = new COAProfile();
 
             var mockMapper = new Mock<IMapper>();
@@ -134,14 +116,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
             var mockIdentityService = new Mock<IIdentityService>();
             var mockValidateService = new Mock<IValidateService>();
 
-            COAController controller = new COAController(mockIdentityService.Object, mockValidateService.Object, mockFacade.Object, mockMapper.Object)
-            {
-                ControllerContext = new ControllerContext()
-                {
-                    HttpContext = new DefaultHttpContext()
-
-                }
-            };
+            var controller = GetController((mockIdentityService, mockValidateService, mockFacade, mockMapper));
             controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = $"{It.IsAny<int>()}";
             controller.ControllerContext.HttpContext.Request.Headers.Add("Content-Type", "multipart/form-data");
             var file = new FormFile(new MemoryStream(Encoding.UTF8.GetBytes(header + "\n" + header)), 0, Encoding.UTF8.GetBytes(header + "\n" + header).LongLength, "Data", "test.csv");
@@ -154,11 +129,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithException_ErrorInFile()
         {
-            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
+            string header = "Kode; Nama;Path;Report Type;Nature;Cash Account";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
-            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
-            mockFacade.Setup(f => f.UploadValidate(It.IsAny<List<COAViewModel>>(), It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(false, new List<object>()));
+            mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(';').ToList());
+            var data = It.IsAny<List<COAViewModel>>();
+            mockFacade.Setup(f => f.UploadValidate(ref It.Ref<List<COAViewModel>>.IsAny, It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(false, new List<object>()));
             COAProfile profile = new COAProfile();
 
             var mockMapper = new Mock<IMapper>();
@@ -168,14 +144,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
             var mockIdentityService = new Mock<IIdentityService>();
             var mockValidateService = new Mock<IValidateService>();
 
-            COAController controller = new COAController(mockIdentityService.Object, mockValidateService.Object, mockFacade.Object, mockMapper.Object)
-            {
-                ControllerContext = new ControllerContext()
-                {
-                    HttpContext = new DefaultHttpContext()
-
-                }
-            };
+            var controller = GetController((mockIdentityService, mockValidateService, mockFacade, mockMapper));
             controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = $"{It.IsAny<int>()}";
             controller.ControllerContext.HttpContext.Request.Headers.Add("Content-Type", "multipart/form-data");
             var file = new FormFile(new MemoryStream(Encoding.UTF8.GetBytes(header + "\n" + header)), 0, Encoding.UTF8.GetBytes(header + "\n" + header).LongLength, "Data", "test.csv");

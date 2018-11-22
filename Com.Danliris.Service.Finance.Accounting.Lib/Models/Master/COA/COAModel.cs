@@ -10,6 +10,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA
     {
         public string Code { get; set; }
 
+        public string Code1 { get; set; }
+
+        public string Code2 { get; set; }
+
+        public string Code3 { get; set; }
+
+        public string Code4 { get; set; }
+
+        public string Header { get; set; }
+
+        public string Subheader { get; set; }
+
         public string Name { get; set; }
 
         public string Path { get; set; }
