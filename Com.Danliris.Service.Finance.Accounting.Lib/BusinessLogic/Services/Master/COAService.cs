@@ -30,8 +30,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
         private readonly int CODE2_LENGTH = 2;
         private readonly int CODE3_LENGTH = 1;
         private readonly int CODE4_LENGTH = 2;
-        private readonly int HEADER_LENGTH = 1;
-        private readonly int SUBHEADER_LENGTH = 2;
 
         private readonly List<string> Header = new List<string>()
         {

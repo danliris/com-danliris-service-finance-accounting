@@ -151,6 +151,64 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
+        public void Should_Fail_Upload_Validate_Count_Code_Data()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
+            viewModel.Code = "11.1.1";
+            List<COAViewModel> coa = new List<COAViewModel>() { viewModel };
+            var Response = service.UploadValidate(ref coa, null);
+            Assert.False(Response.Item1);
+        }
+
+        [Fact]
+        public void Should_Fail_Upload_Validate_Not_Digit_Data()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
+            viewModel.Code = "1a.1.1.1";
+            List<COAViewModel> coa = new List<COAViewModel>() { viewModel };
+            var Response = service.UploadValidate(ref coa, null);
+            Assert.False(Response.Item1);
+        }
+
+        [Fact]
+        public void Should_Fail_Upload_Validate_Too_long_Data()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
+            viewModel.Code = "11111.1111.1111.1111";
+            List<COAViewModel> coa = new List<COAViewModel>() { viewModel };
+            var Response = service.UploadValidate(ref coa, null);
+            Assert.False(Response.Item1);
+        }
+        [Fact]
+        public void Should_Success_Upload_Short_Code_Data()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
+            viewModel.Code = "1.1.1.1";
+            List<COAViewModel> coa = new List<COAViewModel>() { viewModel };
+            var Response = service.UploadValidate(ref coa, null);
+            Assert.True(Response.Item1);
+        }
+
+        [Fact]
+        public async void Should_Fail_Upload_Existed_Data()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
+
+            List<COAViewModel> coa = new List<COAViewModel>() { viewModel };
+            COAModel model = _dataUtil(service).GetNewData();
+
+            List<COAModel> coaModel = new List<COAModel>() { model };
+            await service.UploadData(coaModel);
+            var Response2 = service.UploadValidate(ref coa, null);
+            Assert.False(Response2.Item1);
+        }
+
+        [Fact]
         public void Should_Fail_Double_Upload_Validate_Data()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
