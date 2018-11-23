@@ -6,6 +6,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MasterCOA;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
+using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,10 +27,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
         protected DbSet<COAModel> DbSet;
         protected IIdentityService IdentityService;
         public FinanceDbContext DbContext;
+        private readonly int CODE1_LENGTH = 4;
+        private readonly int CODE_COUNT = 4;
+        private readonly int CODE2_LENGTH = 2;
+        private readonly int CODE3_LENGTH = 1;
+        private readonly int CODE4_LENGTH = 2;
 
         private readonly List<string> Header = new List<string>()
         {
-            "Kode", "Nama", "Path", "Report Type", "Nature", "Cash Account"
+            "Name", "Nature", "ReportType", "Code"
         };
         public List<string> CsvHeader => Header;
 
@@ -37,12 +44,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
         {
             public COAMap()
             {
-                Map(x => x.Code).Index(0);
-                Map(x => x.Name).Index(1);
-                Map(x => x.Path).Index(2);
-                Map(x => x.ReportType).Index(3);
-                Map(x => x.Nature).Index(4);
-                Map(x => x.CashAccount).Index(5);
+                Map(x => x.Code).Index(3);
+                Map(x => x.Name).Index(0);
+                Map(x => x.ReportType).Index(2);
+                Map(x => x.Nature).Index(1);
             }
         }
 
@@ -71,7 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
             List<string> searchAttributes = new List<string>()
             {
-                "Code", "Name"
+                "Code", "Name", "Nature", "ReportType"
             };
 
             query = QueryHelper<COAModel>.Search(query, searchAttributes, keyword);
@@ -81,7 +86,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
             List<string> selectedFields = new List<string>()
                 {
-                    "Id", "Name", "Code", "Path", "Nature", "CashAccount", "ReportType", "LastModifiedUtc"
+                    "Id", "Name", "Code","Path", "Nature", "CashAccount", "ReportType", "LastModifiedUtc"
                 };
 
             Dictionary<string, string> orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
@@ -91,7 +96,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
             {
                 Id = x.Id,
                 Name = x.Name,
+                Code1 = x.Code1,
+                Code2 = x.Code2,
+                Code3 = x.Code3,
+                Code4 = x.Code4,
                 Code = x.Code,
+                Header = x.Header,
+                Subheader = x.Subheader,
                 Path = x.Path,
                 CashAccount = x.CashAccount,
                 Nature = x.Nature,
@@ -175,14 +186,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
             }).Unwrap();
         }
 
-        public Tuple<bool, List<object>> UploadValidate(List<COAViewModel> Data, List<KeyValuePair<string, StringValues>> Body)
+        public Tuple<bool, List<object>> UploadValidate(ref List<COAViewModel> Data, List<KeyValuePair<string, StringValues>> Body)
         {
             List<object> ErrorList = new List<object>();
             string ErrorMessage;
             bool Valid = true;
-
-
-
+            var dbData = DbSet.ToList();
             foreach (COAViewModel coaVM in Data)
             {
                 ErrorMessage = "";
@@ -195,6 +204,65 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                 {
                     ErrorMessage = string.Concat(ErrorMessage, "Kode tidak boleh duplikat, ");
                 }
+                else
+                {
+                    var codeArray = coaVM.Code.Split('.', StringSplitOptions.RemoveEmptyEntries);
+                    if (codeArray.Count() != CODE_COUNT)
+                    {
+                        ErrorMessage = string.Concat(ErrorMessage, "Kode tidak valid, ");
+                    }
+                    else
+                    {
+                        if (!codeArray[0].All(char.IsDigit) || !codeArray[1].All(char.IsDigit) || !codeArray[2].All(char.IsDigit) || !codeArray[3].All(char.IsDigit))
+                        {
+                            ErrorMessage = string.Concat(ErrorMessage, "Kode tidak valid, ");
+                        }
+                        if (codeArray[0].Length > CODE1_LENGTH)
+                        {
+                            ErrorMessage = string.Concat(ErrorMessage, "Kode tidak valid, ");
+                        }
+                        else if (codeArray[0].Length < CODE1_LENGTH && codeArray[0].Length > 0)
+                        {
+                            string firstCode = codeArray[0];
+                            codeArray[0] = firstCode.PadLeft(CODE1_LENGTH, '0');
+                        }
+
+                        if (codeArray[1].Length > CODE2_LENGTH)
+                        {
+                            ErrorMessage = string.Concat(ErrorMessage, "Kode tidak valid, ");
+                        }
+                        else if (codeArray[1].Length < CODE2_LENGTH && codeArray[1].Length > 0)
+                        {
+                            string secondCode = codeArray[1];
+                            codeArray[1] = secondCode.PadLeft(CODE2_LENGTH, '0');
+                        }
+
+                        if (codeArray[2].Length > CODE3_LENGTH)
+                        {
+                            ErrorMessage = string.Concat(ErrorMessage, "Kode tidak valid, ");
+                        }
+
+                        if (codeArray[3].Length > CODE4_LENGTH)
+                        {
+                            ErrorMessage = string.Concat(ErrorMessage, "Kode tidak valid, ");
+                        }
+                        else if (codeArray[3].Length < CODE4_LENGTH && codeArray[3].Length > 0)
+                        {
+                            string fourthCode = codeArray[3];
+                            codeArray[3] = fourthCode.PadLeft(CODE4_LENGTH, '0');
+                        }
+                        coaVM.Code = string.Join('.', codeArray);
+                        if (dbData.Any(x => x.Code == coaVM.Code))
+                        {
+                            ErrorMessage = string.Concat(ErrorMessage, "Kode sudah ada di database, ");
+                        }
+                        if (dbData.Any(x => x.Name == coaVM.Name))
+                        {
+                            ErrorMessage = string.Concat(ErrorMessage, "Nama sudah ada di database, ");
+                        }
+
+                    }
+                }
 
                 if (string.IsNullOrWhiteSpace(coaVM.Name))
                 {
@@ -204,6 +272,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                 {
                     ErrorMessage = string.Concat(ErrorMessage, "Nama tidak boleh duplikat, ");
                 }
+
+
+
 
                 if (!string.IsNullOrEmpty(ErrorMessage))
                 {
@@ -228,6 +299,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
             }
 
             return Tuple.Create(Valid, ErrorList);
+        }
+
+        public MemoryStream DownloadTemplate()
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                using (var streamWriter = new StreamWriter(stream))
+                {
+
+                    using (var csvWriter = new CsvWriter(streamWriter))
+                    {
+                        foreach(var item in CsvHeader)
+                        {
+                            csvWriter.WriteField(item);
+                        }
+                        csvWriter.NextRecord();
+                    }
+                }
+                return stream;
+            }
         }
 
     }

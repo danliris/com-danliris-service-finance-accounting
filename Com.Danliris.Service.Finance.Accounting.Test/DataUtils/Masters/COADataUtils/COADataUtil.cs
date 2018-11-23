@@ -24,7 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Masters.COAData
             {
                 CashAccount = "CashAccount",
                 Name = "Name",
-                Code = "Code",
+                Code = "1111.11.1.11",
                 Nature = "Nature",
                 Path = "/",
                 ReportType = "ReportType"
@@ -38,7 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Masters.COAData
             {
                 CashAccount = "CashAccount",
                 Name = "Name",
-                Code = "Code",
+                Code = "1111.11.1.11",
                 Nature = "Nature",
                 Path = "/",
                 ReportType = "ReportType"

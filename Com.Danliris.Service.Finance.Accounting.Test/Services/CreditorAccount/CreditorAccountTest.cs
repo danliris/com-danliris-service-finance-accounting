@@ -199,7 +199,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
             var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            unitData.SupplierCode += "deleted";
             unitData.SupplierName += "deleted";
+            unitData.InvoiceNo += "deletd";
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
             data.InvoiceNo = unitData.InvoiceNo;
@@ -207,6 +209,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             var Response = await service.CreateFromBankExpenditureNoteAsync(data);
             var newData = await service.GetByBankExpenditureNote(data.SupplierCode, data.Code, data.InvoiceNo);
             var deleteResponse = await service.DeleteFromBankExpenditureNoteAsync(newData.CreditorAccountId);
+            var deleteData = await service.GetByBankExpenditureNote(data.SupplierCode, data.Code, data.InvoiceNo);
+            Assert.Null(deleteData);
+        }
+
+        [Fact]
+        public async void Should_Success_Delete_BankExpenditureNoteList()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
+            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            unitData.SupplierCode += "deleted";
+            unitData.SupplierName += "deleted";
+            unitData.InvoiceNo += "deletd";
+            data.SupplierCode = unitData.SupplierCode;
+            data.SupplierName = unitData.SupplierName;
+            data.InvoiceNo = unitData.InvoiceNo;
+            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
+            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+            var newData = await service.GetByBankExpenditureNote(data.SupplierCode, data.Code, data.InvoiceNo);
+            var deleteResponse = await service.DeleteFromBankExpenditureNoteListAsync(newData.Code);
             var deleteData = await service.GetByBankExpenditureNote(data.SupplierCode, data.Code, data.InvoiceNo);
             Assert.Null(deleteData);
         }

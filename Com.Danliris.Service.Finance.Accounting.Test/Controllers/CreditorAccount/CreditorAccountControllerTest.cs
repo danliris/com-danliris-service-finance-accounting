@@ -347,6 +347,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
         }
 
         [Fact]
+        public async Task PostByBankExpenditureNoteList_ReturnCreated()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.CreateFromBankExpenditureNoteAsync(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).BankExpenditureNoteListPost(new List<CreditorAccountBankExpenditureNotePostedViewModel>() { new CreditorAccountBankExpenditureNotePostedViewModel() });
+            Assert.Equal((int)HttpStatusCode.Created, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PostByBankExpenditureNoteList_ThrowsServiceValidationException()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Throws(GetServiceValidationExeption());
+
+            var response = await GetController(mocks).BankExpenditureNoteListPost(new List<CreditorAccountBankExpenditureNotePostedViewModel>() { new CreditorAccountBankExpenditureNotePostedViewModel() });
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PostByBankExpenditureNoteList_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.CreateFromBankExpenditureNoteAsync(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Throws(new Exception());
+
+            var response = await GetController(mocks).BankExpenditureNoteListPost(new List<CreditorAccountBankExpenditureNotePostedViewModel>() { new CreditorAccountBankExpenditureNotePostedViewModel() });
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public async Task PutByBankExpenditureNote_ReturnNoContent()
         {
             var mocks = GetMocks();
@@ -393,6 +425,52 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
         }
 
         [Fact]
+        public async Task PutByBankExpenditureNoteList_ReturnNoContent()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.UpdateFromBankExpenditureNoteAsync(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).BankExpenditureNoteListPut(new List<CreditorAccountBankExpenditureNotePostedViewModel>() { new CreditorAccountBankExpenditureNotePostedViewModel() });
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutByBankExpenditureNoteList_ThrowNotFound()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.UpdateFromBankExpenditureNoteAsync(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Throws(new NotFoundException());
+
+            var response = await GetController(mocks).BankExpenditureNoteListPut(new List<CreditorAccountBankExpenditureNotePostedViewModel>() { new CreditorAccountBankExpenditureNotePostedViewModel() });
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutByBankExpenditureNoteList_ThrowServiceValidationException()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Throws(GetServiceValidationExeption());
+
+            var response = await GetController(mocks).BankExpenditureNoteListPut(new List<CreditorAccountBankExpenditureNotePostedViewModel>() { new CreditorAccountBankExpenditureNotePostedViewModel() });
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutByBankExpenditureNoteList_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.UpdateFromBankExpenditureNoteAsync(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Throws(new Exception());
+
+            var response = await GetController(mocks).BankExpenditureNoteListPut(new List<CreditorAccountBankExpenditureNotePostedViewModel>() { new CreditorAccountBankExpenditureNotePostedViewModel()});
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public async Task DeleteByBankExpenditureNote_ReturnNoContent()
         {
             var mocks = GetMocks();
@@ -409,6 +487,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             mocks.Service.Setup(f => f.DeleteFromBankExpenditureNoteAsync(It.IsAny<int>())).Throws(new Exception());
 
             var response = await GetController(mocks).BankExpenditureNoteDelete(1);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task DeleteByBankExpenditureListNote_ReturnNoContent()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.DeleteFromBankExpenditureNoteListAsync(It.IsAny<string>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).BankExpenditureNoteDeleteList("code");
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task DeleteByBankExpenditureNoteList_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.DeleteFromBankExpenditureNoteListAsync(It.IsAny<string>())).Throws(new Exception());
+
+            var response = await GetController(mocks).BankExpenditureNoteDeleteList("code");
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
