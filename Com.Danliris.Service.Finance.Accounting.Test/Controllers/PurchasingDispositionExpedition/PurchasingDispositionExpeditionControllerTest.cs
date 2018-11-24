@@ -104,7 +104,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
             mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>()));
             mocks.Mapper.Setup(f => f.Map<List<PurchasingDispositionExpeditionViewModel>>(It.IsAny<List<PurchasingDispositionExpeditionModel>>())).Returns(new List<PurchasingDispositionExpeditionViewModel>());
             
-            var response = GetController(mocks).Get(It.IsAny<int>());
+            var response = GetController(mocks).GetById(It.IsAny<int>()).Result;
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
@@ -113,6 +113,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.CreateAsync(Mapper.Map<PurchasingDispositionExpeditionModel>(this.ViewModel)));
+            mocks.Mapper.Setup(f => f.Map<List<PurchasingDispositionExpeditionViewModel>>(It.IsAny<List<PurchasingDispositionExpeditionModel>>())).Returns(new List<PurchasingDispositionExpeditionViewModel>());
 
             var response = GetController(mocks).Post(new List<PurchasingDispositionExpeditionViewModel> { this.ViewModel }).Result;
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
@@ -123,6 +124,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.CreateAsync(Mapper.Map<PurchasingDispositionExpeditionModel>(this.ViewModel)));
+            mocks.Mapper.Setup(f => f.Map<List<PurchasingDispositionExpeditionViewModel>>(It.IsAny<List<PurchasingDispositionExpeditionModel>>())).Returns(new List<PurchasingDispositionExpeditionViewModel>());
 
             var response = GetController(mocks).Post(new List<PurchasingDispositionExpeditionViewModel>()).Result;
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
