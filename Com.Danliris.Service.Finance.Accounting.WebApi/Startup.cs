@@ -5,11 +5,13 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Credi
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -45,6 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             APIEndpoint.Inventory = Configuration.GetValue<string>("InventoryEndpoint") ?? Configuration["InventoryEndpoint"];
             APIEndpoint.Purchasing = Configuration.GetValue<string>("PurchasingEndpoint") ?? Configuration["PurchasingEndpoint"];
             APIEndpoint.Finishing = Configuration.GetValue<string>("FinishingEndpoint") ?? Configuration["FinishingEndpoint"];
+            APIEndpoint.Finance = Configuration.GetValue<string>("FinanceEndpoint") ?? Configuration["FinanceEndpoint"];
             //APIEndpoint.Production = Configuration.GetValue<string>("ProductionEndpoint") ?? Configuration["ProductionEndpoint"];
         }
 
@@ -62,7 +65,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<ICreditorAccountService, CreditorAccountService>()
                 .AddTransient<IJournalTransactionService, JournalTransactionService>()
                 .AddTransient<ICreditBalanceService, CreditBalanceService>()
-                .AddTransient<IDailyBankTransactionService, DailyBankTransactionService>();
+                .AddTransient<IDailyBankTransactionService, DailyBankTransactionService>()
+                .AddTransient<IPurchasingDispositionExpeditionService, PurchasingDispositionExpeditionService>();
         }
 
 

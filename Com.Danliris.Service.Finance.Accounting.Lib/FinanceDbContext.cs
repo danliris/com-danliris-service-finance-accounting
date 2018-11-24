@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Moonlay.Data.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,5 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<JournalTransactionModel> JournalTransactions { get; set; }
         public DbSet<JournalTransactionItemModel> JournalTransactionItems { get; set; }
 
+        public DbSet<PurchasingDispositionExpeditionModel> PurchasingDispositionExpeditions { get; set; }
+        public DbSet<PurchasingDispositionExpeditionItemModel> PurchasingDispositionExpeditionItems { get; set; }
     }
 }
