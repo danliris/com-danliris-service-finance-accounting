@@ -85,6 +85,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
             return new ServiceValidationExeption(validationContext, validationResults);
         }
 
+        private int GetStatusCodeGet((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPurchasingDispositionExpeditionService> Service, Mock<IMapper> Mapper) mocks)
+        {
+            PurchasingDispositionExpeditionController controller = GetController(mocks);
+            IActionResult response = controller.Get();
+
+            return GetStatusCode(response);
+        }
+
         [Fact]
         public void Get_WithoutException_ReturnOK()
         {
@@ -94,6 +102,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
 
             var response = GetController(mocks).Get();
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void Get_ReadThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
+
+            int statusCode = GetStatusCodeGet(mocks);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
 
         private async Task<int> GetStatusCodeGetById((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPurchasingDispositionExpeditionService> Service, Mock<IMapper> Mapper) mocks)

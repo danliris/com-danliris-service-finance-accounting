@@ -108,5 +108,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
 
             Assert.True(vm.Validate(null).Count() > 0);
         }
+
+        [Fact]
+        public async void Should_Success_Delete_Data()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
+            var newModel = await service.ReadByIdAsync(model.Id);
+
+            var Response = await service.DeleteAsync(newModel.Id);
+            Assert.NotEqual(0, Response);
+        }
     }
 }
