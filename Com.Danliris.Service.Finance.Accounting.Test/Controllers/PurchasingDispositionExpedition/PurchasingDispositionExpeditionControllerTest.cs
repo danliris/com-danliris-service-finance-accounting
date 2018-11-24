@@ -96,39 +96,85 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
-        [Fact]
-        public void Should_Success_Get_Data_By_Id()
+        private async Task<int> GetStatusCodeGetById((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPurchasingDispositionExpeditionService> Service, Mock<IMapper> Mapper) mocks)
         {
-            var mocks = GetMocks();
+            PurchasingDispositionExpeditionController controller = GetController(mocks);
+            IActionResult response = await controller.GetById(1);
 
-            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>()));
-            mocks.Mapper.Setup(f => f.Map<List<PurchasingDispositionExpeditionViewModel>>(It.IsAny<List<PurchasingDispositionExpeditionModel>>())).Returns(new List<PurchasingDispositionExpeditionViewModel>());
-            
-            var response = GetController(mocks).GetById(It.IsAny<int>()).Result;
-            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+            return GetStatusCode(response);
         }
 
         [Fact]
-        public void Should_Validate_Create_Data()
+        public async Task GetById_NotNullModel_ReturnOK()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.CreateAsync(Mapper.Map<PurchasingDispositionExpeditionModel>(this.ViewModel)));
-            mocks.Mapper.Setup(f => f.Map<List<PurchasingDispositionExpeditionViewModel>>(It.IsAny<List<PurchasingDispositionExpeditionModel>>())).Returns(new List<PurchasingDispositionExpeditionViewModel>());
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new PurchasingDispositionExpeditionModel());
 
-            var response = GetController(mocks).Post(new List<PurchasingDispositionExpeditionViewModel> { this.ViewModel }).Result;
-            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+            int statusCode = await GetStatusCodeGetById(mocks);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
 
         [Fact]
-        public void Should_Error_Create_Data()
+        public async Task GetById_NullModel_ReturnNotFound()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.CreateAsync(Mapper.Map<PurchasingDispositionExpeditionModel>(this.ViewModel)));
-            mocks.Mapper.Setup(f => f.Map<List<PurchasingDispositionExpeditionViewModel>>(It.IsAny<List<PurchasingDispositionExpeditionModel>>())).Returns(new List<PurchasingDispositionExpeditionViewModel>());
+            mocks.Mapper.Setup(f => f.Map<PurchasingDispositionExpeditionViewModel>(It.IsAny<PurchasingDispositionExpeditionModel>())).Returns(ViewModel);
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync((PurchasingDispositionExpeditionModel)null);
 
-            var response = GetController(mocks).Post(new List<PurchasingDispositionExpeditionViewModel>()).Result;
-            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+            int statusCode = await GetStatusCodeGetById(mocks);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
         }
+
+        [Fact]
+        public async Task GetById_ThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            int statusCode = await GetStatusCodeGetById(mocks);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        private async Task<int> GetStatusCodePost((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPurchasingDispositionExpeditionService> Service, Mock<IMapper> Mapper) mocks)
+        {
+            PurchasingDispositionExpeditionController controller = GetController(mocks);
+            IActionResult response = await controller.Post(new List<PurchasingDispositionExpeditionViewModel> { this.ViewModel});
+
+            return GetStatusCode(response);
+        }
+
+        [Fact]
+        public async Task Post_WithoutException_ReturnCreated()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PurchasingDispositionExpeditionViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.CreateAsync(It.IsAny<PurchasingDispositionExpeditionModel>())).ReturnsAsync(1);
+
+            int statusCode = await GetStatusCodePost(mocks);
+            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        }
+
+        [Fact]
+        public async Task Post_ThrowServiceValidationExeption_ReturnBadRequest()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PurchasingDispositionExpeditionViewModel>())).Throws(GetServiceValidationExeption());
+
+            int statusCode = await GetStatusCodePost(mocks);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
+        public async Task Post_ThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PurchasingDispositionExpeditionViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.CreateAsync(It.IsAny<PurchasingDispositionExpeditionModel>())).ThrowsAsync(new Exception());
+
+            int statusCode = await GetStatusCodePost(mocks);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
         private async Task<int> GetStatusCodeDeleteByReferenceNo((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPurchasingDispositionExpeditionService> Service, Mock<IMapper> Mapper) mocks)
         {
             PurchasingDispositionExpeditionController controller = GetController(mocks);
