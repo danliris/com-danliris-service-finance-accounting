@@ -155,16 +155,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
         }
 
         [Fact]
-        public async Task Post_ThrowServiceValidationExeption_ReturnBadRequest()
-        {
-            var mocks = GetMocks();
-            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PurchasingDispositionExpeditionViewModel>())).Throws(GetServiceValidationExeption());
-
-            int statusCode = await GetStatusCodePost(mocks);
-            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
-        }
-
-        [Fact]
         public async Task Post_ThrowException_ReturnInternalServerError()
         {
             var mocks = GetMocks();
