@@ -1,8 +1,10 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.BasicUploadCsvService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionAcceptance;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionExpedition;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
@@ -36,7 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         public void CreateModel(PurchasingDispositionExpeditionModel m)
         {
             EntityExtension.FlagForCreate(m, IdentityService.Username, UserAgent);
-            m.Position = 2;
+            m.Position = ExpeditionPosition.SEND_TO_VERIFICATION_DIVISION;
             foreach (var item in m.Items){
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
             }
@@ -103,6 +105,71 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         public Task<int> UpdateAsync(int id, PurchasingDispositionExpeditionModel model)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<int> PurchasingDispositionAcceptance(PurchasingDispositionAcceptanceViewModel data)
+        {
+
+            int updated = 0;
+
+            using (var transaction = DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    List<string> dispositions = new List<string>();
+
+                    if (data.Role.Equals("VERIFICATION"))
+                    {
+                        foreach (var item in data.PurchasingDispositionAcceptances)
+                        {
+                            dispositions.Add(item.DispositionNo);
+
+                            PurchasingDispositionExpeditionModel model = new PurchasingDispositionExpeditionModel()
+                            {
+                                Id = item.Id,
+                                VerificationDivisionBy = IdentityService.Username,
+                                VerificationDivisionDate = DateTimeOffset.UtcNow,
+                                Position = ExpeditionPosition.VERIFICATION_DIVISION
+                            };
+
+                            EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+
+                            DbContext.Entry(model).Property(x => x.VerificationDivisionBy).IsModified = true;
+                            DbContext.Entry(model).Property(x => x.VerificationDivisionDate).IsModified = true;
+                            DbContext.Entry(model).Property(x => x.Position).IsModified = true;
+                            DbContext.Entry(model).Property(x => x.LastModifiedAgent).IsModified = true;
+                            DbContext.Entry(model).Property(x => x.LastModifiedBy).IsModified = true;
+                            DbContext.Entry(model).Property(x => x.LastModifiedUtc).IsModified = true;
+                        }
+
+                        updated = await DbContext.SaveChangesAsync();
+                        UpdateDispositionPosition(dispositions, ExpeditionPosition.VERIFICATION_DIVISION);
+                    }
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    transaction.Rollback();
+                    throw new Exception(e.Message);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw new Exception(e.Message);
+                }
+            }
+
+            return updated;
+        }
+
+        public Task<int> DeletePurchasingDispositionAcceptance(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void UpdateDispositionPosition(List<string> dispositions, ExpeditionPosition position)
+        {
+            string dispositionUri = "purchasing-dispositions/update/position";
+
         }
     }
 }
