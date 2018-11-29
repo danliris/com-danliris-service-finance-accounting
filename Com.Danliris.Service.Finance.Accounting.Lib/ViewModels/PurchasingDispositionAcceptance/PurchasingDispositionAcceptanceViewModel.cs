@@ -7,13 +7,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
 {
     public class PurchasingDispositionAcceptanceViewModel : IValidatableObject
     {
+
         public string Role { get; set; }
 
-        public List<PurchasingDispositionAcceptanceItemViewModel> PurchasingDispositionAcceptances { get; set; } 
+        public List<PurchasingDispositionAcceptanceItemViewModel> PurchasingDispositionExpedition { get; set; } 
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (this.PurchasingDispositionAcceptances.Count.Equals(0))
+            if (this.PurchasingDispositionExpedition.Count.Equals(0))
             {
                 yield return new ValidationResult("Purchasing Disposition Expeditions is required", new List<string> { "PurchaseDispositionExpeditionCollection" });
             }

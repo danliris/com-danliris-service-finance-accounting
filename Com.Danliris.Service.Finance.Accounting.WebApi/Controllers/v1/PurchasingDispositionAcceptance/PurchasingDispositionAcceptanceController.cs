@@ -16,7 +16,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("v{version:apiVersion}/expedition/purchasing-disposition-acceptance")]
+    [Route("v{version:apiVersion}/purchasing-disposition-acceptance")]
     [Authorize]
     public class PurchasingDispositionAcceptanceController : Controller
     {
