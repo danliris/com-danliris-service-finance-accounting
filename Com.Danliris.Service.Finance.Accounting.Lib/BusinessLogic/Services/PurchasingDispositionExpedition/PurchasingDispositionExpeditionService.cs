@@ -1,20 +1,21 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
-using Com.Danliris.Service.Finance.Accounting.Lib.Services.BasicUploadCsvService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionAcceptance;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
-using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition
@@ -24,11 +25,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         private const string UserAgent = "finance-service";
         protected DbSet<PurchasingDispositionExpeditionModel> DbSet;
         protected IIdentityService IdentityService;
+        public readonly IServiceProvider ServiceProvider;
         public FinanceDbContext DbContext;
 
         public PurchasingDispositionExpeditionService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
             DbContext = dbContext;
+            ServiceProvider = serviceProvider;
             DbSet = dbContext.Set<PurchasingDispositionExpeditionModel>();
             IdentityService = serviceProvider.GetService<IIdentityService>();
         }
@@ -36,8 +39,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         public void CreateModel(PurchasingDispositionExpeditionModel m)
         {
             EntityExtension.FlagForCreate(m, IdentityService.Username, UserAgent);
-            m.Position = 2;
-            foreach (var item in m.Items){
+            m.Position = ExpeditionPosition.SEND_TO_VERIFICATION_DIVISION;
+            foreach (var item in m.Items)
+            {
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
             }
             DbSet.Add(m);
@@ -103,6 +107,126 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         public Task<int> UpdateAsync(int id, PurchasingDispositionExpeditionModel model)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<int> PurchasingDispositionAcceptance(PurchasingDispositionAcceptanceViewModel data)
+        {
+
+            int updated = 0;
+
+            using (var transaction = DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    List<string> dispositions = new List<string>();
+
+                    if (data.Role.Equals("VERIFICATION"))
+                    {
+                        foreach (var item in data.PurchasingDispositionExpedition)
+                        {
+                            dispositions.Add(item.DispositionNo);
+                            PurchasingDispositionExpeditionModel model = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(x => x.Id == item.Id);
+                            model.VerificationDivisionBy = IdentityService.Username;
+                            model.VerificationDivisionDate = DateTimeOffset.UtcNow;
+                            model.Position = ExpeditionPosition.VERIFICATION_DIVISION;
+                            
+                            EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+                        }
+
+                        updated = await DbContext.SaveChangesAsync();
+                        UpdateDispositionPosition(dispositions, ExpeditionPosition.VERIFICATION_DIVISION);
+                    }
+                    else if (data.Role.Equals("CASHIER"))
+                    {
+                        foreach (var item in data.PurchasingDispositionExpedition)
+                        {
+                            dispositions.Add(item.DispositionNo);
+                            PurchasingDispositionExpeditionModel model = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(x => x.Id == item.Id);
+                            model.CashierDivisionBy = IdentityService.Username;
+                            model.CashierDivisionDate = DateTimeOffset.UtcNow;
+                            model.Position = ExpeditionPosition.CASHIER_DIVISION;
+
+                            EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+                        }
+
+                        updated = await DbContext.SaveChangesAsync();
+                        UpdateDispositionPosition(dispositions, ExpeditionPosition.CASHIER_DIVISION);
+                    }
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw new Exception(e.Message);
+                }
+            }
+
+            return updated;
+        }
+
+        public async Task<int> DeletePurchasingDispositionAcceptance(int id)
+        {
+            int count = 0;
+
+            if (DbContext.PurchasingDispositionExpeditions.Count(x => x.Id == id && !x.IsDeleted).Equals(0))
+            {
+                return 0;
+            }
+
+            using (var transaction = DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    PurchasingDispositionExpeditionModel purchasingDispositionExpedition = DbContext.PurchasingDispositionExpeditions.Single(x => x.Id == id);
+
+                    if (purchasingDispositionExpedition.Position == ExpeditionPosition.VERIFICATION_DIVISION)
+                    {
+                        purchasingDispositionExpedition.VerificationDivisionBy = null;
+                        purchasingDispositionExpedition.VerificationDivisionDate = null;
+                        purchasingDispositionExpedition.Position = ExpeditionPosition.SEND_TO_VERIFICATION_DIVISION;
+
+                        EntityExtension.FlagForUpdate(purchasingDispositionExpedition, IdentityService.Username, UserAgent);
+                        
+                        count = await DbContext.SaveChangesAsync();
+                        UpdateDispositionPosition(new List<string>() { purchasingDispositionExpedition.DispositionNo }, ExpeditionPosition.SEND_TO_VERIFICATION_DIVISION);
+                    }
+                    else if (purchasingDispositionExpedition.Position == ExpeditionPosition.CASHIER_DIVISION)
+                    {
+                        purchasingDispositionExpedition.CashierDivisionBy = null;
+                        purchasingDispositionExpedition.CashierDivisionDate = null;
+                        purchasingDispositionExpedition.Position = ExpeditionPosition.SEND_TO_CASHIER_DIVISION;
+                        
+                        EntityExtension.FlagForUpdate(purchasingDispositionExpedition, IdentityService.Username, UserAgent);
+                        
+                        count = await DbContext.SaveChangesAsync();
+                        UpdateDispositionPosition(new List<string>() { purchasingDispositionExpedition.DispositionNo }, ExpeditionPosition.SEND_TO_CASHIER_DIVISION);
+                    }
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw new Exception(e.Message);
+                }
+            }
+
+            return count;
+        }
+
+        private void UpdateDispositionPosition(List<string> dispositions, ExpeditionPosition position)
+        {
+            string dispositionUri = "purchasing-dispositions/update/position";
+
+            var data = new
+            {
+                Position = position,
+                PurchasingDispositionNoes = dispositions
+            };
+
+            IHttpClientService httpClient = (IHttpClientService)this.ServiceProvider.GetService(typeof(IHttpClientService));
+            var response = httpClient.PutAsync($"{APIEndpoint.Purchasing}{dispositionUri}", new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+            response.EnsureSuccessStatusCode();
         }
     }
 }

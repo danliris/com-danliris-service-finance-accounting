@@ -1,3 +1,4 @@
 ignore:
   - "Com.Danliris.Service.Finance.Accounting.Lib/Migrations"
   - "Com.Danliris.Service.Finance.Accounting.Lib/Helpers"
+  - "Com.Danliris.Service.Finance.Accounting.Lib/Enums"

@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Purchas
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionAcceptance;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
@@ -14,7 +15,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispositionExpedition
@@ -118,6 +118,127 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
 
             var Response = await service.DeleteAsync(newModel.Id);
             Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async void Should_Success_Post_Acceptance_Verification()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
+
+            PurchasingDispositionAcceptanceViewModel data = new PurchasingDispositionAcceptanceViewModel()
+            {
+                Role = "VERIFICATION",
+                PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>()
+                {
+                    new PurchasingDispositionAcceptanceItemViewModel()
+                    {
+                        DispositionNo  = model.DispositionNo,
+                        Id = model.Id
+                    }
+                }
+            };
+
+            var response = await service.PurchasingDispositionAcceptance(data);
+            Assert.NotEqual(0, response);
+        }
+
+        [Fact]
+        public async void Should_Success_Post_Acceptance_Cashier()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
+
+            PurchasingDispositionAcceptanceViewModel data = new PurchasingDispositionAcceptanceViewModel()
+            {
+                Role = "CASHIER",
+                PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>()
+                {
+                    new PurchasingDispositionAcceptanceItemViewModel()
+                    {
+                        DispositionNo  = model.DispositionNo,
+                        Id = model.Id
+                    }
+                }
+            };
+
+            var response = await service.PurchasingDispositionAcceptance(data);
+            Assert.NotEqual(0, response);
+        }
+
+        [Fact]
+        public async void Should_Success_Delete_Acceptance_Verification()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = await _dataUtil(service).GetTestData();
+            PurchasingDispositionAcceptanceViewModel data = new PurchasingDispositionAcceptanceViewModel()
+            {
+                Role = "VERIFICATION",
+                PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>()
+                {
+                    new PurchasingDispositionAcceptanceItemViewModel()
+                    {
+                        DispositionNo  = model.DispositionNo,
+                        Id = model.Id
+                    }
+                }
+            };
+            var acceptedResponse = await service.PurchasingDispositionAcceptance(data);
+            var newModel = await service.ReadByIdAsync(model.Id);
+            var deleteResponse = await service.DeletePurchasingDispositionAcceptance(newModel.Id);
+            Assert.NotEqual(0, deleteResponse);
+        }
+
+        [Fact]
+        public async void Should_Success_Delete_Acceptance_Cashier()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = await _dataUtil(service).GetTestData();
+            PurchasingDispositionAcceptanceViewModel data = new PurchasingDispositionAcceptanceViewModel()
+            {
+                Role = "CASHIER",
+                PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>()
+                {
+                    new PurchasingDispositionAcceptanceItemViewModel()
+                    {
+                        DispositionNo  = model.DispositionNo,
+                        Id = model.Id
+                    }
+                }
+            };
+            var acceptedResponse = await service.PurchasingDispositionAcceptance(data);
+            var newModel = await service.ReadByIdAsync(model.Id);
+            var deleteResponse = await service.DeletePurchasingDispositionAcceptance(newModel.Id);
+            Assert.NotEqual(0, deleteResponse);
+        }
+
+        [Fact]
+        public async void Should_Fail_Delete_Empty_Id()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var deleteResponse = await service.DeletePurchasingDispositionAcceptance(-1);
+            Assert.Equal(0, deleteResponse);
+        }
+
+        [Fact]
+        public  void Should_Success_Validate_Purchasing_Disposition_Acceptance_Vm()
+        {
+            PurchasingDispositionAcceptanceViewModel nullVM = new PurchasingDispositionAcceptanceViewModel();
+            nullVM.PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>();
+
+            Assert.True(nullVM.Validate(null).Count() > 0);
+            PurchasingDispositionAcceptanceViewModel vm = new PurchasingDispositionAcceptanceViewModel();
+            vm.PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>()
+            {
+                new PurchasingDispositionAcceptanceItemViewModel()
+                {
+                    DispositionNo = "DispositonNo",
+                    Id = 1
+                }
+            };
+
+            Assert.True(vm.Validate(null).Count() == 0);
+
         }
     }
 }

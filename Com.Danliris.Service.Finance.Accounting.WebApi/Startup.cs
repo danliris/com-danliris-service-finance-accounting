@@ -12,6 +12,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBa
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -51,11 +52,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             //APIEndpoint.Production = Configuration.GetValue<string>("ProductionEndpoint") ?? Configuration["ProductionEndpoint"];
         }
 
-        private void RegisterServices(IServiceCollection services)
+        private void RegisterServices(IServiceCollection services, bool isTest)
         {
             services
+                .AddScoped<IdentityService>()
+                .AddScoped<ValidateService>()
                 .AddScoped<IIdentityService, IdentityService>()
                 .AddScoped<IValidateService, ValidateService>();
+
+            if (!isTest)
+            {
+                services.AddScoped<IHttpClientService, HttpClientService>();
+            }
         }
 
         private void RegisterBusinessServices(IServiceCollection services)
@@ -75,11 +83,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = Configuration.GetConnectionString(Constant.DEFAULT_CONNECTION) ?? Configuration[Constant.DEFAULT_CONNECTION];
-
+            string env = Configuration.GetValue<string>(Constant.ASPNETCORE_ENVIRONMENT);
             services.AddDbContext<FinanceDbContext>(options => options.UseSqlServer(connectionString, c => c.CommandTimeout(60)));
 
             #region Register
-            RegisterServices(services);
+            RegisterServices(services, env.Equals("Test"));
 
             RegisterBusinessServices(services);
 
