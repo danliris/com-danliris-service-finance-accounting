@@ -13,11 +13,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransaction
@@ -51,7 +49,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
         private JournalTransactionDataUtil _dataUtil(JournalTransactionService service)
         {
-            var coaService = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var coaService = new COAService(GetServiceProvider().Object, service._DbContext);
             var coaDataUtil = new COADataUtil(coaService);
             return new JournalTransactionDataUtil(service, coaDataUtil);
         }
