@@ -154,11 +154,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     }
                     transaction.Commit();
                 }
-                catch (DbUpdateConcurrencyException e)
-                {
-                    transaction.Rollback();
-                    throw new Exception(e.Message);
-                }
                 catch (Exception e)
                 {
                     transaction.Rollback();
@@ -208,11 +203,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     }
 
                     transaction.Commit();
-                }
-                catch (DbUpdateConcurrencyException e)
-                {
-                    transaction.Rollback();
-                    throw new Exception(e.Message);
                 }
                 catch (Exception e)
                 {
