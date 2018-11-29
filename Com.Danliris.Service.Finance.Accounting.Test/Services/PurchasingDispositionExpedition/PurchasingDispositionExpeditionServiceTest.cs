@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispositionExpedition
@@ -211,6 +210,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             var newModel = await service.ReadByIdAsync(model.Id);
             var deleteResponse = await service.DeletePurchasingDispositionAcceptance(newModel.Id);
             Assert.NotEqual(0, deleteResponse);
+        }
+
+        [Fact]
+        public async void Should_Fail_Delete_Empty_Id()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var deleteResponse = await service.DeletePurchasingDispositionAcceptance(-1);
+            Assert.Equal(0, deleteResponse);
+        }
+
+        [Fact]
+        public  void Should_Success_Validate_Purchasing_Disposition_Acceptance_Vm()
+        {
+            PurchasingDispositionAcceptanceViewModel nullVM = new PurchasingDispositionAcceptanceViewModel();
+            nullVM.PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>();
+
+            Assert.True(nullVM.Validate(null).Count() > 0);
+            PurchasingDispositionAcceptanceViewModel vm = new PurchasingDispositionAcceptanceViewModel();
+            vm.PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>()
+            {
+                new PurchasingDispositionAcceptanceItemViewModel()
+                {
+                    DispositionNo = "DispositonNo",
+                    Id = 1
+                }
+            };
+
+            Assert.True(vm.Validate(null).Count() == 0);
+
         }
     }
 }
