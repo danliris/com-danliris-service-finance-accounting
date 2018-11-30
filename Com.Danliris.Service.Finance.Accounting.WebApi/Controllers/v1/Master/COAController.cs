@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
@@ -152,6 +153,21 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
                   .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
+        }
+
+        [HttpGet("header")]
+        public IActionResult GetCOAHeaderSubheader()
+        {
+            List<object> result = new List<object>();
+            foreach(COACategoryEnum item in Enum.GetValues(typeof(COACategoryEnum)))
+            {
+                result.Add(new
+                {
+                    Name = item.ToDescriptionString(),
+                    Code = ((int)item).ToString()
+                });
+            }
+            return Ok(result);
         }
     }
 }
