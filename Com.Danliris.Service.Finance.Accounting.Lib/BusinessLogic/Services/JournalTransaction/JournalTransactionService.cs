@@ -45,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
             foreach (var item in model.Items)
             {
-                var coa = _COADbSet.FirstOrDefault();
+                var coa = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COA.Id) || f.Code.Equals(item.COA.Code));
                 item.COAId = coa.Id;
                 item.COA = null;
 
@@ -153,7 +153,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 }
                 else
                 {
-                    var coa = _COADbSet.FirstOrDefault(f => f.Code.Equals(item.COA.Code) || f.Id.Equals(item.COA.Id));
+                    var coa = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COA.Id) || f.Code.Equals(item.COA.Code));
                     item.COAId = coa.Id;
                     item.COA = null;
                     EntityExtension.FlagForUpdate(item, _IdentityService.Username, _UserAgent);
