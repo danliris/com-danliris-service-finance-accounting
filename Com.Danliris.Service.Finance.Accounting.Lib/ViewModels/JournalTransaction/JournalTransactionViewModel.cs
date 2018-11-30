@@ -62,8 +62,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
                     }
                     ItemsError += "}, ";
 
-                    Debit += (double)item.Debit;
-                    Credit += (double)item.Credit;
+                    Debit += item.Debit.GetValueOrDefault();
+                    Credit += item.Credit.GetValueOrDefault();
                 }
 
                 ItemsError += "]";
