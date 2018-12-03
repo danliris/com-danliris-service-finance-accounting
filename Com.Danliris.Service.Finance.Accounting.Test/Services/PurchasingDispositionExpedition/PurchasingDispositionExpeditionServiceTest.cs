@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using Xunit;
 
@@ -56,6 +57,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
                 .Returns(new HttpClientTestService());
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+
+            return serviceProvider;
+        }
+
+        private Mock<IServiceProvider> GetServiceProviderWrongHttpClient()
+        {
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientFailTestService());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -150,6 +166,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
 
             var response = await service.PurchasingDispositionAcceptance(data);
             Assert.NotEqual(0, response);
+        }
+
+        [Fact]
+        public async System.Threading.Tasks.Task Should_Fail_Post_Acceptance_Verification()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
+
+            PurchasingDispositionAcceptanceViewModel data = new PurchasingDispositionAcceptanceViewModel()
+            {
+                Role = "VERIFICATION",
+                PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>()
+                {
+                    new PurchasingDispositionAcceptanceItemViewModel()
+                    {
+                        DispositionNo  = model.DispositionNo,
+                        Id = model.Id
+                    }
+                }
+            };
+            await Assert.ThrowsAnyAsync<Exception>(() => service.PurchasingDispositionAcceptance(data));
+            
         }
 
         [Fact]
