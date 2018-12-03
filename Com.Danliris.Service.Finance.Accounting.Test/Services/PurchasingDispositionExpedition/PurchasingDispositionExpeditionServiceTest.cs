@@ -75,6 +75,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
+        public async void Should_Success_Get_Data_Verification()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestData();
+            var Response = service.Read(1, 25, "{}", null, null, "{'verificationFilter':''}");
+            Assert.NotNull(Response.Data);
+        }
+
+        [Fact]
         public async void Should_Success_Get_Data_By_Id()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
