@@ -141,7 +141,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         }
 
                         updated = await DbContext.SaveChangesAsync();
-                        //UpdateDispositionPosition(dispositions, ExpeditionPosition.VERIFICATION_DIVISION);
+                        UpdateDispositionPosition(dispositions, ExpeditionPosition.VERIFICATION_DIVISION);
                     }
                     else if (data.Role.Equals("CASHIER"))
                     {
@@ -157,14 +157,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         }
 
                         updated = await DbContext.SaveChangesAsync();
-                        //UpdateDispositionPosition(dispositions, ExpeditionPosition.CASHIER_DIVISION);
+                        UpdateDispositionPosition(dispositions, ExpeditionPosition.CASHIER_DIVISION);
                     }
                     transaction.Commit();
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    throw new Exception(e.Message);
+                    throw new e;
                 }
             }
 
@@ -195,7 +195,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         EntityExtension.FlagForUpdate(purchasingDispositionExpedition, IdentityService.Username, UserAgent);
                         
                         count = await DbContext.SaveChangesAsync();
-                        //UpdateDispositionPosition(new List<string>() { purchasingDispositionExpedition.DispositionNo }, ExpeditionPosition.SEND_TO_VERIFICATION_DIVISION);
+                        UpdateDispositionPosition(new List<string>() { purchasingDispositionExpedition.DispositionNo }, ExpeditionPosition.SEND_TO_VERIFICATION_DIVISION);
                     }
                     else if (purchasingDispositionExpedition.Position == ExpeditionPosition.CASHIER_DIVISION)
                     {
@@ -206,7 +206,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         EntityExtension.FlagForUpdate(purchasingDispositionExpedition, IdentityService.Username, UserAgent);
                         
                         count = await DbContext.SaveChangesAsync();
-                        //UpdateDispositionPosition(new List<string>() { purchasingDispositionExpedition.DispositionNo }, ExpeditionPosition.SEND_TO_CASHIER_DIVISION);
+                        UpdateDispositionPosition(new List<string>() { purchasingDispositionExpedition.DispositionNo }, ExpeditionPosition.SEND_TO_CASHIER_DIVISION);
                     }
 
                     transaction.Commit();
@@ -214,26 +214,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    throw new Exception(e.Message);
+                    throw e;
                 }
             }
 
             return count;
         }
 
-        //private void UpdateDispositionPosition(List<string> dispositions, ExpeditionPosition position)
-        //{
-        //    string dispositionUri = "purchasing-dispositions/update/position";
+        private void UpdateDispositionPosition(List<string> dispositions, ExpeditionPosition position)
+        {
+            string dispositionUri = "purchasing-dispositions/update/position";
 
-        //    var data = new
-        //    {
-        //        Position = position,
-        //        PurchasingDispositionNoes = dispositions
-        //    };
+            var data = new
+            {
+                Position = position,
+                PurchasingDispositionNoes = dispositions
+            };
 
-        //    IHttpClientService httpClient = (IHttpClientService)this.ServiceProvider.GetService(typeof(IHttpClientService));
-        //    var response = httpClient.PutAsync($"{APIEndpoint.Purchasing}{dispositionUri}", new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
-        //    response.EnsureSuccessStatusCode();
-        //}
+            IHttpClientService httpClient = (IHttpClientService)this.ServiceProvider.GetService(typeof(IHttpClientService));
+            var response = httpClient.PutAsync($"{APIEndpoint.Purchasing}{dispositionUri}", new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
