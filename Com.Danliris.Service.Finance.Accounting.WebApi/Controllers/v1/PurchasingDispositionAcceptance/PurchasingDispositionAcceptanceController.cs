@@ -63,7 +63,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
             catch (Exception e)
             {
                 Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message + "," + e.Source + "," + e)
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
@@ -83,7 +83,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
             catch (Exception e)
             {
                 Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message + "," + e.Source + "," + e)
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
