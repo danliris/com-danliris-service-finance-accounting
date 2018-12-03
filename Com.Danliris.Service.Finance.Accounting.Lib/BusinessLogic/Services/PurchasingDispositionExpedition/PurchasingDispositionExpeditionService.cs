@@ -164,7 +164,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    throw new e;
+                    throw  e;
                 }
             }
 
