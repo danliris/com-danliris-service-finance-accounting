@@ -60,6 +60,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
                     .Fail(e);
                 return BadRequest(Result);
             }
+            catch(AggregateException ex)
+            {
+                string message = string.Join(',', ex.InnerExceptions.Select(x => x.Message));
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
             catch (Exception e)
             {
                 Dictionary<string, object> Result =
@@ -79,6 +87,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
                 await Service.DeletePurchasingDispositionAcceptance(id);
 
                 return NoContent();
+            }
+            catch (AggregateException ex)
+            {
+                string message = string.Join(',', ex.InnerExceptions.Select(x => x.Message));
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
             catch (Exception e)
             {

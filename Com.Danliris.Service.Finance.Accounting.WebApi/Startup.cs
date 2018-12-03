@@ -52,18 +52,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             //APIEndpoint.Production = Configuration.GetValue<string>("ProductionEndpoint") ?? Configuration["ProductionEndpoint"];
         }
 
-        private void RegisterServices(IServiceCollection services, bool isTest)
+        private void RegisterServices(IServiceCollection services)
         {
             services
                 .AddScoped<IdentityService>()
                 .AddScoped<ValidateService>()
+                .AddScoped<IHttpClientService, HttpClientService>()
                 .AddScoped<IIdentityService, IdentityService>()
                 .AddScoped<IValidateService, ValidateService>();
 
-            if (!isTest)
-            {
-                services.AddScoped<IHttpClientService, HttpClientService>();
-            }
         }
 
         private void RegisterBusinessServices(IServiceCollection services)
@@ -87,7 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             services.AddDbContext<FinanceDbContext>(options => options.UseSqlServer(connectionString, c => c.CommandTimeout(60)));
 
             #region Register
-            RegisterServices(services, env.Equals("Test"));
+            RegisterServices(services);
 
             RegisterBusinessServices(services);
 

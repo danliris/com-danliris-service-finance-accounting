@@ -113,6 +113,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDIs
         }
 
         [Fact]
+        public void Post_Throws_Internal_Error_Aggregate()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.PurchasingDispositionAcceptance(It.IsAny<PurchasingDispositionAcceptanceViewModel>())).Throws(new AggregateException());
+
+            var response = GetController(mocks).Post(ViewModel).Result;
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public void Delete_Success()
         {
             var mocks = GetMocks();
@@ -127,6 +137,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDIs
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.DeletePurchasingDispositionAcceptance(It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).Delete(1).Result;
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void Delete_Throws_Internal_Error_Aggregate()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.DeletePurchasingDispositionAcceptance(It.IsAny<int>())).Throws(new AggregateException());
 
             var response = GetController(mocks).Delete(1).Result;
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
