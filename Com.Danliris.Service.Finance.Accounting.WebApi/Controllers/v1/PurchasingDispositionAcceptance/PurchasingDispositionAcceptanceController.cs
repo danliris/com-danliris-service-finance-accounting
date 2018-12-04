@@ -64,14 +64,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
             {
                 string message = string.Join(',', ex.InnerExceptions.Select(x => x.Message));
                 Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, message + APIEndpoint.Purchasing)
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, message + APIEndpoint.Purchasing + ex)
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
             catch (Exception e)
             {
                 Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message + APIEndpoint.Purchasing)
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message + APIEndpoint.Purchasing + e)
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
@@ -92,14 +92,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
             {
                 string message = string.Join(',', ex.InnerExceptions.Select(x => x.Message));
                 Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, message + APIEndpoint.Purchasing)
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, message + APIEndpoint.Purchasing + ex)
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
             catch (Exception e)
             {
                 Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message + APIEndpoint.Purchasing)
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message + APIEndpoint.Purchasing + e)
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
