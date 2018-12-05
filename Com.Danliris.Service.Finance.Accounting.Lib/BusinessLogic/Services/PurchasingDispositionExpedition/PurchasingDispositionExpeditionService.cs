@@ -252,7 +252,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         model.NotVerifiedReason = data.Reason;
 
                         EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
-                        await DbContext.SaveChangesAsync();
+                        updated = await DbContext.SaveChangesAsync();
                         UpdateDispositionPosition(new List<string>() { model.DispositionNo }, ExpeditionPosition.SEND_TO_PURCHASING_DIVISION);
                     }
                     else if (data.SubmitPosition == ExpeditionPosition.SEND_TO_CASHIER_DIVISION)
@@ -265,7 +265,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         model.Active = true;
 
                         EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
-                        await DbContext.SaveChangesAsync();
+                        updated = await DbContext.SaveChangesAsync();
                         UpdateDispositionPosition(new List<string>() { model.DispositionNo }, ExpeditionPosition.SEND_TO_CASHIER_DIVISION);
                     }
                     
