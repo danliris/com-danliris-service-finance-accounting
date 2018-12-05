@@ -42,7 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
                 foreach (var item in Items)
                 {
                     ItemsError += "{ ";
-                    if (item.COA == null || item.COA.Id <= 0)
+                    if (item.COA == null || string.IsNullOrWhiteSpace(item.COA.Code))
                     {
                         CountItemsError++;
                         ItemsError += "'COA': 'Akun harus diisi', ";
@@ -62,8 +62,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
                     }
                     ItemsError += "}, ";
 
-                    Debit += (double)item.Debit;
-                    Credit += (double)item.Credit;
+                    Debit += item.Debit.GetValueOrDefault();
+                    Credit += item.Credit.GetValueOrDefault();
                 }
 
                 ItemsError += "]";
