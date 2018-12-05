@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService
 {
@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService
     {
         private HttpClient _client = new HttpClient();
 
-        public HttpClientService(IIdentityService identityService)
+        public HttpClientService(IdentityService.IdentityService identityService)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, identityService.Token);
         }
