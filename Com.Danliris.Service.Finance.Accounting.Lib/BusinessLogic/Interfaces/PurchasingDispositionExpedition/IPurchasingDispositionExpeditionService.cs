@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseInterface;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionAcceptance;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionVerification;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,5 +14,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
     {
         Task<int> PurchasingDispositionAcceptance(PurchasingDispositionAcceptanceViewModel data);
         Task<int> DeletePurchasingDispositionAcceptance(int id);
+        Task<int> PurchasingDispositionVerification(PurchasingDispositionVerificationViewModel data);
     }
 }
