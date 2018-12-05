@@ -6,6 +6,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionAcceptance;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionVerification;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
 using Microsoft.EntityFrameworkCore;
@@ -132,11 +133,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         foreach (var item in data.PurchasingDispositionExpedition)
                         {
                             dispositions.Add(item.DispositionNo);
-                            PurchasingDispositionExpeditionModel model = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(x => x.Id == item.Id);
+                            PurchasingDispositionExpeditionModel model = DbContext.PurchasingDispositionExpeditions.Single(x => x.Id == item.Id);
                             model.VerificationDivisionBy = IdentityService.Username;
                             model.VerificationDivisionDate = DateTimeOffset.UtcNow;
                             model.Position = ExpeditionPosition.VERIFICATION_DIVISION;
-                            
+
                             EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
                         }
 
@@ -148,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         foreach (var item in data.PurchasingDispositionExpedition)
                         {
                             dispositions.Add(item.DispositionNo);
-                            PurchasingDispositionExpeditionModel model = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(x => x.Id == item.Id);
+                            PurchasingDispositionExpeditionModel model = DbContext.PurchasingDispositionExpeditions.Single(x => x.Id == item.Id);
                             model.CashierDivisionBy = IdentityService.Username;
                             model.CashierDivisionDate = DateTimeOffset.UtcNow;
                             model.Position = ExpeditionPosition.CASHIER_DIVISION;
@@ -164,7 +165,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    throw  e;
+                    throw e;
                 }
             }
 
@@ -193,7 +194,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         purchasingDispositionExpedition.Position = ExpeditionPosition.SEND_TO_VERIFICATION_DIVISION;
 
                         EntityExtension.FlagForUpdate(purchasingDispositionExpedition, IdentityService.Username, UserAgent);
-                        
+
                         count = await DbContext.SaveChangesAsync();
                         UpdateDispositionPosition(new List<string>() { purchasingDispositionExpedition.DispositionNo }, ExpeditionPosition.SEND_TO_VERIFICATION_DIVISION);
                     }
@@ -202,9 +203,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         purchasingDispositionExpedition.CashierDivisionBy = null;
                         purchasingDispositionExpedition.CashierDivisionDate = null;
                         purchasingDispositionExpedition.Position = ExpeditionPosition.SEND_TO_CASHIER_DIVISION;
-                        
+
                         EntityExtension.FlagForUpdate(purchasingDispositionExpedition, IdentityService.Username, UserAgent);
-                        
+
                         count = await DbContext.SaveChangesAsync();
                         UpdateDispositionPosition(new List<string>() { purchasingDispositionExpedition.DispositionNo }, ExpeditionPosition.SEND_TO_CASHIER_DIVISION);
                     }
@@ -219,6 +220,66 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             }
 
             return count;
+        }
+
+        public async Task<int> PurchasingDispositionVerification(PurchasingDispositionVerificationViewModel data)
+        {
+            int updated = 0;
+
+            using (var transaction = DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    PurchasingDispositionExpeditionModel model;
+                    if (data.Id == 0)
+                    {
+                        model = DbContext.PurchasingDispositionExpeditions.First(x => x.DispositionNo == data.DispositionNo);
+                    }
+                    else
+                    {
+                        model = DbContext.PurchasingDispositionExpeditions.Single(x => x.Id == data.Id);
+                    }
+                    
+
+                    if (data.SubmitPosition == ExpeditionPosition.SEND_TO_PURCHASING_DIVISION)
+                    {
+                        model.DispositionNo = data.DispositionNo;
+                        model.VerifyDate = data.VerifyDate;
+                        model.SendToPurchasingDivisionBy = IdentityService.Username;
+                        model.SendToPurchasingDivisionDate = data.VerifyDate;
+                        model.Position = ExpeditionPosition.SEND_TO_PURCHASING_DIVISION;
+                        model.Active = false;
+                        model.NotVerifiedReason = data.Reason;
+
+                        EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+                        await DbContext.SaveChangesAsync();
+                        UpdateDispositionPosition(new List<string>() { model.DispositionNo }, ExpeditionPosition.SEND_TO_PURCHASING_DIVISION);
+                    }
+                    else if (data.SubmitPosition == ExpeditionPosition.SEND_TO_CASHIER_DIVISION)
+                    {
+                        model.DispositionNo = data.DispositionNo;
+                        model.VerifyDate = data.VerifyDate;
+                        model.SendToCashierDivisionBy = IdentityService.Username;
+                        model.SendToCashierDivisionDate = data.VerifyDate;
+                        model.Position = ExpeditionPosition.SEND_TO_CASHIER_DIVISION;
+                        model.Active = true;
+
+                        EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+                        await DbContext.SaveChangesAsync();
+                        UpdateDispositionPosition(new List<string>() { model.DispositionNo }, ExpeditionPosition.SEND_TO_CASHIER_DIVISION);
+                    }
+                    
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw e;
+                }
+            }
+
+            return updated;
         }
 
         private void UpdateDispositionPosition(List<string> dispositions, ExpeditionPosition position)
@@ -238,5 +299,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                 throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, APIEndpoint.Purchasing));
             }
         }
+
+
     }
 }
