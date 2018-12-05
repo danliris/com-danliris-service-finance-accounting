@@ -1,5 +1,4 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
-using Com.Moonlay.Models;
+﻿using Com.Moonlay.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,7 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositi
         public DateTimeOffset PaymentDueDate { get; set; }
         public string InvoiceNo { get; set; }
         public string NotVerifiedReason { get; set; }
-        public ExpeditionPosition Position { get; set; }
+        public int Position { get; set; }
         public string SendToCashierDivisionBy { get; set; }
         public DateTimeOffset? SendToCashierDivisionDate { get; set; }
         public string SendToPurchasingDivisionBy { get; set; }

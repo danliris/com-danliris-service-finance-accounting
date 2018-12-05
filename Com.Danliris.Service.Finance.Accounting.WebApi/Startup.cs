@@ -12,7 +12,6 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBa
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
-using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -55,12 +54,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
         private void RegisterServices(IServiceCollection services)
         {
             services
-                .AddScoped<IdentityService>()
-                .AddScoped<ValidateService>()
-                .AddScoped<IHttpClientService, HttpClientService>()
                 .AddScoped<IIdentityService, IdentityService>()
                 .AddScoped<IValidateService, ValidateService>();
-
         }
 
         private void RegisterBusinessServices(IServiceCollection services)
@@ -80,7 +75,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = Configuration.GetConnectionString(Constant.DEFAULT_CONNECTION) ?? Configuration[Constant.DEFAULT_CONNECTION];
-            string env = Configuration.GetValue<string>(Constant.ASPNETCORE_ENVIRONMENT);
+
             services.AddDbContext<FinanceDbContext>(options => options.UseSqlServer(connectionString, c => c.CommandTimeout(60)));
 
             #region Register

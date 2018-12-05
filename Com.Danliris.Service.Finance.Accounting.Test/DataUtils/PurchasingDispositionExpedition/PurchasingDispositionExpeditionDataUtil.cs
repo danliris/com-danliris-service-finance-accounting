@@ -1,5 +1,4 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
-using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionExpedition;
@@ -34,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                 PaymentDueDate = DateTimeOffset.Now,
                 InvoiceNo = nowTicksA,
                 NotVerifiedReason = nowTicksA,
-                Position = ExpeditionPosition.CASHIER_DIVISION,
+                Position = (int)nowTicks,
                 SendToCashierDivisionBy = nowTicksA,
                 SendToCashierDivisionDate = DateTimeOffset.Now,
                 SendToPurchasingDivisionBy = nowTicksA,
