@@ -368,5 +368,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             await Assert.ThrowsAnyAsync<Exception>(() => service.DeletePurchasingDispositionAcceptance(newModel.Id));
 
         }
+
+        [Fact]
+        public void Should_No_Error_Validate_VM_Verification_Disposition()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionVerificationViewModel vm = new PurchasingDispositionVerificationViewModel()
+            {
+                DispositionNo = "DispositionNo",
+                Id = 1,
+                Reason = "Reason",
+                SubmitPosition = ExpeditionPosition.SEND_TO_PURCHASING_DIVISION,
+                VerifyDate = DateTimeOffset.UtcNow
+            };
+
+            Assert.True(vm.Validate(null).Count() == 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_VM_Verification_Disposition()
+        {
+            PurchasingDispositionVerificationViewModel vm = new PurchasingDispositionVerificationViewModel();
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+        [Fact]
+        public void Should_Success_Validate_Wrong_Verify_Date_VM_Verification_Disposition()
+        {
+            PurchasingDispositionVerificationViewModel vm = new PurchasingDispositionVerificationViewModel()
+            {
+                DispositionNo = "DispositionNo",
+                Id = 1,
+                Reason = "Reason",
+                SubmitPosition = ExpeditionPosition.SEND_TO_PURCHASING_DIVISION,
+                VerifyDate = DateTimeOffset.UtcNow.AddDays(1)
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
     }
 }

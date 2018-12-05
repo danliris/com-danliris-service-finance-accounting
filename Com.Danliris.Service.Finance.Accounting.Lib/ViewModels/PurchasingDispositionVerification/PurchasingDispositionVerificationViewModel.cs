@@ -28,7 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
             if (string.IsNullOrWhiteSpace(this.DispositionNo))
                 yield return new ValidationResult("Disposition No is required", new List<string> { "DispositionNo" });
 
-            if (this.SubmitPosition.Equals(0))
+            if (!Enum.IsDefined(typeof(ExpeditionPosition), SubmitPosition))
                 yield return new ValidationResult("Submit Position is required", new List<string> { "SubmitPosition" });
         }
     }
