@@ -2,12 +2,14 @@
 {
     public class APIWrapper
     {
-        public string ApiVersion { get; set; }
+        public string apiVersion { get; set; }
 
-        public string Data { get; set; }
+        public string data { get; set; }
 
-        public string Message { get; set; }
+        public string message { get; set; }
 
-        public string StatusCode { get; set; }
+        public string statusCode { get; set; }
+
+        public string info { get; set; }
     }
 }
