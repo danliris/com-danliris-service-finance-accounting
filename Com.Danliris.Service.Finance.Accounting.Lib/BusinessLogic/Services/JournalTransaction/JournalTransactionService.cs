@@ -1,8 +1,10 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction
@@ -174,6 +177,74 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             _DbSet.Update(model);
             return await _DbContext.SaveChangesAsync();
+        }
+
+        private List<JournalTransactionReportViewModel> GetReport(int month, int year, int offset)
+        {
+            _DbContext.ChartsOfAccounts.Load();
+            IQueryable<JournalTransactionItemModel> query = _DbContext.JournalTransactionItems
+                .Include(x => x.JournalTransaction)
+                .Where(x => x.JournalTransaction.Date.Month == month && x.JournalTransaction.Date.Year == year);
+            
+            List<JournalTransactionReportViewModel> result = new List<JournalTransactionReportViewModel>();
+            foreach (var item in query.OrderBy(x => x.JournalTransaction.Date).ToList())
+            {
+                JournalTransactionReportViewModel vm = new JournalTransactionReportViewModel
+                {
+                    Credit = item.Credit,
+                    Date = item.JournalTransaction.Date,
+                    Debit = item.Debit,
+                    Remark = item.Remark
+                };
+
+                if (item.COA != null)
+                {
+                    vm.COACode = item.COA.Code;
+                    vm.COAName = item.COA.Name;
+                }
+                result.Add(vm);
+
+            }
+            return result;
+        }
+
+        public ReadResponse<JournalTransactionReportViewModel> GetReport(int page, int size, int month, int year, int offSet)
+        {
+            var queries = GetReport(month, year, offSet);
+
+            Pageable<JournalTransactionReportViewModel> pageable = new Pageable<JournalTransactionReportViewModel>(queries, page - 1, size);
+            List<JournalTransactionReportViewModel> data = pageable.Data.ToList();
+
+            return new ReadResponse<JournalTransactionReportViewModel>(data, pageable.TotalCount, new Dictionary<string, string>(), new List<string>());
+        }
+
+        public MemoryStream GenerateExcel(int month, int year, int offSet)
+        {
+            var data = GetReport(month, year, offSet);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add(new DataColumn() { ColumnName = "Date", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nama Akun", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No Akun", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(string) });
+
+            if(data.Count == 0)
+            {
+                dt.Rows.Add("", "", "", "", "", "");
+            }
+            else
+            {
+                foreach(var item in data)
+                {
+                    dt.Rows.Add(item.Date.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.COAName) ? "-" : item.COAName, string.IsNullOrEmpty(item.COACode) ? "-" : item.COACode,
+                        string.IsNullOrEmpty(item.Remark) ? "-" : item.Remark, item.Debit.HasValue ? item.Debit.Value.ToString("#,##0.###0") : "0", item.Credit.HasValue ? item.Credit.Value.ToString("#,##0.###0") : "0");
+
+                }
+            }
+
+            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Jurnal Transaksi") }, true);
         }
     }
 }

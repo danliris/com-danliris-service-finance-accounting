@@ -430,13 +430,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             postedModel.DispositionNo = httpClientFromPurchasingDisposition.GetPurchasingDispositionViewModel().DispositionNo;
             await service.CreateAsync(postedModel);
             var model = await service.ReadByIdAsync(postedModel.Id);
-            var reportResponse = service.GetReport(1, 25, "{}", "{}", null, null, 7);
+            var reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", null, null, 7);
             Assert.NotEmpty(reportResponse.Data);
-            reportResponse = service.GetReport(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), null, 7);
+            reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), null, 7);
             Assert.NotEmpty(reportResponse.Data);
-            reportResponse = service.GetReport(1, 25, "{}", "{}", null, DateTimeOffset.UtcNow.AddDays(1), 7);
+            reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", null, DateTimeOffset.UtcNow.AddDays(1), 7);
             Assert.NotEmpty(reportResponse.Data);
-            reportResponse = service.GetReport(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1), 7);
+            reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1), 7);
             Assert.NotEmpty(reportResponse.Data);
         }
 
@@ -444,7 +444,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         public void Should_Fail_Get_Report()
         {
             var service = new PurchasingDispositionExpeditionService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
-            Assert.Throws<Exception>(() => service.GetReport(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1), 7));
+            Assert.ThrowsAsync<Exception>(() => service.GetReportAsync(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1), 7));
 
         }
 
@@ -468,7 +468,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             postedModel.DispositionNo = httpClientFromPurchasingDisposition.GetPurchasingDispositionViewModel().DispositionNo;
             await service.CreateAsync(postedModel);
             var model = await service.ReadByIdAsync(postedModel.Id);
-            var reportResponse = service.GenerateExcel(1, 25, "{}", "{}", null, null, 7);
+            var reportResponse = service.GenerateExcelAsync(1, 25, "{}", "{}", null, null, 7);
             Assert.NotNull(reportResponse);
         }
     }

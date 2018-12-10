@@ -17,7 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
         Task<int> PurchasingDispositionAcceptance(PurchasingDispositionAcceptanceViewModel data);
         Task<int> DeletePurchasingDispositionAcceptance(int id);
         Task<int> PurchasingDispositionVerification(PurchasingDispositionVerificationViewModel data);
-        ReadResponse<PurchasingDispositionReportViewModel> GetReport(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet);
-        MemoryStream GenerateExcel(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet);
+        Task<ReadResponse<PurchasingDispositionReportViewModel>> GetReportAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet);
+        Task<MemoryStream> GenerateExcelAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet);
     }
 }
