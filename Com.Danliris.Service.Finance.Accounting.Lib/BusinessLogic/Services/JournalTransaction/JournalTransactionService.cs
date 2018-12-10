@@ -184,7 +184,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             _DbContext.ChartsOfAccounts.Load();
             IQueryable<JournalTransactionItemModel> query = _DbContext.JournalTransactionItems
                 .Include(x => x.JournalTransaction)
-                .Where(x => x.JournalTransaction.Date.Month == month && x.JournalTransaction.Date.Year == year);
+                .Where(x => x.JournalTransaction.Date.AddHours(offset).Month == month && x.JournalTransaction.Date.AddHours(offset).Year == year);
             
             List<JournalTransactionReportViewModel> result = new List<JournalTransactionReportViewModel>();
             foreach (var item in query.OrderBy(x => x.JournalTransaction.Date).ToList())
