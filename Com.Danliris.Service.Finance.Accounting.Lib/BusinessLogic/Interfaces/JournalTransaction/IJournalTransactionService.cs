@@ -8,7 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.J
 {
     public interface IJournalTransactionService : IBaseService<JournalTransactionModel>
     {
-        ReadResponse<JournalTransactionReportViewModel> GetReport(int page, int size, int month, int year, int offSet);
+        (ReadResponse<JournalTransactionReportViewModel>, double, double) GetReport(int page, int size, int month, int year, int offSet);
         MemoryStream GenerateExcel(int month, int year, int offSet);
     }
 }

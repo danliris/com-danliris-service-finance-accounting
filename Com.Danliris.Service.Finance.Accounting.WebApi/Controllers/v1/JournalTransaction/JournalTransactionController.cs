@@ -37,12 +37,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
-                    data = data.Data,
+                    data = data.Item1.Data,
                     info = new
                     {
-                        data.Count,
-                        data.Order,
-                        data.Selected
+                        data.Item1.Count,
+                        data.Item1.Order,
+                        data.Item1.Selected,
+                        TotalDebit = data.Item2,
+                        TotalCredit = data.Item3
                     },
                     message = General.OK_MESSAGE,
                     statusCode = General.OK_STATUS_CODE

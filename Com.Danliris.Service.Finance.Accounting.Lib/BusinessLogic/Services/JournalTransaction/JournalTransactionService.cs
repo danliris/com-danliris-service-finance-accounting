@@ -179,7 +179,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return await _DbContext.SaveChangesAsync();
         }
 
-        private List<JournalTransactionReportViewModel> GetReport(int month, int year, int offset)
+        private (List<JournalTransactionReportViewModel>, double, double) GetReport(int month, int year, int offset)
         {
             _DbContext.ChartsOfAccounts.Load();
             IQueryable<JournalTransactionItemModel> query = _DbContext.JournalTransactionItems
@@ -205,17 +205,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 result.Add(vm);
 
             }
-            return result;
+            
+            return (result, result.Sum(x => x.Debit.GetValueOrDefault()), result.Sum(x => x.Credit.GetValueOrDefault()));
         }
 
-        public ReadResponse<JournalTransactionReportViewModel> GetReport(int page, int size, int month, int year, int offSet)
+        public (ReadResponse<JournalTransactionReportViewModel>, double, double) GetReport(int page, int size, int month, int year, int offSet)
         {
             var queries = GetReport(month, year, offSet);
 
-            Pageable<JournalTransactionReportViewModel> pageable = new Pageable<JournalTransactionReportViewModel>(queries, page - 1, size);
+            Pageable<JournalTransactionReportViewModel> pageable = new Pageable<JournalTransactionReportViewModel>(queries.Item1, page - 1, size);
             List<JournalTransactionReportViewModel> data = pageable.Data.ToList();
 
-            return new ReadResponse<JournalTransactionReportViewModel>(data, pageable.TotalCount, new Dictionary<string, string>(), new List<string>());
+            return (new ReadResponse<JournalTransactionReportViewModel>(data, pageable.TotalCount, new Dictionary<string, string>(), new List<string>()), queries.Item2, queries.Item3);
         }
 
         public MemoryStream GenerateExcel(int month, int year, int offSet)
@@ -230,18 +231,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             dt.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(string) });
 
-            if(data.Count == 0)
+            if(data.Item1.Count == 0)
             {
                 dt.Rows.Add("", "", "", "", "", "");
             }
             else
             {
-                foreach(var item in data)
+                foreach(var item in data.Item1)
                 {
                     dt.Rows.Add(item.Date.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.COAName) ? "-" : item.COAName, string.IsNullOrEmpty(item.COACode) ? "-" : item.COACode,
                         string.IsNullOrEmpty(item.Remark) ? "-" : item.Remark, item.Debit.HasValue ? item.Debit.Value.ToString("#,##0.###0") : "0", item.Credit.HasValue ? item.Credit.Value.ToString("#,##0.###0") : "0");
 
                 }
+                dt.Rows.Add("", "", "", "TOTAL", data.Item2.ToString("#,##0.###0"), data.Item3.ToString("#,##0.###0"));
             }
 
             return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Jurnal Transaksi") }, true);
