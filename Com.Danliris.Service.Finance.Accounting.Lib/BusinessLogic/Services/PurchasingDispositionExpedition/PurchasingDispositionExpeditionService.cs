@@ -305,10 +305,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             }
         }
 
-        private PurchasingDispositionBaseResponseViewModel JoinReport(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
+        private async Task<PurchasingDispositionBaseResponseViewModel> JoinReportAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
             var expeditionData = DbSet.ToList();
-            var purchasingDispositionResponse = GetPurchasingDisposition(page, size, order, filter);
+            var purchasingDispositionResponse = await GetPurchasingDispositionAsync(page, size, order, filter);
             List<PurchasingDispositionViewModel> data = purchasingDispositionResponse.data;
 
             List<PurchasingDispositionReportViewModel> result = new List<PurchasingDispositionReportViewModel>();
@@ -370,9 +370,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             };
         }
 
-        public MemoryStream GenerateExcel(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
+        public async Task<MemoryStream> GenerateExcelAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
-            var data = JoinReport(page, size, order, filter, dateFrom, dateTo, offSet);
+            var data = await JoinReportAsync(page, size, order, filter, dateFrom, dateTo, offSet);
 
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Disposisi", DataType = typeof(string) });
@@ -410,21 +410,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Disposisi Pembelian") }, true);
         }
 
-        public ReadResponse<PurchasingDispositionReportViewModel> GetReport(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
+        public async Task<ReadResponse<PurchasingDispositionReportViewModel>> GetReportAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
-            var queries = JoinReport(page, size, order, filter, dateFrom, dateTo, offSet);
+            var queries = await JoinReportAsync(page, size, order, filter, dateFrom, dateTo, offSet);
             Pageable<PurchasingDispositionReportViewModel> pageable = new Pageable<PurchasingDispositionReportViewModel>(queries.data, page - 1, size);
             List<PurchasingDispositionReportViewModel> data = pageable.Data.ToList();
-            return new ReadResponse<PurchasingDispositionReportViewModel>(queries.data, queries.info.total, new Dictionary<string, string>(), new List<string>());
+            return new ReadResponse<PurchasingDispositionReportViewModel>(data, pageable.TotalCount, new Dictionary<string, string>(), new List<string>());
         }
 
-        private PurchasingDispositionResponseViewModel GetPurchasingDisposition(int page, int size, string order, string filter)
+        private async Task<PurchasingDispositionResponseViewModel> GetPurchasingDispositionAsync(int page, int size, string order, string filter)
         {
             string dispositionUri = "purchasing-dispositions";
             string queryUri = "?page=" + page + "&size=" + size + "&order=" + order + "&filter=" + filter;
             string uri = dispositionUri + queryUri;
             IHttpClientService httpClient = (IHttpClientService)this.ServiceProvider.GetService(typeof(IHttpClientService));
-            var response = httpClient.GetAsync($"{APIEndpoint.Purchasing}{uri}").Result;
+            var response = await httpClient.GetAsync($"{APIEndpoint.Purchasing}{uri}");
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, APIEndpoint.Purchasing));

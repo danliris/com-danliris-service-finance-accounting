@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PurchasingDispositionReport
 {
@@ -42,14 +43,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
         }
 
         [HttpGet("")]
-        public IActionResult GetReport(DateTime? dateFrom = null, DateTime? dateTo = null, int page = 1, int size = 25, string order = "{}", string filter = "{}")
+        public async Task<IActionResult> GetReportAsync(DateTime? dateFrom = null, DateTime? dateTo = null, int page = 1, int size = 25, string order = "{}", string filter = "{}")
         {
             try
             {
                 VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                var data = Service.GetReport(page, size, order, filter, dateFrom, dateTo, offSet);
+                var data = await Service.GetReportAsync(page, size, order, filter, dateFrom, dateTo, offSet);
 
                 return Ok(new
                 {
@@ -75,14 +76,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
         }
 
         [HttpGet("downloads/xls")]
-        public IActionResult GetXls(string filter = "{}", DateTime? dateFrom = null, DateTime? dateTo = null)
+        public async Task<IActionResult> GetXlsAsync(string filter = "{}", DateTime? dateFrom = null, DateTime? dateTo = null)
         {
             try
             {
                 VerifyUser();
                 byte[] xlsInBytes;
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
-                var xls = Service.GenerateExcel(1, int.MaxValue, "{}", filter, dateFrom, dateTo, offSet);
+                var xls = await Service.GenerateExcelAsync(1, int.MaxValue, "{}", filter, dateFrom, dateTo, offSet);
 
                 string fileName = "";
                 if (dateFrom == null && dateTo == null)

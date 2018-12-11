@@ -202,5 +202,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var Response = await service.UpdateAsync(model.Id, model);
             Assert.NotEqual(0, Response);
         }
+
+        [Fact]
+        public async void Should_Success_Generate_Excel()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var data = await _dataUtil(service).GetTestData();
+            var reportResponse = service.GenerateExcel(data.Date.Month, data.Date.Year, 7);
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
+        public  void Should_Success_Generate_Excel_Empty()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            
+            var reportResponse = service.GenerateExcel(1,1, 7);
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
+        public async void Should_Success_Get_Report()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestData();
+            var reportResponse = service.GetReport(1, 25, data.Date.Month, data.Date.Year, 7);
+            Assert.NotNull(reportResponse);
+        }
     }
 }
