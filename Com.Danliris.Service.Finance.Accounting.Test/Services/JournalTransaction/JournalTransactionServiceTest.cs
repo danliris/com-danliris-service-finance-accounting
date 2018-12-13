@@ -228,7 +228,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData();
             var reportResponse = service.GetReport(1, 25, data.Date.Month, data.Date.Year, 7);
-            Assert.NotNull(reportResponse);
+            Assert.NotNull(reportResponse.Item1);
         }
     }
 }
