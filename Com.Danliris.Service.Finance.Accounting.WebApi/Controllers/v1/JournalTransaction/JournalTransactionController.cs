@@ -25,14 +25,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("report")]
-        public IActionResult GetReport([FromQuery] int month, [FromQuery] int year, int page = 1, int size = 25)
+        public IActionResult GetReport([FromQuery] DateTimeOffset? dateFrom = null, [FromQuery] DateTimeOffset? dateTo = null, int page = 1, int size = 25)
         {
             try
             {
                 VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                var data = Service.GetReport(page, size, month, year, offSet);
+                var data = Service.GetReport(page, size, dateFrom, dateTo, offSet);
 
                 return Ok(new
                 {
@@ -60,16 +60,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("report/downloads/xls")]
-        public  IActionResult GetXls([FromQuery] int month, [FromQuery] int year)
+        public  IActionResult GetXls([FromQuery] DateTimeOffset? dateFrom = null, [FromQuery] DateTimeOffset? dateTo = null)
         {
             try
             {
                 VerifyUser();
                 byte[] xlsInBytes;
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
-                var xls = Service.GenerateExcel(month, year, offSet);
+                var xls = Service.GenerateExcel(dateFrom, dateTo, offSet);
 
-                string fileName = string.Format("Jurnal Transaksi Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                string fileName = "";
+                if (dateFrom == null && dateTo == null)
+                    fileName = string.Format("Jurnal Transaksi");
+                else if (dateFrom != null && dateTo == null)
+                    fileName = string.Format("Jurnal Transaksi {0}", dateFrom.Value.ToString("dd/MM/yyyy"));
+                else if (dateFrom == null && dateTo != null)
+                    fileName = string.Format("Jurnal Transaksi {0}", dateTo.GetValueOrDefault().ToString("dd/MM/yyyy"));
+                else
+                    fileName = string.Format("Jurnal Transaksi {0} - {1}", dateFrom.GetValueOrDefault().ToString("dd/MM/yyyy"), dateTo.Value.ToString("dd/MM/yyyy"));
+
                 xlsInBytes = xls.ToArray();
 
                 var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

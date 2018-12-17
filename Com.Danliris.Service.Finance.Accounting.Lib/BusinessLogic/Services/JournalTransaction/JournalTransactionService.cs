@@ -179,13 +179,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return await _DbContext.SaveChangesAsync();
         }
 
-        private (List<JournalTransactionReportViewModel>, double, double) GetReport(int month, int year, int offset)
+        private (List<JournalTransactionReportViewModel>, double, double) GetReport(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
             _DbContext.ChartsOfAccounts.Load();
             IQueryable<JournalTransactionItemModel> query = _DbContext.JournalTransactionItems
-                .Include(x => x.JournalTransaction)
-                .Where(x => x.JournalTransaction.Date.AddHours(offset).Month == month && x.JournalTransaction.Date.AddHours(offset).Year == year);
-            
+                .Include(x => x.JournalTransaction);
+
+            if (dateFrom == null && dateTo == null)
+            {
+                query = query
+                    .Where(x => DateTimeOffset.UtcNow.AddDays(-30).Date <= x.JournalTransaction.Date.AddHours(offSet).Date
+                        && x.JournalTransaction.Date.AddHours(offSet).Date <= DateTime.UtcNow.Date);
+            }
+            else if (dateFrom == null && dateTo != null)
+            {
+                query = query
+                    .Where(x => dateTo.Value.AddDays(-30).Date <= x.JournalTransaction.Date.AddHours(offSet).Date
+                        && x.JournalTransaction.Date.AddHours(offSet).Date <= dateTo.Value.Date);
+            }
+            else if (dateTo == null && dateFrom != null)
+            {
+                query = query
+                    .Where(x => dateFrom.Value.Date <= x.JournalTransaction.Date.AddHours(offSet).Date
+                        && x.JournalTransaction.Date.AddHours(offSet).Date <= dateFrom.Value.AddDays(30).Date);
+            }
+            else
+            {
+                query = query
+                    .Where(x => dateFrom.Value.Date <= x.JournalTransaction.Date.AddHours(offSet).Date
+                        && x.JournalTransaction.Date.AddHours(offSet).Date <= dateTo.Value.Date);
+            }
+
             List<JournalTransactionReportViewModel> result = new List<JournalTransactionReportViewModel>();
             foreach (var item in query.OrderBy(x => x.JournalTransaction.Date).ToList())
             {
@@ -209,9 +233,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return (result, result.Sum(x => x.Debit.GetValueOrDefault()), result.Sum(x => x.Credit.GetValueOrDefault()));
         }
 
-        public (ReadResponse<JournalTransactionReportViewModel>, double, double) GetReport(int page, int size, int month, int year, int offSet)
+        public (ReadResponse<JournalTransactionReportViewModel>, double, double) GetReport(int page, int size, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
-            var queries = GetReport(month, year, offSet);
+            var queries = GetReport(dateFrom, dateTo, offSet);
 
             Pageable<JournalTransactionReportViewModel> pageable = new Pageable<JournalTransactionReportViewModel>(queries.Item1, page - 1, size);
             List<JournalTransactionReportViewModel> data = pageable.Data.ToList();
@@ -219,9 +243,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return (new ReadResponse<JournalTransactionReportViewModel>(data, pageable.TotalCount, new Dictionary<string, string>(), new List<string>()), queries.Item2, queries.Item3);
         }
 
-        public MemoryStream GenerateExcel(int month, int year, int offSet)
+        public MemoryStream GenerateExcel(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
-            var data = GetReport(month, year, offSet);
+            var data = GetReport(dateFrom, dateTo, offSet);
 
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "Date", DataType = typeof(string) });
