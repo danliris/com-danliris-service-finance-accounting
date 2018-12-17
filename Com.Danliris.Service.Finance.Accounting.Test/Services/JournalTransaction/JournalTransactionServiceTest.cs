@@ -209,16 +209,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
             var data = await _dataUtil(service).GetTestData();
-            var reportResponse = service.GenerateExcel(data.Date.Month, data.Date.Year, 7);
+            var reportResponse = service.GenerateExcel(data.Date.AddDays(-1), data.Date, 7);
             Assert.NotNull(reportResponse);
         }
 
         [Fact]
-        public  void Should_Success_Generate_Excel_Empty()
+        public void Should_Success_Generate_Excel_Empty()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            
-            var reportResponse = service.GenerateExcel(1,1, 7);
+
+            var reportResponse = service.GenerateExcel(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, 7);
             Assert.NotNull(reportResponse);
         }
 
@@ -227,8 +227,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData();
-            var reportResponse = service.GetReport(1, 25, data.Date.Month, data.Date.Year, 7);
-            Assert.NotNull(reportResponse);
+
+            var reportResponse = service.GetReport(1, 25, data.Date.AddDays(-1), data.Date, 7);
+            Assert.NotNull(reportResponse.Item1);
+
+            var reportResponse2 = service.GetReport(1, 25, data.Date.AddDays(-1), null, 7);
+            Assert.NotNull(reportResponse2.Item1);
+
+            var reportResponse3 = service.GetReport(1, 25, null, data.Date, 7);
+            Assert.NotNull(reportResponse3.Item1);
+
+            var reportResponse4 = service.GetReport(1, 25, null, null, 7);
+            Assert.NotNull(reportResponse4.Item1);
         }
     }
 }

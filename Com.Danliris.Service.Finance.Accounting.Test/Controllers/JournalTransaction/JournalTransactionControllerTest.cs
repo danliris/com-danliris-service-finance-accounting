@@ -19,9 +19,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public void GetReport_ReturnOK()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns((new ReadResponse<JournalTransactionReportViewModel>(new List<JournalTransactionReportViewModel>(), 1, new Dictionary<string, string>(), new List<string>()), 0, 0));
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).Returns((new ReadResponse<JournalTransactionReportViewModel>(new List<JournalTransactionReportViewModel>(), 1, new Dictionary<string, string>(), new List<string>()), 0, 0));
 
-            var response = GetController(mocks).GetReport(11, 2018);
+            var response = GetController(mocks).GetReport();
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
@@ -29,9 +29,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public void GetReport_ThrowException()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).Throws(new Exception());
 
-            var response = GetController(mocks).GetReport(11, 2018);
+            var response = GetController(mocks).GetReport();
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
@@ -39,19 +39,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public void GetReportExcel_ReturnFile()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new MemoryStream());
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).Returns(new MemoryStream());
 
-            var response =  GetController(mocks).GetXls(11, 2018);
+            var response =  GetController(mocks).GetXls();
             Assert.NotNull(response);
-            
+
+            var response2 = GetController(mocks).GetXls(DateTimeOffset.UtcNow);
+            Assert.NotNull(response2);
+
+            var response3 = GetController(mocks).GetXls(null, DateTimeOffset.UtcNow);
+            Assert.NotNull(response3);
+
+            var response4 = GetController(mocks).GetXls(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+            Assert.NotNull(response4);
+
         }
         [Fact]
         public void GetReportExcel_ThrowException()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).Throws(new Exception());
 
-            var response = GetController(mocks).GetXls(11, 2018);
+            var response = GetController(mocks).GetXls();
             Assert.NotNull(response);
         }
     }
