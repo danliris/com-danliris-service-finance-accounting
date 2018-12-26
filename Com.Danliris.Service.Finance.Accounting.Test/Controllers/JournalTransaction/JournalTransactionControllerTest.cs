@@ -63,5 +63,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
             var response = GetController(mocks).GetXls();
             Assert.NotNull(response);
         }
+
+        [Fact]
+        public void ReverseJournalTransaction_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReverseJournalTransactionByReferenceNo(It.IsAny<string>())).Throws(new Exception());
+
+            var response = GetController(mocks).PostReverseJournalTransaction(It.IsAny<string>()).Result;
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void ReverseJournalTransaction_Succes()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReverseJournalTransactionByReferenceNo(It.IsAny<string>())).ReturnsAsync(1);
+
+            var response = GetController(mocks).PostReverseJournalTransaction(It.IsAny<string>()).Result;
+            Assert.Equal((int)HttpStatusCode.Created, GetStatusCode(response));
+        }
     }
 }

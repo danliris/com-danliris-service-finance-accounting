@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Journ
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using Com.Danliris.Service.Production.WebApi.Utilities;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalTransaction
 {
@@ -89,6 +91,29 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                 Dictionary<string, object> Result =
                   new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
                   .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPost("reverse-transactions/{referenceNo}")]
+        public async Task<ActionResult> PostReverseJournalTransaction([FromRoute] string referenceNo)
+        {
+            try
+            {
+                VerifyUser();
+
+                await Service.ReverseJournalTransactionByReferenceNo(referenceNo);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return Created(String.Concat(Request.Path, "/", 0), Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }

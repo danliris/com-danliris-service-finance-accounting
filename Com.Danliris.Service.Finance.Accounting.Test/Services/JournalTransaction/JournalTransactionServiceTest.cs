@@ -5,6 +5,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Masters.COADataUtils;
@@ -80,20 +81,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_By_Id()
+        public void Should_Success_Get_Data_By_Id()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var model = await _dataUtil(service).GetTestData();
-            var Response = await service.ReadByIdAsync(model.Id);
+            var model = _dataUtil(service).GetTestData().Result;
+            var Response = service.ReadByIdAsync(model.Id).Result;
             Assert.NotNull(Response);
         }
 
         [Fact]
-        public async void Should_Success_Create_Data()
+        public void Should_Success_Create_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = _dataUtil(service).GetNewData();
-            var Response = await service.CreateAsync(model);
+            var Response = service.CreateAsync(model).Result;
             Assert.NotEqual(0, Response);
         }
 
@@ -115,24 +116,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public async void Should_Success_Update_Data()
+        public void Should_Success_Update_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var model = await _dataUtil(service).GetTestData();
-            var newModel = await service.ReadByIdAsync(model.Id);
+            var model = _dataUtil(service).GetTestData().Result;
+            var newModel = service.ReadByIdAsync(model.Id).Result;
             newModel.Description = "NewDescription";
-            var Response = await service.UpdateAsync(newModel.Id, newModel);
+            var Response = service.UpdateAsync(newModel.Id, newModel).Result;
             Assert.NotEqual(0, Response);
         }
 
         [Fact]
-        public async void Should_Success_Delete_Data()
+        public void Should_Success_Delete_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var model = await _dataUtil(service).GetTestData();
+            var model = _dataUtil(service).GetTestData().Result;
             //var modelToDelete = await service.ReadByIdAsync(model.Id);
 
-            var Response = await service.DeleteAsync(model.Id);
+            var Response = service.DeleteAsync(model.Id).Result;
             Assert.NotEqual(0, Response);
         }
 
@@ -171,10 +172,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public async void Should_Success_Update_Data_NewItem()
+        public void Should_Success_Update_Data_NewItem()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var model = await _dataUtil(service).GetTestData();
+            var model = _dataUtil(service).GetTestData().Result;
             model.Description = "NewDescription";
 
             var newItemDebit = new JournalTransactionItemModel()
@@ -199,16 +200,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             };
             model.Items.Add(newItemCredit);
 
-            var Response = await service.UpdateAsync(model.Id, model);
+            var Response = service.UpdateAsync(model.Id, model).Result;
             Assert.NotEqual(0, Response);
         }
 
         [Fact]
-        public async void Should_Success_Generate_Excel()
+        public void Should_Success_Generate_Excel()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
-            var data = await _dataUtil(service).GetTestData();
+            var data = _dataUtil(service).GetTestData().Result;
             var reportResponse = service.GenerateExcel(data.Date.AddDays(-1), data.Date, 7);
             Assert.NotNull(reportResponse);
         }
@@ -223,10 +224,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public async void Should_Success_Get_Report()
+        public void Should_Success_Get_Report()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = await _dataUtil(service).GetTestData();
+            var data = _dataUtil(service).GetTestData().Result;
 
             var reportResponse = service.GetReport(1, 25, data.Date.AddDays(-1), data.Date, 7);
             Assert.NotNull(reportResponse.Item1);
@@ -239,6 +240,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             var reportResponse4 = service.GetReport(1, 25, null, null, 7);
             Assert.NotNull(reportResponse4.Item1);
+        }
+
+        [Fact]
+        public void Should_Success_ReverseJournalTransaction_Data()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewData();
+            var createdData = service.CreateAsync(model).Result;
+            var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
+            Assert.NotEqual(0, response);
+        }
+
+        [Fact]
+        public void Should_Error_CreateDuplicateReferenceNo_Data()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewData();
+            var createdData = service.CreateAsync(model).Result;
+
+            var newModel = _dataUtil(service).GetNewData();
+            newModel.ReferenceNo = model.ReferenceNo;
+            //var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
+            Assert.ThrowsAsync<ServiceValidationException>(() => service.CreateAsync(newModel));
+        }
+
+        [Fact]
+        public void Should_Error_ReverseJournalTransaction_Data()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            Assert.ThrowsAsync<ServiceValidationException>(() => service.ReverseJournalTransactionByReferenceNo("test"));
         }
     }
 }
