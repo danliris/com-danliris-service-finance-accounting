@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         protected DbSet<JournalTransactionModel> _DbSet;
         protected DbSet<JournalTransactionItemModel> _ItemDbSet;
         protected DbSet<COAModel> _COADbSet;
+        private readonly IServiceProvider _serviceProvider;
         protected IIdentityService _IdentityService;
         public FinanceDbContext _DbContext;
 
@@ -34,6 +36,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             _DbSet = dbContext.Set<JournalTransactionModel>();
             _ItemDbSet = dbContext.Set<JournalTransactionItemModel>();
             _COADbSet = dbContext.Set<COAModel>();
+            _serviceProvider = serviceProvider;
             _IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
@@ -44,6 +47,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 model.DocumentNo = CodeGenerator.Generate();
             }
             while (_DbSet.Any(d => d.DocumentNo.Equals(model.DocumentNo)));
+
+            if (_DbSet.Any(d => d.ReferenceNo.Equals(model.ReferenceNo) && !d.IsDeleted && !d.IsReversed && !d.IsReverser))
+            {
+                var errorResult = new List<ValidationResult>()
+                {
+                    new ValidationResult("No. Referensi duplikat", new List<string> { "ReferenceNo" })
+                };
+                ValidationContext validationContext = new ValidationContext(model, _serviceProvider, null);
+                throw new ServiceValidationException(validationContext, errorResult);
+            }
 
             EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
             foreach (var item in model.Items)
@@ -229,7 +242,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 result.Add(vm);
 
             }
-            
+
             return (result, result.Sum(x => x.Debit.GetValueOrDefault()), result.Sum(x => x.Credit.GetValueOrDefault()));
         }
 
@@ -255,13 +268,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             dt.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(string) });
 
-            if(data.Item1.Count == 0)
+            if (data.Item1.Count == 0)
             {
                 dt.Rows.Add("", "", "", "", "", "");
             }
             else
             {
-                foreach(var item in data.Item1)
+                foreach (var item in data.Item1)
                 {
                     dt.Rows.Add(item.Date.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.COAName) ? "-" : item.COAName, string.IsNullOrEmpty(item.COACode) ? "-" : item.COACode,
                         string.IsNullOrEmpty(item.Remark) ? "-" : item.Remark, item.Debit.HasValue ? item.Debit.Value.ToString("#,##0.###0") : "0", item.Credit.HasValue ? item.Credit.Value.ToString("#,##0.###0") : "0");
@@ -271,6 +284,52 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             }
 
             return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Jurnal Transaksi") }, true);
+        }
+
+        public async Task<int> ReverseJournalTransactionByReferenceNo(string referenceNo)
+        {
+            var transactionToReverse = _DbSet.FirstOrDefault(entity => entity.ReferenceNo.Equals(referenceNo) && !entity.IsReversed && !entity.IsReverser && !entity.IsDeleted);
+
+            if (transactionToReverse == null)
+            {
+                throw new Exception("Transaction Not Found");
+            }
+
+            transactionToReverse.IsReversed = true;
+            _DbSet.Update(transactionToReverse);
+
+            var transactionToReverseItems = _ItemDbSet.Where(entity => entity.JournalTransactionId.Equals(transactionToReverse.Id) && !entity.IsDeleted).ToList();
+            var reversingItems = new List<JournalTransactionItemModel>();
+            foreach (var transactionToReverseItem in transactionToReverseItems)
+            {
+                var reversingItem = new JournalTransactionItemModel()
+                {
+                    COAId = transactionToReverseItem.COAId,
+                    Credit = transactionToReverseItem.Debit,
+                    Debit = transactionToReverseItem.Credit,
+                    Remark = transactionToReverseItem.Remark
+                };
+                EntityExtension.FlagForCreate(reversingItem, _IdentityService.Username, _UserAgent);
+                reversingItems.Add(reversingItem);
+            }
+
+            var reversingJournalTransaction = new JournalTransactionModel()
+            {
+                Date = DateTimeOffset.Now,
+                Items = reversingItems,
+                ReferenceNo = transactionToReverse.ReferenceNo
+            };
+
+            do
+            {
+                reversingJournalTransaction.DocumentNo = CodeGenerator.Generate();
+            }
+            while (_DbSet.Any(d => d.DocumentNo.Equals(reversingJournalTransaction.DocumentNo)));
+            reversingJournalTransaction.IsReverser = true;
+            EntityExtension.FlagForCreate(reversingJournalTransaction, _IdentityService.Username, _UserAgent);
+            _DbSet.Add(reversingJournalTransaction);
+
+            return await _DbContext.SaveChangesAsync();
         }
     }
 }
