@@ -79,6 +79,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
+        public async void Should_Success_Get_Data_All()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            await _dataUtil(service).GetTestData();
+            var Response = service.GetAll();
+            Assert.NotEmpty(Response);
+        }
+
+        [Fact]
         public async void Should_Success_Get_Data_By_Id()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
