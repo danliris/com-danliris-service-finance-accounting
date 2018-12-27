@@ -43,7 +43,30 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
             coaModel.Header = coaModel.Code.Substring(0, 1);
             coaModel.Subheader = coaModel.Code.Substring(0, 2);
         };
-        
+
+        [HttpGet("all")]
+        public IActionResult GetAll(int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")]List<string> select = null, string keyword = null, string filter = "{}")
+        {
+            try
+            {
+                var read = Service.GetAll();
+
+                List<COAViewModel> dataVM = Mapper.Map<List<COAViewModel>>(read);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, dataVM, 1, dataVM.Count, dataVM.Count, dataVM.Count, new Dictionary<string, string>(), new List<string>());
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpPost("upload")]
         public async Task<IActionResult> PostCSVFileAsync()
         {

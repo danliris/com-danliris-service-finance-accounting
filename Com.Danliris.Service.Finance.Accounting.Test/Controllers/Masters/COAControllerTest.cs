@@ -25,6 +25,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
     public class COAControllerTest : BaseControllerTest<COAController, COAModel, COAViewModel, ICOAService>
     {
         [Fact]
+        public void GetAll_WithoutException_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetAll()).Returns(new List<COAModel>());
+            mocks.Mapper.Setup(f => f.Map<List<COAViewModel>>(It.IsAny<List<COAModel>>())).Returns(ViewModels);
+
+            var response = GetController(mocks).GetAll();
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetAll_ReadThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetAll()).Throws(new Exception());
+            var response = GetController(mocks).GetAll();
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public void UploadFile_WithoutException_ReturnOK()
         {
             string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
