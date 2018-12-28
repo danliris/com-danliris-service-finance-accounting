@@ -317,7 +317,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             {
                 Date = DateTimeOffset.Now,
                 Items = reversingItems,
-                ReferenceNo = transactionToReverse.ReferenceNo
+                ReferenceNo = transactionToReverse.ReferenceNo,
+                Description = $"Jurnal Pembalik {transactionToReverse.DocumentNo}"
             };
 
             do
