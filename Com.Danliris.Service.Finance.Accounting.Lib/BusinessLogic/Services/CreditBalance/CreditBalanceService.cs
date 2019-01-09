@@ -50,11 +50,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             foreach (var item in query.GroupBy(x => x.SupplierCode).ToList())
             {
+                var productsUnion = string.Join("\n", item.Select(x => x.Products).ToList());
+                var uniqueProducts = string.Join("\n", productsUnion.Split("\n").Distinct());
+
                 var creditBalance = new CreditBalanceViewModel()
                 {
                     StartBalance = DbSet.AsQueryable().Where(x => x.SupplierCode == item.Key
                                     && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == previousMonth
                                     && x.UnitReceiptNoteDate.Value.Year == previousYear).ToList().Sum(x => x.FinalBalance),
+                    Products = uniqueProducts,
                     Purchase = item.Sum(x => x.UnitReceiptMutation),
                     Payment = item.Sum(x => x.BankExpenditureNoteMutation),
                     FinalBalance = item.Sum(x => x.FinalBalance),

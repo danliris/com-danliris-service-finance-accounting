@@ -4,6 +4,8 @@
     {
         public string Currency { get; set; }
 
+        public string Products { get; set; }
+
         public string SupplierName { get; set; }
 
         public double StartBalance { get; set; }
