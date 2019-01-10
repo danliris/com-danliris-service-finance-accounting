@@ -11,5 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
         public double PPN { get; set; }
 
         public string Currency { get; set; }
+
+        public string Products { get; set; }
     }
 }
