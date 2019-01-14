@@ -29,6 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 InvoiceNo = "InvoiceNo",
                 SupplierCode = "SupplierCode",
                 SupplierName = "SupplierName",
+                Products = "- Product 1\n- Product 2",
                 Currency = "Currency"
             };
         }

@@ -17,6 +17,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         #region UnitReceiptNote
         public string UnitReceiptNoteNo { get; set; }
 
+        public string Products { get; set; }
+
         public DateTimeOffset? UnitReceiptNoteDate { get; set; }
 
         public double UnitReceiptNoteDPP { get; set; }

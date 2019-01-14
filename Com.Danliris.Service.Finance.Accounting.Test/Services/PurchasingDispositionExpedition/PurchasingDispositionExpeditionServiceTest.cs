@@ -1,10 +1,16 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionAcceptance;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionVerification;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispositionExpedition
@@ -169,7 +175,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async System.Threading.Tasks.Task Should_Fail_Post_Acceptance_Verification()
+        public async Task Should_Fail_Post_Acceptance_Verification()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
@@ -187,7 +193,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
                 }
             };
             await Assert.ThrowsAnyAsync<Exception>(() => service.PurchasingDispositionAcceptance(data));
-            
+
         }
 
         [Fact]
@@ -268,7 +274,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public  void Should_Success_Validate_Purchasing_Disposition_Acceptance_Vm()
+        public void Should_Success_Validate_Purchasing_Disposition_Acceptance_Vm()
         {
             PurchasingDispositionAcceptanceViewModel nullVM = new PurchasingDispositionAcceptanceViewModel();
             nullVM.PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>();
@@ -286,6 +292,203 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
 
             Assert.True(vm.Validate(null).Count() == 0);
 
+        }
+
+        [Fact]
+        public async void Should_Success_Post_Disposition_Verification_Update_Cashier()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
+
+            PurchasingDispositionVerificationViewModel data = new PurchasingDispositionVerificationViewModel()
+            {
+                DispositionNo = model.DispositionNo,
+                Id = model.Id,
+                Reason = "Reason",
+                SubmitPosition = ExpeditionPosition.SEND_TO_CASHIER_DIVISION,
+                VerifyDate = DateTimeOffset.UtcNow
+            };
+            var response = await service.PurchasingDispositionVerification(data);
+            Assert.NotEqual(0, response);
+        }
+
+        [Fact]
+        public async void Should_Success_Post_Disposition_Verification_Create_Purchasing()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
+
+            PurchasingDispositionVerificationViewModel data = new PurchasingDispositionVerificationViewModel()
+            {
+                DispositionNo = model.DispositionNo,
+                Id = 0,
+                Reason = "Reason",
+                SubmitPosition = ExpeditionPosition.SEND_TO_PURCHASING_DIVISION,
+                VerifyDate = DateTimeOffset.UtcNow
+            };
+            var response = await service.PurchasingDispositionVerification(data);
+            Assert.NotEqual(0, response);
+        }
+
+        [Fact]
+        public async Task Should_Fail_Post_Disposition_Verification()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
+
+            PurchasingDispositionVerificationViewModel data = new PurchasingDispositionVerificationViewModel()
+            {
+                DispositionNo = model.DispositionNo,
+                Id = 0,
+                Reason = "Reason",
+                SubmitPosition = ExpeditionPosition.SEND_TO_PURCHASING_DIVISION,
+                VerifyDate = DateTimeOffset.UtcNow
+            };
+            await Assert.ThrowsAnyAsync<Exception>(() => service.PurchasingDispositionVerification(data));
+
+        }
+
+        [Fact]
+        public async Task Should_Fail_Delete_Acceptance()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = await _dataUtil(service).GetTestData();
+            PurchasingDispositionAcceptanceViewModel data = new PurchasingDispositionAcceptanceViewModel()
+            {
+                Role = "CASHIER",
+                PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>()
+                {
+                    new PurchasingDispositionAcceptanceItemViewModel()
+                    {
+                        DispositionNo  = model.DispositionNo,
+                        Id = model.Id
+                    }
+                }
+            };
+            var acceptedResponse = await service.PurchasingDispositionAcceptance(data);
+            var newModel = await service.ReadByIdAsync(model.Id);
+            service = new PurchasingDispositionExpeditionService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
+            await Assert.ThrowsAnyAsync<Exception>(() => service.DeletePurchasingDispositionAcceptance(newModel.Id));
+
+        }
+
+        [Fact]
+        public void Should_No_Error_Validate_VM_Verification_Disposition()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionVerificationViewModel vm = new PurchasingDispositionVerificationViewModel()
+            {
+                DispositionNo = "DispositionNo",
+                Id = 1,
+                Reason = "Reason",
+                SubmitPosition = ExpeditionPosition.SEND_TO_PURCHASING_DIVISION,
+                VerifyDate = DateTimeOffset.UtcNow
+            };
+
+            Assert.True(vm.Validate(null).Count() == 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_VM_Verification_Disposition()
+        {
+            PurchasingDispositionVerificationViewModel vm = new PurchasingDispositionVerificationViewModel();
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+        [Fact]
+        public void Should_Success_Validate_Wrong_Verify_Date_VM_Verification_Disposition()
+        {
+            PurchasingDispositionVerificationViewModel vm = new PurchasingDispositionVerificationViewModel()
+            {
+                DispositionNo = "DispositionNo",
+                Id = 1,
+                Reason = "Reason",
+                SubmitPosition = ExpeditionPosition.SEND_TO_PURCHASING_DIVISION,
+                VerifyDate = DateTimeOffset.UtcNow.AddDays(1)
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async void Should_Success_Get_Report()
+        {
+            var serviceProvider = new Mock<IServiceProvider>();
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientFromPurchasingDisposition());
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(serviceProvider.Object, _dbContext(GetCurrentMethod()));
+
+            var postedModel = _dataUtil(service).GetNewData();
+            HttpClientFromPurchasingDisposition httpClientFromPurchasingDisposition = new HttpClientFromPurchasingDisposition();
+            postedModel.DispositionNo = httpClientFromPurchasingDisposition.GetPurchasingDispositionViewModel().DispositionNo;
+            await service.CreateAsync(postedModel);
+            var model = await service.ReadByIdAsync(postedModel.Id);
+            var reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", null, null, 7);
+            Assert.NotEmpty(reportResponse.Data);
+            reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), null, 7);
+            Assert.NotEmpty(reportResponse.Data);
+            reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", null, DateTimeOffset.UtcNow.AddDays(1), 7);
+            Assert.NotEmpty(reportResponse.Data);
+            reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1), 7);
+            Assert.NotEmpty(reportResponse.Data);
+        }
+
+        [Fact]
+        public void Should_Fail_Get_Report()
+        {
+            var service = new PurchasingDispositionExpeditionService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
+            Assert.ThrowsAsync<Exception>(() => service.GetReportAsync(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1), 7));
+
+        }
+
+        [Fact]
+        public async void Should_Success_Generate_Excel()
+        {
+            var serviceProvider = new Mock<IServiceProvider>();
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientFromPurchasingDisposition());
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(serviceProvider.Object, _dbContext(GetCurrentMethod()));
+
+            var postedModel = _dataUtil(service).GetNewData();
+            HttpClientFromPurchasingDisposition httpClientFromPurchasingDisposition = new HttpClientFromPurchasingDisposition();
+            postedModel.DispositionNo = httpClientFromPurchasingDisposition.GetPurchasingDispositionViewModel().DispositionNo;
+            await service.CreateAsync(postedModel);
+            var model = await service.ReadByIdAsync(postedModel.Id);
+            var reportResponse = service.GenerateExcelAsync(1, 25, "{}", "{}", null, null, 7);
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
+        public void Should_Success_Generate_Empty_Excel()
+        {
+            var serviceProvider = new Mock<IServiceProvider>();
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientFromPurchasingExpeditionGetEmpty());
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(serviceProvider.Object, _dbContext(GetCurrentMethod()));
+
+            var reportResponse = service.GenerateExcelAsync(1, 25, "{}", "{}", null, null, 7);
+            Assert.NotNull(reportResponse);
         }
     }
 }
