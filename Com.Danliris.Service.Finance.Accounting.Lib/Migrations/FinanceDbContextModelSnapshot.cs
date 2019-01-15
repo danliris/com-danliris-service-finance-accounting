@@ -87,6 +87,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<double>("MemoPPN");
 
+                    b.Property<string>("Products");
+
                     b.Property<string>("SupplierCode");
 
                     b.Property<string>("SupplierName");
@@ -370,6 +372,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(50);
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<bool>("IsReversed");
+
+                    b.Property<bool>("IsReverser");
 
                     b.Property<string>("LastModifiedAgent")
                         .IsRequired()

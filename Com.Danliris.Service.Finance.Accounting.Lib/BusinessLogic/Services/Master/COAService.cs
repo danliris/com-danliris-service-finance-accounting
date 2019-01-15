@@ -310,7 +310,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
                     using (var csvWriter = new CsvWriter(streamWriter))
                     {
-                        foreach(var item in CsvHeader)
+                        foreach (var item in CsvHeader)
                         {
                             csvWriter.WriteField(item);
                         }
@@ -321,5 +321,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
             }
         }
 
+        public List<COAModel> GetAll()
+        {
+            IQueryable<COAModel> query = DbSet.Select(x => new COAModel()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Code1 = x.Code1,
+                Code2 = x.Code2,
+                Code3 = x.Code3,
+                Code4 = x.Code4,
+                Code = x.Code,
+                Header = x.Header,
+                Subheader = x.Subheader,
+                Path = x.Path,
+                CashAccount = x.CashAccount,
+                Nature = x.Nature,
+                ReportType = x.ReportType,
+                LastModifiedUtc = x.LastModifiedUtc
+            });
+            
+
+            return query.ToList();
+        }
     }
 }

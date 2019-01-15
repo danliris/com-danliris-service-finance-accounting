@@ -26,10 +26,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
             var COA1 = Task.Run(() => _COADataUtil.GetTestData()).Result;
             JournalTransactionModel TestData = new JournalTransactionModel()
             {
-                DocumentNo = "DocumentNo",
+                DocumentNo = Guid.NewGuid().ToString(),
                 Description = "Description",
                 Date = DateTimeOffset.UtcNow,
-                ReferenceNo = "ReferenceNo",
+                ReferenceNo = Guid.NewGuid().ToString(),
                 Items = new List<JournalTransactionItemModel>()
                 {
                     new JournalTransactionItemModel()
@@ -51,10 +51,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
             var COA1 = Task.Run(() => _COADataUtil.GetTestData()).Result;
             JournalTransactionViewModel TestData = new JournalTransactionViewModel()
             {
-                DocumentNo = "DocumentNo",
+                DocumentNo = Guid.NewGuid().ToString(),
                 Description = "Description",
                 Date = DateTimeOffset.UtcNow,
-                ReferenceNo = "ReferenceNo",
+                ReferenceNo = Guid.NewGuid().ToString(),
                 Items = new List<JournalTransactionItemViewModel>()
                 {
                     new JournalTransactionItemViewModel()
