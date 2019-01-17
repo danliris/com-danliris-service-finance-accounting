@@ -32,7 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                 CurrencyId = nowTicksA,
                 CurrencyCode = nowTicksA,
                 PaymentDueDate = DateTimeOffset.Now,
-                InvoiceNo = nowTicksA,
+                ProformaNo = nowTicksA,
                 NotVerifiedReason = nowTicksA,
                 Position = ExpeditionPosition.CASHIER_DIVISION,
                 SendToCashierDivisionBy = nowTicksA,
@@ -61,8 +61,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                 BankExpenditureNotePPHDate = DateTimeOffset.Now,
                 BankExpenditureNotePPHNo = nowTicksA,
                 PaymentMethod = nowTicksA,
+                CategoryId=nowTicksA,
                 CategoryCode = nowTicksA,
                 CategoryName = nowTicksA,
+                DivisionCode=nowTicksA,
+                DivisionId=nowTicksA,
+                DivisionName=nowTicksA,
+                SupplierId=nowTicksA,
+                VatValue=1000,
+                IncomeTaxValue=100,
+                DPP=10000,
 
                 Items = new List<PurchasingDispositionExpeditionItemModel>
                 {
@@ -99,7 +107,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                     code = nowTicksA,
                 },
                 paymentDueDate = DateTimeOffset.Now,
-                invoiceNo = nowTicksA,
+                proformaNo = nowTicksA,
                 notVerifiedReason = nowTicksA,
                 position = (int)nowTicks,
                 sendToCashierDivisionBy = nowTicksA,
@@ -108,6 +116,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                 sendToPurchasingDivisionDate = DateTimeOffset.Now,
                 supplier = new SupplierViewModel
                 {
+                    _id= nowTicksA,
                     code = nowTicksA,
                     name = nowTicksA,
                 },
@@ -136,9 +145,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                 paymentMethod = nowTicksA,
                 category = new CategoryViewModel
                 {
+                    _id= nowTicksA,
                     name = nowTicksA,
                     code = nowTicksA,
                 },
+                division=new DivisionViewModel
+                {
+                    _id= nowTicksA,
+                    code= nowTicksA,
+                    name= nowTicksA
+                },
+                vatValue= 1000,
+                incomeTaxValue=100,
+                dpp=10000,
                 items = new List<PurchasingDispositionExpeditionItemViewModel>
                 {
                     new PurchasingDispositionExpeditionItemViewModel

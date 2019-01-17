@@ -16,13 +16,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositi
         [MaxLength(255)]
         public string CurrencyCode { get; set; }
         public DateTimeOffset PaymentDueDate { get; set; }
-        public string InvoiceNo { get; set; }
+        public string ProformaNo { get; set; }
         public string NotVerifiedReason { get; set; }
         public ExpeditionPosition Position { get; set; }
         public string SendToCashierDivisionBy { get; set; }
         public DateTimeOffset? SendToCashierDivisionDate { get; set; }
         public string SendToPurchasingDivisionBy { get; set; }
         public DateTimeOffset? SendToPurchasingDivisionDate { get; set; }
+        [MaxLength(255)]
+        public string SupplierId { get; set; }
         [MaxLength(255)]
         public string SupplierCode { get; set; }
         [MaxLength(255)]
@@ -48,9 +50,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositi
         public string BankExpenditureNotePPHNo { get; set; }
         public string PaymentMethod { get; set; }
         [MaxLength(255)]
+        public string CategoryId { get; set; }
+        [MaxLength(255)]
         public string CategoryCode { get; set; }
         [MaxLength(255)]
         public string CategoryName { get; set; }
+        [MaxLength(255)]
+        public string DivisionId { get; set; }
+        [MaxLength(255)]
+        public string DivisionCode { get; set; }
+        [MaxLength(255)]
+        public string DivisionName { get; set; }
+
+        public double DPP { get; set; }
+        public double VatValue { get; set; }
+        public double IncomeTaxValue { get; set; }
+    
 
         public virtual ICollection<PurchasingDispositionExpeditionItemModel> Items { get; set; }
 
