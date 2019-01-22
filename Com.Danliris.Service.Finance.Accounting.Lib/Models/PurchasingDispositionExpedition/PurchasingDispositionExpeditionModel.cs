@@ -37,14 +37,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositi
         public DateTimeOffset? VerificationDivisionDate { get; set; }
         public DateTimeOffset? VerifyDate { get; set; }
         public bool UseIncomeTax { get; set; }
-        public double IncomeTax { get; set; }
+        //public double IncomeTax { get; set; }
         public string IncomeTaxId { get; set; }
         public string IncomeTaxName { get; set; }
         public double IncomeTaxRate { get; set; }
         public bool IsPaid { get; set; }
         public bool IsPaidPPH { get; set; }
         public bool UseVat { get; set; }
-        public double Vat { get; set; }
+        //public double Vat { get; set; }
         public DateTimeOffset? BankExpenditureNoteDate { get; set; }
         public DateTimeOffset? BankExpenditureNotePPHDate { get; set; }
         public string BankExpenditureNotePPHNo { get; set; }
