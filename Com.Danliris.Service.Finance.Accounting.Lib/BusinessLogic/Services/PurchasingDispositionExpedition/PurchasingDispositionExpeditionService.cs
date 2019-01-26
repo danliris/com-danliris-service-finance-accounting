@@ -50,12 +50,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             {
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
             }
+            List<string> dispoNo = new List<string>();
+            dispoNo.Add(m.DispositionNo);
+            UpdateDispositionPosition(dispoNo, ExpeditionPosition.SEND_TO_VERIFICATION_DIVISION);
+
             DbSet.Add(m);
         }
 
         public async Task<int> CreateAsync(PurchasingDispositionExpeditionModel m)
         {
             CreateModel(m);
+            
             return await DbContext.SaveChangesAsync();
         }
 
@@ -67,6 +72,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             {
                 EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
             }
+            List<string> dispoNo = new List<string>();
+            dispoNo.Add(model.DispositionNo);
+            UpdateDispositionPosition(dispoNo, ExpeditionPosition.PURCHASING_DIVISION);
+
             DbSet.Update(model);
         }
 
