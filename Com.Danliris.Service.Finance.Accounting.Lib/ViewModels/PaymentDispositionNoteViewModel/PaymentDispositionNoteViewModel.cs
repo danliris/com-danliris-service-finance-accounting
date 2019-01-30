@@ -20,7 +20,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            throw new NotImplementedException();
+            if (this.AccountBank==null)
+            {
+                yield return new ValidationResult("Disposition is required", new List<string> { "purchaseDisposition" });
+            }
         }
     }
 }
