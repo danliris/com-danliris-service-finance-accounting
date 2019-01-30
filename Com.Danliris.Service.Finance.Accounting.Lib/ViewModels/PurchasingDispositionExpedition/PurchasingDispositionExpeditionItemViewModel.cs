@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
         public ProductViewModel product { get; set; }
         public double quantity { get; set; }
         public UnitViewModel unit { get; set; }
-        public string uom { get; set; }
+        public UomViewModel uom { get; set; }
         public int purchasingDispositionDetailId { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
