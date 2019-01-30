@@ -87,14 +87,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             Assert.NotNull(Response);
         }
 
-        [Fact]
-        public async void Should_Success_Create_Data()
-        {
-            PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
-            var Response = await service.CreateAsync(model);
-            Assert.NotEqual(0, Response);
-        }
+        //[Fact]
+        //public async void Should_Success_Create_Data()
+        //{
+        //    PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+        //    PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
+        //    var Response = await service.CreateAsync(model);
+        //    Assert.NotEqual(0, Response);
+        //}
 
     }
 }
