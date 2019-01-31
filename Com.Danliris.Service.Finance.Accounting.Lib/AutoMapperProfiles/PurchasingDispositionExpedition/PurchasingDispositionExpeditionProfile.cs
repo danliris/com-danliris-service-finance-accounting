@@ -20,6 +20,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Purchas
                 .ForPath(d => d.unit.code, opt => opt.MapFrom(s => s.UnitCode))
                 .ForPath(d => d.unit.name, opt => opt.MapFrom(s => s.UnitName))
 
+                .ForPath(d => d.uom._id, opt => opt.MapFrom(s => s.UomId))
+                .ForPath(d => d.uom.unit, opt => opt.MapFrom(s => s.UomUnit))
+
                 .ReverseMap();
 
             CreateMap<PurchasingDispositionExpeditionModel, PurchasingDispositionExpeditionViewModel>()

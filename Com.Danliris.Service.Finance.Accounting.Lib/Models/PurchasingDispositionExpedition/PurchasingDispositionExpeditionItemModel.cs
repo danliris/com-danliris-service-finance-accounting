@@ -23,7 +23,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositi
         public string UnitCode { get; set; }
         [MaxLength(255)]
         public string UnitName { get; set; }
-        public string Uom { get; set; }
+        public string UomId { get; set; }
+        public string UomUnit { get; set; }
         public int PurchasingDispositionDetailId { get; set; }
         public virtual int PurchasingDispositionExpeditionId { get; set; }
         [ForeignKey("PurchasingDispositionExpeditionId")]

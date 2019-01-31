@@ -82,7 +82,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                         UnitId = nowTicksA,
                         UnitCode = nowTicksA,
                         UnitName = nowTicksA,
-                        Uom = nowTicksA,
+                        UomUnit = nowTicksA,
+                        UomId = nowTicksA,
                         PurchasingDispositionDetailId = (int)nowTicks
                     }
                 }
@@ -174,7 +175,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                             code = nowTicksA,
                             name = nowTicksA,
                         },
-                        uom = nowTicksA,
+                        uom = new UomViewModel
+                        {
+                            _id = nowTicksA,
+                            unit=nowTicksA
+                        },
                         purchasingDispositionDetailId =(int) nowTicks,
                     }
                 }

@@ -5,12 +5,14 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Credi
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -71,7 +73,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IJournalTransactionService, JournalTransactionService>()
                 .AddTransient<ICreditBalanceService, CreditBalanceService>()
                 .AddTransient<IDailyBankTransactionService, DailyBankTransactionService>()
-                .AddTransient<IPurchasingDispositionExpeditionService, PurchasingDispositionExpeditionService>();
+                .AddTransient<IPurchasingDispositionExpeditionService, PurchasingDispositionExpeditionService>()
+                .AddTransient<IPaymentDispositionNoteService, PaymentDispositionNoteService>();
         }
 
 

@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190129021633_Initial_PaymentDispositionNote")]
+    partial class Initial_PaymentDispositionNote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,8 +88,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("MemoNo");
 
                     b.Property<double>("MemoPPN");
-
-                    b.Property<string>("Products");
 
                     b.Property<string>("SupplierCode");
 
@@ -785,9 +785,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("UnitName")
                         .HasMaxLength(255);
 
-                    b.Property<string>("UomId");
-
-                    b.Property<string>("UomUnit");
+                    b.Property<string>("Uom");
 
                     b.HasKey("Id");
 
