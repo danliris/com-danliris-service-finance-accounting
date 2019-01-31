@@ -34,7 +34,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                     AccountBank=new AccountBankViewModel(),
                     BGCheckNumber= It.IsAny<string>(),
                     BankAccountCOA= It.IsAny<string>(),
-                    PaymentDate= It.IsAny<DateTimeOffset>(),
+                    PaymentDispositionNo = It.IsAny<string>(),
+                    PaymentDate = It.IsAny<DateTimeOffset>(),
+                    Amount = It.IsAny<double>(),
                     Items = new List<PaymentDispositionNoteItemViewModel>
                     {
                         new PaymentDispositionNoteItemViewModel()
@@ -112,16 +114,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             return GetStatusCode(response);
         }
 
-        //[Fact]
-        //public void Get_WithoutException_ReturnOK()
-        //{
-        //    var mocks = GetMocks();
-        //    mocks.Service.Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Returns(new ReadResponse<PaymentDispositionNoteModel>(new List<PaymentDispositionNoteModel>(), 0, new Dictionary<string, string>(), new List<string>()));
-        //    mocks.Mapper.Setup(f => f.Map<List<PaymentDispositionNoteViewModel>>(It.IsAny<List<PaymentDispositionNoteViewModel>>())).Returns(new List<PaymentDispositionNoteViewModel>());
+        [Fact]
+        public void Get_WithoutException_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service
+                .Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new ReadResponse<PaymentDispositionNoteModel>(new List<PaymentDispositionNoteModel>() {new PaymentDispositionNoteModel() }, 0, new Dictionary<string, string>(), new List<string>()));
+            mocks.Mapper
+                .Setup(f => f.Map<List<PaymentDispositionNoteViewModel>>(It.IsAny<List<PaymentDispositionNoteModel>>()))
+                .Returns(new List<PaymentDispositionNoteViewModel>());
 
-        //    var response = GetController(mocks).Get();
-        //    Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
-        //}
+            var response = GetController(mocks).Get();
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
 
         [Fact]
         public void Get_ReadThrowException_ReturnInternalServerError()
