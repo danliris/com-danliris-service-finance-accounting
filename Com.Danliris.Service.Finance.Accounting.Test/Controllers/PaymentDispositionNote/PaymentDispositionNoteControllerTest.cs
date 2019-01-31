@@ -32,16 +32,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                 {
                     Supplier = new SupplierViewModel(),
                     AccountBank=new AccountBankViewModel(),
-                    
+                    BGCheckNumber= It.IsAny<string>(),
+                    BankAccountCOA= It.IsAny<string>(),
+                    PaymentDate= It.IsAny<DateTimeOffset>(),
                     Items = new List<PaymentDispositionNoteItemViewModel>
                     {
                         new PaymentDispositionNoteItemViewModel()
                         {
                             category=new Lib.ViewModels.IntegrationViewModel.CategoryViewModel(),
-                            Details=new List<PaymentDispositionNoteDetailViewModel>()
+                            division=new Lib.ViewModels.IntegrationViewModel.DivisionViewModel(),
+                            dispositionDate= It.IsAny<DateTimeOffset>(),
+                            dispositionNo=It.IsAny<string>(),
+                            dispositionId=It.IsAny<string>(),
+                            incomeTaxValue=It.IsAny<double>(),
+                            dpp=It.IsAny<double>(),
+                            vatValue=It.IsAny<double>(),
+                            totalPaid=It.IsAny<double>(),
+                            proformaNo=It.IsAny<string>(),
+                            Details =new List<PaymentDispositionNoteDetailViewModel>()
                             {
                                 new PaymentDispositionNoteDetailViewModel()
                                 {
+                                    uom=new Lib.ViewModels.IntegrationViewModel.UomViewModel(),
+                                    price=It.IsAny<double>(),
+                                    quantity=It.IsAny<double>(),
                                     product = new Lib.ViewModels.IntegrationViewModel.ProductViewModel(),
                                     unit = new Lib.ViewModels.IntegrationViewModel.UnitViewModel(),
                                 }
