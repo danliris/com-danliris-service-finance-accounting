@@ -193,5 +193,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
             await Service.CreateAsync(model);
             return await Service.ReadByIdAsync(model.Id);
         }
+
+        public async Task<PurchasingDispositionExpeditionModel> GetTestData2()
+        {
+            PurchasingDispositionExpeditionModel model = GetNewData();
+            await Service.CreateAsync(model);
+            PurchasingDispositionExpeditionModel model2 = GetNewData();
+            model2.DispositionNo = model.DispositionNo;
+            model2.DispositionId = model.DispositionId;
+            await Service.CreateAsync(model2);
+            return await Service.ReadByIdAsync(model.Id);
+        }
     }
 }
