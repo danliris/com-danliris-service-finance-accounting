@@ -47,6 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
         public double dpp { get; set; }
         public double vatValue { get; set; }
         public double incomeTaxValue { get; set; }
+        public double payToSupplier { get; set; }
         public List<PurchasingDispositionExpeditionItemViewModel> items { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

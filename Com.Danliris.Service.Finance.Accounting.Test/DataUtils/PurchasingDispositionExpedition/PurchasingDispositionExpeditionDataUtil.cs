@@ -69,6 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                 VatValue=1000,
                 IncomeTaxValue=100,
                 DPP=10000,
+                PayToSupplier=10000,
 
                 Items = new List<PurchasingDispositionExpeditionItemModel>
                 {
@@ -142,6 +143,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                 bankExpenditureNotePPHDate = DateTimeOffset.Now,
                 bankExpenditureNotePPHNo = nowTicksA,
                 paymentMethod = nowTicksA,
+                payToSupplier=10000,
                 category = new CategoryViewModel
                 {
                     _id= nowTicksA,
@@ -191,6 +193,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
         {
             PurchasingDispositionExpeditionModel model = GetNewData();
             await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<PurchasingDispositionExpeditionModel> GetTestData2()
+        {
+            PurchasingDispositionExpeditionModel model = GetNewData();
+            await Service.CreateAsync(model);
+            PurchasingDispositionExpeditionModel model2 = GetNewData();
+            model2.DispositionNo = model.DispositionNo;
+            model2.DispositionId = model.DispositionId;
+            await Service.CreateAsync(model2);
             return await Service.ReadByIdAsync(model.Id);
         }
     }

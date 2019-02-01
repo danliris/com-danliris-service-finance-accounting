@@ -65,7 +65,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositi
         public double DPP { get; set; }
         public double VatValue { get; set; }
         public double IncomeTaxValue { get; set; }
-    
+        public double PayToSupplier { get; set; }
+
 
         public virtual ICollection<PurchasingDispositionExpeditionItemModel> Items { get; set; }
 

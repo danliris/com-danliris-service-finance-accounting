@@ -67,15 +67,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         public async Task DeleteModel(int id)
         {
             PurchasingDispositionExpeditionModel model = await ReadByIdAsync(id);
-            EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
             foreach (var item in model.Items)
             {
                 EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
             }
+
             List<string> dispoNo = new List<string>();
             dispoNo.Add(model.DispositionNo);
-            UpdateDispositionPosition(dispoNo, ExpeditionPosition.PURCHASING_DIVISION);
 
+            var dispoCount = this.DbSet.Count(x => x.DispositionNo == model.DispositionNo && x.IsDeleted == false && x.Id!=model.Id);
+            if (dispoCount > 0)
+            {
+                UpdateDispositionPosition(dispoNo, ExpeditionPosition.SEND_TO_PURCHASING_DIVISION);
+            }
+            else
+            {
+                UpdateDispositionPosition(dispoNo, ExpeditionPosition.PURCHASING_DIVISION);
+            }
+
+            EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
             DbSet.Update(model);
         }
 
@@ -247,7 +257,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     PurchasingDispositionExpeditionModel model;
                     if (data.Id == 0)
                     {
-                        model = DbContext.PurchasingDispositionExpeditions.First(x => x.DispositionNo == data.DispositionNo);
+                        model = DbContext.PurchasingDispositionExpeditions.OrderByDescending(x=>x.LastModifiedUtc).First(x => x.DispositionNo == data.DispositionNo);
                     }
                     else
                     {
