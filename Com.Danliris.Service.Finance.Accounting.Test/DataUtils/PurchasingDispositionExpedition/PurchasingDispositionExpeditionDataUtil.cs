@@ -69,6 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                 VatValue=1000,
                 IncomeTaxValue=100,
                 DPP=10000,
+                PayToSupplier=10000,
 
                 Items = new List<PurchasingDispositionExpeditionItemModel>
                 {
@@ -142,6 +143,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                 bankExpenditureNotePPHDate = DateTimeOffset.Now,
                 bankExpenditureNotePPHNo = nowTicksA,
                 paymentMethod = nowTicksA,
+                payToSupplier=10000,
                 category = new CategoryViewModel
                 {
                     _id= nowTicksA,
