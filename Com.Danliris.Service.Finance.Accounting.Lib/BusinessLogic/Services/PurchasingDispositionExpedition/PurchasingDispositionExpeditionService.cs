@@ -275,6 +275,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         model.Active = false;
                         model.NotVerifiedReason = data.Reason;
 
+                        model.SendToCashierDivisionBy = null;
+                        model.SendToCashierDivisionDate = DateTimeOffset.MinValue;
+
+
                         EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
                         updated = await DbContext.SaveChangesAsync();
                         UpdateDispositionPosition(new List<string>() { model.DispositionNo }, ExpeditionPosition.SEND_TO_PURCHASING_DIVISION);
@@ -287,6 +291,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         model.SendToCashierDivisionDate = data.VerifyDate;
                         model.Position = ExpeditionPosition.SEND_TO_CASHIER_DIVISION;
                         model.Active = true;
+
+                        model.SendToPurchasingDivisionBy = null;
+                        model.SendToPurchasingDivisionDate = DateTimeOffset.MinValue;
+                        model.NotVerifiedReason = null;
 
                         EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
                         updated = await DbContext.SaveChangesAsync();
