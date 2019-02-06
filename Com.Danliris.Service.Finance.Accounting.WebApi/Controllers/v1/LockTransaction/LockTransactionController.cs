@@ -61,8 +61,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.LockTran
         {
             var typeOptions = new List<string>()
             {
-                "Bon Terima Unit",
-                "Surat Perintah Bayar"
+                "Pembelian",
+                "Penjualan",
+                "Keuangan"
             };
             Dictionary<string, object> Result =
                 new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
