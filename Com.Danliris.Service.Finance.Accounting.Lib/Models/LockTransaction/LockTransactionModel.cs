@@ -7,7 +7,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.LockTransaction
 {
     public class LockTransactionModel : StandardEntity, IValidatableObject
     {
-        public DateTimeOffset LockDate { get; set; }
+        public DateTimeOffset EndLockDate { get; set; }
+        public DateTimeOffset BeginLockDate { get; set; }
         public string Description { get; set; }
         public bool IsActiveStatus { get; set; }
         public string Type { get; set; }

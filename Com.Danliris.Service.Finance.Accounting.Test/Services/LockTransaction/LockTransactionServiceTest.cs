@@ -110,6 +110,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.LockTransaction
         }
 
         [Fact]
+        public void Should_Success_Validate_NotValidDate()
+        {
+            var vm = new LockTransactionViewModel
+            {
+                BeginLockDate = DateTimeOffset.Now.AddDays(1),
+                EndLockDate = DateTimeOffset.Now
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_NotValidDate_GreaterThanNow()
+        {
+            var vm = new LockTransactionViewModel
+            {
+                EndLockDate = DateTimeOffset.Now.AddDays(1)
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
         public async Task Should_Success_Update_Data()
         {
             var service = new LockTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));

@@ -23,7 +23,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.LockTransaction
             {
                 Description = "Description",
                 IsActiveStatus = false,
-                LockDate = DateTimeOffset.Now,
+                BeginLockDate = DateTimeOffset.Now.AddDays(-2),
+                EndLockDate = DateTimeOffset.Now,
                 Type = "Type"
             };
         }
@@ -34,7 +35,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.LockTransaction
             {
                 Description = "Description",
                 IsActiveStatus = false,
-                LockDate = DateTimeOffset.Now,
+                BeginLockDate = DateTimeOffset.Now.AddDays(-2),
+                EndLockDate = DateTimeOffset.Now,
                 Type = "Type"
 
             };
