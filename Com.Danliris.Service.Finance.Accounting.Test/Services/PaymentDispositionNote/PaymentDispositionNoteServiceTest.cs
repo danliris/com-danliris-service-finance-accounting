@@ -122,10 +122,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             var Response1 = await service.UpdateAsync(newModel.Id, newModel);
             Assert.NotEqual(0, Response1);
 
-            List<PaymentDispositionNoteItemModel> item = new List<PaymentDispositionNoteItemModel>();
-            item.Add(model.Items.First());
-            newModel.Items = item;
-            var Response = await service.UpdateAsync(newModel.Id,newModel);
+            PaymentDispositionNoteModel model2 = await _dataUtil(service, GetCurrentMethod()).GetTestData();
+            //var newModel2 = await service.ReadByIdAsync(model.Id);
+            model2.Items.Remove(model2.Items.First());
+            var Response = await service.UpdateAsync(model2.Id, model2);
             Assert.NotEqual(0, Response);
         }
 

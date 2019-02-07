@@ -172,6 +172,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
 
+        //[Fact]
+        //public async Task Post_BadRequest()
+        //{
+        //    var mocks = GetMocks();
+        //    mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Verifiable();
+        //    mocks.Service.Setup(s => s.CreateAsync(It.IsAny<PaymentDispositionNoteModel>())).ReturnsAsync(1);
+
+        //    int statusCode = await GetStatusCodePost(mocks);
+        //    Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        //}
+
         [Fact]
         public void Post_Throws_Validation_Exception()
         {
@@ -181,6 +192,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
 
             var mockFacade = new Mock<IPaymentDispositionNoteService>();
             var mockIdentity = new Mock<IIdentityService>();
+            var ViewModel = this.ViewModel;
+            ViewModel.PaymentDate = DateTimeOffset.MinValue;
             var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Post(ViewModel).Result;
             Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
         }
@@ -271,6 +284,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
 
             int statusCode = await GetStatusCodePut(mocks);
             Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+        [Fact]
+        public void Update_Throws_Validation_Exception()
+        {
+            var validateMock = new Mock<IValidateService>();
+            validateMock.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Throws(GetServiceValidationExeption());
+            var mockMapper = new Mock<IMapper>();
+
+            var mockFacade = new Mock<IPaymentDispositionNoteService>();
+            var mockIdentity = new Mock<IIdentityService>();
+            var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Put(It.IsAny<int>(),ViewModel).Result;
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
         }
 
         //[Fact]
