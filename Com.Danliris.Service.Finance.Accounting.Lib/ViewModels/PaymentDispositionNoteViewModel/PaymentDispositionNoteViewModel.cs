@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
     public class PaymentDispositionNoteViewModel : BaseViewModel, IValidatableObject
     {
         public string BGCheckNumber { get; set; }
+
         public AccountBankViewModel AccountBank { get; set; }
         public string PaymentDispositionNo { get; set; }
         public double Amount { get; set; }
@@ -20,9 +21,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (this.AccountBank==null)
+            if (this.AccountBank == null || this.AccountBank.Id == 0)
             {
-                yield return new ValidationResult("Disposition is required", new List<string> { "purchaseDisposition" });
+                yield return new ValidationResult("Bank harus dipilih", new List<string> { "bank" });
+            }
+
+            if (this.Supplier == null || this.Supplier.Id == 0)
+            {
+                yield return new ValidationResult("Supplier harus dipilih", new List<string> { "Supplier" });
+            }
+
+            if (this.PaymentDate.Equals(DateTimeOffset.MinValue) || this.PaymentDate == null)
+            {
+                yield return new ValidationResult("Tanggal Pembayaran harus diisi", new List<string> { "PaymentDate" });
+            }
+            if (this.Items.Count == 0)
+            {
+                yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "Items" });
             }
         }
     }
