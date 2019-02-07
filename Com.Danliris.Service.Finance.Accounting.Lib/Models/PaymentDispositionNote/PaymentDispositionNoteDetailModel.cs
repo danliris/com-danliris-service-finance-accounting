@@ -11,7 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionN
     {
         public virtual int PaymentDispositionNoteItemId { get; set; }
         [ForeignKey("PaymentDispositionNoteItemId")]
-        public virtual PaymentDispositionNoteModel PaymentDispositionNoteItem { get; set; }
+        public virtual PaymentDispositionNoteItemModel PaymentDispositionNoteItem { get; set; }
        
         public double Price { get; set; }
         [MaxLength(255)]

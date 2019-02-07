@@ -67,18 +67,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] List<PaymentDispositionNoteViewModel> viewModel)
+        public async Task<ActionResult> Post([FromBody] PaymentDispositionNoteViewModel viewModel)
         {
             try
             {
                 VerifyUser();
+                
                 ValidateService.Validate(viewModel);
-                foreach (var vm in viewModel)
-                {
-                    ValidateService.Validate(viewModel);
-                    PaymentDispositionNoteModel model = Mapper.Map<PaymentDispositionNoteModel>(vm);
-                    await Service.CreateAsync(model);
-                }
+                PaymentDispositionNoteModel model = Mapper.Map<PaymentDispositionNoteModel>(viewModel);
+                await Service.CreateAsync(model);
 
                 Dictionary<string, object> Result =
                        new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
@@ -99,6 +96,88 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
+        }
+
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetById([FromRoute] int id)
+        {
+            try
+            {
+                PaymentDispositionNoteModel model = await Service.ReadByIdAsync(id);
+
+                if (model == null)
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                        .Fail();
+                    return NotFound(Result);
+                }
+                else
+                {
+                    PaymentDispositionNoteViewModel viewModel = Mapper.Map<PaymentDispositionNoteViewModel>(model);
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                        .Ok<PaymentDispositionNoteViewModel>(Mapper, viewModel);
+                    return Ok(Result);
+                }
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await Service.DeleteAsync(id);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromRoute]int id, [FromBody]PaymentDispositionNoteViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+
+                ValidateService.Validate(viewModel);
+                PaymentDispositionNoteModel model = Mapper.Map<PaymentDispositionNoteModel>(viewModel);
+                await Service.UpdateAsync(id,model);
+
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+
         }
     }
 }

@@ -84,6 +84,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
         public async Task DeleteModel(int id)
         {
             PaymentDispositionNoteModel model = await ReadByIdAsync(id);
+            foreach (var item in model.Items)
+            {
+                PurchasingDispositionExpeditionModel expedition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(ex => ex.Id.Equals(item.PurchasingDispositionExpeditionId));
+                EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
+                expedition.IsPaid = false;
+                expedition.BankExpenditureNoteNo = null;
+                expedition.BankExpenditureNoteDate = DateTimeOffset.MinValue;
+                foreach (var detail in item.Details)
+                {
+                    EntityExtension.FlagForDelete(detail, IdentityService.Username, UserAgent, true);
+                }
+            }
             EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
             DbSet.Update(model);
         }
@@ -107,8 +119,49 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public void UpdateModel(int id, PaymentDispositionNoteModel model)
         {
-            EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
-            DbSet.Update(model);
+            PaymentDispositionNoteModel exist = DbSet
+                        .Include(d => d.Items)
+                        .ThenInclude(d => d.Details)
+                        .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
+
+            exist.BGCheckNumber = model.BGCheckNumber;
+            exist.PaymentDate = model.PaymentDate;
+
+            foreach (var item in exist.Items)
+            {
+                PaymentDispositionNoteItemModel itemModel = model.Items.FirstOrDefault(prop => prop.Id.Equals(item.Id));
+
+                if (itemModel == null)
+                {
+                    PurchasingDispositionExpeditionModel expedition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(ex => ex.Id.Equals(item.PurchasingDispositionExpeditionId));
+                    expedition.IsPaid = false;
+                    expedition.BankExpenditureNoteNo = null;
+                    expedition.BankExpenditureNoteDate = DateTimeOffset.MinValue;
+
+                    EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
+
+                    foreach (var detail in item.Details)
+                    {
+                        EntityExtension.FlagForDelete(detail, IdentityService.Username, UserAgent, true);
+                        //DbContext.PaymentDispositionNoteDetails.Update(detail);
+                    }
+
+                    //DbContext.PaymentDispositionNoteItems.Update(item);
+                }
+                else
+                {
+                    EntityExtension.FlagForUpdate(item, IdentityService.Username, UserAgent);
+
+                    foreach (var detail in DbContext.PaymentDispositionNoteDetails.AsNoTracking().Where(p => p.PaymentDispositionNoteItemId == item.Id))
+                    {
+                        EntityExtension.FlagForUpdate(detail, IdentityService.Username, UserAgent);
+
+                    }
+                }
+            }
+
+            EntityExtension.FlagForUpdate(exist, IdentityService.Username, UserAgent);
+            //DbSet.Update(exist);
         }
 
         public ReadResponse<PaymentDispositionNoteModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)

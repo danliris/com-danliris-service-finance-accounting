@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Purchas
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
@@ -13,6 +14,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Xunit;
@@ -70,6 +72,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         }
 
         [Fact]
+        public async void Should_Success_Create_Data()
+        {
+            PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PaymentDispositionNoteModel model =  _dataUtil(service, GetCurrentMethod()).GetNewData();
+            var Response = await service.CreateAsync(model);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
         public async void Should_Success_Get_Data()
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
@@ -87,14 +98,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             Assert.NotNull(Response);
         }
 
-        //[Fact]
-        //public async void Should_Success_Create_Data()
-        //{
-        //    PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-        //    PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
-        //    var Response = await service.CreateAsync(model);
-        //    Assert.NotEqual(0, Response);
-        //}
+        [Fact]
+        public async void Should_Success_Delete_Data()
+        {
+            PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+
+            PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
+            var newModel = await service.ReadByIdAsync(model.Id);
+
+            var Response = await service.DeleteAsync(newModel.Id);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async void Should_Success_Update_Data()
+        {
+            PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+
+            PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
+            var newModel = await service.ReadByIdAsync(model.Id);
+            newModel.BGCheckNumber = "newBG";
+            var Response1 = await service.UpdateAsync(newModel.Id, newModel);
+            Assert.NotEqual(0, Response1);
+
+            PaymentDispositionNoteModel model2 = await _dataUtil(service, GetCurrentMethod()).GetTestData();
+            //var newModel2 = await service.ReadByIdAsync(model.Id);
+            PaymentDispositionNoteModel newModel2 = new PaymentDispositionNoteModel();
+            newModel2.Id = model2.Id;
+            
+            newModel2.Items =new List<PaymentDispositionNoteItemModel> { model2.Items.First() };
+            var Response = await service.UpdateAsync(model2.Id, newModel2);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_Data()
+        {
+            PaymentDispositionNoteViewModel vm = new PaymentDispositionNoteViewModel();
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
 
     }
 }

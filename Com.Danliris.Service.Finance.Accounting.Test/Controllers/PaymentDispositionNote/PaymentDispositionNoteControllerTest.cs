@@ -37,6 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                     PaymentDispositionNo = It.IsAny<string>(),
                     PaymentDate = It.IsAny<DateTimeOffset>(),
                     Amount = It.IsAny<double>(),
+                    
                     Items = new List<PaymentDispositionNoteItemViewModel>
                     {
                         new PaymentDispositionNoteItemViewModel()
@@ -51,6 +52,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                             vatValue=It.IsAny<double>(),
                             totalPaid=It.IsAny<double>(),
                             proformaNo=It.IsAny<string>(),
+                            paymentDueDate=It.IsAny<DateTimeOffset>(),
+                            payToSupplier=It.IsAny<double>(),
                             Details =new List<PaymentDispositionNoteDetailViewModel>()
                             {
                                 new PaymentDispositionNoteDetailViewModel()
@@ -98,12 +101,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
         }
 
-        private ServiceValidationExeption GetServiceValidationExeption()
+        private ServiceValidationException GetServiceValidationExeption()
         {
             Mock<IServiceProvider> serviceProvider = new Mock<IServiceProvider>();
             List<ValidationResult> validationResults = new List<ValidationResult>();
             System.ComponentModel.DataAnnotations.ValidationContext validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(this.ViewModel, serviceProvider.Object, null);
-            return new ServiceValidationExeption(validationContext, validationResults);
+            return new ServiceValidationException(validationContext, validationResults);
         }
 
         private int GetStatusCodeGet((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPaymentDispositionNoteService> Service, Mock<IMapper> Mapper) mocks)
@@ -142,7 +145,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
         private async Task<int> GetStatusCodePost((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPaymentDispositionNoteService> Service, Mock<IMapper> Mapper) mocks)
         {
             PaymentDispositionNoteController controller = GetController(mocks);
-            IActionResult response = await controller.Post(new List<PaymentDispositionNoteViewModel> { this.ViewModel });
+            IActionResult response = await controller.Post(ViewModel);
 
             return GetStatusCode(response);
         }
@@ -167,6 +170,154 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
 
             int statusCode = await GetStatusCodePost(mocks);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public void Post_Throws_Validation_Exception()
+        {
+            var validateMock = new Mock<IValidateService>();
+            validateMock.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Throws(GetServiceValidationExeption());
+            var mockMapper = new Mock<IMapper>();
+
+            var mockFacade = new Mock<IPaymentDispositionNoteService>();
+            var mockIdentity = new Mock<IIdentityService>();
+            var ViewModel = this.ViewModel;
+            ViewModel.PaymentDate = DateTimeOffset.MinValue;
+            var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Post(ViewModel).Result;
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
+        }
+
+        private async Task<int> GetStatusCodeGetById((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPaymentDispositionNoteService> Service, Mock<IMapper> Mapper) mocks)
+        {
+            PaymentDispositionNoteController controller = GetController(mocks);
+            IActionResult response = await controller.GetById(1);
+
+            return GetStatusCode(response);
+        }
+
+        [Fact]
+        public async Task GetById_NotNullModel_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new PaymentDispositionNoteModel());
+
+            int statusCode = await GetStatusCodeGetById(mocks);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public async Task GetById_NullModel_ReturnNotFound()
+        {
+            var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<PaymentDispositionNoteViewModel>(It.IsAny<PaymentDispositionNoteModel>())).Returns(ViewModel);
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync((PaymentDispositionNoteModel)null);
+
+            int statusCode = await GetStatusCodeGetById(mocks);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+        [Fact]
+        public async Task GetById_ThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            int statusCode = await GetStatusCodeGetById(mocks);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void Delete_Success()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.DeleteAsync(It.IsAny<int>())).ReturnsAsync(1);
+
+            var response = GetController(mocks).Delete(1).Result;
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void Delete_Throws_Internal_Error()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.DeleteAsync(It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).Delete(1).Result;
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void Delete_Throws_Internal_Error_Aggregate()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.DeleteAsync(It.IsAny<int>())).Throws(new AggregateException());
+
+            var response = GetController(mocks).Delete(1).Result;
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        private async Task<int> GetStatusCodePut((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPaymentDispositionNoteService> Service, Mock<IMapper> Mapper) mocks)
+        {
+            PaymentDispositionNoteController controller = GetController(mocks);
+            IActionResult response = await controller.Put(ViewModel.Id,ViewModel);
+
+            return GetStatusCode(response);
+        }
+
+        [Fact]
+        public async Task Put_WithoutException_ReturnUpdated()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.UpdateAsync(It.IsAny<int>(), It.IsAny<PaymentDispositionNoteModel>())).ReturnsAsync(1);
+
+            int statusCode = await GetStatusCodePut(mocks);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+        [Fact]
+        public void Update_Throws_Validation_Exception()
+        {
+            var validateMock = new Mock<IValidateService>();
+            validateMock.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Throws(GetServiceValidationExeption());
+            var mockMapper = new Mock<IMapper>();
+
+            var mockFacade = new Mock<IPaymentDispositionNoteService>();
+            var mockIdentity = new Mock<IIdentityService>();
+            var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Put(It.IsAny<int>(),ViewModel).Result;
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
+        }
+
+        //[Fact]
+        //public void Update_Success()
+        //{
+        //    var mocks = GetMocks();
+        //    mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Verifiable();
+        //    mocks.Service.Setup(s => s.UpdateAsync(It.IsAny<int>(), It.IsAny<PaymentDispositionNoteModel>())).ReturnsAsync(1);
+
+        //    int statusCode = await GetStatusCodePut(mocks);
+        //    Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        //}
+
+        [Fact]
+        public void Update_Throws_Internal_Error()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.UpdateAsync(It.IsAny<int>(), It.IsAny<PaymentDispositionNoteModel>())).Throws(new Exception());
+
+            var response = GetController(mocks).Put(1,It.IsAny<PaymentDispositionNoteViewModel>()).Result;
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void Update_Throws_Internal_Error_Aggregate()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.UpdateAsync(It.IsAny<int>(), It.IsAny<PaymentDispositionNoteModel>())).Throws(new AggregateException());
+
+            var response = GetController(mocks).Put(1, It.IsAny<PaymentDispositionNoteViewModel>()).Result;
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
 }
