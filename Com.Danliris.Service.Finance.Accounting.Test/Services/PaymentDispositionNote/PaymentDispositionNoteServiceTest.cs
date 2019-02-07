@@ -13,6 +13,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Xunit;
@@ -70,6 +71,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         }
 
         [Fact]
+        public async void Should_Success_Create_Data()
+        {
+            PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PaymentDispositionNoteModel model =  _dataUtil(service, GetCurrentMethod()).GetNewData();
+            var Response = await service.CreateAsync(model);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
         public async void Should_Success_Get_Data()
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
@@ -87,14 +97,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             Assert.NotNull(Response);
         }
 
-        //[Fact]
-        //public async void Should_Success_Create_Data()
-        //{
-        //    PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-        //    PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
-        //    var Response = await service.CreateAsync(model);
-        //    Assert.NotEqual(0, Response);
-        //}
+        [Fact]
+        public async void Should_Success_Delete_Data()
+        {
+            PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+
+            PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
+            var newModel = await service.ReadByIdAsync(model.Id);
+
+            var Response = await service.DeleteAsync(newModel.Id);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async void Should_Success_Update_Data()
+        {
+            PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+
+            PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
+            var newModel = await service.ReadByIdAsync(model.Id);
+            newModel.BGCheckNumber = "newBG";
+            var Response1 = await service.UpdateAsync(newModel.Id, newModel);
+            Assert.NotEqual(0, Response1);
+
+            List<PaymentDispositionNoteItemModel> item = new List<PaymentDispositionNoteItemModel>();
+            item.Add(model.Items.First());
+            newModel.Items = item;
+            var Response = await service.UpdateAsync(newModel.Id,newModel);
+            Assert.NotEqual(0, Response);
+        }
 
     }
 }

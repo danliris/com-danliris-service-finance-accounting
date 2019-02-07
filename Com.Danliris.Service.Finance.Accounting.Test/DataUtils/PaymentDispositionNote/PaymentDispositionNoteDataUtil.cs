@@ -83,6 +83,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PaymentDisposit
                             }
                         }
 
+                    },
+                    new PaymentDispositionNoteItemModel
+                    {
+                        PurchasingDispositionExpeditionId=datas.Id,
+                        CategoryCode=datas.CategoryId,
+                        CategoryId=1,
+                        CategoryName=datas.CategoryName,
+                        DispositionDate=DateTimeOffset.Now,
+                        DispositionId=1,
+                        DispositionNo=datas.DispositionNo,
+                        DivisionCode=datas.DivisionCode,
+                        DivisionId=1,
+                        DivisionName=datas.DivisionName,
+                        DPP=datas.DPP,
+                        VatValue=datas.DPP,
+                        IncomeTaxValue=datas.IncomeTaxValue,
+                        ProformaNo=datas.ProformaNo,
+                        TotalPaid=datas.TotalPaid,
+                        Details= new List<PaymentDispositionNoteDetailModel>
+                        {
+                            new PaymentDispositionNoteDetailModel
+                            {
+                                ProductCode=datas.Items.First().ProductCode,
+                                Price=datas.Items.First().Price,
+                                ProductId=1,
+                                ProductName=datas.Items.First().ProductName,
+                                UnitCode=datas.Items.First().UnitCode,
+                                UnitId=1,
+                                UnitName=datas.Items.First().UnitName,
+                                UomId=1,
+                                UomUnit=datas.Items.First().UomUnit,
+                                Quantity=datas.Items.First().Quantity,
+                                PurchasingDispositionDetailId=datas.Items.First().PurchasingDispositionDetailId,
+                                PurchasingDispositionExpeditionItemId=datas.Items.First().Id
+                            }
+                        }
+
                     }
                 }
             };
