@@ -125,8 +125,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
 
             PaymentDispositionNoteModel model2 = await _dataUtil(service, GetCurrentMethod()).GetTestData();
             //var newModel2 = await service.ReadByIdAsync(model.Id);
-            model2.Items.Remove(model2.Items.First());
-            var Response = await service.UpdateAsync(model2.Id, model2);
+            PaymentDispositionNoteModel newModel2 = new PaymentDispositionNoteModel();
+            newModel2.Id = model2.Id;
+            
+            newModel2.Items =new List<PaymentDispositionNoteItemModel> { model2.Items.First() };
+            var Response = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
         }
 
