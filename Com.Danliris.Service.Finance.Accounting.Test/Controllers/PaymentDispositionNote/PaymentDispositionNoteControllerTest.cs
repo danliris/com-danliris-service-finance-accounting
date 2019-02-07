@@ -37,6 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                     PaymentDispositionNo = It.IsAny<string>(),
                     PaymentDate = It.IsAny<DateTimeOffset>(),
                     Amount = It.IsAny<double>(),
+                    
                     Items = new List<PaymentDispositionNoteItemViewModel>
                     {
                         new PaymentDispositionNoteItemViewModel()
@@ -51,6 +52,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                             vatValue=It.IsAny<double>(),
                             totalPaid=It.IsAny<double>(),
                             proformaNo=It.IsAny<string>(),
+                            paymentDueDate=It.IsAny<DateTimeOffset>(),
+                            payToSupplier=It.IsAny<double>(),
                             Details =new List<PaymentDispositionNoteDetailViewModel>()
                             {
                                 new PaymentDispositionNoteDetailViewModel()
@@ -98,12 +101,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
         }
 
-        private ServiceValidationExeption GetServiceValidationExeption()
+        private ServiceValidationException GetServiceValidationExeption()
         {
             Mock<IServiceProvider> serviceProvider = new Mock<IServiceProvider>();
             List<ValidationResult> validationResults = new List<ValidationResult>();
             System.ComponentModel.DataAnnotations.ValidationContext validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(this.ViewModel, serviceProvider.Object, null);
-            return new ServiceValidationExeption(validationContext, validationResults);
+            return new ServiceValidationException(validationContext, validationResults);
         }
 
         private int GetStatusCodeGet((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPaymentDispositionNoteService> Service, Mock<IMapper> Mapper) mocks)
@@ -167,6 +170,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
 
             int statusCode = await GetStatusCodePost(mocks);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void Post_Throws_Validation_Exception()
+        {
+            var validateMock = new Mock<IValidateService>();
+            validateMock.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Throws(GetServiceValidationExeption());
+            var mockMapper = new Mock<IMapper>();
+
+            var mockFacade = new Mock<IPaymentDispositionNoteService>();
+            var mockIdentity = new Mock<IIdentityService>();
+            var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Post(ViewModel).Result;
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
         }
 
         private async Task<int> GetStatusCodeGetById((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPaymentDispositionNoteService> Service, Mock<IMapper> Mapper) mocks)
