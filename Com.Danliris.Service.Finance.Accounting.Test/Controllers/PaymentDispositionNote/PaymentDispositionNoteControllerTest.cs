@@ -172,16 +172,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
 
-        //[Fact]
-        //public async Task Post_BadRequest()
-        //{
-        //    var mocks = GetMocks();
-        //    mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Verifiable();
-        //    mocks.Service.Setup(s => s.CreateAsync(It.IsAny<PaymentDispositionNoteModel>())).ReturnsAsync(1);
-
-        //    int statusCode = await GetStatusCodePost(mocks);
-        //    Assert.Equal((int)HttpStatusCode.Created, statusCode);
-        //}
 
         [Fact]
         public void Post_Throws_Validation_Exception()

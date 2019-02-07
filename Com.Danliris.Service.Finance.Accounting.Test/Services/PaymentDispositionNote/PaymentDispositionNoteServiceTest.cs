@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Purchas
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
@@ -127,6 +128,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             model2.Items.Remove(model2.Items.First());
             var Response = await service.UpdateAsync(model2.Id, model2);
             Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_Data()
+        {
+            PaymentDispositionNoteViewModel vm = new PaymentDispositionNoteViewModel();
+
+            Assert.True(vm.Validate(null).Count() > 0);
         }
 
     }
