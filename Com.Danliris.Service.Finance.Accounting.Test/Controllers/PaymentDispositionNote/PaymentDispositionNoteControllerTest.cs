@@ -30,8 +30,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             {
                 return new PaymentDispositionNoteViewModel
                 {
-                    Supplier = new SupplierViewModel(),
-                    AccountBank=new AccountBankViewModel(),
+                    Supplier = new SupplierViewModel
+                    {
+                        Name= It.IsAny<string>()
+                    },
+                    AccountBank=new AccountBankViewModel
+                    {
+                        Currency=new CurrencyViewModel
+                        {
+                            Code= It.IsAny<string>()
+                        }
+                    },
                     BGCheckNumber= It.IsAny<string>(),
                     BankAccountCOA= It.IsAny<string>(),
                     PaymentDispositionNo = It.IsAny<string>(),
@@ -62,8 +71,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                                     price=It.IsAny<double>(),
                                     quantity=It.IsAny<double>(),
                                     product = new Lib.ViewModels.IntegrationViewModel.ProductViewModel(),
-                                    unit = new Lib.ViewModels.IntegrationViewModel.UnitViewModel(),
-                                }
+                                    unit = new Lib.ViewModels.IntegrationViewModel.UnitViewModel
+                                    {
+                                        code="Test",
+                                        name="Test"
+                                    },
+                                },
+                                new PaymentDispositionNoteDetailViewModel()
+                                {
+                                    uom=new Lib.ViewModels.IntegrationViewModel.UomViewModel(),
+                                    price=It.IsAny<double>(),
+                                    quantity=It.IsAny<double>(),
+                                    product = new Lib.ViewModels.IntegrationViewModel.ProductViewModel(),
+                                    unit = new Lib.ViewModels.IntegrationViewModel.UnitViewModel
+                                    {
+                                        code="Test1",
+                                        name="Test1"
+                                    },
+                                },
+                                new PaymentDispositionNoteDetailViewModel()
+                                {
+                                    uom=new Lib.ViewModels.IntegrationViewModel.UomViewModel(),
+                                    price=It.IsAny<double>(),
+                                    quantity=It.IsAny<double>(),
+                                    product = new Lib.ViewModels.IntegrationViewModel.ProductViewModel(),
+                                    unit = new Lib.ViewModels.IntegrationViewModel.UnitViewModel
+                                    {
+                                        code="Test",
+                                        name="Test"
+                                    },
+                                },
                             }
                         }
                     }
@@ -318,6 +355,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
 
             var response = GetController(mocks).Put(1, It.IsAny<PaymentDispositionNoteViewModel>()).Result;
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void Should_Success_Get_PDF_By_Id()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new PaymentDispositionNoteModel());
+            mocks.Mapper.Setup(f => f.Map<PaymentDispositionNoteViewModel>(It.IsAny<PaymentDispositionNoteModel>())).Returns(ViewModel);
+
+            PaymentDispositionNoteController controller = new PaymentDispositionNoteController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Mapper.Object, mocks.Service.Object);
+            controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
+
+            var response = controller.GetById(It.IsAny<int>()).Result;
+            Assert.NotEqual(null, response.GetType().GetProperty("FileStream"));
         }
     }
 }
