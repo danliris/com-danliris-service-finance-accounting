@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -103,7 +105,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
         {
             try
             {
-                PaymentDispositionNoteModel model = await Service.ReadByIdAsync(id);
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                var model = await Service.ReadByIdAsync(id);
+                PaymentDispositionNoteViewModel viewModel = Mapper.Map<PaymentDispositionNoteViewModel>(model);
 
                 if (model == null)
                 {
@@ -112,13 +116,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
                         .Fail();
                     return NotFound(Result);
                 }
+
+                if (indexAcceptPdf < 0)
+                {
+                    return Ok(new
+                    {
+                        apiVersion = ApiVersion,
+                        data = viewModel,
+                        message = General.OK_MESSAGE,
+                        statusCode = General.OK_STATUS_CODE
+                    });
+                }
                 else
                 {
-                    PaymentDispositionNoteViewModel viewModel = Mapper.Map<PaymentDispositionNoteViewModel>(model);
-                    Dictionary<string, object> Result =
-                        new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
-                        .Ok<PaymentDispositionNoteViewModel>(Mapper, viewModel);
-                    return Ok(Result);
+                    int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
+
+                    PaymentDispositionNotePDFTemplate PdfTemplate = new PaymentDispositionNotePDFTemplate();
+                    MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, clientTimeZoneOffset);
+
+                    return new FileStreamResult(stream, "application/pdf")
+                    {
+                        FileDownloadName = $"Bukti Pembayaran Disposisi {viewModel.PaymentDispositionNo}.pdf"
+                    };
                 }
             }
             catch (Exception e)
