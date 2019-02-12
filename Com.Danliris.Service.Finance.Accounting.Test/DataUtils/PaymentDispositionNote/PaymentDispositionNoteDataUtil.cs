@@ -79,7 +79,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PaymentDisposit
                                 UomUnit=datas.Items.First().UomUnit,
                                 Quantity=datas.Items.First().Quantity,
                                 PurchasingDispositionDetailId=datas.Items.First().PurchasingDispositionDetailId,
-                                PurchasingDispositionExpeditionItemId=datas.Items.First().Id
+                                PurchasingDispositionExpeditionItemId=datas.Items.First().Id,
+                                EPOId=datas.Items.First().EPOId
                             }
                         }
 
@@ -116,7 +117,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PaymentDisposit
                                 UomUnit=datas.Items.First().UomUnit,
                                 Quantity=datas.Items.First().Quantity,
                                 PurchasingDispositionDetailId=datas.Items.First().PurchasingDispositionDetailId,
-                                PurchasingDispositionExpeditionItemId=datas.Items.First().Id
+                                PurchasingDispositionExpeditionItemId=datas.Items.First().Id,
+                                EPOId=datas.Items.First().EPOId
                             }
                         }
 
