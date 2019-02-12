@@ -8,6 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
 {
     public class PaymentDispositionNoteDetailViewModel : BaseViewModel
     {
+        public string epoId { get; set; }
         public double price { get; set; }
         public ProductViewModel product { get; set; }
         public double quantity { get; set; }

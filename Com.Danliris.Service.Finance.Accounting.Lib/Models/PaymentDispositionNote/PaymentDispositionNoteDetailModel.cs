@@ -9,6 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionN
 {
     public class PaymentDispositionNoteDetailModel : StandardEntity
     {
+        public string EPOId { get; set; }
         public virtual int PaymentDispositionNoteItemId { get; set; }
         [ForeignKey("PaymentDispositionNoteItemId")]
         public virtual PaymentDispositionNoteItemModel PaymentDispositionNoteItem { get; set; }
