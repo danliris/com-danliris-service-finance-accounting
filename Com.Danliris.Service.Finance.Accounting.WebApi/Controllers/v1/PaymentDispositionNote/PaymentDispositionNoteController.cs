@@ -198,5 +198,34 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
             }
 
         }
+
+        [HttpGet("byEpoId/{epoId}")]
+        public IActionResult GetDetailsByEpoId([FromRoute] string epoId)
+        {
+            try
+            {
+                ReadResponse<PaymentDispositionNoteDetailModel> read = Service.ReadDetailsByEPOId(epoId);
+
+                List<PaymentDispositionNoteDetailViewModel> dataVM = Mapper.Map<List<PaymentDispositionNoteDetailViewModel>>(read.Data);
+
+                //Dictionary<string, object> Result =
+                //    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                //    .Ok(Mapper, dataVM, 1, size, read.Count, dataVM.Count, read.Order, read.Selected);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data = dataVM,
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }

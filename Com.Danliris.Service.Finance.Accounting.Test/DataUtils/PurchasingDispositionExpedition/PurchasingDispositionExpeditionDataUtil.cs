@@ -85,7 +85,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                         UnitName = nowTicksA,
                         UomUnit = nowTicksA,
                         UomId = nowTicksA,
-                        PurchasingDispositionDetailId = (int)nowTicks
+                        PurchasingDispositionDetailId = (int)nowTicks,
+                        EPOId=nowTicksA
                     }
                 }
             };
@@ -183,6 +184,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispo
                             unit=nowTicksA
                         },
                         purchasingDispositionDetailId =(int) nowTicks,
+                        epoId=nowTicksA
                     }
                 }
             };

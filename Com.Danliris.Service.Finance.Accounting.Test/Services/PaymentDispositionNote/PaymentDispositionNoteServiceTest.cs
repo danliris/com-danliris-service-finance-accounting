@@ -140,6 +140,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
 
             Assert.True(vm.Validate(null).Count() > 0);
         }
-
+        [Fact]
+        public async void Should_Success_Get_Data_Details_By_EPOId()
+        {
+            PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
+            
+            var item = model.Items.First();
+            var detail = item.Details.First();
+            var epoId = detail.EPOId;
+            var Response = service.ReadDetailsByEPOId(detail.EPOId);
+            Assert.NotNull(Response);
+        }
     }
 }

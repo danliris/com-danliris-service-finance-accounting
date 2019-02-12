@@ -76,6 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                                         code="Test",
                                         name="Test"
                                     },
+                                    epoId="test"
                                 },
                                 new PaymentDispositionNoteDetailViewModel()
                                 {
@@ -88,6 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                                         code="Test1",
                                         name="Test1"
                                     },
+                                    epoId="test"
                                 },
                                 new PaymentDispositionNoteDetailViewModel()
                                 {
@@ -100,6 +102,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                                         code="Test",
                                         name="Test"
                                     },
+                                    epoId="test"
                                 },
                             }
                         }
@@ -375,6 +378,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
 
             var response = controller.GetById(It.IsAny<int>()).Result;
             Assert.NotEqual(null, response.GetType().GetProperty("FileStream"));
+        }
+
+        [Fact]
+        public void GetByEPOId_WithoutException_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service
+                .Setup(f => f.ReadDetailsByEPOId( It.IsAny<string>()))
+                .Returns(new ReadResponse<PaymentDispositionNoteDetailModel>(new List<PaymentDispositionNoteDetailModel>() { new PaymentDispositionNoteDetailModel() }, 0, new Dictionary<string, string>(), new List<string>()));
+            mocks.Mapper
+                .Setup(f => f.Map<List<PaymentDispositionNoteDetailViewModel>>(It.IsAny<List<PaymentDispositionNoteDetailModel>>()))
+                .Returns(new List<PaymentDispositionNoteDetailViewModel>());
+
+            var response = GetController(mocks).GetDetailsByEpoId(It.IsAny<string>());
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetByEPOId_ReadThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
+
+            var response = GetController(mocks).GetDetailsByEpoId("");
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
 }
