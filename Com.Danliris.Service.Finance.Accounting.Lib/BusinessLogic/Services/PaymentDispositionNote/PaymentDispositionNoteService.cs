@@ -187,5 +187,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return new ReadResponse<PaymentDispositionNoteModel>(Data, TotalData, OrderDictionary, new List<string>());
         }
 
+        public ReadResponse<PaymentDispositionNoteDetailModel> ReadDetailsByEPOId(string epoId)
+        {
+            List<PaymentDispositionNoteDetailModel> paymentDispositionNoteDetails = DbContext.PaymentDispositionNoteDetails.Where(a => a.EPOId == epoId).ToList();
+            
+            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>("{ }");
+            
+            int TotalData = paymentDispositionNoteDetails.Count;
+
+            return new ReadResponse<PaymentDispositionNoteDetailModel>(paymentDispositionNoteDetails, TotalData, OrderDictionary, new List<string>());
+        }
     }
 }
