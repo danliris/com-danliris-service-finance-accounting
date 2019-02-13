@@ -39,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
 
             try
             {
-                var data = Service.GetReport(no, supplier, division, dateFrom, dateTo, page, size, Order, offset);
+                var data = Service.GetReport(no, supplier, division, dateFrom, dateTo, page, size, Order, offset, "notHistory");
 
                 return Ok(new
                 {
@@ -70,9 +70,66 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
                 DateTime DateFrom = dateFrom == null ? new DateTime(1970, 1, 1) : Convert.ToDateTime(dateFrom);
                 DateTime DateTo = dateTo == null ? DateTime.Now : Convert.ToDateTime(dateTo);
 
-                var xls = Service.GenerateExcel(no, supplier, division, dateFrom, dateTo, offset);
+                var xls = Service.GenerateExcel(no, supplier, division, dateFrom, dateTo, offset, "notHistory");
 
                 string filename = String.Format("Laporan Disposisi Not Verified - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+
+                xlsInBytes = xls.ToArray();
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("history")]
+        public IActionResult GetHistoryReport(string no, string supplier, string division, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int page, int size, string Order = "{}")
+        {
+            int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+            string accept = Request.Headers["Accept"];
+
+            try
+            {
+                var data = Service.GetReport(no, supplier, division, dateFrom, dateTo, page, size, Order, offset, "history");
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data = data.Item1,
+                    info = new { total = data.Item2, page = page, size = size }
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+
+
+        }
+
+        [HttpGet("history/download")]
+        public IActionResult GetXlsHistoryReport(string no, string supplier, string division, DateTime? dateFrom, DateTime? dateTo)
+        {
+
+            try
+            {
+                byte[] xlsInBytes;
+                int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                DateTime DateFrom = dateFrom == null ? new DateTime(1970, 1, 1) : Convert.ToDateTime(dateFrom);
+                DateTime DateTo = dateTo == null ? DateTime.Now : Convert.ToDateTime(dateTo);
+
+                var xls = Service.GenerateExcel(no, supplier, division, dateFrom, dateTo, offset, "history");
+
+                string filename = String.Format("Histori Disposisi Not Verified - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
 
                 xlsInBytes = xls.ToArray();
                 var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
