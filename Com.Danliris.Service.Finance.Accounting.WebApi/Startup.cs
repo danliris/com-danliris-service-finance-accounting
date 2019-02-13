@@ -7,6 +7,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Journ
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PaymentDispositionNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PaymentDispositionNotVerifiedReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
@@ -15,6 +16,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Journal
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNotVerifiedReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -77,7 +79,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<ICreditBalanceService, CreditBalanceService>()
                 .AddTransient<IDailyBankTransactionService, DailyBankTransactionService>()
                 .AddTransient<IPurchasingDispositionExpeditionService, PurchasingDispositionExpeditionService>()
-                .AddTransient<IPaymentDispositionNoteService, PaymentDispositionNoteService>();
+                .AddTransient<IPaymentDispositionNoteService, PaymentDispositionNoteService>()
+                .AddTransient<IPaymentDispositionNotVerifiedReport, PaymentDispositionNotVerifiedReportService>();
         }
 
 
