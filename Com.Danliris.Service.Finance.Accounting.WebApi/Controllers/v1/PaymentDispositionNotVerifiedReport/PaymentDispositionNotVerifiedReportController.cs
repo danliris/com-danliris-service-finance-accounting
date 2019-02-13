@@ -129,7 +129,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
 
                 var xls = Service.GenerateExcel(no, supplier, division, dateFrom, dateTo, offset, "history");
 
-                string filename = String.Format("Laporan History Disposisi Not Verified - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+                string filename = String.Format("Histori Disposisi Not Verified - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
 
                 xlsInBytes = xls.ToArray();
                 var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
