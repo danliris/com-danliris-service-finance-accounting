@@ -33,13 +33,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             DbSet = dbContext.Set<PurchasingDispositionExpeditionModel>();
             IdentityService = serviceProvider.GetService<IIdentityService>();
         }
-        public IQueryable<PaymentDispositionNotVerifiedReportViewModel> GetReportQuery(string no, string supplier, string division, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset)
+        public IQueryable<PaymentDispositionNotVerifiedReportViewModel> GetReportQuery(string no, string supplier, string division, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset, string type)
         {
             DateTimeOffset dateFromFilter = (dateFrom == null ? new DateTime(1970, 1, 1) : dateFrom.Value.Date);
             DateTimeOffset dateToFilter = (dateTo == null ? DateTimeOffset.UtcNow.Date : dateTo.Value.Date);
 
-            var header= DbContext.PurchasingDispositionExpeditions.GroupBy(x => x.DispositionNo)
+            var header = DbContext.PurchasingDispositionExpeditions.AsQueryable();
+
+            if (type == "notHistory")
+            {
+                header = header.GroupBy(x => x.DispositionNo)
                         .Select(g => g.OrderByDescending(x => x.LastModifiedUtc).FirstOrDefault()).AsQueryable();
+            }
 
             var Query = (from a in header
                          where a.Position == ExpeditionPosition.SEND_TO_PURCHASING_DIVISION
@@ -66,12 +71,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return Query;
         }
 
-        public Tuple<List<PaymentDispositionNotVerifiedReportViewModel>, int> GetReport(string no, string supplier, string division, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int page, int size, string Order, int offset)
+        public Tuple<List<PaymentDispositionNotVerifiedReportViewModel>, int> GetReport(string no, string supplier, string division, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int page, int size, string Order, int offset, string type)
         {
-            var Query = GetReportQuery(no, supplier, division, dateFrom, dateTo, offset);
+            var Query = GetReportQuery(no, supplier, division, dateFrom, dateTo, offset, type);
 
             Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Order);
-            Query = Query.OrderByDescending(b => b.LastModifiedUtc);
+            Query = Query.OrderByDescending(b => b.DispositionNo).ThenByDescending(b=>b.VerifyDate);
 
 
             Pageable<PaymentDispositionNotVerifiedReportViewModel> pageable = new Pageable<PaymentDispositionNotVerifiedReportViewModel>(Query, page - 1, size);
@@ -81,10 +86,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return Tuple.Create(Data, TotalData);
         }
 
-        public MemoryStream GenerateExcel(string no, string supplier, string division, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset)
+        public MemoryStream GenerateExcel(string no, string supplier, string division, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset, string type)
         {
-            var Query = GetReportQuery(no, supplier, division, dateFrom, dateTo, offset);
-            Query = Query.OrderByDescending(b => b.LastModifiedUtc);
+            var Query = GetReportQuery(no, supplier, division, dateFrom, dateTo, offset, type);
+            Query = Query.OrderByDescending(b => b.DispositionNo).ThenByDescending(b => b.VerifyDate);
             DataTable result = new DataTable();
             result.Columns.Add(new DataColumn() { ColumnName = "Tanggal Verifikasi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "No Disposisi", DataType = typeof(String) });
