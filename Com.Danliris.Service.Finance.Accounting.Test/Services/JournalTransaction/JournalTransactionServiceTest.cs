@@ -9,7 +9,6 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Masters.COADataUtils;
-using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
@@ -278,19 +277,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
-            var data = await _dataUtil(service).GetTestData();
-            var reportResponse = service.GetSubLedgerReportXls(data.Date.Month, data.Date.Year, data.Items.ToList()[0].COAId, 1);
+            var data = await _dataUtil(service).GetTestPostedData();
+            var reportResponse = await service.GetSubLedgerReportXls(data.Items.ToList()[0].COAId, data.Date.Month, data.Date.Year, 1);
             Assert.NotNull(reportResponse);
         }
 
         [Fact]
         public async Task Should_Success_Generate_SubLedger()
         {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(Guid.NewGuid().ToString()));
+            
+            //_dbContext(GetCurrentMethod().
+            var data = await _dataUtil(service).GetTestPostedData();
+            var reportResponse = await service.GetSubLedgerReport(data.Items.ToList()[0].COAId, data.Date.Month, data.Date.Year, 1);
+            Assert.NotEmpty(reportResponse.Info);
+        }
+
+        [Fact]
+        public async Task Should_Success_Generate_NoBankName_SubLedger()
+        {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
-            var data = await _dataUtil(service).GetTestData();
-            var reportResponse = service.GetSubLedgerReport(data.Date.Month, data.Date.Year, data.Items.ToList()[0].COAId, 1);
-            Assert.NotNull(reportResponse);
+            var data = await _dataUtil(service).GetTestPostedManualData();
+            var reportResponse = await service.GetSubLedgerReport(data.Items.ToList()[0].COAId, data.Date.Month, data.Date.Year, 1);
+            Assert.NotEmpty(reportResponse.Info);
         }
 
         [Fact]
@@ -298,7 +308,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
-            var data = await _dataUtil(service).GetTestPostedData();
+            var data = await _dataUtil(service).GetTestData();
             var reportResponse = await service.PostTransactionAsync(data.Id);
             Assert.NotEqual(0, reportResponse);
         }

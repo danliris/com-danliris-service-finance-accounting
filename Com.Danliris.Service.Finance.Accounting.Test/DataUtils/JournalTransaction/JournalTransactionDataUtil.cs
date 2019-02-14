@@ -73,6 +73,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
             return TestData;
         }
 
+        public JournalTransactionModel GetNewPostedManualData()
+        {
+            var COA1 = Task.Run(() => _COADataUtil.GetTestData()).Result;
+            JournalTransactionModel TestData = new JournalTransactionModel()
+            {
+                DocumentNo = Guid.NewGuid().ToString(),
+                Description = "Description",
+                Date = DateTimeOffset.UtcNow,
+                ReferenceNo = "ReferenceNo1",
+                Status = JournalTransactionStatus.Posted,
+                Items = new List<JournalTransactionItemModel>()
+                {
+                    new JournalTransactionItemModel()
+                    {
+                        COAId = COA1.Id,
+                        COA = COA1,
+                        Remark = "Remark",
+                        Debit = 10000.00,
+                        Credit = 10000.00
+                    }
+                }
+            };
+
+            return TestData;
+        }
+
         public JournalTransactionViewModel GetDataToValidate()
         {
             var COA1 = Task.Run(() => _COADataUtil.GetTestData()).Result;
@@ -124,6 +150,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
         public async Task<JournalTransactionModel> GetTestPostedData()
         {
             JournalTransactionModel model = GetNewPostedData();
+            await _Service.CreateAsync(model);
+            return await _Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<JournalTransactionModel> GetTestPostedManualData()
+        {
+            JournalTransactionModel model = GetNewPostedManualData();
             await _Service.CreateAsync(model);
             return await _Service.ReadByIdAsync(model.Id);
         }

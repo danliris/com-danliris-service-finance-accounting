@@ -346,7 +346,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         private async Task<SubLedgerReportViewModel> GetSubLedgerReportData(int coaId, int month, int year, int timeoffset)
         {
-            var postedJournals = _DbSet.Where(w => w.Status.Equals(JournalTransactionStatus.Posted) && w.Date.AddHours(timeoffset).Month.Equals(month) && w.Date.AddHours(timeoffset).Year.Equals(year)).Select(s => new { s.Id, s.Date, s.ReferenceNo, s.DocumentNo }).ToList();
+            var postedJournals = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date.AddHours(timeoffset).Month.Equals(month) && w.Date.AddHours(timeoffset).Year.Equals(year)).Select(s => new { s.Id, s.Date, s.ReferenceNo, s.DocumentNo }).ToList();
             var postedIds = postedJournals.Select(s => s.Id).ToList();
             var postedReferenceNos = postedJournals.Select(s => s.ReferenceNo).ToList();
 
@@ -357,7 +357,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var closingCreditBalance = entries.Sum(s => s.Credit);
 
             var initialDate = new DateTime(year, month, 1);
-            var previousPostedJournalIds = _DbSet.Where(w => w.Status.Equals(JournalTransactionStatus.Posted) && w.Date < initialDate).Select(s => s.Id).ToList();
+            var previousPostedJournalIds = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date < initialDate).Select(s => s.Id).ToList();
             var previousDebitBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId) && w.COAId.Equals(coaId)).Sum(s => s.Debit);
             var previousCreditBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId) && w.COAId.Equals(coaId)).Sum(s => s.Credit);
 
