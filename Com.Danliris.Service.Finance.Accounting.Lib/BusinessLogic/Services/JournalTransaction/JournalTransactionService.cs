@@ -392,7 +392,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         private async Task<List<BankPayment>> GetBankPayments(int month, int year, int timeoffset)
         {
-            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/by-period?month={month}&year={year}&timeoffset={timeoffset}";
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/get-documentno/by-period?month={month}&year={year}&timeoffset={timeoffset}";
 
             IHttpClientService _httpClientService = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
             var response = await _httpClientService.GetAsync(uri);
