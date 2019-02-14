@@ -45,6 +45,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderCS2.HorizontalAlignment = Element.ALIGN_CENTER;
             headerTable.AddCell(cellHeaderCS2);
 
+            cellHeaderCS2.Phrase = new Phrase("", bold_font);
+            cellHeaderCS2.HorizontalAlignment = Element.ALIGN_CENTER;
+            headerTable.AddCell(cellHeaderCS2);
+
             cellHeaderBody.Phrase = new Phrase("PT. DANLIRIS", normal_font);
             headerTable1.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase("Kel. Banaran, Kec. Grogol", normal_font);
@@ -132,33 +136,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                         s.First().unit.name,
                         Total = s.Sum(d =>  d.price )
                     });
+                bodyCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                bodyCell.VerticalAlignment = Element.ALIGN_TOP;
+                bodyCell.Phrase = new Phrase((index++).ToString(), normal_font);
+                bodyTable.AddCell(bodyCell);
+
+                bodyCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                bodyCell.Phrase = new Phrase(item.dispositionNo, normal_font);
+                bodyTable.AddCell(bodyCell);
+
+                bodyCell.Phrase = new Phrase(item.category.name, normal_font);
+                bodyTable.AddCell(bodyCell);
+
+                bodyCell.Phrase = new Phrase(item.division.name, normal_font);
+                bodyTable.AddCell(bodyCell);
+
+                bodyCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                bodyCell.Phrase = new Phrase(viewModel.AccountBank.Currency.Code, normal_font);
+                bodyTable.AddCell(bodyCell);
+
+
+                bodyCell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                bodyCell.Phrase = new Phrase(string.Format("{0:n4}", item.payToSupplier), normal_font);
+                bodyTable.AddCell(bodyCell);
+
+                total += item.payToSupplier;
 
                 foreach (var detail in details)
                 {
-                    bodyCell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    bodyCell.VerticalAlignment = Element.ALIGN_TOP;
-                    bodyCell.Phrase = new Phrase((index++).ToString(), normal_font);
-                    bodyTable.AddCell(bodyCell);
-
-                    bodyCell.HorizontalAlignment = Element.ALIGN_LEFT;
-                    bodyCell.Phrase = new Phrase(item.dispositionNo, normal_font);
-                    bodyTable.AddCell(bodyCell);
-
-                    bodyCell.Phrase = new Phrase(item.category.name, normal_font);
-                    bodyTable.AddCell(bodyCell);
-
-                    bodyCell.Phrase = new Phrase(item.division.name, normal_font);
-                    bodyTable.AddCell(bodyCell);
-
-                    bodyCell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    bodyCell.Phrase = new Phrase(viewModel.AccountBank.Currency.Code, normal_font);
-                    bodyTable.AddCell(bodyCell);
-
-
-                    bodyCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                    bodyCell.Phrase = new Phrase(string.Format("{0:n4}", item.totalPaid), normal_font);
-                    bodyTable.AddCell(bodyCell);
-
                     if (units.ContainsKey(detail.code))
                     {
                         units[detail.code] += detail.Total;
@@ -168,11 +173,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                         units.Add(detail.code, detail.Total);
                     }
 
-                    total += item.totalPaid;
+                   
                 }
             }
 
-            bodyCell.Colspan = 4;
+            bodyCell.Colspan = 3;
             bodyCell.Border = Rectangle.NO_BORDER;
             bodyCell.Phrase = new Phrase("", normal_font);
             bodyTable.AddCell(bodyCell);
