@@ -12,6 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
         public string Description { get; set; }
         public DateTimeOffset? Date { get; set; }
         public string ReferenceNo { get; set; }
+        public string Status { get; set; }
         public List<JournalTransactionItemViewModel> Items { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

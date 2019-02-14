@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransaction
@@ -65,23 +66,92 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         }
 
         [Fact]
-        public void ReverseJournalTransaction_ThrowException()
+        public async Task ReverseJournalTransaction_ThrowException()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.ReverseJournalTransactionByReferenceNo(It.IsAny<string>())).Throws(new Exception());
 
-            var response = GetController(mocks).PostReverseJournalTransaction(It.IsAny<string>()).Result;
+            var response = await GetController(mocks).PostReverseJournalTransaction(It.IsAny<string>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
         [Fact]
-        public void ReverseJournalTransaction_Succes()
+        public async Task ReverseJournalTransaction_Succes()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.ReverseJournalTransactionByReferenceNo(It.IsAny<string>())).ReturnsAsync(1);
 
-            var response = GetController(mocks).PostReverseJournalTransaction(It.IsAny<string>()).Result;
+            var response = await GetController(mocks).PostReverseJournalTransaction(It.IsAny<string>());
             Assert.Equal((int)HttpStatusCode.Created, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_SubLedger_Reports()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetSubLedgerReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new SubLedgerReportViewModel());
+
+            var response = await GetController(mocks).GetSubLedgerReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_ThrowException_Get_SubLedger_Reports()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetSubLedgerReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).GetSubLedgerReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_SubLedger_Reports_Xls()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetSubLedgerReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new SubLedgerXlsFormat());
+
+            var response = await GetController(mocks).GetSubLedgerReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Should_ThrowException_Get_SubLedger_Reports_Xls()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetSubLedgerReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).GetSubLedgerReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void Should_Success_Get_MonthOptions()
+        {
+            var mocks = GetMocks();
+
+            var response = GetController(mocks).GetMonthOptions();
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Succes_PostTransaction()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.PostTransactionAsync(It.IsAny<int>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).PostingTransationById(It.IsAny<int>());
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Throw_Exception_PostTransaction()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.PostTransactionAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).PostingTransationById(It.IsAny<int>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
 }

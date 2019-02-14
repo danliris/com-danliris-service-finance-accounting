@@ -17,6 +17,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransaction
@@ -61,7 +62,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(new HttpClientTestService());
+                .Returns(new JournalHttpClientTestService());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -72,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public async void Should_Success_Get_Data()
+        public async Task Should_Success_Get_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData();
@@ -81,20 +82,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public void Should_Success_Get_Data_By_Id()
+        public async Task Should_Success_Get_Data_By_Id()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var model = _dataUtil(service).GetTestData().Result;
-            var Response = service.ReadByIdAsync(model.Id).Result;
+            var model = await _dataUtil(service).GetTestData();
+            var Response = await service.ReadByIdAsync(model.Id);
             Assert.NotNull(Response);
         }
 
         [Fact]
-        public void Should_Success_Create_Data()
+        public async Task Should_Success_Create_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = _dataUtil(service).GetNewData();
-            var Response = service.CreateAsync(model).Result;
+            var Response = await service.CreateAsync(model);
             Assert.NotEqual(0, Response);
         }
 
@@ -116,24 +117,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public void Should_Success_Update_Data()
+        public async Task Should_Success_Update_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var model = _dataUtil(service).GetTestData().Result;
-            var newModel = service.ReadByIdAsync(model.Id).Result;
+            var model = await _dataUtil(service).GetTestData();
+            var newModel = await service.ReadByIdAsync(model.Id);
             newModel.Description = "NewDescription";
-            var Response = service.UpdateAsync(newModel.Id, newModel).Result;
+            var Response = await service.UpdateAsync(newModel.Id, newModel);
             Assert.NotEqual(0, Response);
         }
 
         [Fact]
-        public void Should_Success_Delete_Data()
+        public async Task Should_Success_Delete_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var model = _dataUtil(service).GetTestData().Result;
+            var model = await _dataUtil(service).GetTestData();
             //var modelToDelete = await service.ReadByIdAsync(model.Id);
 
-            var Response = service.DeleteAsync(model.Id).Result;
+            var Response = await service.DeleteAsync(model.Id);
             Assert.NotEqual(0, Response);
         }
 
@@ -172,10 +173,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public void Should_Success_Update_Data_NewItem()
+        public async Task Should_Success_Update_Data_NewItem()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var model = _dataUtil(service).GetTestData().Result;
+            var model = await _dataUtil(service).GetTestData();
             model.Description = "NewDescription";
 
             var newItemDebit = new JournalTransactionItemModel()
@@ -200,16 +201,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             };
             model.Items.Add(newItemCredit);
 
-            var Response = service.UpdateAsync(model.Id, model).Result;
+            var Response = await service.UpdateAsync(model.Id, model);
             Assert.NotEqual(0, Response);
         }
 
         [Fact]
-        public void Should_Success_Generate_Excel()
+        public async Task Should_Success_Generate_Excel()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
-            var data = _dataUtil(service).GetTestData().Result;
+            var data = await _dataUtil(service).GetTestData();
             var reportResponse = service.GenerateExcel(data.Date.AddDays(-1), data.Date, 7);
             Assert.NotNull(reportResponse);
         }
@@ -224,10 +225,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public void Should_Success_Get_Report()
+        public async Task Should_Success_Get_Report()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = _dataUtil(service).GetTestData().Result;
+            var data = await _dataUtil(service).GetTestData();
 
             var reportResponse = service.GetReport(1, 25, data.Date.AddDays(-1), data.Date, 7);
             Assert.NotNull(reportResponse.Item1);
@@ -243,33 +244,64 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public void Should_Success_ReverseJournalTransaction_Data()
+        public async Task Should_Success_ReverseJournalTransaction_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = _dataUtil(service).GetNewData();
-            var createdData = service.CreateAsync(model).Result;
-            var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
+            var createdData = await service.CreateAsync(model);
+            var response = await service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo);
             Assert.NotEqual(0, response);
         }
 
         [Fact]
-        public void Should_Error_CreateDuplicateReferenceNo_Data()
+        public async Task Should_Error_CreateDuplicateReferenceNo_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = _dataUtil(service).GetNewData();
-            var createdData = service.CreateAsync(model).Result;
+            var createdData = await service.CreateAsync(model);
 
             var newModel = _dataUtil(service).GetNewData();
             newModel.ReferenceNo = model.ReferenceNo;
             //var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
-            Assert.ThrowsAsync<ServiceValidationException>(() => service.CreateAsync(newModel));
+            await Assert.ThrowsAsync<ServiceValidationException>(() => service.CreateAsync(newModel));
         }
 
         [Fact]
-        public void Should_Error_ReverseJournalTransaction_Data()
+        public async Task Should_Error_ReverseJournalTransaction_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            Assert.ThrowsAsync<ServiceValidationException>(() => service.ReverseJournalTransactionByReferenceNo("test"));
+            await Assert.ThrowsAsync<Exception>(() => service.ReverseJournalTransactionByReferenceNo("test"));
+        }
+
+        [Fact]
+        public async Task Should_Success_Generate_SubLedger_Excel()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var data = await _dataUtil(service).GetTestData();
+            var reportResponse = service.GetSubLedgerReportXls(data.Date.Month, data.Date.Year, data.Items.ToList()[0].COAId, 1);
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
+        public async Task Should_Success_Generate_SubLedger()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var data = await _dataUtil(service).GetTestData();
+            var reportResponse = service.GetSubLedgerReport(data.Date.Month, data.Date.Year, data.Items.ToList()[0].COAId, 1);
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
+        public async Task Should_Success_Posting_Transaction()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var data = await _dataUtil(service).GetTestPostedData();
+            var reportResponse = await service.PostTransactionAsync(data.Id);
+            Assert.NotEqual(0, reportResponse);
         }
     }
 }
+
