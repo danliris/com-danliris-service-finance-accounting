@@ -108,11 +108,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     Description = s.Description,
                     ReferenceNo = s.ReferenceNo,
                     LastModifiedUtc = s.LastModifiedUtc,
+                    Status = s.Status
                 });
 
             List<string> searchAttributes = new List<string>()
             {
-                "DocumentNo", "ReferenceNo", "Description"
+                "DocumentNo", "ReferenceNo", "Description", "Status"
             };
 
             Query = QueryHelper<JournalTransactionModel>.Search(Query, searchAttributes, keyword);
@@ -138,6 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                    Description = s.Description,
                    ReferenceNo = s.ReferenceNo,
                    LastModifiedUtc = s.LastModifiedUtc,
+                   Status = s.Status
                }).ToList()
             );
 
