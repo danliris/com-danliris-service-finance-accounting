@@ -169,7 +169,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
             }
         }
 
-        [HttpGet("posting-transaction/{id}")]
+        [HttpPut("posting-transaction/{id}")]
         public async Task<ActionResult> PostingTransationById([FromRoute] int id)
         {
             try

@@ -444,6 +444,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var model = _DbSet.FirstOrDefault(f => f.Id.Equals(id));
 
             model.Status = JournalTransactionStatus.Posted;
+            EntityExtension.FlagForUpdate(model, _IdentityService.Username, _UserAgent);
             _DbSet.Update(model);
             return await _DbContext.SaveChangesAsync();
         }
