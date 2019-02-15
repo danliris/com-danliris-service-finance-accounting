@@ -76,7 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             var Query = GetReportQuery(no, supplier, division, dateFrom, dateTo, offset, type);
 
             Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Order);
-            Query = Query.OrderByDescending(b => b.DispositionNo).ThenByDescending(b=>b.VerifyDate);
+            Query = Query.OrderByDescending(b => b.DispositionNo).ThenByDescending(b=>b.LastModifiedUtc);
 
 
             Pageable<PaymentDispositionNotVerifiedReportViewModel> pageable = new Pageable<PaymentDispositionNotVerifiedReportViewModel>(Query, page - 1, size);
@@ -89,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
         public MemoryStream GenerateExcel(string no, string supplier, string division, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset, string type)
         {
             var Query = GetReportQuery(no, supplier, division, dateFrom, dateTo, offset, type);
-            Query = Query.OrderByDescending(b => b.DispositionNo).ThenByDescending(b => b.VerifyDate);
+            Query = Query.OrderByDescending(b => b.DispositionNo).ThenByDescending(b => b.LastModifiedUtc);
             DataTable result = new DataTable();
             result.Columns.Add(new DataColumn() { ColumnName = "Tanggal Verifikasi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "No Disposisi", DataType = typeof(String) });
