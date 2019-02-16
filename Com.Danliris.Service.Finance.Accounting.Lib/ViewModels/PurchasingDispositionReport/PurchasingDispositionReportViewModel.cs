@@ -35,5 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
 
         public DateTimeOffset? BankExpenditureNotePPHDate { get; set; }
 
+        public string Staff { get; set; }
+
     }
 }

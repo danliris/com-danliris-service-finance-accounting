@@ -65,7 +65,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                            DispositionDate = a.DispositionDate,
                            PayToSupplier = a.PayToSupplier,
                            NotVerifiedReason = a.NotVerifiedReason,
-                           LastModifiedUtc = a.LastModifiedUtc
+                           LastModifiedUtc = a.LastModifiedUtc,
+                           CreatedUtc = a.CreatedUtc 
                        });
 
             return Query;
@@ -94,6 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             result.Columns.Add(new DataColumn() { ColumnName = "Tanggal Verifikasi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "No Disposisi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Tanggal Disposisi", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Tanggal Kirim dari Pembelian", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Divisi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Total Bayar", DataType = typeof(double) });
@@ -101,7 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             result.Columns.Add(new DataColumn() { ColumnName = "Alasan", DataType = typeof(String) });
 
             if (Query.ToArray().Count() == 0)
-                result.Rows.Add("", "", "", "", "", 0, "", ""); // to allow column name to be generated properly for empty data as template
+                result.Rows.Add("", "", "", "", "", "", 0, "", ""); // to allow column name to be generated properly for empty data as template
             else
             {
                 int index = 0;
@@ -112,6 +114,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     string verifyDate = vDate == new DateTime(1970, 1, 1) ? "-" : vDate.ToOffset(new TimeSpan(offset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID"));
 
                     result.Rows.Add(verifyDate, item.DispositionNo, item.DispositionDate.ToOffset(new TimeSpan(offset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
+                        item.CreatedUtc.AddHours(offset).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
                         item.SupplierName, item.DivisionName, item.PayToSupplier, item.Currency, item.NotVerifiedReason);
                 }
             }
