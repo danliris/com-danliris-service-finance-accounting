@@ -9,6 +9,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
     {
         public DateTimeOffset? Date { get; set; }
 
+        public string Products { get; set; }
+
         public string UnitReceiptNoteNo { get; set; }
         
         public string BankExpenditureNoteNo { get; set; }

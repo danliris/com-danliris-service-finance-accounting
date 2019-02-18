@@ -519,5 +519,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             var reportResponse = service.GenerateExcelAsync(1, 25, "{}", "{}", null, null, 7);
             Assert.NotNull(reportResponse);
         }
+
+        [Fact]
+        public void Should_Success_Generate_Empty_Excel()
+        {
+            var serviceProvider = new Mock<IServiceProvider>();
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientFromPurchasingExpeditionGetEmpty());
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(serviceProvider.Object, _dbContext(GetCurrentMethod()));
+
+            var reportResponse = service.GenerateExcelAsync(1, 25, "{}", "{}", null, null, 7);
+            Assert.NotNull(reportResponse);
+        }
     }
 }

@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190206080405_RenameColumn")]
+    partial class RenameColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -390,9 +392,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("ReferenceNo")
                         .HasMaxLength(250);
 
-                    b.Property<string>("Status")
-                        .HasMaxLength(25);
-
                     b.HasKey("Id");
 
                     b.ToTable("JournalTransactions");
@@ -550,8 +549,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("DeletedUtc");
 
-                    b.Property<string>("EPOId");
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LastModifiedAgent")
@@ -565,6 +562,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<DateTime>("LastModifiedUtc");
 
                     b.Property<int>("PaymentDispositionNoteItemId");
+
+                    b.Property<int?>("PaymentDispositionNoteItemModelId");
 
                     b.Property<double>("Price");
 
@@ -598,6 +597,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PaymentDispositionNoteItemId");
+
+                    b.HasIndex("PaymentDispositionNoteItemModelId");
 
                     b.ToTable("PaymentDispositionNoteDetails");
                 });
@@ -669,11 +670,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<double>("PayToSupplier");
-
                     b.Property<int>("PaymentDispositionNoteId");
-
-                    b.Property<DateTimeOffset>("PaymentDueDate");
 
                     b.Property<string>("ProformaNo")
                         .HasMaxLength(255);
@@ -806,8 +803,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(255);
 
                     b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<string>("EPOId");
 
                     b.Property<bool>("IsDeleted");
 
@@ -1017,10 +1012,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote.PaymentDispositionNoteDetailModel", b =>
                 {
-                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote.PaymentDispositionNoteItemModel", "PaymentDispositionNoteItem")
-                        .WithMany("Details")
+                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote.PaymentDispositionNoteModel", "PaymentDispositionNoteItem")
+                        .WithMany()
                         .HasForeignKey("PaymentDispositionNoteItemId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote.PaymentDispositionNoteItemModel")
+                        .WithMany("Details")
+                        .HasForeignKey("PaymentDispositionNoteItemModelId");
                 });
 
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote.PaymentDispositionNoteItemModel", b =>
