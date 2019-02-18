@@ -367,7 +367,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 
             foreach (var item in data)
             {
-                var expedition = expeditionData.FirstOrDefault(x => x.DispositionNo == item.DispositionNo);
+                var expedition = expeditionData.OrderByDescending(a=>a.LastModifiedUtc).FirstOrDefault(x => x.DispositionNo == item.DispositionNo);
                 PurchasingDispositionReportViewModel vm = new PurchasingDispositionReportViewModel()
                 {
                     BankExpenditureNoteDate = expedition == null || expedition.BankExpenditureNoteDate == DateTimeOffset.MinValue ? null : expedition.BankExpenditureNoteDate,
@@ -377,7 +377,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     BankExpenditureNotePPHNo = expedition?.BankExpenditureNotePPHNo,
                     CashierDivisionDate = expedition == null || expedition.CashierDivisionDate == DateTimeOffset.MinValue ? null : expedition.CashierDivisionDate,
                     CreatedUtc = item.CreatedUtc,
-                    InvoiceNo = item.InvoiceNo,
+                    InvoiceNo = item.ProformaNo,
                     PaymentDueDate = item.PaymentDueDate,
                     Position = item.Position,
                     SentToVerificationDivisionDate = expedition == null ? null : new DateTimeOffset?(expedition.CreatedUtc),
