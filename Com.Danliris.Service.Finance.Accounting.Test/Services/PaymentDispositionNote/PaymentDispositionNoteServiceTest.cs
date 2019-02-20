@@ -140,6 +140,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
 
             Assert.True(vm.Validate(null).Count() > 0);
         }
+
+        [Fact]
+        public void Should_Success_Validate_Date_Data()
+        {
+            PaymentDispositionNoteViewModel vm = new PaymentDispositionNoteViewModel();
+            vm.PaymentDate = DateTimeOffset.UtcNow.AddDays(2);
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
         [Fact]
         public async void Should_Success_Get_Data_Details_By_EPOId()
         {
