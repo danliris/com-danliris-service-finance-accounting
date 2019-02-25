@@ -312,6 +312,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var reportResponse = await service.PostTransactionAsync(data.Id);
             Assert.NotEqual(0, reportResponse);
         }
+
+        [Fact]
+        public async Task Should_Success_Create_NextMonth_Data()
+        {
+            var dbContext = _dbContext(GetCurrentMethod());
+            var service = new JournalTransactionService(GetServiceProvider().Object, dbContext);
+            var model = _dataUtil(service).GetNewData();
+            var Response = await service.CreateAsync(model);
+
+            var numberGenerator = dbContext.JournalTransactionNumbers.FirstOrDefault();
+            numberGenerator.Month = model.CreatedUtc.Month - 1;
+            dbContext.JournalTransactionNumbers.Update(numberGenerator);
+            dbContext.SaveChanges();
+
+            var newModel = _dataUtil(service).GetNewData();
+            newModel.ReferenceNo = new Guid().ToString();
+            var NewResponse = await service.CreateAsync(newModel);
+
+            Assert.NotEqual(0, NewResponse);
+        }
     }
 }
 

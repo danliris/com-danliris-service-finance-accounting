@@ -29,6 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         protected DbSet<JournalTransactionModel> _DbSet;
         protected DbSet<JournalTransactionItemModel> _ItemDbSet;
         protected DbSet<COAModel> _COADbSet;
+        private readonly DbSet<JournalTransactionNumber> _JournalTransactionNumberDbSet;
         private readonly IServiceProvider _serviceProvider;
         protected IIdentityService _IdentityService;
         public FinanceDbContext _DbContext;
@@ -39,17 +40,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             _DbSet = dbContext.Set<JournalTransactionModel>();
             _ItemDbSet = dbContext.Set<JournalTransactionItemModel>();
             _COADbSet = dbContext.Set<COAModel>();
+            _JournalTransactionNumberDbSet = dbContext.Set<JournalTransactionNumber>();
             _serviceProvider = serviceProvider;
             _IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
         public async Task<int> CreateAsync(JournalTransactionModel model)
         {
-            do
-            {
-                model.DocumentNo = CodeGenerator.Generate();
-            }
-            while (_DbSet.Any(d => d.DocumentNo.Equals(model.DocumentNo)));
+
+            model.DocumentNo = GenerateDocumentNo(model);
 
             if (_DbSet.Any(d => d.ReferenceNo.Equals(model.ReferenceNo) && !d.IsDeleted && !d.IsReversed && !d.IsReverser))
             {
@@ -77,6 +76,66 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             _DbSet.Add(model);
             return await _DbContext.SaveChangesAsync();
+        }
+
+        private string GenerateDocumentNo(JournalTransactionModel model)
+        {
+            var divisionFromCOA = GetDivisionFromCOANumbers(model.Items);
+            var division = JournalNumberGenerator.GetDivisionByNumber(int.Parse(divisionFromCOA));
+            var numberRule = _JournalTransactionNumberDbSet.FirstOrDefault(f => f.Division == int.Parse(divisionFromCOA));
+
+            if (numberRule == null)
+            {
+                numberRule = new JournalTransactionNumber()
+                {
+                    Division = int.Parse(divisionFromCOA),
+                    Month = DateTimeOffset.Now.Month,
+                    Number = 1,
+                    Year = DateTimeOffset.Now.Year
+                };
+
+                EntityExtension.FlagForCreate(numberRule, _IdentityService.Username, _UserAgent);
+                _JournalTransactionNumberDbSet.Add(numberRule);
+
+                return $"{division}{numberRule.Month.ToString().PadLeft(2, '0')}{numberRule.Year}{numberRule.Number.ToString().PadLeft(4, '0')}";
+            }
+            else
+            {
+                if (numberRule.Month != DateTimeOffset.Now.Month)
+                {
+                    numberRule.Number = 0;
+                    
+                }
+
+                numberRule.Number += 1;
+                numberRule.Month = DateTimeOffset.Now.Month;
+                numberRule.Year = DateTimeOffset.Now.Year;
+
+                EntityExtension.FlagForUpdate(numberRule, _IdentityService.Username, _UserAgent);
+                _JournalTransactionNumberDbSet.Update(numberRule);
+
+                return $"{division}{numberRule.Month.ToString().PadLeft(2, '0')}{numberRule.Year}{numberRule.Number.ToString().PadLeft(4, '0')}";
+            }
+        }
+
+        private string GetDivisionFromCOANumbers(ICollection<JournalTransactionItemModel> items)
+        {
+            var result = "0";
+            foreach (var item in items)
+            {
+                var coaCompositions = item.COA.Code.Split(".");
+
+                if (coaCompositions.Count() >= 4)
+                {
+                    if (coaCompositions[2] != "0")
+                    {
+                        result = coaCompositions[2];
+                        break;
+                    }
+                }
+            }
+
+            return result;
         }
 
         public async Task<int> DeleteAsync(int id)

@@ -28,6 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
         public DbSet<JournalTransactionModel> JournalTransactions { get; set; }
         public DbSet<JournalTransactionItemModel> JournalTransactionItems { get; set; }
+        public DbSet<JournalTransactionNumber> JournalTransactionNumbers { get; set; }
 
         public DbSet<LockTransactionModel> LockTransactions { get; set; }
 
