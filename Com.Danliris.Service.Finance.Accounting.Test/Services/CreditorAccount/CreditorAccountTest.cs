@@ -175,6 +175,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
+        public async void Should_Return_1_IfNotFound()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
+            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            data.SupplierCode = "";
+            data.SupplierName = "";
+            data.InvoiceNo = "";
+            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
+            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+            var newData = await service.GetByBankExpenditureNote(data.SupplierCode, data.Code, data.InvoiceNo);
+            Assert.Null(newData);
+        }
+
+        [Fact]
         public async void Should_Success_Put_BankExpenditureNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
