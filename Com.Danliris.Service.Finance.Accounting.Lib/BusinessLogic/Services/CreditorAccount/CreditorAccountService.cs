@@ -378,7 +378,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.BankExpenditureNoteNo == null && x.SupplierCode == viewModel.SupplierCode && x.InvoiceNo == viewModel.InvoiceNo);
 
             if (model == null)
-                throw new NotFoundException();
+                return 1;
 
             model.BankExpenditureNoteDate = viewModel.Date;
             model.BankExpenditureNoteId = viewModel.Id;
