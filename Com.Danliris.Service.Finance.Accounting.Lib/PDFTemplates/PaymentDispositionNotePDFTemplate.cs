@@ -95,7 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             #endregion Header
 
             Dictionary<string, double> units = new Dictionary<string, double>();
-
+            Dictionary<string, double> percentageUnits = new Dictionary<string, double>();
             #region Body
 
             PdfPTable bodyTable = new PdfPTable(6);
@@ -126,6 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             int index = 1;
             double total = 0;
+            double totalPay = 0;
             foreach (PaymentDispositionNoteItemViewModel item in viewModel.Items)
             {
                 var details = item.Details
@@ -173,8 +174,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                         units.Add(detail.code, detail.Total);
                     }
 
-                   
+                    totalPay += detail.Total;
                 }
+            }
+
+            foreach(var un in units)
+            {
+                percentageUnits[un.Key] = un.Value * 100 / totalPay;
             }
 
             bodyCell.Colspan = 3;
@@ -223,7 +229,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             bodyFooterCell.Phrase = new Phrase("");
             bodyFooterTable.AddCell(bodyFooterCell);
 
-            foreach (var unit in units)
+
+
+            foreach (var unit in percentageUnits)
             {
                 bodyFooterCell.Colspan = 1;
                 bodyFooterCell.Phrase = new Phrase("");
@@ -237,7 +245,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 //bodyFooterCell.Phrase = new Phrase(string.Format("{0:n4}", unit.Value), normal_font);
                 //bodyFooterTable.AddCell(bodyFooterCell);
-                bodyFooterCell.Phrase = new Phrase(string.Format("{0:n4}", unit.Value), normal_font);
+                bodyFooterCell.Phrase = new Phrase(string.Format("{0:n4}", unit.Value* total/100), normal_font);
                 bodyFooterTable.AddCell(bodyFooterCell);
 
 
