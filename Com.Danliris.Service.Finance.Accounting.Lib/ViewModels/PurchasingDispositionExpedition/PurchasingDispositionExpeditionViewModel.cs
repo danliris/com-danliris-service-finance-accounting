@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
         public DateTimeOffset cashierDivisionDate { get; set; }
         public CurrencyViewModel currency { get; set; }
         public DateTimeOffset paymentDueDate { get; set; }
-        public string invoiceNo { get; set; }
+        public string proformaNo { get; set; }
         public string notVerifiedReason { get; set; }
         public int position { get; set; }
         public string sendToCashierDivisionBy { get; set; }
@@ -41,6 +41,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
         public string bankExpenditureNotePPHNo { get; set; }
         public string paymentMethod { get; set; }
         public CategoryViewModel category { get; set; }
+
+        public DivisionViewModel division { get; set; }
+
+        public double dpp { get; set; }
+        public double vatValue { get; set; }
+        public double incomeTaxValue { get; set; }
+        public double payToSupplier { get; set; }
         public List<PurchasingDispositionExpeditionItemViewModel> items { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

@@ -9,6 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositi
 {
     public class PurchasingDispositionExpeditionItemModel : StandardEntity, IValidatableObject
     {
+        public string EPOId { get; set; }
         public double Price { get; set; }
         [MaxLength(50)]
         public string ProductId { get; set; }
@@ -23,7 +24,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositi
         public string UnitCode { get; set; }
         [MaxLength(255)]
         public string UnitName { get; set; }
-        public string Uom { get; set; }
+        public string UomId { get; set; }
+        public string UomUnit { get; set; }
         public int PurchasingDispositionDetailId { get; set; }
         public virtual int PurchasingDispositionExpeditionId { get; set; }
         [ForeignKey("PurchasingDispositionExpeditionId")]

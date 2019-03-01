@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -20,7 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -37,6 +41,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             StackFrame sf = st.GetFrame(1);
 
             return string.Concat(sf.GetMethod().Name, "_", ENTITY);
+        }
+
+        private IServiceProvider PutServiceProvider()
+        {
+            var httpClientService = new Mock<IHttpClientService>();
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("purchasing-dispositions/update/position"))))
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(new PurchasingDispositionDataUtil().GetResultFormatterOkString()) });
+            
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IdentityService)))
+                .Returns(new IdentityService { Username = "Username", TimezoneOffset = 7 });
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            return serviceProviderMock.Object;
         }
 
         private FinanceDbContext _dbContext(string testName)
@@ -58,11 +80,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
 
         private Mock<IServiceProvider> GetServiceProvider()
         {
+            var httpClientService = new Mock<IHttpClientService>();
+            httpClientService
+                .Setup(x => x.PutAsync(It.Is<string>(s => s.Contains("purchasing-dispositions/update/position")), It.IsAny<StringContent>()))
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
             var serviceProvider = new Mock<IServiceProvider>();
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(new HttpClientTestService());
+                .Returns(httpClientService.Object);
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -74,10 +101,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
 
         private Mock<IServiceProvider> GetServiceProviderWrongHttpClient()
         {
+            var httpClientService = new Mock<IHttpClientService>();
+            httpClientService
+                .Setup(x => x.PutAsync(It.Is<string>(s => s.Contains("purchasing-dispositions/update/position")), It.IsAny<StringContent>()))
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
             var serviceProvider = new Mock<IServiceProvider>();
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(new HttpClientFailTestService());
+                .Returns(httpClientService);
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -144,12 +176,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         public async void Should_Success_Delete_Data()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            
+
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
             var newModel = await service.ReadByIdAsync(model.Id);
 
             var Response = await service.DeleteAsync(newModel.Id);
             Assert.NotEqual(0, Response);
         }
+
+        [Fact]
+        public async void Should_Success_Delete_With_two_Datas()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData2();
+            var newModel = await service.ReadByIdAsync(model.Id);
+
+            var Response = await service.DeleteAsync(newModel.Id);
+            Assert.NotEqual(0, Response);
+        }
+
+        
 
         [Fact]
         public async void Should_Success_Post_Acceptance_Verification()
@@ -177,7 +224,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         [Fact]
         public async Task Should_Fail_Post_Acceptance_Verification()
         {
-            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
+
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
 
             PurchasingDispositionAcceptanceViewModel data = new PurchasingDispositionAcceptanceViewModel()
@@ -192,7 +240,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
                     }
                 }
             };
-            await Assert.ThrowsAnyAsync<Exception>(() => service.PurchasingDispositionAcceptance(data));
+            await Assert.ThrowsAnyAsync<Exception>(() => service.PurchasingDispositionAcceptance(null));
 
         }
 
@@ -333,7 +381,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         [Fact]
         public async Task Should_Fail_Post_Disposition_Verification()
         {
-            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
 
             PurchasingDispositionVerificationViewModel data = new PurchasingDispositionVerificationViewModel()
@@ -344,7 +392,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
                 SubmitPosition = ExpeditionPosition.SEND_TO_PURCHASING_DIVISION,
                 VerifyDate = DateTimeOffset.UtcNow
             };
-            await Assert.ThrowsAnyAsync<Exception>(() => service.PurchasingDispositionVerification(data));
+            await Assert.ThrowsAnyAsync<Exception>(() => service.PurchasingDispositionVerification(null));
 
         }
 
