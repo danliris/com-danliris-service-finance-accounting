@@ -9,11 +9,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
 {
     public class PurchasingDispositionExpeditionItemViewModel : BaseViewModel, IValidatableObject
     {
+        public string epoId { get; set; }
         public double price { get; set; }
         public ProductViewModel product { get; set; }
         public double quantity { get; set; }
         public UnitViewModel unit { get; set; }
-        public string uom { get; set; }
+        public UomViewModel uom { get; set; }
         public int purchasingDispositionDetailId { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

@@ -1,7 +1,9 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Moonlay.Data.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -26,8 +28,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
         public DbSet<JournalTransactionModel> JournalTransactions { get; set; }
         public DbSet<JournalTransactionItemModel> JournalTransactionItems { get; set; }
+        public DbSet<JournalTransactionNumber> JournalTransactionNumbers { get; set; }
+
+        public DbSet<LockTransactionModel> LockTransactions { get; set; }
 
         public DbSet<PurchasingDispositionExpeditionModel> PurchasingDispositionExpeditions { get; set; }
         public DbSet<PurchasingDispositionExpeditionItemModel> PurchasingDispositionExpeditionItems { get; set; }
+
+        public DbSet<PaymentDispositionNoteModel> PaymentDispositionNotes { get; set; }
+        public DbSet<PaymentDispositionNoteItemModel> PaymentDispositionNoteItems { get; set; }
+        public DbSet<PaymentDispositionNoteDetailModel> PaymentDispositionNoteDetails { get; set; }
     }
 }

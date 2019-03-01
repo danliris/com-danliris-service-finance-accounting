@@ -50,23 +50,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             {
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
             }
+            List<string> dispoNo = new List<string>();
+            dispoNo.Add(m.DispositionNo);
+            UpdateDispositionPosition(dispoNo, ExpeditionPosition.SEND_TO_VERIFICATION_DIVISION);
+
             DbSet.Add(m);
         }
 
         public async Task<int> CreateAsync(PurchasingDispositionExpeditionModel m)
         {
             CreateModel(m);
+            
             return await DbContext.SaveChangesAsync();
         }
 
         public async Task DeleteModel(int id)
         {
             PurchasingDispositionExpeditionModel model = await ReadByIdAsync(id);
-            EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
             foreach (var item in model.Items)
             {
                 EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
             }
+
+            List<string> dispoNo = new List<string>();
+            dispoNo.Add(model.DispositionNo);
+
+            var dispoCount = this.DbSet.Count(x => x.DispositionNo == model.DispositionNo && x.IsDeleted == false && x.Id!=model.Id);
+            if (dispoCount > 0)
+            {
+                UpdateDispositionPosition(dispoNo, ExpeditionPosition.SEND_TO_PURCHASING_DIVISION);
+            }
+            else
+            {
+                UpdateDispositionPosition(dispoNo, ExpeditionPosition.PURCHASING_DIVISION);
+            }
+
+            EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
             DbSet.Update(model);
         }
 
@@ -238,7 +257,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     PurchasingDispositionExpeditionModel model;
                     if (data.Id == 0)
                     {
-                        model = DbContext.PurchasingDispositionExpeditions.First(x => x.DispositionNo == data.DispositionNo);
+                        model = DbContext.PurchasingDispositionExpeditions.OrderByDescending(x=>x.LastModifiedUtc).First(x => x.DispositionNo == data.DispositionNo);
                     }
                     else
                     {
@@ -256,6 +275,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         model.Active = false;
                         model.NotVerifiedReason = data.Reason;
 
+                        model.SendToCashierDivisionBy = null;
+                        model.SendToCashierDivisionDate = DateTimeOffset.MinValue;
+
+
                         EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
                         updated = await DbContext.SaveChangesAsync();
                         UpdateDispositionPosition(new List<string>() { model.DispositionNo }, ExpeditionPosition.SEND_TO_PURCHASING_DIVISION);
@@ -268,6 +291,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         model.SendToCashierDivisionDate = data.VerifyDate;
                         model.Position = ExpeditionPosition.SEND_TO_CASHIER_DIVISION;
                         model.Active = true;
+
+                        model.SendToPurchasingDivisionBy = null;
+                        model.SendToPurchasingDivisionDate = DateTimeOffset.MinValue;
+                        model.NotVerifiedReason = null;
 
                         EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
                         updated = await DbContext.SaveChangesAsync();
@@ -340,7 +367,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 
             foreach (var item in data)
             {
-                var expedition = expeditionData.FirstOrDefault(x => x.DispositionNo == item.DispositionNo);
+                var expedition = expeditionData.OrderByDescending(a=>a.LastModifiedUtc).FirstOrDefault(x => x.DispositionNo == item.DispositionNo);
                 PurchasingDispositionReportViewModel vm = new PurchasingDispositionReportViewModel()
                 {
                     BankExpenditureNoteDate = expedition == null || expedition.BankExpenditureNoteDate == DateTimeOffset.MinValue ? null : expedition.BankExpenditureNoteDate,
@@ -350,7 +377,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     BankExpenditureNotePPHNo = expedition?.BankExpenditureNotePPHNo,
                     CashierDivisionDate = expedition == null || expedition.CashierDivisionDate == DateTimeOffset.MinValue ? null : expedition.CashierDivisionDate,
                     CreatedUtc = item.CreatedUtc,
-                    InvoiceNo = item.InvoiceNo,
+                    InvoiceNo = item.ProformaNo,
                     PaymentDueDate = item.PaymentDueDate,
                     Position = item.Position,
                     SentToVerificationDivisionDate = expedition == null ? null : new DateTimeOffset?(expedition.CreatedUtc),
@@ -358,7 +385,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     ((expedition.Position == ExpeditionPosition.SEND_TO_PURCHASING_DIVISION) && expedition.SendToPurchasingDivisionDate != DateTimeOffset.MinValue) ? expedition.SendToPurchasingDivisionDate : null,
                     SupplierName = item.Supplier.name,
                     VerificationDivisionDate = expedition == null || expedition.VerificationDivisionDate == DateTimeOffset.MinValue ? null : expedition.VerificationDivisionDate,
-                    VerifyDate = expedition == null || expedition.VerifyDate == DateTimeOffset.MinValue ? null : expedition.VerifyDate
+                    VerifyDate = expedition == null || expedition.VerifyDate == DateTimeOffset.MinValue ? null : expedition.VerifyDate,
+                    Staff= expedition == null   ? "" :  expedition.CreatedBy
                 };
                 result.Add(vm);
 
@@ -378,7 +406,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Disposisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Disposisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Jatuh Tempo", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Invoice", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Proforma", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Posisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Pembelian Kirim", DataType = typeof(string) });
@@ -388,22 +416,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Terima Kasir", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Bayar Kasir", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No Kuitansi Kasir", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Bayar PPH Kasir", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "No Kuitansi PPHKasir", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Bayar PPH Kasir", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "No Kuitansi PPHKasir", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Staf", DataType = typeof(string) });
 
             if (data.data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "","");
             }
             else
             {
                 foreach (var item in data.data)
                 {
                     dt.Rows.Add(item.DispositionNo, item.CreatedUtc == null ? "-" : item.CreatedUtc.Value.AddHours(offSet).ToString("dd MMM yyyy"), item.PaymentDueDate == null ? "-" : item.PaymentDueDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
-                        item.InvoiceNo, item.SupplierName, item.Position == 0 ? "-" : ((ExpeditionPosition)item.Position).ToDescriptionString(),item.SentToVerificationDivisionDate == null ? "-" : item.SentToVerificationDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), item.VerificationDivisionDate == null ? "-" : item.VerificationDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
+                        item.InvoiceNo, item.SupplierName, item.Position == 0 ? "-" : item.Position==4 ? "Dikirim ke Bag. Keuangan" : item.Position==7 ? "Bag. Keuangan" : ((ExpeditionPosition)item.Position).ToDescriptionString(),item.SentToVerificationDivisionDate == null ? "-" : item.SentToVerificationDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), item.VerificationDivisionDate == null ? "-" : item.VerificationDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
                         item.VerifyDate == null ? "-" : item.VerifyDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), item.SendDate == null ? "-" : item.SendDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
                         item.CashierDivisionDate == null ? "-" : item.CashierDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), item.BankExpenditureNoteDate == null ? "-" : item.BankExpenditureNoteDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
-                        string.IsNullOrEmpty(item.BankExpenditureNoteNo) ? "-" : item.BankExpenditureNoteNo, item.BankExpenditureNotePPHDate == null ? "-" : item.BankExpenditureNotePPHDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.BankExpenditureNotePPHNo) ? "-" : item.BankExpenditureNotePPHNo);
+                        string.IsNullOrEmpty(item.BankExpenditureNoteNo) ? "-" : item.BankExpenditureNoteNo, 
+                        //item.BankExpenditureNotePPHDate == null ? "-" : item.BankExpenditureNotePPHDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.BankExpenditureNotePPHNo) ? "-" : item.BankExpenditureNotePPHNo,
+                        item.Staff);
 
                 }
             }

@@ -117,5 +117,100 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+
+        [HttpGet("report/sub-ledgers")]
+        public async Task<ActionResult> GetSubLedgerReport([FromQuery] int coaId, [FromQuery] int month, [FromQuery] int year)
+        {
+            try
+            {
+                VerifyUser();
+
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                var reportData = await Service.GetSubLedgerReport(coaId, month, year, offSet);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, reportData);
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("report/sub-ledgers/download/xls")]
+        public async Task<ActionResult> GetSubLedgerReportXls([FromQuery] int coaId, [FromQuery] int month, [FromQuery] int year)
+        {
+            try
+            {
+                VerifyUser();
+
+                byte[] xlsInBytes;
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                var reportData = await Service.GetSubLedgerReportXls(coaId, month, year, offSet);
+
+                string fileName = reportData.Filename;
+
+                xlsInBytes = reportData.Result.ToArray();
+
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                return file;
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("posting-transaction/{id}")]
+        public async Task<ActionResult> PostingTransationById([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await Service.PostTransactionAsync(id);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("report/sub-ledgers/options/months")]
+        public IActionResult GetMonthOptions()
+        {
+            var monthOptions = new List<object>()
+            {
+                new { MonthNumber = 1, MonthName = "Januari" },
+                new { MonthNumber = 2, MonthName = "Februari" },
+                new { MonthNumber = 3, MonthName = "Maret" },
+                new { MonthNumber = 4, MonthName = "April" },
+                new { MonthNumber = 5, MonthName = "Mei" },
+                new { MonthNumber = 6, MonthName = "Juni" },
+                new { MonthNumber = 7, MonthName = "Juli" },
+                new { MonthNumber = 8, MonthName = "Agustus" },
+                new { MonthNumber = 9, MonthName = "September" },
+                new { MonthNumber = 10, MonthName = "Oktober" },
+                new { MonthNumber = 11, MonthName = "November" },
+                new { MonthNumber = 12, MonthName = "Desember" }
+            };
+            Dictionary<string, object> Result =
+                new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                .Ok(Mapper, monthOptions);
+            return Ok(Result);
+        }
     }
 }
