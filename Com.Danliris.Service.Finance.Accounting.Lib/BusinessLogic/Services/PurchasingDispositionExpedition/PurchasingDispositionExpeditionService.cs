@@ -386,7 +386,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     SupplierName = item.Supplier.name,
                     VerificationDivisionDate = expedition == null || expedition.VerificationDivisionDate == DateTimeOffset.MinValue ? null : expedition.VerificationDivisionDate,
                     VerifyDate = expedition == null || expedition.VerifyDate == DateTimeOffset.MinValue ? null : expedition.VerifyDate,
-                    Staff= expedition == null   ? "" :  expedition.CreatedBy
+                    Staff= item == null   ? "" : item.CreatedBy
                 };
                 result.Add(vm);
 
