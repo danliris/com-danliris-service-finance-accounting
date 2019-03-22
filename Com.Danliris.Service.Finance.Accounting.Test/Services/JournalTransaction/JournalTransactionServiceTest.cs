@@ -266,10 +266,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public async Task Should_Error_ReverseJournalTransaction_Data()
+        public async Task Should_Skip_ReverseJournalTransaction_DataNotFound()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            await Assert.ThrowsAsync<Exception>(() => service.ReverseJournalTransactionByReferenceNo("test"));
+            //await Assert.ThrowsAsync<Exception>(() => service.ReverseJournalTransactionByReferenceNo("test"));
+            var response = await service.ReverseJournalTransactionByReferenceNo("test");
+            Assert.Equal(0, response);
         }
 
         [Fact]
