@@ -359,7 +359,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             if (transactionToReverse == null)
             {
-                throw new Exception("Transaction Not Found");
+                return await _DbContext.SaveChangesAsync();
             }
 
             transactionToReverse.IsReversed = true;
