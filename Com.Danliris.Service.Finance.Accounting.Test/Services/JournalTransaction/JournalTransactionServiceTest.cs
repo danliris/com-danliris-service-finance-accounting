@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -253,7 +254,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
-        public async Task Should_Error_CreateDuplicateReferenceNo_Data()
+        public async Task Should_Success_CreateDuplicateReferenceNo_Data()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = _dataUtil(service).GetNewData();
@@ -262,7 +263,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var newModel = _dataUtil(service).GetNewData();
             newModel.ReferenceNo = model.ReferenceNo;
             //var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
-            await Assert.ThrowsAsync<ServiceValidationException>(() => service.CreateAsync(newModel));
+            var response = await service.CreateAsync(newModel);
+            Assert.NotEqual(0, response);
         }
 
         [Fact]
@@ -333,6 +335,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var NewResponse = await service.CreateAsync(newModel);
 
             Assert.NotEqual(0, NewResponse);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Many()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var firstModel = _dataUtil(service).GetNewData();
+            var secondModel = _dataUtil(service).GetNewData();
+            var response = await service.CreateManyAsync(new List<JournalTransactionModel>() { firstModel, secondModel });
+
+            //var newModel = _dataUtil(service).GetNewData();
+            //newModel.ReferenceNo = model.ReferenceNo;
+            //var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
+            //var response = await service.CreateAsync(newModel);
+            Assert.NotEqual(0, response);
         }
     }
 }

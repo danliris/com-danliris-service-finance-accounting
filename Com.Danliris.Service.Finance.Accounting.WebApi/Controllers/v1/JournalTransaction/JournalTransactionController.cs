@@ -26,6 +26,35 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         {
         }
 
+        [HttpPost("many")]
+        public async Task<ActionResult> PostMany([FromBody] List<JournalTransactionViewModel> viewModels)
+        {
+            try
+            {
+                VerifyUser();
+                //foreach (var viewModel in viewModels)
+                //{
+
+                //    ValidateService.Validate(viewModel);
+                //}
+
+                var models = Mapper.Map<List<JournalTransactionModel>>(viewModels);
+                await Service.CreateManyAsync(models);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return Created(string.Concat(Request.Path, "/", 0), Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("report")]
         public IActionResult GetReport([FromQuery] DateTimeOffset? dateFrom = null, [FromQuery] DateTimeOffset? dateTo = null, int page = 1, int size = 25)
         {
