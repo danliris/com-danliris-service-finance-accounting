@@ -23,7 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
     {
         private const string ENTITY = "MasterCOA";
         //private PurchasingDocumentAcceptanceDataUtil pdaDataUtil;
-        private readonly IIdentityService identityService;
+        //private readonly IIdentityService identityService;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public string GetCurrentMethod()

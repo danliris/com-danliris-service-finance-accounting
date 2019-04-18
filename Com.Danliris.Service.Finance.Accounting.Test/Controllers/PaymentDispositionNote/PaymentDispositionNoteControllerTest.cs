@@ -377,7 +377,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
 
             var response = controller.GetById(It.IsAny<int>()).Result;
-            Assert.NotEqual(null, response.GetType().GetProperty("FileStream"));
+            Assert.NotNull(response.GetType().GetProperty("FileStream"));
         }
 
         [Fact]
