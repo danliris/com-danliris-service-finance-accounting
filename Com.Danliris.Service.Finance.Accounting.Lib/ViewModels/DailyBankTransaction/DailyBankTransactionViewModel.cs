@@ -38,10 +38,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                 yield return new ValidationResult("Tanggal harus lebih kecil dari atau sama dengan tanggal sekarang", new List<string> { "Date" });
             }
 
-            if (string.IsNullOrWhiteSpace(ReferenceNo))
-            {
-                yield return new ValidationResult("No. Referensi harus diisi", new List<string> { "ReferenceNo" });
-            }
+            //if (string.IsNullOrWhiteSpace(ReferenceNo))
+            //{
+            //    yield return new ValidationResult("No. Referensi harus diisi", new List<string> { "ReferenceNo" });
+            //}
 
             if (string.IsNullOrWhiteSpace(ReferenceType))
             {
