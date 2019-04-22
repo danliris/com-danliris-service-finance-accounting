@@ -20,7 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
     {
         private const string ENTITY = "CreditorAccount";
         //private PurchasingDocumentAcceptanceDataUtil pdaDataUtil;
-        private readonly IIdentityService identityService;
+        //private readonly IIdentityService identityService;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public string GetCurrentMethod()

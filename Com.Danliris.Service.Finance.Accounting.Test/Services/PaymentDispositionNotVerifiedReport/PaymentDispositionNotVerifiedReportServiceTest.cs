@@ -25,7 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
     {
         private const string ENTITY = "PurchasingDispositionExpeditions";
         //private PurchasingDocumentAcceptanceDataUtil pdaDataUtil;
-        private readonly IIdentityService identityService;
+        //private readonly IIdentityService identityService;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public string GetCurrentMethod()
@@ -95,7 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             DateTimeOffset tomorrow = DateTimeOffset.UtcNow.AddDays(1);
             PaymentDispositionNotVerifiedReportService report= new PaymentDispositionNotVerifiedReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var response = report.GetReport("", "", "", model.VerifyDate, tomorrow, 1, 25, "{}", 7, "notHistory");
-            Assert.NotEqual(response.Item1.Count, 0);
+            Assert.NotEmpty(response.Item1);
         }
 
         [Fact]
@@ -140,7 +140,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             DateTimeOffset tomorrow = DateTimeOffset.UtcNow.AddDays(1);
             PaymentDispositionNotVerifiedReportService report = new PaymentDispositionNotVerifiedReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var response = report.GetReport("", "", "", model.VerifyDate, tomorrow, 1, 25, "{}", 7, "history");
-            Assert.NotEqual(response.Item1.Count, 0);
+            Assert.NotEmpty(response.Item1);
         }
 
         [Fact]
