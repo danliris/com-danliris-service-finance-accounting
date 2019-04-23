@@ -19,7 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
     {
         private const string ENTITY = "CreditBalance";
         //private PurchasingDocumentAcceptanceDataUtil pdaDataUtil;
-        private readonly IIdentityService identityService;
+        //private readonly IIdentityService identityService;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public string GetCurrentMethod()

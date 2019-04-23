@@ -23,7 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.LockTransaction
     {
         private const string ENTITY = "LockTransaction";
         //private PurchasingDocumentAcceptanceDataUtil pdaDataUtil;
-        private readonly IIdentityService identityService;
+        //private readonly IIdentityService identityService;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public string GetCurrentMethod()
@@ -114,8 +114,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.LockTransaction
         {
             var vm = new LockTransactionViewModel
             {
-                BeginLockDate = DateTimeOffset.Now.AddDays(1),
-                EndLockDate = DateTimeOffset.Now
+                //BeginLockDate = DateTimeOffset.Now.AddDays(1),
+                LockDate = DateTimeOffset.Now
             };
 
             Assert.True(vm.Validate(null).Count() > 0);
@@ -126,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.LockTransaction
         {
             var vm = new LockTransactionViewModel
             {
-                EndLockDate = DateTimeOffset.Now.AddDays(1)
+                LockDate = DateTimeOffset.Now.AddDays(1)
             };
 
             Assert.True(vm.Validate(null).Count() > 0);
