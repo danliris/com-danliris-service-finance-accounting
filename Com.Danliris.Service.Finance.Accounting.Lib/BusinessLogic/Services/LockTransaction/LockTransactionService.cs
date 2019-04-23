@@ -68,8 +68,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Loc
                     Id = s.Id,
                     CreatedUtc = s.CreatedUtc,
                     CreatedBy = s.CreatedBy,
-                    BeginLockDate = s.BeginLockDate,
-                    EndLockDate = s.EndLockDate,
+                    LockDate = s.LockDate,
+                    Type = s.Type,
+                    //EndLockDate = s.EndLockDate,
                     IsActiveStatus = s.IsActiveStatus,
                     Description = s.Description,
                     LastModifiedUtc = s.LastModifiedUtc
@@ -98,8 +99,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Loc
                    Id = s.Id,
                    CreatedUtc = s.CreatedUtc,
                    CreatedBy = s.CreatedBy,
-                   BeginLockDate = s.BeginLockDate,
-                   EndLockDate = s.EndLockDate,
+                   LockDate = s.LockDate,
+                   Type = s.Type,
+                   //EndLockDate = s.EndLockDate,
                    IsActiveStatus = s.IsActiveStatus,
                    Description = s.Description,
                    LastModifiedUtc = s.LastModifiedUtc

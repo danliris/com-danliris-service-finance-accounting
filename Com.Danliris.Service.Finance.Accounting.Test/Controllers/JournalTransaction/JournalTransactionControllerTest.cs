@@ -153,5 +153,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
             var response = await GetController(mocks).PostingTransationById(It.IsAny<int>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
+
+        [Fact]
+        public async Task Post_Many_WithoutException_ReturnCreated()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<List<JournalTransactionViewModel>>())).Verifiable();
+            mocks.Service.Setup(s => s.CreateManyAsync(It.IsAny<List<JournalTransactionModel>>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).PostMany(It.IsAny<List<JournalTransactionViewModel>>());
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        }
+
+        //[Fact]
+        //public async Task Post_Many_ThrowServiceValidationExeption_ReturnBadRequest()
+        //{
+        //    var mocks = GetMocks();
+        //    mocks.ValidateService.Setup(s => s.Validate(It.IsAny<List<JournalTransactionViewModel>>())).Throws(GetServiceValidationExeption());
+
+        //    var response = await GetController(mocks).PostMany(new List<JournalTransactionViewModel>() { new JournalTransactionViewModel()});
+        //    int statusCode = GetStatusCode(response);
+        //    Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        //}
+
+        [Fact]
+        public async Task Post_Many_ThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<List<JournalTransactionViewModel>>())).Verifiable();
+            mocks.Service.Setup(s => s.CreateManyAsync(It.IsAny<List<JournalTransactionModel>>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).PostMany(It.IsAny<List<JournalTransactionViewModel>>());
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
     }
 }

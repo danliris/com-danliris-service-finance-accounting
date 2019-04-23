@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseInterface;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -16,5 +17,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.J
         Task<SubLedgerReportViewModel> GetSubLedgerReport(int coaId, int month, int year, int timeoffset);
         Task<SubLedgerXlsFormat> GetSubLedgerReportXls(int coaId, int month, int year, int timeoffset);
         Task<int> PostTransactionAsync(int id);
+        Task<int> CreateManyAsync(List<JournalTransactionModel> models);
     }
 }

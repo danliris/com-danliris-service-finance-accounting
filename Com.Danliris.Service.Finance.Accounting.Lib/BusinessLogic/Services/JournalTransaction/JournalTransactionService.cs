@@ -50,15 +50,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             model.DocumentNo = GenerateDocumentNo(model);
 
-            if (_DbSet.Any(d => d.ReferenceNo.Equals(model.ReferenceNo) && !d.IsDeleted && !d.IsReversed && !d.IsReverser))
-            {
-                var errorResult = new List<ValidationResult>()
-                {
-                    new ValidationResult("No. Referensi duplikat", new List<string> { "ReferenceNo" })
-                };
-                ValidationContext validationContext = new ValidationContext(model, _serviceProvider, null);
-                throw new ServiceValidationException(validationContext, errorResult);
-            }
+            //if (_DbSet.Any(d => d.ReferenceNo.Equals(model.ReferenceNo) && !d.IsDeleted && !d.IsReversed && !d.IsReverser))
+            //{
+            //    var errorResult = new List<ValidationResult>()
+            //    {
+            //        new ValidationResult("No. Referensi duplikat", new List<string> { "ReferenceNo" })
+            //    };
+            //    ValidationContext validationContext = new ValidationContext(model, _serviceProvider, null);
+            //    throw new ServiceValidationException(validationContext, errorResult);
+            //}
 
             if (string.IsNullOrWhiteSpace(model.Status))
                 model.Status = JournalTransactionStatus.Draft;
@@ -104,7 +104,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 if (numberRule.Month != DateTimeOffset.Now.Month)
                 {
                     numberRule.Number = 0;
-                    
+
                 }
 
                 numberRule.Number += 1;
@@ -355,47 +355,50 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         public async Task<int> ReverseJournalTransactionByReferenceNo(string referenceNo)
         {
-            var transactionToReverse = _DbSet.FirstOrDefault(entity => entity.ReferenceNo.Equals(referenceNo) && !entity.IsReversed && !entity.IsReverser && !entity.IsDeleted);
+            var transactionsToReverse = _DbSet.Where(entity => entity.ReferenceNo.Equals(referenceNo) && !entity.IsReversed && !entity.IsReverser && !entity.IsDeleted).ToList();
 
-            if (transactionToReverse == null)
+            if (!transactionsToReverse.Any())
             {
-                throw new Exception("Transaction Not Found");
+                return await _DbContext.SaveChangesAsync();
             }
 
-            transactionToReverse.IsReversed = true;
-            _DbSet.Update(transactionToReverse);
-
-            var transactionToReverseItems = _ItemDbSet.Where(entity => entity.JournalTransactionId.Equals(transactionToReverse.Id) && !entity.IsDeleted).ToList();
-            var reversingItems = new List<JournalTransactionItemModel>();
-            foreach (var transactionToReverseItem in transactionToReverseItems)
+            foreach (var transactionToReverse in transactionsToReverse)
             {
-                var reversingItem = new JournalTransactionItemModel()
+                transactionToReverse.IsReversed = true;
+                _DbSet.Update(transactionToReverse);
+
+                var transactionToReverseItems = _ItemDbSet.Where(entity => entity.JournalTransactionId.Equals(transactionToReverse.Id)).ToList();
+                var reversingItems = new List<JournalTransactionItemModel>();
+                foreach (var transactionToReverseItem in transactionToReverseItems)
                 {
-                    COAId = transactionToReverseItem.COAId,
-                    Credit = transactionToReverseItem.Debit,
-                    Debit = transactionToReverseItem.Credit,
-                    Remark = transactionToReverseItem.Remark
+                    var reversingItem = new JournalTransactionItemModel()
+                    {
+                        COAId = transactionToReverseItem.COAId,
+                        Credit = transactionToReverseItem.Debit,
+                        Debit = transactionToReverseItem.Credit,
+                        Remark = transactionToReverseItem.Remark
+                    };
+                    EntityExtension.FlagForCreate(reversingItem, _IdentityService.Username, _UserAgent);
+                    reversingItems.Add(reversingItem);
+                }
+
+                var reversingJournalTransaction = new JournalTransactionModel()
+                {
+                    Date = DateTimeOffset.Now,
+                    Items = reversingItems,
+                    ReferenceNo = transactionToReverse.ReferenceNo,
+                    Description = $"Jurnal Pembalik {transactionToReverse.DocumentNo}"
                 };
-                EntityExtension.FlagForCreate(reversingItem, _IdentityService.Username, _UserAgent);
-                reversingItems.Add(reversingItem);
-            }
 
-            var reversingJournalTransaction = new JournalTransactionModel()
-            {
-                Date = DateTimeOffset.Now,
-                Items = reversingItems,
-                ReferenceNo = transactionToReverse.ReferenceNo,
-                Description = $"Jurnal Pembalik {transactionToReverse.DocumentNo}"
-            };
-
-            do
-            {
-                reversingJournalTransaction.DocumentNo = CodeGenerator.Generate();
+                do
+                {
+                    reversingJournalTransaction.DocumentNo = CodeGenerator.Generate();
+                }
+                while (_DbSet.Any(d => d.DocumentNo.Equals(reversingJournalTransaction.DocumentNo)));
+                reversingJournalTransaction.IsReverser = true;
+                EntityExtension.FlagForCreate(reversingJournalTransaction, _IdentityService.Username, _UserAgent);
+                _DbSet.Add(reversingJournalTransaction);
             }
-            while (_DbSet.Any(d => d.DocumentNo.Equals(reversingJournalTransaction.DocumentNo)));
-            reversingJournalTransaction.IsReverser = true;
-            EntityExtension.FlagForCreate(reversingJournalTransaction, _IdentityService.Username, _UserAgent);
-            _DbSet.Add(reversingJournalTransaction);
 
             return await _DbContext.SaveChangesAsync();
         }
@@ -508,6 +511,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             EntityExtension.FlagForUpdate(model, _IdentityService.Username, _UserAgent);
             _DbSet.Update(model);
             return await _DbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> CreateManyAsync(List<JournalTransactionModel> models)
+        {
+            var result = 0;
+            foreach (var model in models)
+            {
+                result += await CreateAsync(model);
+            }
+            return result;
         }
     }
 
