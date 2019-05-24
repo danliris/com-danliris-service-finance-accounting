@@ -43,6 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             _JournalTransactionNumberDbSet = dbContext.Set<JournalTransactionNumber>();
             _serviceProvider = serviceProvider;
             _IdentityService = serviceProvider.GetService<IIdentityService>();
+            //_IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
         public async Task<int> CreateAsync(JournalTransactionModel model)
@@ -67,6 +68,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             foreach (var item in model.Items)
             {
                 var coa = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COA.Id) || f.Code.Equals(item.COA.Code));
+                if (coa == null)
+                {
+                    CreateNonExistingCOA(item.COA.Code);
+                    coa = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COA.Id) || f.Code.Equals(item.COA.Code));
+                }
+                    
                 item.COAId = coa.Id;
                 item.COA = null;
 
@@ -76,6 +83,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             _DbSet.Add(model);
             return await _DbContext.SaveChangesAsync();
+        }
+
+        private void CreateNonExistingCOA(string code)
+        {
+            var splittedCode = code.Split(".");
+            if (splittedCode.Count().Equals(4))
+            {
+                var newCOA = new COAModel()
+                {
+                    Code = code,
+                    Code1 = splittedCode[0],
+                    Code2 = splittedCode[1],
+                    Code3 = splittedCode[2],
+                    Code4 = splittedCode[3]
+                };
+
+                EntityExtension.FlagForCreate(newCOA, _IdentityService.Username, _UserAgent);
+                _COADbSet.Add(newCOA);
+                _DbContext.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("{COA: 'Invalid COA Code'}");
+            }
+            
         }
 
         private string GenerateDocumentNo(JournalTransactionModel model)
@@ -113,6 +145,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
                 EntityExtension.FlagForUpdate(numberRule, _IdentityService.Username, _UserAgent);
                 _JournalTransactionNumberDbSet.Update(numberRule);
+                _DbContext.SaveChanges();
 
                 return $"{division}{numberRule.Month.ToString().PadLeft(2, '0')}{numberRule.Year}{numberRule.Number.ToString().PadLeft(4, '0')}";
             }
