@@ -155,6 +155,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         }
 
         [Fact]
+        public async Task Should_Succes_PostTransactionById()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.PostTransactionAsync(It.IsAny<int>(), It.IsAny<JournalTransactionModel>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).PostingTransationById(It.IsAny<int>(), It.IsAny<JournalTransactionViewModel>());
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Throw_Exception_PostTransactionById()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.PostTransactionAsync(It.IsAny<int>(), It.IsAny<JournalTransactionModel>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).PostingTransationById(It.IsAny<int>(), It.IsAny<JournalTransactionViewModel>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public async Task Post_Many_WithoutException_ReturnCreated()
         {
             var mocks = GetMocks();

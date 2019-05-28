@@ -318,6 +318,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
+        public async Task Should_Success_Posting_Transaction_By_Model()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var data = await _dataUtil(service).GetTestData();
+            var reportResponse = await service.PostTransactionAsync(data.Id, data);
+            Assert.NotEqual(0, reportResponse);
+        }
+
+        [Fact]
         public async Task Should_Success_Create_NextMonth_Data()
         {
             var dbContext = _dbContext(GetCurrentMethod());
