@@ -218,6 +218,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
             }
         }
 
+        [HttpPut("posting-transaction-update-coa/{id}")]
+        public async Task<ActionResult> PostingTransationById([FromRoute] int id, [FromBody] JournalTransactionViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+
+                var model = Mapper.Map<JournalTransactionModel>(viewModel);
+
+                await Service.PostTransactionAsync(id, model);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("report/sub-ledgers/options/months")]
         public IActionResult GetMonthOptions()
         {
@@ -260,37 +282,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                     .Ok(Mapper, dataVM);
                 return Ok(Result);
-            }
-            catch (Exception e)
-            {
-                Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
-            }
-        }
-
-        [HttpPut("/post-transactions-many")]
-        public async Task<IActionResult> Put([FromBody] List<JournalTransactionViewModel> viewModels)
-        {
-            try
-            {
-                VerifyUser();
-                //ValidateService.Validate(viewModel);
-
-                //if (id != viewModel.Id)
-                //{
-                //    Dictionary<string, object> Result =
-                //        new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
-                //        .Fail();
-                //    return BadRequest(Result);
-                //}
-
-                var models = Mapper.Map<List<JournalTransactionModel>>(viewModels);
-
-                await Service.PostTransactionManyAsync(models);
-
-                return NoContent();
             }
             catch (Exception e)
             {

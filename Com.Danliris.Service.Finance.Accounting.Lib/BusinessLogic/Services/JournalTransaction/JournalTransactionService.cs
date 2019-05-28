@@ -73,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     CreateNonExistingCOA(item.COA.Code);
                     coa = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COA.Id) || f.Code.Equals(item.COA.Code));
                 }
-                    
+
                 item.COAId = coa.Id;
                 item.COA = null;
 
@@ -107,7 +107,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             {
                 throw new Exception("{COA: 'Invalid COA Code'}");
             }
-            
+
         }
 
         private string GenerateDocumentNo(JournalTransactionModel model)
@@ -258,30 +258,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var transactionIds = result.Select(s => s.Id).ToList();
 
             var transactionItems = (from transactionItem in _ItemDbSet
-                                        join coa in _COADbSet on transactionItem.COAId equals coa.Id
-                                        where transactionIds.Contains(transactionItem.JournalTransactionId)
-                                        select new JournalTransactionItemModel()
-                                        {
-                                            Active = transactionItem.Active,
-                                            COA = coa,
-                                            COAId = coa.Id,
-                                            CreatedAgent = transactionItem.CreatedAgent,
-                                            CreatedBy = transactionItem.CreatedBy,
-                                            CreatedUtc = transactionItem.CreatedUtc,
-                                            Credit = transactionItem.Credit,
-                                            Debit = transactionItem.Debit,
-                                            DeletedAgent = transactionItem.DeletedAgent,
-                                            DeletedBy = transactionItem.DeletedBy,
-                                            DeletedUtc = transactionItem.DeletedUtc,
-                                            Id = transactionItem.Id,
-                                            IsDeleted = transactionItem.IsDeleted,
-                                            //JournalTransaction = tra
-                                            JournalTransactionId = transactionItem.JournalTransactionId,
-                                            LastModifiedAgent = transactionItem.LastModifiedAgent,
-                                            LastModifiedBy = transactionItem.LastModifiedBy,
-                                            LastModifiedUtc = transactionItem.LastModifiedUtc,
-                                            Remark = transactionItem.Remark
-                                        }).ToList();
+                                    join coa in _COADbSet on transactionItem.COAId equals coa.Id
+                                    where transactionIds.Contains(transactionItem.JournalTransactionId)
+                                    select new JournalTransactionItemModel()
+                                    {
+                                        Active = transactionItem.Active,
+                                        COA = coa,
+                                        COAId = coa.Id,
+                                        CreatedAgent = transactionItem.CreatedAgent,
+                                        CreatedBy = transactionItem.CreatedBy,
+                                        CreatedUtc = transactionItem.CreatedUtc,
+                                        Credit = transactionItem.Credit,
+                                        Debit = transactionItem.Debit,
+                                        DeletedAgent = transactionItem.DeletedAgent,
+                                        DeletedBy = transactionItem.DeletedBy,
+                                        DeletedUtc = transactionItem.DeletedUtc,
+                                        Id = transactionItem.Id,
+                                        IsDeleted = transactionItem.IsDeleted,
+                                        //JournalTransaction = tra
+                                        JournalTransactionId = transactionItem.JournalTransactionId,
+                                        LastModifiedAgent = transactionItem.LastModifiedAgent,
+                                        LastModifiedBy = transactionItem.LastModifiedBy,
+                                        LastModifiedUtc = transactionItem.LastModifiedUtc,
+                                        Remark = transactionItem.Remark
+                                    }).ToList();
 
             foreach (var transaction in result)
             {
@@ -595,13 +595,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return result;
         }
 
-        public Task<int> PostTransactionManyAsync(List<JournalTransactionModel> models)
+        public Task<int> PostTransactionAsync(int id, JournalTransactionModel model)
         {
-            foreach (var model in  models)
+            model.Status = "POSTED";
+
+            foreach (var item in model.Items)
             {
-                model.Status = "POSTED";
+                item.COAId = item.COA.Id;
+                item.COA = null;
+                EntityExtension.FlagForUpdate(item, _IdentityService.Username, _UserAgent);
+                _ItemDbSet.Update(item);
             }
-            _DbSet.UpdateRange(models);
+
+            EntityExtension.FlagForUpdate(model, _IdentityService.Username, _UserAgent);
+            _DbSet.Update(model);
             return _DbContext.SaveChangesAsync();
         }
     }
