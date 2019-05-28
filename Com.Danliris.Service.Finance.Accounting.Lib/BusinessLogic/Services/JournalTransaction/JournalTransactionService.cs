@@ -242,14 +242,53 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         public async Task<JournalTransactionModel> ReadByIdAsync(int id)
         {
-            var Result = await _DbSet.FirstOrDefaultAsync(d => d.Id.Equals(id) && !d.IsDeleted);
-            Result.Items = await _ItemDbSet.Where(w => w.JournalTransactionId.Equals(id) && !w.IsDeleted).ToListAsync();
-            foreach (var item in Result.Items)
+            var result = await _DbSet.FirstOrDefaultAsync(d => d.Id.Equals(id) && !d.IsDeleted);
+            result.Items = await _ItemDbSet.Where(w => w.JournalTransactionId.Equals(id) && !w.IsDeleted).ToListAsync();
+            foreach (var item in result.Items)
             {
                 var COA = await _COADbSet.FirstOrDefaultAsync(c => c.Id.Equals(item.COAId) && !c.IsDeleted);
                 item.COA = COA;
             }
-            return Result;
+            return result;
+        }
+
+        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year)
+        {
+            var result = _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.Status.Equals("DRAFT")).ToList();
+            var transactionIds = result.Select(s => s.Id).ToList();
+
+            var transactionItems = (from transactionItem in _ItemDbSet
+                                        join coa in _COADbSet on transactionItem.COAId equals coa.Id
+                                        where transactionIds.Contains(transactionItem.JournalTransactionId)
+                                        select new JournalTransactionItemModel()
+                                        {
+                                            Active = transactionItem.Active,
+                                            COA = coa,
+                                            COAId = coa.Id,
+                                            CreatedAgent = transactionItem.CreatedAgent,
+                                            CreatedBy = transactionItem.CreatedBy,
+                                            CreatedUtc = transactionItem.CreatedUtc,
+                                            Credit = transactionItem.Credit,
+                                            Debit = transactionItem.Debit,
+                                            DeletedAgent = transactionItem.DeletedAgent,
+                                            DeletedBy = transactionItem.DeletedBy,
+                                            DeletedUtc = transactionItem.DeletedUtc,
+                                            Id = transactionItem.Id,
+                                            IsDeleted = transactionItem.IsDeleted,
+                                            //JournalTransaction = tra
+                                            JournalTransactionId = transactionItem.JournalTransactionId,
+                                            LastModifiedAgent = transactionItem.LastModifiedAgent,
+                                            LastModifiedBy = transactionItem.LastModifiedBy,
+                                            LastModifiedUtc = transactionItem.LastModifiedUtc,
+                                            Remark = transactionItem.Remark
+                                        }).ToList();
+
+            foreach (var transaction in result)
+            {
+                transaction.Items = transactionItems.Where(w => w.JournalTransactionId.Equals(transaction.Id)).ToList();
+            }
+
+            return result;
         }
 
         public async Task<int> UpdateAsync(int id, JournalTransactionModel model)
@@ -554,6 +593,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 result += await CreateAsync(model);
             }
             return result;
+        }
+
+        public Task<int> PostTransactionManyAsync(List<JournalTransactionModel> models)
+        {
+            foreach (var model in  models)
+            {
+                model.Status = "POSTED";
+            }
+            _DbSet.UpdateRange(models);
+            return _DbContext.SaveChangesAsync();
         }
     }
 

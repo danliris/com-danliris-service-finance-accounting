@@ -241,5 +241,64 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                 .Ok(Mapper, monthOptions);
             return Ok(Result);
         }
+
+        [HttpGet("unposted-transactions")]
+        public IActionResult GetUnPosted(int month = 0, int year = 0)
+        {
+            try
+            {
+                if (month.Equals(0))
+                    month = DateTime.Now.Month;
+                if (year.Equals(0))
+                    year = DateTime.Now.Year;
+
+                List<JournalTransactionModel> result = Service.ReadUnPostedTransactionsByPeriod(month, year);
+
+                List<JournalTransactionViewModel> dataVM = Mapper.Map<List<JournalTransactionViewModel>>(result);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, dataVM);
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("/post-transactions-many")]
+        public async Task<IActionResult> Put([FromBody] List<JournalTransactionViewModel> viewModels)
+        {
+            try
+            {
+                VerifyUser();
+                //ValidateService.Validate(viewModel);
+
+                //if (id != viewModel.Id)
+                //{
+                //    Dictionary<string, object> Result =
+                //        new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                //        .Fail();
+                //    return BadRequest(Result);
+                //}
+
+                var models = Mapper.Map<List<JournalTransactionModel>>(viewModels);
+
+                await Service.PostTransactionManyAsync(models);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }
