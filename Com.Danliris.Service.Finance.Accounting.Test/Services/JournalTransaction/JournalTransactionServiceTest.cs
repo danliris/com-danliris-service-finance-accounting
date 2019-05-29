@@ -318,6 +318,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
+        public async Task Should_Success_Posting_Transaction_By_Model()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var data = await _dataUtil(service).GetTestData();
+            var reportResponse = await service.PostTransactionAsync(data.Id, data);
+            Assert.NotEqual(0, reportResponse);
+        }
+
+        [Fact]
         public async Task Should_Success_Create_NextMonth_Data()
         {
             var dbContext = _dbContext(GetCurrentMethod());
@@ -408,6 +418,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             model.Items = items;
             //var Response = await service.CreateAsync(model);
             await Assert.ThrowsAsync<Exception>(() => service.CreateAsync(model));
+        }
+
+        [Fact]
+        public async Task Should_Success_Read_Unposted_Journal()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewData();
+            model.Status = "DRAFT";
+            var createdData = await service.CreateAsync(model);
+
+            var response = service.ReadUnPostedTransactionsByPeriod(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year);
+
+            Assert.NotEmpty(response);
         }
     }
 }

@@ -17,6 +17,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.J
         Task<SubLedgerReportViewModel> GetSubLedgerReport(int coaId, int month, int year, int timeoffset);
         Task<SubLedgerXlsFormat> GetSubLedgerReportXls(int coaId, int month, int year, int timeoffset);
         Task<int> PostTransactionAsync(int id);
+        Task<int> PostTransactionAsync(int id, JournalTransactionModel model);
         Task<int> CreateManyAsync(List<JournalTransactionModel> models);
+        List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year);
     }
 }
