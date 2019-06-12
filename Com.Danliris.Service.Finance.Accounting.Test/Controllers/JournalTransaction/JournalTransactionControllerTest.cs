@@ -37,6 +37,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         }
 
         [Fact]
+        public void Get_Unposted_Return_Ok()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadUnPostedTransactionsByPeriod(It.IsAny<int>(), It.IsAny<int>())).Returns(new List<JournalTransactionModel>());
+
+            var response = GetController(mocks).GetUnPosted(0, 0);
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void Get_Unposted_Throws_Exception()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadUnPostedTransactionsByPeriod(It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).GetUnPosted();
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public void GetReportExcel_ReturnFile()
         {
             var mocks = GetMocks();
@@ -151,6 +171,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
             mocks.Service.Setup(f => f.PostTransactionAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
 
             var response = await GetController(mocks).PostingTransationById(It.IsAny<int>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Succes_PostTransactionById()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.PostTransactionAsync(It.IsAny<int>(), It.IsAny<JournalTransactionModel>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).PostingTransationById(It.IsAny<int>(), It.IsAny<JournalTransactionViewModel>());
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Throw_Exception_PostTransactionById()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.PostTransactionAsync(It.IsAny<int>(), It.IsAny<JournalTransactionModel>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).PostingTransationById(It.IsAny<int>(), It.IsAny<JournalTransactionViewModel>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 

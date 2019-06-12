@@ -218,6 +218,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
             }
         }
 
+        [HttpPut("posting-transaction-update-coa/{id}")]
+        public async Task<ActionResult> PostingTransationById([FromRoute] int id, [FromBody] JournalTransactionViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+
+                var model = Mapper.Map<JournalTransactionModel>(viewModel);
+
+                await Service.PostTransactionAsync(id, model);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("report/sub-ledgers/options/months")]
         public IActionResult GetMonthOptions()
         {
@@ -240,6 +262,34 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                 new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                 .Ok(Mapper, monthOptions);
             return Ok(Result);
+        }
+
+        [HttpGet("unposted-transactions")]
+        public IActionResult GetUnPosted(int month = 0, int year = 0)
+        {
+            try
+            {
+                if (month.Equals(0))
+                    month = DateTime.Now.Month;
+                if (year.Equals(0))
+                    year = DateTime.Now.Year;
+
+                List<JournalTransactionModel> result = Service.ReadUnPostedTransactionsByPeriod(month, year);
+
+                List<JournalTransactionViewModel> dataVM = Mapper.Map<List<JournalTransactionViewModel>>(result);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, dataVM);
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
         }
     }
 }

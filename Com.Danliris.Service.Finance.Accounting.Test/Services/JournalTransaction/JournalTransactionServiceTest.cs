@@ -318,6 +318,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
+        public async Task Should_Success_Posting_Transaction_By_Model()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var data = await _dataUtil(service).GetTestData();
+            var reportResponse = await service.PostTransactionAsync(data.Id, data);
+            Assert.NotEqual(0, reportResponse);
+        }
+
+        [Fact]
         public async Task Should_Success_Create_NextMonth_Data()
         {
             var dbContext = _dbContext(GetCurrentMethod());
@@ -350,6 +360,77 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             //var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
             //var response = await service.CreateAsync(newModel);
             Assert.NotEqual(0, response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Data_Non_Exist_COA()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewData();
+            var items = new List<JournalTransactionItemModel>()
+            {
+                new JournalTransactionItemModel()
+                {
+                    COA = new COAModel()
+                    {
+                        Code = "9999.9.99.99",
+                    },
+                    Debit = 1000
+                },
+                new JournalTransactionItemModel()
+                {
+                    COA = new COAModel()
+                    {
+                        Code = "9999.9.99.98",
+                    },
+                    Credit = 1000
+                }
+            };
+            model.Items = items;
+            var Response = await service.CreateAsync(model);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_Throw_Exception_Create_Non_Exist_COA_Invalid_Format()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewData();
+            var items = new List<JournalTransactionItemModel>()
+            {
+                new JournalTransactionItemModel()
+                {
+                    COA = new COAModel()
+                    {
+                        Code = "9999.9.99.99",
+                    },
+                    Debit = 1000
+                },
+                new JournalTransactionItemModel()
+                {
+                    COA = new COAModel()
+                    {
+                        Code = "9999.9.9998",
+                    },
+                    Credit = 1000
+                }
+            };
+            model.Items = items;
+            //var Response = await service.CreateAsync(model);
+            await Assert.ThrowsAsync<Exception>(() => service.CreateAsync(model));
+        }
+
+        [Fact]
+        public async Task Should_Success_Read_Unposted_Journal()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewData();
+            model.Status = "DRAFT";
+            var createdData = await service.CreateAsync(model);
+
+            var response = service.ReadUnPostedTransactionsByPeriod(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year);
+
+            Assert.NotEmpty(response);
         }
     }
 }
