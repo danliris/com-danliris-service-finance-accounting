@@ -87,9 +87,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 Status = "IN",
                 Supplier = new NewSupplierViewModel()
                 {
-                    Id = 1,
-                    Code = "SupplierCode",
-                    Name = "SupplierName"
+                    _id = 1,
+                    code = "SupplierCode",
+                    name = "SupplierName"
                 }
             };
 

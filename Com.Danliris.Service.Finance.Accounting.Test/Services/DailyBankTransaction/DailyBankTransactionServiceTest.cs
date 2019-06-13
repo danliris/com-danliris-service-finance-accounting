@@ -193,7 +193,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                 SourceType = "Investasi",
                 Supplier = new NewSupplierViewModel()
                 {
-                    Id = 0
+                    _id = 0
                 }
             };
 

@@ -9,8 +9,8 @@
 
     public class NewSupplierViewModel
     {
-        public int? Id { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
+        public int? _id { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
     }
 }

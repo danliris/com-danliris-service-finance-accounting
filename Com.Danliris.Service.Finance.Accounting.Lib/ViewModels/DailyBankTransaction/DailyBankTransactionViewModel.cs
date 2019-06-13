@@ -73,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                     case "OUT":
                         if (!string.IsNullOrWhiteSpace(SourceType) && (SourceType.ToUpper().Equals("OPERASIONAL") || SourceType.ToUpper().Equals("INVESTASI") || SourceType.ToUpper().Equals("PENDANAAN")))
                         {
-                            if (Supplier == null || Supplier.Id.GetValueOrDefault() <= 0)
+                            if (Supplier == null || Supplier._id.GetValueOrDefault() <= 0)
                                 if (SourceType.ToUpper().Equals("OPERASIONAL"))
                                 {
                                     yield return new ValidationResult("Supplier harus diisi", new List<string> { "Supplier" });

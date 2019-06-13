@@ -21,9 +21,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBa
                 .ForPath(d => d.Bank.Currency.Symbol, opt => opt.MapFrom(s => s.AccountBankCurrencySymbol))
 
                 /* Supplier */
-                .ForPath(d => d.Supplier.Id, opt => opt.MapFrom(s => s.SupplierId))
-                .ForPath(d => d.Supplier.Code, opt => opt.MapFrom(s => s.SupplierCode))
-                .ForPath(d => d.Supplier.Name, opt => opt.MapFrom(s => s.SupplierName))
+                .ForPath(d => d.Supplier._id, opt => opt.MapFrom(s => s.SupplierId))
+                .ForPath(d => d.Supplier.code, opt => opt.MapFrom(s => s.SupplierCode))
+                .ForPath(d => d.Supplier.name, opt => opt.MapFrom(s => s.SupplierName))
 
                 /* Buyer */
                 .ForPath(d => d.Buyer.Id, opt => opt.MapFrom(s => s.BuyerId))
