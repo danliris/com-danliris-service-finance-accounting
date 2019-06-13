@@ -8,9 +8,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
 {
     public class DailyBankTransactionViewModel : BaseViewModel, IValidatableObject
     {
-        public AccountBankViewModel Bank { get; set; }
+        public NewAccountBankViewModel Bank { get; set; }
         public string Code { get; set; }
-        public BuyerViewModel Buyer { get; set; }
+        public NewBuyerViewModel Buyer { get; set; }
         public DateTimeOffset? Date { get; set; }
         public double? Nominal { get; set; }
         public string ReferenceNo { get; set; }
@@ -18,13 +18,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
         public string Remark { get; set; }
         public string SourceType { get; set; }
         public string Status { get; set; }
-        public SupplierViewModel Supplier { get; set; }
+        public NewSupplierViewModel Supplier { get; set; }
         public double? AfterNominal { get; set; }
         public double? BeforeNominal { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (Bank == null || string.IsNullOrWhiteSpace(Bank._id))
+            if (Bank == null || Bank.Id.GetValueOrDefault() <= 0)
             {
                 yield return new ValidationResult("Bank harus diisi", new List<string> { "Bank" });
             }
@@ -59,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                     case "IN":
                         if (!string.IsNullOrWhiteSpace(SourceType) && (SourceType.ToUpper().Equals("OPERASIONAL") || SourceType.ToUpper().Equals("INVESTASI") || SourceType.ToUpper().Equals("PENDANAAN")))
                         {
-                            if (Buyer == null || string.IsNullOrWhiteSpace(Buyer._id))
+                            if (Buyer == null || Buyer.Id.GetValueOrDefault() <= 0)
                                 if (SourceType.ToUpper().Equals("OPERASIONAL"))
                                 {
                                     yield return new ValidationResult("Buyer harus diisi", new List<string> { "Buyer" });
@@ -73,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                     case "OUT":
                         if (!string.IsNullOrWhiteSpace(SourceType) && (SourceType.ToUpper().Equals("OPERASIONAL") || SourceType.ToUpper().Equals("INVESTASI") || SourceType.ToUpper().Equals("PENDANAAN")))
                         {
-                            if (Supplier == null || string.IsNullOrWhiteSpace(Supplier._id))
+                            if (Supplier == null || Supplier.Id.GetValueOrDefault() <= 0)
                                 if (SourceType.ToUpper().Equals("OPERASIONAL"))
                                 {
                                     yield return new ValidationResult("Supplier harus diisi", new List<string> { "Supplier" });

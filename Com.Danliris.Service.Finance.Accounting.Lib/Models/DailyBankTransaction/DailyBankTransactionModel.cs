@@ -8,8 +8,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
     public class DailyBankTransactionModel : StandardEntity, IValidatableObject
     {
         //Bank
-        [MaxLength(50)]
-        public string AccountBankId { get; set; }
+        //[MaxLength(50)]
+        public int AccountBankId { get; set; }
         [MaxLength(25)]
         public string AccountBankCode { get; set; }
         [MaxLength(100)]
@@ -21,7 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         [MaxLength(100)]
         public string AccountBankCurrencyCode { get; set; }
         [MaxLength(50)]
-        public string AccountBankCurrencyId { get; set; }
+        public int AccountBankCurrencyId { get; set; }
         [MaxLength(100)]
         public string AccountBankCurrencySymbol { get; set; }
         [MaxLength(25)]
@@ -29,8 +29,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         //Buyer
         [MaxLength(25)]
         public string BuyerCode { get; set; }
-        [MaxLength(50)]
-        public string BuyerId { get; set; }
+        //[MaxLength(50)]
+        public int BuyerId { get; set; }
         [MaxLength(150)]
         public string BuyerName { get; set; }
         public DateTimeOffset Date { get; set; }
@@ -46,8 +46,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         [MaxLength(50)]
         public string Status { get; set; }
         //Supplier
-        [MaxLength(50)]
-        public string SupplierId { get; set; }
+        //[MaxLength(50)]
+        public int SupplierId { get; set; }
         [MaxLength(100)]
         public string SupplierCode { get; set; }
         [MaxLength(250)]

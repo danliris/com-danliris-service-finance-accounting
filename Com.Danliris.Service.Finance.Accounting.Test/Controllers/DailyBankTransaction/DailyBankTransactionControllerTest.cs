@@ -51,7 +51,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReport_Without_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new ReadResponse<DailyBankTransactionModel>(new List<DailyBankTransactionModel>(), 0, new Dictionary<string, string>(), new List<string>()));
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new ReadResponse<DailyBankTransactionModel>(new List<DailyBankTransactionModel>(), 0, new Dictionary<string, string>(), new List<string>()));
             mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
 
             int statusCode = GetStatusCodeGetReport(mocks);
@@ -61,7 +61,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         private int GetStatusCodeGetReport((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IDailyBankTransactionService> Service, Mock<IMapper> Mapper) mocks)
         {
             var controller = GetController(mocks);
-            IActionResult response = controller.GetReport(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>());
+            IActionResult response = controller.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
 
             return GetStatusCode(response);
         }

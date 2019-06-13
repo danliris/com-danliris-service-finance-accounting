@@ -11,7 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         public double InitialBalance { get; set; }
         public double RemainingBalance { get; set; }
         [MaxLength(50)]
-        public string AccountBankId { get; set; }
+        public int AccountBankId { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             throw new System.NotImplementedException();

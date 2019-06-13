@@ -147,13 +147,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
             {
-                Bank = new AccountBankViewModel()
+                Bank = new NewAccountBankViewModel()
                 {
-                    _id = ""
+                    Id = 0
                 },
-                Buyer = new BuyerViewModel()
+                Buyer = new NewBuyerViewModel()
                 {
-                    _id = ""
+                    Id = 0
                 },
                 Date = DateTime.Now.AddYears(1),
                 Nominal = 0,
@@ -184,16 +184,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
             {
-                Bank = new AccountBankViewModel()
+                Bank = new NewAccountBankViewModel()
                 {
-                    _id = ""
+                    Id = 0
                 },
                 Date = DateTime.Now.AddYears(1),
                 Status = "OUT",
                 SourceType = "Investasi",
-                Supplier = new SupplierViewModel()
+                Supplier = new NewSupplierViewModel()
                 {
-                    _id = ""
+                    Id = 0
                 }
             };
 
