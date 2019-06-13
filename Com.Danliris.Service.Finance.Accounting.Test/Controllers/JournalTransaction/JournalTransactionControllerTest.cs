@@ -62,7 +62,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).Returns(new MemoryStream());
 
-            var response =  GetController(mocks).GetXls();
+            var response = GetController(mocks).GetXls();
             Assert.NotNull(response);
 
             var response2 = GetController(mocks).GetXls(DateTimeOffset.UtcNow);
@@ -129,7 +129,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public async Task Should_Success_Get_SubLedger_Reports_Xls()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetSubLedgerReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new SubLedgerXlsFormat());
+            mocks.Service.Setup(f => f.GetSubLedgerReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new SubLedgerXlsFormat()
+            {
+                Filename = "aa",
+                Result = new MemoryStream()
+            });
 
             var response = await GetController(mocks).GetSubLedgerReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
             Assert.NotNull(response);
