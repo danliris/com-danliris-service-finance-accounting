@@ -1,7 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using System;
 using System.Threading.Tasks;
 
@@ -52,7 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
         {
             DailyBankTransactionViewModel TestData = new DailyBankTransactionViewModel()
             {
-                Bank = new NewAccountBankViewModel()
+                Bank = new AccountBankViewModel()
                 {
                     Id = 1,
                     AccountName = "AccountName",
@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                     BankCode = "BankCode",
                     BankName = "Name",
                     Code = "Code",
-                    Currency = new NewCurrencyViewModel()
+                    Currency = new CurrencyViewModel()
                     {
                         Id = 1,
                         Code = "Code",

@@ -6,7 +6,6 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseInterface;
 using Com.Danliris.Service.Production.WebApi.Utilities;
 using Com.Moonlay.Models;
-using Com.Moonlay.NetCore.Lib.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
