@@ -209,6 +209,46 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public void Should_Success_Instatiate_Buyer()
+        {
+            var supplier = new Lib.ViewModels.IntegrationViewModel.BuyerViewModel()
+            {
+                _id = "",
+                code = "Code",
+                name = "Name",
+            };
+
+
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
+        public void Should_Success_Instatiate_AccountBank()
+        {
+            var supplier = new Lib.ViewModels.IntegrationViewModel.AccountBankViewModel()
+            {
+                _id = "",
+                code = "Code",
+                accountName = "Name",
+                bankName = "Name",
+                accountCurrencyId= "",
+                accountNumber= "",
+                bankCode = "",
+                currency = new Lib.ViewModels.IntegrationViewModel.CurrencyViewModel()
+                {
+                    code = "",
+                    description = "",
+                    rate = 0,
+                    symbol = "",
+                    _id = ""
+                }
+            };
+
+
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
         public void Should_Success_Validate_With_Invalid_Input_Data_Out_Supplier_NotNull_NonOperasional()
         {
             DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
