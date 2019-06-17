@@ -4,7 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -149,11 +149,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             {
                 Bank = new AccountBankViewModel()
                 {
-                    _id = ""
+                    Id = 0
                 },
-                Buyer = new BuyerViewModel()
+                Buyer = new NewBuyerViewModel()
                 {
-                    _id = ""
+                    Id = 0
                 },
                 Date = DateTime.Now.AddYears(1),
                 Nominal = 0,
@@ -180,20 +180,89 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public void Should_Success_Instatiate_New_Buyer()
+        {
+            var buyer = new NewBuyerViewModel()
+            {
+                Id = 1,
+                Code = "Code",
+                Name = "Name"
+            };
+
+
+            Assert.True(buyer != null);
+        }
+
+        [Fact]
+        public void Should_Success_Instatiate_New_Supplier()
+        {
+            var supplier = new NewSupplierViewModel()
+            {
+                _id = 1,
+                code = "Code",
+                name = "Name",
+                import = false
+            };
+
+
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
+        public void Should_Success_Instatiate_Buyer()
+        {
+            var supplier = new Lib.ViewModels.IntegrationViewModel.BuyerViewModel()
+            {
+                _id = "",
+                code = "Code",
+                name = "Name",
+            };
+
+
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
+        public void Should_Success_Instatiate_AccountBank()
+        {
+            var supplier = new Lib.ViewModels.IntegrationViewModel.AccountBankViewModel()
+            {
+                _id = "",
+                code = "Code",
+                accountName = "Name",
+                bankName = "Name",
+                accountCurrencyId= "",
+                accountNumber= "",
+                bankCode = "",
+                currency = new Lib.ViewModels.IntegrationViewModel.CurrencyViewModel()
+                {
+                    code = "",
+                    description = "",
+                    rate = 0,
+                    symbol = "",
+                    _id = ""
+                }
+            };
+
+
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
         public void Should_Success_Validate_With_Invalid_Input_Data_Out_Supplier_NotNull_NonOperasional()
         {
             DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
             {
                 Bank = new AccountBankViewModel()
                 {
-                    _id = ""
+                    Id = 0
                 },
                 Date = DateTime.Now.AddYears(1),
                 Status = "OUT",
                 SourceType = "Investasi",
-                Supplier = new SupplierViewModel()
+                Supplier = new NewSupplierViewModel()
                 {
-                    _id = ""
+                    _id = 0
                 }
             };
 

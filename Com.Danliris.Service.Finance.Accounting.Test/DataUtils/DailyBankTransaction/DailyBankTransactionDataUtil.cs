@@ -1,7 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using System;
 using System.Threading.Tasks;
 
@@ -24,14 +24,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 AccountBankAccountNumber = "AccountNumber",
                 AccountBankCode = "BankCode",
                 AccountBankCurrencyCode = "CurrencyCode",
-                AccountBankCurrencyId = "CurrencyId",
+                AccountBankCurrencyId = 1,
                 AccountBankCurrencySymbol = "CurrencySymbol",
-                AccountBankId = "BankId",
+                AccountBankId = 1,
                 AccountBankName = "BankName",
                 AfterNominal = 0,
                 BeforeNominal = 0,
                 BuyerCode = "BuyerCode",
-                BuyerId = "BuyerId",
+                BuyerId = 1,
                 BuyerName = "BuyerName",
                 Date = DateTimeOffset.UtcNow,
                 Nominal = 1000,
@@ -42,7 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 Status = "IN",
                 SupplierCode = "SupplierCode",
                 SupplierName = "SupplierName",
-                SupplierId = "SupplierId"
+                SupplierId = 1
             };
 
             return TestData;
@@ -54,29 +54,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
             {
                 Bank = new AccountBankViewModel()
                 {
-                    _id = "BankId",
-                    accountCurrencyId = "CurrencyId",
-                    accountName = "AccountName",
-                    accountNumber = "AccountNumber",
-                    bankCode = "BankCode",
-                    bankName = "Name",
-                    code = "Code",
-                    currency = new CurrencyViewModel()
+                    Id = 1,
+                    AccountName = "AccountName",
+                    AccountNumber = "AccountNumber",
+                    BankCode = "BankCode",
+                    BankName = "Name",
+                    Code = "Code",
+                    Currency = new CurrencyViewModel()
                     {
-                        _id = "CurrencyId",
-                        code = "Code",
-                        description = "Description",
-                        rate = 1,
-                        symbol = "Symbol"
+                        Id = 1,
+                        Code = "Code",
+                        Description = "Description",
+                        Rate = 1,
+                        Symbol = "Symbol"
                     }
                 },
                 AfterNominal = 0,
                 BeforeNominal = 0,
-                Buyer = new BuyerViewModel()
+                Buyer = new NewBuyerViewModel()
                 {
-                   _id = "BuyerId",
-                  code = "BuyerCode",
-                  name = "BuyerName"
+                   Id = 1,
+                  Code = "BuyerCode",
+                  Name = "BuyerName"
                 },
                 Code = "Code",
                 Date = DateTimeOffset.UtcNow,
@@ -86,9 +85,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 Remark = "Remark",
                 SourceType = "Operasional",
                 Status = "IN",
-                Supplier = new SupplierViewModel()
+                Supplier = new NewSupplierViewModel()
                 {
-                    _id = "SupplierId",
+                    _id = 1,
                     code = "SupplierCode",
                     name = "SupplierName"
                 }

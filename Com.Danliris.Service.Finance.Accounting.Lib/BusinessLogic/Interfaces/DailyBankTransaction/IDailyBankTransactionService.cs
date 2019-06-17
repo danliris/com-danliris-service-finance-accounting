@@ -9,8 +9,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.D
 {
     public interface IDailyBankTransactionService : IBaseService<DailyBankTransactionModel>
     {
-        ReadResponse<DailyBankTransactionModel> GetReport(string bankId, int month, int year, int clientTimeZoneOffset);
-        MemoryStream GenerateExcel(string bankId, int month, int year, int clientTimeZoneOffset);
+        ReadResponse<DailyBankTransactionModel> GetReport(int bankId, int month, int year, int clientTimeZoneOffset);
+        MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset);
         Task<int> DeleteByReferenceNoAsync(string referenceNo);
 
     }
