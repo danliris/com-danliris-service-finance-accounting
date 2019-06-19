@@ -279,5 +279,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
             var reportResponse = await service.ReviseEmptyNamesCoa(models);
             Assert.NotEqual(0, reportResponse);
         }
+
+        [Fact]
+        public async void Should_Success_Revise_Empty_Name_Coa_But_Empty_List()
+        {
+            COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            COAModel model = _dataUtil(service).GetNewData();
+            await service.CreateAsync(model);
+            var createdModel = await service.ReadByIdAsync(model.Id);
+            createdModel.Name = null;
+            List<COAModel> models = new List<COAModel>()
+            {
+                createdModel
+            };
+
+            var reportResponse = await service.ReviseEmptyNamesCoa(models);
+            Assert.NotEqual(0, reportResponse);
+        }
     }
 }
