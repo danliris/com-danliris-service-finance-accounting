@@ -340,9 +340,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                 ReportType = x.ReportType,
                 LastModifiedUtc = x.LastModifiedUtc
             });
-            
+
 
             return query.ToList();
+        }
+
+        public Task<List<COAModel>> GetEmptyNames()
+        {
+            return DbSet.Where(x => string.IsNullOrEmpty(x.Name) || string.IsNullOrWhiteSpace(x.Name)).ToListAsync();
+        }
+
+        public async Task<int> ReviseEmptyNamesCoa(List<COAModel> data)
+        {
+            var updatedData = data.Where(x => !string.IsNullOrEmpty(x.Name) && !string.IsNullOrWhiteSpace(x.Name));
+
+            foreach(var item in updatedData)
+            {
+                var model = await ReadModelById(item.Id);
+                model.Name = item.Name;
+                UpdateModelAsync(model.Id, model);
+            }
+            return await DbContext.SaveChangesAsync();
         }
     }
 }

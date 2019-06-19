@@ -192,5 +192,50 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
             }
             return Ok(result);
         }
+
+        [HttpGet("empty-names")]
+        public async Task<IActionResult> GetWithEmptyNames()
+        {
+            try
+            {
+                var read = await Service.GetEmptyNames();
+
+                List<COAViewModel> dataVM = Mapper.Map<List<COAViewModel>>(read);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, dataVM);
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("empty-names")]
+        public async Task<IActionResult> ReviseEmptyNameCoa([FromBody] List<COAViewModel> data)
+        {
+            try
+            {
+                VerifyUser();
+
+                List<COAModel> models = Mapper.Map<List<COAModel>>(data);
+
+                await Service.ReviseEmptyNamesCoa(models);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }
