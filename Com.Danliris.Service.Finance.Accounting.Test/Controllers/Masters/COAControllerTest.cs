@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
@@ -48,8 +49,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         public void UploadFile_WithoutException_ReturnOK()
         {
             string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
+            string isi = "2112.12.2.12, Nama,Path,Report Type,Nature,Cash Account";
             var mockFacade = new Mock<ICOAService>();
-            mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
+            mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Returns(Task.CompletedTask);
             mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
             
             mockFacade.Setup(f => f.UploadValidate(ref It.Ref<List<COAViewModel>>.IsAny, It.IsAny<List<KeyValuePair<string, StringValues>>>())).Returns(new Tuple<bool, List<object>>(true, new List<object>()));
@@ -57,15 +59,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
 
             var mockMapper = new Mock<IMapper>();
             mockMapper.Setup(x => x.ConfigurationProvider).Returns(new MapperConfiguration(cfg => cfg.AddProfile(profile)));
-
-            mockMapper.Setup(x => x.Map<List<COAModel>>(It.IsAny<List<COAViewModel>>())).Returns(new List<COAModel>() { Model });
+            var model = new COAModel()
+            {
+                Code = "2112.12.2.12",
+                Name = "Nama",
+                Path = "Path",
+                ReportType = "report",
+                Nature = "nature",
+                CashAccount = "cash"
+            };
+            mockMapper.Setup(x => x.Map<List<COAModel>>(It.IsAny<List<COAViewModel>>())).Returns(new List<COAModel>() { model });
             var mockIdentityService = new Mock<IIdentityService>();
             var mockValidateService = new Mock<IValidateService>();
 
             var controller = GetController((mockIdentityService, mockValidateService, mockFacade, mockMapper));
             controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = $"{It.IsAny<int>()}";
             controller.ControllerContext.HttpContext.Request.Headers.Add("Content-Type", "multipart/form-data");
-            var file = new FormFile(new MemoryStream(Encoding.UTF8.GetBytes(header + "\n" + header)), 0, Encoding.UTF8.GetBytes(header + "\n" + header).LongLength, "Data", "test.csv");
+            var file = new FormFile(new MemoryStream(Encoding.UTF8.GetBytes(header + "\n" + isi)), 0, Encoding.UTF8.GetBytes(header + "\n" + isi).LongLength, "Data", "test.csv");
             controller.ControllerContext.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), new FormFileCollection { file });
 
             var response = controller.PostCSVFileAsync();
@@ -201,6 +211,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
 
             var response = GetController(mocks).GetCOAHeaderSubheader();
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async void GetEmptyNameCoa_WithoutException_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetEmptyNames()).ReturnsAsync(new List<COAModel>());
+            mocks.Mapper.Setup(f => f.Map<List<COAViewModel>>(It.IsAny<List<COAModel>>())).Returns(ViewModels);
+
+            var response = await GetController(mocks).GetWithEmptyNames();
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async void GetEmptyNameCoa_ReadThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetEmptyNames()).ThrowsAsync(new Exception());
+            var response = await GetController(mocks).GetWithEmptyNames();
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async void ReviseNameCoa_WithoutException_NoContent()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReviseEmptyNamesCoa(It.IsAny<List<COAModel>>())).ReturnsAsync(1);
+            List<COAModel> models = new List<COAModel>()
+            {
+                Model
+            };
+            mocks.Mapper.Setup(f => f.Map<List<COAModel>>(It.IsAny<List<COAViewModel>>())).Returns(models);
+
+            var response = await GetController(mocks).ReviseEmptyNameCoa(new List<COAViewModel>());
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async void ReviseNameCoa_ReadThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReviseEmptyNamesCoa(It.IsAny<List<COAModel>>())).ThrowsAsync(new Exception());
+            List<COAModel> models = new List<COAModel>()
+            {
+                Model
+            };
+            mocks.Mapper.Setup(f => f.Map<List<COAModel>>(It.IsAny<List<COAViewModel>>())).Returns(models);
+
+            var response = await GetController(mocks).ReviseEmptyNameCoa(new List<COAViewModel>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
 }

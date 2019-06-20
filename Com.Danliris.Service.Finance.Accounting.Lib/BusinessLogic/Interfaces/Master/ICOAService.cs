@@ -14,6 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.M
         Task UploadData(List<COAModel> data);
         MemoryStream DownloadTemplate();
         List<COAModel> GetAll();
-
+        Task<List<COAModel>> GetEmptyNames();
+        Task<int> ReviseEmptyNamesCoa(List<COAModel> data);
     }
 }
