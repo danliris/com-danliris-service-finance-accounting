@@ -123,7 +123,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controller.Utils
         }
 
         [Fact]
-        public async Task Post_WithoutException_ReturnCreated()
+        public virtual async Task Post_WithoutException_ReturnCreated()
         {
             var mocks = GetMocks();
             mocks.ValidateService.Setup(s => s.Validate(It.IsAny<TViewModel>())).Verifiable();
@@ -217,7 +217,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controller.Utils
         }
 
         [Fact]
-        public async Task Put_ValidId_ReturnNoContent()
+        public virtual async Task Put_ValidId_ReturnNoContent()
         {
             var mocks = GetMocks();
             mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<TViewModel>())).Verifiable();

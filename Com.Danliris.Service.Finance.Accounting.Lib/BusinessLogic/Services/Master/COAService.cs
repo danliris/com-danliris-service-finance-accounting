@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
         private readonly List<string> Header = new List<string>()
         {
-            "Name", "Nature", "ReportType", "Code"
+            "Kode, Nama,Path,Report Type,Nature,Cash Account,Balance"
         };
         public List<string> CsvHeader => Header;
 
@@ -44,10 +44,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
         {
             public COAMap()
             {
-                Map(x => x.Code).Index(3);
-                Map(x => x.Name).Index(0);
-                Map(x => x.ReportType).Index(2);
-                Map(x => x.Nature).Index(1);
+                Map(x => x.Code).Index(0);
+                Map(x => x.Name).Index(1);
+                Map(x => x.Path).Index(2);
+                Map(x => x.ReportType).Index(3);
+                Map(x => x.Nature).Index(4);
+                Map(x => x.CashAccount).Index(5);
+                Map(x => x.Balance).Index(6);
             }
         }
 
@@ -86,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
             List<string> selectedFields = new List<string>()
                 {
-                    "Id", "Name", "Code","Path", "Nature", "CashAccount", "ReportType", "LastModifiedUtc"
+                    "Id", "Name", "Code","Path", "Nature", "CashAccount", "ReportType", "LastModifiedUtc", "Balance"
                 };
 
             Dictionary<string, string> orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
@@ -107,6 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                 CashAccount = x.CashAccount,
                 Nature = x.Nature,
                 ReportType = x.ReportType,
+                Balance = x.Balance,
                 LastModifiedUtc = x.LastModifiedUtc
             });
 
@@ -338,6 +342,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                 CashAccount = x.CashAccount,
                 Nature = x.Nature,
                 ReportType = x.ReportType,
+                Balance = x.Balance,
                 LastModifiedUtc = x.LastModifiedUtc
             });
 
