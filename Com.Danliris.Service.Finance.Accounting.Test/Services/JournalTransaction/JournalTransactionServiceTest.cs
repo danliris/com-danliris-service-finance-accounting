@@ -283,7 +283,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             var data = await _dataUtil(service).GetTestPostedData();
             var reportResponse = await service.GetSubLedgerReportXls(data.Items.ToList()[0].COAId, data.Date.Month, data.Date.Year, 1);
+
             Assert.NotNull(reportResponse);
+
+            var reportResponse2 = await service.GetSubLedgerReportXls(null, data.Date.Month, data.Date.Year, 1);
+            Assert.NotNull(reportResponse2);
         }
 
         [Fact]

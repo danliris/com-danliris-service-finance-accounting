@@ -48,8 +48,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithoutException_ReturnOK()
         {
-            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
-            string isi = "2112.12.2.12, Nama,Path,Report Type,Nature,Cash Account";
+            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account,Balance";
+            string isi = "2112.12.2.12, Nama,Path,Report Type,Nature,Cash Account, 1";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Returns(Task.CompletedTask);
             mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
@@ -159,7 +159,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithException_ErrorInFile()
         {
-            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account";
+            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account, Balance";
+            string isi = "2112.12.2.12, Nama,Path,Report Type,Nature,Cash Account, 1";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
             mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
@@ -177,7 +178,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
             var controller = GetController((mockIdentityService, mockValidateService, mockFacade, mockMapper));
             controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = $"{It.IsAny<int>()}";
             controller.ControllerContext.HttpContext.Request.Headers.Add("Content-Type", "multipart/form-data");
-            var file = new FormFile(new MemoryStream(Encoding.UTF8.GetBytes(header + "\n" + header)), 0, Encoding.UTF8.GetBytes(header + "\n" + header).LongLength, "Data", "test.csv");
+            var file = new FormFile(new MemoryStream(Encoding.UTF8.GetBytes(header + "\n" + isi)), 0, Encoding.UTF8.GetBytes(header + "\n" + isi).LongLength, "Data", "test.csv");
             controller.ControllerContext.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), new FormFileCollection { file });
 
             var response = controller.PostCSVFileAsync();
@@ -261,6 +262,51 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
 
             var response = await GetController(mocks).ReviseEmptyNameCoa(new List<COAViewModel>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        public override async Task Post_WithoutException_ReturnCreated()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<COAViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.CreateAsync(It.IsAny<COAModel>())).ReturnsAsync(1);
+            COAModel model = new COAModel()
+            {
+                Code = "1111.11.1.11"
+            };
+            mocks.Mapper.Setup(m => m.Map<COAModel>(It.IsAny<COAViewModel>())).Returns(model);
+            var controller = GetController(mocks);
+            COAViewModel vm = new COAViewModel()
+            {
+                Code = "1111.11.1.11"
+            };
+            IActionResult response = await controller.Post(vm);
+
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        }
+
+        public override async Task Put_ValidId_ReturnNoContent()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<COAViewModel>())).Verifiable();
+            var id = 1;
+            var viewModel = new COAViewModel()
+            {
+                Id = id,
+                Code = "1111.11.1.11"
+            };
+            COAModel model = new COAModel()
+            {
+                Id = id,
+                Code = "1111.11.1.11"
+            };
+            mocks.Mapper.Setup(m => m.Map<COAModel>(It.IsAny<COAViewModel>())).Returns(model);
+            mocks.Service.Setup(f => f.UpdateAsync(It.IsAny<int>(), It.IsAny<COAModel>())).ReturnsAsync(1);
+            var controller = GetController(mocks);
+            IActionResult response = await controller.Put(id, viewModel);
+
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
         }
     }
 }
