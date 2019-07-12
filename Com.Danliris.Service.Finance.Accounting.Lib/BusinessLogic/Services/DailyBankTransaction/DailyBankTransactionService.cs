@@ -108,12 +108,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             }
         }
 
-        private double GetSumOutByMonth(int month, int year, string bankId)
+        private double GetSumOutByMonth(int month, int year, int bankId)
         {
             return _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.AccountBankId.Equals(bankId) && w.Status.Equals("OUT")).Sum(s => s.Nominal);
         }
 
-        private double GetSumInByMonth(int month, int year, string bankId)
+        private double GetSumInByMonth(int month, int year, int bankId)
         {
             return _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.AccountBankId.Equals(bankId) && w.Status.Equals("IN")).Sum(s => s.Nominal);
         }
@@ -149,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return result.Id;
         }
 
-        public MemoryStream GenerateExcel(string bankId, int month, int year, int clientTimeZoneOffset)
+        public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             var Query = GetQuery(bankId, month, year, clientTimeZoneOffset);
 
@@ -183,12 +183,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, true);
         }
 
-        private BankTransactionMonthlyBalanceModel GetBalanceMonthAndYear(string bankId, int month, int year, int clientTimeZoneOffset)
+        private BankTransactionMonthlyBalanceModel GetBalanceMonthAndYear(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             return _DbMonthlyBalanceSet.Where(w => w.AccountBankId.Equals(bankId) && w.Month.Equals(month) && w.Year.Equals(year)).FirstOrDefault();
         }
 
-        private IQueryable<DailyBankTransactionModel> GetQuery(string bankId, int month, int year, int clientTimeZoneOffset)
+        private IQueryable<DailyBankTransactionModel> GetQuery(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             //DateTimeOffset DateFrom = dateFrom == null ? dateTo == null ? DateTimeOffset.Now.AddDays(-30) : dateTo.Value.AddHours(clientTimeZoneOffset * -1).AddDays(-30) : dateFrom.Value.AddHours(clientTimeZoneOffset * -1);
             //DateTimeOffset DateTo = dateTo == null ? dateFrom == null ? DateTimeOffset.Now : dateFrom.Value.AddHours(clientTimeZoneOffset * -1).AddDays(DateTimeOffset.Now.Subtract(dateFrom.Value.AddHours(clientTimeZoneOffset * -1)).TotalDays) : dateTo.Value.AddHours(clientTimeZoneOffset * -1);
@@ -196,7 +196,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             var Query = (from transaction in _DbContext.DailyBankTransactions
                          where
                          transaction.IsDeleted == false
-                         && string.IsNullOrWhiteSpace(bankId) ? true : bankId.Equals(transaction.AccountBankId)
+                         && transaction.AccountBankId == bankId
                          && transaction.Date.Month == month
                          && transaction.Date.Year == year
                          orderby transaction.Date, transaction.CreatedUtc
@@ -217,7 +217,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return Query;
         }
 
-        public ReadResponse<DailyBankTransactionModel> GetReport(string bankId, int month, int year, int clientTimeZoneOffset)
+        public ReadResponse<DailyBankTransactionModel> GetReport(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             IQueryable<DailyBankTransactionModel> Query = GetQuery(bankId, month, year, clientTimeZoneOffset);
 

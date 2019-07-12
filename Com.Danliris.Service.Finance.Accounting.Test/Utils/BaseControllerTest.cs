@@ -6,7 +6,6 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseInterface;
 using Com.Danliris.Service.Production.WebApi.Utilities;
 using Com.Moonlay.Models;
-using Com.Moonlay.NetCore.Lib.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -124,7 +123,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controller.Utils
         }
 
         [Fact]
-        public async Task Post_WithoutException_ReturnCreated()
+        public virtual async Task Post_WithoutException_ReturnCreated()
         {
             var mocks = GetMocks();
             mocks.ValidateService.Setup(s => s.Validate(It.IsAny<TViewModel>())).Verifiable();
@@ -218,7 +217,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controller.Utils
         }
 
         [Fact]
-        public async Task Put_ValidId_ReturnNoContent()
+        public virtual async Task Put_ValidId_ReturnNoContent()
         {
             var mocks = GetMocks();
             mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<TViewModel>())).Verifiable();

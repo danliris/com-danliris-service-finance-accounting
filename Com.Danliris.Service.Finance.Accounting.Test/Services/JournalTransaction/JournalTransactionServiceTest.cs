@@ -286,7 +286,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             Assert.NotNull(reportResponse);
 
-            var reportResponse2 = await service.GetSubLedgerReportXls(null, null, null, 1);
+            var reportResponse2 = await service.GetSubLedgerReportXls(null, data.Date.Month, data.Date.Year, 1);
             Assert.NotNull(reportResponse2);
         }
 

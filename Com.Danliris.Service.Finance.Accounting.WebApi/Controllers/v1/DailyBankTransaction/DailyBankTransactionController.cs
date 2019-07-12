@@ -27,7 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("mutation/report")]
-        public IActionResult GetReport(string bankId, int month, int year)
+        public IActionResult GetReport(int bankId, int month, int year)
         {
             int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
             ReadResponse<DailyBankTransactionModel> Result = Service.GetReport(bankId, month, year, clientTimeZoneOffset);
@@ -42,7 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("mutation/report/download")]
-        public IActionResult GetReportXls(string bankId, int month, int year)
+        public IActionResult GetReportXls(int bankId, int month, int year)
         {
             try
             {

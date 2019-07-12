@@ -482,7 +482,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         private async Task<SubLedgerReportViewModel> GetSubLedgerReportData(int? coaId, int? month, int? year, int timeoffset)
         {
             var bankPayments = await GetBankPayments(month.GetValueOrDefault(), year.GetValueOrDefault(), timeoffset);
-            if (month.HasValue && year.HasValue && coaId.HasValue)
+            if (coaId.HasValue)
             {
                 var postedJournals = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date.AddHours(timeoffset).Month.Equals(month.GetValueOrDefault()) && w.Date.AddHours(timeoffset).Year.Equals(year.GetValueOrDefault())).Select(s => new { s.Id, s.Date, s.ReferenceNo, s.DocumentNo }).ToList();
                 var postedIds = postedJournals.Select(s => s.Id).ToList();
@@ -525,15 +525,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             }
             else
             {
-                var postedJournals = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted))).Select(s => new { s.Id, s.Date, s.ReferenceNo, s.DocumentNo }).ToList();
+                var postedJournals = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date.AddHours(timeoffset).Month.Equals(month.GetValueOrDefault()) && w.Date.AddHours(timeoffset).Year.Equals(year.GetValueOrDefault())).Select(s => new { s.Id, s.Date, s.ReferenceNo, s.DocumentNo }).ToList();
                 var postedIds = postedJournals.Select(s => s.Id).ToList();
                 var postedReferenceNos = postedJournals.Select(s => s.ReferenceNo).ToList();
 
                 var entries = _ItemDbSet.Where(w => postedIds.Contains(w.JournalTransactionId)).ToList();
                 var closingDebitBalance = entries.Sum(s => s.Debit);
                 var closingCreditBalance = entries.Sum(s => s.Credit);
-                
-                var previousPostedJournalIds = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted))).Select(s => s.Id).ToList();
+
+                var initialDate = new DateTime(year.GetValueOrDefault(), month.GetValueOrDefault(), 1);
+                var previousPostedJournalIds = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date < initialDate).Select(s => s.Id).ToList();
                 var previousDebitBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId)).Sum(s => s.Debit);
                 var previousCreditBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId)).Sum(s => s.Credit);
 
@@ -574,7 +575,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var response = await _httpClientService.GetAsync(uri);
 
             var result = new BankPaymentResult();
-            if (response.EnsureSuccessStatusCode().IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 result = JsonConvert.DeserializeObject<BankPaymentResult>(await response.Content.ReadAsStringAsync());
             }
@@ -585,10 +586,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         {
             var result = new SubLedgerXlsFormat();
             SubLedgerReportViewModel data = new SubLedgerReportViewModel();
-            if (!coaId.HasValue && !month.HasValue && !year.HasValue)
+            if (!coaId.HasValue)
             {
                 data = await GetSubLedgerReportData(coaId, month, year, timeoffset);
-                result.Filename = $"Laporan Sub Ledger";
+
+                if(month.HasValue && year.HasValue)
+                {
+                    var monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month.GetValueOrDefault());
+                    result.Filename = $"Laporan Sub Ledger Periode {monthName} {year.GetValueOrDefault()}";
+                }
+                else
+                {
+                    result.Filename = $"Laporan Sub Ledger";
+                }
+                
             }
             else
             {

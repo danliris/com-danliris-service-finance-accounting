@@ -32,6 +32,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA
 
         public string CashAccount { get; set; }
 
+        public decimal Balance { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             throw new NotImplementedException();
