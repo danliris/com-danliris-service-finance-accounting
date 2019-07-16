@@ -161,7 +161,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 }
 
                 var coaCompositions = item.COA.Code.Split(".");
-                item.COA = null;
+                //item.COA = null;
 
                 if (coaCompositions.Count() >= 4)
                 {
@@ -469,6 +469,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 };
 
                 reversingJournalTransaction.DocumentNo = GenerateDocumentNo(reversingJournalTransaction);
+                foreach (var item in reversingJournalTransaction.Items)
+                {
+                    item.COA = null;
+                }
                 //do
                 //{
                 //    reversingJournalTransaction.DocumentNo = CodeGenerator.Generate();
