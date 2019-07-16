@@ -14,6 +14,7 @@ using System.IO;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDispositionReport
@@ -52,7 +53,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
         }
 
         [Fact]
-        public async void GetReport_ReturnOK()
+        public async Task GetReport_ReturnOK()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetReportAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).ReturnsAsync(new ReadResponse<PurchasingDispositionReportViewModel>(new List<PurchasingDispositionReportViewModel>(), 1, new Dictionary<string, string>(), new List<string>()));
@@ -62,7 +63,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
         }
 
         [Fact]
-        public async void GetReport_ThrowException()
+        public async Task GetReport_ThrowException()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetReportAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).ThrowsAsync(new Exception());
@@ -72,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
         }
 
         [Fact]
-        public async void GetReportExcel_ReturnFile()
+        public async Task GetReportExcel_ReturnFile()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcelAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).ReturnsAsync(new MemoryStream());
@@ -88,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
             Assert.NotNull(response4);
         }
         [Fact]
-        public async void GetReportExcel_ThrowException()
+        public async Task GetReportExcel_ThrowException()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcelAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).ThrowsAsync(new Exception());

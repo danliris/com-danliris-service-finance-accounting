@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
@@ -70,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Success_Get_Data()
+        public async Task Should_Success_Get_Data()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             await _dataUtil(service).GetTestData();
@@ -79,7 +80,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_All()
+        public async Task Should_Success_Get_Data_All()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             await _dataUtil(service).GetTestData();
@@ -88,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_By_Id()
+        public async Task Should_Success_Get_Data_By_Id()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             COAModel model = await _dataUtil(service).GetTestData();
@@ -97,7 +98,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Success_Create_Data()
+        public async Task Should_Success_Create_Data()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             COAModel model = _dataUtil(service).GetNewData();
@@ -114,7 +115,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Success_Update_Data()
+        public async Task Should_Success_Update_Data()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             COAModel model = await _dataUtil(service).GetTestData();
@@ -125,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Success_Delete_Data()
+        public async Task Should_Success_Delete_Data()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             COAModel model = await _dataUtil(service).GetTestData();
@@ -137,7 +138,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Success_Upload_Data()
+        public async Task Should_Success_Upload_Data()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             COAModel model = _dataUtil(service).GetNewData();
@@ -203,7 +204,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Fail_Upload_Existed_Data()
+        public async Task Should_Fail_Upload_Existed_Data()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             COAViewModel viewModel = _dataUtil(service).GetNewViewModel();
@@ -252,7 +253,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Success_Get_Empty_Name_Coa()
+        public async Task Should_Success_Get_Empty_Name_Coa()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             COAModel model = _dataUtil(service).GetNewData();
@@ -263,7 +264,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Success_Revise_Empty_Name_Coa()
+        public async Task Should_Success_Revise_Empty_Name_Coa()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             COAModel model = _dataUtil(service).GetNewData();
@@ -281,7 +282,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Masters.COATest
         }
 
         [Fact]
-        public async void Should_Success_Revise_Empty_Name_Coa_But_Empty_List()
+        public async Task Should_Success_Revise_Empty_Name_Coa_But_Empty_List()
         {
             COAService service = new COAService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             COAModel model = _dataUtil(service).GetNewData();

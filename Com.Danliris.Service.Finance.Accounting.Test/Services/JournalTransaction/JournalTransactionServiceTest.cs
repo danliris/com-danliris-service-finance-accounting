@@ -262,7 +262,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             var newModel = _dataUtil(service).GetNewData();
             newModel.ReferenceNo = model.ReferenceNo;
-            //var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
             var response = await service.CreateAsync(newModel);
             Assert.NotEqual(0, response);
         }
@@ -361,7 +360,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             //var newModel = _dataUtil(service).GetNewData();
             //newModel.ReferenceNo = model.ReferenceNo;
-            //var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
             //var response = await service.CreateAsync(newModel);
             Assert.NotEqual(0, response);
         }
