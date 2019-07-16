@@ -159,7 +159,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 {
                     item.COA = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COAId));
                 }
+
                 var coaCompositions = item.COA.Code.Split(".");
+                item.COA = null;
 
                 if (coaCompositions.Count() >= 4)
                 {
@@ -170,7 +172,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     }
                 }
 
-                item.COA = null;
             }
 
             return result;
