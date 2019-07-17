@@ -84,7 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.LockTransaction
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_By_Type()
+        public async Task Should_Success_Get_Data_By_Type()
         {
             var service = new LockTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = await _dataUtil(service).GetTestData();

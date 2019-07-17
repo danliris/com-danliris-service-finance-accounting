@@ -11,6 +11,7 @@ using Moq;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
@@ -66,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
         }
 
         [Fact]
-        public async void Should_Success_Get_Report()
+        public async Task Should_Success_Get_Report()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
@@ -84,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
 
 
         [Fact]
-        public async void Should_Success_Get_Report_January()
+        public async Task Should_Success_Get_Report_January()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
@@ -102,7 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
         }
 
         [Fact]
-        public async void Should_Success_Get_Excel()
+        public async Task Should_Success_Get_Excel()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));

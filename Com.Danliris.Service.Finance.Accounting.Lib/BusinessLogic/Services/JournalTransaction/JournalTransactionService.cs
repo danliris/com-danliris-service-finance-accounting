@@ -155,7 +155,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var result = "0";
             foreach (var item in items)
             {
+                if (item.COA == null)
+                {
+                    item.COA = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COAId));
+                }
+
                 var coaCompositions = item.COA.Code.Split(".");
+                //item.COA = null;
 
                 if (coaCompositions.Count() >= 4)
                 {
@@ -165,6 +171,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         break;
                     }
                 }
+
             }
 
             return result;
@@ -461,17 +468,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     Description = $"Jurnal Pembalik {transactionToReverse.DocumentNo}"
                 };
 
-                do
+                reversingJournalTransaction.DocumentNo = GenerateDocumentNo(reversingJournalTransaction);
+                foreach (var item in reversingJournalTransaction.Items)
                 {
-                    reversingJournalTransaction.DocumentNo = CodeGenerator.Generate();
+                    item.COA = null;
                 }
-                while (_DbSet.Any(d => d.DocumentNo.Equals(reversingJournalTransaction.DocumentNo)));
+                //do
+                //{
+                //    reversingJournalTransaction.DocumentNo = CodeGenerator.Generate();
+                //}
+                //while (_DbSet.Any(d => d.DocumentNo.Equals(reversingJournalTransaction.DocumentNo)));
                 reversingJournalTransaction.IsReverser = true;
                 EntityExtension.FlagForCreate(reversingJournalTransaction, _IdentityService.Username, _UserAgent);
                 _DbSet.Add(reversingJournalTransaction);
+                await _DbContext.SaveChangesAsync();
             }
 
-            return await _DbContext.SaveChangesAsync();
+            return transactionsToReverse.Count;
         }
 
         public async Task<SubLedgerReportViewModel> GetSubLedgerReport(int coaId, int month, int year, int timeoffset)
