@@ -281,6 +281,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
             var data = await _dataUtil(service).GetTestPostedData();
+            var data2 = await _dataUtil(service).GetTestPostedGarmentIData();
+            var data3 = await _dataUtil(service).GetTestPostedGarmentLData();
             var reportResponse = await service.GetSubLedgerReportXls(data.Items.ToList()[0].COAId, data.Date.Month, data.Date.Year, 1);
 
             Assert.NotNull(reportResponse);
@@ -297,7 +299,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             //_dbContext(GetCurrentMethod().
             var data = await _dataUtil(service).GetTestPostedData();
             var reportResponse = await service.GetSubLedgerReport(data.Items.ToList()[0].COAId, data.Date.Month, data.Date.Year, 1);
-            Assert.NotEmpty(reportResponse.Info);
+            Assert.NotNull(reportResponse);
         }
 
         [Fact]
@@ -307,7 +309,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             var data = await _dataUtil(service).GetTestPostedManualData();
             var reportResponse = await service.GetSubLedgerReport(data.Items.ToList()[0].COAId, data.Date.Month, data.Date.Year, 1);
-            Assert.NotEmpty(reportResponse.Info);
+            Assert.NotNull(reportResponse);
         }
 
         [Fact]

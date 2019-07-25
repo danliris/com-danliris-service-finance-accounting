@@ -79,7 +79,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
             List<string> searchAttributes = new List<string>()
             {
-                "Code", "Name", "Nature", "ReportType"
+                "Code", "Name"
             };
 
             query = QueryHelper<COAModel>.Search(query, searchAttributes, keyword);

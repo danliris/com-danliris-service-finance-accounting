@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -32,7 +33,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
         public Task<HttpResponseMessage> PostAsync(string url, HttpContent content)
         {
-            return Task.Run(() => new HttpResponseMessage());
+            UnitReceiptNoteResult result = new UnitReceiptNoteResult()
+            {
+                data = new List<UnitReceiptNote>()
+            };
+            return Task.Run(() => new HttpResponseMessage() { Content = new StringContent(JsonConvert.SerializeObject(result))});
         }
     }
 }
