@@ -148,7 +148,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("report/sub-ledgers")]
-        public async Task<ActionResult> GetSubLedgerReport([FromQuery] int coaId, [FromQuery] int month, [FromQuery] int year)
+        public async Task<ActionResult> GetSubLedgerReport([FromQuery] int? coaId, [FromQuery] int month, [FromQuery] int year)
         {
             try
             {

@@ -489,7 +489,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return transactionsToReverse.Count;
         }
 
-        public async Task<SubLedgerReportViewModel> GetSubLedgerReport(int coaId, int month, int year, int timeoffset)
+        public async Task<SubLedgerReportViewModel> GetSubLedgerReport(int? coaId, int month, int year, int timeoffset)
         {
             return await GetSubLedgerReportData(coaId, month, year, timeoffset);
         }
