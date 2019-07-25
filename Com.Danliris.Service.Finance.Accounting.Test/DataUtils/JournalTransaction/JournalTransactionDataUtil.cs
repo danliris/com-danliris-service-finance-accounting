@@ -55,7 +55,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                 DocumentNo = Guid.NewGuid().ToString(),
                 Description = "Description",
                 Date = DateTimeOffset.UtcNow,
-                ReferenceNo = "ReferenceNo",
+                ReferenceNo = "aa-aa-aaI-aa",
                 Status = JournalTransactionStatus.Posted,
                 Items = new List<JournalTransactionItemModel>()
                 {
@@ -81,7 +81,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                 DocumentNo = Guid.NewGuid().ToString(),
                 Description = "Description",
                 Date = DateTimeOffset.UtcNow,
-                ReferenceNo = "ReferenceNo1",
+                ReferenceNo = "aa-aa-aaL-aa",
                 Status = JournalTransactionStatus.Posted,
                 Items = new List<JournalTransactionItemModel>()
                 {
