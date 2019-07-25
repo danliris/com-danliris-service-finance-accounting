@@ -99,6 +99,60 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
             return TestData;
         }
 
+        public JournalTransactionModel GetPostedGarmenLtData()
+        {
+            var COA1 = Task.Run(() => _COADataUtil.GetTestData()).Result;
+            COA1.Code = "1111.11.4.11";
+            JournalTransactionModel TestData = new JournalTransactionModel()
+            {
+                DocumentNo = Guid.NewGuid().ToString(),
+                Description = "Description",
+                Date = DateTimeOffset.UtcNow,
+                ReferenceNo = "aa-aa-aaL-aa",
+                Status = JournalTransactionStatus.Posted,
+                Items = new List<JournalTransactionItemModel>()
+                {
+                    new JournalTransactionItemModel()
+                    {
+                        COAId = COA1.Id,
+                        COA = COA1,
+                        Remark = "Remark",
+                        Debit = 10000.00,
+                        Credit = 10000.00
+                    }
+                }
+            };
+
+            return TestData;
+        }
+
+        public JournalTransactionModel GetPostedGarmenItData()
+        {
+            var COA1 = Task.Run(() => _COADataUtil.GetTestData()).Result;
+            COA1.Code = "1111.11.4.11";
+            JournalTransactionModel TestData = new JournalTransactionModel()
+            {
+                DocumentNo = Guid.NewGuid().ToString(),
+                Description = "Description",
+                Date = DateTimeOffset.UtcNow,
+                ReferenceNo = "aa-aa-aaL-aa",
+                Status = JournalTransactionStatus.Posted,
+                Items = new List<JournalTransactionItemModel>()
+                {
+                    new JournalTransactionItemModel()
+                    {
+                        COAId = COA1.Id,
+                        COA = COA1,
+                        Remark = "Remark",
+                        Debit = 10000.00,
+                        Credit = 10000.00
+                    }
+                }
+            };
+
+            return TestData;
+        }
+
         public JournalTransactionViewModel GetDataToValidate()
         {
             var COA1 = Task.Run(() => _COADataUtil.GetTestData()).Result;
@@ -157,6 +211,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
         public async Task<JournalTransactionModel> GetTestPostedManualData()
         {
             JournalTransactionModel model = GetNewPostedManualData();
+            await _Service.CreateAsync(model);
+            return await _Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<JournalTransactionModel> GetTestPostedGarmentLData()
+        {
+            JournalTransactionModel model = GetPostedGarmenLtData();
+            await _Service.CreateAsync(model);
+            return await _Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<JournalTransactionModel> GetTestPostedGarmentIData()
+        {
+            JournalTransactionModel model = GetPostedGarmenItData();
             await _Service.CreateAsync(model);
             return await _Service.ReadByIdAsync(model.Id);
         }

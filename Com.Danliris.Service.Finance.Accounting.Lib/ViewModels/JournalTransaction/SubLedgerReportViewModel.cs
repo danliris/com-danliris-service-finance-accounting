@@ -48,26 +48,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
         public string Filename { get; set; }
         public MemoryStream Result { get; set; }
     }
-
-    public class SubLedgerReportComparer : IEqualityComparer<SubLedgerReport>
-    {
-        public bool Equals(SubLedgerReport x, SubLedgerReport y)
-        {
-            return x.COACode == y.COACode &&
-                    x.COAName == y.COAName &&
-                    x.Credit == y.Credit &&
-                    x.Date == y.Date &&
-                    x.Debit == y.Debit &&
-                    x.Remark == y.Remark &&
-                    x.Supplier == y.Supplier &&
-                    x.UPONo == y.UPONo &&
-                    x.URNNo == y.URNNo;
-        }
-
-        public int GetHashCode(SubLedgerReport obj)
-        {
-            return base.GetHashCode();
-        }
-    }
-
+    
 }

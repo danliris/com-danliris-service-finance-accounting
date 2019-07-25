@@ -496,162 +496,156 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         private async Task<SubLedgerReportViewModel> GetSubLedgerReportData(int? coaId, int? month, int? year, int timeoffset)
         {
-            try
+
+            List<string> textiles = new List<string>() { "1", "2", "3" };
+            List<string> garments = new List<string>() { "4" };
+            var bankPayments = await GetBankPayments(month.GetValueOrDefault(), year.GetValueOrDefault(), timeoffset);
+            if (coaId.HasValue)
             {
-                List<string> textiles = new List<string>() { "1", "2", "3" };
-                List<string> garments = new List<string>() { "4" };
-                var bankPayments = await GetBankPayments(month.GetValueOrDefault(), year.GetValueOrDefault(), timeoffset);
-                if (coaId.HasValue)
+                var postedJournals = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date.AddHours(timeoffset).Month.Equals(month.GetValueOrDefault()) && w.Date.AddHours(timeoffset).Year.Equals(year.GetValueOrDefault())).Select(s => new { s.Id, s.Date, s.ReferenceNo, s.DocumentNo }).ToList();
+                var postedIds = postedJournals.Select(s => s.Id).ToList();
+                var postedReferenceNos = postedJournals.Select(s => s.ReferenceNo).ToList();
+
+                var entries = _ItemDbSet.Include(x => x.COA).Where(w => postedIds.Contains(w.JournalTransactionId) && w.COAId.Equals(coaId.GetValueOrDefault())).ToList();
+                var closingDebitBalance = entries.Sum(s => s.Debit);
+                var closingCreditBalance = entries.Sum(s => s.Credit);
+
+                var initialDate = new DateTime(year.GetValueOrDefault(), month.GetValueOrDefault(), 1);
+                var previousPostedJournalIds = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date < initialDate).Select(s => s.Id).ToList();
+                var previousDebitBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId) && w.COAId.Equals(coaId.GetValueOrDefault())).Sum(s => s.Debit);
+                var previousCreditBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId) && w.COAId.Equals(coaId.GetValueOrDefault())).Sum(s => s.Credit);
+
+                var result = new SubLedgerReportViewModel
                 {
-                    var postedJournals = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date.AddHours(timeoffset).Month.Equals(month.GetValueOrDefault()) && w.Date.AddHours(timeoffset).Year.Equals(year.GetValueOrDefault())).Select(s => new { s.Id, s.Date, s.ReferenceNo, s.DocumentNo }).ToList();
-                    var postedIds = postedJournals.Select(s => s.Id).ToList();
-                    var postedReferenceNos = postedJournals.Select(s => s.ReferenceNo).ToList();
+                    InitialBalance = (decimal)previousDebitBalance - (decimal)previousCreditBalance,
+                    ClosingBalance = ((decimal)previousDebitBalance - (decimal)previousCreditBalance) + ((decimal)closingDebitBalance - (decimal)closingCreditBalance)
+                };
 
-                    var entries = _ItemDbSet.Include(x => x.COA).Where(w => postedIds.Contains(w.JournalTransactionId) && w.COAId.Equals(coaId.GetValueOrDefault())).ToList();
-                    var closingDebitBalance = entries.Sum(s => s.Debit);
-                    var closingCreditBalance = entries.Sum(s => s.Credit);
-
-                    var initialDate = new DateTime(year.GetValueOrDefault(), month.GetValueOrDefault(), 1);
-                    var previousPostedJournalIds = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date < initialDate).Select(s => s.Id).ToList();
-                    var previousDebitBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId) && w.COAId.Equals(coaId.GetValueOrDefault())).Sum(s => s.Debit);
-                    var previousCreditBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId) && w.COAId.Equals(coaId.GetValueOrDefault())).Sum(s => s.Credit);
-
-                    var result = new SubLedgerReportViewModel
+                var unitReceiptNotes = await GetUnitReceiptNote(postedReferenceNos);
+                foreach (var entry in entries)
+                {
+                    var header = postedJournals.FirstOrDefault(f => f.Id.Equals(entry.JournalTransactionId));
+                    //var bankPayment = bankPayments.FirstOrDefault(f => f.DocumentNo.Equals(header?.ReferenceNo));
+                    var unitReceiptNote = unitReceiptNotes.FirstOrDefault(f => f.URNNo == header.ReferenceNo);
+                    var data = new SubLedgerReport()
                     {
-                        InitialBalance = (decimal)previousDebitBalance - (decimal)previousCreditBalance,
-                        ClosingBalance = ((decimal)previousDebitBalance - (decimal)previousCreditBalance) + ((decimal)closingDebitBalance - (decimal)closingCreditBalance)
+                        //BankName = bankPayment?.BankName,
+                        //BGCheck = bankPayment?.BGCheckNumber,
+                        Credit = (decimal)entry.Credit,
+                        Debit = (decimal)entry.Debit,
+                        //Date = unitReceiptNote != null && unitReceiptNote.URNDate.HasValue ? unitReceiptNote.URNDate.Value.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture)
+                        //        : header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
+                        //No = header.DocumentNo,
+                        Date = header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
+                        Remark = entry.Remark,
+                        COACode = entry.COA?.Code,
+                        COAName = entry.COA?.Name,
+                        URNNo = header.ReferenceNo,
+                        Supplier = unitReceiptNote?.Supplier,
+                        UPONo = unitReceiptNote?.UPONo,
+                        JournalId = entry.JournalTransactionId,
+                        JournalItemId = entry.Id
                     };
 
-                    var unitReceiptNotes = await GetUnitReceiptNote(postedReferenceNos);
-                    foreach (var entry in entries)
-                    {
-                        var header = postedJournals.FirstOrDefault(f => f.Id.Equals(entry.JournalTransactionId));
-                        //var bankPayment = bankPayments.FirstOrDefault(f => f.DocumentNo.Equals(header?.ReferenceNo));
-                        var unitReceiptNote = unitReceiptNotes.FirstOrDefault(f => f.URNNo == header.ReferenceNo);
-                        var data = new SubLedgerReport()
-                        {
-                            //BankName = bankPayment?.BankName,
-                            //BGCheck = bankPayment?.BGCheckNumber,
-                            Credit = (decimal)entry.Credit,
-                            Debit = (decimal)entry.Debit,
-                            //Date = unitReceiptNote != null && unitReceiptNote.URNDate.HasValue ? unitReceiptNote.URNDate.Value.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture)
-                            //        : header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
-                            //No = header.DocumentNo,
-                            Date = header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
-                            Remark = entry.Remark,
-                            COACode = entry.COA?.Code,
-                            COAName = entry.COA?.Name,
-                            URNNo = header.ReferenceNo,
-                            Supplier = unitReceiptNote?.Supplier,
-                            UPONo = unitReceiptNote?.UPONo,
-                            JournalId = entry.JournalTransactionId,
-                            JournalItemId = entry.Id
-                        };
-
-                        if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
-                                                            && textiles.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'L')
-                            result.TextileLokals.Add(data);
-                        else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
-                                                            && textiles.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'I')
-                            result.TextileImports.Add(data);
-                        else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
-                                                            && garments.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'L')
-                            result.GarmentLokals.Add(data);
-                        else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
-                                                            && garments.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'I')
-                            result.GarmentImports.Add(data);
-                        else
-                            result.Others.Add(data);
-                    }
-
-
-                    return result;
+                    if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
+                                                        && textiles.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'L')
+                        result.TextileLokals.Add(data);
+                    else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
+                                                        && textiles.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'I')
+                        result.TextileImports.Add(data);
+                    else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
+                                                        && garments.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'L')
+                        result.GarmentLokals.Add(data);
+                    else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
+                                                        && garments.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'I')
+                        result.GarmentImports.Add(data);
+                    else
+                        result.Others.Add(data);
                 }
-                else
-                {
-                    var postedJournals = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date.AddHours(timeoffset).Month.Equals(month.GetValueOrDefault()) && w.Date.AddHours(timeoffset).Year.Equals(year.GetValueOrDefault())).Select(s => new { s.Id, s.Date, s.ReferenceNo, s.DocumentNo }).ToList();
-                    var postedIds = postedJournals.Select(s => s.Id).ToList();
-                    var postedReferenceNos = postedJournals.Select(s => s.ReferenceNo).ToList();
 
-                    var entries = _ItemDbSet.Include(x => x.COA).Where(w => postedIds.Contains(w.JournalTransactionId)).ToList();
-                    var closingDebitBalance = entries.Sum(s => s.Debit);
-                    var closingCreditBalance = entries.Sum(s => s.Credit);
 
-                    var initialDate = new DateTime(year.GetValueOrDefault(), month.GetValueOrDefault(), 1);
-                    var previousPostedJournalIds = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date < initialDate).Select(s => s.Id).ToList();
-                    var previousDebitBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId)).Sum(s => s.Debit);
-                    var previousCreditBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId)).Sum(s => s.Credit);
-
-                    var result = new SubLedgerReportViewModel
-                    {
-                        InitialBalance = (decimal)previousDebitBalance - (decimal)previousCreditBalance,
-                        ClosingBalance = ((decimal)previousDebitBalance - (decimal)previousCreditBalance) + ((decimal)closingDebitBalance - (decimal)closingCreditBalance)
-                    };
-
-                    //foreach (var entry in entries)
-                    //{
-                    //    var header = postedJournals.FirstOrDefault(f => f.Id.Equals(entry.JournalTransactionId));
-                    //    var bankPayment = bankPayments.FirstOrDefault(f => f.DocumentNo.Equals(header?.ReferenceNo));
-                    //    var data = new SubLedgerReport()
-                    //    {
-                    //        BankName = bankPayment?.BankName,
-                    //        BGCheck = bankPayment?.BGCheckNumber,
-                    //        Credit = (decimal)entry.Credit,
-                    //        Debit = (decimal)entry.Debit,
-                    //        Date = header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
-                    //        No = header.DocumentNo,
-                    //        Remark = entry.Remark
-                    //    };
-
-                    //    result.Info.Add(data);
-                    //}
-                    var unitReceiptNotes = await GetUnitReceiptNote(postedReferenceNos);
-                    foreach (var entry in entries)
-                    {
-                        var header = postedJournals.FirstOrDefault(f => f.Id.Equals(entry.JournalTransactionId));
-                        //var bankPayment = bankPayments.FirstOrDefault(f => f.DocumentNo.Equals(header?.ReferenceNo));
-                        var unitReceiptNote = unitReceiptNotes.FirstOrDefault(f => f.URNNo == header.ReferenceNo);
-                        var data = new SubLedgerReport()
-                        {
-                            //BankName = bankPayment?.BankName,
-                            //BGCheck = bankPayment?.BGCheckNumber,
-                            Credit = (decimal)entry.Credit,
-                            Debit = (decimal)entry.Debit,
-                            //Date = unitReceiptNote != null && unitReceiptNote.URNDate.HasValue ? unitReceiptNote.URNDate.Value.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture)
-                            //        : header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
-                            //No = header.DocumentNo,
-                            Date = header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
-                            Remark = entry.Remark,
-                            COACode = entry.COA?.Code,
-                            COAName = entry.COA?.Name,
-                            URNNo = header.ReferenceNo,
-                            Supplier = unitReceiptNote?.Supplier,
-                            UPONo = unitReceiptNote?.UPONo,
-                            JournalId = entry.JournalTransactionId,
-                            JournalItemId = entry.Id
-                        };
-
-                        if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
-                                                            && textiles.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'L')
-                            result.TextileLokals.Add(data);
-                        else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
-                                                            && textiles.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'I')
-                            result.TextileImports.Add(data);
-                        else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
-                                                            && garments.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'L')
-                            result.GarmentLokals.Add(data);
-                        else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
-                                                            && garments.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'I')
-                            result.GarmentImports.Add(data);
-                        else
-                            result.Others.Add(data);
-                    }
-                    return result;
-                }
+                return result;
             }
-            catch (Exception ex)
+            else
             {
-                throw ex;
+                var postedJournals = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date.AddHours(timeoffset).Month.Equals(month.GetValueOrDefault()) && w.Date.AddHours(timeoffset).Year.Equals(year.GetValueOrDefault())).Select(s => new { s.Id, s.Date, s.ReferenceNo, s.DocumentNo }).ToList();
+                var postedIds = postedJournals.Select(s => s.Id).ToList();
+                var postedReferenceNos = postedJournals.Select(s => s.ReferenceNo).ToList();
+
+                var entries = _ItemDbSet.Include(x => x.COA).Where(w => postedIds.Contains(w.JournalTransactionId)).ToList();
+                var closingDebitBalance = entries.Sum(s => s.Debit);
+                var closingCreditBalance = entries.Sum(s => s.Credit);
+
+                var initialDate = new DateTime(year.GetValueOrDefault(), month.GetValueOrDefault(), 1);
+                var previousPostedJournalIds = _DbSet.Where(w => (!string.IsNullOrWhiteSpace(w.Status) && w.Status.Equals(JournalTransactionStatus.Posted)) && w.Date < initialDate).Select(s => s.Id).ToList();
+                var previousDebitBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId)).Sum(s => s.Debit);
+                var previousCreditBalance = _ItemDbSet.Where(w => previousPostedJournalIds.Contains(w.JournalTransactionId)).Sum(s => s.Credit);
+
+                var result = new SubLedgerReportViewModel
+                {
+                    InitialBalance = (decimal)previousDebitBalance - (decimal)previousCreditBalance,
+                    ClosingBalance = ((decimal)previousDebitBalance - (decimal)previousCreditBalance) + ((decimal)closingDebitBalance - (decimal)closingCreditBalance)
+                };
+
+                //foreach (var entry in entries)
+                //{
+                //    var header = postedJournals.FirstOrDefault(f => f.Id.Equals(entry.JournalTransactionId));
+                //    var bankPayment = bankPayments.FirstOrDefault(f => f.DocumentNo.Equals(header?.ReferenceNo));
+                //    var data = new SubLedgerReport()
+                //    {
+                //        BankName = bankPayment?.BankName,
+                //        BGCheck = bankPayment?.BGCheckNumber,
+                //        Credit = (decimal)entry.Credit,
+                //        Debit = (decimal)entry.Debit,
+                //        Date = header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
+                //        No = header.DocumentNo,
+                //        Remark = entry.Remark
+                //    };
+
+                //    result.Info.Add(data);
+                //}
+                var unitReceiptNotes = await GetUnitReceiptNote(postedReferenceNos);
+                foreach (var entry in entries)
+                {
+                    var header = postedJournals.FirstOrDefault(f => f.Id.Equals(entry.JournalTransactionId));
+                    //var bankPayment = bankPayments.FirstOrDefault(f => f.DocumentNo.Equals(header?.ReferenceNo));
+                    var unitReceiptNote = unitReceiptNotes.FirstOrDefault(f => f.URNNo == header.ReferenceNo);
+                    var data = new SubLedgerReport()
+                    {
+                        //BankName = bankPayment?.BankName,
+                        //BGCheck = bankPayment?.BGCheckNumber,
+                        Credit = (decimal)entry.Credit,
+                        Debit = (decimal)entry.Debit,
+                        //Date = unitReceiptNote != null && unitReceiptNote.URNDate.HasValue ? unitReceiptNote.URNDate.Value.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture)
+                        //        : header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
+                        //No = header.DocumentNo,
+                        Date = header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
+                        Remark = entry.Remark,
+                        COACode = entry.COA?.Code,
+                        COAName = entry.COA?.Name,
+                        URNNo = header.ReferenceNo,
+                        Supplier = unitReceiptNote?.Supplier,
+                        UPONo = unitReceiptNote?.UPONo,
+                        JournalId = entry.JournalTransactionId,
+                        JournalItemId = entry.Id
+                    };
+
+                    if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
+                                                        && textiles.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'L')
+                        result.TextileLokals.Add(data);
+                    else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
+                                                        && textiles.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'I')
+                        result.TextileImports.Add(data);
+                    else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
+                                                        && garments.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'L')
+                        result.GarmentLokals.Add(data);
+                    else if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)
+                                                        && garments.Contains(data.COACode.Split('.')[2]) && data.URNNo.Split('-')[2].LastOrDefault() == 'I')
+                        result.GarmentImports.Add(data);
+                    else
+                        result.Others.Add(data);
+                }
+                return result;
             }
 
 
@@ -737,7 +731,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             {
                 dt.Rows.Add();
                 dt.Rows.Add("Pembelian Textile Lokal");
-                
+
                 foreach (var item in data.TextileLokals.OrderBy(x => x.Date).ThenBy(x => x.JournalId).ThenBy(x => x.JournalItemId))
                 {
                     var date = DateTime.Parse(item.Date);
@@ -747,7 +741,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
                 dt.Rows.Add();
                 dt.Rows.Add("Pembelian Textile Import");
-               
+
                 foreach (var item in data.TextileImports.OrderBy(x => x.Date).ThenBy(x => x.JournalId).ThenBy(x => x.JournalItemId))
                 {
                     var date = DateTime.Parse(item.Date);
@@ -757,7 +751,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
                 dt.Rows.Add();
                 dt.Rows.Add("Pembelian Garment Lokal");
-                
+
                 foreach (var item in data.GarmentLokals.OrderBy(x => x.Date).ThenBy(x => x.JournalId).ThenBy(x => x.JournalItemId))
                 {
                     var date = DateTime.Parse(item.Date);
@@ -767,7 +761,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
                 dt.Rows.Add();
                 dt.Rows.Add("Pembelian Garment Import");
-                
+
                 foreach (var item in data.GarmentImports.OrderBy(x => x.Date).ThenBy(x => x.JournalId).ThenBy(x => x.JournalItemId))
                 {
                     var date = DateTime.Parse(item.Date);
@@ -777,7 +771,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
                 dt.Rows.Add();
                 dt.Rows.Add("Lain - Lain");
-                
+
                 foreach (var item in data.Others.OrderBy(x => x.Date).ThenBy(x => x.JournalId).ThenBy(x => x.JournalItemId))
                 {
                     var date = DateTime.Parse(item.Date);
