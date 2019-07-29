@@ -370,5 +370,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             vm.SourceType = "Pendanaan";
             Assert.True(vm.Validate(null).Count() > 0);
         }
+
+        [Fact]
+        public async Task Should_Fail_CreateInOut_Data()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = null;
+            model.SourceType = "Pendanaan";
+            //var Response = await service.CreateInOutTransactionAsync(model);
+            await Assert.ThrowsAnyAsync<Exception>(() => service.CreateInOutTransactionAsync(model));
+        }
     }
 }
