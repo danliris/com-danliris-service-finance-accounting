@@ -363,8 +363,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionModel model = _dataUtil(service).GetNewData();
             model.Status = "OUT";
             model.SourceType = "Pendanaan";
-            var Response = await service.CreateInOutTransactionAsync(model);
+            var Response = await service.CreateInOutTransactionAsync(model); 
             Assert.NotEqual(0, Response);
+            var vm = _dataUtil(service).GetDataToValidate();
+            vm.Status = "OUT";
+            vm.SourceType = "Pendanaan";
+            Assert.True(vm.Validate(null).Count() > 0);
         }
     }
 }
