@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -380,6 +382,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             model.SourceType = "Pendanaan";
             //var Response = await service.CreateInOutTransactionAsync(model);
             await Assert.ThrowsAnyAsync<Exception>(() => service.CreateInOutTransactionAsync(model));
+        }
+        
+        [Fact]
+        public void ShouldSuccessAutoMapper()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            Mapper.Initialize(cfg => cfg.AddProfile<DailyBankTransactionProfile>());
+            Mapper.AssertConfigurationIsValid();
+            var model = _dataUtil(service).GetNewData();
+            var vm = Mapper.Map<DailyBankTransactionViewModel>(model);
+            Assert.True(true);
         }
     }
 }

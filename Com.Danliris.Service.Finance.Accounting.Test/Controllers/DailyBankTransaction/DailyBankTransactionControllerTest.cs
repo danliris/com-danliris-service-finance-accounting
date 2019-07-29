@@ -57,6 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             int statusCode = GetStatusCodeGetReport(mocks);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
+        
 
         public override async Task Post_WithoutException_ReturnCreated()
         {

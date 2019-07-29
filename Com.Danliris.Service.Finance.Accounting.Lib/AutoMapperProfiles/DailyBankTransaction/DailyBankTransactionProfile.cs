@@ -8,6 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBa
     {
         public DailyBankTransactionProfile()
         {
+            
             CreateMap<DailyBankTransactionModel, DailyBankTransactionViewModel>()
                 .ForPath(d => d.Date, opt => opt.MapFrom(s => s.Date))
                 /* Bank */
