@@ -12,6 +12,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.D
         ReadResponse<DailyBankTransactionModel> GetReport(int bankId, int month, int year, int clientTimeZoneOffset);
         MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset);
         Task<int> DeleteByReferenceNoAsync(string referenceNo);
-
+        Task<int> CreateInOutTransactionAsync(DailyBankTransactionModel model);
     }
 }

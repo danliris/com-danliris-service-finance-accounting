@@ -355,5 +355,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var Response = await service.DeleteByReferenceNoAsync(model.ReferenceNo);
             Assert.NotEqual(0, Response);
         }
+
+        [Fact]
+        public async Task Should_Success_CreateInOut_Data()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            var Response = await service.CreateInOutTransactionAsync(model);
+            Assert.NotEqual(0, Response);
+        }
     }
 }
