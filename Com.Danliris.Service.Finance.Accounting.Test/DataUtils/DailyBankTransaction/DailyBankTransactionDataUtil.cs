@@ -42,7 +42,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 Status = "IN",
                 SupplierCode = "SupplierCode",
                 SupplierName = "SupplierName",
-                SupplierId = 1
+                SupplierId = 1,
+                DestinationBankAccountName = "AccountName",
+                DestinationBankAccountNumber = "AccountNumber",
+                DestinationBankCode = "BankCode",
+                DestinationBankCurrencyCode = "CurrencyCode",
+                DestinationBankCurrencyId = 1,
+                DestinationBankCurrencySymbol = "CurrencySymbol",
+                DestinationBankId = 1,
+                DestinationBankName = "BankName"
             };
 
             return TestData;
@@ -90,6 +98,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                     _id = 1,
                     code = "SupplierCode",
                     name = "SupplierName"
+                },
+                OutputBank = new AccountBankViewModel()
+                {
+                    Id = 1,
+                    AccountName = "AccountName",
+                    AccountNumber = "AccountNumber",
+                    BankCode = "BankCode",
+                    BankName = "Name",
+                    Code = "Code",
+                    Currency = new CurrencyViewModel()
+                    {
+                        Id = 1,
+                        Code = "Code",
+                        Description = "Description",
+                        Rate = 1,
+                        Symbol = "Symbol"
+                    }
                 }
             };
 

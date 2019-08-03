@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -354,6 +356,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             var Response = await service.DeleteByReferenceNoAsync(model.ReferenceNo);
             Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_CreateInOut_Data()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            var Response = await service.CreateInOutTransactionAsync(model); 
+            Assert.NotEqual(0, Response);
+            var vm = _dataUtil(service).GetDataToValidate();
+            vm.Status = "OUT";
+            vm.SourceType = "Pendanaan";
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async Task Should_Fail_CreateInOut_Data()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = null;
+            model.SourceType = "Pendanaan";
+            //var Response = await service.CreateInOutTransactionAsync(model);
+            await Assert.ThrowsAnyAsync<Exception>(() => service.CreateInOutTransactionAsync(model));
+        }
+        
+        [Fact]
+        public void ShouldSuccessAutoMapper()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            Mapper.Initialize(cfg => cfg.AddProfile<DailyBankTransactionProfile>());
+            Mapper.AssertConfigurationIsValid();
+            var model = _dataUtil(service).GetNewData();
+            var vm = Mapper.Map<DailyBankTransactionViewModel>(model);
+            Assert.True(true);
         }
     }
 }

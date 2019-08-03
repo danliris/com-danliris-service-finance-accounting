@@ -369,5 +369,47 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             return await _DbContext.SaveChangesAsync();
         }
+
+        public async Task<int> CreateInOutTransactionAsync(DailyBankTransactionModel model)
+        {
+            int result = 0;
+            var inputModel = model.Clone();
+            inputModel.AccountBankAccountName = model.DestinationBankAccountName;
+            inputModel.AccountBankAccountNumber = model.DestinationBankAccountNumber;
+            inputModel.AccountBankCode = model.DestinationBankCode;
+            inputModel.AccountBankCurrencyCode = model.DestinationBankCurrencyCode;
+            inputModel.AccountBankCurrencyId = model.DestinationBankCurrencyId;
+            inputModel.AccountBankCurrencySymbol = model.DestinationBankCurrencySymbol;
+            inputModel.AccountBankId = model.DestinationBankId;
+            inputModel.AccountBankName = model.DestinationBankName;
+            inputModel.Status = "IN";
+            inputModel.DestinationBankAccountName = "";
+            inputModel.DestinationBankAccountNumber = "";
+            inputModel.DestinationBankCode = "";
+            inputModel.DestinationBankCurrencyCode = "";
+            inputModel.DestinationBankCurrencyId = 0;
+            inputModel.DestinationBankCurrencySymbol = "";
+            inputModel.DestinationBankId = 0;
+            inputModel.DestinationBankName = "";
+            
+            inputModel.Remark = "Pendanaan Dari " + inputModel.AccountBankName + " " + inputModel.AccountBankAccountName;
+
+            using (var transaction = _DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    result += await CreateAsync(model);
+                    result += await CreateAsync(inputModel);
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+
+            }
+            return result;
+        }
     }
 }

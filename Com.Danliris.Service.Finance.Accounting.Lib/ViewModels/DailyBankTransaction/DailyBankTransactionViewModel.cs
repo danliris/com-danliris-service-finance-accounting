@@ -20,6 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
         public string Status { get; set; }
         public NewSupplierViewModel Supplier { get; set; }
         public double? AfterNominal { get; set; }
+        public AccountBankViewModel OutputBank { get; set; }
         public double? BeforeNominal { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -78,10 +79,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                                 {
                                     yield return new ValidationResult("Supplier harus diisi", new List<string> { "Supplier" });
                                 }
-                                else
+                                else if (SourceType.ToUpper().Equals("INVESTASI"))
                                 {
                                     yield return new ValidationResult("Ke harus diisi", new List<string> { "Supplier" });
                                 }
+                        }
+                        if (OutputBank == null || OutputBank.Id <= 0)
+                        {
+                            yield return new ValidationResult("Bank tujuan harus diisi", new List<string> { "OutputBank" });
+                        }
+                        else
+                        {
+                            if(OutputBank.Id == Bank.Id)
+                            {
+                                yield return new ValidationResult("Bank tujuan tidak boleh sama dengan Bank", new List<string> { "OutputBank", "Bank" });
+                            }
                         }
                         break;
                 }

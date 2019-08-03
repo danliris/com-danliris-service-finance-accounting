@@ -24,6 +24,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         public int AccountBankCurrencyId { get; set; }
         [MaxLength(100)]
         public string AccountBankCurrencySymbol { get; set; }
+
+        //Destination Bank
+        //[MaxLength(50)]
+        public int DestinationBankId { get; set; }
+        [MaxLength(25)]
+        public string DestinationBankCode { get; set; }
+        [MaxLength(100)]
+        public string DestinationBankName { get; set; }
+        [MaxLength(100)]
+        public string DestinationBankAccountName { get; set; }
+        [MaxLength(100)]
+        public string DestinationBankAccountNumber { get; set; }
+        [MaxLength(100)]
+        public string DestinationBankCurrencyCode { get; set; }
+        [MaxLength(50)]
+        public int DestinationBankCurrencyId { get; set; }
+        [MaxLength(100)]
+        public string DestinationBankCurrencySymbol { get; set; }
+
         [MaxLength(25)]
         public string Code { get; set; }
         //Buyer

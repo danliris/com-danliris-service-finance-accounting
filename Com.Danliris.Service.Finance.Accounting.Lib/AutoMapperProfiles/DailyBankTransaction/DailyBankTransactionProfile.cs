@@ -8,6 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBa
     {
         public DailyBankTransactionProfile()
         {
+            
             CreateMap<DailyBankTransactionModel, DailyBankTransactionViewModel>()
                 .ForPath(d => d.Date, opt => opt.MapFrom(s => s.Date))
                 /* Bank */
@@ -19,6 +20,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBa
                 .ForPath(d => d.Bank.Currency.Id, opt => opt.MapFrom(s => s.AccountBankCurrencyId))
                 .ForPath(d => d.Bank.Currency.Code, opt => opt.MapFrom(s => s.AccountBankCurrencyCode))
                 .ForPath(d => d.Bank.Currency.Symbol, opt => opt.MapFrom(s => s.AccountBankCurrencySymbol))
+
+                /* Destination Bank */
+                .ForPath(d => d.OutputBank.Id, opt => opt.MapFrom(s => s.DestinationBankId))
+                .ForPath(d => d.OutputBank.BankCode, opt => opt.MapFrom(s => s.DestinationBankCode))
+                .ForPath(d => d.OutputBank.AccountName, opt => opt.MapFrom(s => s.DestinationBankAccountName))
+                .ForPath(d => d.OutputBank.AccountNumber, opt => opt.MapFrom(s => s.DestinationBankAccountNumber))
+                .ForPath(d => d.OutputBank.BankName, opt => opt.MapFrom(s => s.DestinationBankName))
+                .ForPath(d => d.OutputBank.Currency.Id, opt => opt.MapFrom(s => s.DestinationBankCurrencyId))
+                .ForPath(d => d.OutputBank.Currency.Code, opt => opt.MapFrom(s => s.DestinationBankCurrencyCode))
+                .ForPath(d => d.OutputBank.Currency.Symbol, opt => opt.MapFrom(s => s.DestinationBankCurrencySymbol))
 
                 /* Supplier */
                 .ForPath(d => d.Supplier._id, opt => opt.MapFrom(s => s.SupplierId))

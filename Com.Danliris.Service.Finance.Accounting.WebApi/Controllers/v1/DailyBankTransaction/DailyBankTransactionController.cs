@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
@@ -26,6 +27,46 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         {
         }
 
+        public override async Task<ActionResult> Post([FromBody] DailyBankTransactionViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                ValidateService.Validate(viewModel);
+
+                DailyBankTransactionModel model = Mapper.Map<DailyBankTransactionModel>(viewModel);
+                if(viewModel.Status.Equals("OUT", StringComparison.OrdinalIgnoreCase) && viewModel.SourceType.Equals("pendanaan", StringComparison.OrdinalIgnoreCase))
+                {
+
+                    await Service.CreateInOutTransactionAsync(model);
+                }
+                else
+                {
+
+                    await Service.CreateAsync(model);
+                }
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, Utilities.General.CREATED_STATUS_CODE, Utilities.General.OK_MESSAGE)
+                    .Ok();
+                return Created(String.Concat(Request.Path, "/", 0), Result);
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, Utilities.General.BAD_REQUEST_STATUS_CODE, Utilities.General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, Utilities.General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(Utilities.General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("mutation/report")]
         public IActionResult GetReport(int bankId, int month, int year)
         {
@@ -36,8 +77,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
             {
                 apiVersion = "1.0.0",
                 data = Result.Data,
-                message = General.OK_MESSAGE,
-                statusCode = General.OK_STATUS_CODE
+                message = Utilities.General.OK_MESSAGE,
+                statusCode = Utilities.General.OK_STATUS_CODE
             });
         }
 
@@ -61,9 +102,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
             catch (Exception e)
             {
                 Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    new ResultFormatter(ApiVersion, Utilities.General.INTERNAL_ERROR_STATUS_CODE, e.Message)
                     .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+                return StatusCode(Utilities.General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
 
@@ -81,9 +122,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
             catch (Exception e)
             {
                 Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    new ResultFormatter(ApiVersion, Utilities.General.INTERNAL_ERROR_STATUS_CODE, e.Message)
                     .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+                return StatusCode(Utilities.General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
     }
