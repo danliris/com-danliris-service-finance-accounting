@@ -830,6 +830,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             _DbSet.Update(model);
             return _DbContext.SaveChangesAsync();
         }
+
+        public Task<List<GeneralLedgerReportViewModel>> GetGeneralLedgerReport(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset)
+        {
+            var query = GetGeneralLedgerReportQueryByPeriod(startDate, endDate, timezoneoffset);
+
+            var journalquery = query
+                .Join(
+                _DbSet,
+                item => item.JournalTransactionId,
+                header => header.Id,
+                (item, header) => new 
+                {
+                    item.Credit,
+                    header.Date,
+                    item.Debit,
+                    item.COAId
+                }).AsQueryable();
+
+            return journalquery.Join(_COADbSet, item => item.COAId, coa => coa.Id, (item, coa) => new GeneralLedgerReportViewModel()
+            {
+                Credit = item.Credit,
+                Date = item.Date,
+                Debit = item.Debit,
+                Description = coa.Name,
+                COACode = coa.Code
+            }).OrderBy(o => o.COACode).ToListAsync();
+        }
+
+        private IQueryable<JournalTransactionItemModel> GetGeneralLedgerReportQueryByPeriod(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset)
+        {
+            var journalTransactionIds = _DbSet.Where(journalDocument => journalDocument.Date.AddHours(timezoneoffset) >= startDate && journalDocument.Date.AddHours(timezoneoffset) <= endDate && journalDocument.Status == "POSTED").Select(s => s.Id).ToList();
+            return _ItemDbSet.Where(item => journalTransactionIds.Contains(item.JournalTransactionId));
+        }
     }
 
     public class BankPaymentResult
