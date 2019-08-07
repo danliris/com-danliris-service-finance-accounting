@@ -232,5 +232,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
             int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
+
+        [Fact]
+        public async Task GetGeneralLedger_ReturnOk()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetGeneralLedgerReport(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>())).ReturnsAsync(new List<GeneralLedgerReportViewModel>());
+
+            var response = await GetController(mocks).GetGeneralLedger(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task GetGeneralLedger_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetGeneralLedgerReport(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).GetGeneralLedger(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
     }
 }

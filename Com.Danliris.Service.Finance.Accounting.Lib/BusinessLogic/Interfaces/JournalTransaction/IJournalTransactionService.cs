@@ -20,5 +20,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.J
         Task<int> PostTransactionAsync(int id, JournalTransactionModel model);
         Task<int> CreateManyAsync(List<JournalTransactionModel> models);
         List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year);
+        Task<List<GeneralLedgerReportViewModel>> GetGeneralLedgerReport(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset);
     }
 }

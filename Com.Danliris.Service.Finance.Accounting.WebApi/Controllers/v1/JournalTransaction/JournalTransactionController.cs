@@ -22,8 +22,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
     [Authorize]
     public class JournalTransactionController : BaseController<JournalTransactionModel, JournalTransactionViewModel, IJournalTransactionService>
     {
+        private readonly DateTimeOffset defaultStartDate;
+        private readonly DateTimeOffset defaultEndDate;
+
         public JournalTransactionController(IIdentityService identityService, IValidateService validateService, IJournalTransactionService service, IMapper mapper) : base(identityService, validateService, service, mapper, "1.0.0")
         {
+            defaultStartDate = DateTimeOffset.UtcNow.AddDays(-30);
+            defaultEndDate = DateTimeOffset.UtcNow;
         }
 
         [HttpPost("many")]
@@ -282,6 +287,30 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                     .Ok(Mapper, dataVM);
                 return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("general-ledgers")]
+        public async Task<IActionResult> GetGeneralLedger([FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                VerifyUser();
+                int timeoffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+                var result = await Service.GetGeneralLedgerReport(startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), timeoffset);
+
+                //Dictionary<string, object> Result =
+                //    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                //    .Ok(result);
+                return Ok(result);
             }
             catch (Exception e)
             {
