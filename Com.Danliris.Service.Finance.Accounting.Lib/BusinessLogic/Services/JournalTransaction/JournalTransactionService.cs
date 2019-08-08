@@ -868,7 +868,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             foreach (var coaHeaderCode in coaHeaderCodes)
             {
                 var filteredCOAIds = _COADbSet.Where(w => w.Code1.Equals(coaHeaderCode.Code1) && w.Code2.Equals(coaHeaderCode.Code2)).Select(s => s.Id).ToList();
-                var initialBalance = _ItemDbSet.Join(_DbSet, item => item.JournalTransactionId, header => header.Id, (item, header) => new { item.Debit, item.COAId, item.Credit, header.Date }).Where(w => w.Date < startDate && filteredCOAIds.Contains(w.COAId)).Sum(sum => sum.Debit - sum.Credit);
+                var initialBalance = _ItemDbSet.Join(_DbSet, item => item.JournalTransactionId, header => header.Id, (item, header) => new { item.Debit, item.COAId, item.Credit, header.Date, header.Status }).Where(w => w.Date < startDate && filteredCOAIds.Contains(w.COAId) && w.Status == "POSTED").Sum(sum => sum.Debit - sum.Credit);
 
                 var filteredJournalResult = journalResult.Where(w => coaHeaderCode.Code1.Equals(w.COACode1) && coaHeaderCode.Code2.Equals(w.COACode2)).Select(s => new GeneralLedgerReportViewModel()
                 {
