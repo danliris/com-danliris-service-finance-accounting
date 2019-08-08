@@ -22,13 +22,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
     [Authorize]
     public class JournalTransactionController : BaseController<JournalTransactionModel, JournalTransactionViewModel, IJournalTransactionService>
     {
-        private readonly DateTimeOffset defaultStartDate;
-        private readonly DateTimeOffset defaultEndDate;
-
         public JournalTransactionController(IIdentityService identityService, IValidateService validateService, IJournalTransactionService service, IMapper mapper) : base(identityService, validateService, service, mapper, "1.0.0")
         {
-            defaultStartDate = DateTimeOffset.UtcNow.AddDays(-30);
-            defaultEndDate = DateTimeOffset.UtcNow;
         }
 
         [HttpPost("many")]
@@ -307,10 +302,39 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
 
                 var result = await Service.GetGeneralLedgerReport(startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), timeoffset);
 
-                //Dictionary<string, object> Result =
-                //    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
-                //    .Ok(result);
-                return Ok(result);
+                return Ok(new
+                {
+                    apiVersion = "1.0.0",
+                    statusCode = 200,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("general-ledgers/download/xls")]
+        public async Task<ActionResult> GetGeneralLedgerXls([FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                VerifyUser();
+
+                byte[] xlsInBytes;
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                var filestream = await Service.GetGeneralLedgerReportXls(startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), offSet);
+
+                string fileName = $"Laporan General Ledger Periode {startDate.GetValueOrDefault().ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)} - {endDate.GetValueOrDefault().ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)}.xlsx";
+
+                xlsInBytes = filestream.ToArray();
+
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                return file;
             }
             catch (Exception e)
             {

@@ -25,6 +25,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Masters.COAData
                 CashAccount = "CashAccount",
                 Name = "Name",
                 Code = "1111.11.1.11",
+                Code1 = "1111",
+                Code2 = "11",
+                Code3 = "0",
+                Code4 = "00",
                 Nature = "Nature",
                 Path = "/",
                 ReportType = "ReportType"

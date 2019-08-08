@@ -10,6 +10,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
         public string Description { get; set; }
         public double Debit { get; set; }
         public double Credit { get; set; }
-        public string COACode { get; internal set; }
+        public string COACode { get; set; }
+        public double RemainingBalance { get; set; }
+    }
+
+    public class GeneralLedgerWrapperReportViewModel
+    {
+        public string COACode { get; set; }
+        public string COAName { get; set; }
+        public double Summary { get; set; }
+        public double InitialBalance { get; set; }
+        public List<GeneralLedgerReportViewModel> Items { get; set; }
     }
 }

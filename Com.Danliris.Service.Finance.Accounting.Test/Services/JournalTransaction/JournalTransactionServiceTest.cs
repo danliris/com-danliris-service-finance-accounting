@@ -446,7 +446,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             var response = await service.GetGeneralLedgerReport(DateTime.Now.AddYears(-1), DateTime.Now.AddYears(1), 0);
 
-            Assert.NotEmpty(response);
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_General_LedgerXls()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewPostedData();
+            await service.CreateAsync(model);
+
+            var response = await service.GetGeneralLedgerReportXls(DateTime.Now.AddYears(-1), DateTime.Now.AddYears(1), 0);
+
+            Assert.NotNull(response);
         }
     }
 }
