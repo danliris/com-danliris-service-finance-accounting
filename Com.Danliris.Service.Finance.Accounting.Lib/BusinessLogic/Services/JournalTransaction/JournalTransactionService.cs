@@ -831,37 +831,126 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return _DbContext.SaveChangesAsync();
         }
 
-        public Task<List<GeneralLedgerReportViewModel>> GetGeneralLedgerReport(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset)
+        public async Task<List<GeneralLedgerWrapperReportViewModel>> GetGeneralLedgerReport(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset)
         {
             var query = GetGeneralLedgerReportQueryByPeriod(startDate, endDate, timezoneoffset);
+            var coaIds = await query.Select(s => s.COAId).Distinct().ToListAsync();
+            var coaCodes1 = _COADbSet.Where(w => coaIds.Contains(w.Id)).Select(s => s.Code1).Distinct().ToList();
+            var coaCodes2 = _COADbSet.Where(w => coaIds.Contains(w.Id)).Select(s => s.Code2).Distinct().ToList();
+            var coaHeaderCodes = _COADbSet.Where(w => coaCodes1.Contains(w.Code1) && coaCodes2.Contains(w.Code2) && w.Code3.Equals("0") && w.Code4.Equals("00")).OrderBy(s => s.Code).Select(s => new { s.Code, s.Code1, s.Code2, s.Name }).Distinct().ToList();
 
             var journalquery = query
                 .Join(
                 _DbSet,
                 item => item.JournalTransactionId,
                 header => header.Id,
-                (item, header) => new 
+                (item, header) => new
                 {
-                    item.Credit,
+                    Credit = Math.Round(item.Credit, 4),
                     header.Date,
-                    item.Debit,
+                    Debit = Math.Round(item.Debit, 4),
                     item.COAId
                 }).AsQueryable();
 
-            return journalquery.Join(_COADbSet, item => item.COAId, coa => coa.Id, (item, coa) => new GeneralLedgerReportViewModel()
+            var journalResult = await journalquery.Join(_COADbSet, item => item.COAId, coa => coa.Id, (item, coa) => new
             {
-                Credit = item.Credit,
-                Date = item.Date,
-                Debit = item.Debit,
+                item.Credit,
+                item.Date,
+                item.Debit,
                 Description = coa.Name,
-                COACode = coa.Code
-            }).OrderBy(o => o.COACode).ToListAsync();
+                COACode = coa.Code,
+                COACode1 = coa.Code1,
+                COACode2 = coa.Code2
+            }).ToListAsync();
+
+            var result = new List<GeneralLedgerWrapperReportViewModel>();
+
+            foreach (var coaHeaderCode in coaHeaderCodes)
+            {
+                var filteredCOAIds = _COADbSet.Where(w => w.Code1.Equals(coaHeaderCode.Code1) && w.Code2.Equals(coaHeaderCode.Code2)).Select(s => s.Id).ToList();
+                var initialBalance = _ItemDbSet.Join(_DbSet, item => item.JournalTransactionId, header => header.Id, (item, header) => new { item.Debit, item.COAId, item.Credit, header.Date }).Where(w => w.Date < startDate && filteredCOAIds.Contains(w.COAId)).Sum(sum => sum.Debit - sum.Credit);
+
+                var filteredJournalResult = journalResult.Where(w => coaHeaderCode.Code1.Equals(w.COACode1) && coaHeaderCode.Code2.Equals(w.COACode2)).Select(s => new GeneralLedgerReportViewModel()
+                {
+                    COACode = s.COACode,
+                    Credit = s.Credit,
+                    Date = s.Date,
+                    Debit = s.Debit,
+                    Description = s.Description
+                }).ToList();
+
+                result.Add(new GeneralLedgerWrapperReportViewModel()
+                {
+                    COACode = coaHeaderCode.Code,
+                    COAName = coaHeaderCode.Name,
+                    Items = GetGeneralLedgerItems(filteredJournalResult.OrderBy(o => o.Date).ToList(), Math.Round(initialBalance, 4)),
+                    Summary = Math.Round(initialBalance, 4) + filteredJournalResult.Sum(s => s.Debit) - filteredJournalResult.Sum(s => s.Credit),
+                    InitialBalance = Math.Round(initialBalance, 4)
+                });
+            }
+
+            return result.Where(w => w.Items.Count > 0).ToList();
+        }
+
+        private List<GeneralLedgerReportViewModel> GetGeneralLedgerItems(List<GeneralLedgerReportViewModel> list, double initialBalance)
+        {
+            var result = new List<GeneralLedgerReportViewModel>();
+
+            var remainingBalance = initialBalance;
+            foreach (var item in list)
+            {
+                remainingBalance += item.Debit - item.Credit;
+                result.Add(new GeneralLedgerReportViewModel()
+                {
+                    COACode = item.COACode,
+                    Credit = item.Credit,
+                    Date = item.Date,
+                    Debit = item.Debit,
+                    Description = item.Description,
+                    RemainingBalance = Math.Round(remainingBalance, 4)
+                });
+            }
+
+            return result;
         }
 
         private IQueryable<JournalTransactionItemModel> GetGeneralLedgerReportQueryByPeriod(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset)
         {
             var journalTransactionIds = _DbSet.Where(journalDocument => journalDocument.Date.AddHours(timezoneoffset) >= startDate && journalDocument.Date.AddHours(timezoneoffset) <= endDate && journalDocument.Status == "POSTED").Select(s => s.Id).ToList();
             return _ItemDbSet.Where(item => journalTransactionIds.Contains(item.JournalTransactionId));
+        }
+
+        public async Task<MemoryStream> GetGeneralLedgerReportXls(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset)
+        {
+            var queryResult = await GetGeneralLedgerReport(startDate, endDate, timezoneoffset);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Jurnal", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Akun", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Sisa Saldo", DataType = typeof(double) });
+
+            if (queryResult.Count == 0)
+            {
+                dt.Rows.Add("", "", "", 0, 0, 0);
+            }
+            else
+                foreach (var header in queryResult)
+                {
+                    dt.Rows.Add("", "Saldo Awal", "", 0, 0, header.InitialBalance);
+
+                    foreach (var item in header.Items)
+                    {
+                        dt.Rows.Add(item.Date.AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture), item.Description, item.COACode, item.Debit, item.Credit, item.RemainingBalance);
+                    }
+
+                    dt.Rows.Add("", "Saldo Akhir", "", 0, 0, header.Summary);
+                    dt.Rows.Add();
+                }
+
+            return Excel.CreateExcelNoFilters(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "General Ledgers") }, true);
         }
     }
 
