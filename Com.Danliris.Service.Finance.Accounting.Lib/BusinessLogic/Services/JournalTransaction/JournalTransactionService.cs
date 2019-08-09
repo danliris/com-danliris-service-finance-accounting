@@ -507,6 +507,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             result.Others.AddRange(dataResult.TextileImports);
             result.Others.AddRange(dataResult.TextileLokals);
 
+            result.Others = result.Others.OrderBy(order => order.SortingDate).ToList();
+
             return result;
         }
 
@@ -560,7 +562,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         Supplier = unitReceiptNote?.Supplier,
                         UPONo = unitReceiptNote?.UPONo,
                         JournalId = entry.JournalTransactionId,
-                        JournalItemId = entry.Id
+                        JournalItemId = entry.Id,
+                        SortingDate = header.Date
                     };
 
                     if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)

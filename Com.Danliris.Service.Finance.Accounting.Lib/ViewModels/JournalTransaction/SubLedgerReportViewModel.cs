@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction
@@ -41,6 +42,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
         public int JournalItemId { get; set; }
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
+
+        //sorting by date purpose only
+        public DateTimeOffset SortingDate { get; set; }
     }
 
     public class SubLedgerXlsFormat
