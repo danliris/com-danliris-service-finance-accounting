@@ -491,7 +491,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         public async Task<SubLedgerReportViewModel> GetSubLedgerReport(int? coaId, int month, int year, int timeoffset)
         {
-            return await GetSubLedgerReportData(coaId, month, year, timeoffset);
+            var dataResult = await GetSubLedgerReportData(coaId, month, year, timeoffset);
+
+            // ui purpose only
+            var result = new SubLedgerReportViewModel()
+            {
+                ClosingBalance = dataResult.ClosingBalance,
+                InitialBalance = dataResult.InitialBalance,
+                Others = new List<SubLedgerReport>()
+            };
+
+            result.Others.AddRange(dataResult.GarmentImports);
+            result.Others.AddRange(dataResult.GarmentLokals);
+            result.Others.AddRange(dataResult.Others);
+            result.Others.AddRange(dataResult.TextileImports);
+            result.Others.AddRange(dataResult.TextileLokals);
+
+            return result;
         }
 
         private async Task<SubLedgerReportViewModel> GetSubLedgerReportData(int? coaId, int? month, int? year, int timeoffset)
