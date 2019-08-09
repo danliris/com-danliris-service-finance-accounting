@@ -34,9 +34,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
         public string COAName { get; set; }
         public string COACode { get; set; }
 
-        //public string No { get; set; }
-        //public string BankName { get; set; }
-        //public string BGCheck { get; set; }
+        public string No { get; set; }
+        public string BankName { get; set; }
+        public string BGCheck { get; set; }
 
         public int JournalId { get; set; }
         public int JournalItemId { get; set; }

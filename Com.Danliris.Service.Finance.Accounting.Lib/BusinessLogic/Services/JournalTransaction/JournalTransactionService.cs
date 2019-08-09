@@ -543,17 +543,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 foreach (var entry in entries)
                 {
                     var header = postedJournals.FirstOrDefault(f => f.Id.Equals(entry.JournalTransactionId));
-                    //var bankPayment = bankPayments.FirstOrDefault(f => f.DocumentNo.Equals(header?.ReferenceNo));
+                    var bankPayment = bankPayments.FirstOrDefault(f => f.DocumentNo.Equals(header?.ReferenceNo));
                     var unitReceiptNote = unitReceiptNotes.FirstOrDefault(f => f.URNNo == header.ReferenceNo);
                     var data = new SubLedgerReport()
                     {
-                        //BankName = bankPayment?.BankName,
-                        //BGCheck = bankPayment?.BGCheckNumber,
+                        BankName = bankPayment?.BankName,
+                        BGCheck = bankPayment?.BGCheckNumber,
                         Credit = (decimal)entry.Credit,
                         Debit = (decimal)entry.Debit,
                         //Date = unitReceiptNote != null && unitReceiptNote.URNDate.HasValue ? unitReceiptNote.URNDate.Value.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture)
                         //        : header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
-                        //No = header.DocumentNo,
+                        No = header.DocumentNo,
                         Date = header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
                         Remark = entry.Remark,
                         COACode = entry.COA?.Code,
