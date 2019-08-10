@@ -491,7 +491,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         public async Task<SubLedgerReportViewModel> GetSubLedgerReport(int? coaId, int month, int year, int timeoffset)
         {
-            return await GetSubLedgerReportData(coaId, month, year, timeoffset);
+            var dataResult = await GetSubLedgerReportData(coaId, month, year, timeoffset);
+
+            // ui purpose only
+            var result = new SubLedgerReportViewModel()
+            {
+                ClosingBalance = dataResult.ClosingBalance,
+                InitialBalance = dataResult.InitialBalance,
+                Others = new List<SubLedgerReport>()
+            };
+
+            result.Others.AddRange(dataResult.GarmentImports);
+            result.Others.AddRange(dataResult.GarmentLokals);
+            result.Others.AddRange(dataResult.Others);
+            result.Others.AddRange(dataResult.TextileImports);
+            result.Others.AddRange(dataResult.TextileLokals);
+
+            result.Others = result.Others.OrderBy(order => order.SortingDate).ToList();
+
+            return result;
         }
 
         private async Task<SubLedgerReportViewModel> GetSubLedgerReportData(int? coaId, int? month, int? year, int timeoffset)
@@ -525,17 +543,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 foreach (var entry in entries)
                 {
                     var header = postedJournals.FirstOrDefault(f => f.Id.Equals(entry.JournalTransactionId));
-                    //var bankPayment = bankPayments.FirstOrDefault(f => f.DocumentNo.Equals(header?.ReferenceNo));
+                    var bankPayment = bankPayments.FirstOrDefault(f => f.DocumentNo.Equals(header?.ReferenceNo));
                     var unitReceiptNote = unitReceiptNotes.FirstOrDefault(f => f.URNNo == header.ReferenceNo);
                     var data = new SubLedgerReport()
                     {
-                        //BankName = bankPayment?.BankName,
-                        //BGCheck = bankPayment?.BGCheckNumber,
+                        BankName = bankPayment?.BankName,
+                        BGCheck = bankPayment?.BGCheckNumber,
                         Credit = (decimal)entry.Credit,
                         Debit = (decimal)entry.Debit,
                         //Date = unitReceiptNote != null && unitReceiptNote.URNDate.HasValue ? unitReceiptNote.URNDate.Value.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture)
                         //        : header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
-                        //No = header.DocumentNo,
+                        No = header.DocumentNo,
                         Date = header.Date.AddHours(timeoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture),
                         Remark = entry.Remark,
                         COACode = entry.COA?.Code,
@@ -544,7 +562,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         Supplier = unitReceiptNote?.Supplier,
                         UPONo = unitReceiptNote?.UPONo,
                         JournalId = entry.JournalTransactionId,
-                        JournalItemId = entry.Id
+                        JournalItemId = entry.Id,
+                        SortingDate = header.Date
                     };
 
                     if (!string.IsNullOrEmpty(data.COACode) && !string.IsNullOrEmpty(data.URNNo)

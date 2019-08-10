@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction
@@ -33,14 +34,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
         public string COAName { get; set; }
         public string COACode { get; set; }
 
-        //public string No { get; set; }
-        //public string BankName { get; set; }
-        //public string BGCheck { get; set; }
+        public string No { get; set; }
+        public string BankName { get; set; }
+        public string BGCheck { get; set; }
 
         public int JournalId { get; set; }
         public int JournalItemId { get; set; }
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
+
+        //sorting by date purpose only
+        public DateTimeOffset SortingDate { get; set; }
     }
 
     public class SubLedgerXlsFormat
