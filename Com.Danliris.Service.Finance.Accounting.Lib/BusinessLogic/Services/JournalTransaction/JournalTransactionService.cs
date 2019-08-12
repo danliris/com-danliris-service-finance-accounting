@@ -467,6 +467,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     Date = DateTimeOffset.Now,
                     Items = reversingItems,
                     ReferenceNo = transactionToReverse.ReferenceNo,
+                    Status = transactionToReverse.Status,
                     Description = $"Jurnal Pembalik {transactionToReverse.DocumentNo}"
                 };
 
