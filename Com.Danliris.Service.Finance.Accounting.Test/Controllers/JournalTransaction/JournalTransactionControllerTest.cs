@@ -232,5 +232,45 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
             int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
+
+        [Fact]
+        public async Task GetGeneralLedger_ReturnOk()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetGeneralLedgerReport(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>())).ReturnsAsync(new List<GeneralLedgerWrapperReportViewModel>());
+
+            var response = await GetController(mocks).GetGeneralLedger(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task GetGeneralLedger_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetGeneralLedgerReport(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).GetGeneralLedger(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_GeneralLedger_Reports_Xls()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetGeneralLedgerReportXls(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>())).ReturnsAsync(new MemoryStream());
+
+            var response = await GetController(mocks).GetGeneralLedgerXls(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Should_ThrowException_Get_GeneralLedger_Reports_Xls()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetGeneralLedgerReportXls(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).GetGeneralLedgerXls(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
     }
 }

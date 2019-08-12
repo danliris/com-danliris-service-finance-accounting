@@ -262,7 +262,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             var newModel = _dataUtil(service).GetNewData();
             newModel.ReferenceNo = model.ReferenceNo;
-            //var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
             var response = await service.CreateAsync(newModel);
             Assert.NotEqual(0, response);
         }
@@ -282,6 +281,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
             var data = await _dataUtil(service).GetTestPostedData();
+            var data2 = await _dataUtil(service).GetTestPostedGarmentIData();
+            var data3 = await _dataUtil(service).GetTestPostedGarmentLData();
             var reportResponse = await service.GetSubLedgerReportXls(data.Items.ToList()[0].COAId, data.Date.Month, data.Date.Year, 1);
 
             Assert.NotNull(reportResponse);
@@ -298,7 +299,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             //_dbContext(GetCurrentMethod().
             var data = await _dataUtil(service).GetTestPostedData();
             var reportResponse = await service.GetSubLedgerReport(data.Items.ToList()[0].COAId, data.Date.Month, data.Date.Year, 1);
-            Assert.NotEmpty(reportResponse.Info);
+            Assert.NotNull(reportResponse);
         }
 
         [Fact]
@@ -308,7 +309,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             var data = await _dataUtil(service).GetTestPostedManualData();
             var reportResponse = await service.GetSubLedgerReport(data.Items.ToList()[0].COAId, data.Date.Month, data.Date.Year, 1);
-            Assert.NotEmpty(reportResponse.Info);
+            Assert.NotNull(reportResponse);
         }
 
         [Fact]
@@ -361,7 +362,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             //var newModel = _dataUtil(service).GetNewData();
             //newModel.ReferenceNo = model.ReferenceNo;
-            //var response = service.ReverseJournalTransactionByReferenceNo(model.ReferenceNo).Result;
             //var response = await service.CreateAsync(newModel);
             Assert.NotEqual(0, response);
         }
@@ -435,6 +435,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var response = service.ReadUnPostedTransactionsByPeriod(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year);
 
             Assert.NotEmpty(response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_General_Ledger()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewPostedData();
+            await service.CreateAsync(model);
+
+            var response = await service.GetGeneralLedgerReport(DateTime.Now.AddYears(-1), DateTime.Now.AddYears(1), 0);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_General_LedgerXls()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewPostedData();
+            await service.CreateAsync(model);
+
+            var response = await service.GetGeneralLedgerReportXls(DateTime.Now.AddYears(-1), DateTime.Now.AddYears(1), 0);
+
+            Assert.NotNull(response);
         }
     }
 }

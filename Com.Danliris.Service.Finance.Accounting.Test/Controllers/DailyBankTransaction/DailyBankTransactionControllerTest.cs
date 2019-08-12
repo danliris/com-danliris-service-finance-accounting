@@ -57,6 +57,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             int statusCode = GetStatusCodeGetReport(mocks);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
+        
+
+        public override async Task Post_WithoutException_ReturnCreated()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<DailyBankTransactionViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.CreateAsync(It.IsAny<DailyBankTransactionModel>())).ReturnsAsync(1);
+            mocks.Service.Setup(s => s.CreateInOutTransactionAsync(It.IsAny<DailyBankTransactionModel>())).ReturnsAsync(1);
+            var vm = new DailyBankTransactionViewModel()
+            {
+                SourceType = "Pendanaan",
+                Status = "IN"
+            };
+            DailyBankTransactionController controller = GetController(mocks);
+            IActionResult response = await controller.Post(vm);
+
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+
+            var vm2 = new DailyBankTransactionViewModel()
+            {
+                SourceType = "Pendanaan",
+                Status = "OUT"
+            };
+
+            IActionResult response2 = await controller.Post(vm2);
+
+            int statusCode2 = GetStatusCode(response2);
+            Assert.Equal((int)HttpStatusCode.Created, statusCode2);
+        }
 
         private int GetStatusCodeGetReport((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IDailyBankTransactionService> Service, Mock<IMapper> Mapper) mocks)
         {

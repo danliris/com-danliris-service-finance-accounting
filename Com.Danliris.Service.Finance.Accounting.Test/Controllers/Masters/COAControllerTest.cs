@@ -215,7 +215,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         }
 
         [Fact]
-        public async void GetEmptyNameCoa_WithoutException_ReturnOK()
+        public async Task GetEmptyNameCoa_WithoutException_ReturnOK()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetEmptyNames()).ReturnsAsync(new List<COAModel>());
@@ -226,7 +226,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         }
 
         [Fact]
-        public async void GetEmptyNameCoa_ReadThrowException_ReturnInternalServerError()
+        public async Task GetEmptyNameCoa_ReadThrowException_ReturnInternalServerError()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetEmptyNames()).ThrowsAsync(new Exception());
@@ -235,7 +235,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         }
 
         [Fact]
-        public async void ReviseNameCoa_WithoutException_NoContent()
+        public async Task ReviseNameCoa_WithoutException_NoContent()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.ReviseEmptyNamesCoa(It.IsAny<List<COAModel>>())).ReturnsAsync(1);
@@ -250,7 +250,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         }
 
         [Fact]
-        public async void ReviseNameCoa_ReadThrowException_ReturnInternalServerError()
+        public async Task ReviseNameCoa_ReadThrowException_ReturnInternalServerError()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.ReviseEmptyNamesCoa(It.IsAny<List<COAModel>>())).ThrowsAsync(new Exception());

@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositionNote
@@ -72,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         }
 
         [Fact]
-        public async void Should_Success_Create_Data()
+        public async Task Should_Success_Create_Data()
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PaymentDispositionNoteModel model =  _dataUtil(service, GetCurrentMethod()).GetNewData();
@@ -81,7 +82,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         }
 
         [Fact]
-        public async void Should_Success_Get_Data()
+        public async Task Should_Success_Get_Data()
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service, GetCurrentMethod()).GetTestData();
@@ -90,7 +91,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_By_Id()
+        public async Task Should_Success_Get_Data_By_Id()
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
@@ -99,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         }
 
         [Fact]
-        public async void Should_Success_Delete_Data()
+        public async Task Should_Success_Delete_Data()
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
@@ -112,7 +113,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         }
 
         [Fact]
-        public async void Should_Success_Update_Data()
+        public async Task Should_Success_Update_Data()
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
@@ -149,7 +150,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             Assert.True(vm.Validate(null).Count() > 0);
         }
         [Fact]
-        public async void Should_Success_Get_Data_Details_By_EPOId()
+        public async Task Should_Success_Get_Data_Details_By_EPOId()
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();

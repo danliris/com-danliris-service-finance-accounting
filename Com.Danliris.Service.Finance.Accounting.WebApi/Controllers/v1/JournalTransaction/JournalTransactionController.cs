@@ -148,7 +148,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("report/sub-ledgers")]
-        public async Task<ActionResult> GetSubLedgerReport([FromQuery] int coaId, [FromQuery] int month, [FromQuery] int year)
+        public async Task<ActionResult> GetSubLedgerReport([FromQuery] int? coaId, [FromQuery] int month, [FromQuery] int year)
         {
             try
             {
@@ -282,6 +282,59 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                     .Ok(Mapper, dataVM);
                 return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("general-ledgers")]
+        public async Task<IActionResult> GetGeneralLedger([FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                VerifyUser();
+                int timeoffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+                var result = await Service.GetGeneralLedgerReport(startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), timeoffset);
+
+                return Ok(new
+                {
+                    apiVersion = "1.0.0",
+                    statusCode = 200,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("general-ledgers/download/xls")]
+        public async Task<ActionResult> GetGeneralLedgerXls([FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                VerifyUser();
+
+                byte[] xlsInBytes;
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                var filestream = await Service.GetGeneralLedgerReportXls(startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), offSet);
+
+                string fileName = $"Laporan General Ledger Periode {startDate.GetValueOrDefault().ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)} - {endDate.GetValueOrDefault().ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)}.xlsx";
+
+                xlsInBytes = filestream.ToArray();
+
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                return file;
             }
             catch (Exception e)
             {

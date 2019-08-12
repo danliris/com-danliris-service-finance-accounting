@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
@@ -67,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Put_UnitPaymentOrder()
+        public async Task Should_Success_Put_UnitPaymentOrder()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
@@ -88,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Null_Get_UnitReceiptNote()
+        public async Task Should_Null_Get_UnitReceiptNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
@@ -98,7 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Get_UnitReceiptNote_WithoutInvoiceNo()
+        public async Task Should_Success_Get_UnitReceiptNote_WithoutInvoiceNo()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
@@ -109,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Post_UnitReceiptNote()
+        public async Task Should_Success_Post_UnitReceiptNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
@@ -119,7 +120,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Put_UnitReceiptNote()
+        public async Task Should_Success_Put_UnitReceiptNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
@@ -136,7 +137,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Delete_UnitReceiptNote()
+        public async Task Should_Success_Delete_UnitReceiptNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
@@ -149,7 +150,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Null_Get_BankExpenditureNote()
+        public async Task Should_Null_Get_BankExpenditureNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
@@ -160,7 +161,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
 
 
         [Fact]
-        public async void Should_Success_Post_BankExpenditureNote()
+        public async Task Should_Success_Post_BankExpenditureNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
@@ -175,7 +176,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Return_1_IfNotFound()
+        public async Task Should_Return_1_IfNotFound()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
@@ -190,7 +191,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Put_BankExpenditureNote()
+        public async Task Should_Success_Put_BankExpenditureNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
@@ -209,7 +210,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Delete_BankExpenditureNote()
+        public async Task Should_Success_Delete_BankExpenditureNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
@@ -229,7 +230,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Delete_BankExpenditureNoteList()
+        public async Task Should_Success_Delete_BankExpenditureNoteList()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
@@ -249,7 +250,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Get_Report()
+        public async Task Should_Success_Get_Report()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
@@ -265,7 +266,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Get_Report_Include_Previous_Month()
+        public async Task Should_Success_Get_Report_Include_Previous_Month()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
@@ -290,7 +291,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
-        public async void Should_Success_Get_Excel()
+        public async Task Should_Success_Get_Excel()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();

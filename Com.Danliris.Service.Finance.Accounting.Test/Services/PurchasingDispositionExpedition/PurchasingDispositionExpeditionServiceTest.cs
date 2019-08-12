@@ -120,7 +120,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Get_Data()
+        public async Task Should_Success_Get_Data()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData();
@@ -129,7 +129,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_Verification()
+        public async Task Should_Success_Get_Data_Verification()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData();
@@ -138,7 +138,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_By_Id()
+        public async Task Should_Success_Get_Data_By_Id()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
@@ -147,7 +147,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Create_Data()
+        public async Task Should_Success_Create_Data()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = _dataUtil(service).GetNewData();
@@ -173,7 +173,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Delete_Data()
+        public async Task Should_Success_Delete_Data()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             
@@ -186,7 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Delete_With_two_Datas()
+        public async Task Should_Success_Delete_With_two_Datas()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData2();
@@ -199,7 +199,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         
 
         [Fact]
-        public async void Should_Success_Post_Acceptance_Verification()
+        public async Task Should_Success_Post_Acceptance_Verification()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
@@ -245,7 +245,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Post_Acceptance_Cashier()
+        public async Task Should_Success_Post_Acceptance_Cashier()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
@@ -268,7 +268,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Delete_Acceptance_Verification()
+        public async Task Should_Success_Delete_Acceptance_Verification()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = await _dataUtil(service).GetTestData();
@@ -291,7 +291,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Delete_Acceptance_Cashier()
+        public async Task Should_Success_Delete_Acceptance_Cashier()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = await _dataUtil(service).GetTestData();
@@ -314,7 +314,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Fail_Delete_Empty_Id()
+        public async Task Should_Fail_Delete_Empty_Id()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var deleteResponse = await service.DeletePurchasingDispositionAcceptance(-1);
@@ -343,7 +343,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Post_Disposition_Verification_Update_Cashier()
+        public async Task Should_Success_Post_Disposition_Verification_Update_Cashier()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
@@ -361,7 +361,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Post_Disposition_Verification_Create_Purchasing()
+        public async Task Should_Success_Post_Disposition_Verification_Create_Purchasing()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
@@ -459,7 +459,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Get_Report()
+        public async Task Should_Success_Get_Report()
         {
             var serviceProvider = new Mock<IServiceProvider>();
 
@@ -479,13 +479,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             await service.CreateAsync(postedModel);
             var model = await service.ReadByIdAsync(postedModel.Id);
             var reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", null, null, 7);
-            Assert.NotEmpty(reportResponse.Data);
+            Assert.NotNull(reportResponse.Data);
             reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), null, 7);
-            Assert.NotEmpty(reportResponse.Data);
+            Assert.NotNull(reportResponse.Data);
             reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", null, DateTimeOffset.UtcNow.AddDays(1), 7);
-            Assert.NotEmpty(reportResponse.Data);
+            Assert.NotNull(reportResponse.Data);
             reportResponse = await service.GetReportAsync(1, 25, "{}", "{}", DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1), 7);
-            Assert.NotEmpty(reportResponse.Data);
+            Assert.NotNull(reportResponse.Data);
         }
 
         [Fact]
@@ -497,7 +497,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
         }
 
         [Fact]
-        public async void Should_Success_Generate_Excel()
+        public async Task Should_Success_Generate_Excel()
         {
             var serviceProvider = new Mock<IServiceProvider>();
 
