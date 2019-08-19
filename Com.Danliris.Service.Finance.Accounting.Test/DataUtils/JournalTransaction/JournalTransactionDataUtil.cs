@@ -42,33 +42,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                         Remark = "Remark",
                         Debit = 10000.00m,
                         Credit = 10000.00m
-                    },
-                    new JournalTransactionItemModel()
-                    {
-                        COAId = COA2.Id,
-                        COA = COA2,
-                        Remark = "Remark",
-                        Debit = 10000.00m,
-                        Credit = 10000.00m
-
-                    },
-                    new JournalTransactionItemModel()
-                    {
-                        COAId = COA3.Id,
-                        COA = COA3,
-                        Remark = "Remark",
-                        Debit = 10000.00m,
-                        Credit = 10000.00m
-
-                    },
-                    new JournalTransactionItemModel()
-                    {
-                        COAId = COA4.Id,
-                        COA = COA4,
-                        Remark = "Remark",
-                        Debit = 10000.00m,
-                        Credit = 10000.00m
-
                     }
                 }
             };
