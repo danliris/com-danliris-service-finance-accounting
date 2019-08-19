@@ -1,7 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MasterCOA;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Masters.COADataUtils;
@@ -25,6 +24,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
         public JournalTransactionModel GetNewData()
         {
             var COA1 = Task.Run(() => _COADataUtil.GetTestData()).Result;
+            var COA2 = Task.Run(() => _COADataUtil.GetTestData2()).Result;
+            var COA3 = Task.Run(() => _COADataUtil.GetTestData3()).Result;
+            var COA4 = Task.Run(() => _COADataUtil.GetTestData4()).Result;
             JournalTransactionModel TestData = new JournalTransactionModel()
             {
                 DocumentNo = Guid.NewGuid().ToString(),
@@ -40,6 +42,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                         Remark = "Remark",
                         Debit = 10000.00m,
                         Credit = 10000.00m
+                    },
+                    new JournalTransactionItemModel()
+                    {
+                        COAId = COA2.Id,
+                        COA = COA2,
+                        Remark = "Remark",
+                        Debit = 10000.00m,
+                        Credit = 10000.00m
+
+                    },
+                    new JournalTransactionItemModel()
+                    {
+                        COAId = COA3.Id,
+                        COA = COA3,
+                        Remark = "Remark",
+                        Debit = 10000.00m,
+                        Credit = 10000.00m
+
+                    },
+                    new JournalTransactionItemModel()
+                    {
+                        COAId = COA4.Id,
+                        COA = COA4,
+                        Remark = "Remark",
+                        Debit = 10000.00m,
+                        Credit = 10000.00m
+
                     }
                 }
             };

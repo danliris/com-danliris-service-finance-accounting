@@ -56,5 +56,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Masters.COAData
             await Service.CreateAsync(model);
             return await Service.ReadByIdAsync(model.Id);
         }
+
+        public async Task<COAModel> GetTestData2()
+        {
+            COAModel model = GetNewData();
+            model.Code = "1111.11.1.00";
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<COAModel> GetTestData3()
+        {
+            COAModel model = GetNewData();
+            model.Code = "1111.11.0.00";
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<COAModel> GetTestData4()
+        {
+            COAModel model = GetNewData();
+            model.Code = "1111.00.0.00";
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
     }
 }
