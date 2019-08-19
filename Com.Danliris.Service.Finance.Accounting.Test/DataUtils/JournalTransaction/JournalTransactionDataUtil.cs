@@ -38,8 +38,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                         COAId = COA1.Id,
                         COA = COA1,
                         Remark = "Remark",
-                        Debit = 10000.00,
-                        Credit = 10000.00
+                        Debit = 10000.00m,
+                        Credit = 10000.00m
                     }
                 }
             };
@@ -64,8 +64,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                         COAId = COA1.Id,
                         COA = COA1,
                         Remark = "Remark",
-                        Debit = 10000.00,
-                        Credit = 10000.00
+                        Debit = 10000.00m,
+                        Credit = 10000.00m
                     }
                 }
             };
@@ -90,8 +90,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                         COAId = COA1.Id,
                         COA = COA1,
                         Remark = "Remark",
-                        Debit = 10000.00,
-                        Credit = 10000.00
+                        Debit = 10000.00m,
+                        Credit = 10000.00m
                     }
                 }
             };
@@ -117,8 +117,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                         COAId = COA1.Id,
                         COA = COA1,
                         Remark = "Remark",
-                        Debit = 10000.00,
-                        Credit = 10000.00
+                        Debit = 10000.00m,
+                        Credit = 10000.00m
                     }
                 }
             };
@@ -144,8 +144,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                         COAId = COA1.Id,
                         COA = COA1,
                         Remark = "Remark",
-                        Debit = 10000.00,
-                        Credit = 10000.00
+                        Debit = 10000.00m,
+                        Credit = 10000.00m
                     }
                 }
             };
@@ -173,7 +173,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                             CashAccount = COA1.CashAccount
                         },
                         Remark = "Remark",
-                        Debit = 10000.00,
+                        Debit = 10000.00m,
                         Credit = 0
                     },
                     new JournalTransactionItemViewModel()
@@ -186,7 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.JournalTransact
                         },
                         Remark = "Remark",
                         Debit = 0,
-                        Credit = 10000.00
+                        Credit = 10000.00m
                     },
                 }
             };
