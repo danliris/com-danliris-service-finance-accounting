@@ -84,17 +84,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                                     yield return new ValidationResult("Ke harus diisi", new List<string> { "Supplier" });
                                 }
                         }
-                        if (OutputBank == null || OutputBank.Id <= 0)
+                        if (SourceType.ToUpper().Equals("PENDANAAN"))
                         {
-                            yield return new ValidationResult("Bank tujuan harus diisi", new List<string> { "OutputBank" });
-                        }
-                        else
-                        {
-                            if(OutputBank.Id == Bank.Id)
+                            if (OutputBank == null || OutputBank.Id <= 0)
                             {
-                                yield return new ValidationResult("Bank tujuan tidak boleh sama dengan Bank", new List<string> { "OutputBank", "Bank" });
+                                yield return new ValidationResult("Bank tujuan harus diisi", new List<string> { "OutputBank" });
+                            }
+                            else
+                            {
+                                if (OutputBank.Id == Bank.Id)
+                                {
+                                    yield return new ValidationResult("Bank tujuan tidak boleh sama dengan Bank", new List<string> { "OutputBank", "Bank" });
+                                }
                             }
                         }
+                        
                         break;
                 }
             }
