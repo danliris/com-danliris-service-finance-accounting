@@ -990,7 +990,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         private async Task UpdateCOABalance(JournalTransactionModel model)
         {
-           
+
 
             foreach (var item in model.Items)
             {
@@ -1000,83 +1000,46 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 List<COAModel> thirdParentCoas = new List<COAModel>();
 
                 var saldo = item.Debit - item.Credit;
-                COAModel leafCoa = leafCoas.FirstOrDefault(x => x.Id == item.COAId);
+
+                COAModel leafCoa = await _COADbSet.FirstOrDefaultAsync(x => x.Id == item.COAId);
+
                 if (leafCoa != null)
                 {
                     leafCoa.Balance += saldo;
-                }
-                else
-                {
-                    leafCoa = await _COADbSet.FirstOrDefaultAsync(x => x.Id == item.COAId);
-
-                    if (leafCoa != null)
-                    {
-                        leafCoa.Balance += saldo;
-                        leafCoas.Add(leafCoa);
-                    }
+                    leafCoas.Add(leafCoa);
                 }
 
-                COAModel existedCoaCode3 = firstParentCoas.FirstOrDefault(x => x.Code1 == leafCoa.Code1 && x.Code2 == leafCoa.Code2 && x.Code3 == leafCoa.Code3 && x.Code4 == "00");
 
+                COAModel existedCoaCode3 = await _COADbSet.FirstOrDefaultAsync(x => x.Code1 == leafCoa.Code1 && x.Code2 == leafCoa.Code2 && x.Code3 == leafCoa.Code3 && x.Code4 == "00");
 
-                if (existedCoaCode3 != null)
+                if (existedCoaCode3 != null && !leafCoas.Any(x => x.Id == existedCoaCode3.Id)
+                    && !secondParentCoas.Any(x => x.Id == existedCoaCode3.Id) && !thirdParentCoas.Any(x => x.Id == existedCoaCode3.Id))
                 {
-
                     existedCoaCode3.Balance += saldo;
-
-                }
-                else
-                {
-                    existedCoaCode3 = await _COADbSet.FirstOrDefaultAsync(x => x.Code1 == leafCoa.Code1 && x.Code2 == leafCoa.Code2 && x.Code3 == leafCoa.Code3 && x.Code4 == "00");
-
-                    if (existedCoaCode3 != null && !leafCoas.Any(x => x.Id == existedCoaCode3.Id)
-                        && !secondParentCoas.Any(x => x.Id == existedCoaCode3.Id) && !thirdParentCoas.Any(x => x.Id == existedCoaCode3.Id))
-                    {
-                        existedCoaCode3.Balance += saldo;
-                        firstParentCoas.Add(existedCoaCode3);
-                    }
+                    firstParentCoas.Add(existedCoaCode3);
                 }
 
 
-                COAModel existedCoaCode2 = secondParentCoas.FirstOrDefault(x => x.Code1 == leafCoa.Code1 && x.Code2 == leafCoa.Code2 && x.Code3 == "0" && x.Code4 == "00");
+                COAModel existedCoaCode2 = await _COADbSet.FirstOrDefaultAsync(x => x.Code1 == leafCoa.Code1 && x.Code2 == leafCoa.Code2 && x.Code3 == "0" && x.Code4 == "00");
 
-
-                if (existedCoaCode2 != null)
+                if (existedCoaCode2 != null && !leafCoas.Any(x => x.Id == existedCoaCode2.Id)
+                    && !firstParentCoas.Any(x => x.Id == existedCoaCode2.Id) && !thirdParentCoas.Any(x => x.Id == existedCoaCode2.Id))
                 {
                     existedCoaCode2.Balance += saldo;
-
-                }
-                else
-                {
-                    existedCoaCode2 = await _COADbSet.FirstOrDefaultAsync(x => x.Code1 == leafCoa.Code1 && x.Code2 == leafCoa.Code2 && x.Code3 == "0" && x.Code4 == "00");
-
-                    if (existedCoaCode2 != null && !leafCoas.Any(x => x.Id == existedCoaCode2.Id)
-                        && !firstParentCoas.Any(x => x.Id == existedCoaCode2.Id) && !thirdParentCoas.Any(x => x.Id == existedCoaCode2.Id))
-                    {
-                        existedCoaCode2.Balance += saldo;
-                        secondParentCoas.Add(existedCoaCode2);
-                    }
+                    secondParentCoas.Add(existedCoaCode2);
                 }
 
 
-                COAModel existedCoaCode1 = thirdParentCoas.FirstOrDefault(x => x.Code1 == leafCoa.Code1 && x.Code2 == "00" && x.Code3 == "0" && x.Code4 == "00");
 
-                if (existedCoaCode1 != null)
+                COAModel existedCoaCode1 = await _COADbSet.FirstOrDefaultAsync(x => x.Code1 == leafCoa.Code1 && x.Code2 == "00" && x.Code3 == "0" && x.Code4 == "00");
+
+                if (existedCoaCode1 != null && !leafCoas.Any(x => x.Id == existedCoaCode1.Id)
+                    && !firstParentCoas.Any(x => x.Id == existedCoaCode1.Id) && !secondParentCoas.Any(x => x.Id == existedCoaCode1.Id))
                 {
                     existedCoaCode1.Balance += saldo;
-
+                    thirdParentCoas.Add(existedCoaCode1);
                 }
-                else
-                {
-                    existedCoaCode1 = await _COADbSet.FirstOrDefaultAsync(x => x.Code1 == leafCoa.Code1 && x.Code2 == "00" && x.Code3 == "0" && x.Code4 == "00");
 
-                    if (existedCoaCode1 != null && !leafCoas.Any(x => x.Id == existedCoaCode1.Id)
-                        && !firstParentCoas.Any(x => x.Id == existedCoaCode1.Id) && !secondParentCoas.Any(x => x.Id == existedCoaCode1.Id))
-                    {
-                        existedCoaCode1.Balance += saldo;
-                        thirdParentCoas.Add(existedCoaCode1);
-                    }
-                }
 
 
             }
