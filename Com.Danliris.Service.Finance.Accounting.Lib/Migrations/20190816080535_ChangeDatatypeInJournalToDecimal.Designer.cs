@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190816080535_ChangeDatatypeInJournalToDecimal")]
+    partial class ChangeDatatypeInJournalToDecimal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -317,11 +319,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("CreatedUtc");
 
-                    b.Property<decimal>("Credit")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("Credit");
 
-                    b.Property<decimal>("Debit")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("Debit");
 
                     b.Property<string>("DeletedAgent")
                         .IsRequired()
@@ -534,8 +534,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("Balance");
 
                     b.Property<string>("CashAccount");
 

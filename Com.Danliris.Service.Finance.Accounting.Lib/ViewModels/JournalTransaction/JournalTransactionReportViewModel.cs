@@ -14,8 +14,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
 
         public string Remark { get; set; }
 
-        public double? Debit { get; set; }
+        public decimal? Debit { get; set; }
 
-        public double? Credit { get; set; }
+        public decimal? Credit { get; set; }
     }
 }

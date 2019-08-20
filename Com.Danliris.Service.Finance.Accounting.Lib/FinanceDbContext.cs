@@ -38,5 +38,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<PaymentDispositionNoteModel> PaymentDispositionNotes { get; set; }
         public DbSet<PaymentDispositionNoteItemModel> PaymentDispositionNoteItems { get; set; }
         public DbSet<PaymentDispositionNoteDetailModel> PaymentDispositionNoteDetails { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<JournalTransactionItemModel>().Property(x => x.Debit).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<JournalTransactionItemModel>().Property(x => x.Credit).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<COAModel>().Property(x => x.Balance).HasColumnType("decimal(18,2)");
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
