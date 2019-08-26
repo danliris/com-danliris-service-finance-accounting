@@ -405,7 +405,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             Pageable<JournalTransactionReportViewModel> pageable = new Pageable<JournalTransactionReportViewModel>(queries.Item1, page - 1, size);
             List<JournalTransactionReportViewModel> data = pageable.Data.ToList();
 
-            return (new ReadResponse<JournalTransactionReportViewModel>(data, pageable.TotalCount, new Dictionary<string, string>(), new List<string>()), queries.Item2, queries.Item3);
+            return (new ReadResponse<JournalTransactionReportViewModel>(queries.Item1, queries.Item1.Count, new Dictionary<string, string>(), new List<string>()), queries.Item2, queries.Item3);
         }
 
         public MemoryStream GenerateExcel(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
@@ -472,6 +472,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     Date = DateTimeOffset.Now,
                     Items = reversingItems,
                     ReferenceNo = transactionToReverse.ReferenceNo,
+                    Status = transactionToReverse.Status,
                     Description = $"Jurnal Pembalik {transactionToReverse.DocumentNo}"
                 };
 
