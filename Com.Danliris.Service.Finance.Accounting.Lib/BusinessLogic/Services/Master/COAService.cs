@@ -347,7 +347,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
             });
 
 
-            return query.ToList();
+            return query.OrderBy(x => x.Code).ToList();
         }
 
         public Task<List<COAModel>> GetEmptyNames()
