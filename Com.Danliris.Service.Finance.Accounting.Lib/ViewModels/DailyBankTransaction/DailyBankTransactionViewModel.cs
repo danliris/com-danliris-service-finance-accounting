@@ -12,16 +12,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
         public string Code { get; set; }
         public NewBuyerViewModel Buyer { get; set; }
         public DateTimeOffset? Date { get; set; }
-        public double? Nominal { get; set; }
+        public decimal? Nominal { get; set; }
         public string ReferenceNo { get; set; }
         public string ReferenceType { get; set; }
         public string Remark { get; set; }
         public string SourceType { get; set; }
         public string Status { get; set; }
         public NewSupplierViewModel Supplier { get; set; }
-        public double? AfterNominal { get; set; }
+        public string Receiver { get; set; }
+        public decimal? AfterNominal { get; set; }
         public AccountBankViewModel OutputBank { get; set; }
-        public double? BeforeNominal { get; set; }
+        public decimal? BeforeNominal { get; set; }
+        public decimal? NominalOut { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
 using Microsoft.EntityFrameworkCore;
@@ -410,6 +411,57 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             }
             return result;
+        }
+
+        public List<DailyBalanceReportViewModel> GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate)
+        {
+            //var result = _DbSet.Where(w => w.AccountBankId.Equals(bankId))
+            var query = _DbSet.Where(w => w.Date >= startDate && w.Date <= endDate);
+
+            if (bankId > 0)
+            {
+                query = query.Where(w => w.AccountBankId.Equals(bankId));
+            }
+
+            var result = query.GroupBy(g => g.AccountBankId).Select(s => new DailyBalanceReportViewModel()
+            {
+                AccountNumber = s.FirstOrDefault().AccountBankAccountNumber,
+                Balance = (decimal)s.Sum(sum => sum.Status.Equals("IN") ? sum.Nominal : sum.Nominal * -1),
+                BankName = s.FirstOrDefault().AccountBankName,
+                Credit = (decimal)s.Sum(sum => sum.Status.Equals("OUT") ? sum.Nominal : 0),
+                Debit = (decimal)s.Sum(sum => sum.Status.Equals("IN") ? sum.Nominal : 0),
+                CurrencyCode = s.FirstOrDefault().AccountBankCurrencyCode
+            });
+
+            return result.ToList();
+            //throw new NotImplementedException();
+        }
+
+        public MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, int clientTimeZoneOffset)
+        {
+            var queryResult = GetDailyBalanceReport(bankId, startDate, endDate);
+
+
+            DataTable result = new DataTable();
+
+            result.Columns.Add(new DataColumn() { ColumnName = "Nama Bank", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Nomor Rekening", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(double) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Credit", DataType = typeof(double) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(double) });
+
+            if (queryResult.ToArray().Count() == 0)
+                result.Rows.Add("", "", "", 0, 0, 0); // to allow column name to be generated properly for empty data as template
+            else
+            {
+                foreach (var item in queryResult)
+                {
+                    result.Rows.Add(item.BankName, item.AccountNumber, item.CurrencyCode, item.Debit, item.Credit, item.Balance);
+                }
+            }
+
+            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Saldo Harian") }, true);
         }
     }
 }
