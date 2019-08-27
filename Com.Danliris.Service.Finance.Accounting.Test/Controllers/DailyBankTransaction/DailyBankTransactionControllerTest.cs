@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Xunit;
@@ -57,7 +58,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             int statusCode = GetStatusCodeGetReport(mocks);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
-        
+
+        [Fact]
+        public void GetReportDailyBankBalance_Without_Exception()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetDailyBalanceReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(new List<DailyBalanceReportViewModel>() { new DailyBalanceReportViewModel() });
+            //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
+
+            var controller = GetController(mocks);
+            IActionResult response = controller.GetDailyBalanceReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>());
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetReportDailyBankBalanceExcel_Without_Exception()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).Returns(new MemoryStream());
+            //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
+
+            var controller = GetController(mocks);
+            IActionResult response = controller.GetDailyBalanceReportXls(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>());
+            Assert.NotNull(response);
+        }
+
 
         public override async Task Post_WithoutException_ReturnCreated()
         {
