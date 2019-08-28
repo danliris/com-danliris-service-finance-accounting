@@ -29,6 +29,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
             {
                 yield return new ValidationResult("Bank harus dipilih", new List<string> { "bank" });
             }
+            else
+            {
+                if (AccountBank.Currency.Code == "IDR")
+                {
+                    if (CurrencyCode == null)
+                    {
+                        yield return new ValidationResult("Mata Uang harus dipilih", new List<string> { "Currency" });
+                    }
+
+                    if (CurrencyRate <= 0)
+                    {
+                        yield return new ValidationResult("Rate harus dipilih", new List<string> { "CurrencyRate" });
+                    }
+                }
+            }
 
             if (this.Supplier == null || this.Supplier.Id == 0)
             {
@@ -47,6 +62,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
             {
                 yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "Items" });
             }
+            
         }
     }
 }
