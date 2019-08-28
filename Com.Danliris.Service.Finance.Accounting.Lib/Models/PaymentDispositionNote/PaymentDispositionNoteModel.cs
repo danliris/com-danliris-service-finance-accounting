@@ -23,6 +23,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionN
         public string BankCurrencyCode { get; set; }
         public int BankCurrencyId { get; set; }
         public double BankCurrencyRate { get; set; }
+
+        [MaxLength(255)]
+        public string CurrencyCode { get; set; }
+        public int CurrencyId { get; set; }
+        public double CurrencyRate { get; set; }
+
         [MaxLength(255)]
         public string PaymentDispositionNo { get; set; }
         public double Amount { get; set; }
