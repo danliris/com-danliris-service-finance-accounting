@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
                 ValidateService.Validate(viewModel);
 
                 DailyBankTransactionModel model = Mapper.Map<DailyBankTransactionModel>(viewModel);
-                if(viewModel.Status.Equals("OUT", StringComparison.OrdinalIgnoreCase) && viewModel.SourceType.Equals("pendanaan", StringComparison.OrdinalIgnoreCase))
+                if (viewModel.Status.Equals("OUT", StringComparison.OrdinalIgnoreCase) && viewModel.SourceType.Equals("pendanaan", StringComparison.OrdinalIgnoreCase))
                 {
 
                     await Service.CreateInOutTransactionAsync(model);
@@ -118,6 +118,46 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
                 await Service.DeleteByReferenceNoAsync(referenceNo);
 
                 return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, Utilities.General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(Utilities.General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("daily-balance/report")]
+        public IActionResult GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate)
+        {
+            var Result = Service.GetDailyBalanceReport(bankId, startDate, endDate);
+
+            return Ok(new
+            {
+                apiVersion = "1.0.0",
+                data = Result,
+                message = Utilities.General.OK_MESSAGE,
+                statusCode = Utilities.General.OK_STATUS_CODE
+            });
+        }
+
+        [HttpGet("daily-balance/report/download")]
+        public IActionResult GetDailyBalanceReportXls(int bankId, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                byte[] xlsInBytes;
+                int clientTimeZoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+                var xls = Service.GenerateExcelDailyBalance(bankId, startDate, endDate, clientTimeZoneOffset);
+
+                string filename = String.Format("Saldo Bank Harian - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+
+                xlsInBytes = xls.ToArray();
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+
             }
             catch (Exception e)
             {

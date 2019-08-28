@@ -416,5 +416,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var vm = Mapper.Map<DailyBankTransactionViewModel>(model);
             Assert.True(true);
         }
+
+        [Fact]
+        public async Task Should_Success_ReportDailyBalance_Data()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            await service.CreateInOutTransactionAsync(model);
+
+            var data = service.GetDailyBalanceReport(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now);
+            Assert.NotNull(data);
+        }
+
+        [Fact]
+        public async Task Should_Success_ReportDailyBalance_Excel()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            await service.CreateInOutTransactionAsync(model);
+
+            var data = service.GenerateExcelDailyBalance(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now, 0);
+            Assert.NotNull(data);
+        }
     }
 }
