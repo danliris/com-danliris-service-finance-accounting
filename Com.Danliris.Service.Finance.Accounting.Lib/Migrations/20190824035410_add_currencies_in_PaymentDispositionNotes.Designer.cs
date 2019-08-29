@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190824035410_add_currencies_in_PaymentDispositionNotes")]
+    partial class add_currencies_in_PaymentDispositionNotes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,9 +197,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<decimal>("AfterNominal");
+                    b.Property<double>("AfterNominal");
 
-                    b.Property<decimal>("BeforeNominal");
+                    b.Property<double>("BeforeNominal");
 
                     b.Property<string>("BuyerCode")
                         .HasMaxLength(25);
@@ -267,11 +269,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<decimal>("Nominal");
-
-                    b.Property<decimal>("NominalOut");
-
-                    b.Property<string>("Receiver");
+                    b.Property<double>("Nominal");
 
                     b.Property<string>("ReferenceNo")
                         .HasMaxLength(50);
