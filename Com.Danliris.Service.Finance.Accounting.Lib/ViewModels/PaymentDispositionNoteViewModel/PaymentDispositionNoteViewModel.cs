@@ -33,14 +33,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
             {
                 if (AccountBank.Currency.Code == "IDR")
                 {
-                    if (CurrencyCode == null)
+                    if (string.IsNullOrEmpty(CurrencyCode))
                     {
                         yield return new ValidationResult("Mata Uang harus dipilih", new List<string> { "Currency" });
                     }
 
                     if (CurrencyRate <= 0)
                     {
-                        yield return new ValidationResult("Rate harus dipilih", new List<string> { "CurrencyRate" });
+                        yield return new ValidationResult("Rate harus > 0", new List<string> { "CurrencyRate" });
                     }
                 }
             }
