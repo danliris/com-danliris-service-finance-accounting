@@ -4,6 +4,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -64,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             cellHeaderBody.Phrase = new Phrase("Tanggal", normal_font);
             headerTable2.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(": " + DateTimeOffset.UtcNow.AddHours(clientTimeZoneOffset).ToString("dd MMMM yyyy"), normal_font);
+            cellHeaderBody.Phrase = new Phrase(": " + viewModel.PaymentDate.AddHours(clientTimeZoneOffset).ToString("dd MMMM yyyy", new CultureInfo("id-ID")), normal_font);
             headerTable2.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("NO", normal_font);
