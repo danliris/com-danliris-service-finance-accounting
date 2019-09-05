@@ -199,6 +199,33 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
             }
         }
 
+        [HttpPut("unit-receipt-note/delete")]
+        public async Task<IActionResult> UnitReceiptNotePutDelete([FromBody] CreditorAccountUnitReceiptNotePostedViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+
+                await Service.DeleteFromUnitReceiptNoteAsync(viewModel);
+
+                return NoContent();
+            }
+            catch (NotFoundException)
+            {
+                Dictionary<string, object> Result =
+                       new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                       .Fail();
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("unit-receipt-note")]
         public async Task<IActionResult> UnitReceiptNoteGet([FromQuery] string supplierCode, [FromQuery] string code, [FromQuery] string invoiceNo)
         {

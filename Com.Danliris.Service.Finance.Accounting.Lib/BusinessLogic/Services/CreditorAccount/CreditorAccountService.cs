@@ -287,19 +287,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
         public async Task<int> UpdateFromUnitReceiptNoteAsync(CreditorAccountUnitReceiptNotePostedViewModel viewModel)
         {
-            CreditorAccountModel data = await DbSet.FirstOrDefaultAsync(x => x.Id == viewModel.CreditorAccountId);
+            CreditorAccountModel data = await DbSet.FirstOrDefaultAsync(x => x.UnitReceiptNoteNo == viewModel.Code);
             if (data == null)
                 throw new NotFoundException();
 
-            data.UnitReceiptNotePPN = viewModel.PPN;
+            data.UnitReceiptNotePPN = viewModel.UseIncomeTax ? 0.1 * viewModel.DPP : 0;
             data.UnitReceiptNoteNo = viewModel.Code;
             data.UnitReceiptNoteDPP = viewModel.DPP;
             data.UnitReceiptNoteDate = viewModel.Date;
-            data.UnitReceiptMutation = viewModel.DPP + viewModel.PPN;
-            data.SupplierName = viewModel.SupplierName;
-            data.SupplierCode = viewModel.SupplierCode;
-            data.InvoiceNo = viewModel.InvoiceNo;
-            data.CurrencyCode = viewModel.Currency;
+            data.UnitReceiptMutation = viewModel.DPP + (viewModel.UseIncomeTax ? 0.1 * viewModel.DPP : 0);
             data.FinalBalance = data.UnitReceiptMutation + data.BankExpenditureNoteMutation + data.MemoMutation;
 
 
@@ -502,6 +498,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             UpdateModel(model.Id, model);
             return await DbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> DeleteFromUnitReceiptNoteAsync(CreditorAccountUnitReceiptNotePostedViewModel viewModel)
+        {
+            CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.UnitReceiptNoteNo == viewModel.Code);
+
+            return await DeleteAsync(model.Id);
         }
     }
 }

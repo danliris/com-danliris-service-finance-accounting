@@ -216,6 +216,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
+        [Fact]
+        public async Task PutDeleteByUnitReceiptNote_ReturnNoContent()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.DeleteFromUnitReceiptNoteAsync(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).UnitReceiptNotePutDelete(new CreditorAccountUnitReceiptNotePostedViewModel());
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutDeleteByUnitReceiptNote_ThrowNotFound()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.DeleteFromUnitReceiptNoteAsync(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Throws(new NotFoundException());
+
+            var response = await GetController(mocks).UnitReceiptNotePutDelete(new CreditorAccountUnitReceiptNotePostedViewModel());
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutDeleteByUnitReceiptNote_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.DeleteFromUnitReceiptNoteAsync(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Throws(new Exception());
+
+            var response = await GetController(mocks).UnitReceiptNotePutDelete(new CreditorAccountUnitReceiptNotePostedViewModel());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
 
         [Fact]
         public async Task PutByUnitPaymentOrder_ReturnNoContent()
