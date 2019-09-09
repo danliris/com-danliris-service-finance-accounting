@@ -340,30 +340,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 
             List<PurchasingDispositionReportViewModel> result = new List<PurchasingDispositionReportViewModel>();
 
-            if (dateFrom == null && dateTo == null)
-            {
-                data = data
-                    .Where(x => DateTimeOffset.UtcNow.AddDays(-30).Date <= x.CreatedUtc.AddHours(offSet).Date
-                        && x.CreatedUtc.AddHours(offSet).Date <= DateTime.UtcNow.Date).ToList();
-            }
-            else if (dateFrom == null && dateTo != null)
-            {
-                data = data
-                    .Where(x => dateTo.Value.AddDays(-30).Date <= x.CreatedUtc.AddHours(offSet).Date
-                        && x.CreatedUtc.AddHours(offSet).Date <= dateTo.Value.Date).ToList();
-            }
-            else if (dateTo == null && dateFrom != null)
-            {
-                data = data
-                    .Where(x => dateFrom.Value.Date <= x.CreatedUtc.AddHours(offSet).Date
-                        && x.CreatedUtc.AddHours(offSet).Date <= dateFrom.Value.AddDays(30).Date).ToList();
-            }
-            else
-            {
-                data = data
-                    .Where(x => dateFrom.Value.Date <= x.CreatedUtc.AddHours(offSet).Date
-                        && x.CreatedUtc.AddHours(offSet).Date <= dateTo.Value.Date).ToList();
-            }
+            DateTimeOffset dateFromFilter = (dateFrom == null ? new DateTime(1970, 1, 1) : dateFrom.Value.Date);
+            DateTimeOffset dateToFilter = (dateTo == null ? DateTimeOffset.UtcNow.Date : dateTo.Value.Date);
+            data = data
+                    .Where(x => x.CreatedUtc.AddHours(offSet).Date >= dateFromFilter
+                         && x.CreatedUtc.AddHours(offSet).Date <= dateToFilter).ToList();
+
+            //if (dateFrom == null && dateTo == null)
+            //{
+            //    data = data
+            //        .Where(x => DateTimeOffset.MinValue.Date <= x.CreatedUtc.AddHours(offSet).Date
+            //            && x.CreatedUtc.AddHours(offSet).Date <= DateTime.UtcNow.Date).ToList();
+            //}
+            //else if (dateFrom == null && dateTo != null)
+            //{
+            //    data = data
+            //        .Where(x => DateTimeOffset.MinValue.Date <= x.CreatedUtc.AddHours(offSet).Date
+            //            && x.CreatedUtc.AddHours(offSet).Date <= dateTo.Value.Date).ToList();
+            //}
+            //else if (dateTo == null && dateFrom != null)
+            //{
+            //    data = data
+            //        .Where(x => dateFrom.Value.Date <= x.CreatedUtc.AddHours(offSet).Date
+            //            && x.CreatedUtc.AddHours(offSet).Date <= DateTime.UtcNow.Date).ToList();
+            //}
+            //else
+            //{
+            //    data = data
+            //        .Where(x => dateFrom.Value.Date <= x.CreatedUtc.AddHours(offSet).Date
+            //            && x.CreatedUtc.AddHours(offSet).Date <= dateTo.Value.Date).ToList();
+            //}
 
             foreach (var item in data)
             {
