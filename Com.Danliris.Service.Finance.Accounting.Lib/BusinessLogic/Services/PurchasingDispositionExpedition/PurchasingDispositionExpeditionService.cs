@@ -342,8 +342,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 
             DateTimeOffset dateFromFilter = (dateFrom == null ? new DateTime(1970, 1, 1) : dateFrom.Value.Date);
             DateTimeOffset dateToFilter = (dateTo == null ? DateTimeOffset.UtcNow.Date : dateTo.Value.Date);
-            data = data
-                    .Where(x => x.CreatedUtc.AddHours(offSet).Date >= dateFromFilter
+            data = data.Where(x => x.CreatedUtc.AddHours(offSet).Date >= dateFromFilter
                          && x.CreatedUtc.AddHours(offSet).Date <= dateToFilter).ToList();
 
             //if (dateFrom == null && dateTo == null)
