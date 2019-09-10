@@ -261,6 +261,7 @@ __pycache__/
 *.pyc
 
 /.vs
+/.vscode
 /Com.Danliris.Service.Finance.Accounting.Lib/bin/Debug/netcoreapp2.1
 /Com.Danliris.Service.Finance.Accounting.Lib/obj
 /Com.Danliris.Service.Finance.Accounting.Test/bin/Debug/netcoreapp2.1

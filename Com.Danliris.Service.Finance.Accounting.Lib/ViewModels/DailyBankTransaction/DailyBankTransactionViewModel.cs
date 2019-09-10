@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
         public NewBuyerViewModel Buyer { get; set; }
         public DateTimeOffset? Date { get; set; }
         public decimal? Nominal { get; set; }
+        public decimal? TransactionNominal { get; set; }
         public string ReferenceNo { get; set; }
         public string ReferenceType { get; set; }
         public string Remark { get; set; }
@@ -23,7 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
         public decimal? AfterNominal { get; set; }
         public AccountBankViewModel OutputBank { get; set; }
         public decimal? BeforeNominal { get; set; }
-        public decimal? NominalOut { get; set; }
+        // public decimal? NominalOut { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -99,8 +100,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                                     yield return new ValidationResult("Bank tujuan tidak boleh sama dengan Bank", new List<string> { "OutputBank", "Bank" });
                                 }
                             }
+
+                            if (TransactionNominal <= 0)
+                            {
+                                yield return new ValidationResult("Nominal Masuk harus lebih besar dari 0", new List<string> { "TransactionNominal" });
+                            }
                         }
-                        
+
                         break;
                 }
             }

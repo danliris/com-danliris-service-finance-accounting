@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction
 {
@@ -54,6 +55,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         public string BuyerName { get; set; }
         public DateTimeOffset Date { get; set; }
         public decimal Nominal { get; set; }
+        [NotMapped]
+        public decimal TransactionNominal { get; set; }
         [MaxLength(50)]
         public string ReferenceNo { get; set; }
         [MaxLength(50)]
@@ -77,7 +80,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
 
         public decimal AfterNominal { get; set; }
         public decimal BeforeNominal { get; set; }
-        public decimal NominalOut { get; set; }
+        // public decimal NominalOut { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
