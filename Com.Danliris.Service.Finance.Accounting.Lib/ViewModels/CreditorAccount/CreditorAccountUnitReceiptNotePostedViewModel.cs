@@ -6,9 +6,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
 {
     public class CreditorAccountUnitReceiptNotePostedViewModel : CreditorAccountPostedViewModel
     {
-        public double DPP { get; set; }
+        public decimal DPP { get; set; }
 
-        public double PPN { get; set; }
+        public decimal PPN { get; set; }
 
         public string Currency { get; set; }
 

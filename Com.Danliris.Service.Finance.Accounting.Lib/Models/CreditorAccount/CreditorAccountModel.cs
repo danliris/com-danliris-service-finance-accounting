@@ -21,11 +21,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
 
         public DateTimeOffset? UnitReceiptNoteDate { get; set; }
 
-        public double UnitReceiptNoteDPP { get; set; }
+        public decimal UnitReceiptNoteDPP { get; set; }
 
-        public double UnitReceiptNotePPN { get; set; }
+        public decimal UnitReceiptNotePPN { get; set; }
 
-        public double UnitReceiptMutation { get; set; }
+        public decimal UnitReceiptMutation { get; set; }
         #endregion
 
         #region BankExpenditureNote
@@ -35,28 +35,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
 
         public DateTimeOffset? BankExpenditureNoteDate { get; set; }
 
-        public double BankExpenditureNoteDPP { get; set; }
+        public decimal BankExpenditureNoteDPP { get; set; }
 
-        public double BankExpenditureNotePPN { get; set; }
+        public decimal BankExpenditureNotePPN { get; set; }
 
-        public double BankExpenditureNoteMutation { get; set; }
+        public decimal BankExpenditureNoteMutation { get; set; }
         #endregion
 
-        #region Memo
+        #region Memo has been changed to SPBNo or NI No
         public string MemoNo { get; set; }
 
         public DateTimeOffset? MemoDate { get; set; }
 
-        public double MemoDPP { get; set; }
+        public decimal MemoDPP { get; set; }
+        public decimal MemoDPPCurrency { get; set; }
 
-        public double MemoPPN { get; set; }
+        public decimal MemoPPN { get; set; }
 
-        public double MemoMutation { get; set; }
+        public decimal MemoMutation { get; set; }
+        public int MemoPaymentDuration { get; set; }
         #endregion
-        
+
         public string InvoiceNo { get; set; }
 
-        public double FinalBalance { get; set; }
+        public decimal FinalBalance { get; set; }
 
         public string CurrencyCode { get; set; }
 
