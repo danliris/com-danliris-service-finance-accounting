@@ -453,9 +453,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         public async Task<ReadResponse<PurchasingDispositionReportViewModel>> GetReportAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
             var queries = await JoinReportAsync(page, size, order, filter, dateFrom, dateTo, offSet);
-            Pageable<PurchasingDispositionReportViewModel> pageable = new Pageable<PurchasingDispositionReportViewModel>(queries.data, page - 1, size);
-            List<PurchasingDispositionReportViewModel> data = pageable.Data.ToList();
-            return new ReadResponse<PurchasingDispositionReportViewModel>(data, pageable.TotalCount, new Dictionary<string, string>(), new List<string>());
+            //Pageable<PurchasingDispositionReportViewModel> pageable = new Pageable<PurchasingDispositionReportViewModel>(queries.data, page - 1, size);
+            //List<PurchasingDispositionReportViewModel> data = pageable.Data.ToList();
+            List<PurchasingDispositionReportViewModel> data = queries.data;
+            return new ReadResponse<PurchasingDispositionReportViewModel>(data, queries.info.total, new Dictionary<string, string>(), new List<string>());
         }
 
         private async Task<PurchasingDispositionResponseViewModel> GetPurchasingDispositionAsync(int page, int size, string order, string filter)

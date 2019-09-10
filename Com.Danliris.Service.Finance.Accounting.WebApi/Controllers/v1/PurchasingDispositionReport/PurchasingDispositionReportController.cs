@@ -60,7 +60,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
                     {
                         data.Count,
                         data.Order,
-                        data.Selected
+                        data.Selected,
+                        size
                     },
                     message = General.OK_MESSAGE,
                     statusCode = General.OK_STATUS_CODE
