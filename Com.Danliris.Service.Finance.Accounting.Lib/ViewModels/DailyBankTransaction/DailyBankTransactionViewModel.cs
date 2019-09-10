@@ -61,16 +61,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                 switch (Status.ToUpper())
                 {
                     case "IN":
-                        if (!string.IsNullOrWhiteSpace(SourceType) && (SourceType.ToUpper().Equals("OPERASIONAL") || SourceType.ToUpper().Equals("INVESTASI") || SourceType.ToUpper().Equals("PENDANAAN")))
+                        if (!string.IsNullOrWhiteSpace(SourceType) && (SourceType.ToUpper().Equals("OPERASIONAL") || SourceType.ToUpper().Equals("INVESTASI") || SourceType.ToUpper().Equals("LAIN - LAIN")))
                         {
                             if (Buyer == null || Buyer.Id <= 0)
                                 if (SourceType.ToUpper().Equals("OPERASIONAL"))
                                 {
                                     yield return new ValidationResult("Buyer harus diisi", new List<string> { "Buyer" });
                                 }
-                                else
+                                else if (SourceType.ToUpper().Equals("INVESTASI"))
                                 {
                                     yield return new ValidationResult("Dari harus diisi", new List<string> { "Buyer" });
+                                }
+
+                            if (SourceType.ToUpper().Equals("LAIN - LAIN"))
+                                if (string.IsNullOrWhiteSpace(Receiver))
+                                {
+                                    yield return new ValidationResult("Tujuan harus diisi", new List<string> { "Receiver" });
                                 }
                         }
                         break;
@@ -111,7 +117,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(SourceType) || (!SourceType.ToUpper().Equals("OPERASIONAL") && !SourceType.ToUpper().Equals("INVESTASI") && !SourceType.ToUpper().Equals("PENDANAAN")))
+            if (string.IsNullOrWhiteSpace(SourceType) || (!SourceType.ToUpper().Equals("OPERASIONAL") && !SourceType.ToUpper().Equals("INVESTASI") && !SourceType.ToUpper().Equals("PENDANAAN") && !SourceType.ToUpper().Equals("LAIN - LAIN")))
             {
                 yield return new ValidationResult("Jenis Sumber harus diisi", new List<string> { "SourceType" });
             }
