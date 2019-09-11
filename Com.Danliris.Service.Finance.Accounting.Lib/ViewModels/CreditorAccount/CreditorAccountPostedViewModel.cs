@@ -19,7 +19,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
 
         public DateTimeOffset Date { get; set; }
         public decimal MemoDPP { get; set; }
-        public decimal MemoDPPCurrency { get; set; }
         public decimal MemoMutation { get; set; }
         public decimal MemoPPN { get; set; }
 

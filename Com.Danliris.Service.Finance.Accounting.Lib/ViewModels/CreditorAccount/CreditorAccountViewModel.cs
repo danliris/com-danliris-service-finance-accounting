@@ -28,6 +28,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
         public decimal? Mutation { get; set; }
 
         public decimal? FinalBalance { get; set; }
+        public decimal? DPPCurrency { get; set; }
+        public decimal? CurrencyRate { get; set; }
 
         public string Currency { get; set; }
         

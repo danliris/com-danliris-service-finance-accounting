@@ -475,7 +475,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     creditorAccount.MemoNo = viewModel.MemoNo;
                     creditorAccount.MemoDate = viewModel.MemoDate;
                     creditorAccount.MemoDPP = item.MemoDPP;
-                    creditorAccount.MemoDPPCurrency = item.MemoDPPCurrency;
+                    //creditorAccount.MemoDPPCurrency = item.MemoDPPCurrency;
                     creditorAccount.MemoMutation = item.MemoMutation;
                     creditorAccount.MemoPPN = item.MemoPPN;
                     creditorAccount.MemoPaymentDuration = viewModel.MemoPaymentDuration;
