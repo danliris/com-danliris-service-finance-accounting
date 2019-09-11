@@ -48,7 +48,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         public DateTimeOffset? MemoDate { get; set; }
 
         public decimal MemoDPP { get; set; }
-        public decimal MemoDPPCurrency { get; set; }
 
         public decimal MemoPPN { get; set; }
 
@@ -61,6 +60,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         public decimal FinalBalance { get; set; }
 
         public string CurrencyCode { get; set; }
+
+        public decimal DPPCurrency { get; set; }
+        public decimal CurrencyRate { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
