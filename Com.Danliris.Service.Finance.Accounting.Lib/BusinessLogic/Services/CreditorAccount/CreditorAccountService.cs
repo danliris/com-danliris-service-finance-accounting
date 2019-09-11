@@ -84,7 +84,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Bukti Pengeluaran Bank", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor NI/SPB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Invoice", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tempo Pembayaran", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nilai Invoice DPP", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nilai Invoice DPP Valas", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nilai Invoice PPN", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nilai Invoice Total", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mutasi", DataType = typeof(string) });
@@ -92,7 +94,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "TOTAL", "", "", "IDR", "0");
+                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", "0");
             }
             else
             {
@@ -100,11 +102,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 foreach (var item in data)
                 {
                     totalBalance += item.FinalBalance.GetValueOrDefault();
-                    dt.Rows.Add(item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null, item.UnitReceiptNoteNo, item.BankExpenditureNoteNo, item.MemoNo, item.InvoiceNo, item.DPP.GetValueOrDefault().ToString("#,##0"),
+                    dt.Rows.Add(item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null, item.UnitReceiptNoteNo, item.BankExpenditureNoteNo, item.MemoNo, item.InvoiceNo, item.PaymentDuration, item.DPP.GetValueOrDefault().ToString("#,##0"), item.DPPCurrency.GetValueOrDefault().ToString("#,##0"),
                         item.PPN.GetValueOrDefault().ToString("#,##0"), item.Total.GetValueOrDefault().ToString("#,##0"), item.Mutation.GetValueOrDefault().ToString("#,##0"), item.FinalBalance);
                 }
 
-                dt.Rows.Add("", "", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0"));
+                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0"));
             }
             return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, true);
         }
@@ -219,13 +221,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     CreditorAccountViewModel vm = new CreditorAccountViewModel
                     {
                         UnitReceiptNoteNo = item.UnitReceiptNoteNo,
+                        Products = item.Products,
                         Date = item.UnitReceiptNoteDate.Value,
                         InvoiceNo = item.InvoiceNo,
-                        DPP = item.UnitReceiptNoteDPP,
+                        DPP = item.CurrencyRate == 1 ? item.UnitReceiptNoteDPP : 0,
+                        DPPCurrency = item.CurrencyRate != 1 ? item.UnitReceiptNoteDPP : 0,
                         PPN = item.UnitReceiptNotePPN,
                         Total = item.UnitReceiptMutation,
-                        Mutation = item.UnitReceiptMutation,
-
+                        Mutation = item.CurrencyRate != 1 ? item.UnitReceiptMutation * item.CurrencyRate : item.UnitReceiptMutation,
+                        PaymentDuration = item.PaymentDuration
                     };
                     unitReceiptMutation = vm.Mutation.GetValueOrDefault();
                     result.Add(vm);
@@ -275,8 +279,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 CreditorAccountViewModel resultVM = new CreditorAccountViewModel()
                 {
                     InvoiceNo = item.InvoiceNo,
-                    Mutation = unitReceiptMutation + bankExpenditureMutation + memoMutation,
-                    FinalBalance = unitReceiptMutation + bankExpenditureMutation + memoMutation,
+                    Mutation = unitReceiptMutation + bankExpenditureMutation,
+                    FinalBalance = unitReceiptMutation + bankExpenditureMutation,
                     Currency = item.CurrencyCode,
                     CurrencyRate = item.CurrencyRate,
                     DPPCurrency = item.DPPCurrency
@@ -298,7 +302,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             data.UnitReceiptNoteDPP = viewModel.DPP;
             data.UnitReceiptNoteDate = viewModel.Date;
             data.UnitReceiptMutation = viewModel.DPP + (viewModel.UseIncomeTax ? (decimal)0.1 * viewModel.DPP : 0);
-            data.FinalBalance = data.UnitReceiptMutation + data.BankExpenditureNoteMutation + data.MemoMutation;
+            data.FinalBalance = data.UnitReceiptMutation + data.BankExpenditureNoteMutation;
 
 
             UpdateModel(data.Id, data);
@@ -421,7 +425,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 UnitReceiptNoteDate = viewModel.Date,
                 UnitReceiptNoteDPP = viewModel.DPP,
                 UnitReceiptNoteNo = viewModel.Code,
-                CurrencyCode = viewModel.Currency
+                CurrencyCode = viewModel.Currency,
+                DPPCurrency = viewModel.DPPCurrency,
+                CurrencyRate = viewModel.CurrencyRate,
+                PaymentDuration = viewModel.PaymentDuration,
+                Products = viewModel.Products
             };
 
             return await CreateAsync(model);
@@ -480,7 +488,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     //creditorAccount.MemoDPPCurrency = item.MemoDPPCurrency;
                     creditorAccount.MemoMutation = item.MemoMutation;
                     creditorAccount.MemoPPN = item.MemoPPN;
-                    creditorAccount.MemoPaymentDuration = viewModel.MemoPaymentDuration;
+                    //creditorAccount.PaymentDuration = viewModel.PaymentDuration;
                 }
                 return await DbContext.SaveChangesAsync();
             }
