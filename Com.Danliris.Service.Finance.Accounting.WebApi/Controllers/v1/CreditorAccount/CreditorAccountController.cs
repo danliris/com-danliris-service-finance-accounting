@@ -82,7 +82,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 var xls = Service.GenerateExcel(supplierName, month, year, offSet);
 
-                string fileName = string.Format("Kartu Hutang Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                string fileName = string.Format("Kartu Hutang Periode {0} {1}.xlsx", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
 
                 xlsInBytes = xls.ToArray();
 

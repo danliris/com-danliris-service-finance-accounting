@@ -11,6 +11,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
 
         public List<CreditorAccountPostedViewModel> CreditorAccounts { get; set; }
         public DateTimeOffset? MemoDate { get; set; }
-        public int MemoPaymentDuration { get; set; }
+        public string PaymentDuration { get; set; }
     }
 }

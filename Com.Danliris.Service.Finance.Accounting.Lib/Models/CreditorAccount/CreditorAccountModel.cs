@@ -52,7 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         public decimal MemoPPN { get; set; }
 
         public decimal MemoMutation { get; set; }
-        public int MemoPaymentDuration { get; set; }
+        public string PaymentDuration { get; set; }
         #endregion
 
         public string InvoiceNo { get; set; }
