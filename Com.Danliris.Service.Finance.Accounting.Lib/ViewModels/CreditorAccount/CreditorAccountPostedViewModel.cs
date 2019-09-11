@@ -21,6 +21,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
         public decimal MemoDPP { get; set; }
         public decimal MemoMutation { get; set; }
         public decimal MemoPPN { get; set; }
+        public decimal DPPCurrency { get; set; }
+        public decimal CurrencyRate { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
