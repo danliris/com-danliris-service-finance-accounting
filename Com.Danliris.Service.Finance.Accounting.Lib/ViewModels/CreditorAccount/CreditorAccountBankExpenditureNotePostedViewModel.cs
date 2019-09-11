@@ -8,6 +8,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
     {
         public int Id { get; set; }
 
-        public double Mutation { get; set; }
+        public decimal Mutation { get; set; }
     }
 }

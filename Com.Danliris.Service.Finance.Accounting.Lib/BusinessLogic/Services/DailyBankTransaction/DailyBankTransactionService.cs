@@ -392,8 +392,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             inputModel.DestinationBankCurrencySymbol = "";
             inputModel.DestinationBankId = 0;
             inputModel.DestinationBankName = "";
+            inputModel.Nominal = model.TransactionNominal;
 
-            inputModel.Remark = "Pendanaan Dari " + inputModel.AccountBankName + " " + inputModel.AccountBankAccountName;
+            model.Remark = FormatOutRemark(model);
+            inputModel.Remark = FormatInRemark(inputModel, model);
 
             using (var transaction = _DbContext.Database.BeginTransaction())
             {
@@ -411,6 +413,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             }
             return result;
+        }
+
+        private string FormatInRemark(DailyBankTransactionModel inputModel, DailyBankTransactionModel model)
+        {
+            return !string.IsNullOrWhiteSpace(inputModel.Remark) ? $"{inputModel.Remark}\n\nPendanaan dari {model.AccountBankAccountName} - {model.AccountBankName} - {model.AccountBankAccountNumber} - {model.AccountBankCurrencyCode}\nSenilai {string.Format("{0:0,0.0}", model.Nominal)} {model.AccountBankCurrencyCode}" : $"Pendanaan dari {model.AccountBankAccountName} - {model.AccountBankName} - {model.AccountBankAccountNumber} - {model.AccountBankCurrencyCode}\nSenilai {string.Format("{0:0,0.0}", model.Nominal)} {model.AccountBankCurrencyCode}";
+        }
+
+        private string FormatOutRemark(DailyBankTransactionModel model)
+        {
+            return !string.IsNullOrWhiteSpace(model.Remark) ? $"{model.Remark}\n\nPendanaan untuk {model.DestinationBankAccountName} - {model.DestinationBankName} - {model.DestinationBankAccountNumber} - {model.DestinationBankCurrencyCode}\nSenilai {string.Format("{0:0,0.0}", model.TransactionNominal)} {model.DestinationBankCurrencyCode}" : $"Pendanaan untuk {model.DestinationBankAccountName} - {model.DestinationBankName} - {model.DestinationBankAccountNumber} - {model.DestinationBankCurrencyCode}\nSenilai {string.Format("{0:0,0.0}", model.TransactionNominal)} {model.DestinationBankCurrencyCode}";
         }
 
         public List<DailyBalanceReportViewModel> GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate)

@@ -146,6 +146,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public void Should_Success_Validate_With_Invalid_Input_Data_In_Receiver_Null_Others()
+        {
+            DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
+            {
+                Date = DateTime.Now.AddYears(1),
+                Status = "IN",
+                SourceType = "Lain - lain"
+            };
+
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
         public void Should_Success_Validate_With_Invalid_Input_Data_In_Buyer_NotNull_NonOperasional()
         {
             DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
@@ -288,7 +302,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                 Supplier = new NewSupplierViewModel()
                 {
                     _id = 0
-                }
+                },
+                OutputBank = new AccountBankViewModel()
+                {
+                    Id = 0
+                },
+                TransactionNominal = 0
             };
 
 
@@ -441,6 +460,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             var data = service.GenerateExcelDailyBalance(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now, 0);
             Assert.NotNull(data);
+        }
+
+        [Fact]
+        public async Task Should_Success_CreateInOut_Data_Empty_Remark()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            model.Remark = "";
+            var Response = await service.CreateInOutTransactionAsync(model);
+            Assert.NotEqual(0, Response);
+            var vm = _dataUtil(service).GetDataToValidate();
+            vm.Status = "OUT";
+            vm.SourceType = "Pendanaan";
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async Task Should_Success_CreateInOut_Data_Not_Empty_Remark()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            model.Remark = "any remark";
+            var Response = await service.CreateInOutTransactionAsync(model);
+            Assert.NotEqual(0, Response);
+            var vm = _dataUtil(service).GetDataToValidate();
+            vm.Status = "OUT";
+            vm.SourceType = "Pendanaan";
+            Assert.True(vm.Validate(null).Count() > 0);
         }
     }
 }
