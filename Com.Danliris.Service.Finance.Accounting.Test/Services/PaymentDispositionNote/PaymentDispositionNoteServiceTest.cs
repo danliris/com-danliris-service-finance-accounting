@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Purchas
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispositionExpedition;
@@ -149,6 +150,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             vm.PaymentDate = DateTimeOffset.UtcNow.AddDays(2);
             Assert.True(vm.Validate(null).Count() > 0);
         }
+
+        [Fact]
+        public void Should_Success_Validate_Date_Data_IDR()
+        {
+            PaymentDispositionNoteViewModel vm = new PaymentDispositionNoteViewModel();
+            vm.PaymentDate = DateTimeOffset.UtcNow.AddDays(2);
+            vm.AccountBank = new AccountBankViewModel
+            {
+                Currency = new CurrencyViewModel
+                {
+                    Code = "IDR"
+                }
+            };
+            vm.CurrencyCode = null;
+            vm.CurrencyRate = 0;
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
         [Fact]
         public async Task Should_Success_Get_Data_Details_By_EPOId()
         {

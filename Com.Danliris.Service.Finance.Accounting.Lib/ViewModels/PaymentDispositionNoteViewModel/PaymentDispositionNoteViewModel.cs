@@ -19,11 +19,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
         public string BankAccountCOA { get; set; }
         public List<PaymentDispositionNoteItemViewModel> Items { get; set; }
 
+        public string CurrencyCode { get; set; }
+        public int CurrencyId { get; set; }
+        public double CurrencyRate { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (this.AccountBank == null || this.AccountBank.Id == 0)
             {
                 yield return new ValidationResult("Bank harus dipilih", new List<string> { "bank" });
+            }
+            else
+            {
+                if (AccountBank.Currency.Code == "IDR")
+                {
+                    if (string.IsNullOrEmpty(CurrencyCode))
+                    {
+                        yield return new ValidationResult("Mata Uang harus dipilih", new List<string> { "Currency" });
+                    }
+
+                    if (CurrencyRate <= 0)
+                    {
+                        yield return new ValidationResult("Rate harus > 0", new List<string> { "CurrencyRate" });
+                    }
+                }
             }
 
             if (this.Supplier == null || this.Supplier.Id == 0)
@@ -43,6 +62,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
             {
                 yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "Items" });
             }
+            
         }
     }
 }

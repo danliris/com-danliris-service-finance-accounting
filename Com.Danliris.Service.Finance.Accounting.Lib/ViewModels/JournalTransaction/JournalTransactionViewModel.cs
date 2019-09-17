@@ -37,8 +37,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
                 int CountItemsError = 0;
                 string ItemsError = "[";
 
-                double Debit = 0;
-                double Credit = 0;
+                decimal Debit = 0;
+                decimal Credit = 0;
 
                 foreach (var item in Items)
                 {

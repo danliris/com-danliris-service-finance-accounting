@@ -82,7 +82,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 var xls = Service.GenerateExcel(supplierName, month, year, offSet);
 
-                string fileName = string.Format("Kartu Hutang Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                string fileName = string.Format("Kartu Hutang Periode {0} {1}.xlsx", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
 
                 xlsInBytes = xls.ToArray();
 
@@ -188,6 +188,33 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
                     .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("unit-receipt-note/delete")]
+        public async Task<IActionResult> UnitReceiptNotePutDelete([FromBody] CreditorAccountUnitReceiptNotePostedViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+
+                await Service.DeleteFromUnitReceiptNoteAsync(viewModel);
+
+                return NoContent();
+            }
+            catch (NotFoundException)
+            {
+                Dictionary<string, object> Result =
+                       new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                       .Fail();
                 return BadRequest(Result);
             }
             catch (Exception e)

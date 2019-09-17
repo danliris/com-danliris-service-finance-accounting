@@ -27,8 +27,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Masters.COAData
                 Code = "1111.11.1.11",
                 Code1 = "1111",
                 Code2 = "11",
-                Code3 = "0",
-                Code4 = "00",
+                Code3 = "1",
+                Code4 = "11",
                 Nature = "Nature",
                 Path = "/",
                 ReportType = "ReportType"
@@ -53,6 +53,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Masters.COAData
         public async Task<COAModel> GetTestData()
         {
             COAModel model = GetNewData();
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<COAModel> GetTestData2()
+        {
+            COAModel model = GetNewData();
+            model.Code = "1111.11.1.00";
+            model.Code4 = "00";
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<COAModel> GetTestData3()
+        {
+            COAModel model = GetNewData();
+            model.Code = "1111.11.0.00";
+            model.Code4 = "00";
+            model.Code3 = "0";
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<COAModel> GetTestData4()
+        {
+            COAModel model = GetNewData();
+            model.Code = "1111.00.0.00";
+            model.Code4 = "00";
+            model.Code3 = "0";
+            model.Code2 = "00";
             await Service.CreateAsync(model);
             return await Service.ReadByIdAsync(model.Id);
         }

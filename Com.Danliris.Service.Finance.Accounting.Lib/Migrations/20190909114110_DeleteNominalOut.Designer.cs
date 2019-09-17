@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190909114110_DeleteNominalOut")]
+    partial class DeleteNominalOut
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,17 +29,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<decimal>("BankExpenditureNoteDPP");
+                    b.Property<double>("BankExpenditureNoteDPP");
 
                     b.Property<DateTimeOffset?>("BankExpenditureNoteDate");
 
                     b.Property<int>("BankExpenditureNoteId");
 
-                    b.Property<decimal>("BankExpenditureNoteMutation");
+                    b.Property<double>("BankExpenditureNoteMutation");
 
                     b.Property<string>("BankExpenditureNoteNo");
 
-                    b.Property<decimal>("BankExpenditureNotePPN");
+                    b.Property<double>("BankExpenditureNotePPN");
 
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
@@ -51,10 +53,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("CurrencyCode");
 
-                    b.Property<decimal>("CurrencyRate");
-
-                    b.Property<decimal>("DPPCurrency");
-
                     b.Property<string>("DeletedAgent")
                         .IsRequired()
                         .HasMaxLength(255);
@@ -65,7 +63,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("DeletedUtc");
 
-                    b.Property<decimal>("FinalBalance");
+                    b.Property<double>("FinalBalance");
 
                     b.Property<string>("InvoiceNo");
 
@@ -81,17 +79,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<decimal>("MemoDPP");
+                    b.Property<double>("MemoDPP");
 
                     b.Property<DateTimeOffset?>("MemoDate");
 
-                    b.Property<decimal>("MemoMutation");
+                    b.Property<double>("MemoMutation");
 
                     b.Property<string>("MemoNo");
 
-                    b.Property<decimal>("MemoPPN");
-
-                    b.Property<string>("PaymentDuration");
+                    b.Property<double>("MemoPPN");
 
                     b.Property<string>("Products");
 
@@ -99,15 +95,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("SupplierName");
 
-                    b.Property<decimal>("UnitReceiptMutation");
+                    b.Property<double>("UnitReceiptMutation");
 
-                    b.Property<decimal>("UnitReceiptNoteDPP");
+                    b.Property<double>("UnitReceiptNoteDPP");
 
                     b.Property<DateTimeOffset?>("UnitReceiptNoteDate");
 
                     b.Property<string>("UnitReceiptNoteNo");
 
-                    b.Property<decimal>("UnitReceiptNotePPN");
+                    b.Property<double>("UnitReceiptNotePPN");
 
                     b.HasKey("Id");
 
