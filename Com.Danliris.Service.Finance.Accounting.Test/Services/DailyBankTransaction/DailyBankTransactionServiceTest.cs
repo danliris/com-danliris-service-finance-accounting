@@ -433,6 +433,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             Mapper.AssertConfigurationIsValid();
             var model = _dataUtil(service).GetNewData();
             var vm = Mapper.Map<DailyBankTransactionViewModel>(model);
+            Mapper.Reset();
             Assert.True(true);
         }
 

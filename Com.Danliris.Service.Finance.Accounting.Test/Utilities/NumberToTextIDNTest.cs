@@ -14,5 +14,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Utilities
             var terbilangKoma = NumberToTextIDN.terbilangKoma(10.00123);
             Assert.NotNull(terbilangKoma);
         }
+
+        [Fact]
+        public void Should_Success_TerbilangKoma_LessThanEqual_4_DecimalPlace()
+        {
+            var terbilangKoma = NumberToTextIDN.terbilangKoma(1004);
+            Assert.NotNull(terbilangKoma);
+        }
     }
 }
