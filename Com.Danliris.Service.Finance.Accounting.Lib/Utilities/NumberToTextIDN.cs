@@ -121,7 +121,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
                 {
                     var temp = Convert.ToInt32(fixNumber[i].ToString());
                     strHasil = strHasil + " " + satuan[temp];
-                } else
+                }
+                else
                 {
                     strHasil = strHasil + " " + "Koma";
                 }

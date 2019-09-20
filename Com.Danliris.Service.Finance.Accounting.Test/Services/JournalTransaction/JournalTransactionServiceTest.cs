@@ -462,18 +462,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             Assert.NotNull(response);
         }
-
-        [Fact]
-        public void ShouldSuccessAutoMapper()
-        {
-            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            Mapper.Initialize(cfg => cfg.AddProfile<JournalTransactionProfile>());
-            Mapper.AssertConfigurationIsValid();
-            var model = _dataUtil(service).GetNewData();
-            var vm = Mapper.Map<JournalTransactionViewModel>(model);
-            Mapper.Reset();
-            Assert.True(true);
-        }
     }
 }
 
