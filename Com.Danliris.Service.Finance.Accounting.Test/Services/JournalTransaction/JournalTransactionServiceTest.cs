@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
@@ -459,6 +461,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var response = await service.GetGeneralLedgerReportXls(DateTime.Now.AddYears(-1), DateTime.Now.AddYears(1), 0);
 
             Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void ShouldSuccessAutoMapper()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            Mapper.Initialize(cfg => cfg.AddProfile<JournalTransactionProfile>());
+            Mapper.AssertConfigurationIsValid();
+            var model = _dataUtil(service).GetNewData();
+            var vm = Mapper.Map<JournalTransactionViewModel>(model);
+            Assert.True(true);
         }
     }
 }

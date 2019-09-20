@@ -117,8 +117,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
             var strHasil = "koma";
             for (var i = 0; i < fixNumber.Length; i++)
             {
-                var temp = Convert.ToInt32(fixNumber[i].ToString());
-                strHasil = strHasil + " " + satuan[temp];
+                if (int.TryParse(fixNumber[i].ToString(), out var notComma))
+                {
+                    var temp = Convert.ToInt32(fixNumber[i].ToString());
+                    strHasil = strHasil + " " + satuan[temp];
+                } else
+                {
+                    strHasil = strHasil + " " + "Koma";
+                }
+                
             }
             return strHasil;
         }
