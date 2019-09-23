@@ -106,6 +106,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
         {
             var a = frac.ToString().Substring(frac.ToString().IndexOf(".") + 1);
             var fixNumber = "";
+
             if (a.Length > 4)
             {
                 fixNumber = (frac.ToString("N4")).ToString().Substring((frac.ToString("N4")).ToString().IndexOf(".") + 1);
@@ -114,12 +115,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
             {
                 fixNumber = a;
             }
+
             var strHasil = "koma";
             for (var i = 0; i < fixNumber.Length; i++)
             {
                 var temp = Convert.ToInt32(fixNumber[i].ToString());
                 strHasil = strHasil + " " + satuan[temp];
             }
+
             return strHasil;
         }
     }
