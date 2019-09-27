@@ -240,6 +240,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public void Should_Success_Instatiate_Supplier()
+        {
+            var supplier = new Lib.ViewModels.IntegrationViewModel.SupplierViewModel()
+            {
+                _id = "",
+                code = "Code",
+                name = "Name"
+            };
+
+
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
         public void Should_Success_Instatiate_AccountBank()
         {
             var supplier = new Lib.ViewModels.IntegrationViewModel.AccountBankViewModel()
