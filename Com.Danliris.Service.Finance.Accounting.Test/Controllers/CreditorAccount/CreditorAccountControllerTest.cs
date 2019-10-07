@@ -109,6 +109,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
         }
 
         [Fact]
+        public void GetReportExcelNull_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).GetXls("code", 8, 2030);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public async Task GetByUnitReceiptNote_ReturnOK()
         {
             var mocks = GetMocks();

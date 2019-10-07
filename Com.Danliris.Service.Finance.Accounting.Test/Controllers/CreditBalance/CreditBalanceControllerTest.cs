@@ -89,5 +89,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
             var response = GetController(mocks).GetXls(1, 2018);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
+
+        [Fact]
+        public void GetReportExcelNull_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).GetXls(8, 2030);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
     }
 }

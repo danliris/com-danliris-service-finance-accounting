@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;

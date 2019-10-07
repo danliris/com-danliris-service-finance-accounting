@@ -240,6 +240,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public void Should_Success_Instatiate_Supplier()
+        {
+            var supplier = new Lib.ViewModels.IntegrationViewModel.SupplierViewModel()
+            {
+                _id = "",
+                code = "Code",
+                name = "Name"
+            };
+
+
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
         public void Should_Success_Instatiate_AccountBank()
         {
             var supplier = new Lib.ViewModels.IntegrationViewModel.AccountBankViewModel()
@@ -425,16 +439,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             await Assert.ThrowsAnyAsync<Exception>(() => service.CreateInOutTransactionAsync(model));
         }
         
-        [Fact]
-        public void ShouldSuccessAutoMapper()
-        {
-            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            Mapper.Initialize(cfg => cfg.AddProfile<DailyBankTransactionProfile>());
-            Mapper.AssertConfigurationIsValid();
-            var model = _dataUtil(service).GetNewData();
-            var vm = Mapper.Map<DailyBankTransactionViewModel>(model);
-            Assert.True(true);
-        }
+        
 
         [Fact]
         public async Task Should_Success_ReportDailyBalance_Data()
