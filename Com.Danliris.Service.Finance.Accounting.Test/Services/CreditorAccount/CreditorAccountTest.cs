@@ -163,6 +163,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
+        public async Task Should_Success_DeleteBy_UnitReceiptNote_Model_NotFound()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            
+            var newData = new CreditorAccountUnitReceiptNotePostedViewModel();
+            var deleteResponse = await service.DeleteFromUnitReceiptNoteAsync(newData);
+            Assert.Equal(0, deleteResponse);
+        }
+
+        [Fact]
         public async Task Should_Null_Get_BankExpenditureNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));

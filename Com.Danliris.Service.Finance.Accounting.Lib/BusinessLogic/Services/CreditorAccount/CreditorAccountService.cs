@@ -521,7 +521,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         {
             CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.UnitReceiptNoteNo == viewModel.Code);
 
-            return await DeleteAsync(model.Id);
+            if (model != null)
+                return await DeleteAsync(model.Id);
+            else
+                return 0;
         }
     }
 }
