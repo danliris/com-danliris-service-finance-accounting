@@ -20,7 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public void GetReport_ReturnOK()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).Returns((new ReadResponse<JournalTransactionReportViewModel>(new List<JournalTransactionReportViewModel>(), 1, new Dictionary<string, string>(), new List<string>()), 0, 0));
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).Returns((new ReadResponse<JournalTransactionReportHeaderViewModel>(new List<JournalTransactionReportHeaderViewModel>(), 1, new Dictionary<string, string>(), new List<string>()), 0, 0));
 
             var response = GetController(mocks).GetReport();
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
