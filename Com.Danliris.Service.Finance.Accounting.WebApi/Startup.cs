@@ -32,6 +32,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Swagger;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
@@ -137,10 +140,33 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             services
                 .AddApiVersioning(options => options.DefaultApiVersion = new ApiVersion(1, 0))
                 .AddMvcCore()
+                .AddApiExplorer()
                 .AddAuthorization()
                 .AddJsonFormatters()
                 .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
 
+            #endregion
+
+            #region Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info() { Title = "My API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme()
+                {
+                    In = "header",
+                    Description = "Please enter into field the word 'Bearer' following by space and JWT",
+                    Name = "Authorization",
+                    Type = "apiKey",
+                });
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>()
+                {
+                    {
+                        "Bearer",
+                        Enumerable.Empty<string>()
+                    }
+                });
+                c.CustomSchemaIds(i => i.FullName);
+            });
             #endregion
         }
 
@@ -157,7 +183,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 var context = serviceScope.ServiceProvider.GetService<FinanceDbContext>();
                 context.Database.Migrate();
             }
-
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+            });
             app.UseAuthentication();
             app.UseCors(FINANCE_POLICY);
             app.UseMvc();
