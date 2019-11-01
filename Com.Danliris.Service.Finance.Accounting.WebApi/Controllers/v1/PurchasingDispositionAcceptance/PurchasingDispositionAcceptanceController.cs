@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
             Mapper = mapper;
             ApiVersion = "1.0.0";
         }
-        public void VerifyUser()
+        protected void VerifyUser()
         {
             IdentityService.Username = User.Claims.ToArray().SingleOrDefault(p => p.Type.Equals("username")).Value;
             IdentityService.Token = Request.Headers["Authorization"].FirstOrDefault().Replace("Bearer ", "");

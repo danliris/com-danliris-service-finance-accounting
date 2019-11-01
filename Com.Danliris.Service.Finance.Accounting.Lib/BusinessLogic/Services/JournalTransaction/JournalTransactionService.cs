@@ -383,7 +383,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     Credit = item.Credit,
                     Date = item.JournalTransaction.Date,
                     Debit = item.Debit,
-                    Remark = item.Remark
+                    Remark = item.Remark,
+                    Description = item.JournalTransaction.Description,
+                    ReferenceNo = item.JournalTransaction.ReferenceNo
                 };
 
                 if (item.COA != null)
@@ -398,14 +400,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return (result, result.Sum(x => x.Debit.GetValueOrDefault()), result.Sum(x => x.Credit.GetValueOrDefault()));
         }
 
-        public (ReadResponse<JournalTransactionReportViewModel>, decimal, decimal) GetReport(int page, int size, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
+        public (ReadResponse<JournalTransactionReportHeaderViewModel>, decimal, decimal) GetReport(int page, int size, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
             var queries = GetReport(dateFrom, dateTo, offSet);
+
+            List<JournalTransactionReportHeaderViewModel> result = new List<JournalTransactionReportHeaderViewModel>();
+
+            foreach (var item in queries.Item1.GroupBy(x => new { x.Date, x.ReferenceNo, x.Description }))
+            {
+                result.Add(new JournalTransactionReportHeaderViewModel()
+                {
+                    Description = item.Key.Description,
+                    ReferenceNo = item.Key.ReferenceNo,
+                    Items = item.ToList()
+                });
+            }
 
             Pageable<JournalTransactionReportViewModel> pageable = new Pageable<JournalTransactionReportViewModel>(queries.Item1, page - 1, size);
             List<JournalTransactionReportViewModel> data = pageable.Data.ToList();
 
-            return (new ReadResponse<JournalTransactionReportViewModel>(queries.Item1, queries.Item1.Count, new Dictionary<string, string>(), new List<string>()), queries.Item2, queries.Item3);
+            return (new ReadResponse<JournalTransactionReportHeaderViewModel>(result, queries.Item1.Count, new Dictionary<string, string>(), new List<string>()), queries.Item2, queries.Item3);
         }
 
         public MemoryStream GenerateExcel(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
@@ -413,6 +427,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var data = GetReport(dateFrom, dateTo, offSet);
 
             DataTable dt = new DataTable();
+            dt.Columns.Add(new DataColumn() { ColumnName = "Deskripsi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No Referensi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Date", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nama Akun", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No Akun", DataType = typeof(string) });
@@ -422,17 +438,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             if (data.Item1.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "");
             }
             else
             {
                 foreach (var item in data.Item1)
                 {
-                    dt.Rows.Add(item.Date.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.COAName) ? "-" : item.COAName, string.IsNullOrEmpty(item.COACode) ? "-" : item.COACode,
+                    dt.Rows.Add(string.IsNullOrEmpty(item.Description) ? "-" : item.Description, string.IsNullOrEmpty(item.ReferenceNo) ? "-" : item.ReferenceNo, item.Date.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.COAName) ? "-" : item.COAName, string.IsNullOrEmpty(item.COACode) ? "-" : item.COACode,
                         string.IsNullOrEmpty(item.Remark) ? "-" : item.Remark, item.Debit.HasValue ? item.Debit.Value.ToString("#,##0.###0") : "0", item.Credit.HasValue ? item.Credit.Value.ToString("#,##0.###0") : "0");
 
                 }
-                dt.Rows.Add("", "", "", "TOTAL", data.Item2.ToString("#,##0.###0"), data.Item3.ToString("#,##0.###0"));
+                dt.Rows.Add("", "", "", "", "", "TOTAL", data.Item2.ToString("#,##0.###0"), data.Item3.ToString("#,##0.###0"));
             }
 
             return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Jurnal Transaksi") }, true);
