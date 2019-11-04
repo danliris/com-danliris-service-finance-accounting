@@ -18,7 +18,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
         public string ReferenceType { get; set; }
         public string Remark { get; set; }
         public string SourceType { get; set; }
-        public string SourceFundingType { get; set; }
         public string Status { get; set; }
         public NewSupplierViewModel Supplier { get; set; }
         public string Receiver { get; set; }
@@ -92,21 +91,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                         }
                         if (SourceType.ToUpper().Equals("PENDANAAN"))
                         {
-                            if (!string.IsNullOrWhiteSpace(SourceType) && (SourceFundingType.ToUpper().Equals("INTERNAL") || SourceFundingType.ToUpper().Equals("EKSTERNAL")))
+                            if (OutputBank == null || OutputBank.Id <= 0)
                             {
-                                if (SourceFundingType.ToUpper().Equals("INTERNAL"))
+                                yield return new ValidationResult("Bank tujuan harus diisi", new List<string> { "OutputBank" });
+                            }
+                            else
+                            {
+                                if (OutputBank.Id == Bank.Id)
                                 {
-                                    if (OutputBank == null || OutputBank.Id <= 0)
-                                    {
-                                        yield return new ValidationResult("Bank tujuan harus diisi", new List<string> { "OutputBank" });
-                                    }
-                                    else
-                                    {
-                                        if (OutputBank.Id == Bank.Id)
-                                        {
-                                            yield return new ValidationResult("Bank tujuan tidak boleh sama dengan Bank", new List<string> { "OutputBank", "Bank" });
-                                        }
-                                    }
+                                    yield return new ValidationResult("Bank tujuan tidak boleh sama dengan Bank", new List<string> { "OutputBank", "Bank" });
                                 }
                             }
 
