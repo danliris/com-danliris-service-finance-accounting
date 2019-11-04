@@ -84,11 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                         if (!string.IsNullOrWhiteSpace(SourceType) && (SourceType.ToUpper().Equals("OPERASIONAL") || SourceType.ToUpper().Equals("INVESTASI") || SourceType.ToUpper().Equals("PENDANAAN")))
                         {
                             if (Supplier == null || Supplier._id <= 0)
-                                if (SourceType.ToUpper().Equals("OPERASIONAL"))
-                                {
-                                    yield return new ValidationResult("Supplier harus diisi", new List<string> { "Supplier" });
-                                }
-                                else if (SourceType.ToUpper().Equals("INVESTASI"))
+                                if (SourceType.ToUpper().Equals("INVESTASI"))
                                 {
                                     yield return new ValidationResult("Ke harus diisi", new List<string> { "Supplier" });
                                 }
