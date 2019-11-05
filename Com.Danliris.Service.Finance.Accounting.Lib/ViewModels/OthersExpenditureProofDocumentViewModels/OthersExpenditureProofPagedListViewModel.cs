@@ -8,6 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
         public int Total { get; set; }
         public int Size { get; set; }
         public int Page { get; set; }
+        public int Count { get; set; }
         public List<OthersExpenditureProofListViewModel> Data { get; set; }
     }
 

@@ -38,7 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             _autoJournalService = serviceProvider.GetService<IAutoJournalService>();
         }
 
-        public async Task<int> Create(OthersExpenditureProofDocumentViewModel viewModel)
+        public async Task<int> CreateAsync(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
         {
             var model = viewModel.MapToModel();
             model.DocumentNo = DocumentNoGenerator(viewModel);
@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             return _taskDone;
         }
 
-        private string DocumentNoGenerator(OthersExpenditureProofDocumentViewModel viewModel)
+        private string DocumentNoGenerator(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
         {
             var latestDocumentNo = _dbSet.IgnoreQueryFilters().Where(document => document.DocumentNo.Contains(viewModel.AccountBankCode)).OrderByDescending(document => document.Id).Select(document => new { document.DocumentNo, document.CreatedUtc }).FirstOrDefault();
 
@@ -82,7 +82,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             }
         }
 
-        public async Task<int> Delete(int id)
+        public async Task<int> DeleteAsync(int id)
         {
             var model = _dbSet.FirstOrDefault(model => model.Id == id);
             EntityExtension.FlagForDelete(model, _identityService.Username, _userAgent);
@@ -116,7 +116,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             return result.data.Select(accountBank => accountBank.Id).ToList();
         }
 
-        public async Task<OthersExpenditureProofPagedListViewModel> GetPagedList(int page, int size, string order, string keyword, string filter)
+        public async Task<OthersExpenditureProofPagedListViewModel> GetPagedListAsync(int page, int size, string order, string keyword, string filter)
         {
             var query = _dbSet.AsQueryable();
 
@@ -148,11 +148,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 Data = data,
                 Page = page,
                 Size = size,
-                Total = total
+                Total = total,
+                Count = data.Count
             };
         }
 
-        public async Task<int> Update(int id, OthersExpenditureProofDocumentViewModel viewModel)
+        public async Task<int> UpdateAsync(int id, OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
         {
             var itemIds = viewModel.Items.Select(item => item.Id.GetValueOrDefault()).ToList();
 
@@ -196,6 +197,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
 
             return _taskDone;
+        }
+
+        public async Task<OthersExpenditureProofDocumentViewModel> GetSingleByIdAsync(int id)
+        {
+            var model = await _dbSet.FirstOrDefaultAsync(document => document.Id == id);
+            var items = _itemDbSet.Where(item => item.OthersExpenditureProofDocumentId == id).ToList();
+
+            return new OthersExpenditureProofDocumentViewModel(model, items);
         }
     }
 }

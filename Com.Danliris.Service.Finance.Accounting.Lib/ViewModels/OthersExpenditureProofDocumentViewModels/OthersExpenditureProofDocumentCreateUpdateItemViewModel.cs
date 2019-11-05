@@ -1,6 +1,6 @@
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels
 {
-    public class OthersExpenditureProofDocumentItemViewModel
+    public class OthersExpenditureProofDocumentCreateUpdateItemViewModel
     {
         public int? Id { get; set; }
         public string Remark { get; set; }

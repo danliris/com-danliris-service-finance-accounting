@@ -6,9 +6,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 {
     public interface IOthersExpenditureProofDocumentService
     {
-        Task<int> Create(OthersExpenditureProofDocumentViewModel viewModel);
-        Task<int> Update(int id, OthersExpenditureProofDocumentViewModel viewModel);
-        Task<int> Delete(int id);
-        Task<OthersExpenditureProofPagedListViewModel> GetPagedList(int page, int size, string order, string keyword, string filter);
+        Task<int> CreateAsync(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel);
+        Task<int> UpdateAsync(int id, OthersExpenditureProofDocumentCreateUpdateViewModel viewModel);
+        Task<int> DeleteAsync(int id);
+        Task<OthersExpenditureProofPagedListViewModel> GetPagedListAsync(int page, int size, string order, string keyword, string filter);
+        Task<OthersExpenditureProofDocumentViewModel> GetSingleByIdAsync(int id);
     }
 }

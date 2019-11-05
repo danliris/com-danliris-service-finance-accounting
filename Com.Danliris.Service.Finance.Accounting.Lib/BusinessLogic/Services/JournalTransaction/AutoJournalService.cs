@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
@@ -39,7 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return result.data.AccountCOA;
         }
 
-        public async Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentViewModel viewModel, string documentNo)
+        public async Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel, string documentNo)
         {
             var model = new JournalTransactionModel()
             {
@@ -50,8 +49,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 Items = new List<JournalTransactionItemModel>()
             };
 
-
-
             model.Items = viewModel.Items.Select(item => new JournalTransactionItemModel()
             {
                 COA = new COAModel()
@@ -60,7 +57,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 },
                 Debit = item.Debit.GetValueOrDefault()
             }).ToList();
-
 
             var accountBankCOA = await GetAccountBankCOA(viewModel.AccountBankId.GetValueOrDefault());
             var creditItem = new JournalTransactionItemModel()

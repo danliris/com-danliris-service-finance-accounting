@@ -7,7 +7,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 {
     public interface IAutoJournalService
     {
-        Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentViewModel viewModel, string documentNo);
+        Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel, string documentNo);
         Task<int> AutoJournalReverseFromOthersExpenditureProof(string documentNo);
     }
 }
