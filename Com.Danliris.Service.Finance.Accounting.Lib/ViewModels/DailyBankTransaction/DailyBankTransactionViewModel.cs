@@ -119,7 +119,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                 }
             }
 
-            var sourceTypeOptions = new List<string> { "Operasional", "Investasi", "Pendanaan", "Lain - Lain" };
+            var sourceTypeOptions = new List<string> { "Operasional", "Investasi", "Pendanaan", "Lain - lain" };
             var sourceFundingTypeOptions = new List<string>() { "Internal", "Eksternal" };
 
             if (!sourceTypeOptions.Contains(SourceType))
