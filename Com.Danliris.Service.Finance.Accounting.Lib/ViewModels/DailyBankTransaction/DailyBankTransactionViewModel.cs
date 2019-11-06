@@ -94,14 +94,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                         }
                         if (SourceType.ToUpper().Equals("PENDANAAN"))
                         {
-                            if (!string.IsNullOrWhiteSpace(SourceFundingType) && (SourceFundingType.ToUpper().Equals("INTERNAL") || SourceFundingType.ToUpper().Equals("EKSTERNAL")))
+                            if (!string.IsNullOrWhiteSpace(SourceFundingType) && (SourceFundingType.ToUpper().Equals("INTERNAL")))
                             {
                                 if (OutputBank == null || OutputBank.Id <= 0)
                                 {
-                                    if (SourceFundingType.ToUpper().Equals("INTERNAL"))
-                                    {
-                                        yield return new ValidationResult("Bank tujuan harus diisi", new List<string> { "OutputBank" });
-                                    }
+                                    yield return new ValidationResult("Bank tujuan harus diisi", new List<string> { "OutputBank" });
                                 }
                                 else
                                 {
@@ -122,13 +119,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(SourceType) || (!SourceType.ToUpper().Equals("OPERASIONAL") && !SourceType.ToUpper().Equals("INVESTASI") && !SourceType.ToUpper().Equals("PENDANAAN") && !SourceType.ToUpper().Equals("LAIN - LAIN")))
+            var sourceTypeOptions = new List<string> { "Operasional", "Investasi", "Pendanaan", "Lain - Lain" };
+            var sourceFundingTypeOptions = new List<string>() { "Internal", "Eksternal" };
+
+            if (!sourceTypeOptions.Contains(SourceType))
             {
                 yield return new ValidationResult("Jenis Sumber harus diisi", new List<string> { "SourceType" });
 
-                if (string.IsNullOrWhiteSpace(SourceType) || (!SourceType.ToUpper().Equals("OPERASIONAL") && !SourceType.ToUpper().Equals("INVESTASI") && !SourceType.ToUpper().Equals("LAIN - LAIN")))
+                if (sourceTypeOptions.Contains("Pendanaan"))
                 {
-                    if (string.IsNullOrWhiteSpace(SourceFundingType) || (!SourceFundingType.ToUpper().Equals("INTERNAL") && !SourceFundingType.ToUpper().Equals("EKSTERNAL")))
+                    if (!sourceFundingTypeOptions.Contains(SourceFundingType))
                     {
                         yield return new ValidationResult("Sumber pendanaan harus diisi", new List<string> { "SourceType", "SourceFundingType" });
                     }
