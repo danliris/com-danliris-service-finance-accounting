@@ -18,6 +18,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
         public string ReferenceType { get; set; }
         public string Remark { get; set; }
         public string SourceType { get; set; }
+        public string SourceFundingType { get; set; }
         public string Status { get; set; }
         public NewSupplierViewModel Supplier { get; set; }
         public string Receiver { get; set; }
@@ -84,22 +85,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                         if (!string.IsNullOrWhiteSpace(SourceType) && (SourceType.ToUpper().Equals("OPERASIONAL") || SourceType.ToUpper().Equals("INVESTASI") || SourceType.ToUpper().Equals("PENDANAAN")))
                         {
                             if (Supplier == null || Supplier._id <= 0)
+                            {
                                 if (SourceType.ToUpper().Equals("INVESTASI"))
                                 {
                                     yield return new ValidationResult("Ke harus diisi", new List<string> { "Supplier" });
                                 }
+                            }
                         }
                         if (SourceType.ToUpper().Equals("PENDANAAN"))
                         {
-                            if (OutputBank == null || OutputBank.Id <= 0)
+                            if (!string.IsNullOrWhiteSpace(SourceFundingType) && (SourceFundingType.ToUpper().Equals("INTERNAL") || SourceFundingType.ToUpper().Equals("EKSTERNAL")))
                             {
-                                yield return new ValidationResult("Bank tujuan harus diisi", new List<string> { "OutputBank" });
-                            }
-                            else
-                            {
-                                if (OutputBank.Id == Bank.Id)
+                                if (OutputBank == null || OutputBank.Id <= 0)
                                 {
-                                    yield return new ValidationResult("Bank tujuan tidak boleh sama dengan Bank", new List<string> { "OutputBank", "Bank" });
+                                    if (SourceFundingType.ToUpper().Equals("INTERNAL"))
+                                    {
+                                        yield return new ValidationResult("Bank tujuan harus diisi", new List<string> { "OutputBank" });
+                                    }
+                                }
+                                else
+                                {
+                                    if (OutputBank.Id == Bank.Id)
+                                    {
+                                        yield return new ValidationResult("Bank tujuan tidak boleh sama dengan Bank", new List<string> { "OutputBank", "Bank" });
+                                    }
                                 }
                             }
 
@@ -116,6 +125,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
             if (string.IsNullOrWhiteSpace(SourceType) || (!SourceType.ToUpper().Equals("OPERASIONAL") && !SourceType.ToUpper().Equals("INVESTASI") && !SourceType.ToUpper().Equals("PENDANAAN") && !SourceType.ToUpper().Equals("LAIN - LAIN")))
             {
                 yield return new ValidationResult("Jenis Sumber harus diisi", new List<string> { "SourceType" });
+
+                if (string.IsNullOrWhiteSpace(SourceType) || (!SourceType.ToUpper().Equals("OPERASIONAL") && !SourceType.ToUpper().Equals("INVESTASI") && !SourceType.ToUpper().Equals("LAIN - LAIN")))
+                {
+                    if (string.IsNullOrWhiteSpace(SourceFundingType) || (!SourceFundingType.ToUpper().Equals("INTERNAL") && !SourceFundingType.ToUpper().Equals("EKSTERNAL")))
+                    {
+                        yield return new ValidationResult("Sumber pendanaan harus diisi", new List<string> { "SourceType", "SourceFundingType" });
+                    }
+                }
             }
 
             if (Nominal <= 0)
