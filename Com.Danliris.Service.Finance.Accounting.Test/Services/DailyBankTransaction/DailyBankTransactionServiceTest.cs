@@ -329,6 +329,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public void Should_Success_Validate_With_Invalid_Input_Data_Out_Supplier_NotNull_Pendanaan_Internal()
+        {
+            DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
+            {
+                Bank = new AccountBankViewModel()
+                {
+                    Id = 0
+                },
+                Date = DateTime.Now.AddYears(1),
+                Status = "OUT",
+                SourceType = "Pendanaan",
+                SourceFundingType = "Internal",
+                Supplier = new NewSupplierViewModel()
+                {
+                    _id = 0
+                },
+                OutputBank = new AccountBankViewModel()
+                {
+                    Id = 0
+                },
+                TransactionNominal = 0
+            };
+
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
         public async Task Should_Success_Update_Data()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));

@@ -92,6 +92,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 ReferenceType = "ReferenceType",
                 Remark = "Remark",
                 SourceType = "Operasional",
+                SourceFundingType = "Internal",
                 Status = "IN",
                 Supplier = new NewSupplierViewModel()
                 {
