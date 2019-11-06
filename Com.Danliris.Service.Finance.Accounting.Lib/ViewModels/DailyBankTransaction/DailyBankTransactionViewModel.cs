@@ -29,6 +29,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            var sourceTypeOptions = new List<string> { "Operasional", "Investasi", "Pendanaan", "Lain - lain" };
+            var sourceFundingTypeOptions = new List<string>() { "Internal", "Eksternal" };
+
             if (Bank == null || Bank.Id <= 0)
             {
                 yield return new ValidationResult("Bank harus diisi", new List<string> { "Bank" });
@@ -62,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                 switch (Status.ToUpper())
                 {
                     case "IN":
-                        if (!string.IsNullOrWhiteSpace(SourceType) && (SourceType.ToUpper().Equals("OPERASIONAL") || SourceType.ToUpper().Equals("INVESTASI") || SourceType.ToUpper().Equals("LAIN - LAIN")))
+                        if (!string.IsNullOrWhiteSpace(SourceType) && (sourceTypeOptions.Contains("Operasional") || sourceTypeOptions.Contains("Investasi") || sourceTypeOptions.Contains("Lain - lain")))
                         {
                             if (Buyer == null || Buyer.Id <= 0)
                                 if (SourceType.ToUpper().Equals("OPERASIONAL"))
@@ -82,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                         }
                         break;
                     case "OUT":
-                        if (!string.IsNullOrWhiteSpace(SourceType) && (SourceType.ToUpper().Equals("OPERASIONAL") || SourceType.ToUpper().Equals("INVESTASI") || SourceType.ToUpper().Equals("PENDANAAN")))
+                        if (!string.IsNullOrWhiteSpace(SourceType) && (sourceTypeOptions.Contains("Operasional") || sourceTypeOptions.Contains("Investasi") || sourceTypeOptions.Contains("Pendanaan")))
                         {
                             if (Supplier == null || Supplier._id <= 0)
                             {
@@ -119,8 +122,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                 }
             }
 
-            var sourceTypeOptions = new List<string> { "Operasional", "Investasi", "Pendanaan", "Lain - Lain" };
-            var sourceFundingTypeOptions = new List<string>() { "Internal", "Eksternal" };
 
             if (!sourceTypeOptions.Contains(SourceType))
             {
