@@ -1,19 +1,13 @@
-using AutoMapper;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
-using Com.Danliris.Service.Production.WebApi.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -50,7 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.OthersEx
             try
             {
                 VerifyUser();
-                
+
                 var result = await _service.GetPagedListAsync(page, size, order, keyword, filter);
 
                 return Ok(new

@@ -84,7 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
         public async Task<int> DeleteAsync(int id)
         {
-            var model = _dbSet.FirstOrDefault(model => model.Id == id);
+            var model = _dbSet.FirstOrDefault(document => document.Id == id);
             EntityExtension.FlagForDelete(model, _identityService.Username, _userAgent);
             _dbSet.Update(model);
 

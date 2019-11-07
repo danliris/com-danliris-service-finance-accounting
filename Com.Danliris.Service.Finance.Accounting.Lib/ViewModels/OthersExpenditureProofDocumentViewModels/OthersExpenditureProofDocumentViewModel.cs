@@ -7,6 +7,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
 {
     public class OthersExpenditureProofDocumentViewModel
     {
+        public OthersExpenditureProofDocumentViewModel()
+        {
+            
+        }
         public OthersExpenditureProofDocumentViewModel(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> items)
         {
             Id = model.Id;
