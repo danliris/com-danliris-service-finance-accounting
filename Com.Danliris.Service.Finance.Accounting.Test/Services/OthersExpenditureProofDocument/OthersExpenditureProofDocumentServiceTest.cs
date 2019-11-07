@@ -1,5 +1,6 @@
 using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
@@ -120,6 +121,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
             var response = await service.GetSingleByIdAsync(createdModel.Id);
 
             Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_Paged_List()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoJournalService))).Returns(new AutoJournalServiceTestHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(new IdentityService() { Username = "Username", Token = "token", TimezoneOffset = 1 });
+
+            var service = new OthersExpenditureProofDocumentService(dbContext, serviceProviderMock.Object);
+
+            var model = GetCreateDataUtil();
+            await service.CreateAsync(model);
+
+            var createdModel = dbContext.OthersExpenditureProofDocuments.FirstOrDefault();
+            var response = await service.GetPagedListAsync(1, 25, "{}", createdModel.DocumentNo, "{}");
+
+            Assert.NotEqual(0, response.Data.Count);
         }
     }
 }
