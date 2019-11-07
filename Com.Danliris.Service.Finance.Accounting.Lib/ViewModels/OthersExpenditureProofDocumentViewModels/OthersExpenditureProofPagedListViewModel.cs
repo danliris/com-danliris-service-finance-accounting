@@ -15,7 +15,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
     public class OthersExpenditureProofListViewModel
     {
         public int Id { get; set; }
+        public string DocumentNo { get; set; }
         public int AccountBankId { get; set; }
+        public decimal Total { get; set; }
         public DateTimeOffset Date { get; set; }
         public string Type { get; set; }
     }

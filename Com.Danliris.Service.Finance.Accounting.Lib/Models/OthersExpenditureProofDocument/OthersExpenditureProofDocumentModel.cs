@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditurePr
         public string Remark { get; set; }
         [NotMapped]
         public bool IsUpdated { get; set; }
-        [MaxLength(16)]
+        [MaxLength(32)]
         public string DocumentNo { get; set; }
     }
 }

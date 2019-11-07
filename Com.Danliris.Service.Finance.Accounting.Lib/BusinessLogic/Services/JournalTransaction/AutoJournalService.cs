@@ -42,7 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         {
             var model = new JournalTransactionModel()
             {
-                Date = viewModel.Date,
+                Date = viewModel.Date.GetValueOrDefault(),
                 Description = "Auto Journal Bukti Pengeluaran Bank Lain - Lain",
                 ReferenceNo = documentNo,
                 Status = "POSTED",

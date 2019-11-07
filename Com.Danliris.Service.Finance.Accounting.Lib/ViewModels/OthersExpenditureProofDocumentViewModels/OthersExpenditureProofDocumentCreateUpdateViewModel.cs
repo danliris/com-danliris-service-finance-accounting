@@ -10,7 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
     {
         public int? AccountBankId { get; set; }
         public string AccountBankCode { get; set; }
-        public DateTimeOffset Date { get; set; }
+        public DateTimeOffset? Date { get; set; }
         public string Type { get; set; }
         public string Remark { get; set; }
 
@@ -66,7 +66,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
             return new OthersExpenditureProofDocumentModel()
             {
                 AccountBankId = AccountBankId.GetValueOrDefault(),
-                Date = Date,
+                Date = Date.GetValueOrDefault(),
                 Type = Type,
                 Remark = Remark
             };

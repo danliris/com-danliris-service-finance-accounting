@@ -137,10 +137,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             var data = query.Skip((page - 1) * size).Take(size).Select(document => new OthersExpenditureProofListViewModel()
             {
                 AccountBankId = document.AccountBankId,
+                DocumentNo = document.DocumentNo,
                 Type = document.Type,
                 Id = document.Id,
                 Date = document.Date
+            }).ToList();
 
+            data = data.Select(element => {
+                element.Total = _itemDbSet.Where(item => item.OthersExpenditureProofDocumentId == element.Id).Sum(item => item.Debit);
+                return element;
             }).ToList();
 
             return new OthersExpenditureProofPagedListViewModel()
