@@ -143,5 +143,50 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 
             Assert.NotEqual(0, response.Data.Count);
         }
+
+        [Fact]
+        public async Task Should_Success_Update_Data()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoJournalService))).Returns(new AutoJournalServiceTestHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(new IdentityService() { Username = "Username", Token = "token", TimezoneOffset = 1 });
+
+            var service = new OthersExpenditureProofDocumentService(dbContext, serviceProviderMock.Object);
+
+            var model = GetCreateDataUtil();
+            await service.CreateAsync(model);
+
+            var createdModel = dbContext.OthersExpenditureProofDocuments.FirstOrDefault();
+
+            var modelToUpdate = new OthersExpenditureProofDocumentCreateUpdateViewModel()
+            {
+                AccountBankCode = model.AccountBankCode,
+                AccountBankId = createdModel.AccountBankId,
+                Date = createdModel.Date,
+                Items = new List<OthersExpenditureProofDocumentCreateUpdateItemViewModel>()
+                {
+                    new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
+                    {
+                        COAId = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).COAId,
+                        Debit = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Debit,
+                        Id = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Id,
+                        Remark = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Remark
+                    },
+                    new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
+                    {
+                        COAId = 2,
+                        Debit = 2,
+                        Remark = "Remark"
+                    }
+                },
+                Remark = createdModel.Remark,
+                Type = createdModel.Type
+            };
+            var response = await service.UpdateAsync(createdModel.Id, modelToUpdate);
+
+            Assert.NotEqual(0, response);
+        }
     }
 }
