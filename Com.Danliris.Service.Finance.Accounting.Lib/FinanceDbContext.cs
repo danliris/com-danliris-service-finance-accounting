@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Moonlay.Data.EntityFrameworkCore;
@@ -38,6 +39,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<PaymentDispositionNoteModel> PaymentDispositionNotes { get; set; }
         public DbSet<PaymentDispositionNoteItemModel> PaymentDispositionNoteItems { get; set; }
         public DbSet<PaymentDispositionNoteDetailModel> PaymentDispositionNoteDetails { get; set; }
+
+        public DbSet<OthersExpenditureProofDocumentModel> OthersExpenditureProofDocuments { get; set; }
+        public DbSet<OthersExpenditureProofDocumentItemModel> OthersExpenditureProofDocumentItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
