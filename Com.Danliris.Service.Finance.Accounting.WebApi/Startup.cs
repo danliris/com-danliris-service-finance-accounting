@@ -20,6 +20,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Payment
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
@@ -83,7 +84,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IDailyBankTransactionService, DailyBankTransactionService>()
                 .AddTransient<IPurchasingDispositionExpeditionService, PurchasingDispositionExpeditionService>()
                 .AddTransient<IPaymentDispositionNoteService, PaymentDispositionNoteService>()
-                .AddTransient<IPaymentDispositionNotVerifiedReport, PaymentDispositionNotVerifiedReportService>();
+                .AddTransient<IPaymentDispositionNotVerifiedReport, PaymentDispositionNotVerifiedReportService>()
+                .AddTransient<IOthersExpenditureProofDocumentService, OthersExpenditureProofDocumentService>()
+                .AddTransient<IAutoJournalService, AutoJournalService>();
         }
 
 

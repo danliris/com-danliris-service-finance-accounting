@@ -157,6 +157,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             }
         }
 
+        // private COAModel GetCOA()
+
         private string GetDivisionFromCOANumbers(ICollection<JournalTransactionItemModel> items)
         {
             var result = "0";
@@ -165,6 +167,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 if (item.COA == null)
                 {
                     item.COA = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COAId));
+                }
+                else if (string.IsNullOrWhiteSpace(item.COA.Code))
+                {
+                    item.COA = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COA.Id));
                 }
 
                 var coaCompositions = item.COA.Code.Split(".");
