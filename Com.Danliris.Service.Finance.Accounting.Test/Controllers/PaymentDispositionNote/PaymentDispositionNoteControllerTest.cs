@@ -46,6 +46,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                     PaymentDispositionNo = It.IsAny<string>(),
                     PaymentDate = It.IsAny<DateTimeOffset>(),
                     Amount = It.IsAny<double>(),
+                    TransactionType = "any",
                     
                     Items = new List<PaymentDispositionNoteItemViewModel>
                     {

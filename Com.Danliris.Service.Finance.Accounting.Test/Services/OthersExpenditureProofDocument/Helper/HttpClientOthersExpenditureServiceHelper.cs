@@ -12,11 +12,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
     {
         public Task<HttpResponseMessage> GetAsync(string url)
         {
-            if (url.Contains("keyword"))
+            if (url.Contains("account-banks") && url.Contains("keyword"))
             {
                 var defaultresponse = new APIDefaultResponse<List<AccountBank>>()
                 {
                     data = new List<AccountBank>()
+                };
+
+                var result = new HttpResponseMessage()
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
+                };
+
+                return Task.FromResult(result);
+            }
+            else if (url.Contains("account-banks") && !url.Contains("keyword"))
+            {
+                var defaultresponse = new APIDefaultResponse<AccountBank>()
+                {
+                    data = new AccountBank()
+                    {
+                        Currency = new Currency()
+                    }
                 };
 
                 var result = new HttpResponseMessage()

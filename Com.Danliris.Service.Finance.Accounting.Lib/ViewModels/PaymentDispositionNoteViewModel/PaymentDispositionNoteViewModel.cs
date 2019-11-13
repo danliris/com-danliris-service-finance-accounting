@@ -17,6 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
         public SupplierViewModel Supplier { get; set; }
         public DateTimeOffset PaymentDate { get; set; }
         public string BankAccountCOA { get; set; }
+        public string TransactionType { get; set; }
         public List<PaymentDispositionNoteItemViewModel> Items { get; set; }
 
         public string CurrencyCode { get; set; }
@@ -45,6 +46,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
                 }
             }
 
+            if (string.IsNullOrWhiteSpace(TransactionType))
+                yield return new ValidationResult("Jenis Transaksi harus dipilih", new List<string> { "TransactionType" });
+
             if (this.Supplier == null || this.Supplier.Id == 0)
             {
                 yield return new ValidationResult("Supplier harus dipilih", new List<string> { "Supplier" });
@@ -58,11 +62,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
             {
                 yield return new ValidationResult("Tanggal Pembayaran harus kurang dari atau sama dengan hari ini", new List<string> { "PaymentDate" });
             }
-            if (this.Items==null || this.Items.Count == 0)
+            if (this.Items == null || this.Items.Count == 0)
             {
                 yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "Items" });
             }
-            
+
         }
     }
 }

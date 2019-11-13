@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
@@ -9,6 +10,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionN
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
+using Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransaction;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
@@ -61,6 +63,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
                 .Setup(x => x.GetService(typeof(IIdentityService)))
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
 
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IAutoDailyBankTransactionService)))
+                .Returns(new AutoDailyBankTransactionServiceHelper());
 
             return serviceProvider;
         }
@@ -77,7 +82,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         public async Task Should_Success_Create_Data()
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            PaymentDispositionNoteModel model =  _dataUtil(service, GetCurrentMethod()).GetNewData();
+            PaymentDispositionNoteModel model = _dataUtil(service, GetCurrentMethod()).GetNewData();
             var Response = await service.CreateAsync(model);
             Assert.NotEqual(0, Response);
         }
@@ -129,8 +134,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             //var newModel2 = await service.ReadByIdAsync(model.Id);
             PaymentDispositionNoteModel newModel2 = new PaymentDispositionNoteModel();
             newModel2.Id = model2.Id;
-            
-            newModel2.Items =new List<PaymentDispositionNoteItemModel> { model2.Items.First() };
+
+            newModel2.Items = new List<PaymentDispositionNoteItemModel> { model2.Items.First() };
             var Response = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
         }
@@ -173,7 +178,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PaymentDispositionNoteModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
-            
+
             var item = model.Items.First();
             var detail = item.Details.First();
             var epoId = detail.EPOId;
