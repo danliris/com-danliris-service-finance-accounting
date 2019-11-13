@@ -40,7 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                 }
             };
             var result = await service.AutoCreateFromPaymentDisposition(dispositionModel);
-            Assert.Equal(1, result);
+            Assert.NotEqual(0, result);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                 }
             };
             var result = await service.AutoRevertFromPaymentDisposition(dispositionModel);
-            Assert.Equal(1, result);
+            Assert.NotEqual(0, result);
         }
 
         [Fact]
@@ -81,7 +81,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var itemModels = new List<OthersExpenditureProofDocumentItemModel>();
             
             var result = await service.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
-            Assert.Equal(1, result);
+            Assert.NotEqual(0, result);
         }
 
         [Fact]
@@ -97,7 +97,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var itemModels = new List<OthersExpenditureProofDocumentItemModel>();
             
             var result = await service.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
-            Assert.Equal(1, result);
+            Assert.NotEqual(0, result);
         }
     }
 
