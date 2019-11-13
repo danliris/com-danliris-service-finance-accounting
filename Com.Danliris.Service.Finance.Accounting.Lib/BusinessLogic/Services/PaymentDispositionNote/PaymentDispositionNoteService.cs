@@ -127,8 +127,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         .Include(d => d.Items)
                         .ThenInclude(d => d.Details)
                         .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
-            await _autoDailyBankTransactionService.AutoRevertFromPaymentDisposition(existingModel);
             UpdateModel(id, model);
+            await _autoDailyBankTransactionService.AutoRevertFromPaymentDisposition(existingModel);
             await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
         }
