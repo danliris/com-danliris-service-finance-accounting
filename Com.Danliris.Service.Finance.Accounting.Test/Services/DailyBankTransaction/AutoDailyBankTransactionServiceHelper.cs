@@ -10,24 +10,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 {
     public class AutoDailyBankTransactionServiceHelper : IAutoDailyBankTransactionService
     {
-        public Task<int> AutoCreateFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels)
+        public async Task<int> AutoCreateFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels)
         {
-            return Task.FromResult(1);
+            return await Task.FromResult(1);
         }
 
-        public Task<int> AutoCreateFromPaymentDisposition(PaymentDispositionNoteModel model)
+        public async Task<int> AutoCreateFromPaymentDisposition(PaymentDispositionNoteModel model)
         {
-            return Task.FromResult(1);
+            return await Task.FromResult(1);
         }
 
-        public Task<int> AutoRevertFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels)
+        public async Task<int> AutoRevertFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels)
         {
-            return Task.FromResult(1);
+            return await Task.FromResult(1);
         }
 
-        public Task<int> AutoRevertFromPaymentDisposition(PaymentDispositionNoteModel model)
+        public async Task<int> AutoRevertFromPaymentDisposition(PaymentDispositionNoteModel model)
         {
-            return Task.FromResult(1);
+            return await Task.FromResult(1);
         }
     }
 }
