@@ -148,7 +148,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 Date = document.Date
             }).ToList();
 
-            data = data.Select(element => {
+            data = data.Select(element =>
+            {
                 element.Total = _itemDbSet.Where(item => item.OthersExpenditureProofDocumentId == element.Id).Sum(item => item.Debit);
                 return element;
             }).ToList();
@@ -208,8 +209,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
             await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
 
-            await _autoDailyBankTransactionService.AutoDelete(model.DocumentNo);
-            await _autoDailyBankTransactionService.AutoCreate(viewModel, model.DocumentNo);
+            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
+            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
 
             return _taskDone;
         }
