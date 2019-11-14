@@ -182,10 +182,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                 {
                     new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
                     {
-                        COAId = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).COAId,
-                        Debit = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Debit,
+                        COAId = 10,
+                        Debit = 6,
                         Id = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Id,
-                        Remark = "Remark"
+                        Remark = "New remark"
                     },
                     new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
                     {
