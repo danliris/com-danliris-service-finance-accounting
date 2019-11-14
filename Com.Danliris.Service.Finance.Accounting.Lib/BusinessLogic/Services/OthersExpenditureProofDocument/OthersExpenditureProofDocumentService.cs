@@ -59,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             await _dbContext.SaveChangesAsync();
 
             await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
-            await _autoDailyBankTransactionService.AutoCreate(viewModel, model.DocumentNo);
+            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
 
             return _taskDone;
         }
@@ -102,7 +102,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
             await _dbContext.SaveChangesAsync();
             await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
-            await _autoDailyBankTransactionService.AutoDelete(model.DocumentNo);
+            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
 
             return _taskDone;
         }
@@ -169,6 +169,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
             var itemModels = await _itemDbSet.AsNoTracking().Where(item => itemIds.Contains(item.Id)).ToListAsync();
             var model = await _dbSet.AsNoTracking().FirstOrDefaultAsync(document => document.Id == id);
+            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
 
             var itemModelsToUpdate = viewModel.MapItemToModel();
 
@@ -205,6 +206,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             await _dbContext.SaveChangesAsync();
             await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
             await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
+            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
 
             await _autoDailyBankTransactionService.AutoDelete(model.DocumentNo);
             await _autoDailyBankTransactionService.AutoCreate(viewModel, model.DocumentNo);

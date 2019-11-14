@@ -40,6 +40,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionN
         public string SupplierName { get; set; }
         public DateTimeOffset PaymentDate { get; set; }
         public string BankAccountCOA { get; set; }
+        [MaxLength(64)]
+        public string TransactionType { get; set; }
         public virtual ICollection<PaymentDispositionNoteItemModel> Items { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
