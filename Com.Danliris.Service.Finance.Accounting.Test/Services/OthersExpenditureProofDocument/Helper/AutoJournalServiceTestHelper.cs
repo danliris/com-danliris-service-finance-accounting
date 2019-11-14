@@ -6,14 +6,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 {
     public class AutoJournalServiceTestHelper : IAutoJournalService
     {
-        public Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel, string documentNo)
+        public async Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel, string documentNo)
         {
-            return Task.FromResult(1);
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
         }
 
-        public Task<int> AutoJournalReverseFromOthersExpenditureProof(string documentNo)
+        public async Task<int> AutoJournalReverseFromOthersExpenditureProof(string documentNo)
         {
-            return Task.FromResult(1);
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
         }
     }
 }

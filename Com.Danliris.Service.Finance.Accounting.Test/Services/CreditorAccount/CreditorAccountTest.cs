@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
@@ -321,6 +322,44 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
 
             var reportResponse = service.GenerateExcel(data.SupplierName, data.Date.Month, data.Date.Year, 7);
             Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
+        public void Should_Success_Get_Excel_Empty()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var reportResponse = service.GenerateExcel(null, 0, 0, 7);
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
+        public async Task Should_Throw_Exception_Update_From_URN()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            await Assert.ThrowsAsync<NotFoundException>(() => service.UpdateFromUnitReceiptNoteAsync(new CreditorAccountUnitReceiptNotePostedViewModel()));
+        }
+
+        [Fact]
+        public async Task Should_Throw_Exception_Update_From_Bank_Expenditure_Note()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            await Assert.ThrowsAsync<NotFoundException>(() => service.UpdateFromBankExpenditureNoteAsync(new CreditorAccountBankExpenditureNotePostedViewModel()));
+        }
+
+        [Fact]
+        public async Task Should_Throw_Exception_Update_From_UPO()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var response = await service.UpdateFromUnitPaymentOrderAsync(new CreditorAccountUnitPaymentOrderPostedViewModel());
+            Assert.Equal(0, response);
+        }
+
+        [Fact]
+        public async Task Should_Throw_Exception_Create_From_Memo()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            await Assert.ThrowsAsync<NotFoundException>(() => service.CreateFromMemoAsync(new CreditorAccountMemoPostedViewModel()));
         }
     }
 }

@@ -41,6 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PaymentDisposit
                 BankId = 1,
                 BankName = nowTicksA,
                 BankAccountCOA = nowTicksA,
+                TransactionType = "Any",
                 BGCheckNumber = nowTicksA,
                 Amount = 1000,
                 PaymentDate = DateTimeOffset.Now,

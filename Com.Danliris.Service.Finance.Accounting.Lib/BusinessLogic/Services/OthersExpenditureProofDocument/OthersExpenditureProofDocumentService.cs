@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -24,6 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         private readonly IServiceProvider _serviceProvider;
         private readonly IIdentityService _identityService;
         private readonly IAutoJournalService _autoJournalService;
+        private readonly IAutoDailyBankTransactionService _autoDailyBankTransactionService;
         private readonly DbSet<OthersExpenditureProofDocumentModel> _dbSet;
         private readonly DbSet<OthersExpenditureProofDocumentItemModel> _itemDbSet;
 
@@ -36,6 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             _serviceProvider = serviceProvider;
             _identityService = serviceProvider.GetService<IIdentityService>();
             _autoJournalService = serviceProvider.GetService<IAutoJournalService>();
+            _autoDailyBankTransactionService = serviceProvider.GetService<IAutoDailyBankTransactionService>();
         }
 
         public async Task<int> CreateAsync(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
@@ -56,6 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             await _dbContext.SaveChangesAsync();
 
             await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
+            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
 
             return _taskDone;
         }
@@ -98,6 +102,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
             await _dbContext.SaveChangesAsync();
             await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
+            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
 
             return _taskDone;
         }
@@ -118,7 +123,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
         public async Task<OthersExpenditureProofPagedListViewModel> GetPagedListAsync(int page, int size, string order, string keyword, string filter)
         {
-            var query = _dbSet.AsQueryable();
+            var query = _dbSet.AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -143,7 +148,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 Date = document.Date
             }).ToList();
 
-            data = data.Select(element => {
+            data = data.Select(element =>
+            {
                 element.Total = _itemDbSet.Where(item => item.OthersExpenditureProofDocumentId == element.Id).Sum(item => item.Debit);
                 return element;
             }).ToList();
@@ -162,8 +168,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         {
             var itemIds = viewModel.Items.Select(item => item.Id.GetValueOrDefault()).ToList();
 
-            var itemModels = await _itemDbSet.AsNoTracking().Where(item => itemIds.Contains(item.Id)).ToListAsync();
+            var itemModels = await _itemDbSet.Where(item => itemIds.Contains(item.Id)).ToListAsync();
             var model = await _dbSet.AsNoTracking().FirstOrDefaultAsync(document => document.Id == id);
+            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
 
             var itemModelsToUpdate = viewModel.MapItemToModel();
 
@@ -189,7 +196,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 }
             }
 
-            var itemModelsToDelete = await _itemDbSet.AsNoTracking().Where(item => !itemIds.Contains(item.Id)).ToListAsync();
+            var itemModelsToDelete = await _itemDbSet.Where(item => !itemIds.Contains(item.Id)).ToListAsync();
             itemModelsToDelete = itemModelsToDelete.Select(item =>
             {
                 EntityExtension.FlagForDelete(item, _identityService.Username, _userAgent);
@@ -200,14 +207,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             await _dbContext.SaveChangesAsync();
             await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
             await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
+            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
+
+            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
+            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
 
             return _taskDone;
         }
 
         public async Task<OthersExpenditureProofDocumentViewModel> GetSingleByIdAsync(int id)
         {
-            var model = await _dbSet.FirstOrDefaultAsync(document => document.Id == id);
-            var items = _itemDbSet.Where(item => item.OthersExpenditureProofDocumentId == id).ToList();
+            var model = await _dbSet.AsNoTracking().FirstOrDefaultAsync(document => document.Id == id);
+            var items = _itemDbSet.AsNoTracking().Where(item => item.OthersExpenditureProofDocumentId == id).ToList();
 
             return new OthersExpenditureProofDocumentViewModel(model, items);
         }

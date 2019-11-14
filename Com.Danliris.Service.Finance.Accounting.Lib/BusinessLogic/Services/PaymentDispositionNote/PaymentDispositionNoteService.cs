@@ -13,6 +13,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote
 {
@@ -21,6 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
         private const string UserAgent = "finance-service";
         protected DbSet<PaymentDispositionNoteModel> DbSet;
         public IIdentityService IdentityService;
+        private readonly IAutoDailyBankTransactionService _autoDailyBankTransactionService;
         public readonly IServiceProvider ServiceProvider;
         public FinanceDbContext DbContext;
 
@@ -30,12 +32,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             ServiceProvider = serviceProvider;
             DbSet = dbContext.Set<PaymentDispositionNoteModel>();
             IdentityService = serviceProvider.GetService<IIdentityService>();
+            _autoDailyBankTransactionService = serviceProvider.GetService<IAutoDailyBankTransactionService>();
         }
 
         public void CreateModel(PaymentDispositionNoteModel model)
         {
             EntityExtension.FlagForCreate(model, IdentityService.Username, UserAgent);
-            foreach(var item in model.Items)
+            foreach (var item in model.Items)
             {
                 PurchasingDispositionExpeditionModel expedition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(ex => ex.Id.Equals(item.PurchasingDispositionExpeditionId));
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
@@ -54,13 +57,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
         {
             model.PaymentDispositionNo = await GenerateNo(model, 7);
             CreateModel(model);
+            await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
         }
 
         async Task<string> GenerateNo(PaymentDispositionNoteModel model, int clientTimeZoneOffset)
         {
             DateTimeOffset Now = model.PaymentDate;
-            string Year = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("yy"); 
+            string Year = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("yy");
             string Month = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("MM");
             string Day = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd");
             //PD + 2 digit tahun + 2 digit bulan + 2 digit tgl + 3 digit urut
@@ -102,18 +106,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public async Task<int> DeleteAsync(int id)
         {
+            var existingModel = DbSet
+                        .Include(d => d.Items)
+                        .ThenInclude(d => d.Details)
+                        .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
+
+            await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(existingModel);
             await DeleteModel(id);
             return await DbContext.SaveChangesAsync();
         }
 
         public Task<PaymentDispositionNoteModel> ReadByIdAsync(int id)
         {
-            return DbSet.Include(m => m.Items).ThenInclude(m=>m.Details).FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
+            return DbSet.Include(m => m.Items).ThenInclude(m => m.Details).FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
         }
 
         public async Task<int> UpdateAsync(int id, PaymentDispositionNoteModel model)
         {
+            var existingModel = DbSet
+                        .Include(d => d.Items)
+                        .ThenInclude(d => d.Details)
+                        .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
             UpdateModel(id, model);
+            await _autoDailyBankTransactionService.AutoRevertFromPaymentDisposition(existingModel);
+            await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
         }
 
@@ -123,6 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         .Include(d => d.Items)
                         .ThenInclude(d => d.Details)
                         .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
+
 
             exist.BGCheckNumber = model.BGCheckNumber;
             exist.PaymentDate = model.PaymentDate;
@@ -166,7 +183,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public ReadResponse<PaymentDispositionNoteModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            IQueryable<PaymentDispositionNoteModel> Query = this.DbSet.Include(m => m.Items).ThenInclude(m=>m.Details);
+            IQueryable<PaymentDispositionNoteModel> Query = this.DbSet.Include(m => m.Items).ThenInclude(m => m.Details);
             List<string> searchAttributes = new List<string>()
             {
                 "PaymentDispositionNo", "Items.DispositionNo",  "SupplierName", "BankCurrencyCode","BankName"
@@ -190,9 +207,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
         public ReadResponse<PaymentDispositionNoteDetailModel> ReadDetailsByEPOId(string epoId)
         {
             List<PaymentDispositionNoteDetailModel> paymentDispositionNoteDetails = DbContext.PaymentDispositionNoteDetails.Where(a => a.EPOId == epoId).ToList();
-            
+
             Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>("{ }");
-            
+
             int TotalData = paymentDispositionNoteDetails.Count;
 
             return new ReadResponse<PaymentDispositionNoteDetailModel>(paymentDispositionNoteDetails, TotalData, OrderDictionary, new List<string>());
