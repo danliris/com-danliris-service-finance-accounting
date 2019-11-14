@@ -65,11 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
                         if (!string.IsNullOrWhiteSpace(SourceType) && (SourceType.ToUpper().Equals("OPERASIONAL") || SourceType.ToUpper().Equals("INVESTASI") || SourceType.ToUpper().Equals("LAIN - LAIN")))
                         {
                             if (Buyer == null || Buyer.Id <= 0)
-                                if (SourceType.ToUpper().Equals("OPERASIONAL"))
-                                {
-                                    yield return new ValidationResult("Buyer harus diisi", new List<string> { "Buyer" });
-                                }
-                                else if (SourceType.ToUpper().Equals("INVESTASI"))
+                               if (SourceType.ToUpper().Equals("INVESTASI"))
                                 {
                                     yield return new ValidationResult("Dari harus diisi", new List<string> { "Buyer" });
                                 }
