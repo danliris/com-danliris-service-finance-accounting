@@ -12,21 +12,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
     {
         public async Task<int> AutoCreateFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels)
         {
+            await Task.Delay(1000);
             return await Task.FromResult(1);
         }
 
         public async Task<int> AutoCreateFromPaymentDisposition(PaymentDispositionNoteModel model)
         {
+            await Task.Delay(1000);
             return await Task.FromResult(1);
         }
 
         public async Task<int> AutoRevertFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels)
         {
+            await Task.Delay(1000);
             return await Task.FromResult(1);
         }
 
         public async Task<int> AutoRevertFromPaymentDisposition(PaymentDispositionNoteModel model)
         {
+            await Task.Delay(1000);
             return await Task.FromResult(1);
         }
     }
