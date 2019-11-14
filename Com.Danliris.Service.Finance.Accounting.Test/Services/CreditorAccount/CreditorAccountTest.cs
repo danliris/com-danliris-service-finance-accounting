@@ -322,5 +322,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             var reportResponse = service.GenerateExcel(data.SupplierName, data.Date.Month, data.Date.Year, 7);
             Assert.NotNull(reportResponse);
         }
+
+        [Fact]
+        public void Should_Success_Get_Excel_Empty()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var reportResponse = service.GenerateExcel(null, 0, 0, 7);
+            Assert.NotNull(reportResponse);
+        }
     }
 }
