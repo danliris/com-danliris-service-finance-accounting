@@ -185,7 +185,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                         COAId = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).COAId,
                         Debit = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Debit,
                         Id = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Id,
-                        Remark = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Remark
+                        Remark = "Remark"
                     },
                     new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
                     {
