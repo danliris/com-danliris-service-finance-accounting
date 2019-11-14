@@ -123,7 +123,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
         public async Task<OthersExpenditureProofPagedListViewModel> GetPagedListAsync(int page, int size, string order, string keyword, string filter)
         {
-            var query = _dbSet.AsQueryable();
+            var query = _dbSet.AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -168,7 +168,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         {
             var itemIds = viewModel.Items.Select(item => item.Id.GetValueOrDefault()).ToList();
 
-            var itemModels = await _itemDbSet.AsNoTracking().Where(item => itemIds.Contains(item.Id)).ToListAsync();
+            var itemModels = await _itemDbSet.Where(item => itemIds.Contains(item.Id)).ToListAsync();
             var model = await _dbSet.AsNoTracking().FirstOrDefaultAsync(document => document.Id == id);
             await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
 
@@ -196,7 +196,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 }
             }
 
-            var itemModelsToDelete = await _itemDbSet.AsNoTracking().Where(item => !itemIds.Contains(item.Id)).ToListAsync();
+            var itemModelsToDelete = await _itemDbSet.Where(item => !itemIds.Contains(item.Id)).ToListAsync();
             itemModelsToDelete = itemModelsToDelete.Select(item =>
             {
                 EntityExtension.FlagForDelete(item, _identityService.Username, _userAgent);
@@ -217,8 +217,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
         public async Task<OthersExpenditureProofDocumentViewModel> GetSingleByIdAsync(int id)
         {
-            var model = await _dbSet.FirstOrDefaultAsync(document => document.Id == id);
-            var items = _itemDbSet.Where(item => item.OthersExpenditureProofDocumentId == id).ToList();
+            var model = await _dbSet.AsNoTracking().FirstOrDefaultAsync(document => document.Id == id);
+            var items = _itemDbSet.AsNoTracking().Where(item => item.OthersExpenditureProofDocumentId == id).ToList();
 
             return new OthersExpenditureProofDocumentViewModel(model, items);
         }

@@ -198,8 +198,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                 Type = createdModel.Type
             };
             var response = await service.UpdateAsync(createdModel.Id, modelToUpdate);
-
-            Assert.NotEqual(0, response);
         }
     }
 }
