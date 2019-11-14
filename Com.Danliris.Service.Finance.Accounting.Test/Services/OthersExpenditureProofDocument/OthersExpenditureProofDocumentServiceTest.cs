@@ -163,6 +163,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
             var service = new OthersExpenditureProofDocumentService(dbContext, serviceProviderMock.Object);
 
             var model = GetCreateDataUtil();
+            model.Items.Add(new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
+            {
+                COAId = 3,
+                Debit = 3,
+                Remark = "Remark"
+            });
             await service.CreateAsync(model);
 
             var createdModel = dbContext.OthersExpenditureProofDocuments.FirstOrDefault();
