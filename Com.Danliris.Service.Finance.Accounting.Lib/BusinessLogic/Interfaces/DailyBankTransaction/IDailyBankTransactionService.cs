@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.D
     {
         ReadResponse<DailyBankTransactionModel> GetReport(int bankId, int month, int year, int clientTimeZoneOffset);
         List<DailyBalanceReportViewModel> GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate);
+        List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate);
         MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset);
         Task<int> DeleteByReferenceNoAsync(string referenceNo);
         Task<int> CreateInOutTransactionAsync(DailyBankTransactionModel model);

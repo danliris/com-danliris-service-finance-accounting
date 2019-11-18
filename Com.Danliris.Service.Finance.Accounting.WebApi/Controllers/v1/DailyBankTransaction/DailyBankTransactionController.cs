@@ -128,10 +128,24 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
             }
         }
 
-        [HttpGet("daily-balance/report")]
-        public IActionResult GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate)
+        [HttpGet("daily-balance/report/accountbank")]
+        public IActionResult GetDailyBalanceAccountBankReport(int bankId, DateTime startDate, DateTime endDate)
         {
             var Result = Service.GetDailyBalanceReport(bankId, startDate, endDate);
+
+            return Ok(new
+            {
+                apiVersion = "1.0.0",
+                data = Result,
+                message = Utilities.General.OK_MESSAGE,
+                statusCode = Utilities.General.OK_STATUS_CODE
+            });
+        }
+
+        [HttpGet("daily-balance/report/currency")]
+        public IActionResult GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate)
+        {
+            var Result = Service.GetDailyBalanceCurrencyReport(bankId, startDate, endDate);
 
             return Ok(new
             {

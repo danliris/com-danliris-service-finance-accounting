@@ -63,11 +63,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReportDailyBankBalance_Without_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetDailyBalanceReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(new List<DailyBalanceReportViewModel>() { new DailyBalanceReportViewModel() { AccountNumber = "", Balance = 0, BankName = "", Credit = 0, CurrencyCode = "", Debit = 0 } });
+            mocks.Service.Setup(f => f.GetDailyBalanceReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(
+                 new List<DailyBalanceReportViewModel>() { new DailyBalanceReportViewModel() { AccountNumber = "", Balance = 0, BankName = "", Credit = 0, CurrencyCode = "", Debit = 0 }
+
+                    }
+            );
             //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
 
             var controller = GetController(mocks);
-            IActionResult response = controller.GetDailyBalanceReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>());
+            IActionResult response = controller.GetDailyBalanceAccountBankReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>());
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetReportDailyBankBalanceCurrency_Without_Exception()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetDailyBalanceCurrencyReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(
+                 new List<DailyBalanceCurrencyReportViewModel>() { new DailyBalanceCurrencyReportViewModel() {  Balance = 0, Credit = 0, CurrencyCode = "", Debit = 0 }
+
+                    }
+            );
+            //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
+
+            var controller = GetController(mocks);
+            IActionResult response = controller.GetDailyBalanceCurrencyReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>());
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
