@@ -65,10 +65,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     SupplierName = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().SupplierName ?? "",
                     Currency = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().CurrencyCode ?? ""
                 };
+                creditBalance.FinalBalance = creditBalance.StartBalance + creditBalance.Purchase - creditBalance.Payment;
                 result.Add(creditBalance);
             }
 
-            return result;
+            return result.OrderBy(x=> x.Currency).ThenBy(x => x.Products).ThenBy(x => x.SupplierName).ToList();
         }
 
         public MemoryStream GenerateExcel(string suplierName, int month, int year, int offSet)
