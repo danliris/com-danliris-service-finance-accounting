@@ -49,8 +49,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         public async Task<int> CreateAsync(JournalTransactionModel model)
         {
-
+            int created = 0;
             model.DocumentNo = GenerateDocumentNo(model);
+            foreach(var item in model.Items)
+            {
+                var coa = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COA.Id) || f.Code.Equals(item.COA.Code));
+                if (coa == null)
+                {
+                    CreateNonExistingCOA(item.COA.Code);
+                }
+            }
 
             //if (_DbSet.Any(d => d.ReferenceNo.Equals(model.ReferenceNo) && !d.IsDeleted && !d.IsReversed && !d.IsReverser))
             //{
@@ -66,29 +74,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 model.Status = JournalTransactionStatus.Draft;
 
             EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
+            
+
             foreach (var item in model.Items)
             {
                 var coa = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COA.Id) || f.Code.Equals(item.COA.Code));
-                if (coa == null)
-                {
-                    CreateNonExistingCOA(item.COA.Code);
-                    coa = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COA.Id) || f.Code.Equals(item.COA.Code));
-                }
+                //if (coa == null)
+                //{
+                //    CreateNonExistingCOA(item.COA.Code);
+                //    coa = _COADbSet.FirstOrDefault(f => f.Id.Equals(item.COA.Id) || f.Code.Equals(item.COA.Code));
+                //}
 
                 item.COAId = coa.Id;
                 item.COA = null;
 
                 EntityExtension.FlagForCreate(item, _IdentityService.Username, _UserAgent);
-                _ItemDbSet.Add(item);
+                //_ItemDbSet.Add(item);
             }
-
             _DbSet.Add(model);
-
+            created += await _DbContext.SaveChangesAsync();
             if (model.Status == JournalTransactionStatus.Posted)
             {
                 await UpdateCOABalance(model);
             }
-            return await _DbContext.SaveChangesAsync();
+
+            created += await _DbContext.SaveChangesAsync();
+            return created;
         }
 
         private void CreateNonExistingCOA(string code)
