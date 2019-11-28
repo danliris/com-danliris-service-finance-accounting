@@ -30,7 +30,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 SupplierCode = "SupplierCode",
                 SupplierName = "SupplierName",
                 Products = "- Product 1\n- Product 2",
-                Currency = "Currency"
+                Currency = "Currency",
+                CurrencyRate = 1,
+                DPPCurrency = 1,
+                PaymentDuration = "1",
+                UseIncomeTax = true,
+                MemoDPP = 1,
+                MemoMutation = 1,
+                MemoPPN = 0
             };
         }
 
