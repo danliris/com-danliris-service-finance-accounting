@@ -215,7 +215,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             {
                 decimal unitReceiptMutation = 0;
                 decimal bankExpenditureMutation = 0;
-                decimal memoMutation = 0;
+                //decimal memoMutation = 0;
                 if (!string.IsNullOrEmpty(item.UnitReceiptNoteNo))
                 {
                     CreditorAccountViewModel vm = new CreditorAccountViewModel
@@ -229,7 +229,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         PPN = item.UnitReceiptNotePPN,
                         Total = item.UnitReceiptMutation,
                         Mutation = item.CurrencyRate != 1 ? item.UnitReceiptMutation * item.CurrencyRate : item.UnitReceiptMutation,
-                        PaymentDuration = item.PaymentDuration
+                        PaymentDuration = item.PaymentDuration,
+                        MemoNo = item.MemoNo
                     };
                     unitReceiptMutation = vm.Mutation.GetValueOrDefault();
                     result.Add(vm);
@@ -248,33 +249,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                             PPN = item.BankExpenditureNotePPN,
                             Total = item.BankExpenditureNoteMutation,
                             Mutation = item.BankExpenditureNoteMutation * -1,
-
+                            MemoNo = item.MemoNo,
+                            PaymentDuration = item.PaymentDuration,
+                            Products = item.Products
                         };
                         bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
                         result.Add(vm);
                     }
 
                 }
-                if (!string.IsNullOrEmpty(item.MemoNo))
-                {
-                    if (item.MemoDate.HasValue && item.MemoDate.Value.Month == month && item.MemoDate.Value.Year == year)
-                    {
-                        CreditorAccountViewModel vm = new CreditorAccountViewModel
-                        {
-                            MemoNo = item.MemoNo,
-                            Date = item.MemoDate.Value,
-                            InvoiceNo = item.InvoiceNo,
-                            DPP = item.MemoDPP,
-                            PPN = item.MemoPPN,
-                            Total = item.MemoMutation,
-                            Mutation = item.MemoMutation,
+                //if (!string.IsNullOrEmpty(item.MemoNo))
+                //{
+                //    if (item.MemoDate.HasValue && item.MemoDate.Value.Month == month && item.MemoDate.Value.Year == year)
+                //    {
+                //        CreditorAccountViewModel vm = new CreditorAccountViewModel
+                //        {
+                //            MemoNo = item.MemoNo,
+                //            Date = item.MemoDate.Value,
+                //            InvoiceNo = item.InvoiceNo,
+                //            DPP = item.MemoDPP,
+                //            PPN = item.MemoPPN,
+                //            Total = item.MemoMutation,
+                //            Mutation = item.MemoMutation,
 
-                        };
-                        memoMutation = vm.Mutation.GetValueOrDefault();
-                        result.Add(vm);
-                    }
+                //        };
+                //        memoMutation = vm.Mutation.GetValueOrDefault();
+                //        result.Add(vm);
+                //    }
 
-                }
+                //}
 
                 CreditorAccountViewModel resultVM = new CreditorAccountViewModel()
                 {
@@ -521,7 +524,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         {
             CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.UnitReceiptNoteNo == viewModel.Code);
 
-            return await DeleteAsync(model.Id);
+            if (model != null)
+                return await DeleteAsync(model.Id);
+            else
+                return 0;
         }
     }
 }

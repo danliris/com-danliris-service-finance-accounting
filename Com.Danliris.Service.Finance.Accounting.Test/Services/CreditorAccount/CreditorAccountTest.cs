@@ -90,6 +90,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
+        public async Task Should_Success_Put_UnitPaymentOrder_Return_0()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            CreditorAccountUnitPaymentOrderPostedViewModel postedData = new CreditorAccountUnitPaymentOrderPostedViewModel()
+            {
+                InvoiceNo = "InvoiceNo",
+                CreditorAccounts = null
+            };
+            var updateResponse = await service.UpdateFromUnitPaymentOrderAsync(postedData);
+
+            Assert.Equal(0, updateResponse);
+        }
+
+        [Fact]
         public async Task Should_Null_Get_UnitReceiptNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
@@ -137,6 +152,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             Assert.NotNull(updateData);
         }
 
+
+        [Fact]
+        public async Task Should_Fail_Put_UnitReceiptNote()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            CreditorAccountUnitReceiptNotePostedViewModel newData = new CreditorAccountUnitReceiptNotePostedViewModel();
+            await Assert.ThrowsAnyAsync<Exception>(() => service.UpdateFromUnitReceiptNoteAsync(newData));
+
+        }
+
         [Fact]
         public async Task Should_Success_Delete_UnitReceiptNote()
         {
@@ -161,6 +186,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             var deleteResponse = await service.DeleteFromUnitReceiptNoteAsync(newData);
             var deleteData = await service.GetByUnitReceiptNote(data.SupplierCode, data.Code, data.InvoiceNo);
             Assert.Null(deleteData);
+        }
+
+        [Fact]
+        public async Task Should_Success_DeleteBy_UnitReceiptNote_Model_NotFound()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var newData = new CreditorAccountUnitReceiptNotePostedViewModel();
+            var deleteResponse = await service.DeleteFromUnitReceiptNoteAsync(newData);
+            Assert.Equal(0, deleteResponse);
         }
 
         [Fact]
@@ -224,6 +259,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
+        public async Task Should_Fail_Put_BankExpenditureNote()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            CreditorAccountBankExpenditureNotePostedViewModel newData = new CreditorAccountBankExpenditureNotePostedViewModel();
+            await Assert.ThrowsAnyAsync<Exception>(() => service.UpdateFromBankExpenditureNoteAsync(newData));
+
+        }
+
+        [Fact]
         public async Task Should_Success_Delete_BankExpenditureNote()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
@@ -280,6 +324,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
+        public async Task Should_Success_Get_Report_NoRate()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
+            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            unitData.CurrencyRate = 0;
+            data.SupplierCode = unitData.SupplierCode;
+            data.SupplierName = unitData.SupplierName;
+            data.InvoiceNo = unitData.InvoiceNo;
+            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
+            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+
+            var reportResponse = service.GetReport(1, 25, data.SupplierName, data.Date.Month, data.Date.Year, 7);
+            Assert.NotEmpty(reportResponse.Item1.Data);
+        }
+
+        [Fact]
         public async Task Should_Success_Get_Report_Include_Previous_Month()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
@@ -302,6 +363,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             await service.CreateFromMemoAsync(memoData);
             var reportResponse = service.GetReport(1, 25, data.SupplierName, nextMonthUnitData.Date.Month, nextMonthUnitData.Date.Year, 7);
             Assert.NotEmpty(reportResponse.Item1.Data);
+        }
+
+        [Fact]
+        public async Task Should_Fail_Create_From_Memo()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            CreditorAccountMemoPostedViewModel memoData = new CreditorAccountMemoPostedViewModel();
+            await Assert.ThrowsAnyAsync<Exception>(() => service.CreateFromMemoAsync(memoData));
+
         }
 
         [Fact]
