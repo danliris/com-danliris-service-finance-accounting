@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
         private readonly List<string> Header = new List<string>()
         {
-            "Kode, Nama,Path,Report Type,Nature,Cash Account,Balance"
+            "Kode", "Nama", "Report Type", "Nature", "Balance"
         };
         public List<string> CsvHeader => Header;
 
@@ -46,11 +46,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
             {
                 Map(x => x.Code).Index(0);
                 Map(x => x.Name).Index(1);
-                Map(x => x.Path).Index(2);
-                Map(x => x.ReportType).Index(3);
-                Map(x => x.Nature).Index(4);
-                Map(x => x.CashAccount).Index(5);
-                Map(x => x.Balance).Index(6);
+                Map(x => x.ReportType).Index(2);
+                Map(x => x.Nature).Index(3);
+                Map(x => x.Balance).Index(4);
             }
         }
 
@@ -287,10 +285,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
                     Error.Add("Kode", coaVM.Code);
                     Error.Add("Nama", coaVM.Name);
-                    Error.Add("Path", coaVM.Path);
                     Error.Add("Report Type", coaVM.ReportType);
                     Error.Add("Nature", coaVM.Nature);
-                    Error.Add("Cash Account", coaVM.CashAccount);
                     Error.Add("Error", ErrorMessage);
 
                     ErrorList.Add(Error);

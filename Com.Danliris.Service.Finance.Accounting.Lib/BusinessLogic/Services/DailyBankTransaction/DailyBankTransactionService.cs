@@ -445,6 +445,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 CurrencyCode = s.FirstOrDefault().AccountBankCurrencyCode
             });
 
+            
             return result.ToList();
             //throw new NotImplementedException();
         }
@@ -452,7 +453,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, int clientTimeZoneOffset)
         {
             var queryResult = GetDailyBalanceReport(bankId, startDate, endDate);
-
+            var currencyQueryResult = GetDailyBalanceCurrencyReport(bankId, startDate, endDate);
 
             DataTable result = new DataTable();
 
@@ -473,7 +474,44 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Saldo Harian") }, true);
+            DataTable currency = new DataTable();
+            currency.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
+            currency.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(double) });
+            currency.Columns.Add(new DataColumn() { ColumnName = "Credit", DataType = typeof(double) });
+            currency.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(double) });
+
+            if (currencyQueryResult.ToArray().Count() == 0)
+                currency.Rows.Add("", 0, 0, 0); // to allow column name to be generated properly for empty data as template
+            else
+            {
+                foreach (var item in currencyQueryResult)
+                {
+                    currency.Rows.Add(item.CurrencyCode, item.Debit, item.Credit, item.Balance);
+                }
+            }
+
+            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Saldo Harian"), new KeyValuePair<DataTable, string>(currency, "Saldo Harian Mata Uang") }, true);
+        }
+
+        public List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate)
+        {
+            var query = _DbSet.Where(w => w.Date >= startDate && w.Date <= endDate);
+
+            if (bankId > 0)
+            {
+                query = query.Where(w => w.AccountBankId.Equals(bankId));
+            }
+
+            var currencyResult = query.GroupBy(g => g.AccountBankCurrencyId).Select(s => new DailyBalanceCurrencyReportViewModel()
+            {
+                Balance = (decimal)s.Sum(sum => sum.Status.Equals("IN") ? sum.Nominal : sum.Nominal * -1),
+                Credit = (decimal)s.Sum(sum => sum.Status.Equals("OUT") ? sum.Nominal : 0),
+                Debit = (decimal)s.Sum(sum => sum.Status.Equals("IN") ? sum.Nominal : 0),
+                CurrencyCode = s.FirstOrDefault().AccountBankCurrencyCode
+            });
+
+
+            return currencyResult.ToList();
         }
     }
 }

@@ -1,9 +1,11 @@
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
+using Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -73,6 +75,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoJournalService))).Returns(new AutoJournalServiceTestHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoDailyBankTransactionService))).Returns(new AutoDailyBankTransactionServiceHelper());
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(new IdentityService() { Username = "Username", Token = "token", TimezoneOffset = 1 });
 
             var service = new OthersExpenditureProofDocumentService(dbContext, serviceProviderMock.Object);
@@ -90,6 +93,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoJournalService))).Returns(new AutoJournalServiceTestHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoDailyBankTransactionService))).Returns(new AutoDailyBankTransactionServiceHelper());
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(new IdentityService() { Username = "Username", Token = "token", TimezoneOffset = 1 });
 
             var service = new OthersExpenditureProofDocumentService(dbContext, serviceProviderMock.Object);
@@ -110,6 +114,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoJournalService))).Returns(new AutoJournalServiceTestHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoDailyBankTransactionService))).Returns(new AutoDailyBankTransactionServiceHelper());
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(new IdentityService() { Username = "Username", Token = "token", TimezoneOffset = 1 });
 
             var service = new OthersExpenditureProofDocumentService(dbContext, serviceProviderMock.Object);
@@ -130,6 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoJournalService))).Returns(new AutoJournalServiceTestHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoDailyBankTransactionService))).Returns(new AutoDailyBankTransactionServiceHelper());
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(new IdentityService() { Username = "Username", Token = "token", TimezoneOffset = 1 });
 
@@ -151,11 +157,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoJournalService))).Returns(new AutoJournalServiceTestHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoDailyBankTransactionService))).Returns(new AutoDailyBankTransactionServiceHelper());
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(new IdentityService() { Username = "Username", Token = "token", TimezoneOffset = 1 });
 
             var service = new OthersExpenditureProofDocumentService(dbContext, serviceProviderMock.Object);
 
             var model = GetCreateDataUtil();
+            model.Items.Add(new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
+            {
+                COAId = 3,
+                Debit = 3,
+                Remark = "Remark"
+            });
             await service.CreateAsync(model);
 
             var createdModel = dbContext.OthersExpenditureProofDocuments.FirstOrDefault();
@@ -169,10 +182,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                 {
                     new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
                     {
-                        COAId = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).COAId,
-                        Debit = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Debit,
+                        COAId = 10,
+                        Debit = 6,
                         Id = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Id,
-                        Remark = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Remark
+                        Remark = "New remark"
                     },
                     new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
                     {
@@ -185,8 +198,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                 Type = createdModel.Type
             };
             var response = await service.UpdateAsync(createdModel.Id, modelToUpdate);
-
-            Assert.NotEqual(0, response);
         }
     }
 }

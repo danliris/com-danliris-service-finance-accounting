@@ -24,7 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             _journalTransactionService = serviceProvider.GetService<IJournalTransactionService>();
         }
 
-        public async Task<string> GetAccountBankCOA(int accountBankId)
+        private async Task<string> GetAccountBankCOA(int accountBankId)
         {
             var http = _serviceProvider.GetService<IHttpClientService>();
 
