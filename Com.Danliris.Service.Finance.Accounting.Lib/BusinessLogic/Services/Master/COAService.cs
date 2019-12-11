@@ -179,7 +179,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                         DbSet.AddRange(batch);
                         var result = await DbContext.SaveChangesAsync();
                         processed += batch.Count();
-                        offset = pageSize;
+                        offset += pageSize;
                     };
                     transaction.Commit();
                 }
