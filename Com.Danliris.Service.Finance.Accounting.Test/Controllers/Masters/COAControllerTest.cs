@@ -48,8 +48,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithoutException_ReturnOK()
         {
-            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account,Balance";
-            string isi = "2112.12.2.12, Nama,Path,Report Type,Nature,Cash Account, 1";
+            string header = "Kode, Nama, Report Type, Nature, Balance";
+            string isi = "2112.12.2.12, Nama,Report Type,Nature, 1";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Returns(Task.CompletedTask);
             mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
@@ -63,10 +63,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
             {
                 Code = "2112.12.2.12",
                 Name = "Nama",
-                Path = "Path",
                 ReportType = "report",
                 Nature = "nature",
-                CashAccount = "cash"
+                Balance = 1
             };
             mockMapper.Setup(x => x.Map<List<COAModel>>(It.IsAny<List<COAViewModel>>())).Returns(new List<COAModel>() { model });
             var mockIdentityService = new Mock<IIdentityService>();
@@ -159,8 +158,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
         [Fact]
         public void UploadFile_WithException_ErrorInFile()
         {
-            string header = "Kode, Nama,Path,Report Type,Nature,Cash Account, Balance";
-            string isi = "2112.12.2.12, Nama,Path,Report Type,Nature,Cash Account, 1";
+            string header = "Kode, Nama, Report Type, Nature, Balance";
+            string isi = "2112.12.2.12, Nama,Report Type,Nature, 1";
             var mockFacade = new Mock<ICOAService>();
             mockFacade.Setup(f => f.UploadData(It.IsAny<List<COAModel>>())).Verifiable();
             mockFacade.Setup(f => f.CsvHeader).Returns(header.Split(',').ToList());
