@@ -402,7 +402,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     Debit = item.Debit,
                     Remark = item.Remark,
                     Description = item.JournalTransaction.Description,
-                    ReferenceNo = item.JournalTransaction.ReferenceNo
+                    ReferenceNo = item.JournalTransaction.ReferenceNo,
+                    IsReverser = item.JournalTransaction.IsReverser,
+                    IsReversed = item.JournalTransaction.IsReversed
                 };
 
                 if (item.COA != null)
@@ -444,6 +446,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var data = GetReport(dateFrom, dateTo, offSet);
 
             DataTable dt = new DataTable();
+
+            dt.Columns.Add(new DataColumn() { ColumnName = "", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Deskripsi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No Referensi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Date", DataType = typeof(string) });
@@ -455,20 +459,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             if (data.Item1.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "");
             }
             else
             {
                 foreach (var item in data.Item1)
                 {
-                    dt.Rows.Add(string.IsNullOrEmpty(item.Description) ? "-" : item.Description, string.IsNullOrEmpty(item.ReferenceNo) ? "-" : item.ReferenceNo, item.Date.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.COAName) ? "-" : item.COAName, string.IsNullOrEmpty(item.COACode) ? "-" : item.COACode,
+                    dt.Rows.Add(item.IsReverser ? "Pembalik" : item.IsReversed ? "Dibalik" : "", string.IsNullOrEmpty(item.Description) ? "-" : item.Description, string.IsNullOrEmpty(item.ReferenceNo) ? "-" : item.ReferenceNo, item.Date.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.COAName) ? "-" : item.COAName, string.IsNullOrEmpty(item.COACode) ? "-" : item.COACode,
                         string.IsNullOrEmpty(item.Remark) ? "-" : item.Remark, item.Debit.HasValue ? item.Debit.Value.ToString("#,##0.###0") : "0", item.Credit.HasValue ? item.Credit.Value.ToString("#,##0.###0") : "0");
 
                 }
-                dt.Rows.Add("", "", "", "", "", "TOTAL", data.Item2.ToString("#,##0.###0"), data.Item3.ToString("#,##0.###0"));
+                dt.Rows.Add("", "", "", "", "", "", "TOTAL", data.Item2.ToString("#,##0.###0"), data.Item3.ToString("#,##0.###0"));
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Jurnal Transaksi") }, true);
+            return Excel.CreateExcelJournalTransaction(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Jurnal Transaksi") }, dateFrom.GetValueOrDefault(), dateTo.GetValueOrDefault(), true);
         }
 
         public async Task<int> ReverseJournalTransactionByReferenceNo(string referenceNo)
