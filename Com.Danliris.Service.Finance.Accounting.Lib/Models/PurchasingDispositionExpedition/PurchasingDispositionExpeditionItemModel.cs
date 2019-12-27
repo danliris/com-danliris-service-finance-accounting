@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositi
     public class PurchasingDispositionExpeditionItemModel : StandardEntity, IValidatableObject
     {
         public string EPOId { get; set; }
+        public string EPONo { get; set; }
         public double Price { get; set; }
         [MaxLength(50)]
         public string ProductId { get; set; }
