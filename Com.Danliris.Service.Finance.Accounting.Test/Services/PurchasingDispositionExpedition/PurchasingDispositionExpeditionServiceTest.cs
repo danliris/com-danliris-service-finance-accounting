@@ -516,7 +516,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             postedModel.DispositionNo = httpClientFromPurchasingDisposition.GetPurchasingDispositionViewModel().DispositionNo;
             await service.CreateAsync(postedModel);
             var model = await service.ReadByIdAsync(postedModel.Id);
-            var reportResponse = await service.GenerateExcelAsync(1, 25, "{}", "{}", null, null, 7);
+            var reportResponse = await service.GenerateExcelAsync(1, 25, "{}", "{}", null, DateTimeOffset.UtcNow.AddDays(2), 7);
             Assert.NotNull(reportResponse);
         }
 
