@@ -455,7 +455,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 
             if (data.data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", 0, "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", "", "","","", 0, "", "", "", "", "");
             }
             else
             {
