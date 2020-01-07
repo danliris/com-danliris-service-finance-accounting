@@ -11,6 +11,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         public string SupplierName { get; set; }
 
         public string SupplierCode { get; set; }
+
+        public bool SupplierIsImport { get; set; }
         #endregion
 
 
