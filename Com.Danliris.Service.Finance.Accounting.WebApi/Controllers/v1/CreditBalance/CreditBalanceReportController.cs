@@ -71,7 +71,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 var xls = Service.GenerateExcel(isImport, supplierName, month, year, offSet);
 
-                string fileName = string.Format("Saldo Hutang Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                string fileName = "";
+
+                if (isImport)
+                {
+                    fileName = string.Format("Saldo Hutang Impor Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                }
+                else
+                {
+                    fileName = string.Format("Saldo Hutang Lokal Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                }
+                
 
                 xlsInBytes = xls.ToArray();
 
