@@ -71,12 +71,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
         }
 
         [Fact]
-        public void GetReportExcel_ReturnFile()
+        public void GetReportExcelLokal_ReturnFile()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new MemoryStream());
 
             var response = GetController(mocks).GetXls(false, 1, 2018);
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void GetReportExcelImpor_ReturnFile()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new MemoryStream());
+
+            var response = GetController(mocks).GetXls(true, 1, 2018);
             Assert.NotNull(response);
         }
 
