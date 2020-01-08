@@ -15,5 +15,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
         public string Products { get; set; }
 
         public bool UseIncomeTax { get; set; }
+
     }
 }

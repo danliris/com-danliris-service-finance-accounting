@@ -54,9 +54,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
         public void GetReport_ReturnOK()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new ReadResponse<CreditBalanceViewModel>(new List<CreditBalanceViewModel>(), 1, new Dictionary<string, string>(), new List<string>()));
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<bool>(),It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new ReadResponse<CreditBalanceViewModel>(new List<CreditBalanceViewModel>(), 1, new Dictionary<string, string>(), new List<string>()));
 
-            var response = GetController(mocks).GetReport(1, 2018);
+            var response = GetController(mocks).GetReport(false, 1, 2018);
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
@@ -64,9 +64,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
         public void GetReport_ThrowException()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
 
-            var response = GetController(mocks).GetReport(1, 2018);
+            var response = GetController(mocks).GetReport(false, 1, 2018);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
@@ -74,9 +74,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
         public void GetReportExcel_ReturnFile()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new MemoryStream());
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new MemoryStream());
 
-            var response = GetController(mocks).GetXls(1, 2018);
+            var response = GetController(mocks).GetXls(false, 1, 2018);
             Assert.NotNull(response);
         }
 
@@ -84,9 +84,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
         public void GetReportExcel_ThrowException()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
 
-            var response = GetController(mocks).GetXls(1, 2018);
+            var response = GetController(mocks).GetXls(false, 1, 2018);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
@@ -94,9 +94,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
         public void GetReportExcelNull_ThrowException()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
 
-            var response = GetController(mocks).GetXls(8, 2030);
+            var response = GetController(mocks).GetXls(false, 8, 2030);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
