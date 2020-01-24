@@ -38,6 +38,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
         public string Staff { get; set; }
         public double PayToSupplier { get; set; }
         public string Currency { get; set; }
-
+        public decimal DPP { get; set; }
+        public decimal VAT { get; set; }
+        public decimal IncomeTax { get; set; }
+        public decimal Total { get; set; }
+        public int DueDateDays { get; set; }
+        public string Category { get; set; }
+        public string Division { get; set; }
+        public string Unit { get; set; }
+        public string VerifiedBy { get; set; }
+        public string ExternalPurchaseOrderNo { get; set; }
+        public DateTimeOffset? UnitPaymentOrderDate { get; set; }
+        public string UnitPaymentOrderNo { get; set; }
+        public double CurrencyRate { get; set; }
     }
 }
