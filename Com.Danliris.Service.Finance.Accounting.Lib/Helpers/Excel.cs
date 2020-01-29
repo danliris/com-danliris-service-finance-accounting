@@ -16,10 +16,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
         /// <param name="dtSourceList">A List of KeyValuePair of DataTable and its sheet name</param>
         /// <param name="styling">Default style is set to False</param>
         /// <returns>MemoryStream object to be written into Response.OutputStream</returns>
-        public static MemoryStream CreateExcel(List<KeyValuePair<DataTable, String>> dtSourceList, bool styling = false)
+        public static MemoryStream CreateExcel(List<KeyValuePair<DataTable, string>> dtSourceList, bool styling = false)
         {
             ExcelPackage package = new ExcelPackage();
-            foreach (KeyValuePair<DataTable, String> item in dtSourceList)
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
             {
                 var sheet = package.Workbook.Worksheets.Add(item.Value);
                 sheet.Cells["A1"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
@@ -30,11 +30,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
-        public static MemoryStream CreateExcelNoFilters(List<KeyValuePair<DataTable, String>> dtSourceList, bool styling = false)
+        public static MemoryStream CreateExcelJournalTransaction(List<KeyValuePair<DataTable, string>> dtSourceList, DateTimeOffset dateFrom, DateTimeOffset dateTo, bool styling = false)
+        {
+            ExcelPackage package = new ExcelPackage();
+
+            var sheet = package.Workbook.Worksheets.Add("Sheet 1");
+
+            sheet.Cells["A1"].Value = "LAPORAN JURNAL TRANSAKSI";
+            sheet.Cells["A1:C1"].Merge = true;
+
+            sheet.Cells["A2"].Value = $"{dateFrom.Date} - {dateTo.Date}";
+            sheet.Cells["B2:C2"].Merge = true;
+
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            {
+                sheet.Cells["A4"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+            }
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
+        public static MemoryStream CreateExcelNoFilters(List<KeyValuePair<DataTable, string>> dtSourceList, bool styling = false)
         {
             ExcelPackage package = new ExcelPackage();
             int index = 1;
-            foreach (KeyValuePair<DataTable, String> item in dtSourceList)
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
             {
                 var sheet = package.Workbook.Worksheets.Add(item.Value);
                 sheet.Cells["A1"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);

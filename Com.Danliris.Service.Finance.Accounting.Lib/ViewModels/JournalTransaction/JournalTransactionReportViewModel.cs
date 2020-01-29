@@ -21,5 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
         public string ReferenceNo { get; set; }
 
         public string Description { get; set; }
+        public bool IsReverser { get; set; }
+        public bool IsReversed { get; set; }
     }
 }

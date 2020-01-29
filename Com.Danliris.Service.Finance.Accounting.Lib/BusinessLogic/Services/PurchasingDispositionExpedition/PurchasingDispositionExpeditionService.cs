@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         public async Task<int> CreateAsync(PurchasingDispositionExpeditionModel m)
         {
             CreateModel(m);
-            
+
             return await DbContext.SaveChangesAsync();
         }
 
@@ -75,7 +75,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             List<string> dispoNo = new List<string>();
             dispoNo.Add(model.DispositionNo);
 
-            var dispoCount = this.DbSet.Count(x => x.DispositionNo == model.DispositionNo && x.IsDeleted == false && x.Id!=model.Id);
+            var dispoCount = this.DbSet.Count(x => x.DispositionNo == model.DispositionNo && x.IsDeleted == false && x.Id != model.Id);
             if (dispoCount > 0)
             {
                 UpdateDispositionPosition(dispoNo, ExpeditionPosition.SEND_TO_PURCHASING_DIVISION);
@@ -257,7 +257,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     PurchasingDispositionExpeditionModel model;
                     if (data.Id == 0)
                     {
-                        model = DbContext.PurchasingDispositionExpeditions.OrderByDescending(x=>x.LastModifiedUtc).First(x => x.DispositionNo == data.DispositionNo);
+                        model = DbContext.PurchasingDispositionExpeditions.OrderByDescending(x => x.LastModifiedUtc).First(x => x.DispositionNo == data.DispositionNo);
                     }
                     else
                     {
@@ -334,7 +334,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 
         private async Task<PurchasingDispositionBaseResponseViewModel> JoinReportAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
-            var expeditionData = DbSet.ToList();
+            var expeditionData = DbSet.Include(entity => entity.Items).ToList();
             var purchasingDispositionResponse = await GetPurchasingDispositionAsync(page, size, order, filter);
             List<PurchasingDispositionViewModel> data = purchasingDispositionResponse.data;
 
@@ -372,7 +372,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 
             foreach (var item in data)
             {
-                var expedition = expeditionData.OrderByDescending(a=>a.LastModifiedUtc).FirstOrDefault(x => x.DispositionNo == item.DispositionNo);
+                var expedition = expeditionData.OrderByDescending(a => a.LastModifiedUtc).FirstOrDefault(x => x.DispositionNo == item.DispositionNo);
                 PurchasingDispositionReportViewModel vm = new PurchasingDispositionReportViewModel()
                 {
                     BankExpenditureNoteDate = expedition == null || expedition.BankExpenditureNoteDate == DateTimeOffset.MinValue ? null : expedition.BankExpenditureNoteDate,
@@ -393,7 +393,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     VerifyDate = expedition == null || expedition.VerifyDate == DateTimeOffset.MinValue ? null : expedition.VerifyDate,
                     Staff = item == null ? "" : item.CreatedBy,
                     PayToSupplier = expedition != null ? expedition.PayToSupplier : 0,
-                    Currency = expedition != null ? expedition.CurrencyCode : ""
+                    Currency = expedition != null ? expedition.CurrencyCode : "",
+                    CurrencyRate = item.Currency.rate,
+                    Category = expedition.CategoryName,
+                    Division = expedition.DivisionName,
+                    Unit = string.Join("\n", expedition.Items.Select(expeditionItem => $"- {expeditionItem.UnitName}")),
+                    DPP = expedition != null ? (decimal)expedition.DPP : 0,
+                    DueDateDays = 0,
+                    ExternalPurchaseOrderNo = expedition != null ? string.Join("\n", expedition.Items.Select(expeditionItem => $"- {expeditionItem.EPONo}")) : "",
+                    IncomeTax = expedition != null ? (decimal)expedition.IncomeTaxValue : 0,
+                    VAT = expedition != null ? (decimal)expedition.VatValue : 0,
+                    Total = expedition != null ? (decimal)expedition.TotalPaid : 0,
+                    VerifiedBy = expedition != null ? expedition.VerificationDivisionBy : ""
                 };
                 result.Add(vm);
 
@@ -415,35 +426,72 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Jatuh Tempo", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Proforma", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Kurs", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PPh", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tempo", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Kategori", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Unit", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Divisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Posisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Pembelian Kirim", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Terima Verifikasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Cek Verifikasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Kirim", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Verifikator", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Terima Kasir", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Bayar Kasir", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "No Kuitansi Kasir", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No Bukti Pengeluaran Bank", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nominal yang dibayar", DataType = typeof(double) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PO Eksternal", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal SPB", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor SPB", DataType = typeof(string) });
             //dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Bayar PPH Kasir", DataType = typeof(string) });
             //dt.Columns.Add(new DataColumn() { ColumnName = "No Kuitansi PPHKasir", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Staf", DataType = typeof(string) });
 
             if (data.data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "",0,"","");
+                dt.Rows.Add("", "", "", "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", "", "","","", 0, "", "", "", "", "");
             }
             else
             {
                 foreach (var item in data.data)
                 {
-                    dt.Rows.Add(item.DispositionNo, item.CreatedUtc == null ? "-" : item.CreatedUtc.Value.AddHours(offSet).ToString("dd MMM yyyy"), item.PaymentDueDate == null ? "-" : item.PaymentDueDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
-                        item.InvoiceNo, item.SupplierName, item.Position == 0 ? "-" : item.Position==4 ? "Dikirim ke Bag. Keuangan" : item.Position==7 ? "Bag. Keuangan" : ((ExpeditionPosition)item.Position).ToDescriptionString(),item.SentToVerificationDivisionDate == null ? "-" : item.SentToVerificationDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), item.VerificationDivisionDate == null ? "-" : item.VerificationDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
-                        item.VerifyDate == null ? "-" : item.VerifyDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), item.SendDate == null ? "-" : item.SendDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
-                        item.CashierDivisionDate == null ? "-" : item.CashierDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), item.BankExpenditureNoteDate == null ? "-" : item.BankExpenditureNoteDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
-                        string.IsNullOrEmpty(item.BankExpenditureNoteNo) ? "-" : item.BankExpenditureNoteNo, 
+                    dt.Rows.Add(
+                        item.DispositionNo,
+                        item.CreatedUtc == null ? "-" : item.CreatedUtc.Value.AddHours(offSet).ToString("dd MMM yyyy"),
+                        item.PaymentDueDate == null ? "-" : item.PaymentDueDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
+                        item.InvoiceNo,
+                        item.SupplierName,
+                        item.CurrencyRate,
+                        item.DPP,
+                        item.VAT,
+                        item.IncomeTax,
+                        item.Total,
+                        item.DueDateDays,
+                        item.Category,
+                        item.Unit,
+                        item.Division,
+                        item.Position == 0 ? "-" : item.Position == 4 ? "Dikirim ke Bag. Keuangan" : item.Position == 7 ? "Bag. Keuangan" : ((ExpeditionPosition)item.Position).ToDescriptionString(),
+                        item.SentToVerificationDivisionDate == null ? "-" : item.SentToVerificationDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
+                        item.VerificationDivisionDate == null ? "-" : item.VerificationDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
+                        item.VerifyDate == null ? "-" : item.VerifyDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
+                        item.SendDate == null ? "-" : item.SendDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
+                        item.VerifiedBy,
+                        item.CashierDivisionDate == null ? "-" : item.CashierDivisionDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
+                        item.BankExpenditureNoteDate == null ? "-" : item.BankExpenditureNoteDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
+                        string.IsNullOrEmpty(item.BankExpenditureNoteNo) ? "-" : item.BankExpenditureNoteNo,
                         //item.BankExpenditureNotePPHDate == null ? "-" : item.BankExpenditureNotePPHDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.BankExpenditureNotePPHNo) ? "-" : item.BankExpenditureNotePPHNo,
-                        item.PayToSupplier,item.Currency,item.Staff);
+                        item.PayToSupplier,
+                        item.Currency,
+                        item.ExternalPurchaseOrderNo,
+                        item.UnitPaymentOrderDate,
+                        item.UnitPaymentOrderNo,
+                        item.Staff);
 
                 }
             }
