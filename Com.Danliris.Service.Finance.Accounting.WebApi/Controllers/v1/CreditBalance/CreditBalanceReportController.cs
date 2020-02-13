@@ -31,13 +31,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
         }
 
         [HttpGet("reports")]
-        public IActionResult GetReport([FromQuery]int month, [FromQuery]int year, [FromQuery] string supplierName = null, int page = 1, int size = 25)
+        public IActionResult GetReport([FromQuery] bool isImport, [FromQuery]int month, [FromQuery]int year, [FromQuery] string supplierName = null, int page = 1, int size = 25)
         {
             try
             {
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                var data = Service.GetReport(page, size, supplierName, month, year, offSet);
+                var data = Service.GetReport(isImport,page, size, supplierName, month, year, offSet);
 
                 return Ok(new
                 {
@@ -63,15 +63,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
         }
 
         [HttpGet("reports/downloads/xls")]
-        public IActionResult GetXls([FromQuery]int month, [FromQuery]int year, [FromQuery]string supplierName = null)
+        public IActionResult GetXls([FromQuery] bool isImport, [FromQuery]int month, [FromQuery]int year, [FromQuery]string supplierName = null)
         {
             try
             {
                 byte[] xlsInBytes;
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
-                var xls = Service.GenerateExcel(supplierName, month, year, offSet);
+                var xls = Service.GenerateExcel(isImport, supplierName, month, year, offSet);
 
-                string fileName = string.Format("Saldo Hutang Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                string fileName = "";
+
+                if (isImport)
+                {
+                    fileName = string.Format("Saldo Hutang Impor Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                }
+                else
+                {
+                    fileName = string.Format("Saldo Hutang Lokal Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                }
+                
 
                 xlsInBytes = xls.ToArray();
 

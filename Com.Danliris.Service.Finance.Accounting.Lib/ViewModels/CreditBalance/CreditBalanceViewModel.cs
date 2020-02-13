@@ -15,5 +15,7 @@
         public decimal Payment { get; set; }
 
         public decimal FinalBalance { get; set; }
+
+        public decimal CurrencyRate { get; set; }
     }
 }

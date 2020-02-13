@@ -425,6 +425,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 InvoiceNo = viewModel.InvoiceNo,
                 SupplierCode = viewModel.SupplierCode,
                 SupplierName = viewModel.SupplierName,
+                SupplierIsImport = viewModel.SupplierIsImport,
                 UnitReceiptMutation = viewModel.DPP + viewModel.PPN,
                 UnitReceiptNoteDate = viewModel.Date,
                 UnitReceiptNoteDPP = viewModel.DPP,
