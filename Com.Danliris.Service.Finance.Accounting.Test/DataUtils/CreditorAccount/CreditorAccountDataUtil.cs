@@ -32,7 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 Products = "- Product 1\n- Product 2",
                 Currency = "Currency",
                 CurrencyRate = 1,
-                SupplierIsImport = false,
+                SupplierIsImport = true,
                 DPPCurrency = 1,
                 PaymentDuration = "1",
                 UseIncomeTax = true,
