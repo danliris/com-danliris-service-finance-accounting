@@ -14,9 +14,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Utilities
         {
             var result =new APIWrapper()
             {
-                apiVersion ="1"
+                apiVersion ="1",
+                data ="data test",
+                message="message test",
+                statusCode ="status code",
+                info="info test"
             };
             Assert.NotNull(result.apiVersion);
+            Assert.NotNull(result.data);
+            Assert.NotNull(result.message);
+            Assert.NotNull(result.statusCode);
+            Assert.NotNull(result.info);
         }
         
     }
