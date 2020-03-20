@@ -20,11 +20,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Utilities
                 statusCode ="status code",
                 info="info test"
             };
-            Assert.NotNull(result.apiVersion);
-            Assert.NotNull(result.data);
-            Assert.NotNull(result.message);
-            Assert.NotNull(result.statusCode);
-            Assert.NotNull(result.info);
+            Assert.Equal("1",result.apiVersion);
+            Assert.Equal("data test", result.data);
+            Assert.Equal("message test", result.message);
+            Assert.Equal("status code", result.statusCode);
+            Assert.Equal("info test",result.info);
         }
         
     }

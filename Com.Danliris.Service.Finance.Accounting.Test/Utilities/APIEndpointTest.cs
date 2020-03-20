@@ -13,20 +13,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Utilities
         [Fact]
         public void Should_succes_intantiate_APIEndpoint()
         {
-           
-            APIEndpoint.Core = "core test";
-            APIEndpoint.Inventory = "Inventory test";
-            APIEndpoint.Production = "Production test";
-            APIEndpoint.Purchasing = "Purchasing test";
-            APIEndpoint.Finishing = "Finishing test";
-            APIEndpoint.Finance = "Finance test";
+            string core = "core test";
+            string inventory = "Inventory test";
+            string production = "Production test";
+            string purchasing = "Purchasing test";
+            string finishing = "Finishing test";
+            string finance = "Finance test";
 
-            Assert.Equal("core test", APIEndpoint.Core);
-            Assert.Equal("Inventory test", APIEndpoint.Inventory);
-            Assert.Equal("Production test", APIEndpoint.Production);
-            Assert.Equal("Purchasing test", APIEndpoint.Purchasing);
-            Assert.Equal("Finishing test", APIEndpoint.Finishing);
-            Assert.Equal("Finance test", APIEndpoint.Finance);
+            APIEndpoint.Core = core;
+            APIEndpoint.Inventory = inventory;
+            APIEndpoint.Production = production;
+            APIEndpoint.Purchasing = purchasing;
+            APIEndpoint.Finishing = finishing;
+            APIEndpoint.Finance = finance;
+
+            Assert.Equal(core, APIEndpoint.Core);
+            Assert.Equal(inventory, APIEndpoint.Inventory);
+            Assert.Equal(production, APIEndpoint.Production);
+            Assert.Equal(purchasing, APIEndpoint.Purchasing);
+            Assert.Equal(finishing, APIEndpoint.Finishing);
+            Assert.Equal(finance,APIEndpoint.Finance);
             
         }
         
