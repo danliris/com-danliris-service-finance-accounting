@@ -335,7 +335,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         private async Task<PurchasingDispositionBaseResponseViewModel> JoinReportAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
             var expeditionData = DbSet.Include(entity => entity.Items).ToList();
-            var purchasingDispositionResponse = await GetPurchasingDispositionAsync(page, size, order, filter);
+            var purchasingDispositionResponse = await GetPurchasingDispositionAsync(1, int.MaxValue, order, filter);
              
             List<PurchasingDispositionViewModel> data = purchasingDispositionResponse.data;
 
@@ -378,8 +378,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                 if (expedition != null) {
                     foreach (var item2 in expedition.Items)
                     {
-                        var epo = GetExternalPurchaseOrderNo(item2.EPOId);
-                        item2.EPONo = epo.no;
+                        var epo = item2.EPOId != null ? GetExternalPurchaseOrderNo(item2.EPOId) : null;
+                        item2.EPONo = epo != null ? epo.no : "-";
                         var upo = GetUnitPaymentOrder(item2.EPONo);
                         foreach (var i in upo) {
                             dataupo.Add(i);
@@ -429,6 +429,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                 };
                 result.Add(vm);
 
+            }
+            foreach (var i in result)
+            {
+                i.ExternalPurchaseOrderNo = i.ExternalPurchaseOrderNo.Contains("-") ? "-" : i.ExternalPurchaseOrderNo;
             }
             return new PurchasingDispositionBaseResponseViewModel
             {
@@ -522,10 +526,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         public async Task<ReadResponse<PurchasingDispositionReportViewModel>> GetReportAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
             var queries = await JoinReportAsync(page, size, order, filter, dateFrom, dateTo, offSet);
-            //Pageable<PurchasingDispositionReportViewModel> pageable = new Pageable<PurchasingDispositionReportViewModel>(queries.data, page - 1, size);
-            //List<PurchasingDispositionReportViewModel> data = pageable.Data.ToList();
-            List<PurchasingDispositionReportViewModel> data = queries.data;
-            return new ReadResponse<PurchasingDispositionReportViewModel>(data, data.Count(), new Dictionary<string, string>(), new List<string>());
+            Pageable<PurchasingDispositionReportViewModel> pageable = new Pageable<PurchasingDispositionReportViewModel>(queries.data, page - 1, size);
+            List<PurchasingDispositionReportViewModel> data = pageable.Data.ToList();
+            //List<PurchasingDispositionReportViewModel> data = queries.data;
+            return new ReadResponse<PurchasingDispositionReportViewModel>(data, pageable.TotalCount, new Dictionary<string, string>(), new List<string>());
         }
 
         private async Task<PurchasingDispositionResponseViewModel> GetPurchasingDispositionAsync(int page, int size, string order, string filter)
