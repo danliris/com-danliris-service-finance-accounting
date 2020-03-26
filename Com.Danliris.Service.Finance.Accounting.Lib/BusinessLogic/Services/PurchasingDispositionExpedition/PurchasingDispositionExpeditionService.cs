@@ -378,8 +378,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                 if (expedition != null) {
                     foreach (var item2 in expedition.Items)
                     {
-                        var epo = GetExternalPurchaseOrderNo(item2.EPOId);
-                        item2.EPONo = epo.no;
+                        var epo = item2.EPOId != null ? GetExternalPurchaseOrderNo(item2.EPOId) : null;
+                        item2.EPONo = epo != null ? epo.no : "-";
                         var upo = GetUnitPaymentOrder(item2.EPONo);
                         foreach (var i in upo) {
                             dataupo.Add(i);
@@ -429,6 +429,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                 };
                 result.Add(vm);
 
+            }
+            foreach (var i in result)
+            {
+                i.ExternalPurchaseOrderNo = i.ExternalPurchaseOrderNo.Contains("-") ? "-" : i.ExternalPurchaseOrderNo;
             }
             return new PurchasingDispositionBaseResponseViewModel
             {
