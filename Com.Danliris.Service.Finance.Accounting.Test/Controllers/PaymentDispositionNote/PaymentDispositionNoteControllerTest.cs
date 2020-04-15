@@ -498,10 +498,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             var mocks = GetMocks();
             mocks.Service
                 .Setup(f => f.ReadDetailsByEPOId( It.IsAny<string>()))
-                .Returns(new ReadResponse<PaymentDispositionNoteDetailModel>(new List<PaymentDispositionNoteDetailModel>() { new PaymentDispositionNoteDetailModel() }, 0, new Dictionary<string, string>(), new List<string>()));
+                .Returns(new ReadResponse<PaymentDispositionNoteItemModel>(new List<PaymentDispositionNoteItemModel>() { new PaymentDispositionNoteItemModel() }, 0, new Dictionary<string, string>(), new List<string>()));
             mocks.Mapper
-                .Setup(f => f.Map<List<PaymentDispositionNoteDetailViewModel>>(It.IsAny<List<PaymentDispositionNoteDetailModel>>()))
-                .Returns(new List<PaymentDispositionNoteDetailViewModel>());
+                .Setup(f => f.Map<List<PaymentDispositionNoteItemViewModel>>(It.IsAny<List<PaymentDispositionNoteItemModel>>()))
+                .Returns(new List<PaymentDispositionNoteItemViewModel>());
 
             var response = GetController(mocks).GetDetailsByEpoId(It.IsAny<string>());
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
