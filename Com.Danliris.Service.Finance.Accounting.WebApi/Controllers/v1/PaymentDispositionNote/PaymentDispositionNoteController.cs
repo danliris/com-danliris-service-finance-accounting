@@ -206,7 +206,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
             {
                 ReadResponse<PaymentDispositionNoteItemModel> read = Service.ReadDetailsByEPOId(epoId);
 
-                List<PaymentDispositionNoteItemModel> dataVM = Mapper.Map<List<PaymentDispositionNoteItemModel>>(read.Data);
+                List<PaymentDispositionNoteItemViewModel> dataVM = Mapper.Map<List<PaymentDispositionNoteItemViewModel>>(read.Data);
 
                 //Dictionary<string, object> Result =
                 //    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
