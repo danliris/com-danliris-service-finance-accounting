@@ -374,15 +374,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             foreach (var item in data)
             {
                 List<UnitPaymentOrderViewModel> dataupo = new List<UnitPaymentOrderViewModel>();
+                List<string> dono = new List<string>();
+                List<string> urnno = new List<string>();
+                //var expedition = DbContext.PurchasingDispositionExpeditions.Where(x => x.DispositionNo == item.DispositionNo).Include(x => x.Items).FirstOrDefault();
                 var expedition = expeditionData.OrderByDescending(a => a.LastModifiedUtc).FirstOrDefault(x => x.DispositionNo == item.DispositionNo);
                 if (expedition != null) {
                     foreach (var item2 in expedition.Items)
                     {
                         var epo = item2.EPOId != null ? GetExternalPurchaseOrderNo(item2.EPOId) : null;
                         item2.EPONo = epo != null ? epo.no : "-";
+                        //var DO = epo != null ? GetDeliveryOrderNo(epo.no) : null;
                         var upo = GetUnitPaymentOrder(item2.EPONo);
                         foreach (var i in upo) {
                             dataupo.Add(i);
+                            foreach(var t in i.items)
+                            {
+                                dono.Add(t.unitReceiptNote.deliveryOrder.no);
+                                urnno.Add(t.unitReceiptNote.no);
+
+                            }
                         }
                     }
                 }
@@ -422,7 +432,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     Total = expedition != null ? (decimal)expedition.TotalPaid : 0,
                     VerifiedBy = expedition != null ? expedition.VerificationDivisionBy : "",
                     UnitPaymentOrderNo = dataupo != null ? string.Join(" & ", dataupo.Select(upono => $" {upono.no}").Distinct()) : "",
-                    UnitPaymentOrderDate = dataupo != null ? string.Join(" & ", dataupo.Select(upodate => $" {upodate.date.Value.Date.ToString("dd MMM yyyy")}").Distinct()) : ""
+                    UnitPaymentOrderDate = dataupo != null ? string.Join(" & ", dataupo.Select(upodate => $" {upodate.date.Value.Date.ToString("dd MMM yyyy")}").Distinct()) : "",
+                    DONo = dataupo != null ? string.Join(" & ", dono.Distinct()) : "",
+                    UrnNo = dataupo != null ? string.Join(" & ", urnno.Distinct()) : "",
 
 
 
@@ -432,7 +444,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             }
             foreach (var i in result)
             {
-                i.ExternalPurchaseOrderNo = i.ExternalPurchaseOrderNo.Contains("-") ? "-" : i.ExternalPurchaseOrderNo;
+                i.ExternalPurchaseOrderNo = i.ExternalPurchaseOrderNo == "" ? "-" : i.ExternalPurchaseOrderNo;
             }
             return new PurchasingDispositionBaseResponseViewModel
             {

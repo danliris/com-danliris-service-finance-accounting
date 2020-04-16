@@ -51,5 +51,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
         public string UnitPaymentOrderDate { get; set; }
         public string UnitPaymentOrderNo { get; set; }
         public double CurrencyRate { get; set; }
+        public string DONo { get; set; }
+        public string UrnNo { get; set; }
     }
 }
