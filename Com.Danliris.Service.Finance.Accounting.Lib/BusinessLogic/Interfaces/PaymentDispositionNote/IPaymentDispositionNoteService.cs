@@ -9,6 +9,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
 {
     public interface IPaymentDispositionNoteService : IBaseService<PaymentDispositionNoteModel>
     {
-        ReadResponse<PaymentDispositionNoteDetailModel> ReadDetailsByEPOId(string epoId);
+        ReadResponse<PaymentDispositionNoteItemModel> ReadDetailsByEPOId(string epoId);
     }
 }
