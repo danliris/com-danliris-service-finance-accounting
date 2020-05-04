@@ -71,6 +71,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
         }
 
         [Fact]
+        public async Task Should_Success_Get_Read_Data()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataById();
+            var Response = service.Read(1, 25, "{}", null, data.Code, "{}");
+            Assert.NotNull(Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Update_Data()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            SalesReceiptModel model = await _dataUtil(service).GetTestDataById();
+            var newModel = await service.ReadByIdAsync(model.Id);
+            var Response = await service.UpdateAsync(newModel.Id, newModel);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Delete_Data()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            SalesReceiptModel model = await _dataUtil(service).GetTestDataById();
+            var newModel = await service.ReadByIdAsync(model.Id);
+
+            var Response = await service.DeleteAsync(newModel.Id);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
         public void Should_No_Error_Validate_Data()
         {
             SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
