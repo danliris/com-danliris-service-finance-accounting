@@ -35,5 +35,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.NewIntegration
 
         }
 
+        [Fact]
+        public void Succes_Instantiate_NewUnitViewModel()
+        {
+            int id = 1;
+            string code = "code test";
+            string name = "name test";
+
+            DivisionViewModel divison = new DivisionViewModel();
+            divison.Id = "Id test";
+            divison.Code = "Code Test";
+            divison.Name = "Name test";
+
+            NewUnitViewModel uvm = new NewUnitViewModel();
+            uvm.Id = 1;
+            uvm.Name = name;
+            uvm.Code = code;
+            uvm.Division = divison;
+
+
+            Assert.Equal(id, uvm.Id);
+            Assert.Equal(name, uvm.Name);
+            Assert.Equal(code, uvm.Code);
+            Assert.NotNull(uvm.Division);
+
+
+        }
+
     }
 }

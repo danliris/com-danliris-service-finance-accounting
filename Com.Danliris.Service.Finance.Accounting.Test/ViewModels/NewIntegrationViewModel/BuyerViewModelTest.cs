@@ -34,16 +34,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.NewIntegration
             int id = 1;
             string nama = "name test";
             string code = "code test";
+            string address = "address test";
 
             NewBuyerViewModel nbvm = new NewBuyerViewModel();
 
             nbvm.Id = 1;
             nbvm.Name = nama;
             nbvm.Code = code;
+            nbvm.Address = address;
 
             Assert.Equal(id, nbvm.Id);
             Assert.Equal(nama, nbvm.Name);
             Assert.Equal(code, nbvm.Code);
+            Assert.Equal(address, nbvm.Address);
 
         }
     }
