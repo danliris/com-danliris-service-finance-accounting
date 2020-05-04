@@ -14,17 +14,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.NewIntegration
         public void Should_Succes_Instantiate_BuyerViewModel()
         {
             string id= "id test";
-            string nama =  "name test" ;
+            string nama =  "name test";
             string code = "name test";
+            string address = "address test";
 
             BuyerViewModel bvm = new BuyerViewModel();
             bvm.Id = id;
             bvm.Name = nama;
             bvm.Code = code;
+            bvm.Address = address;
 
             Assert.Equal(id, bvm.Id);
             Assert.Equal(nama, bvm.Name);
             Assert.Equal(code, bvm.Code);
+            Assert.Equal(address, bvm.Address);
 
         }
 

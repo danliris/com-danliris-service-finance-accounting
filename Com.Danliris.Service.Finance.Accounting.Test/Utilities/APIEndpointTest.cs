@@ -19,6 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Utilities
             string purchasing = "Purchasing test";
             string finishing = "Finishing test";
             string finance = "Finance test";
+            string sales = "Sales test";
 
             APIEndpoint.Core = core;
             APIEndpoint.Inventory = inventory;
@@ -26,14 +27,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Utilities
             APIEndpoint.Purchasing = purchasing;
             APIEndpoint.Finishing = finishing;
             APIEndpoint.Finance = finance;
+            APIEndpoint.Sales = sales;
 
             Assert.Equal(core, APIEndpoint.Core);
             Assert.Equal(inventory, APIEndpoint.Inventory);
             Assert.Equal(production, APIEndpoint.Production);
             Assert.Equal(purchasing, APIEndpoint.Purchasing);
             Assert.Equal(finishing, APIEndpoint.Finishing);
-            Assert.Equal(finance,APIEndpoint.Finance);
-            
+            Assert.Equal(finance, APIEndpoint.Finance);
+            Assert.Equal(sales, APIEndpoint.Sales);
+
         }
         
     }
