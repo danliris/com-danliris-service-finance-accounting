@@ -1,46 +1,48 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.SalesReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.SalesReceipt;
-using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Utils;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.SalesReceipt;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.SalesReceipt
 {
-    public class SalesReceiptDataUtil : BaseDataUtil<SalesReceiptService, SalesReceiptModel>
+    public class SalesReceiptDataUtil
     {
-        public SalesReceiptDataUtil(SalesReceiptService service) : base(service)
+        private readonly SalesReceiptService Service;
+
+        public SalesReceiptDataUtil(SalesReceiptService service)
         {
+            Service = service;
         }
 
-        public override async Task<SalesReceiptModel> GetNewData()
+        public SalesReceiptModel GetNewData()
         {
-            var data = await base.GetNewData();
-
-            data.Code = "code";
-            data.AutoIncreament = 1;
-            data.SalesReceiptNo = "SalesReceiptNo";
-            data.SalesReceiptDate = DateTimeOffset.UtcNow;
-            data.UnitId = 1;
-            data.UnitName = "Dying";
-            data.BuyerId = 1;
-            data.BuyerName = "BuyerName";
-            data.BuyerAddress = "BuyerAddress";
-            data.OriginAccountNumber = "OriginAccountNumber";
-            data.CurrencyId = 1;
-            data.CurrencyCode = "CurrencyCode";
-            data.CurrencySymbol = "CurrencySymbol";
-            data.CurrencyRate = 1;
-            data.BankId = 1;
-            data.AccountName = "AccountName";
-            data.AccountNumber = "AccountNumber";
-            data.BankName = "BankName";
-            data.BankCode = "BankCode";
-            data.AdministrationFee = 1;
-            data.TotalPaid = 1;
-
-            data.SalesReceiptDetails = new List<SalesReceiptDetailModel>()
+            SalesReceiptModel TestData = new SalesReceiptModel()
+            {
+                Code = "code",
+                AutoIncreament = 1,
+                SalesReceiptNo = "SalesReceiptNo",
+                SalesReceiptDate = DateTimeOffset.UtcNow,
+                UnitId = 1,
+                UnitName = "Dying",
+                BuyerId = 1,
+                BuyerName = "BuyerName",
+                BuyerAddress = "BuyerAddress",
+                OriginAccountNumber = "OriginAccountNumber",
+                CurrencyId = 1,
+                CurrencyCode = "CurrencyCode",
+                CurrencySymbol = "CurrencySymbol",
+                CurrencyRate = 1,
+                BankId = 1,
+                AccountName = "AccountName",
+                AccountNumber = "AccountNumber",
+                BankName = "BankName",
+                BankCode = "BankCode",
+                AdministrationFee = 1,
+                TotalPaid = 1,
+                SalesReceiptDetails = new List<SalesReceiptDetailModel>()
                 {
                     new SalesReceiptDetailModel()
                     {
@@ -60,10 +62,83 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.SalesReceipt
                         Unpaid = 8000,
                         OverPaid = 0,
                         IsPaidOff = false,
-
                     }
-                };
-            return data;
+                }
+            };
+
+            return TestData;
+        }
+
+        public SalesReceiptViewModel GetDataToValidate()
+        {
+            SalesReceiptViewModel TestData = new SalesReceiptViewModel()
+            {
+                SalesReceiptDate = DateTimeOffset.UtcNow.AddDays(-1),
+                Unit = new NewUnitViewModel()
+                {
+                    Id = 0,
+                    Name = "",
+                },
+                Buyer = new NewBuyerViewModel()
+                {
+                    Id = 0,
+                    Name = "",
+                    Address = "",
+                },
+                OriginAccountNumber = "",
+                Currency = new CurrencyViewModel()
+                {
+                    Id = 0,
+                    Code = "",
+                    Symbol = "",
+                    Rate = 0,
+                },
+                Bank = new AccountBankViewModel()
+                {
+                    Id = 0,
+                    AccountName = "",
+                    AccountNumber = "",
+                    BankName = "",
+                    Code = "",
+                },
+                AdministrationFee = -1,
+                TotalPaid = -1,
+                SalesReceiptDetails = new List<SalesReceiptDetailViewModel>{
+                        new SalesReceiptDetailViewModel{
+                            Id = 0,
+                            SalesInvoice = new SalesInvoiceViewModel()
+                            {
+                                Id = 0,
+                                SalesInvoiceNo = "",
+                                Currency = new CurrencyViewModel()
+                                {
+                                    Id = 0,
+                                    Code = "",
+                                    Symbol = "",
+                                    Rate = 0,
+                                },
+                            },
+                            DueDate = DateTimeOffset.UtcNow.AddDays(-1),
+                            VatType = "",
+                            Tempo = -1,
+                            TotalPayment = -1,
+                            TotalPaid = -1,
+                            Paid = -1,
+                            Nominal = -1,
+                            Unpaid = -1,
+                            IsPaidOff = false
+                        }
+                    }
+            };
+
+            return TestData;
+        }
+
+        public async Task<SalesReceiptModel> GetTestDataById()
+        {
+            SalesReceiptModel model = GetNewData();
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
         }
     }
 }

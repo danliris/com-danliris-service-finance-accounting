@@ -1,13 +1,23 @@
 ﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.SalesReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.SalesReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.SalesReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.SalesReceipt;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.SalesReceipt;
+using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
@@ -16,11 +26,109 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
     {
         private const string ENTITY = "SalesReceipt";
 
-        protected SalesReceiptDataUtil DataUtil(SalesReceiptService service)
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public string GetCurrentMethod()
         {
-            var SalesReceiptDataUtil = new SalesReceiptDataUtil(service);
+            StackTrace st = new StackTrace();
+            StackFrame sf = st.GetFrame(1);
 
-            return SalesReceiptDataUtil;
+            return string.Concat(sf.GetMethod().Name, "_", ENTITY);
+        }
+
+        private FinanceDbContext _dbContext(string testName)
+        {
+            DbContextOptionsBuilder<FinanceDbContext> optionsBuilder = new DbContextOptionsBuilder<FinanceDbContext>();
+            optionsBuilder
+                .UseInMemoryDatabase(testName)
+                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+
+            FinanceDbContext dbContext = new FinanceDbContext(optionsBuilder.Options);
+
+            return dbContext;
+        }
+
+        private SalesReceiptDataUtil _dataUtil(SalesReceiptService service)
+        {
+            return new SalesReceiptDataUtil(service);
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_Data_By_Id()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            SalesReceiptModel model = await _dataUtil(service).GetTestDataById();
+            var Response = await service.ReadByIdAsync(model.Id);
+            Assert.NotNull(Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Data()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            SalesReceiptModel model = _dataUtil(service).GetNewData();
+            var Response = await service.CreateAsync(model);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public void Should_No_Error_Validate_Data()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            SalesReceiptViewModel vm = _dataUtil(service).GetDataToValidate();
+
+            Assert.True(vm.Validate(null).Count() == 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_Data()
+        {
+            SalesReceiptViewModel vm = new SalesReceiptViewModel();
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private Mock<IServiceProvider> GetServiceProvider()
+        {
+            var serviceProvider = new Mock<IServiceProvider>();
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientTestService());
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+
+            return serviceProvider;
         }
 
         [Fact]

@@ -3,10 +3,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.SalesReceipt;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 {

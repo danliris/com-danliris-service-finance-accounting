@@ -5,7 +5,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationV
     {
         public int Id { get; set; }
         public string SalesInvoiceNo { get; set; }
-        public string vatType { get; set; }
+        public string VatType { get; set; }
         public CurrencyViewModel Currency { get; set; }
     }
 }

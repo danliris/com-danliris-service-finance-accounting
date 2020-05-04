@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
+﻿namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
 {
     public class APIEndpoint
     {

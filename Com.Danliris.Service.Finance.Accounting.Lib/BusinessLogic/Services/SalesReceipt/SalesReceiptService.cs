@@ -105,13 +105,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
                     {
                         SalesReceiptModel salesReceiptModel = new SalesReceiptModel();
 
-                        //foreach (var item in model.SalesReceiptDetails)
-                        //{
-                        //    var updateToSalesInvoice = _DbContext.SalesInvoices.FirstOrDefault(x => x.Id == item.SalesInvoiceId);
-                        //    updateToSalesInvoice.TotalPaid = updateToSalesInvoice.TotalPaid - item.Nominal;
-                        //    updateToSalesInvoice.IsPaidOff = false;
-                        //}
-
                         salesReceiptModel = model;
 
                         model = await ReadByIdAsync(id);
