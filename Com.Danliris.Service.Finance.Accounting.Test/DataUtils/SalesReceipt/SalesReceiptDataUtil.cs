@@ -73,60 +73,71 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.SalesReceipt
         {
             SalesReceiptViewModel TestData = new SalesReceiptViewModel()
             {
-                SalesReceiptDate = DateTimeOffset.UtcNow.AddDays(-1),
+                Code = "code",
+                AutoIncreament = 1,
+                SalesReceiptNo = "SalesReceiptNo",
+                SalesReceiptDate = DateTimeOffset.UtcNow,
+                OriginAccountNumber = "OriginAccountNumber",
+                AdministrationFee = 1,
+                TotalPaid = 1,
                 Unit = new NewUnitViewModel()
                 {
-                    Id = 0,
-                    Name = "",
+                    Id = 1,
+                    Name = "UnitName",
                 },
                 Buyer = new NewBuyerViewModel()
                 {
-                    Id = 0,
-                    Name = "",
-                    Address = "",
+                    Id = 1,
+                    Name = "BuyerName",
+                    Address = "BuyerAddress",
                 },
-                OriginAccountNumber = "",
                 Currency = new CurrencyViewModel()
                 {
-                    Id = 0,
-                    Code = "",
-                    Symbol = "",
-                    Rate = 0,
+                    Id = 1,
+                    Code = "CurrencyCode",
+                    Symbol = "CurrencySymbol",
+                    Rate = 10,
                 },
                 Bank = new AccountBankViewModel()
                 {
-                    Id = 0,
-                    AccountName = "",
-                    AccountNumber = "",
-                    BankName = "",
+                    Id = 1,
+                    AccountName = "AccountName",
+                    AccountNumber = "AccountNumber",
+                    BankName = "BankName",
                     Code = "",
                 },
-                AdministrationFee = -1,
-                TotalPaid = -1,
                 SalesReceiptDetails = new List<SalesReceiptDetailViewModel>{
                         new SalesReceiptDetailViewModel{
-                            Id = 0,
+                            Id = 10,
+                            DueDate = DateTimeOffset.UtcNow,
+                            VatType = "PPN BUMN",
+                            Tempo = 16,
+                            TotalPayment = 10000,
+                            TotalPaid = 1000,
+                            Paid = 1000,
+                            Nominal = 1000,
+                            Unpaid = 8000,
+                            OverPaid = 0,
+                            IsPaidOff = false,
                             SalesInvoice = new SalesInvoiceViewModel()
                             {
-                                Id = 0,
-                                SalesInvoiceNo = "",
+                                Id = 10,
+                                SalesInvoiceNo = "SalesInvoiceNo",
                                 Currency = new CurrencyViewModel()
                                 {
-                                    Id = 0,
-                                    Code = "",
-                                    Symbol = "",
-                                    Rate = 0,
+                                    Id = 1,
+                                    Code = "CurrencyCode",
+                                    Symbol = "CurrencySymbol",
+                                    Rate = 10,
                                 },
                             },
-                            DueDate = DateTimeOffset.UtcNow.AddDays(-1),
-                            VatType = "",
-                            Tempo = -1,
-                            TotalPayment = -1,
-                            TotalPaid = -1,
-                            Paid = -1,
-                            Nominal = -1,
-                            Unpaid = -1,
-                            IsPaidOff = false
+                            Currency = new CurrencyViewModel()
+                                {
+                                    Id = 1,
+                                    Code = "CurrencyCode",
+                                    Symbol = "CurrencySymbol",
+                                    Rate = 10,
+                                },
                         }
                     }
             };

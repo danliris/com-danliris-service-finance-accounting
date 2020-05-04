@@ -202,6 +202,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
                                     Rate = 0,
                                 },
                             },
+                            Currency = new CurrencyViewModel()
+                            {
+                                Id = 0,
+                                Code = "",
+                                Symbol = "",
+                                Rate = 0,
+                            },
                             DueDate = DateTimeOffset.UtcNow.AddDays(-1),
                             VatType = "",
                             Tempo = -1,
