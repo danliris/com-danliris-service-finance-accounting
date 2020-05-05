@@ -15,7 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.SalesReceipt
     public class SalesReceiptControllerTest : BaseControllerTest<SalesReceiptController, SalesReceiptModel, SalesReceiptViewModel, ISalesReceiptService>
     {
         [Fact]
-        public void Get_Sales_Receipt_PDF_Success()
+        public void Get_Sales_Receipt_PDF_Success_Currency_IDR()
         {
             var vm = new SalesReceiptViewModel()
             {
@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.SalesReceipt
                 {
                     Code = "IDR",
                     Symbol = "Rp",
-                    Rate = 14000,
+                    Rate = 1,
                 },
                 Bank = new AccountBankViewModel()
                 {
@@ -51,7 +51,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.SalesReceipt
                             {
                                 Code = "IDR",
                                 Symbol = "Rp",
-                                Rate = 14000,
+                                Rate = 1,
                             },
                         },
                     }
@@ -66,7 +66,60 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.SalesReceipt
             var response = controller.GetSalesReceiptPDF(1).Result;
 
             Assert.NotNull(response);
+        }
 
+        [Fact]
+        public void Get_Sales_Receipt_PDF_Success_Currency_Not_IDR()
+        {
+            var vm = new SalesReceiptViewModel()
+            {
+                SalesReceiptDate = DateTimeOffset.Now,
+                Unit = new NewUnitViewModel()
+                {
+                    Name = "Name",
+                },
+                Buyer = new NewBuyerViewModel()
+                {
+                    Name = "Name",
+                    Address = "Address",
+                },
+                Currency = new CurrencyViewModel()
+                {
+                    Code = "USD",
+                    Symbol = "$",
+                    Rate = 14447,
+                },
+                Bank = new AccountBankViewModel()
+                {
+                    BankName = "BCA",
+                },
+                SalesReceiptDetails = new List<SalesReceiptDetailViewModel>()
+                {
+                    new SalesReceiptDetailViewModel()
+                    {
+                        VatType = "PPN BUMN",
+                        SalesInvoice = new SalesInvoiceViewModel()
+                        {
+                            SalesInvoiceNo = "no",
+                            Currency = new CurrencyViewModel()
+                            {
+                                Code = "USD",
+                                Symbol = "$",
+                                Rate = 14447,
+                            },
+                        },
+                    }
+                }
+
+            };
+            var mocks = GetMocks();
+            mocks.Service.Setup(x => x.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(Model);
+            mocks.Mapper.Setup(s => s.Map<SalesReceiptViewModel>(It.IsAny<SalesReceiptModel>()))
+                .Returns(vm);
+            var controller = GetController(mocks);
+            var response = controller.GetSalesReceiptPDF(1).Result;
+
+            Assert.NotNull(response);
         }
 
         [Fact]

@@ -31,11 +31,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.SalesRec
         [HttpGet("pdf/{Id}")]
         public async Task<IActionResult> GetSalesReceiptPDF([FromRoute] int Id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
                 var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
