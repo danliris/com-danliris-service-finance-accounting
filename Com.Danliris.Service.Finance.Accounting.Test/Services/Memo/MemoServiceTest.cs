@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Memo;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Memo;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.Memo;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -127,6 +129,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
         }
 
         [Fact]
+        public async Task Should_Success_Update_Model_Remove_Items()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new MemoService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new MemoDataUtil(service);
+            var modelToUpdate = await dataUtil.GetCreatedData();
+            modelToUpdate.Items = new List<MemoItemModel>();
+            modelToUpdate.Items.Add(new MemoItemModel()
+            {
+                CurrencyCode = "CurrencyCode",
+                CurrencyId = 1,
+                CurrencyRate = 1,
+                Interest = 1,
+                PaymentAmount = 1
+            });
+
+            var result = await service.UpdateAsync(modelToUpdate.Id, modelToUpdate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Read_Data()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
@@ -152,6 +177,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
             var result = await service.ReadByIdAsync(data.Id);
 
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Should_Success_MapToViewModel()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new MemoService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new MemoDataUtil(service);
+            var data = await dataUtil.GetCreatedData();
+
+            var result = await service.ReadByIdAsync(data.Id);
+
+            Mapper.Initialize(mapper => mapper.AddProfile<MemoProfile>());
+            Mapper.AssertConfigurationIsValid();
+            var viewModel = Mapper.Map<MemoViewModel>(result);
+            Assert.NotNull(viewModel);
+            var model = Mapper.Map<MemoModel>(viewModel);
+            Assert.NotNull(model);
         }
 
         [Fact]
