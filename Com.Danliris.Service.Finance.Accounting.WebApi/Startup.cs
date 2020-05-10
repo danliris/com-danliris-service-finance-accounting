@@ -16,6 +16,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBa
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Memo;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNotVerifiedReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
@@ -91,6 +92,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IOthersExpenditureProofDocumentService, OthersExpenditureProofDocumentService>()
                 .AddTransient<IAutoJournalService, AutoJournalService>()
                 .AddTransient<IAutoDailyBankTransactionService, AutoDailyBankTransactionService>()
+                .AddTransient<IMemoService, MemoService>()
                 .AddTransient<ISalesReceiptService, SalesReceiptService>();
         }
 

@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.Memo;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
@@ -46,6 +47,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
         public DbSet<SalesReceiptModel> SalesReceipts { get; set; }
         public DbSet<SalesReceiptDetailModel> SalesReceiptDetails { get; set; }
+
+        public DbSet<MemoModel> Memos { get; set; }
+        public DbSet<MemoItemModel> MemoItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
