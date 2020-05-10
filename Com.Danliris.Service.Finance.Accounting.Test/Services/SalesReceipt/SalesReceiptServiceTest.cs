@@ -118,33 +118,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         private Mock<IServiceProvider> GetServiceProvider()
         {
             var serviceProvider = new Mock<IServiceProvider>();
@@ -386,6 +359,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
                 var defaultValidationResult = viewModel.Validate(null);
                 Assert.True(defaultValidationResult.Count() > 0);
             }
+        }
+
+        [Fact]
+        public async Task Should_Success_GetSalesInvoice()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataById();
+            var Response = service.GetSalesInvoice(new SalesInvoicePostForm()
+            {
+                SalesInvoiceIds = data.SalesReceiptDetails.Select(s => (long)s.SalesInvoiceId).ToList()
+            });
+            Assert.NotEmpty(Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetReport()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataById();
+            var Response = service.GetReport(data.SalesReceiptDate.AddDays(-1), data.SalesReceiptDate.AddDays(1), 7);
+            Assert.NotEmpty(Response);
+
+            Response = service.GetReport(data.SalesReceiptDate.AddDays(-1), null, 7);
+            Assert.NotEmpty(Response);
+
+            Response = service.GetReport(null, data.SalesReceiptDate.AddDays(1), 7);
+            Assert.NotEmpty(Response);
+
+            Response = service.GetReport(null, null, 7);
+            Assert.NotEmpty(Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_GenerateExcel()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataById();
+            var Response = service.GenerateExcel(data.SalesReceiptDate.AddDays(-1), data.SalesReceiptDate.AddDays(1), 7);
+            Assert.NotNull(Response);
+
+            Response = service.GenerateExcel(data.SalesReceiptDate.AddDays(-2), data.SalesReceiptDate.AddDays(-1), 7);
+            Assert.NotNull(Response);
         }
     }
 }
