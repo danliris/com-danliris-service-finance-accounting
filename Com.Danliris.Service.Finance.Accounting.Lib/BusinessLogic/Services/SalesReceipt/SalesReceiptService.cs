@@ -307,15 +307,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
 
             if (dateFrom.HasValue && dateTo.HasValue)
             {
-                query = query.Where(s => dateFrom <= s.SalesReceiptDate && s.SalesReceiptDate <= dateTo);
+                query = query.Where(s => dateFrom.Value.Date <= s.SalesReceiptDate.AddHours(offSet).Date && s.SalesReceiptDate.AddHours(offSet).Date <= dateTo.Value.Date);
             }
             else if (dateFrom.HasValue && !dateTo.HasValue)
             {
-                query = query.Where(s => dateFrom <= s.SalesReceiptDate);
+                query = query.Where(s => dateFrom.Value.Date <= s.SalesReceiptDate.AddHours(offSet).Date);
             }
             else if (!dateFrom.HasValue && dateTo.HasValue)
             {
-                query = query.Where(s => s.SalesReceiptDate <= dateTo);
+                query = query.Where(s => s.SalesReceiptDate.AddHours(offSet).Date <= dateTo.Value.Date);
             }
 
             var result = query.OrderBy(s => s.SalesReceiptDate)
