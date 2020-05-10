@@ -65,5 +65,78 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.SalesRec
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+
+        [HttpPost("sales-invoice-report")]
+        public IActionResult GetSalesInvoiceData([FromBody] SalesInvoicePostForm dataForm)
+        {
+            try
+            {
+                var data = Service.GetSalesInvoice(dataForm);
+
+                return Ok(data);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("reports")]
+        public IActionResult GetReportAll(DateTimeOffset? dateFrom, DateTimeOffset? dateTo)
+        {
+            int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+            try
+            {
+                VerifyUser();
+                var data = Service.GetReport(dateFrom, dateTo, offset);
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data,
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("reports/xls")]
+        public IActionResult GetXlsAll(DateTimeOffset? dateFrom, DateTimeOffset? dateTo)
+        {
+
+            try
+            {
+                VerifyUser();
+                byte[] xlsInBytes;
+                int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+                var xls = Service.GenerateExcel(dateFrom, dateTo, offset);
+
+                string filename = "Laporan Kwitansi.xlsx";
+
+                xlsInBytes = xls.ToArray();
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }

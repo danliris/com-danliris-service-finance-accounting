@@ -15,6 +15,10 @@ using System.Net.Http;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using System.Text;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.SalesReceipt;
+using System.IO;
+using System.Data;
+using System.Globalization;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.SalesReceipt
 {
@@ -278,6 +282,87 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
             {
                 throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, APIEndpoint.Purchasing));
             }
+        }
+
+        public List<SalesInvoiceReportSalesReceiptViewModel> GetSalesInvoice(SalesInvoicePostForm dataForm)
+        {
+            var query = _DetailDbSet.Include(s => s.SalesReceiptModel).Where(s => dataForm.SalesInvoiceIds.Contains(s.SalesInvoiceId))
+                .Select(s => new SalesInvoiceReportSalesReceiptViewModel()
+                {
+                    CurrencySymbol = s.CurrencySymbol,
+                    SalesInvoiceId = s.SalesInvoiceId,
+                    Nominal = s.Nominal,
+                    SalesReceiptDate = s.SalesReceiptModel.SalesReceiptDate,
+                    SalesReceiptNo = s.SalesReceiptModel.SalesReceiptNo,
+                    TotalPaid = s.TotalPaid,
+                    UnPaid = s.Unpaid
+                }).ToList();
+
+            return query;
+        }
+
+        private IQueryable<SalesReceiptReportViewModel> GetReportQuery(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
+        {
+            var query = _DbSet.AsQueryable();
+
+            if (dateFrom.HasValue && dateTo.HasValue)
+            {
+                query = query.Where(s => dateFrom <= s.SalesReceiptDate && s.SalesReceiptDate <= dateTo);
+            }
+            else if (dateFrom.HasValue && !dateTo.HasValue)
+            {
+                query = query.Where(s => dateFrom <= s.SalesReceiptDate);
+            }
+            else if (!dateFrom.HasValue && dateTo.HasValue)
+            {
+                query = query.Where(s => s.SalesReceiptDate <= dateTo);
+            }
+
+            var result = query.OrderBy(s => s.SalesReceiptDate)
+                .Select(s => new SalesReceiptReportViewModel()
+                {
+                    Buyer = s.BuyerName,
+                    SalesReceiptDate = s.SalesReceiptDate,
+                    CurrencyCode = s.CurrencyCode,
+                    TotalPaid = s.TotalPaid,
+                    SalesReceiptNo = s.SalesReceiptNo
+                });
+
+            return result;
+        }
+
+        public List<SalesReceiptReportViewModel> GetReport(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
+        {
+            var data = GetReportQuery(dateFrom, dateTo, offSet);
+
+            return data.ToList();
+        }
+
+        public MemoryStream GenerateExcel(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
+        {
+            var data = GetReportQuery(dateFrom, dateTo, offSet);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add(new DataColumn() { ColumnName = "No Kwitansi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Pembayaran", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah Pembayaran", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Buyer", DataType = typeof(string) });
+
+            if (data.Count() == 0)
+            {
+                dt.Rows.Add("", "", "", "", "");
+            }
+            else
+            {
+                foreach (var item in data)
+                {
+                    dt.Rows.Add(item.SalesReceiptNo, item.SalesReceiptDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.TotalPaid,
+                        item.CurrencyCode, item.Buyer);
+                }
+            }
+
+            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Bukti Pembayaran Faktur") }, true);
         }
     }
 }
