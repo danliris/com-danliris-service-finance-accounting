@@ -85,10 +85,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.SalesRec
         }
 
         [HttpGet("reports")]
-        public IActionResult GetReportAll(DateTimeOffset? dateFrom, DateTimeOffset? dateTo)
+        public IActionResult GetReportAll(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         {
-            int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
-
+            //int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+            int offset = Convert.ToInt32(timezone);
             try
             {
                 VerifyUser();
@@ -112,15 +112,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.SalesRec
         }
 
         [HttpGet("reports/xls")]
-        public IActionResult GetXlsAll(DateTimeOffset? dateFrom, DateTimeOffset? dateTo)
+        public IActionResult GetXlsAll(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         {
 
             try
             {
                 VerifyUser();
                 byte[] xlsInBytes;
-                int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
-
+                //int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                int offset = Convert.ToInt32(timezone);
                 var xls = Service.GenerateExcel(dateFrom, dateTo, offset);
 
                 string filename = "Laporan Kwitansi.xlsx";

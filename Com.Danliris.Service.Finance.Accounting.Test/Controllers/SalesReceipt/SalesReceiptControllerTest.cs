@@ -182,7 +182,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.SalesReceipt
                 .Returns(new List<SalesReceiptReportViewModel>());
 
             var controller = GetController(mocks);
-            var response = controller.GetReportAll(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+            var response = controller.GetReportAll(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
@@ -196,7 +196,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.SalesReceipt
                 .Throws(new Exception());
 
             var controller = GetController(mocks);
-            var response = controller.GetReportAll(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+            var response = controller.GetReportAll(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
@@ -210,7 +210,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.SalesReceipt
                 .Returns(new System.IO.MemoryStream());
 
             var controller = GetController(mocks);
-            var response = controller.GetXlsAll(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+            var response = controller.GetXlsAll(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
             Assert.NotNull(response);
         }
 
@@ -222,7 +222,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.SalesReceipt
                .Throws(new Exception());
 
             var controller = GetController(mocks);
-            var response = controller.GetXlsAll(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+            var response = controller.GetXlsAll(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
