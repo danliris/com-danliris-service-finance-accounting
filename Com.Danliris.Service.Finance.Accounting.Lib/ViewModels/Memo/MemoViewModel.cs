@@ -56,7 +56,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Memo
                         ItemsError += "'PaymentAmount': 'Jumlah Pembayaran harus lebih besar dari 0', ";
                     }
 
-                    if (item.Interest.GetValueOrDefault() <= 0)
+                    if (item.Interest.GetValueOrDefault() < 0)
                     {
                         CountItemsError++;
                         ItemsError += "'Interest': 'Bunga harus lebih besar dari 0', ";
