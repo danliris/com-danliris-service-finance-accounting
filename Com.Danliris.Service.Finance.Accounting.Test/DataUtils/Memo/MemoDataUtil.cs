@@ -21,7 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Memo
         {
             return new MemoViewModel()
             {
-                
+
                 SalesInvoice = new SalesInvoice()
                 {
                     Id = 0,
@@ -38,6 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Memo
                 {
                     new MemoItemViewModel()
                     {
+                        Interest = -1
                     },
                     new MemoItemViewModel()
                     {
