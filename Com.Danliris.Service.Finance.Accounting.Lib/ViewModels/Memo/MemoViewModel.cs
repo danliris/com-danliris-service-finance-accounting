@@ -11,7 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Memo
         public SalesInvoice SalesInvoice { get; set; }
         public string MemoType { get; set; }
         public DateTimeOffset? Date { get; set; }
-        public Buyer Buyer { get; set; }
+        
         public Unit Unit { get; set; }
         public string Remark { get; set; }
         public List<MemoItemViewModel> Items { get; set; }
@@ -26,8 +26,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Memo
             if (Date == null)
                 yield return new ValidationResult("Tanggal harus diisi", new List<string> { "Date" });
 
-            if (Buyer == null || Buyer.Id.GetValueOrDefault() <= 0)
-                yield return new ValidationResult("Buyer harus diisi", new List<string> { "Buyer" });
+            //if (Buyer == null || Buyer.Id.GetValueOrDefault() <= 0)
+            //    yield return new ValidationResult("Buyer harus diisi", new List<string> { "Buyer" });
 
             if (Unit == null || Unit.Id.GetValueOrDefault() <= 0)
                 yield return new ValidationResult("Unit harus diisi", new List<string> { "Unit" });
@@ -59,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Memo
                     if (item.Interest.GetValueOrDefault() < 0)
                     {
                         CountItemsError++;
-                        ItemsError += "'Interest': 'Bunga harus lebih besar dari 0', ";
+                        ItemsError += "'Interest': 'Bunga harus lebih besar atau sama dengan 0', ";
                     }
 
                     ItemsError += "}, ";

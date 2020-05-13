@@ -15,9 +15,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Memo
                 .ForPath(d => d.SalesInvoice.Id, opt => opt.MapFrom(s => s.SalesInvoiceId))
                 .ForPath(d => d.SalesInvoice.SalesInvoiceNo, opt => opt.MapFrom(s => s.SalesInvoiceNo))
 
-                .ForPath(d => d.Buyer.Id, opt => opt.MapFrom(s => s.BuyerId))
-                .ForPath(d => d.Buyer.Code, opt => opt.MapFrom(s => s.BuyerCode))
-                .ForPath(d => d.Buyer.Name, opt => opt.MapFrom(s => s.BuyerName))
+                .ForPath(d => d.SalesInvoice.Buyer.Id, opt => opt.MapFrom(s => s.BuyerId))
+                .ForPath(d => d.SalesInvoice.Buyer.Code, opt => opt.MapFrom(s => s.BuyerCode))
+                .ForPath(d => d.SalesInvoice.Buyer.Name, opt => opt.MapFrom(s => s.BuyerName))
 
                 .ForPath(d => d.Unit.Id, opt => opt.MapFrom(s => s.UnitId))
                 .ForPath(d => d.Unit.Code, opt => opt.MapFrom(s => s.UnitCode))
