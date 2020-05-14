@@ -54,16 +54,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
                         model.Code = CodeGenerator.Generate();
                     }
                     while (_DbSet.Any(d => d.Code.Equals(model.Code)));
+                    model.SalesReceiptDetails = model.SalesReceiptDetails.Where(s => s.Nominal > 0).ToList();
 
                     SalesReceiptNumberGenerator(model, index);
 
-                    if (model.SalesReceiptDetails.Count > 0)
+                    foreach (var detail in model.SalesReceiptDetails)
                     {
-                        foreach (var detail in model.SalesReceiptDetails)
-                        {
-                            EntityExtension.FlagForCreate(detail, _IdentityService.Username, _UserAgent);
-                        }
+                        EntityExtension.FlagForCreate(detail, _IdentityService.Username, _UserAgent);
                     }
+
+                    //if (model.SalesReceiptDetails.Count > 0)
+                    //{
+                    //    foreach (var detail in model.SalesReceiptDetails)
+                    //    {
+                    //        if(detail.Nominal > 0)
+                    //        {
+                    //            EntityExtension.FlagForCreate(detail, _IdentityService.Username, _UserAgent);
+                    //        }
+                    //    }
+                    //}
 
                     EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
                     _DbSet.Add(model);
