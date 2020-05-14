@@ -52,7 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.SalesReceipt
             if (TotalPaid <= 0)
                 yield return new ValidationResult("Total Paid kosong", new List<string> { "TotalPaid" });
 
-            if (SalesReceiptDetails.Count > 0 && SalesReceiptDetails.All(s => s.Nominal <= 0))
+            if (SalesReceiptDetails != null && SalesReceiptDetails.Count > 0 && SalesReceiptDetails.All(s => s.Nominal <= 0))
                 yield return new ValidationResult("Nominal tidak boleh kosong", new List<string> { "NominalNotNull" });
 
             int Count = 0;
