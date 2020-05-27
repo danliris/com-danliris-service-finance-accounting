@@ -303,6 +303,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Memo
         }
 
         [Fact]
+        public async Task Put_WithValidationException_ReturnBadRequest_Diff_Id()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IMemoService>();
+            serviceMock
+                .Setup(service => service.UpdateAsync(It.IsAny<int>(), It.IsAny<MemoModel>()))
+                .ReturnsAsync(1);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMemoService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            validateServiceMock
+                .Setup(validateService => validateService.Validate(It.IsAny<MemoViewModel>()))
+                .Verifiable();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<MemoModel>(It.IsAny<MemoViewModel>()))
+                .Returns(It.IsAny<MemoModel>());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.Put(1, new MemoViewModel() { Id = 0 });
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
         public async Task Put_WithException_ReturnInternalServerError()
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
