@@ -107,6 +107,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
         }
 
         [Fact]
+        public async Task Should_Success_Create_Same_Buyer_SalesInvoice()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new MemoService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new MemoDataUtil(service);
+            await dataUtil.GetCreatedSalesInvoiceData();
+            var modelToCreate = dataUtil.GetMemoModelToCreate();
+            var result = await service.CreateAsync(modelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Update_Model()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
@@ -127,6 +141,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
 
             Assert.NotEqual(0, result);
         }
+
+        
 
         [Fact]
         public async Task Should_Success_Update_Model_Remove_Items()
@@ -151,6 +167,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
             Assert.NotEqual(0, result);
         }
 
+        
+
         [Fact]
         public async Task Should_Success_Read_Data()
         {
@@ -159,6 +177,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
             var service = new MemoService(dbContext, serviceProviderMock.Object);
             var dataUtil = new MemoDataUtil(service);
             await dataUtil.GetCreatedData();
+
+            var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
+
+            Assert.NotEmpty(result.Data);
+        }
+
+        [Fact]
+        public async Task Should_Success_Read_Data_SalesInvoice()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new MemoService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new MemoDataUtil(service);
+            await dataUtil.GetCreatedSalesInvoiceData();
 
             var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
 
@@ -175,6 +207,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
             var data = await dataUtil.GetCreatedData();
 
             var result = await service.ReadByIdAsync(data.Id);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Read_ById_SalesInvoice()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new MemoService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new MemoDataUtil(service);
+            var data = await dataUtil.GetCreatedSalesInvoiceData();
+
+            var result = await service.ReadBySalesInvoiceAsync(data.SalesInvoiceNo);
 
             Assert.NotNull(result);
         }
@@ -211,5 +257,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
 
             Assert.NotEqual(0, result);
         }
+
+        
     }
 }

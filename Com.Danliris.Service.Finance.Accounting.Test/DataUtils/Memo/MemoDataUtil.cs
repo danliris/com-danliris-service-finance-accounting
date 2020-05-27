@@ -85,5 +85,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Memo
             await _service.CreateAsync(model);
             return await _service.ReadByIdAsync(model.Id);
         }
+
+        public async Task<MemoModel> GetCreatedSalesInvoiceData()
+        {
+            var model = GetMemoModelToCreate();
+            await _service.CreateAsync(model);
+            return await _service.ReadBySalesInvoiceAsync(model.SalesInvoiceNo);
+        }
     }
 }
