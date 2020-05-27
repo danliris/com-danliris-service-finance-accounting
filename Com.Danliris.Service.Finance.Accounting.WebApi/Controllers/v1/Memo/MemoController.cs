@@ -118,11 +118,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Memo
         }
 
         [HttpGet("by-salesinvoiceno/{salesinvoiceno}")]
-        public async Task<IActionResult> GetBySalesInvoice([FromRoute] string salesinvoiceno)
+        public async Task<IActionResult> GetBySalesInvoice([FromRoute] string SalesInvoiceNo)
         {
             try
             {
-                var model = await _service.ReadBySalesInvoiceAsync(salesinvoiceno);
+                var model = await _service.ReadBySalesInvoiceAsync(SalesInvoiceNo);
 
                 if (model == null)
                 {

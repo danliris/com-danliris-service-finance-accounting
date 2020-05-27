@@ -298,7 +298,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
             Assert.NotNull(model);
         }
 
-        
+        [Fact]
+        public async Task Should_Success_MapToViewModel_SalesInvoice()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new MemoService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new MemoDataUtil(service);
+            var data = await dataUtil.GetCreatedSalesInvoiceData();
+
+            var result = await service.ReadBySalesInvoiceAsync(data.SalesInvoiceNo);
+            Assert.NotNull(result);
+        }
+
+
         [Fact]
         public async Task Should_Success_Delete_ById()
         {
