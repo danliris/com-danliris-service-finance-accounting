@@ -4,5 +4,7 @@
     {
         public int? Id { get; set; }
         public string SalesInvoiceNo { get; set; }
+
+        public Buyer Buyer { get; set; }
     }
 }
