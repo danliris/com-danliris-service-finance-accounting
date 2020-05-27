@@ -93,6 +93,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
         }
 
         [Fact]
+        public async Task Should_Success_Create_Model_SalesInvoice()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new MemoService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new MemoDataUtil(service);
+            var modelToCreate = dataUtil.GetMemoModelToCreate_SalesInvoice();
+            var result = await service.CreateAsync(modelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Create_Same_Buyer()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
@@ -114,7 +127,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Memo
             var service = new MemoService(dbContext, serviceProviderMock.Object);
             var dataUtil = new MemoDataUtil(service);
             await dataUtil.GetCreatedSalesInvoiceData();
-            var modelToCreate = dataUtil.GetMemoModelToCreate();
+            var modelToCreate = dataUtil.GetMemoModelToCreate_SalesInvoice();
             var result = await service.CreateAsync(modelToCreate);
 
             Assert.NotEqual(0, result);

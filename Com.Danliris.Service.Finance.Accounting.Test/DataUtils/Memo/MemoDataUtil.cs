@@ -79,6 +79,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Memo
             };
         }
 
+        public MemoModel GetMemoModelToCreate_SalesInvoice()
+        {
+            return new MemoModel()
+            {
+                BuyerCode = "BuyerCode",
+                BuyerId = 1,
+                BuyerName = "BuyerName",
+                Date = DateTime.Now.ToUniversalTime(),
+                Items = new List<MemoItemModel>()
+                {
+                    new MemoItemModel()
+                    {
+                        CurrencyCode = "CurrencyCode",
+                        CurrencyId = 1,
+                        CurrencyRate = 1,
+                        Interest = 1,
+                        PaymentAmount = 1
+                    }
+                },
+                MemoType = "MemoType",
+                SalesInvoiceId = 1,
+                SalesInvoiceNo = "SalesInvoiceNo",
+                UnitCode = "UnitCode",
+                UnitId = 1,
+                UnitName = "UnitName"
+            };
+        }
+
         public async Task<MemoModel> GetCreatedData()
         {
             var model = GetMemoModelToCreate();
@@ -88,7 +116,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.Memo
 
         public async Task<MemoModel> GetCreatedSalesInvoiceData()
         {
-            var model = GetMemoModelToCreate();
+            var model = GetMemoModelToCreate_SalesInvoice();
             await _service.CreateAsync(model);
             return await _service.ReadBySalesInvoiceAsync(model.SalesInvoiceNo);
         }
