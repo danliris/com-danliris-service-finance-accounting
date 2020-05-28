@@ -158,6 +158,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Memo
                     return BadRequest(result);
                 }
 
+
                 var model = _mapper.Map<MemoModel>(viewModel);
 
                 await _service.UpdateAsync(id, model);
