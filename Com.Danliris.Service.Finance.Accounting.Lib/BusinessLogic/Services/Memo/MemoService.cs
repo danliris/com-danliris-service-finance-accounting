@@ -137,6 +137,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             return _dbContext.Memos.Include(entity => entity.Items).Where(entity => entity.Id == id).FirstOrDefaultAsync();
         }
 
+        public Task<MemoModel> ReadBySalesInvoiceAsync(string SalesInvoiceNo)
+        {
+            return _dbContext.Memos.Include(entity => entity.Items).Where(entity => entity.SalesInvoiceNo == SalesInvoiceNo).FirstOrDefaultAsync();
+        }
+
         public Task<int> UpdateAsync(int id, MemoModel model)
         {
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);

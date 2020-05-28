@@ -303,6 +303,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Memo
         }
 
         [Fact]
+        public async Task Put_WithValidationException_ReturnBadRequest_Diff_Id()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IMemoService>();
+            serviceMock
+                .Setup(service => service.UpdateAsync(It.IsAny<int>(), It.IsAny<MemoModel>()))
+                .ReturnsAsync(1);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMemoService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            validateServiceMock
+                .Setup(validateService => validateService.Validate(It.IsAny<MemoViewModel>()))
+                .Verifiable();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<MemoModel>(It.IsAny<MemoViewModel>()))
+                .Returns(It.IsAny<MemoModel>());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.Put(1, new MemoViewModel() { Id = 0 });
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
         public async Task Put_WithException_ReturnInternalServerError()
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
@@ -372,6 +408,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Memo
         }
 
         [Fact]
+        public async Task GetbySalesInvoice_WithoutException_ReturnOK()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IMemoService>();
+            serviceMock
+                .Setup(service => service.ReadBySalesInvoiceAsync(It.IsAny<string>()))
+                .ReturnsAsync(new MemoModel());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMemoService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<MemoViewModel>(It.IsAny<MemoModel>()))
+                .Returns(new MemoViewModel());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetBySalesInvoice(It.IsAny<string>());
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
         public async Task GetById_WithException_ReturnInternalServerError()
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
@@ -399,6 +468,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Memo
             var controller = GetController(serviceProviderMock.Object);
 
             var response = await controller.GetById(It.IsAny<int>());
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+        [Fact]
+        public async Task GetbySalesInvoice_WithException_ReturnByInternalServerError()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IMemoService>();
+            serviceMock
+                .Setup(service => service.ReadBySalesInvoiceAsync(It.IsAny<string>()))
+                .Throws(new Exception());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMemoService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<MemoViewModel>(It.IsAny<MemoModel>()))
+                .Returns(new MemoViewModel());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetBySalesInvoice(It.IsAny<string>());
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
@@ -432,6 +533,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Memo
             var controller = GetController(serviceProviderMock.Object);
 
             var response = await controller.GetById(It.IsAny<int>());
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+        [Fact]
+        public async Task GetbySalesInvoice_WithInvalidId_ReturnNotFound()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IMemoService>();
+            serviceMock
+                .Setup(service => service.ReadBySalesInvoiceAsync(It.IsAny<string>()))
+                .ReturnsAsync((MemoModel)null);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMemoService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<MemoViewModel>(It.IsAny<MemoModel>()))
+                .Returns(new MemoViewModel());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetBySalesInvoice(It.IsAny<string>());
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
