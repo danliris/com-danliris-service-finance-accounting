@@ -126,8 +126,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Memo
 
                 if (model == null)
                 {
-                    var result = new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE).Fail();
-                    return NotFound(result);
+                    //var result = new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE).Fail();
+                    //return NotFound(result);
+
+                    var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Fail();
+                    return Ok(result);
                 }
                 else
                 {
@@ -157,7 +160,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Memo
                     var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail();
                     return BadRequest(result);
                 }
-
 
                 var model = _mapper.Map<MemoModel>(viewModel);
 
