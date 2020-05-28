@@ -545,7 +545,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Memo
 
             var serviceMock = new Mock<IMemoService>();
             serviceMock
-                .Setup(service => service.ReadBySalesInvoiceAsync(It.IsAny<string>()))
+                .Setup(service => service.ReadBySalesInvoiceAsync(""))
                 .ReturnsAsync((MemoModel)null);
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IMemoService))).Returns(serviceMock.Object);
@@ -565,10 +565,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Memo
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = await controller.GetBySalesInvoice(It.IsAny<string>());
+            var response = await controller.GetBySalesInvoice("");
             var statusCode = GetStatusCode(response);
 
-            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
 
         [Fact]
