@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    [Migration("20200509163113_AddMemoModel")]
-    partial class AddMemoModel
+    [Migration("20200529072555_NewFixMigrationFinance")]
+    partial class NewFixMigrationFinance
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

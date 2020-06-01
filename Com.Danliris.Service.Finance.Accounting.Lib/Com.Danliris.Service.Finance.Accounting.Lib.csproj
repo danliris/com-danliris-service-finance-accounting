@@ -5,6 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200428020203_AddSalesReceiptModule.cs" />
+    <Compile Remove="Migrations\20200428020203_AddSalesReceiptModule.Designer.cs" />
+    <Compile Remove="Migrations\20200428021355_AddSalesReceipt.cs" />
+    <Compile Remove="Migrations\20200428021355_AddSalesReceipt.Designer.cs" />
+    <Compile Remove="Migrations\20200429071657_AddSalesReceipId.cs" />
+    <Compile Remove="Migrations\20200429071657_AddSalesReceipId.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="Com.Moonlay.Data.EntityFrameworkCore" Version="1.0.2" />
     <PackageReference Include="Com.Moonlay.NetCore.Lib" Version="1.0.0-alpha-20171102-001" />

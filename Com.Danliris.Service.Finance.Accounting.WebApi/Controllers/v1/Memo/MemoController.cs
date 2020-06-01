@@ -117,6 +117,36 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Memo
             }
         }
 
+        [HttpGet("by-salesinvoiceno/{salesinvoiceno}")]
+        public async Task<IActionResult> GetBySalesInvoice([FromRoute] string SalesInvoiceNo)
+        {
+            try
+            {
+                var model = await _service.ReadBySalesInvoiceAsync(SalesInvoiceNo);
+
+                if (model == null)
+                {
+                    //var result = new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE).Fail();
+                    //return NotFound(result);
+
+                    var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Fail();
+                    return Ok(result);
+                }
+                else
+                {
+                    var viewModel = _mapper.Map<MemoViewModel>(model);
+                    var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Ok<MemoViewModel>(_mapper, viewModel);
+                    return Ok(result);
+                }
+
+            }
+            catch (Exception e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] MemoViewModel viewModel)
         {
