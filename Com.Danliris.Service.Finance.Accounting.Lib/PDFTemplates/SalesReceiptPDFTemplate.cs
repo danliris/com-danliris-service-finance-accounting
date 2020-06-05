@@ -19,6 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             Font bold_font = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 11);
             Font note_font = FontFactory.GetFont(BaseFont.HELVETICA_OBLIQUE, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 8);
             Font bold_italic_font = FontFactory.GetFont(BaseFont.HELVETICA_BOLDOBLIQUE, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 12);
+            Font Title_bold_font = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 13);
 
             Document document = new Document(PageSize.A5.Rotate(), MARGIN, MARGIN, MARGIN, MARGIN);
             MemoryStream stream = new MemoryStream();
@@ -63,15 +64,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             PdfPCell cellHeader4 = new PdfPCell() { Border = Rectangle.NO_BORDER };
             PdfPCell cellHeaderBody = new PdfPCell() { Border = Rectangle.NO_BORDER };
 
-            cellHeaderBody.Phrase = new Phrase("PT. DANLIRIS", bold_font);
+            cellHeaderBody.Phrase = new Phrase("PT. DAN LIRIS", Title_bold_font);
             headerTable1.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase("INDUSTRIAL & TRADING CO.LTD.", bold_font);
+            cellHeaderBody.Phrase = new Phrase("Head Office : Jl. Merapi No. 23 Banaran, Grogol", normal_font);
             headerTable1.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase("Kel. Banaran (Selatan Lawehan)", normal_font);
+            cellHeaderBody.Phrase = new Phrase("Sukoharjo, 57552 Central Java, Indonesia", normal_font);
             headerTable1.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase("Telp. 714400, 719113", normal_font);
+            cellHeaderBody.Phrase = new Phrase("", normal_font);
             headerTable1.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase("SOLO - INDONESIA 57100", normal_font);
+            cellHeaderBody.Phrase = new Phrase("Telp  :(+62 271) 740888, 714400", normal_font);
+            headerTable1.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("Fax  :(+62 271) 740777, 735222", normal_font);
+            headerTable1.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("PO BOX 116 Solo, 57100", normal_font);
+            headerTable1.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("Web: www.danliris.com", normal_font);
             headerTable1.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("", normal_font);
