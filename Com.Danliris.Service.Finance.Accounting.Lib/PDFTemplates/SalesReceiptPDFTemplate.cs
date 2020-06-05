@@ -66,14 +66,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             cellHeaderBody.Phrase = new Phrase("PT. DAN LIRIS", Title_bold_font);
             headerTable1.AddCell(cellHeaderBody);
-            //cellHeaderBody.Phrase = new Phrase("INDUSTRIAL & TRADING CO.LTD.", bold_font);
-            //headerTable1.AddCell(cellHeaderBody);
-            //cellHeaderBody.Phrase = new Phrase("Kel. Banaran (Selatan Lawehan)", normal_font);
-            //headerTable1.AddCell(cellHeaderBody);
-            //cellHeaderBody.Phrase = new Phrase("Telp. 714400, 719113", normal_font);
-            //headerTable1.AddCell(cellHeaderBody);
-            //cellHeaderBody.Phrase = new Phrase("SOLO - INDONESIA 57100", normal_font);
-            //headerTable1.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase("Head Office : Jl. Merapi No. 23 Banaran, Grogol", normal_font);
             headerTable1.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase("Sukoharjo, 57552 Central Java, Indonesia", normal_font);
