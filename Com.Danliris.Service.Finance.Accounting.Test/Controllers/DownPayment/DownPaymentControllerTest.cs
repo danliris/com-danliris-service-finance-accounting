@@ -21,7 +21,7 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
 {
-    public class DownPaymentControllerTest
+    public class DownPaymentControllerTest 
     {
 
         private DownPaymentViewModel ViewModel
@@ -555,7 +555,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
 
                     Currency = new BankCurrency()
                     {
-                        Code = "Code"
+                        Code = "IDR"
                     },
 
                 },
@@ -576,13 +576,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
                 Remark="remark"
 
             };
-            
+
             var serviceProviderMock = new Mock<IServiceProvider>();
 
             var serviceMock = new Mock<IDownPaymentService>();
             serviceMock
-                .Setup(service => service.DeleteAsync(It.IsAny<int>()))
-                .Throws(new Exception());
+                .Setup(service => service.ReadByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(new DownPaymentModel());
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IDownPaymentService))).Returns(serviceMock.Object);
 
@@ -595,14 +595,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
             var mapperMock = new Mock<IMapper>();
             mapperMock
                 .Setup(mapper => mapper.Map<DownPaymentViewModel>(It.IsAny<DownPaymentModel>()))
-                .Returns(new DownPaymentViewModel());
+                .Returns(vm);
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = await controller.GetDownPaymentPDF(1);
-            var statusCode = GetStatusCode(response);
+            var response = await controller.GetDownPaymentPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
 
             Assert.NotNull(response);
         }
@@ -621,7 +621,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
                     AccountNumber = "Account",
                     Currency = new BankCurrency()
                     {
-                        Code = "Code"
+                        Code = "USD"
                     },
 
                 },
@@ -648,7 +648,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
             var serviceMock = new Mock<IDownPaymentService>();
             serviceMock
                 .Setup(service => service.ReadByIdAsync(It.IsAny<int>()))
-                .Throws(new Exception());
+                .ReturnsAsync(new DownPaymentModel());
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IDownPaymentService))).Returns(serviceMock.Object);
 
@@ -661,14 +661,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
             var mapperMock = new Mock<IMapper>();
             mapperMock
                 .Setup(mapper => mapper.Map<DownPaymentViewModel>(It.IsAny<DownPaymentModel>()))
-                .Returns(new DownPaymentViewModel());
+                .Returns(vm);
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = await controller.GetDownPaymentPDF(1);
-            var statusCode = GetStatusCode(response);
+            var response = await controller.GetDownPaymentPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
 
             Assert.NotNull(response);
         }
@@ -681,7 +681,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
             var serviceMock = new Mock<IDownPaymentService>();
             serviceMock
                 .Setup(service => service.ReadByIdAsync(It.IsAny<int>()))
-                .Throws(new Exception());
+                .ReturnsAsync((DownPaymentModel)null);
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IDownPaymentService))).Returns(serviceMock.Object);
 
@@ -703,7 +703,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
             var response = await controller.GetDownPaymentPDF(1);
             var statusCode = GetStatusCode(response);
 
-            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
 
         }
 
