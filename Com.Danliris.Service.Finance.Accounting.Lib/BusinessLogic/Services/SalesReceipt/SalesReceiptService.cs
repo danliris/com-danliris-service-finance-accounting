@@ -258,19 +258,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
             if (lastData == null)
             {
                 model.AutoIncreament = 1 + index;
-                model.SalesReceiptNo = $"{YearNowString}{MonthNowString}{model.BankCode}M{model.AutoIncreament.ToString().PadLeft(6, '0')}";
+                model.SalesReceiptNo = $"{YearNowString}{MonthNowString}{model.BankCode}K{model.AutoIncreament.ToString().PadLeft(6, '0')}";
             }
             else
             {
                 if (YearNow > lastData.CreatedUtc.Year || MonthNow > lastData.CreatedUtc.Month)
                 {
                     model.AutoIncreament = 1 + index;
-                    model.SalesReceiptNo = $"{YearNowString}{MonthNowString}{model.BankCode}M{model.AutoIncreament.ToString().PadLeft(6, '0')}";
+                    model.SalesReceiptNo = $"{YearNowString}{MonthNowString}{model.BankCode}K{model.AutoIncreament.ToString().PadLeft(6, '0')}";
                 }
                 else
                 {
                     model.AutoIncreament = lastData.AutoIncreament + (1 + index);
-                    model.SalesReceiptNo = $"{YearNowString}{MonthNowString}{model.BankCode}M{model.AutoIncreament.ToString().PadLeft(6, '0')}";
+                    model.SalesReceiptNo = $"{YearNowString}{MonthNowString}{model.BankCode}K{model.AutoIncreament.ToString().PadLeft(6, '0')}";
                 }
             }
         }
