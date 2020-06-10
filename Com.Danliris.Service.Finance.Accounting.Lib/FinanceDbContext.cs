@@ -51,6 +51,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<MemoModel> Memos { get; set; }
         public DbSet<MemoItemModel> MemoItems { get; set; }
 
+        public DbSet<DownPaymentModel> DownPayments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<JournalTransactionItemModel>().Property(x => x.Debit).HasColumnType("decimal(18,2)");

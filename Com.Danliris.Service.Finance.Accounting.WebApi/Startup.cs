@@ -13,6 +13,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Sales
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DownPayment;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
@@ -93,7 +94,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IAutoJournalService, AutoJournalService>()
                 .AddTransient<IAutoDailyBankTransactionService, AutoDailyBankTransactionService>()
                 .AddTransient<IMemoService, MemoService>()
-                .AddTransient<ISalesReceiptService, SalesReceiptService>();
+                .AddTransient<ISalesReceiptService, SalesReceiptService>()
+                .AddTransient<IDownPaymentService, DownPaymentService>();
         }
 
 
