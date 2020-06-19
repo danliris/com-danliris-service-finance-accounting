@@ -50,7 +50,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dow
             {
                 "DocumentNo",
                 "CurrencyCode",
-                "BuyerName"
+                "BuyerName",
+                "CategoryAcceptance"
             };
 
             query = QueryHelper<DownPaymentModel>.Search(query, searchAttributes, keyword);
@@ -70,7 +71,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dow
                 Id = entity.Id,
                 LastModifiedUtc = entity.LastModifiedUtc,
                 CurrencyCode = entity.CurrencyCode,
-                TotalPayment = entity.TotalPayment
+                TotalPayment = entity.TotalPayment,
+                CategoryAcceptance = entity.CategoryAcceptance
+
             }).ToList();
 
             int totalData = pageable.TotalCount;

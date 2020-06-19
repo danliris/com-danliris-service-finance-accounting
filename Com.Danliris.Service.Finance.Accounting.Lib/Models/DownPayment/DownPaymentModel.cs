@@ -30,5 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string PaymentFor { get; set; }
         public string Remark { get; set; }
         public decimal TotalPayment { get; set; }
+        [MaxLength(64)]
+        public string CategoryAcceptance { get; set; }
     }
 }
