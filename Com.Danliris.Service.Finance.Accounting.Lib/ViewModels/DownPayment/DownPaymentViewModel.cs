@@ -14,6 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DownPayment
         public decimal? TotalPayment { get; set; }
         public Currency Currency { get; set; }
         public string Remark { get; set; }
+        public string CategoryAcceptance { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -32,7 +33,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DownPayment
             if (Currency == null || Currency.Id.GetValueOrDefault() <= 0)
                 yield return new ValidationResult("Kurs harus di isi!", new List<string> { "Currency" });
 
-            if (Remark == null || Remark.ToString() == "")
+            if (string.IsNullOrWhiteSpace(CategoryAcceptance))
+                yield return new ValidationResult("Kategori Bukti Penerimaan harus di isi!", new List<string> { "CategoryAcceptance" });
+
+            if (string.IsNullOrWhiteSpace(Remark))
                 yield return new ValidationResult("Untuk Pembayaran harus di isi!", new List<string> { "Remark" });
 
         }

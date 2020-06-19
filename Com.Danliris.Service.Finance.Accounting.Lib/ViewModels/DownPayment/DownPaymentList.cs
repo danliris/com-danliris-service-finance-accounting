@@ -11,5 +11,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DateTimeOffset DatePayment { get; set; }
         public string CurrencyCode { get; set; }
         public decimal TotalPayment { get; set; }
+        public string CategoryAcceptance { get; set; }
     }
 }
