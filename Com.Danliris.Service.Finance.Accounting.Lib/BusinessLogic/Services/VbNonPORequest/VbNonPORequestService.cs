@@ -345,21 +345,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 .FirstOrDefaultAsync();
         }
 
-        //public Task<int> UpdateAsync(int id, VbRequestModel model)
-        //{
-        //    model.VBRequestCategory = "NONPO";
-        //    //model.UnitLoad = GetUnitLoad(model);
-
-        //    model.Status_Post = "Belum";
-        //    model.Apporve_Status = "Not Approve";
-        //    model.Complete_Status = "Not Complete";
-
-        //    EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
-
-        //    _dbContext.VbRequests.Update(model);
-
-        //    return _dbContext.SaveChangesAsync();
-        //}
         public Task<int> UpdateAsync(int id, VbNonPORequestViewModel viewModel)
         {
             var model = MappingData2(viewModel);
@@ -393,11 +378,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                     {
                         EntityExtension.FlagForUpdate(m, user, UserAgent);
                         m.Status_Post = "Sudah";
-
-                        //foreach (var item in m.Items)
-                        //{
-                        //    EntityExtension.FlagForUpdate(item, user, USER_AGENT);
-                        //}
                     });
 
                     Updated = _dbContext.SaveChanges();

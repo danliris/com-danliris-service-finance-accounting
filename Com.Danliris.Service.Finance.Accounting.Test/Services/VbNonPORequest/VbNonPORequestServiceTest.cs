@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.VBNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest;
@@ -148,6 +150,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
 
         [Fact]
         public async Task Should_Success_Read_ById()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbNonPORequestDataUtil(service);
+            var data = await dataUtil.GetCreatedData();
+
+            var result = await service.ReadByIdAsync(data.Id);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Should_Success_MapToViewModel()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();

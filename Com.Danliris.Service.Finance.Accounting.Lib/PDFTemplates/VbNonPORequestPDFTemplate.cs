@@ -475,7 +475,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             string res;
             if (lastitem == "Spinning 1" || lastitem == "Spinning 2" || lastitem == "Spinning 3" || lastitem == "Weaving 1" || lastitem == "Weaving 2" &&
                 lastitem == "Printing" || lastitem == "Finishing" || lastitem == "Konfeksi 1A" || lastitem == "Konfeksi 1B"
-                || lastitem == "Konveksi 2A" || lastitem == "Konveksi 2B" || lastitem == "Konveksi 2C" || lastitem == "Umum")
+                || lastitem == "Konfeksi 2A" || lastitem == "Konfeksi 2B" || lastitem == "Konfeksi 2C" || lastitem == "Umum")
             {
                 _radioG9.Checked = false;
                 res = ".......";
@@ -730,33 +730,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
             return stream;
         }
-
-        //public PdfPCell Create_Box(PdfWriter writer, PdfPTable headerTable3a)
-        //{
-        //    PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
-        //    cellform.FixedHeight = 5f;
-        //    //initiate form checkbox 
-        //    //PdfFormField _checkGroup = PdfFormField.CreateRadioButton(writer, true);
-        //    PdfFormField _checkGroup = PdfFormField.CreateEmpty(writer);
-        //    RadioCheckField _radioG;
-        //    PdfFormField _radioField1;
-        //    Rectangle kotak = new Rectangle(100, 100);
-        //    _radioG = new RadioCheckField(writer, kotak, "abc", "Yes");
-        //    _radioG.CheckType = RadioCheckField.TYPE_CHECK;
-        //    _radioG.BorderStyle = PdfBorderDictionary.STYLE_SOLID;
-        //    _radioG.BorderColor = BaseColor.Black;
-        //    _radioG.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
-        //    _radioG.Checked = true;
-        //    _radioG.Rotation = 90;
-        //    _radioG.Options = TextField.READ_ONLY;
-        //    _radioField1 = _radioG.CheckField;
-
-        //    cellform.CellEvent
-        //         = new BebanUnitEvent(_checkGroup, _radioField1, 1);
-        //    headerTable3a.AddCell(cellform);
-        //    writer.AddAnnotation(_checkGroup);
-
-        //    return cellform;
-        //}
     }
 }
