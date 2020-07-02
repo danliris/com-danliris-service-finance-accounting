@@ -121,5 +121,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
             await _service.CreateAsync(model, viewmodel);
             return await _service.ReadByIdAsync(model.Id);
         }
+
+        public async Task<VbRequestModel> GetTestData()
+        {
+            VbRequestModel vbRequest = GetVbRequestModelToCreate();
+            var viewmodel = GetViewModel();
+            await _service.CreateAsync(vbRequest, viewmodel);
+
+            return vbRequest;
+        }
     }
 }

@@ -120,6 +120,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
         }
 
         [Fact]
+        public async Task Should_Success_Update_Model_2()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbNonPORequestDataUtil(service);
+
+            List<VbRequestModel> modelList = new List<VbRequestModel>();
+            VbRequestModel model = await dataUtil.GetTestData();
+            modelList.Add(model);
+
+            var result = await service.UpdateStatusAsync(modelList, "user");
+
+            Assert.NotEqual(1, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Update_Model_Remove_Items()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
@@ -158,6 +175,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
             var data = await dataUtil.GetCreatedData();
 
             var result = await service.ReadByIdAsync(data.Id);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Read_ById_2()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbNonPORequestDataUtil(service);
+            var data = await dataUtil.GetCreatedData();
+
+            var result = await service.ReadByIdAsync2(data.Id);
 
             Assert.NotNull(result);
         }
