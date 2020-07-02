@@ -708,7 +708,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             table.AddCell(cell);
             cell.Phrase = new Phrase("(..................)", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("(..................)", normal_font);
+            cell.Phrase = new Phrase($"({viewModel.CreatedBy})", normal_font);
             table.AddCell(cell);
 
             cell.Phrase = new Phrase("Kasir", normal_font);

@@ -68,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VbNonPOR
                     MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, timeoffsset);
                     return new FileStreamResult(stream, "application/pdf")
                     {
-                        FileDownloadName = "Kuitansi - " + viewModel.VBCode + ".pdf"
+                        FileDownloadName = "Bukti Permohonan Non PO - " + viewModel.VBNo + ".pdf"
                     };
                 }
             }
