@@ -11,6 +11,28 @@
     <Compile Remove="Migrations\20200428021355_AddSalesReceipt.Designer.cs" />
     <Compile Remove="Migrations\20200429071657_AddSalesReceipId.cs" />
     <Compile Remove="Migrations\20200429071657_AddSalesReceipId.Designer.cs" />
+    <Compile Remove="Migrations\20200629100102_VbNonPoRequest.cs" />
+    <Compile Remove="Migrations\20200629100102_VbNonPoRequest.Designer.cs" />
+    <Compile Remove="Migrations\20200629112448_Update_VbNonPoRequest.cs" />
+    <Compile Remove="Migrations\20200629112448_Update_VbNonPoRequest.Designer.cs" />
+    <Compile Remove="Migrations\20200630101524_Update_VbNonPoRequest2.cs" />
+    <Compile Remove="Migrations\20200630101524_Update_VbNonPoRequest2.Designer.cs" />
+    <Compile Remove="Migrations\20200701045417_Update_VbNonPORequest3.cs" />
+    <Compile Remove="Migrations\20200701045417_Update_VbNonPORequest3.Designer.cs" />
+    <Compile Remove="Migrations\20200701050343_Update_VbNonPORequest4.cs" />
+    <Compile Remove="Migrations\20200701050343_Update_VbNonPORequest4.Designer.cs" />
+    <Compile Remove="Migrations\20200701051220_VbNonPORequest.cs" />
+    <Compile Remove="Migrations\20200701051220_VbNonPORequest.Designer.cs" />
+    <Compile Remove="Migrations\20200701051744_VbNonPORequest_test.cs" />
+    <Compile Remove="Migrations\20200701051744_VbNonPORequest_test.Designer.cs" />
+    <Compile Remove="Migrations\20200701051955_VbRequests.cs" />
+    <Compile Remove="Migrations\20200701051955_VbRequests.Designer.cs" />
+    <Compile Remove="Migrations\20200701080023_UpdateVbRequest.cs" />
+    <Compile Remove="Migrations\20200701080023_UpdateVbRequest.Designer.cs" />
+    <Compile Remove="Migrations\20200701081043_AddVbRequest.cs" />
+    <Compile Remove="Migrations\20200701081043_AddVbRequest.Designer.cs" />
+    <Compile Remove="Migrations\20200701083826_VbRequest.cs" />
+    <Compile Remove="Migrations\20200701083826_VbRequest.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,6 +13,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Sales
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DownPayment;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
@@ -21,6 +22,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Payment
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNotVerifiedReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.SalesReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditureProofDocument;
@@ -93,7 +95,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IAutoJournalService, AutoJournalService>()
                 .AddTransient<IAutoDailyBankTransactionService, AutoDailyBankTransactionService>()
                 .AddTransient<IMemoService, MemoService>()
-                .AddTransient<ISalesReceiptService, SalesReceiptService>();
+                .AddTransient<ISalesReceiptService, SalesReceiptService>()
+                .AddTransient<IDownPaymentService, DownPaymentService>()
+                .AddTransient<IVbNonPORequestService, VbNonPORequestService>();
         }
 
 

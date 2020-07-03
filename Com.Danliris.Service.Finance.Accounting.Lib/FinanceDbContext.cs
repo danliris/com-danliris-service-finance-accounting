@@ -8,6 +8,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofD
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.SalesReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
 using Com.Moonlay.Data.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -50,6 +51,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
         public DbSet<MemoModel> Memos { get; set; }
         public DbSet<MemoItemModel> MemoItems { get; set; }
+
+        public DbSet<DownPaymentModel> DownPayments { get; set; }
+
+        public DbSet<VbRequestModel> VbRequests { get; set; }
+        public DbSet<VbRequestDetailModel> VbRequestsDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

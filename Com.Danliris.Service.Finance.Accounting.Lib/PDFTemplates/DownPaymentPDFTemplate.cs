@@ -1,16 +1,18 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.SalesReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DownPayment;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 {
-    public class SalesReceiptPDFTemplate
+    public class DownPaymentPDFTemplate
     {
-        public MemoryStream GeneratePdfTemplate(SalesReceiptViewModel viewModel, SalesReceiptDetailViewModel detailViewModel, int clientTimeZoneOffset)
+        public MemoryStream GeneratePdfTemplate(DownPaymentViewModel viewModel, int clientTimeZoneOffset)
         {
             const int MARGIN = 20;
 
@@ -28,15 +30,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             #region CustomModel
 
-            double convertCurrency = 0;
+            double convertCurrency;
 
-            if (detailViewModel.SalesInvoice.Currency.Symbol == "Rp")
+
+            if (viewModel.Currency.Code == "IDR")
             {
-                convertCurrency = viewModel.TotalPaid;
+                convertCurrency = (double)viewModel.TotalPayment;
             }
             else
             {
-                convertCurrency = (Math.Round((double)viewModel.TotalPaid * (double)detailViewModel.SalesInvoice.Currency.Rate));
+                convertCurrency = (Math.Round((double)viewModel.TotalPayment * (double)viewModel.Currency.Rate));
             }
 
             string TotalPaidString = NumberToTextIDN.terbilang(convertCurrency);
@@ -97,11 +100,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable2.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase("", header_font);
             headerTable2.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase("KUITANSI", header_font);
+            cellHeaderBody.Phrase = new Phrase("", header_font);
             headerTable2.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase("", header_font);
             headerTable2.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase("No. " + viewModel.SalesReceiptNo, bold_font);
+            cellHeaderBody.Phrase = new Phrase("", header_font);
+            headerTable2.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("", header_font);
+            headerTable2.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("", header_font);
+            headerTable2.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("", header_font);
+            headerTable2.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("", header_font);
+            headerTable2.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("", header_font);
+            headerTable2.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("", header_font);
+            headerTable2.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("", header_font);
+            headerTable2.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("BUKTI PENERIMAAN", header_font);
+            headerTable2.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase("", header_font);
             headerTable2.AddCell(cellHeaderBody);
 
             cellHeader2.AddElement(headerTable2);
@@ -115,7 +136,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(viewModel.Bank.BankName + " " + viewModel.Bank.AccountNumber + " (" + detailViewModel.SalesInvoice.Currency.Code + ")", normal_font);
+            cellHeaderBody.Phrase = new Phrase(viewModel.Bank.BankName + " " + viewModel.Bank.AccountNumber + " (" + viewModel.Bank.Currency.Code + ")", normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("Telah terima dari ", normal_font);
@@ -129,7 +150,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase("", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(viewModel.Buyer.Address, normal_font);
+            cellHeaderBody.Phrase = new Phrase("", normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("Banyaknya uang ", normal_font);
@@ -143,21 +164,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            foreach (SalesReceiptDetailViewModel item in viewModel.SalesReceiptDetails)
-            {
-                cellHeaderBody.Phrase = new Phrase(item.SalesInvoice.SalesInvoiceNo + "  ", normal_font);
-                headerTable3.AddCell(cellHeaderBody);
-                cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-                headerTable3.AddCell(cellHeaderBody);
-                cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-                headerTable3.AddCell(cellHeaderBody);
-            }
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            cellHeaderBody.Phrase = new Phrase(viewModel.Remark + "  ", normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("Terbilang", bold_italic_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase("", bold_italic_font);
+            cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase("Rp. " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), bold_italic_font);
             headerTable3.AddCell(cellHeaderBody);
@@ -169,8 +181,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable_B.AddCell(cellHeader4);
 
             document.Add(headerTable_B);
-
-            #endregion Header
+            #endregion
 
             #region Footer
             PdfPTable footerTable = new PdfPTable(2);
@@ -199,49 +210,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
 
-            cellHeaderFooter.Phrase = new Phrase("Solo, " + viewModel.SalesReceiptDate?.AddHours(clientTimeZoneOffset).ToString("dd MMMM yyyy", new CultureInfo("id-ID")), normal_font);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
 
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-
-            cellHeaderFooter.Phrase = new Phrase("(                                                       )", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
-
-            foreach (SalesReceiptDetailViewModel item in viewModel.SalesReceiptDetails)
-            {
-                if (item.VatType == "PPN BUMN")
-                {
-                    cellHeaderFooter.Phrase = new Phrase("Note : PPN dibayarkan oleh buyer secara terpisah", note_font);
-                }
-            }
 
             footerTable1.AddCell(cellHeaderFooter);
             cellHeaderFooter.Phrase = new Phrase("", note_font);
@@ -252,9 +255,63 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("Sukoharjo, " + viewModel.DatePayment?.AddHours(clientTimeZoneOffset).ToString("dd MMMM yyyy", new CultureInfo("id-ID")), normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable2.AddCell(cellHeaderFooter);
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable2.AddCell(cellHeaderFooter);
+            cellHeaderFooter.Phrase = new Phrase("(                             )", normal_font);
             footerTable2.AddCell(cellHeaderFooter);
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable2.AddCell(cellHeaderFooter);
@@ -273,6 +330,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             return stream;
         }
-
     }
 }
