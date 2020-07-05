@@ -11,7 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
     {
         public string VBNo { get; set; }
         public DateTimeOffset? Date { get; set; }
-        public string VBCode { get; set; }
+        public Unit Unit { get; set; }
         public CurrencyVBRequest Currency { get; set; }
         public decimal Amount { get; set; }
         public string Usage { get; set; }
@@ -39,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             if (Date == null)
                 yield return new ValidationResult("Tanggal harus diisi!", new List<string> { "Date" });
 
-            if (string.IsNullOrWhiteSpace(VBCode))
+            if (Unit == null || Unit.Id <= 0)
                 yield return new ValidationResult("Kode VB harus diisi!", new List<string> { "VBCode" });
 
             if (Currency == null || Currency.Id <= 0)
@@ -51,8 +51,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             if (string.IsNullOrWhiteSpace(Usage))
                 yield return new ValidationResult("Kegunaan harus diisi!", new List<string> { "Usage" });
 
-            if (Spinning1 == false && Spinning2 == false && Spinning3 == false && Weaving1 == false && Weaving2 == false && Finishing == false 
-                && Printing == false && Konfeksi1A == false && Konfeksi1B == false && Konfeksi2A==false && Konfeksi2B == false
+            if (Spinning1 == false && Spinning2 == false && Spinning3 == false && Weaving1 == false && Weaving2 == false && Finishing == false
+                && Printing == false && Konfeksi1A == false && Konfeksi1B == false && Konfeksi2A == false && Konfeksi2B == false
                 && Konfeksi2C == false && Umum == false && Others == false)
                 yield return new ValidationResult("Beban Unit harus dipilih salah satu!", new List<string> { "UnitLoadCheck" });
 
