@@ -113,7 +113,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VbNonPOR
                 await _service.CreateAsync(model, viewModel);
 
                 await _service.MappingData(viewModel);
-                
+
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
 
                 return Created(String.Concat(Request.Path, "/", 0), result);
@@ -138,7 +138,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VbNonPOR
             _identityService.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
             try
             {
-               
+
                 await _service.UpdateStatusAsync(ListVbRequestViewModel, _identityService.Username);
 
                 return NoContent();
@@ -149,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VbNonPOR
             }
         }
 
-            [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             try

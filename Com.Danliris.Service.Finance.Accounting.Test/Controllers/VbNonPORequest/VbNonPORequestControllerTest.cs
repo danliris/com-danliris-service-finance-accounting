@@ -546,13 +546,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.Now,
-                VBCode = "VBCode",
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
                 Currency = new CurrencyVBRequest()
                 {
                     Id = 1,
                     Code = "IDR",
                     Rate = 1,
-                    Symbol="Rp"
+                    Symbol = "Rp"
                 },
                 Amount = 123,
                 Usage = "Usage",
@@ -613,7 +618,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.Now,
-                VBCode = "VBCode",
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
                 Currency = new CurrencyVBRequest()
                 {
                     Id = 1,
@@ -680,7 +690,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.Now,
-                VBCode = "VBCode",
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
                 Currency = new CurrencyVBRequest()
                 {
                     Id = 1,
@@ -748,7 +763,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.Now,
-                VBCode = "VBCode",
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
                 Currency = new CurrencyVBRequest()
                 {
                     Id = 1,

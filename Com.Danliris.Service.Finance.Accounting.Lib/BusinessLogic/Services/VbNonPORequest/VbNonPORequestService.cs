@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VbNonPORequest;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbNonPORequest
 {
@@ -138,7 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
         public VbRequestModel MappingData2(VbNonPORequestViewModel viewModel)
         {
             var listDetail = new List<VbRequestDetailModel>();
-            
+
             var myProperty = viewModel.GetType().GetProperties();
 
             int value = int.Parse(dbSet.OrderByDescending(p => p.Id)
@@ -149,7 +150,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             {
                 if ((bool)prop.GetValue(viewModel))
                 {
-                    var item = new VbRequestDetailModel() { VBId = value, UnitName = prop.Name,
+                    var item = new VbRequestDetailModel()
+                    {
+                        VBId = value,
+                        UnitName = prop.Name,
                         LastModifiedBy = viewModel.LastModifiedBy,
                         LastModifiedAgent = viewModel.LastModifiedAgent,
                         DeletedBy = "",
@@ -166,14 +170,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
 
                 }
             }
-            var result = new VbRequestModel() {
+            var result = new VbRequestModel()
+            {
                 VbRequestDetail = listDetail,
                 Active = viewModel.Active,
                 Id = viewModel.Id,
                 Date = (DateTimeOffset)viewModel.Date,
-                VBCode = viewModel.VBCode,
+                UnitId = viewModel.Unit.Id,
+                UnitCode = viewModel.Unit.Code,
+                UnitName = viewModel.Unit.Name,
                 VBNo = viewModel.VBNo,
-                CurrencyId  = viewModel.Currency.Id,
+                CurrencyId = viewModel.Currency.Id,
                 CurrencyCode = viewModel.Currency.Code,
                 CurrencyRate = viewModel.Currency.Rate,
                 CurrencySymbol = viewModel.Currency.Symbol,
@@ -270,17 +277,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
 
         private string GetVbNonPoNo(VbRequestModel model)
         {
-            var now = DateTime.Now;
+            var now = model.Date;
             var year = now.ToString("yy");
             var month = now.ToString("MM");
 
 
-            var unit = model.VBCode.ToString().Split(" - ");
+            var unit = model.UnitCode.ToString().Split(" - ");
 
 
             var documentNo = $"VB{unit[0]}{month}{year}";
 
-            var countSameDocumentNo =  _dbContext.VbRequests.Count(entity => entity.VBCode.Contains(model.VBCode));
+            var countSameDocumentNo = _dbContext.VbRequests.Where(a => a.Date.Month == model.Date.Month).Count(entity => entity.UnitCode.Contains(model.UnitCode));
 
             if (countSameDocumentNo >= 0)
             {
@@ -313,7 +320,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                        UnitLoad = s.UnitLoad,
                        VBNo = s.VBNo,
                        Date = s.Date,
-                       VBCode = s.VBCode,
+                       //VBCode = s.VBCode,
+                       Unit = new Unit()
+                       {
+                           Id = s.UnitId,
+                           Code = s.UnitCode,
+                           Name = s.UnitName
+                       },
                        Currency = new CurrencyVBRequest()
                        {
                            Id = s.CurrencyId,
@@ -339,7 +352,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                        Umum = s.VbRequestDetail.Where(t => t.UnitName.ToUpper() == "UMUM").Count() >= 1,
                        Others = s.VbRequestDetail.Where(t => t.UnitName.ToUpper() == "OTHERS").Count() >= 1,
                        DetailOthers = s.VbRequestDetail.FirstOrDefault(t => t.UnitName.ToUpper() == "OTHERS") == null ?
-                       string.Empty: s.VbRequestDetail.FirstOrDefault(t => t.UnitName.ToUpper() == "OTHERS").DetailOthers
+                       string.Empty : s.VbRequestDetail.FirstOrDefault(t => t.UnitName.ToUpper() == "OTHERS").DetailOthers
                    }
                 )
                 .FirstOrDefaultAsync();
@@ -390,7 +403,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 }
             }
 
-                return _dbContext.SaveChangesAsync();
+            return _dbContext.SaveChangesAsync();
         }
 
         public Task<int> DeleteAsync(int id)
