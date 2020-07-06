@@ -519,7 +519,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             _radioG10.BorderStyle = PdfBorderDictionary.STYLE_SOLID;
             _radioG10.BorderColor = BaseColor.Black;
             _radioG10.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
-            if (unit.Contains("Spinning 3"))
+            if (unit.ToUpper().Contains("Spinning 3"))
             {
                 _radioG10.Checked = true;
             }
@@ -549,7 +549,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             _radioG11.BorderStyle = PdfBorderDictionary.STYLE_SOLID;
             _radioG11.BorderColor = BaseColor.Black;
             _radioG11.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
-            if (unit.Contains("Printing"))
+            if (unit.ToUpper().Contains("Printing"))
             {
                 _radioG11.Checked = true;
             }
@@ -579,7 +579,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             _radioG12.BorderStyle = PdfBorderDictionary.STYLE_SOLID;
             _radioG12.BorderColor = BaseColor.Black;
             _radioG12.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
-            if (unit.Contains("Konfeksi 1B"))
+            if (unit.ToUpper().Contains("Konfeksi 1B"))
             {
                 _radioG12.Checked = true;
             }
@@ -609,7 +609,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             _radioG13.BorderStyle = PdfBorderDictionary.STYLE_SOLID;
             _radioG13.BorderColor = BaseColor.Black;
             _radioG13.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
-            if (unit.Contains("Konfeksi 2C"))
+            if (unit.ToUpper().Contains("Konfeksi 2C"))
             {
                 _radioG13.Checked = true;
             }
