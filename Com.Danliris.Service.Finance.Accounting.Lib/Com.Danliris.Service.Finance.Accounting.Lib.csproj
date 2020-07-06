@@ -33,6 +33,18 @@
     <Compile Remove="Migrations\20200701081043_AddVbRequest.Designer.cs" />
     <Compile Remove="Migrations\20200701083826_VbRequest.cs" />
     <Compile Remove="Migrations\20200701083826_VbRequest.Designer.cs" />
+    <Compile Remove="Migrations\20200701084031_VbRequest.cs" />
+    <Compile Remove="Migrations\20200701084031_VbRequest.Designer.cs" />
+    <Compile Remove="Migrations\20200703172243_UpdateVBRequest.cs" />
+    <Compile Remove="Migrations\20200703172243_UpdateVBRequest.Designer.cs" />
+    <Compile Remove="Migrations\20200706043928_UpdateVBRequest2.cs" />
+    <Compile Remove="Migrations\20200706043928_UpdateVBRequest2.Designer.cs" />
+    <Compile Remove="Migrations\20200706073524_UpdateVBRequest3.cs" />
+    <Compile Remove="Migrations\20200706073524_UpdateVBRequest3.Designer.cs" />
+    <Compile Remove="Migrations\20200706145901_removestringVBRequest.cs" />
+    <Compile Remove="Migrations\20200706145901_removestringVBRequest.Designer.cs" />
+    <Compile Remove="Migrations\20200706151824_UpdateVBRequest3.cs" />
+    <Compile Remove="Migrations\20200706151824_UpdateVBRequest3.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

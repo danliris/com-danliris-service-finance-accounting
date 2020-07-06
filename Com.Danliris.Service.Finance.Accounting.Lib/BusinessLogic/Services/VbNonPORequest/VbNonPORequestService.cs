@@ -56,10 +56,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             {
                 "VBNo",
                 "UnitLoad",
-                "CreatedBy",
-                "Status_Post",
-                "Apporve_Status",
-                "Complete_Status"
+                "CreatedBy"
             };
 
             query = QueryHelper<VbRequestModel>.Search(query, searchAttributes, keyword);
@@ -96,9 +93,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
 
             model.VBRequestCategory = "NONPO";
 
-            model.Status_Post = "Belum";
-            model.Apporve_Status = "Not Approve";
-            model.Complete_Status = "Not Complete";
+            model.Status_Post = false;
+            model.Apporve_Status = false;
+            model.Complete_Status = false;
 
             model.UnitLoad = GetUnitLoad(viewmodel);
 
@@ -364,9 +361,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             model.VBRequestCategory = "NONPO";
             model.UnitLoad = GetUnitLoad(viewModel);
 
-            model.Status_Post = "Belum";
-            model.Apporve_Status = "Not Approve";
-            model.Complete_Status = "Not Complete";
+            model.Status_Post = false;
+            model.Apporve_Status = false;
+            model.Complete_Status = false;
 
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
 
@@ -390,7 +387,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                     listData.ForEach(m =>
                     {
                         EntityExtension.FlagForUpdate(m, user, UserAgent);
-                        m.Status_Post = "Sudah";
+                        m.Status_Post = true;
                     });
 
                     Updated = _dbContext.SaveChanges();

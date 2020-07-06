@@ -117,9 +117,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
                 Amount = 123,
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
-                Status_Post = "Status_Post",
-                Apporve_Status = "Apporve_Status",
-                Complete_Status = "Complete_Status",
+                Status_Post = true,
+                Apporve_Status = true,
+                Complete_Status = true,
                 VBRequestCategory = "VBRequestCategory",
                 CreatedBy = "CreatedBy"
 

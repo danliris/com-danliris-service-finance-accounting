@@ -19,7 +19,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest
         public string UnitName { get; set; }
         [MaxLength(64)]
         public string DetailOthers { get; set; }
-
+        [MaxLength(64)]
+        public string ProductId { get; set; }
+        [MaxLength(64)]
+        public string ProductCode { get; set; }
+        [MaxLength(64)]
+        public string ProductName { get; set; }
+        public decimal DefaultQuantity { get; set; }
+        [MaxLength(64)]
+        public string DefaultUOMId { get; set; }
+        [MaxLength(64)]
+        public string DefaultUOMUnit { get; set; }
+        public decimal DealQuantity { get; set; }
+        [MaxLength(64)]
+        public string DealUOMId { get; set; }
+        [MaxLength(64)]
+        public string DealUOMUnit { get; set; }
+        public decimal Conversion { get; set; }
+        public decimal Price { get; set; }
+        [MaxLength(64)]
+        public string ProductRemark { get; set; }
         public int VBId { get; set; }
 
         [ForeignKey("VBId")]
