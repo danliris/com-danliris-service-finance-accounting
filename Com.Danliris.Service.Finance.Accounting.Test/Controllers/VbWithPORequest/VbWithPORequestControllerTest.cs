@@ -568,7 +568,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
             var serviceMock = new Mock<IVbWithPORequestService>();
             serviceMock
                 .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
-                .ReturnsAsync(new VbWithPORequestViewModel());
+                .ReturnsAsync(vm);
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
 
@@ -578,12 +578,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
             var identityServiceMock = new Mock<IIdentityService>();
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
-            var mapperMock = new Mock<IMapper>();
-            mapperMock
-                .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbRequestModel>()))
-                .Returns(new VbWithPORequestViewModel());
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
 
