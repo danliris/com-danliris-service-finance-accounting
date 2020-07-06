@@ -505,6 +505,74 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
         }
 
         [Fact]
+        public async Task Get_VBWithPORequest_PDF_NotFound()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync((VbWithPORequestViewModel)null);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<VbNonPORequestViewModel>(It.IsAny<VbRequestModel>()))
+                .Returns(new VbNonPORequestViewModel());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetDownPaymentPDF(1);
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+
+        }
+
+        [Fact]
+        public async Task Get_VBWithPO_PDF_Exception()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .Throws(new Exception());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<VbNonPORequestViewModel>(It.IsAny<VbRequestModel>()))
+                .Returns(new VbNonPORequestViewModel());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetDownPaymentPDF(1);
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+
+        }
+
+        [Fact]
         public async Task Get_Sales_Receipt_PDF_Success_Currency_IDRAsync()
         {
             var vm = new VbWithPORequestViewModel()
@@ -527,6 +595,629 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                             Id = 1,
                             Code = "Code",
                             Name = "Name",
+                        },
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                Conversion = 1,
+                                dealQuantity = 1,
+                                dealUom = new dealUom()
+                                {
+                                    _id = "id",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 1,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id = "id",
+                                    unit ="unit"
+                                },
+                                priceBeforeTax = 1,
+                                product = new Product_VB()
+                                {
+                                    _id = "id",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+                        }
+
+                    }
+
+
+                },
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetDownPaymentPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_Currency_IDRAsync_S1()
+        {
+            var vm = new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.Now,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 1,
+                            Code = "Code",
+                            Name = "SPINNING 1",
+                        },
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                Conversion = 1,
+                                dealQuantity = 1,
+                                dealUom = new dealUom()
+                                {
+                                    _id = "id",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 1,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id = "id",
+                                    unit ="unit"
+                                },
+                                priceBeforeTax = 1,
+                                product = new Product_VB()
+                                {
+                                    _id = "id",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+                        }
+
+                    }
+
+
+                },
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetDownPaymentPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_Currency_IDRAsync_S2()
+        {
+            var vm = new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.Now,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 1,
+                            Code = "Code",
+                            Name = "SPINNING 2",
+                        },
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                Conversion = 1,
+                                dealQuantity = 1,
+                                dealUom = new dealUom()
+                                {
+                                    _id = "id",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 1,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id = "id",
+                                    unit ="unit"
+                                },
+                                priceBeforeTax = 1,
+                                product = new Product_VB()
+                                {
+                                    _id = "id",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+                        }
+
+                    }
+
+
+                },
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetDownPaymentPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_Currency_IDRAsync_S3()
+        {
+            var vm = new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.Now,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 1,
+                            Code = "Code",
+                            Name = "SPINNING 3",
+                        },
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                Conversion = 1,
+                                dealQuantity = 1,
+                                dealUom = new dealUom()
+                                {
+                                    _id = "id",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 1,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id = "id",
+                                    unit ="unit"
+                                },
+                                priceBeforeTax = 1,
+                                product = new Product_VB()
+                                {
+                                    _id = "id",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+                        }
+
+                    }
+
+
+                },
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetDownPaymentPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_Currency_IDRAsync_W1()
+        {
+            var vm = new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.Now,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 1,
+                            Code = "Code",
+                            Name = "WEAVING 1",
+                        },
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                Conversion = 1,
+                                dealQuantity = 1,
+                                dealUom = new dealUom()
+                                {
+                                    _id = "id",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 1,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id = "id",
+                                    unit ="unit"
+                                },
+                                priceBeforeTax = 1,
+                                product = new Product_VB()
+                                {
+                                    _id = "id",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+                        }
+
+                    }
+
+
+                },
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetDownPaymentPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_Currency_IDRAsync_W2()
+        {
+            var vm = new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.Now,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 1,
+                            Code = "Code",
+                            Name = "WEAVING 2",
+                        },
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                Conversion = 1,
+                                dealQuantity = 1,
+                                dealUom = new dealUom()
+                                {
+                                    _id = "id",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 1,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id = "id",
+                                    unit ="unit"
+                                },
+                                priceBeforeTax = 1,
+                                product = new Product_VB()
+                                {
+                                    _id = "id",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+                        }
+
+                    }
+
+
+                },
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetDownPaymentPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_Currency_IDRAsync_PR()
+        {
+            var vm = new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.Now,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 1,
+                            Code = "Code",
+                            Name = "PRINTING",
+                        },
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                Conversion = 1,
+                                dealQuantity = 1,
+                                dealUom = new dealUom()
+                                {
+                                    _id = "id",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 1,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id = "id",
+                                    unit ="unit"
+                                },
+                                priceBeforeTax = 1,
+                                product = new Product_VB()
+                                {
+                                    _id = "id",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+                        }
+
+                    }
+
+
+                },
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetDownPaymentPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_Currency_IDRAsync_UMUM()
+        {
+            var vm = new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.Now,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 1,
+                            Code = "Code",
+                            Name = "UMUM",
                         },
                         Details = new List<VbWithPORequestDetailItemsViewModel>()
                         {
