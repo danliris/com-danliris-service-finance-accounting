@@ -44,7 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
         }
 
         [HttpGet("pdf/{Id}")]
-        public async Task<IActionResult> GetDownPaymentPDF([FromRoute] int Id)
+        public async Task<IActionResult> GetVbNonPORequestPDF([FromRoute] int Id)
         {
             try
             {
