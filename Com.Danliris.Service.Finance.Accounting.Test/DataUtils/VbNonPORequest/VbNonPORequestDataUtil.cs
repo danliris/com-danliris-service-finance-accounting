@@ -24,6 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
                 Unit = new Unit()
                 {
                     Id = 0,
@@ -65,6 +66,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
                 Unit = new Unit()
                 {
                     Id = 1,
@@ -107,6 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
 
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
                 UnitId = 1,
                 UnitCode = "UnitCode",
                 UnitName = "UnitName",
@@ -117,9 +120,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
                 Amount = 123,
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
-                Status_Post = "Status_Post",
-                Apporve_Status = "Apporve_Status",
-                Complete_Status = "Complete_Status",
+                //Status_Post = true,
+                Apporve_Status = true,
+                Complete_Status = true,
                 VBRequestCategory = "VBRequestCategory",
                 CreatedBy = "CreatedBy"
 
