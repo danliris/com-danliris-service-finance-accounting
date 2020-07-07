@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    [Migration("20200706153326_VBRequest")]
-    partial class VBRequest
+    [Migration("20200707085627_VbRequestandDetail")]
+    partial class VbRequestandDetail
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1752,6 +1752,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTimeOffset>("Date");
 
+                    b.Property<DateTimeOffset>("DateEstimate");
+
                     b.Property<string>("DeletedAgent")
                         .IsRequired()
                         .HasMaxLength(255);
@@ -1773,8 +1775,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(255);
 
                     b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<bool>("Status_Post");
 
                     b.Property<string>("UnitCode")
                         .HasMaxLength(64);
