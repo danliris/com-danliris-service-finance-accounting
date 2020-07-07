@@ -24,7 +24,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
-                VBCode = "VBNo",
+                Unit = new Unit()
+                {
+                    Id = 0,
+                    Code = "Code",
+                    Name = "Name",
+                },
                 Currency = new CurrencyVBRequest()
                 {
                     Id = 0,
@@ -60,7 +65,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
-                VBCode = "VBNo",
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
                 Currency = new CurrencyVBRequest()
                 {
                     Id = 0,
@@ -94,22 +104,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
         {
             return new VbRequestModel()
             {
-                
+
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
-                VBCode = "VBNo",
-                CurrencyId=1,
-                CurrencyCode= "CurrencyCode",
+                UnitId = 1,
+                UnitCode = "UnitCode",
+                UnitName = "UnitName",
+                CurrencyId = 1,
+                CurrencyCode = "CurrencyCode",
                 CurrencyRate = 123,
                 CurrencySymbol = "CurrencySymbol",
                 Amount = 123,
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
-                Status_Post= "Status_Post",
-                Apporve_Status= "Apporve_Status",
-                Complete_Status= "Complete_Status",
-                VBRequestCategory= "VBRequestCategory",
-                CreatedBy= "CreatedBy"
+                Status_Post = "Status_Post",
+                Apporve_Status = "Apporve_Status",
+                Complete_Status = "Complete_Status",
+                VBRequestCategory = "VBRequestCategory",
+                CreatedBy = "CreatedBy"
 
             };
         }

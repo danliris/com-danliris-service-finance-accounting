@@ -11,8 +11,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         [MaxLength(64)]
         public string VBNo { get; set; }
         public DateTimeOffset Date { get; set; }
+
+        public int UnitId { get; set; }
         [MaxLength(64)]
-        public string VBCode { get; set; }
+        public string UnitCode { get; set; }
+        [MaxLength(64)]
+        public string UnitName { get; set; }
         public int CurrencyId { get; set; }
         [MaxLength(64)]
         public string CurrencyCode { get; set; }
