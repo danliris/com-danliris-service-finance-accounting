@@ -59,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 Date = entity.Date,
                 UnitLoad = entity.UnitLoad,
                 CreateBy = entity.CreatedBy,
-                Status_Post = entity.Status_Post,
+                //Status_Post = entity.Status_Post,
                 Approve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory
@@ -77,7 +77,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
             model.VBRequestCategory = "PO";
 
-            model.Status_Post = false;
+            //model.Status_Post = false;
             model.Apporve_Status = false;
             model.Complete_Status = false;
 
@@ -100,10 +100,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             var month = now.ToString("MM");
 
 
-            var unit = model.UnitCode.ToString().Split(" - ");
+            //var unit = model.UnitCode.ToString().Split(" - ");
 
 
-            var documentNo = $"VB{unit[0]}{month}{year}";
+            var documentNo = $"VB-{month}{year}-";
 
             var countSameDocumentNo = _dbContext.VbRequests.Where(a => a.Date.Month == model.Date.Month).Count(entity => entity.UnitCode.Contains(model.UnitCode));
 
@@ -130,6 +130,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     LastModifiedBy = s.LastModifiedBy,
                     VBNo = s.VBNo,
                     Date = s.Date,
+                    DateEstimate = s.DateEstimate,
                     Unit = new Unit()
                     {
                         Id = s.UnitId,
@@ -187,7 +188,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             var model = MappingData2(id, viewmodel);
             model.VBRequestCategory = "PO";
 
-            model.Status_Post = false;
+            //model.Status_Post = false;
             model.Apporve_Status = false;
             model.Complete_Status = false;
 

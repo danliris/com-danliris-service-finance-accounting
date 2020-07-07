@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
         public string VBNo { get; set; }
         public DateTimeOffset? Date { get; set; }
+        public DateTimeOffset? DateEstimate { get; set; }
         public Unit Unit { get; set; }
 
         public ICollection<VbWithPORequestDetailViewModel> Items { get; set; }
@@ -19,11 +20,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             if (Date == null)
                 yield return new ValidationResult("Tanggal harus diisi!", new List<string> { "Date" });
 
+            if (DateEstimate == null)
+                yield return new ValidationResult("Estimasi Tanggal Realisasi harus diisi!", new List<string> { "DateEstimate" });
+
             if (Unit == null || Unit.Id <= 0)
                 yield return new ValidationResult("Kode VB harus diisi!", new List<string> { "VBCode" });
 
-            if (Items == null)
-                yield return new ValidationResult("Nomor PO harus diisi!", new List<string> { "purchaseOrder" });
+            if (Items == null || Items.Count == 0)
+                yield return new ValidationResult("Nomor PO harus diisi!", new List<string> { "itemscount" });
         }
     }
 }
