@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
-    public partial class VBRequest : Migration
+    public partial class VbRequestandDetail : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,6 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     DeletedAgent = table.Column<string>(maxLength: 255, nullable: false),
                     VBNo = table.Column<string>(maxLength: 64, nullable: true),
                     Date = table.Column<DateTimeOffset>(nullable: false),
+                    DateEstimate = table.Column<DateTimeOffset>(nullable: false),
                     UnitId = table.Column<int>(nullable: false),
                     UnitCode = table.Column<string>(maxLength: 64, nullable: true),
                     UnitName = table.Column<string>(maxLength: 64, nullable: true),
@@ -37,7 +38,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     Amount = table.Column<decimal>(nullable: false),
                     Usage = table.Column<string>(maxLength: 255, nullable: true),
                     UnitLoad = table.Column<string>(maxLength: 255, nullable: true),
-                    Status_Post = table.Column<bool>(nullable: false),
                     Apporve_Status = table.Column<bool>(nullable: false),
                     Complete_Status = table.Column<bool>(nullable: false),
                     VBRequestCategory = table.Column<string>(maxLength: 255, nullable: true)
