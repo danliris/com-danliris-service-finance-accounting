@@ -25,6 +25,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Payment
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.SalesReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbNonPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditureProofDocument;
@@ -100,7 +101,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<ISalesReceiptService, SalesReceiptService>()
                 .AddTransient<ICashierApprovalService, CashierApprovalService>()
                 .AddTransient<IDownPaymentService, DownPaymentService>()
-                .AddTransient<IVbNonPORequestService, VbNonPORequestService>();
+                .AddTransient<IVbNonPORequestService, VbNonPORequestService>()
+                .AddTransient<IVbWithPORequestService, VbWithPORequestService>();
         }
 
 

@@ -20,7 +20,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
     {
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
-        private readonly List<string> _alphabets;
         private const string UserAgent = "finance-service";
         private readonly DbSet<VbRequestModel> dbSet;
 
@@ -29,23 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             _dbContext = dbContext;
             _identityService = serviceProvider.GetService<IIdentityService>();
 
-            _alphabets = GetAlphabets();
             dbSet = _dbContext.Set<VbRequestModel>();
-        }
-
-        public List<string> GetAlphabets()
-        {
-            //Declare string container for alphabet
-            var result = new List<string>();
-
-            //Loop through the ASCII characters 65 to 90
-            for (int i = 65; i <= 90; i++)
-            {
-                // Convert the int to a char to get the actual character behind the ASCII code
-                result.Add(((char)i).ToString());
-            }
-
-            return result;
         }
 
         public ReadResponse<VbRequestList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
@@ -56,10 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             {
                 "VBNo",
                 "UnitLoad",
-                "CreatedBy",
-                "Status_Post",
-                "Apporve_Status",
-                "Complete_Status"
+                "CreatedBy"
             };
 
             query = QueryHelper<VbRequestModel>.Search(query, searchAttributes, keyword);
@@ -78,7 +58,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 Date = entity.Date,
                 UnitLoad = entity.UnitLoad,
                 CreateBy = entity.CreatedBy,
-                Status_Post = entity.Status_Post,
+                //Status_Post = entity.Status_Post,
                 Approve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory
@@ -96,9 +76,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
 
             model.VBRequestCategory = "NONPO";
 
-            model.Status_Post = "Belum";
-            model.Apporve_Status = "Not Approve";
-            model.Complete_Status = "Not Complete";
+            model.Apporve_Status = false;
+            model.Complete_Status = false;
 
             model.UnitLoad = GetUnitLoad(viewmodel);
 
@@ -282,10 +261,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             var month = now.ToString("MM");
 
 
-            var unit = model.UnitCode.ToString().Split(" - ");
+            //var unit = model.UnitCode.ToString().Split(" - ");
 
 
-            var documentNo = $"VB{unit[0]}{month}{year}";
+            var documentNo = $"VB-{month}{year}-";
 
             var countSameDocumentNo = _dbContext.VbRequests.Where(a => a.Date.Month == model.Date.Month).Count(entity => entity.UnitCode.Contains(model.UnitCode));
 
@@ -320,6 +299,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                        UnitLoad = s.UnitLoad,
                        VBNo = s.VBNo,
                        Date = s.Date,
+                       DateEstimate = s.DateEstimate,
                        //VBCode = s.VBCode,
                        Unit = new Unit()
                        {
@@ -364,9 +344,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             model.VBRequestCategory = "NONPO";
             model.UnitLoad = GetUnitLoad(viewModel);
 
-            model.Status_Post = "Belum";
-            model.Apporve_Status = "Not Approve";
-            model.Complete_Status = "Not Complete";
+            //model.Status_Post = false;
+            model.Apporve_Status = false;
+            model.Complete_Status = false;
 
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
 
@@ -390,7 +370,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                     listData.ForEach(m =>
                     {
                         EntityExtension.FlagForUpdate(m, user, UserAgent);
-                        m.Status_Post = "Sudah";
+                        //m.Status_Post = true;
                     });
 
                     Updated = _dbContext.SaveChanges();
