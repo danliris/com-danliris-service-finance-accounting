@@ -137,14 +137,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
             throw new NotImplementedException();
         }
 
-        public Task<int> CreateAsync(VbRequestModel model)
+        public Task<int> CreateAsync(VbRequestModel model, CashierApprovalViewModel viewmodel)
         {
-            throw new NotImplementedException();
+            EntityExtension.FlagForCreate(model, IdentityService.Username, UserAgent);
+
+            DbContext.VbRequests.Add(model);
+
+            return DbContext.SaveChangesAsync();
         }
 
         public Task<VbRequestModel> ReadByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return DbContext.VbRequests.Where(entity => entity.Id == id).FirstOrDefaultAsync();
         }
 
         public Task<int> UpdateAsync(int id, VbRequestModel model)
@@ -153,6 +157,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
         }
 
         public Task<int> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> CreateAsync(VbRequestModel model)
         {
             throw new NotImplementedException();
         }

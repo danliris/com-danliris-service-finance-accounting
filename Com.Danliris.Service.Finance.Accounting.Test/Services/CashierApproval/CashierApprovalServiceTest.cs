@@ -87,5 +87,193 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Non_POApproval
                 Assert.True(defaultValidationResult.Count() > 0);
             }
         }
+
+        private Mock<IServiceProvider> GetServiceProviderWrongHttpClient()
+        {
+            var httpClientService = new Mock<IHttpClientService>();
+            httpClientService
+                .Setup(x => x.PutAsync(It.Is<string>(s => s.Contains("cashier-approval")), It.IsAny<StringContent>()))
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService);
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+
+            return serviceProvider;
+        }
+
+        [Fact]
+        public async Task Should_Success_Post_Approval_With_PO()
+        {
+            CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            VbRequestModel model = await _dataUtil(service).GetTestData();
+
+            CashierApprovalViewModel data = new CashierApprovalViewModel()
+            {
+                VBRequestCategory = "PO",
+                CashierApproval = new List<CashierApprovalItemViewModel>()
+                {
+                    new CashierApprovalItemViewModel()
+                    {
+                        VBNo  = model.VBNo,
+                        Id = model.Id
+                    }
+                }
+            };
+
+            var response = await service.CashierAproval(data);
+            Assert.NotEqual(0, response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Post_Approval_Non_PO()
+        {
+            CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            VbRequestModel model = await _dataUtil(service).GetTestData();
+
+            CashierApprovalViewModel data = new CashierApprovalViewModel()
+            {
+                VBRequestCategory = "NONPO",
+                CashierApproval = new List<CashierApprovalItemViewModel>()
+                {
+                    new CashierApprovalItemViewModel()
+                    {
+                        VBNo  = model.VBNo,
+                        Id = model.Id
+                    }
+                }
+            };
+
+            var response = await service.CashierAproval(data);
+            Assert.NotEqual(0, response);
+        }
+
+        [Fact]
+        public async Task Should_Fail_Post_Approval_With_PO()
+        {
+
+            CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            VbRequestModel model = await _dataUtil(service).GetTestData();
+
+            CashierApprovalViewModel data = new CashierApprovalViewModel()
+            {
+                VBRequestCategory = "PO",
+                CashierApproval = new List<CashierApprovalItemViewModel>()
+                {
+                    new CashierApprovalItemViewModel()
+                    {
+                        VBNo  = model.VBNo,
+                        Id = model.Id
+                    }
+                }
+            };
+
+            await Assert.ThrowsAnyAsync<Exception>(() => service.CashierAproval(null));
+
+        }
+
+        [Fact]
+        public async Task Should_Fail_Post_Approval_Non_PO()
+        {
+
+            CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            VbRequestModel model = await _dataUtil(service).GetTestData();
+
+            CashierApprovalViewModel data = new CashierApprovalViewModel()
+            {
+                VBRequestCategory = "NONPO",
+                CashierApproval = new List<CashierApprovalItemViewModel>()
+                {
+                    new CashierApprovalItemViewModel()
+                    {
+                        VBNo  = model.VBNo,
+                        Id = model.Id
+                    }
+                }
+            };
+
+            await Assert.ThrowsAnyAsync<Exception>(() => service.CashierAproval(null));
+
+        }
+
+        [Fact]
+        public async Task Should_Success_Delete_Approval_With_PO()
+        {
+            CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            VbRequestModel model = await _dataUtil(service).GetTestData();
+
+            CashierApprovalViewModel data = new CashierApprovalViewModel()
+            {
+                VBRequestCategory = "PO",
+                CashierApproval = new List<CashierApprovalItemViewModel>()
+                {
+                    new CashierApprovalItemViewModel()
+                    {
+                        VBNo  = model.VBNo,
+                        Id = model.Id
+                    }
+                }
+            };
+            var acceptedResponse = await service.CashierAproval(data);
+            var newModel = await service.ReadByIdAsync(model.Id);
+            var deleteResponse = await service.DeleteCashierAproval(newModel.Id);
+            Assert.NotEqual(0, deleteResponse);
+        }
+
+        [Fact]
+        public async Task Should_Success_Delete_Approval_Non_PO()
+        {
+            CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            VbRequestModel model = await _dataUtil(service).GetTestData();
+
+            CashierApprovalViewModel data = new CashierApprovalViewModel()
+            {
+                VBRequestCategory = "NONPO",
+                CashierApproval = new List<CashierApprovalItemViewModel>()
+                {
+                    new CashierApprovalItemViewModel()
+                    {
+                        VBNo  = model.VBNo,
+                        Id = model.Id
+                    }
+                }
+            };
+            var acceptedResponse = await service.CashierAproval(data);
+            var newModel = await service.ReadByIdAsync(model.Id);
+            var deleteResponse = await service.DeleteCashierAproval(newModel.Id);
+            Assert.NotEqual(0, deleteResponse);
+        }
+
+        //[Fact]
+        //public async Task Should_Fail_Delete_Approval_Non_PO()
+        //{
+        //    CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+        //    VbRequestModel model = await _dataUtil(service).GetTestData();
+
+        //    CashierApprovalViewModel data = new CashierApprovalViewModel()
+        //    {
+        //        VBRequestCategory = "NONPO",
+        //        CashierApproval = new List<CashierApprovalItemViewModel>()
+        //        {
+        //            new CashierApprovalItemViewModel()
+        //            {
+        //                VBNo  = model.VBNo,
+        //                Id = model.Id
+        //            }
+        //        }
+        //    };
+
+        //    var acceptedResponse = await service.CashierAproval(data);
+        //    var newModel = await service.ReadByIdAsync(model.Id);
+        //    service = new CashierApprovalService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
+        //    await Assert.ThrowsAnyAsync<Exception>(() => service.DeleteCashierAproval(newModel.Id));
+
+        //}
     }
 }

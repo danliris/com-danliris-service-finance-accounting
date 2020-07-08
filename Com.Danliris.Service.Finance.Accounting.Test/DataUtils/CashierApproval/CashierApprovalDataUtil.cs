@@ -40,7 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CashierApproval
                 //Status_Post = true,
                 Apporve_Status = true,
                 Complete_Status = true,
-                VBRequestCategory = "VBRequestCategory",
+                VBRequestCategory = "NONPO",
                 CreatedBy = "CreatedBy"
             };
 
@@ -51,7 +51,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CashierApproval
         {
             CashierApprovalViewModel TestData = new CashierApprovalViewModel()
             {
-                VBRequestCategory = "VBRequestCategory",
+                VBRequestCategory = "NONPO",
                 CashierApproval = new List<CashierApprovalItemViewModel>{
                         new CashierApprovalItemViewModel{
                             Id = 10,
@@ -63,11 +63,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CashierApproval
             return TestData;
         }
 
-        public async Task<VbRequestModel> GetTestDataById()
+        public async Task<VbRequestModel> GetTestData()
         {
-            VbRequestModel model = GetNewData();
-            await Service.CreateAsync(model);
-            return await Service.ReadByIdAsync(model.Id);
+            VbRequestModel vbRequest = GetNewData();
+            var viewmodel = GetDataToValidate();
+            await Service.CreateAsync(vbRequest, viewmodel);
+
+            return vbRequest;
         }
     }
 }
