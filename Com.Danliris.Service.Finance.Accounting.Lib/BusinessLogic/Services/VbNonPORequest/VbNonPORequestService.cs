@@ -39,7 +39,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             {
                 "VBNo",
                 "UnitLoad",
-                "CreatedBy"
+                "CreatedBy",
+                "CurrencyCode",
+                "UnitName",
             };
 
             query = QueryHelper<VbRequestModel>.Search(query, searchAttributes, keyword);
@@ -57,6 +59,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 VBNo = entity.VBNo,
                 Date = entity.Date,
                 UnitLoad = entity.UnitLoad,
+                Amount = entity.Amount,
+                CurrencyCode = entity.CurrencyCode,
+                UnitName = entity.UnitName,
                 CreateBy = entity.CreatedBy,
                 //Status_Post = entity.Status_Post,
                 Approve_Status = entity.Apporve_Status,

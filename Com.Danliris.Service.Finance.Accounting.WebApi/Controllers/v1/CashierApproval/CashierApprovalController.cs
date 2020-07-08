@@ -23,11 +23,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CashierA
     {
         private IIdentityService IdentityService;
         private readonly IValidateService ValidateService;
-        private readonly ICashierApprovalService Service;
+        private readonly ICashierAprovalService Service;
         private readonly string ApiVersion;
         private readonly IMapper Mapper;
 
-        public CashierApprovalController(IIdentityService identityService, IValidateService validateService, IMapper mapper, ICashierApprovalService service)
+        public CashierApprovalController(IIdentityService identityService, IValidateService validateService, IMapper mapper, ICashierAprovalService service)
         {
             IdentityService = identityService;
             ValidateService = validateService;
@@ -50,7 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CashierA
                 VerifyUser();
                 ValidateService.Validate(viewModel);
 
-                await Service.CashierApproval(viewModel);
+                await Service.CashierAproval(viewModel);
 
                 return NoContent();
             }
@@ -85,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CashierA
             {
                 VerifyUser();
 
-                await Service.DeleteCashierApproval(id);
+                await Service.DeleteCashierAproval(id);
 
                 return NoContent();
             }

@@ -99,7 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IAutoDailyBankTransactionService, AutoDailyBankTransactionService>()
                 .AddTransient<IMemoService, MemoService>()
                 .AddTransient<ISalesReceiptService, SalesReceiptService>()
-                .AddTransient<ICashierApprovalService, CashierApprovalService>()
+                .AddTransient<ICashierAprovalService, CashierApprovalService>()
                 .AddTransient<IDownPaymentService, DownPaymentService>()
                 .AddTransient<IVbNonPORequestService, VbNonPORequestService>()
                 .AddTransient<IVbWithPORequestService, VbWithPORequestService>();

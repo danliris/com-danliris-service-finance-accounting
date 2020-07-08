@@ -1,5 +1,4 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.CashierApproval;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.LockTransaction;
@@ -49,8 +48,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
         public DbSet<SalesReceiptModel> SalesReceipts { get; set; }
         public DbSet<SalesReceiptDetailModel> SalesReceiptDetails { get; set; }
-
-        public DbSet<CashierApprovalModel> CashierApprovals { get; set; }
 
         public DbSet<MemoModel> Memos { get; set; }
         public DbSet<MemoItemModel> MemoItems { get; set; }
