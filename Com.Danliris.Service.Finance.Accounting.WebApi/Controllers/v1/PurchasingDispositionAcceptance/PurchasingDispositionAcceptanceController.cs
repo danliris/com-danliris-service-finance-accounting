@@ -40,13 +40,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
             ApiVersion = "1.0.0";
         }
 
-        public PurchasingDispositionAcceptanceController(IIdentityService object1, IValidateService object2, IMapper object3, ICashierAprovalService object4)
-        {
-            this.object1 = object1;
-            this.object2 = object2;
-            this.object3 = object3;
-            this.object4 = object4;
-        }
+        //public PurchasingDispositionAcceptanceController(IIdentityService object1, IValidateService object2, IMapper object3, ICashierAprovalService object4)
+        //{
+        //    this.object1 = object1;
+        //    this.object2 = object2;
+        //    this.object3 = object3;
+        //    this.object4 = object4;
+        //}
 
         protected void VerifyUser()
         {
