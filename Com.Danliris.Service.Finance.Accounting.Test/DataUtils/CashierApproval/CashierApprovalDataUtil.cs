@@ -65,10 +65,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CashierApproval
         public async Task<VbRequestModel> GetTestData()
         {
             VbRequestModel vbRequest = GetNewData();
+
             var viewmodel = GetDataToValidate();
+           
             await Service.CreateAsync(vbRequest, viewmodel);
 
             return vbRequest;
         }
+
+
     }
 }
