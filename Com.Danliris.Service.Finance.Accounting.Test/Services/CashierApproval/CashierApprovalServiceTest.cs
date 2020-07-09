@@ -295,6 +295,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Non_POApproval
 
         }
 
-       
+        [Fact]
+        public async Task Should_Fail_Delete_Empty_Id()
+        {
+            CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var deleteResponse = await service.DeleteCashierAproval(-1);
+            Assert.Equal(0, deleteResponse);
+        }
+
     }
 }
