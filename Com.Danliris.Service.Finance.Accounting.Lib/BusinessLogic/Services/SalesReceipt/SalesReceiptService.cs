@@ -63,17 +63,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
                         EntityExtension.FlagForCreate(detail, _IdentityService.Username, _UserAgent);
                     }
 
-                    //if (model.SalesReceiptDetails.Count > 0)
-                    //{
-                    //    foreach (var detail in model.SalesReceiptDetails)
-                    //    {
-                    //        if(detail.Nominal > 0)
-                    //        {
-                    //            EntityExtension.FlagForCreate(detail, _IdentityService.Username, _UserAgent);
-                    //        }
-                    //    }
-                    //}
-
                     EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
                     _DbSet.Add(model);
 

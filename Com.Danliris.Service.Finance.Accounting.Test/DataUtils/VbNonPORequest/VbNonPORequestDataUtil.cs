@@ -24,6 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
+                //ApprovedDate = DateTimeOffset.UtcNow,
                 DateEstimate = DateTimeOffset.UtcNow,
                 Unit = new Unit()
                 {

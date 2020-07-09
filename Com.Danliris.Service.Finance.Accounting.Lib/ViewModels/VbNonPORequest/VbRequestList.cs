@@ -8,6 +8,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string VBNo { get; set; }
         public DateTimeOffset Date { get; set; }
         public string UnitLoad { get; set; }
+        public string CurrencyCode { get; set; }
+        public string UnitName { get; set; }
+        public decimal Amount { get; set; }
         public string CreateBy { get; set; }
         public bool Status_Post { get; set; }
         public bool Approve_Status { get; set; }
