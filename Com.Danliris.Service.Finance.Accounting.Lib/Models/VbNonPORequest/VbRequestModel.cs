@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         [MaxLength(64)]
         public string VBNo { get; set; }
         public DateTimeOffset Date { get; set; }
+        public DateTimeOffset? ApproveDate { get; set; }
         public DateTimeOffset DateEstimate { get; set; }
         public int UnitId { get; set; }
         [MaxLength(64)]

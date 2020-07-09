@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierApproval;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionAcceptance;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,25 +12,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PurchasingDispositionAcceptance
+namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CashierApproval
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("v{version:apiVersion}/purchasing-disposition-acceptance")]
+    [Route("v{version:apiVersion}/cashier-approval")]
     [Authorize]
-    public class PurchasingDispositionAcceptanceController : Controller
+
+    public class CashierApprovalController : Controller
     {
         private IIdentityService IdentityService;
-        private IIdentityService object1;
-        private IValidateService object2;
-        private IMapper object3;
-        private ICashierAprovalService object4;
         private readonly IValidateService ValidateService;
-        private readonly IPurchasingDispositionExpeditionService Service;
+        private readonly ICashierAprovalService Service;
         private readonly string ApiVersion;
         private readonly IMapper Mapper;
 
-        public PurchasingDispositionAcceptanceController(IIdentityService identityService, IValidateService validateService, IMapper mapper, IPurchasingDispositionExpeditionService service)
+        public CashierApprovalController(IIdentityService identityService, IValidateService validateService, IMapper mapper, ICashierAprovalService service)
         {
             IdentityService = identityService;
             ValidateService = validateService;
@@ -39,15 +35,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
             Mapper = mapper;
             ApiVersion = "1.0.0";
         }
-
-        //public PurchasingDispositionAcceptanceController(IIdentityService object1, IValidateService object2, IMapper object3, ICashierAprovalService object4)
-        //{
-        //    this.object1 = object1;
-        //    this.object2 = object2;
-        //    this.object3 = object3;
-        //    this.object4 = object4;
-        //}
-
         protected void VerifyUser()
         {
             IdentityService.Username = User.Claims.ToArray().SingleOrDefault(p => p.Type.Equals("username")).Value;
@@ -56,14 +43,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] PurchasingDispositionAcceptanceViewModel viewModel)
+        public async Task<ActionResult> Post([FromBody] CashierApprovalViewModel viewModel)
         {
             try
             {
                 VerifyUser();
                 ValidateService.Validate(viewModel);
 
-                await Service.PurchasingDispositionAcceptance(viewModel);
+                await Service.CashierAproval(viewModel);
 
                 return NoContent();
             }
@@ -98,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
             {
                 VerifyUser();
 
-                await Service.DeletePurchasingDispositionAcceptance(id);
+                await Service.DeleteCashierAproval(id);
 
                 return NoContent();
             }
