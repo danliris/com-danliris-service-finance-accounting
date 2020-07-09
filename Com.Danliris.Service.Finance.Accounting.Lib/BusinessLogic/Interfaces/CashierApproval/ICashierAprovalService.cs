@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierApproval
 {
-    public interface ICashierAprovalService : IBaseService<VbRequestModel>
+    public interface ICashierAprovalService
+        //: IBaseService<VbRequestModel>
     {
         Task<int> CashierAproval(CashierApprovalViewModel data);
         Task<int> DeleteCashierAproval(int id);

@@ -88,26 +88,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Non_POApproval
             }
         }
 
-        private Mock<IServiceProvider> GetServiceProviderWrongHttpClient()
-        {
-            var httpClientService = new Mock<IHttpClientService>();
-            httpClientService
-                .Setup(x => x.PutAsync(It.Is<string>(s => s.Contains("cashier-approval")), It.IsAny<StringContent>()))
-                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-
-            var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider
-                .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(httpClientService);
-
-            serviceProvider
-                .Setup(x => x.GetService(typeof(IIdentityService)))
-                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
-
-
-            return serviceProvider;
-        }
-
         [Fact]
         public async Task Should_Success_Post_Approval_With_PO()
         {
@@ -207,7 +187,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Non_POApproval
         {
             CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             VbRequestModel model = await _dataUtil(service).GetTestData();
-
+            model.VBRequestCategory = "PO";
             CashierApprovalViewModel data = new CashierApprovalViewModel()
             {
                 VBRequestCategory = "PO",
@@ -271,9 +251,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Non_POApproval
 
         //    var acceptedResponse = await service.CashierAproval(data);
         //    var newModel = await service.ReadByIdAsync(model.Id);
-        //    service = new CashierApprovalService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
-        //    await Assert.ThrowsAnyAsync<Exception>(() => service.DeleteCashierAproval(newModel.Id));
+        //service = new CashierApprovalService(GetServiceProviderWrongHttpClient().Object, _dbContext(GetCurrentMethod()));
+        //    await Assert.ThrowsAnyAsync<Exception>(() => service.DeleteCashierAproval(0));
 
         //}
+
+        [Fact]
+        public async Task Should_Fail_Delete_Empty_Id()
+        {
+            CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var deleteResponse = await service.DeleteCashierAproval(-1);
+            Assert.Equal(0, deleteResponse);
+        }
     }
 }

@@ -37,9 +37,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CashierApproval
                 Amount = 123,
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
-                //Status_Post = true,
-                Apporve_Status = true,
-                Complete_Status = true,
+                Apporve_Status = false,
+                Complete_Status = false,
                 VBRequestCategory = "NONPO",
                 CreatedBy = "CreatedBy"
             };
