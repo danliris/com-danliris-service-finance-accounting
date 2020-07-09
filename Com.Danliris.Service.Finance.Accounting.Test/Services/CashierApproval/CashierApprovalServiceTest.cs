@@ -231,34 +231,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Non_POApproval
             Assert.NotEqual(0, deleteResponse);
         }
 
-       
+        //[Fact]
+        //public async Task Should_Fail_Delete_Approval_Non_PO()
+        //{
+        //    CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+        //    VbRequestModel model = await _dataUtil(service).GetTestData();
 
-        [Fact]
-        public async Task Should_Fail_Delete_Approval_Non_PO()
-        {
-            CashierApprovalService service = new CashierApprovalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            VbRequestModel model = await _dataUtil(service).GetTestData();
+        //    var serviceProvider = new Mock<IServiceProvider>();
 
-            var serviceProvider = new Mock<IServiceProvider>();
+        //    serviceProvider
+        //        .Setup(x => x.GetService(typeof(IHttpClientService)))
+        //        .Returns(new HttpClientTestService());
 
-            serviceProvider
-                .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(new HttpClientTestService());
+        //    Mock<IIdentityService> mockIdentity = new Mock<IIdentityService>();
+        //    mockIdentity
+        //        .Setup(s => s.Username)
+        //        .Throws(new Exception());
 
-            Mock<IIdentityService> mockIdentity = new Mock<IIdentityService>();
-            mockIdentity
-                .Setup(s => s.Username)
-                .Throws(new Exception());
+        //    serviceProvider
+        //       .Setup(x => x.GetService(typeof(IIdentityService)))
+        //       .Returns(mockIdentity.Object);
 
-            serviceProvider
-               .Setup(x => x.GetService(typeof(IIdentityService)))
-               .Returns(mockIdentity.Object);
-
-            service = new CashierApprovalService(serviceProvider.Object, _dbContext(GetCurrentMethod()));
+        //    service = new CashierApprovalService(serviceProvider.Object, _dbContext(GetCurrentMethod()));
             
-            await Assert.ThrowsAnyAsync<Exception>(() => service.DeleteCashierAproval(model.Id));
+        //    await Assert.ThrowsAnyAsync<Exception>(() => service.DeleteCashierAproval(model.Id));
 
-        }
+        //}
 
         [Fact]
         public async Task Should_Fail_Delete_Empty_Id()
