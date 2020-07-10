@@ -118,7 +118,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Non_POApproval
                     new CashierApprovalItemViewModel()
                     {
                         VBNo  = model.VBNo,
-                        Id = model.Id
+                        Id = model.Id,
+                        Amount = model.Amount,
                     }
                 }
             };
@@ -165,7 +166,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Non_POApproval
                     new CashierApprovalItemViewModel()
                     {
                         VBNo  = model.VBNo,
-                        Id = model.Id
+                        Id = model.Id,
+                        Amount = model.Amount
                     }
                 }
             };
@@ -212,7 +214,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Non_POApproval
                     new CashierApprovalItemViewModel()
                     {
                         VBNo  = model.VBNo,
-                        Id = model.Id
+                        Id = model.Id,
+                        Amount = model.Amount
                     }
                 }
             };

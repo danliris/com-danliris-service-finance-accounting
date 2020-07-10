@@ -54,6 +54,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                             VbRequestModel model = DbContext.VbRequests.Single(x => x.Id == item.Id);
                             model.Apporve_Status = true;
                             model.ApproveDate = DateTimeOffset.UtcNow;
+                            model.Amount = item.Amount;
 
                             EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
                         }
@@ -105,6 +106,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                     {
                         approvals.Apporve_Status = false;
                         approvals.ApproveDate = null;
+                        approvals.Amount = 0;
 
                         EntityExtension.FlagForUpdate(approvals, IdentityService.Username, UserAgent);
 

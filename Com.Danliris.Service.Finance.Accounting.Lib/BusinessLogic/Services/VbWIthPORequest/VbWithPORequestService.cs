@@ -32,9 +32,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             _DetailDbSet = _dbContext.Set<VbRequestDetailModel>();
         }
 
-        public ReadResponse<VbRequestList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
+        public ReadResponse<VbRequestWIthPOList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _dbContext.VbRequests.AsQueryable();
+            var query2 = _dbContext.VbRequestsDetails.AsQueryable();
+
+
 
             var searchAttributes = new List<string>()
             {
@@ -43,35 +46,73 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 "CreatedBy"
             };
 
+
+
             query = QueryHelper<VbRequestModel>.Search(query, searchAttributes, keyword);
+
+
 
             var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
             query = QueryHelper<VbRequestModel>.Filter(query, filterDictionary);
 
+
+
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
             query = QueryHelper<VbRequestModel>.Order(query, orderDictionary);
 
+
+
             var pageable = new Pageable<VbRequestModel>(query, page - 1, size);
-            var data = pageable.Data.Select(entity => new VbRequestList()
+            var pageable2 = new Pageable<VbRequestDetailModel>(query2, page - 1, size);
+            var data = pageable.Data.Select(entity => new VbRequestWIthPOList()
             {
                 Id = entity.Id,
                 VBNo = entity.VBNo,
                 Date = entity.Date,
+                DateEstimate = entity.DateEstimate,
                 UnitLoad = entity.UnitLoad,
-                Amount = entity.Amount,
-                //CurrencyCode = entity.CurrencyCode,
+                UnitId = entity.UnitId,
+                UnitCode = entity.UnitCode,
                 UnitName = entity.UnitName,
                 CreateBy = entity.CreatedBy,
-                //Status_Post = entity.Status_Post,
+                Amount = entity.Amount,
                 Approve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
-                VBRequestCategory = entity.VBRequestCategory
+                VBRequestCategory = entity.VBRequestCategory,
+                PONo = pageable2.Data.Select(en => new VbRequestDetailModel()
+                {
+                    VBId = en.VBId,
+                    PONo = en.PONo,
+                    Price = en.Price,
+                    DealQuantity = en.DealQuantity,
+                }).Where(en => en.VBId == entity.Id).ToList()
+                //pageable2.Data.GroupBy(
+                //            groupkey => new { groupkey.PONo, groupkey.VBId },
+                //            item => item,
+                //            (grpkey, item) => new { Group = grpkey, Item = item }
+                //        ).Select(en => new VbRequestDetailModel()
+                //        {
 
+
+
+                //            PONo = en.Group.PONo
+
+
+
+                //            //Price = en.Item
+
+
+
+                //        }).ToList()
             }).ToList();
+
+
 
             int totalData = pageable.TotalCount;
 
-            return new ReadResponse<VbRequestList>(data, totalData, orderDictionary, new List<string>());
+
+
+            return new ReadResponse<VbRequestWIthPOList>(data, totalData, orderDictionary, new List<string>());
         }
 
         public Task<int> CreateAsync(VbRequestModel model, VbWithPORequestViewModel viewmodel)
