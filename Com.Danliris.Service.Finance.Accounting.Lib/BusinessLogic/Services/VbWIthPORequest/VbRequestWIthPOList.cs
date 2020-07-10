@@ -1,10 +1,8 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
-namespace Com.Danliris.Service.Finance.Accounting.Lib
+namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest
 {
-    public class VbRequestList
+    public class VbRequestWIthPOList
     {
         public int Id { get; set; }
         public string VBNo { get; set; }
@@ -13,16 +11,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string UnitLoad { get; set; }
         public int UnitId { get; set; }
         public string UnitCode { get; set; }
-        public string UnitName { get; set; }
-        public string CurrencyCode { get; set; }
         public decimal Amount { get; set; }
-        public decimal TotalAmount { get; set; }
+        public string UnitName { get; set; }
         public string CreateBy { get; set; }
-        public bool Status_Post { get; set; }
         public bool Approve_Status { get; set; }
         public bool Complete_Status { get; set; }
         public string VBRequestCategory { get; set; }
-        public List<VbRequestDetailModel> PONo { get; set; }
-
+        public object PONo { get; set; }
     }
 }

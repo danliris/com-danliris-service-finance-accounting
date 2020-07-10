@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -68,7 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
             var serviceMock = new Mock<IVbWithPORequestService>();
             serviceMock
                 .Setup(service => service.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(new ReadResponse<VbRequestList>(new List<VbRequestList>(), 1, new Dictionary<string, string>(), new List<string>()));
+                .Returns(new ReadResponse<VbRequestWIthPOList>(new List<VbRequestWIthPOList>(), 1, new Dictionary<string, string>(), new List<string>()));
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
 

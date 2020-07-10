@@ -8,5 +8,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierApproval
     {
         public int Id { get; set; }
         public string VBNo { get; set; }
+        public decimal Amount { get; set; }
     }
 }
