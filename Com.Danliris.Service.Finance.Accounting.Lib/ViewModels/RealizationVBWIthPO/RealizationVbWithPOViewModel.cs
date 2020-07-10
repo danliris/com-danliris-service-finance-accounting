@@ -24,18 +24,26 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             int cnt=0;
 
-            foreach (var itm in Items)
+            if (Items == null)
             {
-                if(itm.IsSave == false)
+                yield return new ValidationResult("Data harus diisi!", new List<string> { "VBCode" });
+            }
+            else
+            {
+                foreach (var itm in Items)
                 {
-                    cnt += 1;
+                    if (itm.IsSave == false)
+                    {
+                        cnt += 1;
+                    }
+                }
+
+                if (Items.Count == cnt)
+                {
+                    yield return new ValidationResult("Data harus dipilih!", new List<string> { "Item" });
                 }
             }
-
-            if(Items.Count == cnt)
-            {
-                yield return new ValidationResult("Data harus dipilih!", new List<string> { "Item" });
-            }
+            
         }
     }
 }

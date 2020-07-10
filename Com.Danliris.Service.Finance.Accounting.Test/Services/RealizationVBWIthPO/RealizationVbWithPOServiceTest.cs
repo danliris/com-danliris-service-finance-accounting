@@ -139,5 +139,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
 
         }
 
+        [Fact]
+        public void Should_Success_Validate_All_Null_Data()
+        {
+            var viewModel = new RealizationVbWithPOViewModel();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
     }
 }
