@@ -21,7 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
 {
     public class RealizationVbWithPOControllerTest
     {
-      
+
         protected RealizationVbWithPOController GetController(Mock<IServiceProvider> serviceProvider)
         {
             var user = new Mock<ClaimsPrincipal>();
@@ -77,17 +77,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             {
                 return new RealizationVbWithPOViewModel()
                 {
-                    Id=1,
-                    Date =DateTimeOffset.Now,
-                    numberVB =new DetailVB()
+                    Id = 1,
+                    Date = DateTimeOffset.Now,
+                    numberVB = new DetailVB()
                     {
                         CreateBy = "CreateBy",
-                        DateEstimate =DateTimeOffset.Now,
+                        DateEstimate = DateTimeOffset.Now,
                         UnitCode = "UnitCode",
-                        UnitId =1,
+                        UnitId = 1,
                         VBNo = "VBNo",
                         UnitName = "UnitName",
-                        PONo=new List<PODetail>()
+                        PONo = new List<PODetail>()
                         {
                             new PODetail()
                             {
@@ -96,7 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                             }
                         }
                     },
-                    Items =new List<DetailSPB>()
+                    Items = new List<DetailSPB>()
                     {
                         new DetailSPB()
                         {
@@ -133,13 +133,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             }
         }
 
+
+
         [Fact]
         public async Task RealizationVbWithPORequestPDF_Return_NotFound()
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
-        
+
             var RealizationVbWithPOMock = new Mock<IRealizationVbWithPOService>();
-            RealizationVbWithPOMock.Setup(s => s.ReadByIdAsync2(It.IsAny<int>())).ReturnsAsync(()=>null);
+            RealizationVbWithPOMock.Setup(s => s.ReadByIdAsync2(It.IsAny<int>())).ReturnsAsync(() => null);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService)))
@@ -168,6 +170,96 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
         }
 
         [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_Currency_IDRAsync()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="division",
+                            IsSave =true,
+                            no ="no",
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public void Get_Return_OK()
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
@@ -176,15 +268,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             Dictionary<string, string> order = new Dictionary<string, string>();
             order.Add("RequestVbName", "desc");
 
-            var queryResult = new ReadResponse<RealizationVbList>(new List<RealizationVbList>(),1, order, new List<string>() { "RequestVbName" , "RequestVbName" });
-            
+            var queryResult = new ReadResponse<RealizationVbList>(new List<RealizationVbList>(), 1, order, new List<string>() { "RequestVbName", "RequestVbName" });
+
             RealizationVbWithPOMock.Setup(s => s.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Returns(queryResult);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService)))
                .Returns(RealizationVbWithPOMock.Object);
 
-            IActionResult response =  GetController(serviceProviderMock).Get(1,25,"{}",new List<string>() { "RequestVbName" },"","{}");
+            IActionResult response = GetController(serviceProviderMock).Get(1, 25, "{}", new List<string>() { "RequestVbName" }, "", "{}");
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
@@ -196,7 +288,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var serviceProviderMock = new Mock<IServiceProvider>();
 
             var RealizationVbWithPOMock = new Mock<IRealizationVbWithPOService>();
-           
+
             RealizationVbWithPOMock.Setup(s => s.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
 
             serviceProviderMock
@@ -215,7 +307,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var serviceProviderMock = new Mock<IServiceProvider>();
 
             var RealizationVbWithPOMock = new Mock<IRealizationVbWithPOService>();
-           
+
             RealizationVbWithPOMock.Setup(s => s.CreateAsync(It.IsAny<RealizationVbModel>(), It.IsAny<RealizationVbWithPOViewModel>())).ReturnsAsync(1);
 
             serviceProviderMock
@@ -288,7 +380,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
 
             var RealizationVbWithPOMock = new Mock<IRealizationVbWithPOService>();
 
-            RealizationVbWithPOMock.Setup(s => s.ReadByIdAsync2(It.IsAny<int>())).ReturnsAsync(()=>null);
+            RealizationVbWithPOMock.Setup(s => s.ReadByIdAsync2(It.IsAny<int>())).ReturnsAsync(() => null);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService)))
@@ -331,7 +423,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService)))
                .Returns(RealizationVbWithPOMock.Object);
 
-            IActionResult response = await GetController(serviceProviderMock).Put(1,realizationVbWithPOViewModel);
+            IActionResult response = await GetController(serviceProviderMock).Put(1, realizationVbWithPOViewModel);
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
         }
@@ -349,7 +441,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService)))
                .Returns(RealizationVbWithPOMock.Object);
 
-          
+
             IActionResult response = await GetController(serviceProviderMock).Put(0, realizationVbWithPOViewModel);
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
