@@ -130,6 +130,68 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
                 }
             };
         }
+
+        public RealizationVbWithPOViewModel GetNewViewModelFalse()
+        {
+            return new RealizationVbWithPOViewModel()
+            {
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    DateEstimate = DateTimeOffset.Now,
+                    PONo = new List<PODetail>()
+                    {
+                        new PODetail()
+                        {
+                            PONo="PONo",
+                            Price=1,
+                        }
+                    },
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    UnitName = "UnitName",
+                    VBNo = "VBNo",
+
+                },
+                VBRealizationNo = "VBRealizationNo",
+                IsDeleted = false,
+
+                Items = new List<DetailSPB>()
+                {
+                    new DetailSPB()
+                    {
+                        date =DateTimeOffset.Now,
+                        division ="division",
+                        IsSave =false,
+                        no ="no",
+                        item =new List<DetailItemSPB>()
+                        {
+                            new DetailItemSPB()
+                            {
+                                IsDeleted =false,
+                                unitReceiptNote =new DetailunitReceiptNote()
+                                {
+                                    no ="no",
+                                    items =new List<DetailitemunitReceiptNote>()
+                                    {
+                                        new DetailitemunitReceiptNote()
+                                        {
+                                            PriceTotal=1,
+                                            Product =new Product_VB()
+                                            {
+                                                code ="code",
+                                                name ="name",
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
         //public async Task<RealizationVbModel> GetTestData()
         //{
         //    RealizationVbModel model = GetNewData();

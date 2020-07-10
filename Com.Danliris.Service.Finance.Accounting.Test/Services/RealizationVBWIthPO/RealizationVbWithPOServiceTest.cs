@@ -147,5 +147,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
             Assert.True(viewModel.Validate(null).Count() > 0);
         }
 
+        [Fact]
+        public void Should_No_Error_Validate_Data()
+        {
+            RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            RealizationVbWithPOViewModel vm = _dataUtil(service).GetNewViewModel();
+
+            Assert.True(vm.Validate(null).Count() == 0);
+        }
+
+        [Fact]
+        public void Should_No_Error_Validate_Data_False()
+        {
+            RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            RealizationVbWithPOViewModel vm = _dataUtil(service).GetNewViewModelFalse();
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
     }
 }
