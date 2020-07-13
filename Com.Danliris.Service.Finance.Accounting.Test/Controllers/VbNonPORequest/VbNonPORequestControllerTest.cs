@@ -828,6 +828,78 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
         }
 
         [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_Currency_Not_IDR_CheckBox_Others_False()
+        {
+
+            var vm = new VbNonPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.Now,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Currency = new CurrencyVBRequest()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$"
+                },
+                Amount = 123,
+                Usage = "Usage",
+                Spinning1 = true,
+                Spinning2 = true,
+                Spinning3 = true,
+                Weaving1 = true,
+                Weaving2 = true,
+                Finishing = true,
+                Printing = true,
+                Konfeksi1A = true,
+                Konfeksi1B = true,
+                Konfeksi2A = true,
+                Konfeksi2B = true,
+                Konfeksi2C = true,
+                Umum = true,
+                Others = false,
+                DetailOthers = "",
+                UnitLoad = "Spinning 1"
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbNonPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(new VbRequestModel());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbNonPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<VbNonPORequestViewModel>(It.IsAny<VbRequestModel>()))
+                .Returns(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.GetDownPaymentPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public async Task Get_Sales_Receipt_PDF_NotFound()
         {
             var serviceProviderMock = new Mock<IServiceProvider>();

@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBWIthPO;
 using Com.Moonlay.NetCore.Lib.Service;
 using Microsoft.AspNetCore.Http;
@@ -184,6 +185,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     VBNo = "VBNo",
                     UnitName = "UnitName",
+                    Amount = 0,
                     PONo = new List<PODetail>()
                         {
                             new PODetail()
@@ -201,6 +203,1460 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                             division ="division",
                             IsSave =true,
                             no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "IDR",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_Currency_USDAsync()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="division",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_SPINNING1()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="SPINNING 1",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_SPINNING2()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="SPINNING 2",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_SPINNING3()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="SPINNING 3",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_WEAVING1()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="WEAVING 1",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_WEAVING2()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="WEAVING 2",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_PRINTING()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="PRINTING",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_DYEING()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="DYEING",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_KONFEKSI1A()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="KONFEKSI 1A",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_KONFEKSI1B()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="KONFEKSI 1B",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_KONFEKSI2A()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="KONFEKSI 2A",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_KONFEKSI2B()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="KONFEKSI 2B",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_KONFEKSI2C()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="KONFEKSI 2C",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
+                            item=new List<DetailItemSPB>()
+                            {
+                                new DetailItemSPB()
+                                {
+                                    IsDeleted =false,
+                                    unitReceiptNote =new DetailunitReceiptNote()
+                                    {
+                                        no="no",
+                                        items =new List<DetailitemunitReceiptNote>()
+                                        {
+                                            new DetailitemunitReceiptNote()
+                                            {
+                                                PriceTotal=1,
+                                                Product=new Product_VB()
+                                                {
+                                                    code="code",
+                                                    name="name"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbWithPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            //var mapperMock = new Mock<IMapper>();
+            //mapperMock
+            //    .Setup(mapper => mapper.Map<VbWithPORequestViewModel>(It.IsAny<VbWithPORequestViewModel>()))
+            //    .Returns(vm);
+            //serviceProviderMock
+            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock);
+
+            var response = await controller.RealizationVbWithPORequestPDF(It.IsAny<int>());
+            //var statusCode = GetStatusCode(response);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_UMUM()
+        {
+            var vm = new RealizationVbWithPOViewModel()
+            {
+                Id = 1,
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailVB()
+                {
+                    CreateBy = "CreateBy",
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    VBNo = "VBNo",
+                    UnitName = "UnitName",
+                    Amount = 123,
+                    PONo = new List<PODetail>()
+                        {
+                            new PODetail()
+                            {
+                                PONo="PONo",
+                                Price =1
+                            }
+                        }
+                },
+                Items = new List<DetailSPB>()
+                    {
+                        new DetailSPB()
+                        {
+                            date=DateTimeOffset.Now,
+                            division ="UMUM",
+                            IsSave =true,
+                            no ="no",
+                            supplier = new SupplierViewModel()
+                            {
+                                _id = "id",
+                                code = "code",
+                                name = "name",
+                            },
+                            currency = new CurrencyViewModel()
+                            {
+                                _id = "id",
+                                code = "USD",
+                                rate = 123
+                            },
                             item=new List<DetailItemSPB>()
                             {
                                 new DetailItemSPB()

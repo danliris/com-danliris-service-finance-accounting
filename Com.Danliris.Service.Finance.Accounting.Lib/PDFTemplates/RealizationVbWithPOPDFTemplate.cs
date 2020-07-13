@@ -949,11 +949,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             foreach (var itm in viewModel.Items)
             {
-                if (!itm.division.ToUpper().Contains("SPINNING 1") || !itm.division.ToUpper().Contains("SPINNING 2") || !itm.division.ToUpper().Contains("SPINNING 3")
-                    || !itm.division.ToUpper().Contains("WEAVING 1") || !itm.division.ToUpper().Contains("WEAVING 2") || !itm.division.ToUpper().Contains("PRINTING")
-                    || !itm.division.ToUpper().Contains("DYEING") || !itm.division.ToUpper().Contains("KONFEKSI 1A") || !itm.division.ToUpper().Contains("KONFEKSI 1B")
-                    || !itm.division.ToUpper().Contains("KONFEKSI 2A") || !itm.division.ToUpper().Contains("KONFEKSI 2B") || !itm.division.ToUpper().Contains("KONFEKSI 2C")
-                    || !itm.division.ToUpper().Contains("UMUM"))
+                if (!itm.division.ToUpper().Contains("SPINNING 1") && !itm.division.ToUpper().Contains("SPINNING 2") && !itm.division.ToUpper().Contains("SPINNING 3")
+                    && !itm.division.ToUpper().Contains("WEAVING 1") && !itm.division.ToUpper().Contains("WEAVING 2") && !itm.division.ToUpper().Contains("PRINTING")
+                    && !itm.division.ToUpper().Contains("DYEING") && !itm.division.ToUpper().Contains("KONFEKSI 1A") && !itm.division.ToUpper().Contains("KONFEKSI 1B")
+                    && !itm.division.ToUpper().Contains("KONFEKSI 2A") && !itm.division.ToUpper().Contains("KONFEKSI 2B") && !itm.division.ToUpper().Contains("KONFEKSI 2C")
+                    && !itm.division.ToUpper().Contains("UMUM"))
                 {
                     cellHeaderBody.Phrase = new Phrase(itm.division.ToUpper(), normal_font_8);
                     headerTable3a.AddCell(cellHeaderBody);
@@ -983,11 +983,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             total = "";
             foreach (var itm in viewModel.Items)
             {
-                if (!itm.division.ToUpper().Contains("SPINNING 1") || !itm.division.ToUpper().Contains("SPINNING 2") || !itm.division.ToUpper().Contains("SPINNING 3")
-                    || !itm.division.ToUpper().Contains("WEAVING 1") || !itm.division.ToUpper().Contains("WEAVING 2") || !itm.division.ToUpper().Contains("PRINTING")
-                    || !itm.division.ToUpper().Contains("DYEING") || !itm.division.ToUpper().Contains("KONFEKSI 1A") || !itm.division.ToUpper().Contains("KONFEKSI 1B")
-                    || !itm.division.ToUpper().Contains("KONFEKSI 2A") || !itm.division.ToUpper().Contains("KONFEKSI 2B") || !itm.division.ToUpper().Contains("KONFEKSI 2C")
-                    || !itm.division.ToUpper().Contains("UMUM"))
+                if (!itm.division.ToUpper().Contains("SPINNING 1") && !itm.division.ToUpper().Contains("SPINNING 2") && !itm.division.ToUpper().Contains("SPINNING 3")
+                    && !itm.division.ToUpper().Contains("WEAVING 1") && !itm.division.ToUpper().Contains("WEAVING 2") && !itm.division.ToUpper().Contains("PRINTING")
+                    && !itm.division.ToUpper().Contains("DYEING") && !itm.division.ToUpper().Contains("KONFEKSI 1A") && !itm.division.ToUpper().Contains("KONFEKSI 1B")
+                    && !itm.division.ToUpper().Contains("KONFEKSI 2A") && !itm.division.ToUpper().Contains("KONFEKSI 2B") && !itm.division.ToUpper().Contains("KONFEKSI 2C")
+                    && !itm.division.ToUpper().Contains("UMUM"))
                 {
                     _radioG9.Checked = true;
 
