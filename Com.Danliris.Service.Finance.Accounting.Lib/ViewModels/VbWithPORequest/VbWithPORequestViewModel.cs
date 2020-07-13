@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -28,6 +29,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
             if (Items == null || Items.Count == 0)
                 yield return new ValidationResult("Nomor PO harus diisi!", new List<string> { "itemscount" });
+
+            foreach (var detail in Items)
+            {
+                var duplicate = Items.Where(w => w.no != null && detail.no != null && w.no.Equals(detail.no)).ToList();
+
+                if (duplicate.Count > 1)
+                {
+                    yield return new ValidationResult("Nomor PO duplikat!", new List<string> { "itemscount" });
+                    break;
+                }
+            }
+
+
         }
     }
 }
