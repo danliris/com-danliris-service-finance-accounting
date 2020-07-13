@@ -28,19 +28,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                 yield return new ValidationResult("Kode VB harus diisi!", new List<string> { "VBCode" });
 
             if (Items == null || Items.Count == 0)
-                yield return new ValidationResult("Nomor PO harus diisi!", new List<string> { "itemscount" });
-
-            foreach (var detail in Items)
             {
-                var duplicate = Items.Where(w => w.no != null && detail.no != null && w.no.Equals(detail.no)).ToList();
-
-                if (duplicate.Count > 1)
+                yield return new ValidationResult("Nomor PO harus diisi!", new List<string> { "itemscount" });
+            }
+            else
+            {
+                foreach (var detail in Items)
                 {
-                    yield return new ValidationResult("Nomor PO duplikat!", new List<string> { "itemscount" });
-                    break;
+                    var duplicate = Items.Where(w => w.no != null && detail.no != null && w.no.Equals(detail.no)).ToList();
+
+                    if (duplicate.Count > 1)
+                    {
+                        yield return new ValidationResult("Nomor PO duplikat!", new List<string> { "itemscount" });
+                        break;
+                    }
                 }
             }
-
 
         }
     }
