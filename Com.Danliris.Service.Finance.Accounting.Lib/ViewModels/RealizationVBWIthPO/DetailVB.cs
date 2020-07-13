@@ -5,6 +5,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 {
     public class DetailVB
     {
+        public decimal Amount { get; set; }
         public string VBNo { get; set; }
         public DateTimeOffset? DateEstimate { get; set; }
         public string CreateBy { get; set; }

@@ -274,7 +274,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
 
             var documentNo = $"VB-{month}{year}-";
 
-            var countSameDocumentNo = _dbContext.VbRequests.Where(a => a.Date.Month == model.Date.Month).Count(entity => entity.UnitCode.Contains(model.UnitCode));
+            var countSameDocumentNo = _dbContext.VbRequests.Where(a => a.Date.Month == model.Date.Month).Count();
 
             if (countSameDocumentNo >= 0)
             {

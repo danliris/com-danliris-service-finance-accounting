@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
         public string division { get; set; }
         public string no { get; set; }
         public SupplierViewModel supplier { get; set; }
+        public CurrencyViewModel currency { get; set; }
         public ICollection<DetailItemSPB> item { get; set; }
     }
 }
