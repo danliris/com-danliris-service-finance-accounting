@@ -37,8 +37,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             var query = _dbContext.VbRequests.AsQueryable();
             var query2 = _dbContext.VbRequestsDetails.AsQueryable();
 
-
-
             var searchAttributes = new List<string>()
             {
                 "VBNo",
@@ -46,21 +44,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 "CreatedBy"
             };
 
-
-
             query = QueryHelper<VbRequestModel>.Search(query, searchAttributes, keyword);
-
-
 
             var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
             query = QueryHelper<VbRequestModel>.Filter(query, filterDictionary);
 
-
-
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
             query = QueryHelper<VbRequestModel>.Order(query, orderDictionary);
-
-
 
             var pageable = new Pageable<VbRequestModel>(query, page - 1, size);
             var pageable2 = new Pageable<VbRequestDetailModel>(query2, page - 1, size);
@@ -93,15 +83,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 //        ).Select(en => new VbRequestDetailModel()
                 //        {
 
-
-
                 //            PONo = en.Group.PONo
 
-
-
                 //            //Price = en.Item
-
-
 
                 //        }).ToList()
             }).ToList();
@@ -143,13 +127,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             var year = now.ToString("yy");
             var month = now.ToString("MM");
 
-
-            //var unit = model.UnitCode.ToString().Split(" - ");
-
-
             var documentNo = $"VB-{month}{year}-";
 
-            var countSameDocumentNo = _dbContext.VbRequests.Where(a => a.Date.Month == model.Date.Month).Count(entity => entity.UnitCode.Contains(model.UnitCode));
+            var countSameDocumentNo = _dbContext.VbRequests.Where(a => a.Date.Month == model.Date.Month).Count();
 
             if (countSameDocumentNo >= 0)
             {
@@ -184,7 +164,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     Items = s.VbRequestDetail.GroupBy(
                             groupkey => new { groupkey.PONo, groupkey.UnitName },
                             item => item,
-                            (grpkey,item) => new {Group = grpkey,Item = item}
+                            (grpkey, item) => new { Group = grpkey, Item = item }
                         ).Select(
                         t => new VbWithPORequestDetailViewModel
                         {
@@ -243,13 +223,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             return _dbContext.SaveChangesAsync();
         }
 
-        public VbRequestModel MappingData2(int id,VbWithPORequestViewModel viewModel)
+        public VbRequestModel MappingData2(int id, VbWithPORequestViewModel viewModel)
         {
             var listDetail = new List<VbRequestDetailModel>();
 
-            foreach(var itm1 in viewModel.Items)
+            foreach (var itm1 in viewModel.Items)
             {
-                foreach(var itm2 in itm1.Details)
+                foreach (var itm2 in itm1.Details)
                 {
                     var item = new VbRequestDetailModel()
                     {
@@ -353,7 +333,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             }
 
             return _dbContext.SaveChangesAsync();
-            
+
         }
     }
 }

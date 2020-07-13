@@ -14,10 +14,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
 {
     public class VbWithPORequestPDFTemplate
     {
-        public VbWithPORequestPDFTemplate()
-        {
-        }
-
         public MemoryStream GeneratePdfTemplate(VbWithPORequestViewModel viewModel, int clientTimeZoneOffset)
         {
             const int MARGIN = 20;

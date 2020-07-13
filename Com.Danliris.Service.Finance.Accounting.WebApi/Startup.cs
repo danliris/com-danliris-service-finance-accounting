@@ -102,7 +102,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<ICashierAprovalService, CashierApprovalService>()
                 .AddTransient<IDownPaymentService, DownPaymentService>()
                 .AddTransient<IVbNonPORequestService, VbNonPORequestService>()
-                .AddTransient<IVbWithPORequestService, VbWithPORequestService>();
+                .AddTransient<IVbWithPORequestService, VbWithPORequestService>()
+                .AddTransient<IRealizationVbWithPOService, RealizationVbWithPOService>();
         }
 
 
