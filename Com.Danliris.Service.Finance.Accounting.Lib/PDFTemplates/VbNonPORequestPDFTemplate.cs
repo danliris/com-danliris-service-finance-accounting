@@ -473,19 +473,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             _radioG9.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
             string res;
-            if (lastitem == "Spinning 1" || lastitem == "Spinning 2" || lastitem == "Spinning 3" || lastitem == "Weaving 1" || lastitem == "Weaving 2" &&
-                lastitem == "Printing" || lastitem == "Finishing" || lastitem == "Konfeksi 1A" || lastitem == "Konfeksi 1B"
-                || lastitem == "Konfeksi 2A" || lastitem == "Konfeksi 2B" || lastitem == "Konfeksi 2C" || lastitem == "Umum")
+            if (viewModel.Others == true)
+            {
+                _radioG9.Checked = true;
+                res = lastitem;
+                
+            }
+            else
             {
                 _radioG9.Checked = false;
                 res = ".......";
             }
-            else
-            {
-                _radioG9.Checked = true;
-                res = lastitem;
-            }
-
+            //lastitem != "Spinning 1" || lastitem != "Spinning 2" || lastitem != "Spinning 3" || lastitem != "Weaving 1" || lastitem != "Weaving 2" &&
+            //    lastitem != "Printing" || lastitem != "Finishing" || lastitem != "Konfeksi 1A" || lastitem != "Konfeksi 1B"
+            //    || lastitem != "Konfeksi 2A" || lastitem != "Konfeksi 2B" || lastitem != "Konfeksi 2C" || lastitem != "Umum"
             _radioG9.Rotation = 90;
             _radioG9.Options = TextField.READ_ONLY;
             _radioField19 = _radioG9.CheckField;

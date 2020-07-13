@@ -18,6 +18,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         [MaxLength(64)]
         public string SupplierName { get; set; }
         [MaxLength(64)]
+        public string CurrencyId { get; set; }
+        [MaxLength(64)]
+        public string CurrencyCode { get; set; }
+        [MaxLength(64)]
+        public string CurrencySymbol { get; set; }
+        public double CurrencyRate { get; set; }
+        [MaxLength(64)]
         public string NoPOSPB { get; set; }
         public decimal PriceTotalSPB { get; set; }
         [MaxLength(64)]

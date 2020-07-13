@@ -51,13 +51,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
         private string GetVbRealizePoNo(RealizationVbModel model)
         {
-            var now = model.Date;
+            var now = model.Date.LocalDateTime;
             var year = now.ToString("yy");
             var month = now.ToString("MM");
 
             var documentNo = $"R-{month}{year}-";
 
-            var countSameDocumentNo = _dbContext.RealizationVbs.Where(a => a.Date.Month == model.Date.Month).Count(entity => entity.UnitCode.Contains(model.UnitCode));
+            var countSameDocumentNo = _dbContext.RealizationVbs.Where(a => a.Date.Month == model.Date.Month).Count();
 
             if (countSameDocumentNo >= 0)
             {
@@ -85,7 +85,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
         public Task<int> MappingData(RealizationVbWithPOViewModel viewmodel)
         {
-            //throw new System.NotImplementedException();
             var result = new List<RealizationVbDetailModel>();
 
             int value = int.Parse(_DbSet.OrderByDescending(p => p.Id)
@@ -107,6 +106,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                             DivisionSPB = itm1.division,
                             NoSPB = itm1.no,
                             DateSPB = itm1.date,
+                            SupplierCode = itm1.supplier.code,
+                            SupplierName = itm1.supplier.name,
+                            CurrencyId = itm1.currency._id,
+                            CurrencyCode = itm1.currency.code,
+                            CurrencyRate = itm1.currency.rate,
+                            CurrencySymbol = itm1.currency.symbol,
                             NoPOSPB = temp.no,
                             PriceTotalSPB = itm3.PriceTotal,
                             IdProductSPB = itm3.Product._id,
@@ -180,7 +185,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                     CreateBy = model.RequestVbName,
                     DateEstimate = model.DateEstimate,
                     UnitCode = model.UnitCode,
-                    UnitName = model.UnitName
+                    UnitName = model.UnitName,
+                    Amount = model.Amount_VB
                 },
                 Items = model.RealizationVbDetail.Select(element => new DetailSPB()
                 {
@@ -191,6 +197,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                     {
                         code = element.SupplierCode,
                         name = element.SupplierName
+                    },
+                    currency = new CurrencyViewModel()
+                    {
+                        _id = element.CurrencyId,
+                        code = element.CurrencyCode,
+                        rate = element.CurrencyRate,
+                        symbol = element.CurrencySymbol
                     },
                     item = model.RealizationVbDetail.Select(s => new DetailItemSPB()
                     {
