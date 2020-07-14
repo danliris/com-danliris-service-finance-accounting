@@ -337,10 +337,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
         }
 
-        public List<VbRequestModel> ReadByAplicant(string createBy)
-        {
-            var result = _DbSet.Include(x => x.VbRequestDetail).Where(p => p.CreatedBy == createBy);
-            return result.ToList();
-        }
+        //public List<VbRequestModel> ReadByAplicant(string createBy)
+        //{
+        //    var result = _DbSet.Include(x => x.VbRequestDetail).Where(p => p.CreatedBy == createBy);
+        //    return result.ToList();
+        //}
     }
 }
