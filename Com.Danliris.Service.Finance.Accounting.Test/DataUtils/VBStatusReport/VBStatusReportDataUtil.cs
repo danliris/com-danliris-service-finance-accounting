@@ -29,7 +29,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBStatusReport
                 CreatedBy = "CreatedBy",
                 Usage = "Usage",
                 Amount = 1000,
-                //VbRequestDetail = new List<VbRequestDetailModel>() { }
             };
 
             return TestData;
