@@ -60,6 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 VBNo = entity.VBNo,
                 Date = entity.Date,
                 DateEstimate = entity.DateEstimate,
+                ApproveDate = entity.ApproveDate,
                 UnitLoad = entity.UnitLoad,
                 UnitId = entity.UnitId,
                 UnitCode = entity.UnitCode,
@@ -334,6 +335,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
             return _dbContext.SaveChangesAsync();
 
+        }
+
+        public List<VbRequestModel> ReadByAplicant(string createBy)
+        {
+            var result = _DbSet.Include(x => x.VbRequestDetail).Where(p => p.CreatedBy == createBy);
+            return result.ToList();
         }
     }
 }

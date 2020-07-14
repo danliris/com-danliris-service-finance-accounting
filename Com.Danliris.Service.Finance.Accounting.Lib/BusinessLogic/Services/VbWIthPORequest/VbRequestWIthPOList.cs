@@ -8,6 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
         public string VBNo { get; set; }
         public DateTimeOffset Date { get; set; }
         public DateTimeOffset DateEstimate { get; set; }
+        public DateTimeOffset? ApproveDate { get; set; }
         public string UnitLoad { get; set; }
         public int UnitId { get; set; }
         public string UnitCode { get; set; }

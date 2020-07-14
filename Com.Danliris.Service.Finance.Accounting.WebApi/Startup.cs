@@ -11,6 +11,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Payme
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PaymentDispositionNotVerifiedReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.SalesReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBStatusReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
@@ -25,6 +26,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Payment
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.SalesReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbNonPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBStatusReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -100,6 +102,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IMemoService, MemoService>()
                 .AddTransient<ISalesReceiptService, SalesReceiptService>()
                 .AddTransient<ICashierAprovalService, CashierApprovalService>()
+                .AddTransient<IVBStatusReportService, VBStatusReportService>()
                 .AddTransient<IDownPaymentService, DownPaymentService>()
                 .AddTransient<IVbNonPORequestService, VbNonPORequestService>()
                 .AddTransient<IVbWithPORequestService, VbWithPORequestService>()
