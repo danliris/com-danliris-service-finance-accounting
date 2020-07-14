@@ -20,6 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string UnitName { get; set; }
         [MaxLength(64)]
         public string RequestVbName { get; set; }
+        public decimal Amount_VB { get; set; }
         public bool isVerified { get; set; }
         public DateTimeOffset VerifiedDate { get; set; }
         public bool isClosed { get; set; }

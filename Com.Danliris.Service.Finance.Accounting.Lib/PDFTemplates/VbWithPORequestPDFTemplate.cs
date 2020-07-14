@@ -110,9 +110,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
 
             decimal convertCurrency = 0;
             string Usage = "";
+            string PoNumber = "";
 
             foreach (var itm1 in viewModel.Items)
             {
+                PoNumber += itm1.no + ", ";
+
                 foreach (var itm2 in itm1.Details)
                 {
                     convertCurrency += itm2.priceBeforeTax;
@@ -120,6 +123,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
                 }
             }
             Usage = Usage.Remove(Usage.Length - 2);
+            PoNumber = PoNumber.Remove(PoNumber.Length - 2);
 
             cellHeaderBody.Phrase = new Phrase("Rp. " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody);
@@ -133,6 +137,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             string TotalPaidString = NumberToTextIDN.terbilang(Decimal.ToDouble(convertCurrency));
 
             cellHeaderBody.Phrase = new Phrase(TotalPaidString + " Rupiah", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+
+            cellHeaderBody.Phrase = new Phrase("No PO", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase(":", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase(PoNumber, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("Kegunaan", normal_font);
@@ -720,9 +731,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             table.AddCell(cell);
             cell.Phrase = new Phrase("Anggaran", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("Kabag Garment", normal_font);
+            cell.Phrase = new Phrase($"Kabag {viewModel.Unit.Name}", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("Bag. Garment", normal_font);
+            cell.Phrase = new Phrase($"Bag. {viewModel.Unit.Name}", normal_font);
             table.AddCell(cell);
 
             document.Add(table);
