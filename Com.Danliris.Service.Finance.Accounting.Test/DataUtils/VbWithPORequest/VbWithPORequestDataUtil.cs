@@ -75,6 +75,74 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
             };
         }
 
+        public VbWithPORequestViewModel GetViewModelToValidateDuplicate()
+        {
+            return new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                //ApprovedDate = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                Unit = new Unit()
+                {
+                    Id = 0,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 0,
+                            Code = "Code",
+                            Name = "Name",
+                        },
+
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                Conversion = 123,
+                                dealQuantity = 123,
+                                dealUom  = new dealUom()
+                                {
+                                    _id = "id",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 123,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id="id",
+                                    unit = "unit"
+                                },
+                                priceBeforeTax = 123,
+                                product = new Product_VB()
+                                {
+                                    _id = "id",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+                        }
+                    },
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 0,
+                            Code = "Code",
+                            Name = "Name",
+                        }
+                    }
+                }
+            };
+        }
+
         public VbWithPORequestViewModel GetViewModel()
         {
             return new VbWithPORequestViewModel()
