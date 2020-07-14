@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
 using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -35,8 +36,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         {
             model.VBNoRealize = GetVbRealizePoNo(model);
 
+            decimal totalAmount = 0;
+            foreach(var item in model.RealizationVbDetail)
+            {
+                totalAmount = +item.PriceTotalSPB;
+            };
+            model.Amount = totalAmount;
             model.VBRealizeCategory = "PO";
-
             model.isVerified = false;
             model.isClosed = false;
             model.isNotVeridied = true;
