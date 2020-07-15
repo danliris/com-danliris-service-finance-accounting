@@ -116,6 +116,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         }
 
         [Fact]
+        public async Task ReadByIdAsync2_Return_Success2()
+        {
+            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            RealizationVbModel model = _dataUtil(service).GetNewData();
+            RealizationVbNonPOViewModel viewModel = _dataUtil(service).GetNewViewModel2();
+            await service.CreateAsync(model, viewModel);
+            var response = await service.ReadByIdAsync2(model.Id);
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task ReadByIdAsync2_Return_Success3()
+        {
+            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            RealizationVbModel model = _dataUtil(service).GetNewData();
+            RealizationVbNonPOViewModel viewModel = _dataUtil(service).GetNewViewModel3();
+            await service.CreateAsync(model, viewModel);
+            var response = await service.ReadByIdAsync2(model.Id);
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public async Task Read_Return_Success()
         {
             RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
@@ -142,6 +164,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         {
             RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
             RealizationVbNonPOViewModel vm = _dataUtil(service).GetNewViewModel();
+
+            Assert.True(vm.Validate(null).Count() == 0);
+        }
+
+        [Fact]
+        public void Should_No_Error_Validate_Data2()
+        {
+            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            RealizationVbNonPOViewModel vm = _dataUtil(service).GetNewViewModel2();
+
+            Assert.True(vm.Validate(null).Count() == 0);
+        }
+
+        [Fact]
+        public void Should_No_Error_Validate_Data3()
+        {
+            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            RealizationVbNonPOViewModel vm = _dataUtil(service).GetNewViewModel3();
 
             Assert.True(vm.Validate(null).Count() == 0);
         }
