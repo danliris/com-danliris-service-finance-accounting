@@ -145,14 +145,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
 
             Assert.True(vm.Validate(null).Count() == 0);
         }
-
-        [Fact]
-        public void Should_No_Error_Validate_Data_False()
-        {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbNonPOViewModel vm = _dataUtil(service).GetNewViewModelFalse();
-
-            Assert.True(vm.Validate(null).Count() > 0);
-        }
     }
 }

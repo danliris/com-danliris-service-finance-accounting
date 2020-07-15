@@ -75,6 +75,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             {
                 return new RealizationVbNonPOViewModel()
                 {
+                    Id = 1,
                     VBRealizationNo = "VBRealizationNo",
                     Date = DateTimeOffset.Now,
                     numberVB = new DetailRequestNonPO()
@@ -94,15 +95,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
 
                     },
                     Items = new List<VbNonPORequestDetailViewModel>()
-                {
-                    new VbNonPORequestDetailViewModel()
                     {
-                        DateDetail = DateTimeOffset.Now,
-                        Remark = "Remark",
-                        Amount = 123,
-                        isGetPPn = true
+                        new VbNonPORequestDetailViewModel()
+                        {
+                            DateDetail = DateTimeOffset.Now,
+                            Remark = "Remark",
+                            Amount = 123,
+                            isGetPPn = true
+                        }
                     }
-                }
                 };
             }
         }
