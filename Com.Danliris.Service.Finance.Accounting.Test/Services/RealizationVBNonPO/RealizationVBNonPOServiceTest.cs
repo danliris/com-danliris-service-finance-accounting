@@ -148,7 +148,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var serviceProviderMock = GetServiceProviderMock();
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
-            //var modelToUpdate = await dataUtil.GetCreatedData();
             var viewmodel = dataUtil.GetNewViewModel();
             viewmodel.Items.Add(new VbNonPORequestDetailViewModel()
             {
