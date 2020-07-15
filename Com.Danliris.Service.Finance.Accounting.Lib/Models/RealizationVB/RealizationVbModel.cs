@@ -14,6 +14,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string VBNoRealize { get; set; }
         public DateTimeOffset Date { get; set; }
         public DateTimeOffset DateEstimate { get; set; }
+        public DateTimeOffset DateVB { get; set; }
+        [MaxLength(64)]
+        public string CurrencyCodeNonPO { get; set; }
+        public decimal CurrencyRateNonPO { get; set; }
+        [MaxLength(64)]
+        public string UnitLoad { get; set; }
         [MaxLength(64)]
         public string UnitCode { get; set; }
         [MaxLength(64)]
@@ -21,6 +27,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         [MaxLength(64)]
         public string RequestVbName { get; set; }
         public decimal Amount_VB { get; set; }
+        public decimal AmountNonPO { get; set; }
+        public decimal DifferenceReqReal { get; set; }
         public bool isVerified { get; set; }
         public DateTimeOffset VerifiedDate { get; set; }
         public bool isClosed { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBWIthPO;
 using Com.Moonlay.Models;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -33,6 +34,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string CodeProductSPB { get; set; }
         [MaxLength(64)]
         public string NameProductSPB { get; set; }
+        public decimal AmountNonPO { get; set; }
+        public DateTimeOffset? DateNonPO { get; set; }
+        [MaxLength(255)]
+        public string Remark { get; set; }
+        public bool isGetPPn { get; set; }
         public int VBRealizationId { get; set; }
 
         [ForeignKey("VBRealizationId")]
