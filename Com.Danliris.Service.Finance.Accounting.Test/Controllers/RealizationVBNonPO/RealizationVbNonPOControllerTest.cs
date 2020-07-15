@@ -538,6 +538,74 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
         }
 
         [Fact]
+        public async Task Get_Sales_Receipt_PDF_NotFound()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync((RealizationVbNonPOViewModel)null);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<RealizationVbNonPOViewModel>(It.IsAny<RealizationVbModel>()))
+                .Returns(new RealizationVbNonPOViewModel());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(1);
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Exception()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .Throws(new Exception());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<RealizationVbNonPOViewModel>(It.IsAny<RealizationVbModel>()))
+                .Returns(new RealizationVbNonPOViewModel());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(1);
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+
+        }
+
+        [Fact]
         public async Task Get_Sales_Receipt_PDF_Success_Currency_IDRAsync()
         {
             var vm = new RealizationVbNonPOViewModel()
