@@ -13,5 +13,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         Task<int> UpdateAsync(int id, VbWithPORequestViewModel viewmodel);
         Task<int> DeleteAsync(int id);
         Task<int> MappingData(VbWithPORequestViewModel viewmodel);
+        //List<VbRequestModel> ReadByAplicant(string createBy);
     }
 }
