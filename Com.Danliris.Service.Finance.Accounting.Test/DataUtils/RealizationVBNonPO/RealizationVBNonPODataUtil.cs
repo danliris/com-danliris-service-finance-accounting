@@ -129,9 +129,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 {
                     new VbNonPORequestDetailViewModel()
                     {
-                        DateDetail = DateTimeOffset.Now,
-                        Remark = "Remark",
-                        Amount = 123,
+                        DateDetail = null,
+                        Remark = "",
+                        Amount = -1,
                         isGetPPn = false
                     }
                 }
