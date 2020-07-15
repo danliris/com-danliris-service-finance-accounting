@@ -25,33 +25,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         private const string ENTITY = "RealizationVbs";
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        protected string GetCurrentMethod()
+        public string GetCurrentMethod()
         {
-
-            StackTrace st = new StackTrace();
-            StackFrame sf = st.GetFrame(1);
+            var st = new StackTrace();
+            var sf = st.GetFrame(1);
 
             return string.Concat(sf.GetMethod().Name, "_", ENTITY);
         }
 
-        protected string GetCurrentAsyncMethod([CallerMemberName] string methodName = "")
+        private FinanceDbContext GetDbContext(string testName)
         {
-            var method = new StackTrace()
-                .GetFrames()
-                .Select(frame => frame.GetMethod())
-                .FirstOrDefault(item => item.Name == methodName);
+            DbContextOptionsBuilder<FinanceDbContext> optionsBuilder = new DbContextOptionsBuilder<FinanceDbContext>();
+            optionsBuilder
+                .UseInMemoryDatabase(testName)
+                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
 
-            return method.Name;
+            FinanceDbContext dbContext = new FinanceDbContext(optionsBuilder.Options);
 
+            return dbContext;
         }
 
-        private Mock<IServiceProvider> GetServiceProvider()
+        private Mock<IServiceProvider> GetServiceProviderMock()
         {
             var serviceProvider = new Mock<IServiceProvider>();
-
-            serviceProvider
-                .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(new HttpClientTestService());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -59,96 +55,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
 
 
             return serviceProvider;
-        }
-
-        protected FinanceDbContext GetDbContext(string testName)
-        {
-            string databaseName = testName;
-            var serviceProvider = new ServiceCollection()
-                .AddEntityFrameworkInMemoryDatabase()
-                .BuildServiceProvider();
-
-            var optionsBuilder = new DbContextOptionsBuilder<FinanceDbContext>();
-            optionsBuilder
-                .UseInMemoryDatabase(databaseName)
-                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-                 .UseInternalServiceProvider(serviceProvider);
-
-            FinanceDbContext DbContex = new FinanceDbContext(optionsBuilder.Options);
-            return DbContex;
-        }
-
-        private RealizationVBNonPODataUtil _dataUtil(RealizationVbNonPOService service)
-        {
-            return new RealizationVBNonPODataUtil(service);
-        }
-
-        [Fact]
-        public async Task Should_Success_Create_Data()
-        {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbModel model = _dataUtil(service).GetNewData();
-            RealizationVbNonPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
-            var Response = await service.CreateAsync(model, viewModel);
-            Assert.NotEqual(0, Response);
-        }
-
-        [Fact]
-        public async Task DeleteAsync_Return_Success()
-        {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbModel model = _dataUtil(service).GetNewData();
-            RealizationVbNonPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
-            await service.CreateAsync(model, viewModel);
-            var response = await service.DeleteAsync(model.Id);
-            Assert.NotEqual(0, response);
-        }
-
-        [Fact]
-        public async Task ReadByIdAsync2_Return_Success()
-        {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbModel model = _dataUtil(service).GetNewData();
-            RealizationVbNonPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
-            await service.CreateAsync(model, viewModel);
-            var response = await service.ReadByIdAsync2(model.Id);
-            Assert.NotNull(response);
-        }
-
-        [Fact]
-        public async Task ReadByIdAsync2_Return_Success2()
-        {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbModel model = _dataUtil(service).GetNewData();
-            RealizationVbNonPOViewModel viewModel = _dataUtil(service).GetNewViewModel2();
-            await service.CreateAsync(model, viewModel);
-            var response = await service.ReadByIdAsync2(model.Id);
-            Assert.NotNull(response);
-        }
-
-        [Fact]
-        public async Task ReadByIdAsync2_Return_Success3()
-        {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbModel model = _dataUtil(service).GetNewData();
-            RealizationVbNonPOViewModel viewModel = _dataUtil(service).GetNewViewModel3();
-            await service.CreateAsync(model, viewModel);
-            var response = await service.ReadByIdAsync2(model.Id);
-            Assert.NotNull(response);
-        }
-
-        [Fact]
-        public async Task Read_Return_Success()
-        {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbModel model = _dataUtil(service).GetNewData();
-            RealizationVbNonPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
-            await service.CreateAsync(model, viewModel);
-
-
-            var response = service.Read(1, 1, "{}", new List<string>(), "", "{}");
-            Assert.NotNull(response);
-
         }
 
         [Fact]
@@ -160,39 +66,116 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         }
 
         [Fact]
-        public void Should_No_Error_Validate_Data()
+        public void Should_Success_Validate_All_Null_ObjectProperty()
         {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbNonPOViewModel vm = _dataUtil(service).GetNewViewModel();
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewModel = dataUtil.GetNewViewModelFalse();
 
-            Assert.True(vm.Validate(null).Count() == 0);
+            Assert.True(viewModel.Validate(null).Count() > 0);
         }
 
         [Fact]
-        public void Should_No_Error_Validate_Data2()
+        public async Task Should_Success_Create_Model()
         {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbNonPOViewModel vm = _dataUtil(service).GetNewViewModel2();
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var modelToCreate = dataUtil.GetNewData();
+            var viewmodel = dataUtil.GetNewViewModel();
+            var result = await service.CreateAsync(modelToCreate, viewmodel);
 
-            Assert.True(vm.Validate(null).Count() == 0);
+            Assert.NotEqual(0, result);
         }
 
         [Fact]
-        public void Should_No_Error_Validate_Data3()
+        public async Task Should_Success_Update_Model()
         {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbNonPOViewModel vm = _dataUtil(service).GetNewViewModel3();
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            //var modelToUpdate = await dataUtil.GetCreatedData();
+            var viewmodel = dataUtil.GetNewViewModel();
+            viewmodel.Items.Add(new VbNonPORequestDetailViewModel()
+            {
+                DateDetail = DateTimeOffset.Now,
+                Amount = 123,
+                Remark = "Remark",
+                isGetPPn = true
+            });
 
-            Assert.True(vm.Validate(null).Count() == 0);
+            var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
+
+            Assert.NotEqual(0, result);
+        }
+
+        //[Fact]
+        //public async Task Should_Success_Update_Model_Remove_Items()
+        //{
+        //    var dbContext = GetDbContext(GetCurrentMethod());
+        //    var serviceProviderMock = GetServiceProviderMock();
+        //    var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+        //    var dataUtil = new RealizationVBNonPODataUtil(service);
+        //    var modelToUpdate = await dataUtil.GetCreatedData();
+        //    modelToUpdate.Items = new List<MemoItemModel>();
+        //    modelToUpdate.Items.Add(new MemoItemModel()
+        //    {
+        //        CurrencyCode = "CurrencyCode",
+        //        CurrencyId = 1,
+        //        CurrencyRate = 1,
+        //        Interest = 1,
+        //        PaymentAmount = 1
+        //    });
+
+        //    var result = await service.UpdateAsync(modelToUpdate.Id, modelToUpdate);
+
+        //    Assert.NotEqual(0, result);
+        //}
+
+        [Fact]
+        public async Task Should_Success_Read_Data()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            await dataUtil.GetCreatedData();
+
+            var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
+
+            Assert.NotEmpty(result.Data);
         }
 
         [Fact]
-        public void Should_No_Error_Validate_Data_False()
+        public async Task Should_Success_Read_ById()
         {
-            RealizationVbNonPOService service = new RealizationVbNonPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbNonPOViewModel vm = _dataUtil(service).GetNewViewModelFalse();
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var data = await dataUtil.GetCreatedData();
 
-            Assert.True(vm.Validate(null).Count() > 0);
+            var result = await service.ReadByIdAsync2(data.Id);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Delete_ById()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var data = await dataUtil.GetCreatedData();
+
+            var result = await service.DeleteAsync(data.Id);
+
+            Assert.NotEqual(0, result);
         }
     }
 }

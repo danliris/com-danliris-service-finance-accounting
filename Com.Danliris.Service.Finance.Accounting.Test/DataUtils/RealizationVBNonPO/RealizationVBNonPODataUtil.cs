@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationV
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNonPO
 {
@@ -31,7 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 UnitName = "UnitName",
                 VBNo = "VBNo",
                 VBNoRealize = "VBNoRealize",
-                VBRealizeCategory = "VBRealizeCategory",
+                VBRealizeCategory = "NONPO",
                 VerifiedDate = DateTimeOffset.Now,
                 RealizationVbDetail = new List<RealizationVbDetailModel>()
                 {
@@ -72,6 +73,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
         {
             return new RealizationVbNonPOViewModel()
             {
+                IsDeleted = false,
+                Active = true,
+                CreatedUtc = DateTime.Now,
+                CreatedBy = "CreatedBy",
+                CreatedAgent = "CreatedAgent",
+                LastModifiedUtc = DateTime.Now,
+                LastModifiedBy = "LastModifiedBy",
+                LastModifiedAgent = "LastModifiedAgent",
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
@@ -206,6 +215,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     }
                 }
             };
+        }
+
+        public async Task<RealizationVbNonPOViewModel> GetCreatedData()
+        {
+            var model = GetNewData();
+            var viewmodel = GetNewViewModel();
+            await Service.CreateAsync(model, viewmodel);
+            return await Service.ReadByIdAsync2(model.Id);
         }
     }
 }
