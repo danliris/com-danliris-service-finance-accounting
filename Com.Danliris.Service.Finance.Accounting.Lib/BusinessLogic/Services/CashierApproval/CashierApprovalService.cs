@@ -147,25 +147,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
         {
             return DbContext.VbRequests.Where(entity => entity.Id == id).FirstOrDefaultAsync();
         }
-
-        //public ReadResponse<VbRequestModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<int> UpdateAsync(int id, VbRequestModel model)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<int> DeleteAsync(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<int> CreateAsync(VbRequestModel model)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

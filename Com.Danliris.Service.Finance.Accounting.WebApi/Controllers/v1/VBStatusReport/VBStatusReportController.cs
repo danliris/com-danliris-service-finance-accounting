@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatusReport
 {
@@ -32,6 +33,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
             ApiVersion = "1.0.0";
         }
 
+        protected void ValidateUser()
+        {
+            IdentityService.Username = User.Claims.ToArray().SingleOrDefault(p => p.Type.Equals("username")).Value;
+            IdentityService.Token = Request.Headers["Authorization"].FirstOrDefault().Replace("Bearer ", "");
+            IdentityService.TimezoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+        }
         [HttpGet("reports")]
         public async Task<IActionResult> GetReportAll(int unitId, int vbRequestId, bool? isRealized, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         {
@@ -39,6 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
 
             try
             {
+                ValidateUser();
                 var data = await Service.GetReport(unitId, vbRequestId, isRealized, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offset);
 
                 return Ok(new
@@ -64,6 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
 
             try
             {
+                ValidateUser();
                 byte[] xlsInBytes;
                 int offset = Convert.ToInt32(timezone);
 

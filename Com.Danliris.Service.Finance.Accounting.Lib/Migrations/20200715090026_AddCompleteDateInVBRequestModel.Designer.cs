@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200715090026_AddCompleteDateInVBRequestModel")]
+    partial class AddCompleteDateInVBRequestModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1722,8 +1724,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<decimal>("AmountNonPO");
-
                     b.Property<string>("CodeProductSPB")
                         .HasMaxLength(64);
 
@@ -1747,8 +1747,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("CurrencySymbol")
                         .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset?>("DateNonPO");
 
                     b.Property<DateTimeOffset?>("DateSPB");
 
@@ -1791,9 +1789,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("PriceTotalSPB");
 
-                    b.Property<string>("Remark")
-                        .HasMaxLength(255);
-
                     b.Property<string>("SupplierCode")
                         .HasMaxLength(64);
 
@@ -1801,8 +1796,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(64);
 
                     b.Property<int>("VBRealizationId");
-
-                    b.Property<bool>("isGetPPn");
 
                     b.HasKey("Id");
 
@@ -1818,8 +1811,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<bool>("Active");
-
-                    b.Property<decimal>("AmountNonPO");
 
                     b.Property<decimal>("Amount");
 
@@ -1837,16 +1828,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("CreatedUtc");
 
-                    b.Property<string>("CurrencyCodeNonPO")
-                        .HasMaxLength(64);
-
-                    b.Property<decimal>("CurrencyRateNonPO");
-
                     b.Property<DateTimeOffset>("Date");
 
                     b.Property<DateTimeOffset>("DateEstimate");
-
-                    b.Property<DateTimeOffset>("DateVB");
 
                     b.Property<string>("DeletedAgent")
                         .IsRequired()
@@ -1857,8 +1841,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(255);
 
                     b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<decimal>("DifferenceReqReal");
 
                     b.Property<bool>("IsDeleted");
 
@@ -1876,9 +1858,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(64);
 
                     b.Property<string>("UnitCode")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("UnitLoad")
                         .HasMaxLength(64);
 
                     b.Property<string>("UnitName")
