@@ -8,10 +8,12 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.ClearaceVB;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
@@ -22,6 +24,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
 {
     public class ClearaceVBControllerTest
     {
+        //protected DbSet<VbRequestModel> _RequestDbSet;
+        //protected DbSet<RealizationVbModel> _RealizationDbSet;
+        //private FinanceDbContext dbContext2;
+
+        //public ClearaceVBControllerTest()
+        //{
+        //    _RequestDbSet = dbContext2.Set<VbRequestModel>();
+        //    _RealizationDbSet = dbContext2.Set<RealizationVbModel>();
+        //}
+
         protected VbRequestModel Model
         {
             get { return new VbRequestModel(); }
@@ -103,8 +115,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
         //public void Get_WithoutException_ReturnOK()
         //{
         //    var mocks = GetMocks();
+
+        //    var query = _RequestDbSet.AsQueryable();
+        //    var realizationQuery = _RealizationDbSet.AsQueryable();
+
+        //    var data = query
+        //       .Join(realizationQuery,
+        //       (rqst) => rqst.VBNo,
+        //       (real) => real.VBNo,
+        //       (rqst, real) => new ClearaceVBViewModel()
+        //       {
+        //           Id = rqst.Id,
+        //           RqstNo = rqst.VBNo,
+        //           VBCategory = rqst.VBRequestCategory,
+        //           RqstDate = rqst.Date,
+        //           Unit = new Unit()
+        //           {
+        //               Id = rqst.Id,
+        //               Name = rqst.UnitName,
+        //           },
+        //           Appliciant = rqst.CreatedBy,
+        //           RealNo = real.VBNoRealize,
+        //           RealDate = real.Date,
+        //           VerDate = null,
+        //           //DiffStatus = diffStatus,
+        //           DiffAmount = real.DifferenceReqReal,
+        //           ClearanceDate = rqst.CompleteDate,
+        //           IsPosted = rqst.Complete_Status,
+        //           Status = rqst.Complete_Status ? "Completed" : "Uncompleted",
+        //           LastModifiedUtc = real.LastModifiedUtc,
+        //       })
+        //       .OrderByDescending(s => s.LastModifiedUtc).ToList();
         //    mocks.Service.Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
-        //        .Returns(new ReadResponse<VbRequestModel>(new List<VbRequestModel>(), 0, new Dictionary<string, string>(), new List<string>()));
+        //    .Returns(new ReadResponse<ClearaceVBViewModel>(new List<ClearaceVBViewModel>(), 0, new Dictionary<string, string>(), new List<string>()));
         //    mocks.Mapper.Setup(f => f.Map<List<ClearaceVBViewModel>>(It.IsAny<List<VbRequestModel>>())).Returns(ViewModels);
 
         //    int statusCode = GetStatusCodeGet(mocks);
@@ -129,39 +172,77 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
             return GetStatusCode(response);
         }
 
-        //[Fact]
-        //public async Task GetById_NotNullModel_ReturnOK()
-        //{
-        //    var mocks = GetMocks();
-        //    mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(Model);
+        [Fact]
+        public async Task GetById_NotNullModel_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadByIdAsync(1)).ReturnsAsync(Model);
 
-        //    int statusCode = await GetStatusCodeGetById(mocks);
-        //    Assert.Equal((int)HttpStatusCode.OK, statusCode);
-        //}
+            int statusCode = await GetStatusCodeGetById(mocks);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
 
         [Fact]
         public async Task GetById_NullModel_ReturnNotFound()
         {
             var mocks = GetMocks();
             mocks.Mapper.Setup(f => f.Map<ClearaceVBViewModel>(It.IsAny<VbRequestModel>())).Returns(ViewModel);
-            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync((VbRequestModel)null);
+            mocks.Service.Setup(f => f.ReadByIdAsync(1)).ReturnsAsync((VbRequestModel)null);
 
             int statusCode = await GetStatusCodeGetById(mocks);
             Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
         }
 
-        //[Fact]
-        //public async Task GetById_ThrowException_ReturnInternalServerError()
-        //{
-        //    var mocks = GetMocks();
-        //    mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
+        [Fact]
+        public async Task GetById_ThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadByIdAsync(1)).ThrowsAsync(new Exception());
 
-        //    int statusCode = await GetStatusCodeGetById(mocks);
-        //    Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
-        //}
+            int statusCode = await GetStatusCodeGetById(mocks);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
 
         [Fact]
-        public async Task Should_Success_PreSalesUnpost()
+        public async Task Should_Success_ClearanceVBPost()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<ClearaceVBViewModel>())).Verifiable();
+            var id = 1;
+            var viewModel = new ClearaceVBViewModel()
+            {
+                Id = id
+            };
+            mocks.Mapper.Setup(m => m.Map<ClearaceVBViewModel>(It.IsAny<VbRequestModel>())).Returns(viewModel);
+            mocks.Service.Setup(f => f.ClearanceVBPost(It.IsAny<List<long>>())).ReturnsAsync(1);
+            List<long> listId = new List<long> { viewModel.Id };
+
+            var controller = GetController(mocks);
+            var response = await controller.ClearanceVBPost(listId);
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Fail_ClearanceVBPost()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<ClearaceVBViewModel>())).Verifiable();
+            var id = 1;
+            var viewModel = new ClearaceVBViewModel()
+            {
+                Id = id
+            };
+            mocks.Mapper.Setup(m => m.Map<ClearaceVBViewModel>(It.IsAny<VbRequestModel>())).Returns(viewModel);
+            mocks.Service.Setup(f => f.ClearanceVBPost(It.IsAny<List<long>>())).ThrowsAsync(new Exception());
+            List<long> listId = new List<long> { viewModel.Id };
+
+            var controller = GetController(mocks);
+            var response = await controller.ClearanceVBPost(listId);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Success_ClearanceVBUnpost()
         {
             var mocks = GetMocks();
             mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<ClearaceVBViewModel>())).Verifiable();
@@ -180,7 +261,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
         }
 
         [Fact]
-        public async Task Should_Fail_PreSalesUnpost()
+        public async Task Should_Fail_ClearanceVBUnpost()
         {
             var mocks = GetMocks();
             mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<ClearaceVBViewModel>())).Verifiable();

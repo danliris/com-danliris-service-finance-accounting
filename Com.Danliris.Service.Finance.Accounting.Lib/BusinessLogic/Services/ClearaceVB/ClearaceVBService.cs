@@ -33,6 +33,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             _IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
+        public Task<int> CreateAsync(VbRequestModel model)
+        {
+            EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
+
+            _DbContext.VbRequests.Add(model);
+
+            return _DbContext.SaveChangesAsync();
+        }
+
         public virtual void UpdateAsync(long id, VbRequestModel model)
         {
             EntityExtension.FlagForUpdate(model, _IdentityService.Username, "sales-service");

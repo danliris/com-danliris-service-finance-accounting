@@ -9,7 +9,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.C
 {
     public interface IClearaceVBService
     {
-        //ReadResponse<VbRequestModel> Read(int page, int size, string order, List<string> select, string keyword, string filter);
         ReadResponse<ClearaceVBViewModel> Read(int page, int size, string order, List<string> select, string keyword, string filter);
         
         Task<VbRequestModel> ReadByIdAsync(long id);
