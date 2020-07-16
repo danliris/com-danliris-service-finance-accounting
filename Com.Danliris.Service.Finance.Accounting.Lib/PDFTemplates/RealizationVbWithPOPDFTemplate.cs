@@ -1218,9 +1218,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             PdfPCell cellColspan = new PdfPCell()
             {
-                Colspan = 4,
+                Colspan = 2,
                 Border = Rectangle.NO_BORDER,
-                HorizontalAlignment = Element.ALIGN_LEFT,
+                HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
             };
 
@@ -1240,10 +1240,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             table.AddCell(cell);
             cell.Phrase = new Phrase("Diperiksa,", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("Mengetahui,", normal_font);
-            table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
-            table.AddCell(cell);
+            cellColspan.Phrase = new Phrase("Mengetahui,", normal_font);
+            table.AddCell(cellColspan);
+            //cell.Phrase = new Phrase("", normal_font);
+            //table.AddCell(cell);
             cell.Phrase = new Phrase("Pembuat laporan,", normal_font);
             table.AddCell(cell);
 
@@ -1277,9 +1277,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             table.AddCell(cell);
             cell.Phrase = new Phrase("Verifikasi", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase($"Direktur {viewModel.numberVB.UnitName}", normal_font);
+            cell.Phrase = new Phrase($"Dir {viewModel.numberVB.UnitName}", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("..................", normal_font);
+            cell.Phrase = new Phrase($"Kabag {viewModel.numberVB.UnitName}", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase(viewModel.numberVB.UnitName, normal_font);
             table.AddCell(cell);

@@ -57,7 +57,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
                 Others = false,
                 DetailOthers = "",
                 UnitLoad = "UnitLoad,UnitLoad,UnitLoad"
-
             };
         }
 
@@ -121,10 +120,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
                 Amount = 123,
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
-                //Status_Post = true,
                 Apporve_Status = true,
                 Complete_Status = true,
-                VBRequestCategory = "VBRequestCategory",
+                VBRequestCategory = "NONPO",
                 CreatedBy = "CreatedBy"
 
             };

@@ -218,10 +218,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 Amount = 123,
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
-                //Status_Post = true,
                 Apporve_Status = true,
                 Complete_Status = true,
-                VBRequestCategory = "VBRequestCategory",
+                VBRequestCategory = "PO",
                 CreatedBy = "CreatedBy"
 
             };
