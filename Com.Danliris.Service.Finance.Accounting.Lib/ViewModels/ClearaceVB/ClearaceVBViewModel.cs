@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB
         public string VBCategory { get; set; }
         public DateTimeOffset RqstDate { get; set; }
         public Unit Unit { get; set; }
+        public string Appliciant { get; set; }
         public string RealNo { get; set; }
         public DateTimeOffset RealDate { get; set; }
         public DateTimeOffset? VerDate { get; set; }

@@ -33,40 +33,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             _IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
-        //public ReadResponse<VbRequestModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
-        //{
-        //    //IQueryable<VbRequestModel> Query = _RequestDbSet;
-
-        //    var real = _DbContext.RealizationVbs.Select(x => x.VBNo);
-        //    IQueryable<VbRequestModel> Query = _RequestDbSet.Where(x => real.Any(y => y == x.VBNo));
-        //    //.Select(x => x.Id);
-
-        //    List<string> SearchAttributes = new List<string>()
-        //    {
-        //        "VBNo"
-        //    };
-
-        //    Query = QueryHelper<VbRequestModel>.Search(Query, SearchAttributes, keyword);
-
-        //    Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
-        //    Query = QueryHelper<VbRequestModel>.Filter(Query, FilterDictionary);
-
-        //    List<string> SelectedFields = new List<string>()
-        //    {
-        //        "Id","VBNo"
-        //    };
-
-        //    Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
-        //    Query = QueryHelper<VbRequestModel>.Order(Query, OrderDictionary);
-
-        //    Pageable<VbRequestModel> pageable = new Pageable<VbRequestModel>(Query, page - 1, size);
-        //    List<VbRequestModel> data = pageable.Data.ToList<VbRequestModel>();
-        //    int totalData = pageable.TotalCount;
-
-        //    return new ReadResponse<VbRequestModel>(data, totalData, OrderDictionary, SelectedFields);
-
-        //}
-
         public virtual void UpdateAsync(long id, VbRequestModel model)
         {
             EntityExtension.FlagForUpdate(model, _IdentityService.Username, "sales-service");
@@ -102,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
         public ReadResponse<ClearaceVBViewModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _RequestDbSet.AsQueryable();
-            var query2 = _RealizationDbSet.AsQueryable();
+            var realizationQuery = _RealizationDbSet.AsQueryable();
 
             List<string> SearchAttributes = new List<string>()
             {
@@ -118,12 +84,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             query = QueryHelper<VbRequestModel>.Order(query, orderDictionary);
 
             var pageable = new Pageable<VbRequestModel>(query, page - 1, size);
-            //var pageable2 = new Pageable<RealizationVbModel>(query2, page - 1, size);
-
             var diffStatus = "";
 
             var data = query
-               .Join(query2,
+               .Join(realizationQuery,
                (rqst) => rqst.VBNo,
                (real) => real.VBNo,
                (rqst, real) => new ClearaceVBViewModel()
@@ -137,58 +101,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                        Id = rqst.Id,
                        Name = rqst.UnitName,
                    },
+                   Appliciant = rqst.CreatedBy,
                    RealNo = real.VBNoRealize,
                    RealDate = real.Date,
                    VerDate = null,
+
+                   //DiffStatus = real.StatusReqReal,
                    DiffStatus = diffStatus,
-                   DiffAmount = rqst.Amount - real.Amount,
+
+                   DiffAmount = real.DifferenceReqReal,
                    ClearanceDate = rqst.CompleteDate,
                    IsPosted = rqst.Complete_Status,
                    Status = rqst.Complete_Status ? "Completed" : "Uncompleted",
                    LastModifiedUtc = real.LastModifiedUtc,
                })
                .OrderByDescending(s => s.LastModifiedUtc).ToList();
-            //return data.ToList();
 
             int totalData = pageable.TotalCount;
             return new ReadResponse<ClearaceVBViewModel>(data, totalData, orderDictionary, new List<string>());
         }
-
-        //public Task<List<VbRequestModel>> ReadByIdAsync(long id)
-        //{
-        //    var requestQuery = _RequestDbSet.AsQueryable();
-        //    var realizationQuery = _RealizationDbSet.AsQueryable();
-
-        //    var diffStatus = "";
-
-        //    var result = requestQuery
-        //       .Join(realizationQuery,
-        //       (rqst) => rqst.VBNo,
-        //       (real) => real.VBNo,
-        //       (rqst, real) => new ClearaceVBViewModel()
-        //       {
-        //           Id = rqst.Id,
-        //           RqstNo = rqst.VBNo,
-        //           VBCategory = rqst.VBRequestCategory,
-        //           RqstDate = rqst.Date,
-        //           Unit = new Unit()
-        //           {
-        //               Id = rqst.Id,
-        //               Name = rqst.UnitName,
-        //           },
-        //           RealNo = real.VBNoRealize,
-        //           RealDate = real.Date,
-        //           VerDate = null,
-        //           DiffStatus = diffStatus,
-        //           DiffAmount = rqst.Amount-real.Amount,
-        //           ClearanceDate = rqst.CompleteDate,
-        //           IsPosted = rqst.Complete_Status,
-        //           Status = rqst.Complete_Status ? "Completed" : "Uncompleted",
-        //           LastModifiedUtc = real.LastModifiedUtc,
-        //       })
-        //       .OrderByDescending(s => s.LastModifiedUtc).ToList();
-
-        //    return result.ToList();
-        //}
     }
 }

@@ -4,6 +4,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
 {
     public class ReadResponse<TModel>
     {
+        private List<VbRequestModel> data;
+
         public List<TModel> Data { get; set; }
         public int Count { get; set; }
         public Dictionary<string, string> Order { get; set; }
@@ -14,6 +16,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
             this.Count = count;
             this.Order = order;
             this.Selected = selected;
+        }
+
+        public ReadResponse(List<VbRequestModel> data, int count, Dictionary<string, string> order, List<string> selected)
+        {
+            this.data = data;
+            Count = count;
+            Order = order;
+            Selected = selected;
         }
     }
 }

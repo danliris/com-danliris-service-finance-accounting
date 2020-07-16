@@ -43,30 +43,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Clearace
             IdentityService.TimezoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
         }
 
-        //[HttpGet]
-        //public virtual IActionResult Get(int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
-        //{
-        //    try
-        //    {
-        //        ValidateUser();
-        //        ReadResponse<VbRequestModel> read = Service.Read(page, size, order, select, keyword, filter);
-
-        //        List<ClearaceVBViewModel> dataVM = Mapper.Map<List<ClearaceVBViewModel>>(read.Data);
-
-        //        Dictionary<string, object> Result =
-        //            new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
-        //            .Ok(Mapper, dataVM, page, size, read.Count, dataVM.Count, read.Order, read.Selected);
-        //        return Ok(Result);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Dictionary<string, object> Result =
-        //            new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-        //            .Fail();
-        //        return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
-        //    }
-        //}
-
         [HttpGet]
         public virtual IActionResult Get(int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
         {
