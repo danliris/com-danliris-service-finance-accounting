@@ -17,13 +17,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
             this.Order = order;
             this.Selected = selected;
         }
-
-        public ReadResponse(List<VbRequestModel> data, int count, Dictionary<string, string> order, List<string> selected)
-        {
-            this.data = data;
-            Count = count;
-            Order = order;
-            Selected = selected;
-        }
     }
 }
