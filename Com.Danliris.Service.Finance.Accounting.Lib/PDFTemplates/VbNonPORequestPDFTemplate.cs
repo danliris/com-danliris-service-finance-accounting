@@ -716,9 +716,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             table.AddCell(cell);
             cell.Phrase = new Phrase("Anggaran", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("Kabag Garment", normal_font);
+            cell.Phrase = new Phrase($"Kabag {viewModel.Unit.Name}", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("Bag. Garment", normal_font);
+            cell.Phrase = new Phrase($"{viewModel.Unit.Name}", normal_font);
             table.AddCell(cell);
 
             document.Add(table);

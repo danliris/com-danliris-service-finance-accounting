@@ -6,6 +6,7 @@ using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authentication;
 using OfficeOpenXml.Table.PivotTable;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Security.Principal;
 
@@ -44,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             PdfPTable headerTable4 = new PdfPTable(2);
             headerTable_A.SetWidths(new float[] { 10f, 10f });
             headerTable_A.WidthPercentage = 100;
-            headerTable3.SetWidths(new float[] { 10f, 20f, 40f, 20f, 20f });
+            headerTable3.SetWidths(new float[] { 5f, 15f, 40f, 20f, 20f });
             headerTable3.WidthPercentage = 110;
             headerTable3a.SetWidths(new float[] { 20f, 3f, 20f, 20f, 3f, 20f, 20f, 3f, 20f });
             headerTable3a.WidthPercentage = 120;
@@ -108,7 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             headerTable3.AddCell(cellHeaderBody3);
 
             cellHeaderBody3.Colspan = 5;
-            cellHeaderBody3.Phrase = new Phrase($"Tanggal: {viewModel.Date?.AddHours(timeoffsset).ToString("dd MMMM yyyy")}", bold_font);
+            cellHeaderBody3.Phrase = new Phrase($"Tanggal: {viewModel.Date?.AddHours(timeoffsset).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
             cellHeaderBody1.Phrase = new Phrase("No", normal_font);
@@ -149,7 +150,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
                     foreach (var itm3 in temp.items)
                     {
-                        cellHeaderBody1.Phrase = new Phrase("Rp.  " + Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString(), normal_font);
+                        cellHeaderBody1.Phrase = new Phrase("Rp." + Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                         headerTable3.AddCell(cellHeaderBody1);
                         count_price += Convert_Rate(itm3.PriceTotal, currencycode, currencyrate);
                     }
@@ -163,7 +164,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody1a.Colspan = 2;
             cellHeaderBody1a.Phrase = new Phrase("Total Realisasi", normal_font);
             headerTable3.AddCell(cellHeaderBody1a);
-            cellHeaderBody1b.Phrase = new Phrase("Rp.  " + count_price.ToString(), normal_font);
+            cellHeaderBody1b.Phrase = new Phrase("Rp." + count_price.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1b);
             //cellHeaderBody1.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody1);
@@ -176,7 +177,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody6.Colspan = 2;
             cellHeaderBody6.Phrase = new Phrase($"No.VB: {viewModel.numberVB.VBNo}", normal_font);
             headerTable3.AddCell(cellHeaderBody6);
-            cellHeaderBody1.Phrase = new Phrase("Rp.  " + viewModel.numberVB.Amount.ToString(), normal_font);
+            cellHeaderBody1.Phrase = new Phrase("Rp." + viewModel.numberVB.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1);
 
             var res = count_price - viewModel.numberVB.Amount;
@@ -187,17 +188,22 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             headerTable3.AddCell(cellHeaderBody5);
             cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody5);
-            cellHeaderBody5.Phrase = new Phrase("Kurang/Sisa", normal_font);
-            headerTable3.AddCell(cellHeaderBody5);
+            
 
             if (res > 0)
             {
-                cellHeaderBody5.Phrase = new Phrase("(" + res.ToString() + ")", normal_font);
+                cellHeaderBody5.Phrase = new Phrase("Kurang", bold_font);
+                headerTable3.AddCell(cellHeaderBody5);
+
+                cellHeaderBody5.Phrase = new Phrase("(Rp." + res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
                 headerTable3.AddCell(cellHeaderBody5);
             }
             else
             {
-                cellHeaderBody5.Phrase = new Phrase((res * -1).ToString(), normal_font);
+                cellHeaderBody5.Phrase = new Phrase("Sisa", bold_font);
+                headerTable3.AddCell(cellHeaderBody5);
+
+                cellHeaderBody5.Phrase = new Phrase("Rp." + (res * -1).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                 headerTable3.AddCell(cellHeaderBody5);
             }            
 
@@ -284,7 +290,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -349,7 +355,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -413,7 +419,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -477,7 +483,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -540,7 +546,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -603,7 +609,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -665,7 +671,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -728,7 +734,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -791,7 +797,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -854,7 +860,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -917,7 +923,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -1000,7 +1006,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -1009,20 +1015,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     _radioG9.Checked = false;
                 }
             }
-
-            //string res;
-            //if (lastitem.ToUpper() == "SPINNING 1" || lastitem.ToUpper() == "SPINNING 2" || lastitem.ToUpper() == "SPINNING 3" || lastitem.ToUpper() == "WEAVING 1" || lastitem.ToUpper() == "WEAVING 2" &&
-            //    lastitem.ToUpper() == "PRINTING" || lastitem.ToUpper() == "FINISHING" || lastitem.ToUpper() == "KONFEKSI 1A" || lastitem.ToUpper() == "KONFEKSI 1B"
-            //    || lastitem.ToUpper() == "KONFEKSI 2A" || lastitem.ToUpper() == "KONFEKSI 2B" || lastitem.ToUpper() == "KONFEKSI 2C" || lastitem.ToUpper() == "UMUM")
-            //{
-            //    _radioG9.Checked = false;
-            //    res = ".......";
-            //}
-            //else
-            //{
-            //    _radioG9.Checked = true;
-            //    res = lastitem;
-            //}
 
             _radioG9.Rotation = 0;
             _radioG9.Options = TextField.READ_ONLY;
@@ -1079,7 +1071,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -1141,7 +1133,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         foreach (var itm3 in temp.items)
                         {
 
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
+                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID"));
                         }
                     }
                 }
@@ -1285,7 +1277,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             table.AddCell(cell);
             cell.Phrase = new Phrase("Verifikasi", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("..................", normal_font);
+            cell.Phrase = new Phrase($"Direktur {viewModel.numberVB.UnitName}", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase("..................", normal_font);
             table.AddCell(cell);

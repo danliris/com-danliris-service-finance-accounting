@@ -37,10 +37,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             model.VBNoRealize = GetVbRealizePoNo(model);
 
             decimal totalAmount = 0;
-            foreach(var item in model.RealizationVbDetail)
+
+            foreach (var item1 in viewmodel.Items)
             {
-                totalAmount = +item.PriceTotalSPB;
+                foreach (var item2 in item1.item)
+                {
+                    var temp = item2.unitReceiptNote;
+
+                    foreach (var item3 in temp.items)
+                    {
+                        totalAmount += item3.PriceTotal;
+                    }
+                }
             };
+
             model.Amount = totalAmount;
             model.VBRealizeCategory = "PO";
             model.isVerified = false;
