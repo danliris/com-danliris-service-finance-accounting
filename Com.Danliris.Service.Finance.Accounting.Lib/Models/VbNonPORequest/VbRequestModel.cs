@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DateTimeOffset Date { get; set; }
         public DateTimeOffset? ApproveDate { get; set; }
         public DateTimeOffset DateEstimate { get; set; }
+        public DateTimeOffset? CompleteDate { get; set; }
         public int UnitId { get; set; }
         [MaxLength(64)]
         public string UnitCode { get; set; }

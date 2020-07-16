@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierApproval;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
@@ -13,6 +14,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Purch
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.SalesReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBStatusReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CashierApproval;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
@@ -103,6 +105,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<ISalesReceiptService, SalesReceiptService>()
                 .AddTransient<ICashierAprovalService, CashierApprovalService>()
                 .AddTransient<IVBStatusReportService, VBStatusReportService>()
+                .AddTransient<IClearaceVBService, ClearaceVBService>()
                 .AddTransient<IDownPaymentService, DownPaymentService>()
                 .AddTransient<IVbNonPORequestService, VbNonPORequestService>()
                 .AddTransient<IVbWithPORequestService, VbWithPORequestService>()
