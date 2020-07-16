@@ -24,6 +24,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Memo;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNotVerifiedReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.SalesReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBStatusReport;
@@ -33,6 +34,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
@@ -106,7 +108,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IDownPaymentService, DownPaymentService>()
                 .AddTransient<IVbNonPORequestService, VbNonPORequestService>()
                 .AddTransient<IVbWithPORequestService, VbWithPORequestService>()
-                .AddTransient<IRealizationVbWithPOService, RealizationVbWithPOService>();
+                .AddTransient<IRealizationVbWithPOService, RealizationVbWithPOService>()
+                .AddTransient<IRealizationVbNonPOService, RealizationVbNonPOService>();
         }
 
 

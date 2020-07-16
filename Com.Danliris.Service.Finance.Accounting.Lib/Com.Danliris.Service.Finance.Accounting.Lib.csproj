@@ -49,6 +49,10 @@
     <Compile Remove="Migrations\20200710150937_UpdateVbRealization2.Designer.cs" />
     <Compile Remove="Migrations\20200710151152_UpdateVbRealization2.cs" />
     <Compile Remove="Migrations\20200710151152_UpdateVbRealization2.Designer.cs" />
+    <Compile Remove="Migrations\20200714104148_UpdateVBRealization3.cs" />
+    <Compile Remove="Migrations\20200714104148_UpdateVBRealization3.Designer.cs" />
+    <Compile Remove="Migrations\20200715073752_test.cs" />
+    <Compile Remove="Migrations\20200715073752_test.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
