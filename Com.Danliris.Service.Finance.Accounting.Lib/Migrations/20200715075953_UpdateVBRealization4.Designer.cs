@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200715075953_UpdateVBRealization4")]
+    partial class UpdateVBRealization4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1821,8 +1823,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("AmountNonPO");
 
-                    b.Property<decimal>("Amount");
-
                     b.Property<decimal>("Amount_VB");
 
                     b.Property<DateTimeOffset>("CloseDate");
@@ -1919,8 +1919,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<bool>("Apporve_Status");
 
                     b.Property<DateTimeOffset?>("ApproveDate");
-
-                    b.Property<DateTimeOffset?>("CompleteDate");
 
                     b.Property<bool>("Complete_Status");
 

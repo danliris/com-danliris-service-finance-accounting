@@ -1,19 +1,15 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
-using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using Microsoft.AspNetCore.Authentication;
-using OfficeOpenXml.Table.PivotTable;
 using System;
 using System.IO;
-using System.Security.Principal;
 
-namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBWIthPO
+namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBNonPO
 {
-    public class RealizationVbWithPOPDFTemplate
+    public class RealizationVbNonPOPDFTemplate
     {
-        public MemoryStream GeneratePdfTemplate(RealizationVbWithPOViewModel viewModel, int timeoffsset)
+        public MemoryStream GeneratePdfTemplate(RealizationVbNonPOViewModel viewModel, int timeoffsset)
         {
             const int MARGIN = 20;
             const int MARGIN_VERTICAL = 10;
@@ -39,12 +35,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             PdfPTable headerTable_C = new PdfPTable(1);
             PdfPTable headerTable1 = new PdfPTable(1);
             PdfPTable headerTable2 = new PdfPTable(1);
-            PdfPTable headerTable3 = new PdfPTable(5);
+            PdfPTable headerTable3 = new PdfPTable(4);
             PdfPTable headerTable3a = new PdfPTable(9);
             PdfPTable headerTable4 = new PdfPTable(2);
             headerTable_A.SetWidths(new float[] { 10f, 10f });
             headerTable_A.WidthPercentage = 100;
-            headerTable3.SetWidths(new float[] { 10f, 20f, 40f, 20f, 20f });
+            headerTable3.SetWidths(new float[] { 10f, 20f, 40f, 20f });
             headerTable3.WidthPercentage = 110;
             headerTable3a.SetWidths(new float[] { 20f, 3f, 20f, 20f, 3f, 20f, 20f, 3f, 20f });
             headerTable3a.WidthPercentage = 120;
@@ -66,6 +62,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             PdfPCell cellHeaderBody4a = new PdfPCell() { Border = Rectangle.NO_BORDER };
             PdfPCell cellHeaderBody4b = new PdfPCell() { Border = Rectangle.NO_BORDER };
             PdfPCell cellHeaderBody5 = new PdfPCell() { Border = Rectangle.NO_BORDER };
+            PdfPCell cellHeaderBody5a = new PdfPCell() { Border = Rectangle.NO_BORDER };
             PdfPCell cellHeaderBody6 = new PdfPCell() { };
 
             cellHeader1.AddElement(headerTable1);
@@ -86,6 +83,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody4a.HorizontalAlignment = Element.ALIGN_CENTER;
             cellHeaderBody4b.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody5.HorizontalAlignment = Element.ALIGN_RIGHT;
+            cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_CENTER;
             cellHeaderBody6.HorizontalAlignment = Element.ALIGN_LEFT;
 
             cellHeaderBody2.Colspan = 5;
@@ -100,10 +98,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
 
-            cellHeaderBody3.Colspan = 5;
+            cellHeaderBody3.Colspan = 4;
             cellHeaderBody3.Phrase = new Phrase($"Realisasi VB Bagian: {viewModel.numberVB.UnitName}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
@@ -117,13 +113,31 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             headerTable3.AddCell(cellHeaderBody1);
             cellHeaderBody1.Phrase = new Phrase("Keterangan", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
-            cellHeaderBody1.Phrase = new Phrase("Unit", normal_font);
-            headerTable3.AddCell(cellHeaderBody1);
+            //cellHeaderBody1.Phrase = new Phrase("Unit", normal_font);
+            //headerTable3.AddCell(cellHeaderBody1);
             cellHeaderBody1.Phrase = new Phrase("Jumlah", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
 
             int index = 1;
             decimal count_price = 0;
+
+            var items = viewModel.numberVB.UnitLoad.Split(",");
+
+            decimal total_all = 0;
+            foreach (var item in viewModel.Items)
+            {
+                if (item.isGetPPn == true)
+                {
+                    var temp = item.Amount * 0.1m;
+                    total_all += item.Amount + temp;
+                }
+                else
+                {
+                    total_all += item.Amount;
+                }
+            }
+
+            
 
             foreach (var itm in viewModel.Items)
             {
@@ -131,52 +145,51 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 headerTable3.AddCell(cellHeaderBody1);
                 index++;
 
-                cellHeaderBody1.Phrase = new Phrase(itm.date?.AddHours(timeoffsset).ToString("dd/MM/yyyy"), normal_font);
+                cellHeaderBody1.Phrase = new Phrase(itm.DateDetail?.AddHours(timeoffsset).ToString("dd/MM/yyyy"), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
 
-                cellHeaderBody1.Phrase = new Phrase(itm.no + $" ({itm.supplier.name})", normal_font);
+                cellHeaderBody1.Phrase = new Phrase(itm.Remark, normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
 
-                cellHeaderBody1.Phrase = new Phrase(itm.division, normal_font);
-                headerTable3.AddCell(cellHeaderBody1);
+                var currencycode = viewModel.numberVB.CurrencyCode;
+                var currencyrate = (double)viewModel.numberVB.CurrencyRate;
 
-                var currencycode = itm.currency.code;
-                var currencyrate = itm.currency.rate;
-
-                foreach (var itm2 in itm.item)
+                if (itm.isGetPPn == true)
                 {
-                    var temp = itm2.unitReceiptNote;
-
-                    foreach (var itm3 in temp.items)
-                    {
-                        cellHeaderBody1.Phrase = new Phrase("Rp.  " + Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString(), normal_font);
-                        headerTable3.AddCell(cellHeaderBody1);
-                        count_price += Convert_Rate(itm3.PriceTotal, currencycode, currencyrate);
-                    }
+                    var temp = itm.Amount * 0.1m;
+                    total_all = itm.Amount + temp;
+                    
                 }
+                else
+                {
+                    total_all = itm.Amount;
+                }
+
+                cellHeaderBody1.Phrase = new Phrase("Rp.        " + Convert_Rate(total_all, currencycode, currencyrate).ToString(), normal_font);
+                headerTable3.AddCell(cellHeaderBody1);
+                count_price += Convert_Rate(total_all, currencycode, currencyrate);
+
             }
 
             cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody1b);
-            cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody1b);
+            //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody1b);
             cellHeaderBody1a.Colspan = 2;
             cellHeaderBody1a.Phrase = new Phrase("Total Realisasi", normal_font);
             headerTable3.AddCell(cellHeaderBody1a);
-            cellHeaderBody1b.Phrase = new Phrase("Rp.  " + count_price.ToString(), normal_font);
+            cellHeaderBody1b.Phrase = new Phrase("Rp.       " + count_price.ToString(), normal_font);
             headerTable3.AddCell(cellHeaderBody1b);
-            //cellHeaderBody1.Phrase = new Phrase(" ", normal_font);
-            //headerTable3.AddCell(cellHeaderBody1);
 
             //cellHeaderBody1.Colspan = 2;
             cellHeaderBody1.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
-            cellHeaderBody1.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody1);
+            //cellHeaderBody1.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody1);
             cellHeaderBody6.Colspan = 2;
             cellHeaderBody6.Phrase = new Phrase($"No.VB: {viewModel.numberVB.VBNo}", normal_font);
             headerTable3.AddCell(cellHeaderBody6);
-            cellHeaderBody1.Phrase = new Phrase("Rp.  " + viewModel.numberVB.Amount.ToString(), normal_font);
+            cellHeaderBody1.Phrase = new Phrase("Rp.        " + viewModel.numberVB.Amount.ToString(), normal_font);
             headerTable3.AddCell(cellHeaderBody1);
 
             var res = count_price - viewModel.numberVB.Amount;
@@ -185,24 +198,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             headerTable3.AddCell(cellHeaderBody5);
             cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody5);
-            cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody5);
+            //cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody5);
             cellHeaderBody5.Phrase = new Phrase("Kurang/Sisa", normal_font);
             headerTable3.AddCell(cellHeaderBody5);
 
             if (res > 0)
             {
-                cellHeaderBody5.Phrase = new Phrase("(" + res.ToString() + ")", normal_font);
-                headerTable3.AddCell(cellHeaderBody5);
+                cellHeaderBody5a.Phrase = new Phrase("(Rp.      " + string.Format("{0:000}", res) + ")", normal_font);
+                headerTable3.AddCell(cellHeaderBody5a);
             }
             else
             {
-                cellHeaderBody5.Phrase = new Phrase((res * -1).ToString(), normal_font);
-                headerTable3.AddCell(cellHeaderBody5);
-            }            
+                cellHeaderBody5a.Phrase = new Phrase("Rp.       " + string.Format("{0:000}", res * -1), normal_font);
+                headerTable3.AddCell(cellHeaderBody5a);
+            }
 
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4);
+            count_price /= items.Length;
+            string total = string.Format("{0:000}", count_price);
+
             cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4);
             cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
@@ -217,16 +231,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody4a.Phrase = new Phrase("Terbilang : ", normal_font);
             headerTable3.AddCell(cellHeaderBody4a);
             cellHeaderBody4b.Colspan = 2;
-            cellHeaderBody4b.Phrase = new Phrase(Nom(count_price, viewModel), normal_font);
+            cellHeaderBody4b.Phrase = new Phrase(Nom(count_price), normal_font);
             headerTable3.AddCell(cellHeaderBody4b);
-            cellHeaderBody4b.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4b);
+            //cellHeaderBody4b.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody4b);
 
             cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4);
             cellHeaderBody4.Phrase = new Phrase("Beban Unit :", bold_font);
-            headerTable3.AddCell(cellHeaderBody4);
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4);
             cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4);
@@ -244,7 +256,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             #endregion Header
 
             #region CheckBox
-            string total = "";
 
             cellHeaderBody.Phrase = new Phrase("Spinning 1", normal_font_8);
             headerTable3a.AddCell(cellHeaderBody);
@@ -267,33 +278,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG.BorderColor = BaseColor.Black;
             _radioG.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            bool flag;
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 1"))
             {
-                if (itm.division.ToUpper().Contains("SPINNING 1"))
-                {
-                    _radioG.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG.Checked = false;
-                }
+                _radioG.Checked = true;
+                flag = true;
             }
-
+            else
+            {
+                _radioG.Checked = false;
+                flag = false;
+            }
 
             _radioG.Rotation = 0;
             _radioG.Options = TextField.READ_ONLY;
@@ -303,7 +298,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                  = new BebanUnitEvent(_checkGroup, _radioField1, 1);
             headerTable3a.AddCell(cellform);
 
-            if (total == "")
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -332,31 +327,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG11.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("PRINTING"))
             {
-                if (itm.division.ToUpper().Contains("PRINTING"))
-                {
-                    _radioG11.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG11.Checked = false;
-                }
+                _radioG11.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG11.Checked = false;
+                flag = false;
             }
 
             _radioG11.Rotation = 0;
@@ -366,7 +345,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                  = new BebanUnitEvent(_checkGroup11, _radioField111, 1);
             headerTable3a.AddCell(cellform11);
 
-            if (total == "")
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -396,31 +375,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG8.BorderColor = BaseColor.Black;
             _radioG8.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2B"))
             {
-                if (itm.division.ToUpper().Contains("KONFEKSI 2B"))
-                {
-                    _radioG8.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG8.Checked = false;
-                }
+                _radioG8.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG8.Checked = false;
+                flag = false;
             }
 
 
@@ -431,7 +394,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                  = new BebanUnitEvent(_checkGroup8, _radioField18, 1);
             headerTable3a.AddCell(cellform8);
 
-            if (total == "")
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -460,31 +423,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG5.BorderColor = BaseColor.Black;
             _radioG5.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 2"))
             {
-                if (itm.division.ToUpper().Contains("SPINNING 2"))
-                {
-                    _radioG5.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG5.Checked = false;
-                }
+                _radioG5.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG5.Checked = false;
+                flag = false;
             }
 
             _radioG5.Rotation = 0;
@@ -494,7 +441,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                  = new BebanUnitEvent(_checkGroup5, _radioField15, 1);
             headerTable3a.AddCell(cellform5);
 
-            if (total == "")
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -523,31 +470,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG5a.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("DYEING"))
             {
-                if (itm.division.ToUpper().Contains("DYEING"))
-                {
-                    _radioG5a.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG5a.Checked = false;
-                }
+                _radioG5a.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG5a.Checked = false;
+                flag = false;
             }
 
             _radioG5a.Rotation = 0;
@@ -557,7 +488,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                  = new BebanUnitEvent(_checkGroup5a, _radioField15a, 1);
             headerTable3a.AddCell(cellform5a);
 
-            if (total == "")
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -586,31 +517,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG13.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2C"))
             {
-                if (itm.division.ToUpper().Contains("KONFEKSI 2C"))
-                {
-                    _radioG13.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG13.Checked = false;
-                }
+                _radioG13.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG13.Checked = false;
+                flag = false;
             }
 
             _radioG13.Rotation = 0;
@@ -620,7 +535,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                  = new BebanUnitEvent(_checkGroup13, _radioField113, 1);
             headerTable3a.AddCell(cellform13);
 
-            if (total == "")
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -648,31 +563,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG10.BorderColor = BaseColor.Black;
             _radioG10.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 3"))
             {
-                if (itm.division.ToUpper().Contains("SPINNING 3"))
-                {
-                    _radioG10.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG10.Checked = false;
-                }
+                _radioG10.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG10.Checked = false;
+                flag = false;
             }
 
             _radioG10.Rotation = 0;
@@ -681,8 +580,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellform10.CellEvent
                  = new BebanUnitEvent(_checkGroup10, _radioField110, 1);
             headerTable3a.AddCell(cellform10);
-            
-            if (total == "")
+
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -690,7 +589,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             else
             {
                 cellHeaderBody.Phrase = new Phrase($":Rp   {total}", normal_font_8);
-            headerTable3a.AddCell(cellHeaderBody);
+                headerTable3a.AddCell(cellHeaderBody);
             }
 
             cellHeaderBody.Phrase = new Phrase("Konfeksi 1A", normal_font_8);
@@ -711,31 +610,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG7.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1A"))
             {
-                if (itm.division.ToUpper().Contains("KONFEKSI 1A"))
-                {
-                    _radioG7.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG7.Checked = false;
-                }
+                _radioG7.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG7.Checked = false;
+                flag = false;
             }
 
             _radioG7.Rotation = 0;
@@ -744,8 +627,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellform7.CellEvent
                  = new BebanUnitEvent(_checkGroup7, _radioField17, 1);
             headerTable3a.AddCell(cellform7);
-            
-            if(total == "")
+
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -774,31 +657,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG4.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("UMUM"))
             {
-                if (itm.division.ToUpper().Contains("UMUM"))
-                {
-                    _radioG4.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG4.Checked = false;
-                }
+                _radioG4.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG4.Checked = false;
+                flag = false;
             }
 
             _radioG4.Rotation = 0;
@@ -807,8 +674,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellform4.CellEvent
                  = new BebanUnitEvent(_checkGroup4, _radioField14, 1);
             headerTable3a.AddCell(cellform4);
-            
-            if (total == "")
+
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -837,31 +704,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG1.BorderColor = BaseColor.Black;
             _radioG1.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 1"))
             {
-                if (itm.division.ToUpper().Contains("WEAVING 1"))
-                {
-                    _radioG1.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG1.Checked = false;
-                }
+                _radioG1.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG1.Checked = false;
+                flag = false;
             }
 
             _radioG1.Rotation = 0;
@@ -871,8 +722,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellform1.CellEvent
                  = new BebanUnitEvent(_checkGroup1, _radioField11, 1);
             headerTable3a.AddCell(cellform1);
-            
-            if (total == "")
+
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -900,31 +751,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG12.BorderColor = BaseColor.Black;
             _radioG12.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1B"))
             {
-                if (itm.division.ToUpper().Contains("KONFEKSI 1B"))
-                {
-                    _radioG12.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG12.Checked = false;
-                }
+                _radioG12.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG12.Checked = false;
+                flag = false;
             }
 
             _radioG12.Rotation = 0;
@@ -933,8 +768,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellform12.CellEvent
                  = new BebanUnitEvent(_checkGroup12, _radioField112, 1);
             headerTable3a.AddCell(cellform12);
-            
-            if (total == "")
+
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -945,26 +780,21 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
-
-            foreach (var itm in viewModel.Items)
+            if (!viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 1") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 2") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 3")
+                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 1") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 2") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("PRINTING")
+                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("DYEING") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1A") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1B")
+                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2A") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2B") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2C")
+                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("UMUM"))
             {
-                if (!itm.division.ToUpper().Contains("SPINNING 1") && !itm.division.ToUpper().Contains("SPINNING 2") && !itm.division.ToUpper().Contains("SPINNING 3")
-                    && !itm.division.ToUpper().Contains("WEAVING 1") && !itm.division.ToUpper().Contains("WEAVING 2") && !itm.division.ToUpper().Contains("PRINTING")
-                    && !itm.division.ToUpper().Contains("DYEING") && !itm.division.ToUpper().Contains("KONFEKSI 1A") && !itm.division.ToUpper().Contains("KONFEKSI 1B")
-                    && !itm.division.ToUpper().Contains("KONFEKSI 2A") && !itm.division.ToUpper().Contains("KONFEKSI 2B") && !itm.division.ToUpper().Contains("KONFEKSI 2C")
-                    && !itm.division.ToUpper().Contains("UMUM"))
-                {
-                    cellHeaderBody.Phrase = new Phrase(itm.division.ToUpper(), normal_font_8);
-                    headerTable3a.AddCell(cellHeaderBody);
-                }
-                else
-                {
-                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
-                    headerTable3a.AddCell(cellHeaderBody);
-                }
+                cellHeaderBody.Phrase = new Phrase(viewModel.numberVB.UnitLoad.ToUpper(), normal_font_8);
+                headerTable3a.AddCell(cellHeaderBody);
+            }
+            else
+            {
+                cellHeaderBody.Phrase = new Phrase("......", normal_font_8);
+                headerTable3a.AddCell(cellHeaderBody);
             }
 
-            
             cellHeaderBody.Phrase = new Phrase("", normal_font_8);
             PdfPCell cellform9 = new PdfPCell() { Border = Rectangle.NO_BORDER };
             cellform9.FixedHeight = 5f;
@@ -979,50 +809,20 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG9.BorderColor = BaseColor.Black;
             _radioG9.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (!viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 1") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 2") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 3")
+                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 1") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 2") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("PRINTING")
+                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("DYEING") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1A") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1B")
+                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2A") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2B") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2C")
+                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("UMUM"))
             {
-                if (!itm.division.ToUpper().Contains("SPINNING 1") && !itm.division.ToUpper().Contains("SPINNING 2") && !itm.division.ToUpper().Contains("SPINNING 3")
-                    && !itm.division.ToUpper().Contains("WEAVING 1") && !itm.division.ToUpper().Contains("WEAVING 2") && !itm.division.ToUpper().Contains("PRINTING")
-                    && !itm.division.ToUpper().Contains("DYEING") && !itm.division.ToUpper().Contains("KONFEKSI 1A") && !itm.division.ToUpper().Contains("KONFEKSI 1B")
-                    && !itm.division.ToUpper().Contains("KONFEKSI 2A") && !itm.division.ToUpper().Contains("KONFEKSI 2B") && !itm.division.ToUpper().Contains("KONFEKSI 2C")
-                    && !itm.division.ToUpper().Contains("UMUM"))
-                {
-                    _radioG9.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG9.Checked = false;
-                }
+                _radioG9.Checked = true;
+                flag = true;
             }
-
-            //string res;
-            //if (lastitem.ToUpper() == "SPINNING 1" || lastitem.ToUpper() == "SPINNING 2" || lastitem.ToUpper() == "SPINNING 3" || lastitem.ToUpper() == "WEAVING 1" || lastitem.ToUpper() == "WEAVING 2" &&
-            //    lastitem.ToUpper() == "PRINTING" || lastitem.ToUpper() == "FINISHING" || lastitem.ToUpper() == "KONFEKSI 1A" || lastitem.ToUpper() == "KONFEKSI 1B"
-            //    || lastitem.ToUpper() == "KONFEKSI 2A" || lastitem.ToUpper() == "KONFEKSI 2B" || lastitem.ToUpper() == "KONFEKSI 2C" || lastitem.ToUpper() == "UMUM")
-            //{
-            //    _radioG9.Checked = false;
-            //    res = ".......";
-            //}
-            //else
-            //{
-            //    _radioG9.Checked = true;
-            //    res = lastitem;
-            //}
+            else
+            {
+                _radioG9.Checked = false;
+                flag = false;
+            }
 
             _radioG9.Rotation = 0;
             _radioG9.Options = TextField.READ_ONLY;
@@ -1032,7 +832,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             headerTable3a.AddCell(cellform9);
             //cellHeaderBody.Phrase = new Phrase("", normal_font_8);
             //headerTable3a.AddCell(cellHeaderBody);
-            if (total == "")
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -1062,31 +862,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG6.BorderColor = BaseColor.Black;
             _radioG6.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 2"))
             {
-                if (itm.division.ToUpper().Contains("WEAVING 2"))
-                {
-                    _radioG6.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG6.Checked = false;
-                }
+                _radioG6.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG6.Checked = false;
+                flag = false;
             }
 
             _radioG6.Rotation = 0;
@@ -1095,8 +879,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellform6.CellEvent
                  = new BebanUnitEvent(_checkGroup6, _radioField16, 1);
             headerTable3a.AddCell(cellform6);
-            
-            if (total == "")
+
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -1124,31 +908,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG3.BorderColor = BaseColor.Black;
             _radioG3.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            total = "";
-            foreach (var itm in viewModel.Items)
+            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2A"))
             {
-                if (itm.division.ToUpper().Contains("KONFEKSI 2A"))
-                {
-                    _radioG3.Checked = true;
-
-                    var currencycode = itm.currency.code;
-                    var currencyrate = itm.currency.rate;
-
-                    foreach (var itm2 in itm.item)
-                    {
-                        var temp = itm2.unitReceiptNote;
-
-                        foreach (var itm3 in temp.items)
-                        {
-
-                            total = Convert_Rate(itm3.PriceTotal, currencycode, currencyrate).ToString();
-                        }
-                    }
-                }
-                else
-                {
-                    _radioG3.Checked = false;
-                }
+                _radioG3.Checked = true;
+                flag = true;
+            }
+            else
+            {
+                _radioG3.Checked = false;
+                flag = false;
             }
 
             _radioG3.Rotation = 0;
@@ -1157,8 +925,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellform3.CellEvent
                  = new BebanUnitEvent(_checkGroup3, _radioField13, 1);
             headerTable3a.AddCell(cellform3);
-            
-            if (total == "")
+
+            if (flag == false)
             {
                 cellHeaderBody.Phrase = new Phrase(":Rp...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -1188,7 +956,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             document.Add(headerTable_C);
             writer.AddAnnotation(_checkGroup);
             writer.AddAnnotation(_checkGroup1);
-            //writer.AddAnnotation(_checkGroup2);
             writer.AddAnnotation(_checkGroup3);
             writer.AddAnnotation(_checkGroup4);
             writer.AddAnnotation(_checkGroup5);
@@ -1303,7 +1070,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             return stream;
         }
 
-        private string Nom(decimal total, RealizationVbWithPOViewModel viewModel)
+        private string Nom(decimal total)
         {
 
             string TotalPaidString = NumberToTextIDN.terbilang((double)total);
@@ -1313,9 +1080,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
         private decimal Convert_Rate(decimal price, string code, double rate)
         {
-            double convertCurrency = 0;
-
-
+            double convertCurrency;
             if (code == "IDR")
             {
                 convertCurrency = (double)price;

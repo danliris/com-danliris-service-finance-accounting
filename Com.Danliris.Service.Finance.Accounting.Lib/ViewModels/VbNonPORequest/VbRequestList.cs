@@ -15,6 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string UnitCode { get; set; }
         public string UnitName { get; set; }
         public string CurrencyCode { get; set; }
+        public decimal CurrencyRate { get; set; }
         public decimal Amount { get; set; }
         public string CreateBy { get; set; }
         public bool Status_Post { get; set; }
