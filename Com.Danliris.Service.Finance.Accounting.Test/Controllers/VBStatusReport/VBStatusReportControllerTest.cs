@@ -51,7 +51,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
         }
 
         [Fact]
-        public async void GetReportAll_WithoutException_ReturnOK()
+        public void GetReportAll_WithoutException_ReturnOK()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<long>(), It.IsAny<bool?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>()))
@@ -79,7 +79,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
         }
 
         [Fact]
-        public async void GetXlsAll_WithoutException_ReturnOK()
+        public void GetXlsAll_WithoutException_ReturnOK()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<long>(), It.IsAny<bool>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>()))
