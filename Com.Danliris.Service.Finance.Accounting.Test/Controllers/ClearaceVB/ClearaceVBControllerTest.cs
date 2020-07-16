@@ -38,9 +38,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
         {
             get { return new VbRequestModel(); }
         }
-        protected List<ClearaceVBViewModel> ViewModels
+        protected List<ClearaceVBViewModel> ViewModels2
         {
             get { return new List<ClearaceVBViewModel>(); }
+        }
+        protected List<ClearaceVBViewModel> ViewModels
+        {
+            get { return new List<ClearaceVBViewModel>() {
+                new ClearaceVBViewModel()
+                {
+                    Id = 1,
+                    RqstNo = "VBNo",
+                    VBCategory = "VBRequestCategory",
+                    RqstDate = DateTimeOffset.Now,
+                    Unit = new Unit()
+                    {
+                        Id = 1,
+                        Name = "UnitName",
+                    },
+                    Appliciant = "CreatedBy",
+                    RealNo = "VBNoRealize",
+                    RealDate = DateTimeOffset.Now,
+                    VerDate = DateTimeOffset.Now,
+                    DiffStatus = "StatusReqReal",
+                    DiffAmount = 100,
+                    ClearanceDate = DateTimeOffset.Now,
+                    IsPosted = true,
+                    Status = "Completed",
+                    LastModifiedUtc = DateTime.Now,
+                }
+            }; }
         }
 
         public (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IClearaceVBService> Service, Mock<IMapper> Mapper) GetMocks()
@@ -111,48 +138,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
             return GetStatusCode(response);
         }
 
-        //[Fact]
-        //public void Get_WithoutException_ReturnOK()
-        //{
-        //    var mocks = GetMocks();
+        [Fact]
+        public void Get_WithoutException_ReturnOK()
+        {
+            var mocks = GetMocks();
 
-        //    var query = _RequestDbSet.AsQueryable();
-        //    var realizationQuery = _RealizationDbSet.AsQueryable();
+            mocks.Service
+                .Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new ReadResponse<ClearaceVBViewModel>(new List<ClearaceVBViewModel>() { new ClearaceVBViewModel()}, 0, new Dictionary<string, string>(), new List<string>()));
+           
+            mocks.Mapper
+                .Setup(f => f.Map<List<ClearaceVBViewModel>>(It.IsAny<List<ClearaceVBViewModel>>()))
+                .Returns(new List<ClearaceVBViewModel>() {new ClearaceVBViewModel() });
 
-        //    var data = query
-        //       .Join(realizationQuery,
-        //       (rqst) => rqst.VBNo,
-        //       (real) => real.VBNo,
-        //       (rqst, real) => new ClearaceVBViewModel()
-        //       {
-        //           Id = rqst.Id,
-        //           RqstNo = rqst.VBNo,
-        //           VBCategory = rqst.VBRequestCategory,
-        //           RqstDate = rqst.Date,
-        //           Unit = new Unit()
-        //           {
-        //               Id = rqst.Id,
-        //               Name = rqst.UnitName,
-        //           },
-        //           Appliciant = rqst.CreatedBy,
-        //           RealNo = real.VBNoRealize,
-        //           RealDate = real.Date,
-        //           VerDate = null,
-        //           //DiffStatus = diffStatus,
-        //           DiffAmount = real.DifferenceReqReal,
-        //           ClearanceDate = rqst.CompleteDate,
-        //           IsPosted = rqst.Complete_Status,
-        //           Status = rqst.Complete_Status ? "Completed" : "Uncompleted",
-        //           LastModifiedUtc = real.LastModifiedUtc,
-        //       })
-        //       .OrderByDescending(s => s.LastModifiedUtc).ToList();
-        //    mocks.Service.Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
-        //    .Returns(new ReadResponse<ClearaceVBViewModel>(new List<ClearaceVBViewModel>(), 0, new Dictionary<string, string>(), new List<string>()));
-        //    mocks.Mapper.Setup(f => f.Map<List<ClearaceVBViewModel>>(It.IsAny<List<VbRequestModel>>())).Returns(ViewModels);
-
-        //    int statusCode = GetStatusCodeGet(mocks);
-        //    Assert.Equal((int)HttpStatusCode.OK, statusCode);
-        //}
+            int statusCode = GetStatusCodeGet(mocks);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
 
         [Fact]
         public void Get_ReadThrowException_ReturnInternalServerError()

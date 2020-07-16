@@ -4,8 +4,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
 {
     public class ReadResponse<TModel>
     {
-        private List<VbRequestModel> data;
-
         public List<TModel> Data { get; set; }
         public int Count { get; set; }
         public Dictionary<string, string> Order { get; set; }
