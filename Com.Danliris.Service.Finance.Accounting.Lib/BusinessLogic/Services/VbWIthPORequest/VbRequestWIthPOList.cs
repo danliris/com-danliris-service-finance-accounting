@@ -1,4 +1,6 @@
-﻿using System;
+﻿using iTextSharp.text;
+using System;
+using System.Collections.Generic;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest
 {
@@ -18,6 +20,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
         public bool Approve_Status { get; set; }
         public bool Complete_Status { get; set; }
         public string VBRequestCategory { get; set; }
-        public object PONo { get; set; }
+        public List<ModelVbPONumber> PONo { get; set; }
     }
 }

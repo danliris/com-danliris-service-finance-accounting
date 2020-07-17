@@ -382,7 +382,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                Date = null,
                 numberVB = new DetailVB()
                 {
                     CreateBy = "CreateBy",
@@ -405,7 +405,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     {
                         new DetailSPB()
                         {
-                            date=DateTimeOffset.Now,
+                            date = null,
                             division ="SPINNING 1",
                             IsSave =true,
                             no ="no",
