@@ -827,7 +827,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
-
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
             var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
 
             Assert.NotNull(response);
@@ -900,7 +901,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             {
                 Id = 1,
                 VBRealizationNo = "VBRealizationNo",
-                Date = DateTimeOffset.Now,
+                Date = null,
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -921,7 +922,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 {
                     new VbNonPORequestDetailViewModel()
                     {
-                        DateDetail = DateTimeOffset.Now,
+                        DateDetail = null,
                         Remark = "Remark",
                         Amount = 123,
                         isGetPPn = false
