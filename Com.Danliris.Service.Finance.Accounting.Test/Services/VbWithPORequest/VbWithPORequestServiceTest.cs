@@ -121,6 +121,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
         }
 
         [Fact]
+        public async Task Should_Success_Create_Model_Mapping()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            var modelToCreate = dataUtil.GetVbRequestModelToCreate();
+            var viewmodelToCreate = dataUtil.GetViewModel();
+            var result = await service.MappingData(viewmodelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Same_Mapping()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            await dataUtil.GetCreatedData();
+            var modelToCreate = dataUtil.GetVbRequestModelToCreate();
+            var viewmodelToCreate = dataUtil.GetViewModel();
+            var result = await service.MappingData(viewmodelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Update_Model()
         {
             var dbContext = GetDbContext(GetCurrentMethod());

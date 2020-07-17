@@ -13,6 +13,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DateTimeOffset? Date { get; set; }
         public DateTimeOffset? DateEstimate { get; set; }
         public Unit Unit { get; set; }
+        //public decimal VBMoney { get; set; }
+        //public string Usage { get; set; }
 
         public ICollection<VbWithPORequestDetailViewModel> Items { get; set; }
 
