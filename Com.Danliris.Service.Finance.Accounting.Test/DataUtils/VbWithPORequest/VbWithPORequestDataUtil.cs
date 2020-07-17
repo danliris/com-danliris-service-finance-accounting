@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
@@ -221,8 +222,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 Apporve_Status = true,
                 Complete_Status = true,
                 VBRequestCategory = "PO",
-                CreatedBy = "CreatedBy"
+                CreatedBy = "CreatedBy",
+                VbRequestDetail = new List<VbRequestDetailModel>()
+                {
+                    new VbRequestDetailModel()
+                    {
+                        VBNo = "VBNo",
+                        PONo = "PONo",
+                        UnitId = 1,
+                        UnitName = "UnitName",
+                        DetailOthers = "DetailOthers",
+                        ProductId = "ProductId",
+                        ProductCode = "ProductCode",
+                        ProductName = "ProductName",
+                        DefaultQuantity = 1,
+                        DefaultUOMId = "DefaultUOMId",
+                        DefaultUOMUnit = "DefaultUOMUnit",
+                        DealQuantity = 1,
+                        DealUOMId = "DealUOMId",
+                        DealUOMUnit = "DealUOMUnit",
+                        Conversion = 1,
+                        Price = 1,
+                        ProductRemark = "ProductRemark"
+                    }
 
+                }
             };
         }
 
