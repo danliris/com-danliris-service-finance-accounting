@@ -968,7 +968,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
-                    Date = DateTimeOffset.Now,
+                    Date = null,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "SPINNING 2",
                     UnitId = 1,
