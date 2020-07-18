@@ -34,7 +34,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public bool Complete_Status { get; set; }
         [MaxLength(255)]
         public string VBRequestCategory { get; set; }
-
+        public decimal VBMoney { get; set; }
+        [MaxLength(255)]
+        public string Usage_Input { get; set; }
         public virtual ICollection<VbRequestDetailModel> VbRequestDetail { get; set; }
     }
 }

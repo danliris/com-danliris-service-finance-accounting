@@ -92,9 +92,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             model.VBNo = GetVbNonPoNo(model);
 
             model.VBRequestCategory = "PO";
-
+            
             model.Apporve_Status = false;
             model.Complete_Status = false;
+            model.Usage_Input = viewmodel.Usage;
 
             foreach (var itm in viewmodel.Items)
             {
@@ -172,6 +173,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     VBNo = s.VBNo,
                     Date = s.Date,
                     DateEstimate = s.DateEstimate,
+                    VBMoney = s.VBMoney,
+                    Usage= s.Usage_Input,
                     Unit = new Unit()
                     {
                         Id = s.UnitId,
@@ -290,7 +293,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 CreatedBy = viewModel.CreatedBy,
                 CreatedAgent = viewModel.CreatedAgent,
                 LastModifiedAgent = viewModel.LastModifiedAgent,
-                LastModifiedBy = viewModel.LastModifiedBy
+                LastModifiedBy = viewModel.LastModifiedBy,
+                VBMoney = viewModel.VBMoney,
+                Usage_Input = viewModel.Usage
             };
 
             return result;
