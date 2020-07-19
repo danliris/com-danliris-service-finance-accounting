@@ -83,11 +83,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 realizationQuery = realizationQuery.Where(s => s.Date.AddHours(offSet).Date <= realizeDateTo.Value.Date);
             }
 
-            var result = query
+            var result = new List<VBStatusReportViewModel>();
+            if (isRealized.GetValueOrDefault())
+                {
+                result = query
                 .Join(realizationQuery,
-                (rqst)=> rqst.VBNo,
-                (real)=> real.VBNo,
-                (rqst,real)=> new VBStatusReportViewModel(){
+                (rqst) => rqst.VBNo,
+                (real) => real.VBNo,
+                (rqst, real) => new VBStatusReportViewModel()
+                {
                     Id = rqst.Id,
                     VBNo = rqst.VBNo,
                     Date = rqst.Date,
@@ -101,14 +105,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     RealizationNo = real.VBNoRealize,
                     RealizationDate = real.Date,
                     Usage = rqst.Usage,
-                    Aging = (int)(real.DateEstimate-real.Date).TotalDays,
+                    Aging = (int)(real.Date - rqst.Date).TotalDays,
                     Amount = rqst.Amount,
                     RealizationAmount = real.Amount,
                     Difference = rqst.Amount - real.Amount,
-                    Status = real.isVerified ? "Realisasi" : "Outstanding",
+                    Status = rqst.Realization_Status ? "Realisasi" : "Outstanding",
                     LastModifiedUtc = real.LastModifiedUtc,
                 })
-                .OrderByDescending(s => s.LastModifiedUtc).ToList();
+                .OrderByDescending(s => s.LastModifiedUtc).Where(t => t.Status == "Realisasi").ToList();
+            }
+            else
+            {
+                decimal amount = 0;
+                result = query.OrderBy(s => s.LastModifiedUtc)
+                .Select(s => new VBStatusReportViewModel()
+                {
+                    Id = s.Id,
+                    VBNo = s.VBNo,
+                    Date = s.Date,
+                    //DateEstimate = real.DateEstimate,
+                    Unit = new Unit()
+                    {
+                        Id = s.Id,
+                        Name = s.UnitName,
+                    },
+                    CreateBy = s.CreatedBy,
+                    //RealizationNo = real.VBNoRealize,
+                    //RealizationDate = real.Date,
+                    Usage = s.Usage,
+                    Aging = (int)(requestDateTo.GetValueOrDefault() - s.Date).TotalDays,
+                    Amount = s.Amount,
+                    RealizationAmount = amount,
+                    Difference = amount,
+                    Status = s.Realization_Status ? "Realisasi" : "Outstanding",
+                    LastModifiedUtc = s.LastModifiedUtc,
+                }).Where(t => t.Status == "Outstanding").ToList();
+            }
 
             return result.ToList();
         }
@@ -134,9 +166,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Realisasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Keperluan VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Aging (Hari)", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah VB", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Realisasi", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Sisa (Kurang/Lebih)", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah VB", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Realisasi", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Sisa (Kurang/Lebih)", DataType = typeof(double) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Status", DataType = typeof(string) });
 
             if (data.Count == 0)
@@ -148,14 +180,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 data = data.OrderBy(s => s.Id).ToList();
                 foreach (var item in data)
                 {
-                    dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), 
-                        item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Unit.Name, item.CreateBy, item.RealizationNo, 
-                        item.RealizationDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), 
+                    if(item.Status == "Realisasi")
+                    {
+                        dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Unit.Name, item.CreateBy, item.RealizationNo,
+                        item.RealizationDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.Usage, item.Aging, item.Amount, item.RealizationAmount, item.Difference, item.Status);
+                    } else
+                    {
+                        dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        "", item.Unit.Name, item.CreateBy, "", "",
+                        item.Usage, item.Aging, item.Amount, item.RealizationAmount, item.Difference, item.Status);
+                    }
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Status VB") }, true);
+            return Excel.CreateExcelVBStatusReport(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Status VB") }, true);
         }
 
         public Task<int> CreateAsync(VbRequestModel model)
