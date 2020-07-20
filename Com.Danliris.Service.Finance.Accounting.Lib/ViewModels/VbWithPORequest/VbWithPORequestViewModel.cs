@@ -13,6 +13,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DateTimeOffset? Date { get; set; }
         public DateTimeOffset? DateEstimate { get; set; }
         public Unit Unit { get; set; }
+        public decimal VBMoney { get; set; }
+        public string Usage { get; set; }
 
         public ICollection<VbWithPORequestDetailViewModel> Items { get; set; }
 
@@ -23,6 +25,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
             if (DateEstimate == null)
                 yield return new ValidationResult("Estimasi Tanggal Realisasi harus diisi!", new List<string> { "DateEstimate" });
+
+            if(VBMoney <= 0)
+                yield return new ValidationResult("VB Uang harus lebih dari nol!", new List<string> { "VBMoney" });
+
+            if(string.IsNullOrWhiteSpace(Usage))
+                yield return new ValidationResult("Kegunaan harus diisi!", new List<string> { "Usage" });
 
             if (Unit == null || Unit.Id <= 0)
                 yield return new ValidationResult("Kode VB harus diisi!", new List<string> { "VBCode" });

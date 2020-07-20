@@ -1,7 +1,9 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest;
+using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
@@ -44,6 +46,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
         private Mock<IServiceProvider> GetServiceProviderMock()
         {
             var serviceProvider = new Mock<IServiceProvider>();
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientTestService());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -110,6 +116,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
             var modelToCreate = dataUtil.GetVbRequestModelToCreate();
             var viewmodelToCreate = dataUtil.GetViewModel();
             var result = await service.CreateAsync(modelToCreate, viewmodelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Model_Mapping()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            var modelToCreate = dataUtil.GetVbRequestModelToCreate();
+            var viewmodelToCreate = dataUtil.GetViewModel();
+            var result = await service.MappingData(viewmodelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Same_Mapping()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            await dataUtil.GetCreatedData();
+            var modelToCreate = dataUtil.GetVbRequestModelToCreate();
+            var viewmodelToCreate = dataUtil.GetViewModel();
+            var result = await service.MappingData(viewmodelToCreate);
 
             Assert.NotEqual(0, result);
         }

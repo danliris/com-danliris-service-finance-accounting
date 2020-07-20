@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory
 
-            }).ToList();
+            }).Where(entity => entity.VBRequestCategory == "NONPO").ToList();
 
             int totalData = pageable.TotalCount;
 

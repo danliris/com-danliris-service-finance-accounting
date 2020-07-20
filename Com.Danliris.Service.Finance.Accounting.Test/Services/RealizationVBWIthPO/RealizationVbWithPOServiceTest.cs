@@ -93,6 +93,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         }
 
         [Fact]
+        public async Task Should_Success_Create_Data_Mapping()
+        {
+            RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            RealizationVbModel model = _dataUtil(service).GetNewData();
+            RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
+            await service.CreateAsync(model, viewModel);
+            var Response = await service.MappingData(viewModel);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
         public async Task DeleteAsync_Return_Success()
         {
             RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);

@@ -229,6 +229,114 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
         }
 
         [Fact]
+        public async Task Post_WithoutException_ReturnCreated_Mapping()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.MappingData(It.IsAny<RealizationVbNonPOViewModel>()))
+                .ReturnsAsync(1);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            validateServiceMock
+                .Setup(validateService => validateService.Validate(It.IsAny<RealizationVbNonPOViewModel>()))
+                .Verifiable();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<RealizationVbModel>(It.IsAny<RealizationVbNonPOViewModel>()))
+                .Returns(It.IsAny<RealizationVbModel>());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.Post(new RealizationVbNonPOViewModel());
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        }
+
+        [Fact]
+        public async Task Post_WithValidationException_ReturnBadRequest_Mapping()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.MappingData(It.IsAny<RealizationVbNonPOViewModel>()))
+                .ReturnsAsync(1);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            validateServiceMock
+                .Setup(validateService => validateService.Validate(It.IsAny<RealizationVbNonPOViewModel>()))
+                .Throws(GetServiceValidationExeption());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<RealizationVbModel>(It.IsAny<RealizationVbNonPOViewModel>()))
+                .Returns(It.IsAny<RealizationVbModel>());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.Post(new RealizationVbNonPOViewModel());
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
+        public async Task Post_WithException_ReturnInternalServerError_Mapping()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.MappingData(It.IsAny<RealizationVbNonPOViewModel>()))
+                .ReturnsAsync(1);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            validateServiceMock
+                .Setup(validateService => validateService.Validate(It.IsAny<RealizationVbNonPOViewModel>()))
+                .Throws(new Exception());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            mapperMock
+                .Setup(mapper => mapper.Map<RealizationVbModel>(It.IsAny<RealizationVbNonPOViewModel>()))
+                .Returns(It.IsAny<RealizationVbModel>());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.Post(new RealizationVbNonPOViewModel());
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
         public async Task Put_WithoutException_ReturnNoContent()
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
@@ -719,7 +827,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
-
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
             var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
 
             Assert.NotNull(response);
@@ -792,7 +901,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             {
                 Id = 1,
                 VBRealizationNo = "VBRealizationNo",
-                Date = DateTimeOffset.Now,
+                Date = null,
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -813,7 +922,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 {
                     new VbNonPORequestDetailViewModel()
                     {
-                        DateDetail = DateTimeOffset.Now,
+                        DateDetail = null,
                         Remark = "Remark",
                         Amount = 123,
                         isGetPPn = false
@@ -859,7 +968,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
-                    Date = DateTimeOffset.Now,
+                    Date = null,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "SPINNING 2",
                     UnitId = 1,
@@ -1319,6 +1428,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
 
             var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
 

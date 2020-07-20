@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBWIthPO;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
@@ -102,6 +103,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
                         division ="division",
                         IsSave =true,
                         no ="no",
+                        supplier = new SupplierViewModel()
+                        {
+                            _id = "1",
+                            code = "code",
+                            name = "name"
+                        },
+                        currency = new CurrencyViewModel()
+                        {
+                            _id = "1",
+                            code = "code",
+                            symbol = "$",
+                            rate = 1
+                        },
                         item =new List<DetailItemSPB>()
                         {
                             new DetailItemSPB()
@@ -117,6 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
                                             PriceTotal=1,
                                             Product =new Product_VB()
                                             {
+                                                _id = "1",
                                                 code ="code",
                                                 name ="name",
 

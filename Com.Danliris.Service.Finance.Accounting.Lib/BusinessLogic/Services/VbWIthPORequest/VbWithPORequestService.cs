@@ -12,6 +12,9 @@ using Com.Moonlay.NetCore.Lib;
 using Com.Moonlay.Models;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+using System.Net.Http;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest
 {
@@ -22,6 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
         private const string UserAgent = "finance-service";
         protected DbSet<VbRequestModel> _DbSet;
         protected DbSet<VbRequestDetailModel> _DetailDbSet;
+        private readonly IServiceProvider _serviceProvider;
 
         public VbWithPORequestService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
         {
@@ -30,12 +34,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
             _DbSet = _dbContext.Set<VbRequestModel>();
             _DetailDbSet = _dbContext.Set<VbRequestDetailModel>();
+            _serviceProvider = serviceProvider;
         }
 
         public ReadResponse<VbRequestWIthPOList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.VbRequests.AsQueryable();
-            var query2 = _dbContext.VbRequestsDetails.AsQueryable();
+            var query = _dbContext.VbRequests.Where(entity => entity.VBRequestCategory == "PO").AsQueryable();
 
             var searchAttributes = new List<string>()
             {
@@ -53,8 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             query = QueryHelper<VbRequestModel>.Order(query, orderDictionary);
 
             var pageable = new Pageable<VbRequestModel>(query, page - 1, size);
-            var pageable2 = new Pageable<VbRequestDetailModel>(query2, page - 1, size);
-            var data = pageable.Data.Select(entity => new VbRequestWIthPOList()
+            var data = query.Include(s => s.VbRequestDetail).Select(entity => new VbRequestWIthPOList
             {
                 Id = entity.Id,
                 VBNo = entity.VBNo,
@@ -70,32 +73,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 Approve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
-                PONo = pageable2.Data.Select(en => new VbRequestDetailModel()
+                PONo = entity.VbRequestDetail.Select(s => new ModelVbPONumber
                 {
-                    VBId = en.VBId,
-                    PONo = en.PONo,
-                    Price = en.Price,
-                    DealQuantity = en.DealQuantity,
-                }).Where(en => en.VBId == entity.Id).ToList()
-                //pageable2.Data.GroupBy(
-                //            groupkey => new { groupkey.PONo, groupkey.VBId },
-                //            item => item,
-                //            (grpkey, item) => new { Group = grpkey, Item = item }
-                //        ).Select(en => new VbRequestDetailModel()
-                //        {
-
-                //            PONo = en.Group.PONo
-
-                //            //Price = en.Item
-
-                //        }).ToList()
+                    PONo = s.PONo,
+                    VBId = s.VBId,
+                    DealQuantity = s.DealQuantity,
+                    Price = s.Price
+                }).ToList()
             }).ToList();
 
-
-
             int totalData = pageable.TotalCount;
-
-
 
             return new ReadResponse<VbRequestWIthPOList>(data, totalData, orderDictionary, new List<string>());
         }
@@ -105,10 +92,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             model.VBNo = GetVbNonPoNo(model);
 
             model.VBRequestCategory = "PO";
-
-            //model.Status_Post = false;
+            
             model.Apporve_Status = false;
             model.Complete_Status = false;
+            model.Usage_Input = viewmodel.Usage;
 
             foreach (var itm in viewmodel.Items)
             {
@@ -119,7 +106,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
             _dbContext.VbRequests.Add(model);
 
+            foreach (var itm1 in viewmodel.Items)
+            {
+                var updateModel = new POExternalUpdateModel()
+                {
+                    IsCreateOnVBRequest = true
+                };
+
+                UpdateToPOExternal(itm1.no, updateModel);
+            }
+
+
+
             return _dbContext.SaveChangesAsync();
+
         }
 
         private string GetVbNonPoNo(VbRequestModel model)
@@ -142,6 +142,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             return documentNo;
         }
 
+        private void UpdateToPOExternal(string PONo, POExternalUpdateModel model)
+        {
+            string PurchasingUri = "external-purchase-orders/update-from-vb-with-po-req-finance/";
+
+            string Uri = $"{APIEndpoint.Purchasing}{PurchasingUri}{PONo}";
+            var data = new
+            {
+                model.IsCreateOnVBRequest
+            };
+
+            IHttpClientService httpClient = (IHttpClientService)this._serviceProvider.GetService(typeof(IHttpClientService));
+            var response = httpClient.PutAsync(Uri, new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result; if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, APIEndpoint.Purchasing));
+            }
+        }
+
         public async Task<VbWithPORequestViewModel> ReadByIdAsync2(int id)
         {
             return await _dbContext.VbRequests.Include(entity => entity.VbRequestDetail).Where(entity => entity.Id == id)
@@ -156,6 +173,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     VBNo = s.VBNo,
                     Date = s.Date,
                     DateEstimate = s.DateEstimate,
+                    VBMoney = s.VBMoney,
+                    Usage= s.Usage_Input,
                     Unit = new Unit()
                     {
                         Id = s.UnitId,
@@ -213,7 +232,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             var model = MappingData2(id, viewmodel);
             model.VBRequestCategory = "PO";
 
-            //model.Status_Post = false;
             model.Apporve_Status = false;
             model.Complete_Status = false;
 
@@ -275,7 +293,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 CreatedBy = viewModel.CreatedBy,
                 CreatedAgent = viewModel.CreatedAgent,
                 LastModifiedAgent = viewModel.LastModifiedAgent,
-                LastModifiedBy = viewModel.LastModifiedBy
+                LastModifiedBy = viewModel.LastModifiedBy,
+                VBMoney = viewModel.VBMoney,
+                Usage_Input = viewModel.Usage
             };
 
             return result;
@@ -286,11 +306,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
         {
             var model = _dbContext.VbRequests.Where(entity => entity.Id == id).FirstOrDefault();
 
+            var modeldetail = _dbContext.VbRequestsDetails.Where(entity => entity.VBId == id).FirstOrDefault();
+
             if (model != null)
             {
                 EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
 
                 _dbContext.VbRequests.Update(model);
+            }
+
+            foreach (var itm1 in modeldetail.PONo)
+            {
+                var updateModel = new POExternalUpdateModel()
+                {
+                    IsCreateOnVBRequest = false
+                };
+
+                UpdateToPOExternal(itm1.ToString(), updateModel);
             }
 
             return _dbContext.SaveChangesAsync();
@@ -337,10 +369,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
         }
 
-        //public List<VbRequestModel> ReadByAplicant(string createBy)
-        //{
-        //    var result = _DbSet.Include(x => x.VbRequestDetail).Where(p => p.CreatedBy == createBy);
-        //    return result.ToList();
-        //}
     }
 }

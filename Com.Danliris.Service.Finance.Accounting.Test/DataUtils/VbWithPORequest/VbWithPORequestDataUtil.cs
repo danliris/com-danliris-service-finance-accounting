@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 Date = DateTimeOffset.UtcNow,
                 //ApprovedDate = DateTimeOffset.UtcNow,
                 DateEstimate = DateTimeOffset.UtcNow,
+                VBMoney = 1,
+                Usage = "Usage",
                 Unit = new Unit()
                 {
                     Id = 0,
@@ -83,6 +86,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 Date = DateTimeOffset.UtcNow,
                 //ApprovedDate = DateTimeOffset.UtcNow,
                 DateEstimate = DateTimeOffset.UtcNow,
+                VBMoney = 0,
+                Usage = "",
                 Unit = new Unit()
                 {
                     Id = 0,
@@ -150,6 +155,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
                 DateEstimate = DateTimeOffset.UtcNow,
+                VBMoney = 1,
+                Usage = "Usage",
                 Unit = new Unit()
                 {
                     Id = 1,
@@ -218,12 +225,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 Amount = 123,
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
-                //Status_Post = true,
                 Apporve_Status = true,
                 Complete_Status = true,
-                VBRequestCategory = "VBRequestCategory",
-                CreatedBy = "CreatedBy"
+                VBRequestCategory = "PO",
+                CreatedBy = "CreatedBy",
+                VBMoney = 1,
+                Usage_Input = "Usage_Input",
+                VbRequestDetail = new List<VbRequestDetailModel>()
+                {
+                    new VbRequestDetailModel()
+                    {
+                        VBNo = "VBNo",
+                        PONo = "PONo",
+                        UnitId = 1,
+                        UnitName = "UnitName",
+                        DetailOthers = "DetailOthers",
+                        ProductId = "ProductId",
+                        ProductCode = "ProductCode",
+                        ProductName = "ProductName",
+                        DefaultQuantity = 1,
+                        DefaultUOMId = "DefaultUOMId",
+                        DefaultUOMUnit = "DefaultUOMUnit",
+                        DealQuantity = 1,
+                        DealUOMId = "DealUOMId",
+                        DealUOMUnit = "DealUOMUnit",
+                        Conversion = 1,
+                        Price = 1,
+                        ProductRemark = "ProductRemark"
+                    }
 
+                }
             };
         }
 

@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBNonPO
@@ -104,7 +105,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             headerTable3.AddCell(cellHeaderBody3);
 
             cellHeaderBody3.Colspan = 5;
-            cellHeaderBody3.Phrase = new Phrase($"Tanggal: {viewModel.Date?.AddHours(timeoffsset).ToString("dd MMMM yyyy")}", bold_font);
+            cellHeaderBody3.Phrase = new Phrase($"Tanggal: {viewModel.Date?.AddHours(timeoffsset).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
             cellHeaderBody1.Phrase = new Phrase("No", normal_font);
@@ -165,7 +166,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     total_all = itm.Amount;
                 }
 
-                cellHeaderBody1.Phrase = new Phrase("Rp.        " + Convert_Rate(total_all, currencycode, currencyrate).ToString(), normal_font);
+                cellHeaderBody1.Phrase = new Phrase("Rp.        " + Convert_Rate(total_all, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
                 count_price += Convert_Rate(total_all, currencycode, currencyrate);
 
@@ -178,19 +179,22 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody1a.Colspan = 2;
             cellHeaderBody1a.Phrase = new Phrase("Total Realisasi", normal_font);
             headerTable3.AddCell(cellHeaderBody1a);
-            cellHeaderBody1b.Phrase = new Phrase("Rp.       " + count_price.ToString(), normal_font);
+            cellHeaderBody1b.Phrase = new Phrase("Rp.       " + count_price.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1b);
 
             //cellHeaderBody1.Colspan = 2;
-            cellHeaderBody1.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody1);
-            //cellHeaderBody1.Phrase = new Phrase(" ", normal_font);
-            //headerTable3.AddCell(cellHeaderBody1);
             cellHeaderBody6.Colspan = 2;
-            cellHeaderBody6.Phrase = new Phrase($"No.VB: {viewModel.numberVB.VBNo}", normal_font);
+            //cellHeaderBody6.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody6);
+            cellHeaderBody6.Phrase = new Phrase($"Tanggal {viewModel.numberVB.Date?.AddHours(timeoffsset).ToString("dd MMMM", new CultureInfo("id-ID"))}", normal_font);
             headerTable3.AddCell(cellHeaderBody6);
-            cellHeaderBody1.Phrase = new Phrase("Rp.        " + viewModel.numberVB.Amount.ToString(), normal_font);
+            //
+            cellHeaderBody1.Phrase = new Phrase($"No.VB: {viewModel.numberVB.VBNo}", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
+            cellHeaderBody1.Phrase = new Phrase("Rp.        " + viewModel.numberVB.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            headerTable3.AddCell(cellHeaderBody1);
+
+            var priceterbilang = count_price;
 
             var res = count_price - viewModel.numberVB.Amount;
 
@@ -200,22 +204,27 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             headerTable3.AddCell(cellHeaderBody5);
             //cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody5);
-            cellHeaderBody5.Phrase = new Phrase("Kurang/Sisa", normal_font);
-            headerTable3.AddCell(cellHeaderBody5);
+            
 
             if (res > 0)
             {
-                cellHeaderBody5a.Phrase = new Phrase("(Rp.      " + string.Format("{0:000}", res) + ")", normal_font);
+                cellHeaderBody5.Phrase = new Phrase("Kurang", bold_font);
+                headerTable3.AddCell(cellHeaderBody5);
+
+                cellHeaderBody5a.Phrase = new Phrase("(Rp.      " + res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
                 headerTable3.AddCell(cellHeaderBody5a);
             }
             else
             {
-                cellHeaderBody5a.Phrase = new Phrase("Rp.       " + string.Format("{0:000}", res * -1), normal_font);
+                cellHeaderBody5.Phrase = new Phrase("Sisa", bold_font);
+                headerTable3.AddCell(cellHeaderBody5);
+
+                cellHeaderBody5a.Phrase = new Phrase("Rp.       " + (res * -1).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                 headerTable3.AddCell(cellHeaderBody5a);
             }
 
             count_price /= items.Length;
-            string total = string.Format("{0:000}", count_price);
+            string total = count_price.ToString("#,##0.00", new CultureInfo("id-ID"));
 
             cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4);
@@ -231,7 +240,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody4a.Phrase = new Phrase("Terbilang : ", normal_font);
             headerTable3.AddCell(cellHeaderBody4a);
             cellHeaderBody4b.Colspan = 2;
-            cellHeaderBody4b.Phrase = new Phrase(Nom(count_price), normal_font);
+            cellHeaderBody4b.Phrase = new Phrase(Nom(priceterbilang), normal_font);
             headerTable3.AddCell(cellHeaderBody4b);
             //cellHeaderBody4b.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody4b);
@@ -972,11 +981,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             #region Footer
 
-            PdfPTable table = new PdfPTable(5)
+            PdfPTable table = new PdfPTable(4)
             {
                 WidthPercentage = 100
             };
-            float[] widths = new float[] { 1f, 1f, 1f, 1f, 1f };
+            float[] widths = new float[] { 1f, 1f, 1f, 1f };
             table.SetWidths(widths);
             PdfPCell cell = new PdfPCell()
             {
@@ -985,23 +994,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 VerticalAlignment = Element.ALIGN_MIDDLE,
             };
 
-            PdfPCell cellLeft = new PdfPCell()
-            {
-                HorizontalAlignment = Element.ALIGN_LEFT,
-                VerticalAlignment = Element.ALIGN_MIDDLE,
-            };
-
-            PdfPCell cellColspan = new PdfPCell()
-            {
-                Colspan = 4,
-                Border = Rectangle.NO_BORDER,
-                HorizontalAlignment = Element.ALIGN_LEFT,
-                VerticalAlignment = Element.ALIGN_MIDDLE,
-            };
-
-
-            cell.Phrase = new Phrase("", normal_font);
-            table.AddCell(cell);
             cell.Phrase = new Phrase("", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase("", normal_font);
@@ -1017,16 +1009,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             table.AddCell(cell);
             cell.Phrase = new Phrase("Mengetahui,", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
-            table.AddCell(cell);
             cell.Phrase = new Phrase("Pembuat laporan,", normal_font);
             table.AddCell(cell);
 
             for (var i = 0; i < 11; i++)
             {
 
-                cell.Phrase = new Phrase("", normal_font);
-                table.AddCell(cell);
                 cell.Phrase = new Phrase("", normal_font);
                 table.AddCell(cell);
                 cell.Phrase = new Phrase("", normal_font);
@@ -1043,8 +1031,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             table.AddCell(cell);
             cell.Phrase = new Phrase("(..................)", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("(..................)", normal_font);
-            table.AddCell(cell);
             cell.Phrase = new Phrase($"({viewModel.numberVB.CreateBy})", normal_font);
             table.AddCell(cell);
 
@@ -1052,9 +1038,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             table.AddCell(cell);
             cell.Phrase = new Phrase("Verifikasi", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("..................", normal_font);
-            table.AddCell(cell);
-            cell.Phrase = new Phrase("..................", normal_font);
+            cell.Phrase = new Phrase($"Kabag {viewModel.numberVB.UnitName}", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase(viewModel.numberVB.UnitName, normal_font);
             table.AddCell(cell);

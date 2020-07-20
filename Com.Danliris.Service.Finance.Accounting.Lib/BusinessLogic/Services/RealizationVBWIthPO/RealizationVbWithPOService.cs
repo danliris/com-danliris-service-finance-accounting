@@ -40,6 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             //updateTotalRequestVb.Realization_Status = true;
 
             decimal totalAmount = 0;
+
             foreach (var item1 in viewmodel.Items)
             {
                 foreach (var item2 in item1.item)
@@ -52,6 +53,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                     }
                 }
             };
+
             model.Amount = totalAmount;
             model.VBRealizeCategory = "PO";
             model.isVerified = false;
