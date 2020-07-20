@@ -26,6 +26,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 Date = DateTimeOffset.UtcNow,
                 //ApprovedDate = DateTimeOffset.UtcNow,
                 DateEstimate = DateTimeOffset.UtcNow,
+                VBMoney = 1,
+                Usage = "Usage",
                 Unit = new Unit()
                 {
                     Id = 0,
@@ -84,6 +86,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 Date = DateTimeOffset.UtcNow,
                 //ApprovedDate = DateTimeOffset.UtcNow,
                 DateEstimate = DateTimeOffset.UtcNow,
+                VBMoney = 0,
+                Usage = "",
                 Unit = new Unit()
                 {
                     Id = 0,
@@ -151,6 +155,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
                 DateEstimate = DateTimeOffset.UtcNow,
+                VBMoney = 1,
+                Usage = "Usage",
                 Unit = new Unit()
                 {
                     Id = 1,
@@ -223,6 +229,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 Complete_Status = true,
                 VBRequestCategory = "PO",
                 CreatedBy = "CreatedBy",
+                VBMoney = 1,
+                Usage_Input = "Usage_Input",
                 VbRequestDetail = new List<VbRequestDetailModel>()
                 {
                     new VbRequestDetailModel()
