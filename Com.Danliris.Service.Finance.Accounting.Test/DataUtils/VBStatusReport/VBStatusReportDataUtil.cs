@@ -21,6 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBStatusReport
         {
             VbRequestModel TestData = new VbRequestModel()
             {
+                Realization_Status = true,
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
                 DateEstimate = DateTimeOffset.UtcNow,
