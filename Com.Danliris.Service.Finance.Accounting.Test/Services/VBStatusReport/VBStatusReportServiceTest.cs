@@ -90,17 +90,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
             VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestDataById();
 
-            var dataRealisation = new RealizationVbModel()
-            {
-                DateEstimate = DateTimeOffset.Now,
-                VBNoRealize = "VBNo",
-                VBNo = "VBNo",
-                Date = DateTimeOffset.Now,
-                Amount = 100,
-                LastModifiedUtc = DateTime.Now,
-            };
-            service._DbContext.RealizationVbs.Add(dataRealisation);
-            service._DbContext.SaveChanges();
+            //var dataRealisation = new RealizationVbModel()
+            //{
+            //    DateEstimate = DateTimeOffset.Now,
+            //    VBNoRealize = "VBNo",
+            //    VBNo = "VBNo",
+            //    Date = DateTimeOffset.Now,
+            //    Amount = 100,
+            //    LastModifiedUtc = DateTime.Now,
+            //};
+            //service._DbContext.RealizationVbs.Add(dataRealisation);
+            //service._DbContext.SaveChanges();
 
             var Response = service.GenerateExcel(0, 0, null, null, null, null, null, 7);
             Assert.NotNull(Response);
