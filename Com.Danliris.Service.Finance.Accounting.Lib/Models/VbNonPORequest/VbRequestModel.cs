@@ -31,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         [MaxLength(255)]
         public string UnitLoad { get; set; }
         public bool Apporve_Status { get; set; }
+        public bool Realization_Status { get; set; }
         public bool Complete_Status { get; set; }
         [MaxLength(255)]
         public string VBRequestCategory { get; set; }

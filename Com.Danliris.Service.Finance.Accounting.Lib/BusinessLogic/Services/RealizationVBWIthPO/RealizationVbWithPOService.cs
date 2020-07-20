@@ -36,6 +36,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         {
             model.VBNoRealize = GetVbRealizePoNo(model);
 
+            //var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo);
+            //updateTotalRequestVb.Realization_Status = true;
+
             decimal totalAmount = 0;
 
             foreach (var item1 in viewmodel.Items)
@@ -88,6 +91,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public Task<int> DeleteAsync(int id)
         {
             var model = _dbContext.RealizationVbs.Where(entity => entity.Id == id).FirstOrDefault();
+
+            //var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo);
+            //updateTotalRequestVb.Realization_Status = false;
 
             if (model != null)
             {

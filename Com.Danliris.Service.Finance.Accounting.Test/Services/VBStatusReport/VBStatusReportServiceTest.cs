@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBStatusReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBStatusReport;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBStatusReport;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -68,9 +69,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
         public async Task Should_Success_GetReport()
         {
             VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = await _dataUtil(service).GetTestDataById();
-            
-            var Response = service.GetReport(data.UnitId, data.Id, false, data.Date, data.Date, data.Date, data.Date, 7);
+            var data = await _dataUtil(service).GetTestData_Outstanding_ById();
+
+            var Response = service.GetReport(data.UnitId, data.Id, true, data.Date, data.Date, data.Date, data.Date, 7);
             Assert.NotNull(Response);
 
             Response = service.GetReport(data.UnitId, data.Id, null, null, null, null, null, 7);
@@ -84,10 +85,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
         }
 
         [Fact]
-        public async Task Should_Success_GenerateExcel()
+        public async Task Should_Success_GenerateExcel_Realisasi()
         {
             VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = await _dataUtil(service).GetTestDataById();
+            var data = await _dataUtil(service).GetTestData_Realisasi_ById();
 
             var dataRealisation = new RealizationVbModel()
             {
@@ -102,10 +103,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
             service._DbContext.RealizationVbs.Add(dataRealisation);
             service._DbContext.SaveChanges();
 
-            var Response = service.GenerateExcel(data.UnitId, data.Id, false, data.Date, data.Date, data.Date, data.Date, 7);
+            var Response = service.GenerateExcel(data.UnitId, data.Id, data.Realization_Status, null, null, null, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GenerateExcel(2, 2, null, null, null, null, null, 7);
+            Response = service.GenerateExcel(data.UnitId, data.Id, false, null, null, null, null, 7);
+            Assert.NotNull(Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_GenerateExcel_Outstanding()
+        {
+            VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestData_Outstanding_ById();
+
+            var dataRealisation = new RealizationVbModel()
+            {
+                DateEstimate = DateTimeOffset.Now,
+                VBNoRealize = "VBNoRealize",
+                VBNo = "VBNo",
+                Date = DateTimeOffset.Now,
+                Amount = 100,
+                isVerified = false,
+                LastModifiedUtc = DateTime.Now,
+            };
+            service._DbContext.RealizationVbs.Add(dataRealisation);
+            service._DbContext.SaveChanges();
+            
+            var Response = service.GenerateExcel(data.UnitId, data.Id, data.Realization_Status, null, null, null, null, 7);
+            Assert.NotNull(Response);
+
+            Response = service.GenerateExcel(data.UnitId, data.Id, true, null, null, null, null, 7);
             Assert.NotNull(Response);
         }
     }

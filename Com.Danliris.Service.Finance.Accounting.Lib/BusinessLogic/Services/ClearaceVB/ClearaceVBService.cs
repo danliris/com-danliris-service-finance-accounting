@@ -81,18 +81,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
 
             List<string> SearchAttributes = new List<string>()
             {
-                "VBNo"
+                "RqstNo","VBCategory","Appliciant","RealNo","Status","DiffStatus"
             };
 
-            query = QueryHelper<VbRequestModel>.Search(query, SearchAttributes, keyword);
 
-            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
-            query = QueryHelper<VbRequestModel>.Filter(query, filterDictionary);
-
-            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
-            query = QueryHelper<VbRequestModel>.Order(query, orderDictionary);
-
-            var pageable = new Pageable<VbRequestModel>(query, page - 1, size);
             var diffStatus = "";
 
             var data = query
@@ -124,10 +116,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                    Status = rqst.Complete_Status ? "Completed" : "Uncompleted",
                    LastModifiedUtc = real.LastModifiedUtc,
                })
-               .OrderByDescending(s => s.LastModifiedUtc).ToList();
+               .OrderByDescending(s => s.LastModifiedUtc).AsQueryable();
+
+            data = QueryHelper<ClearaceVBViewModel>.Search(data, SearchAttributes, keyword);
+
+            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            data = QueryHelper<ClearaceVBViewModel>.Filter(data, filterDictionary);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            data = QueryHelper<ClearaceVBViewModel>.Order(data, orderDictionary);
+
+            var pageable = new Pageable<ClearaceVBViewModel>(data, page - 1, size);
 
             int totalData = pageable.TotalCount;
-            return new ReadResponse<ClearaceVBViewModel>(data, totalData, orderDictionary, new List<string>());
+            return new ReadResponse<ClearaceVBViewModel>(data.ToList(), totalData, orderDictionary, new List<string>());
         }
     }
 }

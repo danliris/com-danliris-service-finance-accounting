@@ -34,6 +34,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
         public Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
         {
+            //var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo);
+            //updateTotalRequestVb.Realization_Status = true;
+
             model.VBNoRealize = GetVbRealizeNo(model);
             model.isVerified = false;
             model.isClosed = false;
@@ -108,6 +111,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
         public Task<int> DeleteAsync(int id)
         {
             var model = _dbContext.RealizationVbs.Where(entity => entity.Id == id).FirstOrDefault();
+
+            //var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo);
+            //updateTotalRequestVb.Realization_Status = false;
 
             if (model != null)
             {
@@ -226,6 +232,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
         public Task<int> UpdateAsync(int id, RealizationVbNonPOViewModel viewModel)
         {
             var model = MappingData2(id, viewModel);
+
+            //var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo);
+            //updateTotalRequestVb.Realization_Status = true;
 
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
 
