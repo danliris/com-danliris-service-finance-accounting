@@ -52,7 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
 
             if (isRealized.HasValue)
             {
-                query = query.Where(s => s.Complete_Status == isRealized.GetValueOrDefault());
+                query = query.Where(s => s.Realization_Status == isRealized.GetValueOrDefault());
             }
 
             if (requestDateFrom.HasValue && requestDateTo.HasValue)
@@ -85,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
 
             var result = new List<VBStatusReportViewModel>();
             if (isRealized.GetValueOrDefault())
-                {
+            {
                 result = query
                 .Join(realizationQuery,
                 (rqst) => rqst.VBNo,
@@ -180,13 +180,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 data = data.OrderBy(s => s.Id).ToList();
                 foreach (var item in data)
                 {
-                    if(item.Status == "Realisasi")
+                    if (item.Status == "Realisasi")
                     {
                         dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Unit.Name, item.CreateBy, item.RealizationNo,
                         item.RealizationDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.Usage, item.Aging, item.Amount, item.RealizationAmount, item.Difference, item.Status);
-                    } else
+                    }
+                    else
                     {
                         dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         "", item.Unit.Name, item.CreateBy, "", "",

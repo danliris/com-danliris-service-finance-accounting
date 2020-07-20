@@ -17,7 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBStatusReport
             this.service = service;
         }
 
-        public VbRequestModel GetNewData()
+        public VbRequestModel GetNewData_Realisasi()
         {
             VbRequestModel TestData = new VbRequestModel()
             {
@@ -34,10 +34,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBStatusReport
 
             return TestData;
         }
-
-        public async Task<VbRequestModel> GetTestDataById()
+        public VbRequestModel GetNewData_Outstanding()
         {
-            VbRequestModel model = GetNewData();
+            VbRequestModel TestData = new VbRequestModel()
+            {
+                Realization_Status = false,
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                UnitId = 1,
+                UnitName = "UnitName",
+                CreatedBy = "CreatedBy",
+                Usage = "Usage",
+                Amount = 1000,
+            };
+
+            return TestData;
+        }
+
+        public async Task<VbRequestModel> GetTestData_Realisasi_ById()
+        {
+            VbRequestModel model = GetNewData_Realisasi();
+            await service.CreateAsync(model);
+            return await service.ReadByIdAsync(model.Id);
+        }
+        public async Task<VbRequestModel> GetTestData_Outstanding_ById()
+        {
+            VbRequestModel model = GetNewData_Outstanding();
             await service.CreateAsync(model);
             return await service.ReadByIdAsync(model.Id);
         }
