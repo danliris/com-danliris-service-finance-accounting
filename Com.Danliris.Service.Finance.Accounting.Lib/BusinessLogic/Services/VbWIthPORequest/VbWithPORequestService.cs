@@ -304,9 +304,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
         public Task<int> DeleteAsync(int id)
         {
-            var model = _dbContext.VbRequests.Where(entity => entity.Id == id).FirstOrDefault();
+            var model = _dbContext.VbRequests.Include(en => en.VbRequestDetail).Where(entity => entity.Id == id).FirstOrDefault();
 
-            var modeldetail = _dbContext.VbRequestsDetails.Where(entity => entity.VBId == id).FirstOrDefault();
+            //var modeldetail = _dbContext.VbRequestsDetails.Where(entity => entity.VBId == id).FirstOrDefault();
 
             if (model != null)
             {
@@ -315,14 +315,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 _dbContext.VbRequests.Update(model);
             }
 
-            foreach (var itm1 in modeldetail.PONo)
+            foreach (var itm1 in model.VbRequestDetail)
             {
                 var updateModel = new POExternalUpdateModel()
                 {
                     IsCreateOnVBRequest = false
                 };
 
-                UpdateToPOExternal(itm1.ToString(), updateModel);
+                UpdateToPOExternal(itm1.PONo.ToString(), updateModel);
             }
 
             return _dbContext.SaveChangesAsync();
