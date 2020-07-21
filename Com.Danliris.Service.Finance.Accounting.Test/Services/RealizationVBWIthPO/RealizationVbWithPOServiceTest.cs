@@ -85,8 +85,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         [Fact]
         public async Task Should_Success_Create_Data()
         {
-            RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            var dbContext = GetDbContext(GetCurrentMethod());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
+
+            var dataRequestVb = _dataUtil(service).GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
             var Response = await service.CreateAsync(model, viewModel);
             Assert.NotEqual(0, Response);
@@ -95,8 +101,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         [Fact]
         public async Task Should_Success_Create_Data_Mapping()
         {
-            RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            var dbContext = GetDbContext(GetCurrentMethod());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
+
+            var dataRequestVb = _dataUtil(service).GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
             await service.CreateAsync(model, viewModel);
             var Response = await service.MappingData(viewModel);
@@ -106,8 +118,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         [Fact]
         public async Task DeleteAsync_Return_Success()
         {
-            RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            var dbContext = GetDbContext(GetCurrentMethod());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
+
+            var dataRequestVb = _dataUtil(service).GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
             await service.CreateAsync(model, viewModel);
             var response = await service.DeleteAsync(model.Id);
@@ -117,8 +135,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         [Fact]
         public async Task ReadByIdAsync2_Return_Success()
         {
-            RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            var dbContext = GetDbContext(GetCurrentMethod());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
+
+            var dataRequestVb = _dataUtil(service).GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
             await service.CreateAsync(model, viewModel);
             var response = await service.ReadByIdAsync2(model.Id);
@@ -139,8 +163,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         [Fact]
         public async Task Read_Return_Success()
         {
-            RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            var dbContext = GetDbContext(GetCurrentMethod());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
+
+            var dataRequestVb = _dataUtil(service).GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
             await service.CreateAsync(model, viewModel);
 
