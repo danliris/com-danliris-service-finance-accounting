@@ -105,7 +105,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     RealizationNo = real.VBNoRealize,
                     RealizationDate = real.Date,
                     Usage = rqst.Usage,
-                    Aging = (int)(real.Date - rqst.Date).TotalDays,
+                    Aging = rqst.Realization_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
                     Amount = rqst.Amount,
                     RealizationAmount = real.Amount,
                     Difference = rqst.Amount - real.Amount,
@@ -123,7 +123,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     Id = s.Id,
                     VBNo = s.VBNo,
                     Date = s.Date,
-                    //DateEstimate = real.DateEstimate,
+                    DateEstimate = s.DateEstimate,
                     Unit = new Unit()
                     {
                         Id = s.Id,
@@ -189,7 +189,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     }
                     else
                     {
-                        dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        dt.Rows.Add(item.VBNo, item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         "", item.Unit.Name, item.CreateBy, "", "",
                         item.Usage, item.Aging, item.Amount, item.RealizationAmount, item.Difference, item.Status);
                     }
@@ -211,6 +211,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
         public Task<VbRequestModel> ReadByIdAsync(int id)
         {
             return _DbContext.VbRequests.Where(entity => entity.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<VbRequestModel>> GetByApplicantName(string applicantName)
+        {
+            var data = await _DbContext.VbRequests.Where(entity => entity.CreatedBy == applicantName).ToListAsync();
+            return data;
         }
     }
 }
