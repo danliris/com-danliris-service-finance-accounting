@@ -36,8 +36,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         {
             model.VBNoRealize = GetVbRealizePoNo(model);
 
-            //var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo);
-            //updateTotalRequestVb.Realization_Status = true;
+            var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
+            updateTotalRequestVb.Realization_Status = true;
 
             decimal totalAmount = 0;
 
@@ -92,8 +92,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         {
             var model = _dbContext.RealizationVbs.Where(entity => entity.Id == id).FirstOrDefault();
 
-            //var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo);
-            //updateTotalRequestVb.Realization_Status = false;
+            var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
+            updateTotalRequestVb.Realization_Status = false;
 
             if (model != null)
             {
