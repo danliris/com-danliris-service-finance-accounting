@@ -56,7 +56,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             PdfPCell cellHeaderBody = new PdfPCell() { Border = Rectangle.NO_BORDER };
             PdfPCell cellHeaderBody1 = new PdfPCell() { };
             PdfPCell cellHeaderBody1a = new PdfPCell() { BorderWidthTop = 2 };
+            PdfPCell cellHeaderBody1a1 = new PdfPCell() { };
+            PdfPCell cellHeaderBody1a2 = new PdfPCell() { };
             PdfPCell cellHeaderBody1b = new PdfPCell() { BorderWidthTop = 2 };
+            PdfPCell cellHeaderBody1b1 = new PdfPCell() { };
+            PdfPCell cellHeaderBody1b2 = new PdfPCell() { };
+            PdfPCell cellHeaderBody1c = new PdfPCell() { };
             PdfPCell cellHeaderBody2 = new PdfPCell() { Border = Rectangle.NO_BORDER };
             PdfPCell cellHeaderBody3 = new PdfPCell() { Border = Rectangle.NO_BORDER };
             PdfPCell cellHeaderBody4 = new PdfPCell() { Border = Rectangle.NO_BORDER };
@@ -77,7 +82,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1.HorizontalAlignment = Element.ALIGN_CENTER;
             cellHeaderBody1a.HorizontalAlignment = Element.ALIGN_CENTER;
+            cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_CENTER;
+            cellHeaderBody1a2.HorizontalAlignment = Element.ALIGN_CENTER;
             cellHeaderBody1b.HorizontalAlignment = Element.ALIGN_CENTER;
+            cellHeaderBody1b1.HorizontalAlignment = Element.ALIGN_CENTER;
+            cellHeaderBody1b2.HorizontalAlignment = Element.ALIGN_CENTER;
+            cellHeaderBody1c.HorizontalAlignment = Element.ALIGN_CENTER;
             cellHeaderBody2.HorizontalAlignment = Element.ALIGN_CENTER;
             cellHeaderBody3.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody4.HorizontalAlignment = Element.ALIGN_CENTER;
@@ -121,6 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             int index = 1;
             decimal count_price = 0;
+            decimal total_realization = 0;
 
             var items = viewModel.numberVB.UnitLoad.Split(",");
 
@@ -166,10 +177,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     total_all = itm.Amount;
                 }
 
-                cellHeaderBody1.Phrase = new Phrase("Rp.        " + Convert_Rate(total_all, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody1.Phrase = new Phrase("Rp.        " + Convert_Rate(itm.Amount, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
                 count_price += Convert_Rate(total_all, currencycode, currencyrate);
-
+                total_realization += Convert_Rate(itm.Amount, currencycode, currencyrate);
             }
 
             cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
@@ -177,10 +188,34 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody1b);
             cellHeaderBody1a.Colspan = 2;
-            cellHeaderBody1a.Phrase = new Phrase("Total Realisasi", normal_font);
+            cellHeaderBody1a.Phrase = new Phrase("Jumlah Realisasi", normal_font);
             headerTable3.AddCell(cellHeaderBody1a);
-            cellHeaderBody1b.Phrase = new Phrase("Rp.       " + count_price.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1b.Phrase = new Phrase("Rp.       " + total_realization.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1b);
+
+
+
+            cellHeaderBody1b1.Phrase = new Phrase(" ", normal_font);
+            headerTable3.AddCell(cellHeaderBody1b1);
+            //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody1b);
+            cellHeaderBody1a1.Colspan = 2;
+            cellHeaderBody1a1.Phrase = new Phrase("PPn", normal_font);
+            headerTable3.AddCell(cellHeaderBody1a1);
+            cellHeaderBody1b1.Phrase = new Phrase("Rp.       " + (count_price - total_realization).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            headerTable3.AddCell(cellHeaderBody1b1);
+
+
+
+            cellHeaderBody1b2.Phrase = new Phrase(" ", normal_font);
+            headerTable3.AddCell(cellHeaderBody1b2);
+            //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody1b);
+            cellHeaderBody1a2.Colspan = 2;
+            cellHeaderBody1a2.Phrase = new Phrase("Total Realisasi", normal_font);
+            headerTable3.AddCell(cellHeaderBody1a2);
+            cellHeaderBody1b2.Phrase = new Phrase("Rp.       " + count_price.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            headerTable3.AddCell(cellHeaderBody1b2);
 
             //cellHeaderBody1.Colspan = 2;
             cellHeaderBody6.Colspan = 2;
