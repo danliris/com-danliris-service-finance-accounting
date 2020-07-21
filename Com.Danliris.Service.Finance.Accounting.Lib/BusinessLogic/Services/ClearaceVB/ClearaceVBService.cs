@@ -12,6 +12,7 @@ using Com.Moonlay.NetCore.Lib;
 using Newtonsoft.Json;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB;
+using System.Linq.Dynamic.Core;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB
 {
@@ -31,6 +32,73 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             _RealizationDbSet = dbContext.Set<RealizationVbModel>();
             _serviceProvider = serviceProvider;
             _IdentityService = serviceProvider.GetService<IIdentityService>();
+        }
+        public static IQueryable<ClearaceVBViewModel> Filter(IQueryable<ClearaceVBViewModel> query, Dictionary<string, object> filterDictionary)
+        {
+            if (filterDictionary != null && !filterDictionary.Count.Equals(0))
+            {
+                foreach (var f in filterDictionary)
+                {
+                    string key = f.Key;
+                    object Value = f.Value;
+                    string filterQuery = string.Concat(string.Empty, key, " == @0");
+
+                    query = query.Where(filterQuery, Value);
+                }
+            }
+            return query;
+        }
+
+        public static IQueryable<ClearaceVBViewModel> Order(IQueryable<ClearaceVBViewModel> query, Dictionary<string, string> orderDictionary)
+        {
+            /* Default Order */
+            if (orderDictionary.Count.Equals(0))
+            {
+                orderDictionary.Add("LastModifiedUtc", "desc");
+
+                query = query.OrderByDescending(b => b.LastModifiedUtc);
+            }
+            /* Custom Order */
+            else
+            {
+                string Key = orderDictionary.Keys.First();
+                string OrderType = orderDictionary[Key];
+
+                query = query.OrderBy(string.Concat(Key.Replace(".", ""), " ", OrderType));
+            }
+            return query;
+        }
+
+        public static IQueryable<ClearaceVBViewModel> Search(IQueryable<ClearaceVBViewModel> query, List<string> searchAttributes, string keyword, bool ToLowerCase = false)
+        {
+            /* Search with Keyword */
+            if (keyword != null)
+            {
+                string SearchQuery = String.Empty;
+                foreach (string Attribute in searchAttributes)
+                {
+                    if (Attribute.Contains("."))
+                    {
+                        var Key = Attribute.Split(".");
+                        SearchQuery = string.Concat(SearchQuery, Key[0], $".Any({Key[1]}.Contains(@0)) OR ");
+                    }
+                    else
+                    {
+                        SearchQuery = string.Concat(SearchQuery, Attribute, ".Contains(@0) OR ");
+                    }
+                }
+
+                SearchQuery = SearchQuery.Remove(SearchQuery.Length - 4);
+
+                if (ToLowerCase)
+                {
+                    SearchQuery = SearchQuery.Replace(".Contains(@0)", ".ToLower().Contains(@0)");
+                    keyword = keyword.ToLower();
+                }
+
+                query = query.Where(SearchQuery, keyword);
+            }
+            return query;
         }
 
         public Task<int> CreateAsync(VbRequestModel model)
@@ -118,13 +186,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                })
                .OrderByDescending(s => s.LastModifiedUtc).AsQueryable();
 
-            data = QueryHelper<ClearaceVBViewModel>.Search(data, SearchAttributes, keyword);
+            data = Search(data, SearchAttributes, keyword);
 
             var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
-            data = QueryHelper<ClearaceVBViewModel>.Filter(data, filterDictionary);
+            data = Filter(data, filterDictionary);
 
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
-            data = QueryHelper<ClearaceVBViewModel>.Order(data, orderDictionary);
+            data = Order(data, orderDictionary);
 
             var pageable = new Pageable<ClearaceVBViewModel>(data, page - 1, size);
 

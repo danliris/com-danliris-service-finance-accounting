@@ -112,7 +112,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     Status = rqst.Realization_Status ? "Realisasi" : "Outstanding",
                     LastModifiedUtc = real.LastModifiedUtc,
                 })
-                .OrderByDescending(s => s.LastModifiedUtc).Where(t => t.Status == "Realisasi").ToList();
+                .OrderByDescending(s => s.LastModifiedUtc)
+                .Where(t => t.Status == "Realisasi")
+                .ToList();
             }
             else
             {
@@ -139,7 +141,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     Difference = amount,
                     Status = s.Realization_Status ? "Realisasi" : "Outstanding",
                     LastModifiedUtc = s.LastModifiedUtc,
-                }).Where(t => t.Status == "Outstanding").ToList();
+                }).OrderByDescending(s => s.LastModifiedUtc)
+                .Where(t => t.Status == "Outstanding")
+                .ToList();
             }
 
             return result.ToList();
@@ -189,8 +193,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     }
                     else
                     {
-                        dt.Rows.Add(item.VBNo, item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                        "", item.Unit.Name, item.CreateBy, "", "",
+                        dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Unit.Name, item.CreateBy, "", "",
                         item.Usage, item.Aging, item.Amount, item.RealizationAmount, item.Difference, item.Status);
                     }
                 }
