@@ -38,12 +38,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBVerifi
             _mapper = serviceProvider.GetService<IMapper>();
         }
 
-        protected void VerifyUser()
-        {
-            _identityService.Username = User.Claims.ToArray().SingleOrDefault(p => p.Type.Equals("username")).Value;
-            _identityService.Token = Request.Headers["Authorization"].FirstOrDefault().Replace("Bearer ", "");
-            _identityService.TimezoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
-        }
+        //protected void VerifyUser()
+        //{
+        //    _identityService.Username = User.Claims.ToArray().SingleOrDefault(p => p.Type.Equals("username")).Value;
+        //    _identityService.Token = Request.Headers["Authorization"].FirstOrDefault().Replace("Bearer ", "");
+        //    _identityService.TimezoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+        //}
 
         [HttpGet]
         public IActionResult Get(int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")

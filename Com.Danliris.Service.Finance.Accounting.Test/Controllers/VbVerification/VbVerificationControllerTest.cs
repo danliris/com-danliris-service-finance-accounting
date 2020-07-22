@@ -161,7 +161,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = controller.Get(select: new List<string>());
+            var response = controller.GetVerification(select: new List<string>());
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
