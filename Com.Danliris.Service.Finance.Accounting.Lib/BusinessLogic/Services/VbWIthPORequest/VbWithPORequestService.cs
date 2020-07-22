@@ -153,7 +153,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             };
 
             IHttpClientService httpClient = (IHttpClientService)this._serviceProvider.GetService(typeof(IHttpClientService));
-            var response = httpClient.PutAsync(Uri, new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result; if (!response.IsSuccessStatusCode)
+            var response = httpClient.PutAsync(Uri, new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result; 
+            if (!response.IsSuccessStatusCode)
             {
                 throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, APIEndpoint.Purchasing));
             }
