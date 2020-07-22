@@ -53,18 +53,6 @@
     <Compile Remove="Migrations\20200714104148_UpdateVBRealization3.Designer.cs" />
     <Compile Remove="Migrations\20200715073752_test.cs" />
     <Compile Remove="Migrations\20200715073752_test.Designer.cs" />
-    <Compile Remove="Migrations\20200721044002_UpdateVBRealizationStatusReqRealandCurrency.cs" />
-    <Compile Remove="Migrations\20200721044002_UpdateVBRealizationStatusReqRealandCurrency.Designer.cs" />
-    <Compile Remove="Migrations\20200721044533_UpdateVBRealizationStatusReqRealandCurrency.cs" />
-    <Compile Remove="Migrations\20200721044533_UpdateVBRealizationStatusReqRealandCurrency.Designer.cs" />
-    <Compile Remove="Migrations\20200721045152_UpdateVBRealizationStatusReqRealandCurrency.cs" />
-    <Compile Remove="Migrations\20200721045152_UpdateVBRealizationStatusReqRealandCurrency.Designer.cs" />
-    <Compile Remove="Migrations\20200721045551_UpdateVBRealizationStatusReqRealandCurrency.cs" />
-    <Compile Remove="Migrations\20200721045551_UpdateVBRealizationStatusReqRealandCurrency.Designer.cs" />
-    <Compile Remove="Migrations\20200721045735_UpdateVBRealizationStatusReqRealandCurrency.cs" />
-    <Compile Remove="Migrations\20200721045735_UpdateVBRealizationStatusReqRealandCurrency.Designer.cs" />
-    <Compile Remove="Migrations\20200721073500_UpdateVBRealizationStatusReqRealandCurrency.cs" />
-    <Compile Remove="Migrations\20200721073500_UpdateVBRealizationStatusReqRealandCurrency.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
