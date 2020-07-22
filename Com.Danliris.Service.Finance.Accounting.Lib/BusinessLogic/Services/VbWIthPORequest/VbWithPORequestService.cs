@@ -96,7 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             model.VBNo = GetVbNonPoNo(model);
 
             model.VBRequestCategory = "PO";
-            
+
             model.Apporve_Status = false;
             model.Complete_Status = false;
             model.Usage_Input = viewmodel.Usage;
@@ -157,10 +157,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             };
 
             IHttpClientService httpClient = (IHttpClientService)this._serviceProvider.GetService(typeof(IHttpClientService));
-            var response = httpClient.PutAsync(Uri, new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result; 
+            var response = httpClient.PutAsync(Uri, new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, APIEndpoint.Purchasing));
+                throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, "failed"));
             }
         }
 
@@ -179,7 +179,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     Date = s.Date,
                     DateEstimate = s.DateEstimate,
                     VBMoney = s.VBMoney,
-                    Usage= s.Usage_Input,
+                    Usage = s.Usage_Input,
                     Unit = new Unit()
                     {
                         Id = s.UnitId,
