@@ -1970,8 +1970,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<bool>("Realization_Status");
-
                     b.Property<string>("UnitCode")
                         .HasMaxLength(64);
 

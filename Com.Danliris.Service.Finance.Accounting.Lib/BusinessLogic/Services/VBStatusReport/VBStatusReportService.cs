@@ -178,9 +178,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             if (data.Count == 0)
             {
                 dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "");
-            }
-            else
-            {
+            } else {
                 data = data.OrderBy(s => s.Id).ToList();
                 foreach (var item in data)
                 {
