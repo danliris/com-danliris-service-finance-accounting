@@ -106,6 +106,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
         }
 
         [Fact]
+        public async Task Should_Success_Create_Model_Failed_Purchasing()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            var modelToCreate = dataUtil.GetVbRequestModelToCreateFailed();
+            var viewmodelToCreate = dataUtil.GetViewModel();
+            var result = await service.CreateAsync(modelToCreate, viewmodelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Create_Same_()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
