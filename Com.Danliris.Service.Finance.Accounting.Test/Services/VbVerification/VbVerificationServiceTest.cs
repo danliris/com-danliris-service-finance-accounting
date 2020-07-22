@@ -91,7 +91,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
-            VbVerificationService service2 = new VbVerificationService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
             var dataRequestVb = _dataUtil(service).GetDataRequestVB();
@@ -112,7 +112,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
-            VbVerificationService service2 = new VbVerificationService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
             var dataRequestVb = _dataUtil(service).GetDataRequestVB();

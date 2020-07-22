@@ -147,7 +147,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
                 .Setup(service => service.ReadVerification(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception());
             serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
 
             var validateServiceMock = new Mock<IValidateService>();
             serviceProviderMock
