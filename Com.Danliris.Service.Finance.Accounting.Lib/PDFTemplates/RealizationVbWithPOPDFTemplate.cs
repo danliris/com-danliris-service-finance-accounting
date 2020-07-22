@@ -268,7 +268,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             #endregion Header
 
             #region CheckBox
-            //string total = "";
+            
             decimal total_count = 0;
 
             cellHeaderBody.Phrase = new Phrase("Spinning 1", normal_font_8);
@@ -347,7 +347,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG11.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -403,7 +403,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG8.BorderColor = BaseColor.Black;
             _radioG8.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -459,7 +459,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG5.BorderColor = BaseColor.Black;
             _radioG5.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -514,7 +514,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG5a.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -569,7 +569,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG13.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -623,7 +623,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG10.BorderColor = BaseColor.Black;
             _radioG10.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -678,7 +678,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG7.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -733,7 +733,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG4.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -788,7 +788,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG1.BorderColor = BaseColor.Black;
             _radioG1.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -843,7 +843,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG12.BorderColor = BaseColor.Black;
             _radioG12.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -915,7 +915,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG9.BorderColor = BaseColor.Black;
             _radioG9.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            //total = "";
+            
             total_count = 0;
             foreach (var itm in viewModel.Items)
             {
@@ -988,7 +988,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG6.BorderColor = BaseColor.Black;
             _radioG6.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
@@ -1042,7 +1042,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG3.BorderColor = BaseColor.Black;
             _radioG3.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            //total = "";
+            
             total_count = 0;
             foreach (var tem in parts)
             {
