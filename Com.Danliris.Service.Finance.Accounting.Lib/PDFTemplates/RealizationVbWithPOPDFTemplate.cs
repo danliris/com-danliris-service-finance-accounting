@@ -1098,7 +1098,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             document.Add(headerTable_C);
             writer.AddAnnotation(_checkGroup);
             writer.AddAnnotation(_checkGroup1);
-            //writer.AddAnnotation(_checkGroup2);
             writer.AddAnnotation(_checkGroup3);
             writer.AddAnnotation(_checkGroup4);
             writer.AddAnnotation(_checkGroup5);
