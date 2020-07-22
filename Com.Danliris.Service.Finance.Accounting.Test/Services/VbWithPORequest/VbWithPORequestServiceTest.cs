@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,11 +48,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
         private Mock<IServiceProvider> GetServiceProviderMock()
         {
             var serviceProvider = new Mock<IServiceProvider>();
-
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
                 .Returns(new HttpClientTestService());
-
+               
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
@@ -109,14 +110,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
         public async Task Should_Success_Create_Model_Failed_Purchasing()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
-            var serviceProviderMock = GetServiceProviderMock();
-            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var serviceProvider = new Mock<IServiceProvider>();
+
+            Mock<IHttpClientService> httpMock = new Mock<IHttpClientService>();
+            var response = new HttpResponseMessage(HttpStatusCode.InternalServerError) { Content = new StringContent("Your message here") };
+
+            httpMock.Setup(s => s.PutAsync(It.IsAny<string>(), It.IsAny<HttpContent>())).Returns(Task.Run(() => response));
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(httpMock.Object);
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            var service = new VbWithPORequestService(dbContext, serviceProvider.Object);
             var dataUtil = new VbWithPORequestDataUtil(service);
             var modelToCreate = dataUtil.GetVbRequestModelToCreateFailed();
             var viewmodelToCreate = dataUtil.GetViewModel();
-            var result = await service.CreateAsync(modelToCreate, viewmodelToCreate);
 
-            Assert.NotEqual(0, result);
+            await Assert.ThrowsAsync<Exception>(() => service.CreateAsync(modelToCreate, viewmodelToCreate));
         }
 
         [Fact]
