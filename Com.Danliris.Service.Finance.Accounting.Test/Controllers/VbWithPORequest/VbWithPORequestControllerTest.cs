@@ -613,6 +613,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.Now,
+                VBMoney = 1,
+                Usage = "Usaage",
                 Unit = new Unit()
                 {
                     Id = 1,

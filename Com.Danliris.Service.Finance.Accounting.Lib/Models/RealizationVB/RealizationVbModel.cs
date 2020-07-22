@@ -29,6 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public decimal Amount_VB { get; set; }
         public decimal AmountNonPO { get; set; }
         public decimal DifferenceReqReal { get; set; }
+        //[MaxLength(64)]
         //public string StatusReqReal { get; set; }
         public bool isVerified { get; set; }
         public DateTimeOffset VerifiedDate { get; set; }
