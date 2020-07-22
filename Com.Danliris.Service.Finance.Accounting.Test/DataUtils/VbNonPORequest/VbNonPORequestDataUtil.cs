@@ -60,6 +60,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
             };
         }
 
+        public VbNonPORequestViewModel GetViewModelToValidateOthers()
+        {
+            return new VbNonPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                //ApprovedDate = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                Unit = new Unit()
+                {
+                    Id = 0,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Currency = new CurrencyVBRequest()
+                {
+                    Id = 0,
+                    Code = "",
+                    Rate = 123,
+                    Symbol = "$"
+                },
+                Amount = 123,
+                Usage = "Usage",
+                Spinning1 = false,
+                Spinning2 = false,
+                Spinning3 = false,
+                Weaving1 = false,
+                Weaving2 = false,
+                Finishing = false,
+                Printing = false,
+                Konfeksi1A = false,
+                Konfeksi1B = false,
+                Konfeksi2A = false,
+                Konfeksi2B = false,
+                Konfeksi2C = false,
+                Umum = false,
+                Others = true,
+                DetailOthers = "",
+                UnitLoad = "UnitLoad,UnitLoad,UnitLoad"
+            };
+        }
+
         public VbNonPORequestViewModel GetViewModel()
         {
             return new VbNonPORequestViewModel()

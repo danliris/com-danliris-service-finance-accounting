@@ -113,7 +113,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
             var serviceProvider = new Mock<IServiceProvider>();
 
             Mock<IHttpClientService> httpMock = new Mock<IHttpClientService>();
-            var response = new HttpResponseMessage(HttpStatusCode.InternalServerError) { Content = new StringContent("Your message here") };
+            var response = new HttpResponseMessage(HttpStatusCode.NotFound) { Content = new StringContent("Your message here") };
 
             httpMock.Setup(s => s.PutAsync(It.IsAny<string>(), It.IsAny<HttpContent>())).Returns(Task.Run(() => response));
 

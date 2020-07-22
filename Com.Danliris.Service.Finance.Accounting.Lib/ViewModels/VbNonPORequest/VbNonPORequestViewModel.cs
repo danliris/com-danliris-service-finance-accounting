@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                 && Konfeksi2C == false && Umum == false && Others == false)
                 yield return new ValidationResult("Beban Unit harus dipilih salah satu!", new List<string> { "UnitLoadCheck" });
 
-            if (Others == true && DetailOthers == "")
+            if (Others == true && string.IsNullOrWhiteSpace(DetailOthers))
                 yield return new ValidationResult("Isian harus diisi!", new List<string> { "DetailOthers" });
         }
     }
