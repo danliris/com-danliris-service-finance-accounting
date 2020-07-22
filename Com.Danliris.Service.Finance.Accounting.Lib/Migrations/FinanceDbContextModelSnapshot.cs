@@ -106,84 +106,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.ToTable("DownPayments");
                 });
 
-            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.ClearanceVB.ClearanceVBModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<string>("Appliciant")
-                        .HasMaxLength(255);
-
-                    b.Property<DateTimeOffset?>("ClearanceDate");
-
-                    b.Property<string>("CreatedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<string>("DeletedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("DeletedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<decimal>("DiffAmount");
-
-                    b.Property<string>("DiffStatus");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<bool>("IsPosted");
-
-                    b.Property<string>("LastModifiedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("LastModifiedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<DateTimeOffset>("RealDate");
-
-                    b.Property<string>("RealNo")
-                        .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset>("RqstDate");
-
-                    b.Property<string>("RqstNo")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("Status");
-
-                    b.Property<int>("UnitId");
-
-                    b.Property<string>("UnitName")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("VBCategory")
-                        .HasMaxLength(255);
-
-                    b.Property<DateTimeOffset?>("VerDate");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ClearanceVBModel");
-                });
-
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount.CreditorAccountModel", b =>
                 {
                     b.Property<int>("Id")
@@ -2047,8 +1969,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(255);
 
                     b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<bool>("Realization_Status");
 
                     b.Property<string>("UnitCode")
                         .HasMaxLength(64);

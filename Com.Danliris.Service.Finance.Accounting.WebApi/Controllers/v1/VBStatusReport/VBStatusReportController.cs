@@ -40,6 +40,32 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
             IdentityService.TimezoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
 
         }
+
+        [HttpGet("by-applicant/{applicantName}")]
+        public async Task<IActionResult> GetByApplicantName([FromRoute] string applicantName)
+        {
+            try
+            {
+                ValidateUser();
+                var data = await Service.GetByApplicantName(applicantName);
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data,
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("reports")]
         public async Task<IActionResult> GetReportAll(int unitId, int vbRequestId, bool? isRealized, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         {

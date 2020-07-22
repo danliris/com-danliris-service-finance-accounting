@@ -85,6 +85,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var modelToCreate = dataUtil.GetNewData();
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
             var viewmodel = dataUtil.GetNewViewModel();
             var result = await service.CreateAsync(modelToCreate, viewmodel);
 
@@ -99,6 +102,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var modelToCreate = dataUtil.GetNewData();
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
             var viewmodel = dataUtil.GetNewViewModel2();
             var result = await service.CreateAsync(modelToCreate, viewmodel);
 
@@ -113,6 +119,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var modelToCreate = dataUtil.GetNewData();
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
             var viewmodel = dataUtil.GetNewViewModel3();
             var result = await service.CreateAsync(modelToCreate, viewmodel);
 
@@ -136,6 +145,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 isGetPPn = true
             });
 
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
             var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
 
             Assert.NotEqual(0, result);
@@ -156,6 +169,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 Remark = "Remark",
                 isGetPPn = false
             });
+
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
 
             var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
 
@@ -194,6 +211,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var dataUtil = new RealizationVBNonPODataUtil(service);
             await dataUtil.GetCreatedData();
 
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
             var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
 
             Assert.NotEmpty(result.Data);
@@ -206,8 +227,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var serviceProviderMock = GetServiceProviderMock();
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
             var data = await dataUtil.GetCreatedData();
-
             var result = await service.ReadByIdAsync2(data.Id);
 
             Assert.NotNull(result);
@@ -221,6 +244,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var data = await dataUtil.GetCreatedData();
+
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
 
             var result = await service.DeleteAsync(data.Id);
 

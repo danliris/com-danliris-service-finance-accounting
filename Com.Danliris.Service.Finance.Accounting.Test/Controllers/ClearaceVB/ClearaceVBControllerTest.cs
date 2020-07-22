@@ -138,6 +138,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
             return GetStatusCode(response);
         }
 
+        //[Fact]
+        //public void Get_Ovveride_Order_Filter_Search_ReturnOK()
+        //{
+        //    var mocks = GetMocks();
+
+        //    mocks.Service
+        //        //.Setup(f => f.Read(1, It.IsAny<int>(), "%7B%7D", It.IsAny<List<string>>(), "vb", "%7B%22Status%22%3A%22Uncompleted%22%7D"))
+        //        .Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+        //        .Returns(new ReadResponse<ClearaceVBViewModel>(new List<ClearaceVBViewModel>() { new ClearaceVBViewModel() }, 0, new Dictionary<string, string>(), new List<string>()));
+
+        //    mocks.Mapper
+        //        .Setup(f => f.Map<List<ClearaceVBViewModel>>(It.IsAny<List<ClearaceVBViewModel>>()))
+        //        .Returns(new List<ClearaceVBViewModel>() { new ClearaceVBViewModel() });
+
+        //    int statusCode = GetStatusCodeGet(mocks);
+        //    Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        //}
+
         [Fact]
         public void Get_WithoutException_ReturnOK()
         {

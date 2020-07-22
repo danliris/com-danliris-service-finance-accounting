@@ -34,8 +34,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
         public Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
         {
-            //var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo);
-            //updateTotalRequestVb.Realization_Status = true;
+            var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
+            updateTotalRequestVb.Realization_Status = true;
 
             model.VBNoRealize = GetVbRealizeNo(model);
             model.isVerified = false;
@@ -112,8 +112,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
         {
             var model = _dbContext.RealizationVbs.Where(entity => entity.Id == id).FirstOrDefault();
 
-            //var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo);
-            //updateTotalRequestVb.Realization_Status = false;
+            var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
+            updateTotalRequestVb.Realization_Status = false;
 
             if (model != null)
             {
@@ -233,8 +233,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
         {
             var model = MappingData2(id, viewModel);
 
-            //var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo);
-            //updateTotalRequestVb.Realization_Status = true;
+            var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
+            updateTotalRequestVb.Realization_Status = true;
 
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
 
