@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBStatusReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBStatusReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -99,6 +100,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
 
             var controller = GetController(mocks);
             var response = controller.GetXlsAll(1, 1, true, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
+            var statusCode = GetStatusCode(response.Result);
+
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void GetByApplicantName_NotNullModel_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetByApplicantName(It.IsAny<string>())).ReturnsAsync(new List<VbRequestModel>());
+
+            var controller = GetController(mocks);
+            var response = controller.GetByApplicantName("Pemohon");
+            var statusCode = GetStatusCode(response.Result);
+
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public void GetByApplicantName_ThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetByApplicantName(It.IsAny<string>())).ThrowsAsync(new Exception());
+
+            var controller = GetController(mocks);
+            var response = controller.GetByApplicantName("Pemohon");
             var statusCode = GetStatusCode(response.Result);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);

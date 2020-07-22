@@ -70,6 +70,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.ClearaceVB
         }
 
         [Fact]
+        public async Task Should_Success_Ovveride_Order_Filter_Search()
+        {
+            var dbContext = _dbContext(GetCurrentMethod());
+            var serviceProvider = GetServiceProvider().Object;
+            var service = new ClearaceVBService(serviceProvider, dbContext);
+            var dataUtil = new ClearaceVBDataUtil(service);
+            var data = await dataUtil.GetTestData();
+            var dataRealisation = new RealizationVbModel()
+            {
+                VBNo = "VBNo",
+                VBNoRealize = "VBNoRealize",
+                Date = DateTimeOffset.Now,
+                DifferenceReqReal = 100,
+                LastModifiedUtc = DateTime.Now,
+            };
+            service._DbContext.RealizationVbs.Add(dataRealisation);
+            service._DbContext.SaveChanges();
+
+            var result = service.Read(1, 10, "{LastModifiedUtc: 'desc'}", new List<string>(), "VB", "{'Status':'Completed'}");
+
+            Assert.NotEmpty(result.Data);
+        }
+
+        [Fact]
         public async Task Should_Success_Read_Data()
         {
             var dbContext = _dbContext(GetCurrentMethod());
@@ -103,7 +127,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.ClearaceVB
             var data = await _dataUtil(service).GetTestData();
             List<long> listData = new List<long> { data.Id };
             var Response = await service.ClearanceVBPost(listData);
-            Assert.NotEqual(Response, 0);
+            Assert.NotEqual(0, Response);
         }
 
         [Fact]
@@ -115,7 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.ClearaceVB
 
             var data = await _dataUtil(service).GetTestData();
             var Response = await service.ClearanceVBUnpost(data.Id);
-            Assert.NotEqual(Response, 0);
+            Assert.NotEqual(0, Response);
         }
     }
 }

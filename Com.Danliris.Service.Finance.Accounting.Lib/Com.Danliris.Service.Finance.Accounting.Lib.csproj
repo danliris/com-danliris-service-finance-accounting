@@ -53,6 +53,8 @@
     <Compile Remove="Migrations\20200714104148_UpdateVBRealization3.Designer.cs" />
     <Compile Remove="Migrations\20200715073752_test.cs" />
     <Compile Remove="Migrations\20200715073752_test.Designer.cs" />
+    <Compile Remove="Migrations\20200721154624_testMigration.cs" />
+    <Compile Remove="Migrations\20200721154624_testMigration.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -135,5 +135,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
             Response = service.GenerateExcel(data.UnitId, data.Id, true, null, null, null, null, 7);
             Assert.NotNull(Response);
         }
+
+        [Fact]
+        public async Task Should_Success_Get_Data_By_Applicant_Name()
+        {
+            VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestData_Outstanding_ById();
+            var Response = await service.GetByApplicantName(data.CreatedBy);
+            Assert.NotNull(Response);
+        }
     }
 }
