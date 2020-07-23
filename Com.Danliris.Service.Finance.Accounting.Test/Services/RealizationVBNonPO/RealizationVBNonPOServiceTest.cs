@@ -129,6 +129,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         }
 
         [Fact]
+        public async Task Should_Success_Create_Model4()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var modelToCreate = dataUtil.GetNewData();
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+            var viewmodel = dataUtil.GetNewViewModel4();
+            var result = await service.CreateAsync(modelToCreate, viewmodel);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Model5()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var modelToCreate = dataUtil.GetNewData();
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+            var viewmodel = dataUtil.GetNewViewModel5();
+            var result = await service.CreateAsync(modelToCreate, viewmodel);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Update_Model()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
@@ -166,6 +200,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             {
                 DateDetail = DateTimeOffset.Now,
                 Amount = 123,
+                Remark = "Remark",
+                isGetPPn = false
+            });
+
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
+            var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Update_Model3()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewmodel = dataUtil.GetNewViewModelNew();
+            viewmodel.Items.Add(new VbNonPORequestDetailViewModel()
+            {
+                DateDetail = DateTimeOffset.Now,
+                Amount = 0,
+                Remark = "Remark",
+                isGetPPn = false
+            });
+
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
+            var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Update_Model4()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewmodel = dataUtil.GetNewViewModelNew();
+            viewmodel.Items.Add(new VbNonPORequestDetailViewModel()
+            {
+                DateDetail = DateTimeOffset.Now,
+                Amount = -1000,
                 Remark = "Remark",
                 isGetPPn = false
             });

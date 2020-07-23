@@ -140,8 +140,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             dbContext.SaveChanges();
 
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
+
+            VbVerificationViewModel viewmodel2 = _dataUtil2(service2).GetViewModelToValidate();
+
             await service.CreateAsync(model, viewModel);
 
+            await service2.CreateAsync(viewmodel2);
 
             var response = service2.ReadVerification(1, 1, "{}", new List<string>(), "", "{}");
             Assert.NotNull(response);

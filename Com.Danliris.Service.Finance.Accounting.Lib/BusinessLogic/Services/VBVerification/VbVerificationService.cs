@@ -61,37 +61,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
             var pageable = new Pageable<RealizationVbModel>(query, page - 1, size);
 
             var data = query.Include(s => s.RealizationVbDetail).Select(real => new VbVerificationList()
-               {
-                   Id = real.Id,
-                   VBNo = real.VBNo,
-                   DateRealization = real.Date,
-                   DateEstimate = real.DateEstimate,
-                   UnitLoad = real.UnitLoad,
-                   Amount_Realization = real.Amount,
-                   VBNoRealize = real.VBNoRealize,
-                   RequestVbName = real.RequestVbName,
-                   DateVB = real.DateVB,
-                   Currency = real.CurrencyCode,
-                   UnitName = real.UnitName,
-                   VBRealizeCategory = real.VBRealizeCategory.Contains("NONPO") ? "Non PO" : "PO",
-                   Diff = real.DifferenceReqReal,
-                   Status_ReqReal = real.StatusReqReal,
+            {
+                Id = real.Id,
+                VBNo = real.VBNo,
+                DateRealization = real.Date,
+                DateEstimate = real.DateEstimate,
+                UnitLoad = real.UnitLoad,
+                Amount_Realization = real.Amount,
+                VBNoRealize = real.VBNoRealize,
+                RequestVbName = real.RequestVbName,
+                DateVB = real.DateVB,
+                Currency = real.CurrencyCode,
+                UnitName = real.UnitName,
+                VBRealizeCategory = real.VBRealizeCategory.Contains("NONPO") ? "Non PO" : "PO",
+                Diff = real.DifferenceReqReal,
+                Status_ReqReal = real.StatusReqReal,
 
-                   Usage = real.UsageVBRequest,
-                   Amount_Request = real.Amount_VB,
-                   Amount_Vat = real.VatAmount,
+                Usage = real.UsageVBRequest,
+                Amount_Request = real.Amount_VB,
+                Amount_Vat = real.VatAmount,
 
-                   DetailItems = real.RealizationVbDetail.Select(s => new ModelVbItem
-                   {
+                DetailItems = real.RealizationVbDetail.Select(s => new ModelVbItem
+                {
 
-                       Date = s.DateNonPO,
-                       Remark = s.Remark,
-                       Amount = s.AmountNonPO,
-                       isGetPPn = s.isGetPPn
+                    Date = s.DateNonPO,
+                    Remark = s.Remark,
+                    Amount = s.AmountNonPO,
+                    isGetPPn = s.isGetPPn
 
-                   }).ToList()
+                }).ToList()
 
-               }).ToList();
+            }).ToList();
 
             int totalData = pageable.TotalCount;
 
@@ -150,36 +150,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
         {
             using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                try
+
+                var m = dbSet.SingleOrDefault(e => e.Id == viewmodel.numberVB.Id);
+                EntityExtension.FlagForUpdate(m, _identityService.Username, UserAgent);
+                m.isVerified = viewmodel.isVerified;
+                m.isNotVeridied = viewmodel.isNotVeridied;
+                m.VerifiedName = _identityService.Username;
+
+                if (viewmodel.isVerified == true)
                 {
-                    var m = dbSet.SingleOrDefault(e => e.Id == viewmodel.numberVB.Id);
-                    EntityExtension.FlagForUpdate(m, _identityService.Username, UserAgent);
-                    m.isVerified = viewmodel.isVerified;
-                    m.isNotVeridied = viewmodel.isNotVeridied;
-                    m.VerifiedName = _identityService.Username;
-
-                    if (viewmodel.isVerified == true)
-                    {
-                        m.VerifiedDate = (DateTimeOffset)viewmodel.VerifyDate;
-                    }
-
-                    if (string.IsNullOrEmpty(viewmodel.Reason))
-                    {
-                        m.Reason_NotVerified = "";
-                    }
-                    else
-                    {
-                        m.Reason_NotVerified = viewmodel.Reason;
-                    }
-
-                    //Updated = _dbContext.SaveChanges();
-                    transaction.Commit();
+                    m.VerifiedDate = (DateTimeOffset)viewmodel.VerifyDate;
                 }
-                catch (Exception e)
+
+                if (string.IsNullOrEmpty(viewmodel.Reason))
                 {
-                    transaction.Rollback();
-                    throw new Exception(e.Message);
+                    m.Reason_NotVerified = "";
                 }
+                else
+                {
+                    m.Reason_NotVerified = viewmodel.Reason;
+                }
+
+                transaction.Commit();
             }
 
             return _dbContext.SaveChangesAsync();
@@ -187,7 +179,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
         public async Task<VbVerificationViewModel> ReadById(int id)
         {
-            
+
             var model = await _dbContext.RealizationVbs.Include(entity => entity.RealizationVbDetail).Where(entity => entity.Id == id).FirstOrDefaultAsync();
 
             var result = new VbVerificationViewModel()
@@ -221,7 +213,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
                     VBRealizeCategory = model.VBRealizeCategory.Contains("NONPO") ? "Non PO" : "PO",
                     Amount_Vat = model.VatAmount,
                     Status_ReqReal = model.StatusReqReal
-                    
+
                 },
                 Reason = model.Reason_NotVerified,
                 Remark = model.Reason_NotVerified,
