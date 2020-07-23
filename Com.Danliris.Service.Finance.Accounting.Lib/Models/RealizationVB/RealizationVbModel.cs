@@ -29,14 +29,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public decimal Amount_VB { get; set; }
         public decimal AmountNonPO { get; set; }
         public decimal DifferenceReqReal { get; set; }
-        //[MaxLength(64)]
-        //public string StatusReqReal { get; set; }
+        [MaxLength(64)]
+        public string StatusReqReal { get; set; }
         public bool isVerified { get; set; }
         public DateTimeOffset VerifiedDate { get; set; }
         public bool isClosed { get; set; }
         public DateTimeOffset CloseDate { get; set; }
         public bool isNotVeridied { get; set; }
         public decimal Amount { get; set; }
+        [MaxLength(255)]
+        public string Reason_NotVerified { get; set; }
         [MaxLength(64)]
         public string VBRealizeCategory { get; set; }
 

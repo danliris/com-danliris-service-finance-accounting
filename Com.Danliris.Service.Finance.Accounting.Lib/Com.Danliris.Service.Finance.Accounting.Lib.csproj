@@ -55,6 +55,14 @@
     <Compile Remove="Migrations\20200715073752_test.Designer.cs" />
     <Compile Remove="Migrations\20200721154624_testMigration.cs" />
     <Compile Remove="Migrations\20200721154624_testMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200722035128_UpdateRealizationVB.cs" />
+    <Compile Remove="Migrations\20200722035128_UpdateRealizationVB.Designer.cs" />
+    <Compile Remove="Migrations\20200722035750_UpdateRealizationVB.cs" />
+    <Compile Remove="Migrations\20200722035750_UpdateRealizationVB.Designer.cs" />
+    <Compile Remove="Migrations\20200722035956_UpdateRealizationVB.cs" />
+    <Compile Remove="Migrations\20200722035956_UpdateRealizationVB.Designer.cs" />
+    <Compile Remove="Migrations\20200722041053_UpdateRealizationVB2.cs" />
+    <Compile Remove="Migrations\20200722041053_UpdateRealizationVB2.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
