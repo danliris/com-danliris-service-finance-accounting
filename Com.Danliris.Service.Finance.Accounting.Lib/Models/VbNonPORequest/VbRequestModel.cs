@@ -38,6 +38,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public decimal VBMoney { get; set; }
         [MaxLength(255)]
         public string Usage_Input { get; set; }
+        [MaxLength(64)]
+        public string UnitDivisionName { get; set; }
+        public int UnitDivisionId { get; set; }
         public virtual ICollection<VbRequestDetailModel> VbRequestDetail { get; set; }
     }
 }

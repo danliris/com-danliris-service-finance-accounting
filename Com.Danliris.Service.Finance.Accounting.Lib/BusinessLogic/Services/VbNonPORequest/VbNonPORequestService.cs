@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
 
         public ReadResponse<VbRequestList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.VbRequests.AsQueryable();
+            var query = _dbContext.VbRequests.Where(entity => entity.VBRequestCategory == "NONPO").AsQueryable();
 
             var searchAttributes = new List<string>()
             {
@@ -66,10 +66,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 UnitId = entity.UnitId,
                 UnitCode = entity.UnitCode,
                 UnitName = entity.UnitName,
+                UnitDivisionId = entity.UnitDivisionId,
+                UnitDivisionName = entity.UnitDivisionName,
                 CreateBy = entity.CreatedBy,
                 Approve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
-                VBRequestCategory = entity.VBRequestCategory
+                VBRequestCategory = entity.VBRequestCategory,
+                Usage = entity.Usage
 
             }).Where(entity => entity.VBRequestCategory == "NONPO").ToList();
 
@@ -163,9 +166,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 Active = viewModel.Active,
                 Id = viewModel.Id,
                 Date = (DateTimeOffset)viewModel.Date,
+                DateEstimate = (DateTimeOffset)viewModel.DateEstimate,
                 UnitId = viewModel.Unit.Id,
                 UnitCode = viewModel.Unit.Code,
                 UnitName = viewModel.Unit.Name,
+                UnitDivisionId = viewModel.Unit.DivisionId,
+                UnitDivisionName = viewModel.Unit.DivisionName,
                 VBNo = viewModel.VBNo,
                 CurrencyId = viewModel.Currency.Id,
                 CurrencyCode = viewModel.Currency.Code,
@@ -177,7 +183,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 CreatedBy = viewModel.CreatedBy,
                 CreatedAgent = viewModel.CreatedAgent,
                 LastModifiedAgent = viewModel.LastModifiedAgent,
-                LastModifiedBy = viewModel.LastModifiedBy
+                LastModifiedBy = viewModel.LastModifiedBy,
+                LastModifiedUtc = DateTime.Now,
+                CreatedUtc = viewModel.CreatedUtc
             };
 
             return result;
@@ -352,7 +360,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             model.VBRequestCategory = "NONPO";
             model.UnitLoad = GetUnitLoad(viewModel);
 
-            //model.Status_Post = false;
             model.Apporve_Status = false;
             model.Complete_Status = false;
 

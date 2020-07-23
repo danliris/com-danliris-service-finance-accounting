@@ -63,6 +63,14 @@
     <Compile Remove="Migrations\20200722035956_UpdateRealizationVB.Designer.cs" />
     <Compile Remove="Migrations\20200722041053_UpdateRealizationVB2.cs" />
     <Compile Remove="Migrations\20200722041053_UpdateRealizationVB2.Designer.cs" />
+    <Compile Remove="Migrations\20200723033858_test.cs" />
+    <Compile Remove="Migrations\20200723033858_test.Designer.cs" />
+    <Compile Remove="Migrations\20200723034304_test.cs" />
+    <Compile Remove="Migrations\20200723034304_test.Designer.cs" />
+    <Compile Remove="Migrations\20200723040048_UpdateTabelVBRequest.cs" />
+    <Compile Remove="Migrations\20200723040048_UpdateTabelVBRequest.Designer.cs" />
+    <Compile Remove="Migrations\20200723042240_UpdateTabelVBRequestandRealizationVb.cs" />
+    <Compile Remove="Migrations\20200723042240_UpdateTabelVBRequestandRealizationVb.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
