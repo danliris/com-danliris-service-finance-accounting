@@ -1,9 +1,12 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBVerification;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWIthPO;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbVerification;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBWIthPO;
@@ -48,6 +51,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
 
         }
 
+        private Mock<IServiceProvider> GetServiceProviderMock()
+        {
+            var serviceProvider = new Mock<IServiceProvider>();
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+
+            return serviceProvider;
+        }
+
         private Mock<IServiceProvider> GetServiceProvider()
         {
             var serviceProvider = new Mock<IServiceProvider>();
@@ -86,6 +101,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             return new RealizationVbWithPODataUtil(service);
         }
 
+        private VbVerificationDataUtil _dataUtil2(VbVerificationService service)
+        {
+            return new VbVerificationDataUtil(service);
+        }
+
         [Fact]
         public async Task Read_Return_Success()
         {
@@ -120,12 +140,67 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             dbContext.SaveChanges();
 
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
+
+            VbVerificationViewModel viewmodel2 = _dataUtil2(service2).GetViewModelToValidate();
+
             await service.CreateAsync(model, viewModel);
 
+            await service2.CreateAsync(viewmodel2);
 
             var response = service2.ReadVerification(1, 1, "{}", new List<string>(), "", "{}");
             Assert.NotNull(response);
 
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Data()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
+            VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
+            RealizationVbModel model = _dataUtil(service).GetNewData();
+
+            var dataRequestVb = _dataUtil(service).GetNewData();
+            dbContext.RealizationVbs.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
+            VbVerificationViewModel viewModel = _dataUtil2(service2).GetViewModelToValidate();
+            var Response = await service2.CreateAsync(viewModel);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Data2()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
+            VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
+            RealizationVbModel model = _dataUtil(service).GetNewData();
+
+            var dataRequestVb = _dataUtil(service).GetNewData();
+            dbContext.RealizationVbs.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
+            VbVerificationViewModel viewModel = _dataUtil2(service2).GetViewModelToValidate2();
+            var Response = await service2.CreateAsync(viewModel);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Read_ById()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var service2 = new VbVerificationService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+            var data = await dataUtil.GetCreatedData();
+            var result = await service2.ReadById(data.Id);
+
+            Assert.NotNull(result);
         }
     }
 }

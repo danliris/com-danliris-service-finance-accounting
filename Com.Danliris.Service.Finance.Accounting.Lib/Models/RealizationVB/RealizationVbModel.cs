@@ -16,8 +16,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DateTimeOffset DateEstimate { get; set; }
         public DateTimeOffset DateVB { get; set; }
         [MaxLength(64)]
-        public string CurrencyCodeNonPO { get; set; }
-        public decimal CurrencyRateNonPO { get; set; }
+        public string CurrencyCode { get; set; }
+        public decimal CurrencyRate { get; set; }
         [MaxLength(64)]
         public string UnitLoad { get; set; }
         [MaxLength(64)]
@@ -39,6 +39,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public decimal Amount { get; set; }
         [MaxLength(255)]
         public string Reason_NotVerified { get; set; }
+        [MaxLength(255)]
+        public string VerifiedName { get; set; }
+        [MaxLength(255)]
+        public string UsageVBRequest { get; set; }
+        public decimal VatAmount { get; set; }
         [MaxLength(64)]
         public string VBRealizeCategory { get; set; }
 
