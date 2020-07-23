@@ -45,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
                 "UnitLoad",
                 "VBNoRealize",
                 "RequestVbName",
-                "CurrencyCodeNonPO",
+                "CurrencyCode",
                 "UnitName",
                 "VBRealizeCategory"
             };
@@ -60,10 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
             var pageable = new Pageable<RealizationVbModel>(query, page - 1, size);
 
-            var data = query.Include(s => s.RealizationVbDetail).Join(query2,
-               (real) => real.VBNo,
-               (rqst) => rqst.VBNo,
-               (real, rqst) => new VbVerificationList()
+            var data = query.Include(s => s.RealizationVbDetail).Select(real => new VbVerificationList()
                {
                    Id = real.Id,
                    VBNo = real.VBNo,
@@ -74,15 +71,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
                    VBNoRealize = real.VBNoRealize,
                    RequestVbName = real.RequestVbName,
                    DateVB = real.DateVB,
-                   Currency = real.CurrencyCodeNonPO,
+                   Currency = real.CurrencyCode,
                    UnitName = real.UnitName,
                    VBRealizeCategory = real.VBRealizeCategory.Contains("NONPO") ? "Non PO" : "PO",
                    Diff = real.DifferenceReqReal,
+                   Status_ReqReal = real.StatusReqReal,
 
-                   Usage = rqst.Usage,
-                   Amount_Request = rqst.Amount,
+                   Usage = real.UsageVBRequest,
+                   Amount_Request = real.Amount_VB,
+                   Amount_Vat = real.VatAmount,
 
-                   DetailItems = real.RealizationVbDetail.Select(s => new ModelVbItem 
+                   DetailItems = real.RealizationVbDetail.Select(s => new ModelVbItem
                    {
 
                        Date = s.DateNonPO,
@@ -101,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
         public ReadResponse<VbVerificationResultList> ReadVerification(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.RealizationVbs.AsQueryable();
+            var query = _dbContext.RealizationVbs.Where(entity => entity.isVerified == true).AsQueryable();
 
             var searchAttributes = new List<string>()
             {
@@ -111,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
                 "VBNo",
                 "VbNo",
                 "VBRealizeCategory",
-                "CurrencyCodeNonPO"
+                "CurrencyCode"
             };
 
             query = QueryHelper<RealizationVbModel>.Search(query, searchAttributes, keyword);
@@ -126,6 +125,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
             var data = pageable.Data.Select(entity => new VbVerificationResultList()
             {
+                Id = entity.Id,
                 DateVerified = entity.VerifiedDate,
                 RealizeNo = entity.VBNoRealize,
                 DateRealize = entity.Date,
@@ -134,14 +134,104 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
                 SendTo = entity.UnitName,
                 VbNo = entity.VBNo,
                 VBCategory = entity.VBRealizeCategory.Contains("NONPO") ? "Non PO" : "PO",
-                Currency = entity.CurrencyCodeNonPO,
-                isVerified = entity.isVerified
+                Currency = entity.CurrencyCode,
+                isVerified = entity.isVerified,
+                Amount = entity.Amount,
+                Usage = entity.UsageVBRequest
 
             }).Where(entity => entity.isVerified == true).ToList();
 
             int totalData = pageable.TotalCount;
 
             return new ReadResponse<VbVerificationResultList>(data, totalData, orderDictionary, new List<string>());
+        }
+
+        public Task<int> CreateAsync(VbVerificationViewModel viewmodel)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var m = dbSet.SingleOrDefault(e => e.Id == viewmodel.numberVB.Id);
+                    EntityExtension.FlagForUpdate(m, _identityService.Username, UserAgent);
+                    m.isVerified = viewmodel.isVerified;
+                    m.isNotVeridied = viewmodel.isNotVeridied;
+                    m.VerifiedName = _identityService.Username;
+
+                    if (viewmodel.isVerified == true)
+                    {
+                        m.VerifiedDate = (DateTimeOffset)viewmodel.VerifyDate;
+                    }
+
+                    if (string.IsNullOrEmpty(viewmodel.Reason))
+                    {
+                        m.Reason_NotVerified = "";
+                    }
+                    else
+                    {
+                        m.Reason_NotVerified = viewmodel.Reason;
+                    }
+
+                    //Updated = _dbContext.SaveChanges();
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw new Exception(e.Message);
+                }
+            }
+
+            return _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<VbVerificationViewModel> ReadById(int id)
+        {
+            
+            var model = await _dbContext.RealizationVbs.Include(entity => entity.RealizationVbDetail).Where(entity => entity.Id == id).FirstOrDefaultAsync();
+
+            var result = new VbVerificationViewModel()
+            {
+
+                numberVB = new NumberVBData()
+                {
+                    DetailItems = model.RealizationVbDetail.Select(s => new VbVerificationDetailViewModel()
+                    {
+
+                        Date = s.DateNonPO,
+                        Remark = s.Remark,
+                        Amount = s.AmountNonPO,
+                        isGetPPn = s.isGetPPn
+
+                    }).ToList(),
+
+                    Id = model.Id,
+                    Amount_Realization = model.Amount,
+                    Amount_Request = model.Amount_VB,
+                    Currency = model.CurrencyCode,
+                    DateEstimate = model.DateEstimate,
+                    DateRealization = model.Date,
+                    DateVB = model.DateVB,
+                    Diff = model.DifferenceReqReal,
+                    RequestVbName = model.RequestVbName,
+                    UnitName = model.UnitName,
+                    Usage = model.UsageVBRequest,
+                    VBNo = model.VBNo,
+                    VBNoRealize = model.VBNoRealize,
+                    VBRealizeCategory = model.VBRealizeCategory.Contains("NONPO") ? "Non PO" : "PO",
+                    Amount_Vat = model.VatAmount,
+                    Status_ReqReal = model.StatusReqReal
+                    
+                },
+                Reason = model.Reason_NotVerified,
+                Remark = model.Reason_NotVerified,
+                VerifyDate = model.VerifiedDate,
+                isVerified = model.isVerified,
+                isNotVeridied = model.isNotVeridied
+            };
+
+            return result;
+
         }
     }
 }

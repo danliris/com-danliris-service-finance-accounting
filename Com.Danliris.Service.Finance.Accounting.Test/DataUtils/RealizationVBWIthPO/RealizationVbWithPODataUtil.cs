@@ -211,6 +211,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
         {
             return new VbRequestModel()
             {
+                Id = 1,
                 VBNo = "VBNo",
                 Realization_Status = false,
                 IsDeleted = false,

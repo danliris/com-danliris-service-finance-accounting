@@ -43,13 +43,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             model.isNotVeridied = true;
             decimal temp_total = 0;
             decimal convert_total = 0;
+            decimal total_vat = 0;
 
             foreach (var item2 in viewmodel.Items)
             {
                 decimal count_total;
+                
                 if (item2.isGetPPn == true)
                 {
                     decimal temp = item2.Amount * 0.1m;
+                    total_vat += temp;
                     count_total = item2.Amount + temp;
                     convert_total += ConvertRate(count_total, viewmodel);
                     temp_total += count_total;
@@ -63,6 +66,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             }
 
             model.Amount = temp_total;
+            model.VatAmount = total_vat;
 
             var ResultDiffReqReal = viewmodel.numberVB.Amount - convert_total;
 
@@ -296,6 +300,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
             decimal temp_total = 0;
             decimal convert_total = 0;
+            decimal total_vat = 0;
+
             foreach (var itm in viewModel.Items)
             {
 
@@ -303,6 +309,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 if (itm.isGetPPn == true)
                 {
                     decimal temp = itm.Amount * 0.1m;
+                    total_vat += temp;
                     count_total = itm.Amount + temp;
                     convert_total += ConvertRate(count_total, viewModel);
                     temp_total += count_total;
@@ -332,6 +339,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 listDetail.Add(item);
             }
 
+            var ResultDiffReqReal = viewModel.numberVB.Amount - convert_total;
+            string StatusReqReal;
+
+
+            decimal DifferenceReqReal;
+            if (ResultDiffReqReal > 0)
+            {
+                DifferenceReqReal = ResultDiffReqReal;
+                StatusReqReal = "Sisa";
+            }
+            else if (ResultDiffReqReal == 0)
+            {
+                DifferenceReqReal = ResultDiffReqReal;
+                StatusReqReal = "Sesuai";
+            }
+            else
+            {
+                DifferenceReqReal = ResultDiffReqReal * -1;
+                StatusReqReal = "Kurang";
+            }
+
             var result = new RealizationVbModel()
             {
                 RealizationVbDetail = listDetail,
@@ -359,8 +387,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 LastModifiedAgent = viewModel.LastModifiedAgent,
                 LastModifiedBy = viewModel.LastModifiedBy,
                 VBRealizeCategory = viewModel.numberVB.VBRequestCategory,
-                DifferenceReqReal = convert_total,
-                
+                DifferenceReqReal = DifferenceReqReal,
+                VatAmount = total_vat,
+                StatusReqReal = StatusReqReal
+
             };
 
             return result;

@@ -43,6 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string VerifiedName { get; set; }
         [MaxLength(255)]
         public string UsageVBRequest { get; set; }
+        public decimal VatAmount { get; set; }
         [MaxLength(64)]
         public string VBRealizeCategory { get; set; }
 
