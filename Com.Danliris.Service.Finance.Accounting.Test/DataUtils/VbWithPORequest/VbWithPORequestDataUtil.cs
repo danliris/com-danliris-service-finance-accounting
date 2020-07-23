@@ -258,6 +258,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
             };
         }
 
+        public VbRequestModel GetVbRequestModelToCreateFailed()
+        {
+            return new VbRequestModel()
+            {
+
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                UnitId = 1,
+                UnitCode = "UnitCode",
+                UnitName = "UnitName",
+                CurrencyId = 1,
+                CurrencyCode = "CurrencyCode",
+                CurrencyRate = 123,
+                CurrencySymbol = "CurrencySymbol",
+                Amount = 123,
+                Usage = "Usage",
+                UnitLoad = "UnitLoad",
+                Apporve_Status = true,
+                Complete_Status = true,
+                VBRequestCategory = "PO",
+                CreatedBy = "CreatedBy",
+                VBMoney = 1,
+                Usage_Input = "Usage_Input",
+                VbRequestDetail = new List<VbRequestDetailModel>()
+                {
+                    new VbRequestDetailModel()
+                    {
+                        VBNo = "VBNo",
+                        UnitId = 1,
+                        UnitName = "UnitName",
+                        DetailOthers = "DetailOthers",
+                        ProductId = "ProductId",
+                        ProductCode = "ProductCode",
+                        ProductName = "ProductName",
+                        DefaultQuantity = 1,
+                        DefaultUOMId = "DefaultUOMId",
+                        DefaultUOMUnit = "DefaultUOMUnit",
+                        DealQuantity = 1,
+                        DealUOMId = "DealUOMId",
+                        DealUOMUnit = "DealUOMUnit",
+                        Conversion = 1,
+                        Price = 1,
+                        ProductRemark = "ProductRemark"
+                    }
+
+                }
+            };
+        }
+
         public async Task<VbWithPORequestViewModel> GetCreatedData()
         {
             var viewmodel = GetViewModel();
