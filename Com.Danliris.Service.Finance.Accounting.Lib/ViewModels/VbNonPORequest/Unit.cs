@@ -7,7 +7,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        
-        public Division Division { get; set; }
     }
 }

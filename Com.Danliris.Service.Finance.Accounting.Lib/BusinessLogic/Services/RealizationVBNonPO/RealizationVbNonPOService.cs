@@ -40,7 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             model.VBNoRealize = GetVbRealizeNo(model);
             model.isVerified = false;
             model.isClosed = false;
-            model.isNotVeridied = true;
+            model.isNotVeridied = false;
             decimal temp_total = 0;
             decimal convert_total = 0;
             decimal total_vat = 0;
@@ -381,11 +381,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 Amount_VB = viewModel.numberVB.Amount,
                 isVerified = false,
                 isClosed = false,
-                isNotVeridied = true,
+                isNotVeridied = false,
                 CreatedBy = viewModel.CreatedBy,
                 CreatedAgent = viewModel.CreatedAgent,
                 LastModifiedAgent = viewModel.LastModifiedAgent,
                 LastModifiedBy = viewModel.LastModifiedBy,
+                LastModifiedUtc = DateTime.Now,
                 VBRealizeCategory = viewModel.numberVB.VBRequestCategory,
                 DifferenceReqReal = DifferenceReqReal,
                 VatAmount = total_vat,

@@ -114,11 +114,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
-                    Division = new Division()
-                    {
-                        DivisionId = 1,
-                        DivisionName = "DivisionName"
-                    }
+                },
+                Division = new Division()
+                {
+                    Id = 1,
+                    Name = "DivisionName"
                 },
                 Currency = new CurrencyVBRequest()
                 {

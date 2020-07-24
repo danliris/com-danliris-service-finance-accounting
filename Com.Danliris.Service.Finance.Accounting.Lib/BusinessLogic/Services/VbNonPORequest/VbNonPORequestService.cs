@@ -170,8 +170,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 UnitId = viewModel.Unit.Id,
                 UnitCode = viewModel.Unit.Code,
                 UnitName = viewModel.Unit.Name,
-                UnitDivisionId = viewModel.Unit.Division.DivisionId,
-                UnitDivisionName = viewModel.Unit.Division.DivisionName,
+                UnitDivisionId = viewModel.Division.Id,
+                UnitDivisionName = viewModel.Division.Name,
                 VBNo = viewModel.VBNo,
                 CurrencyId = viewModel.Currency.Id,
                 CurrencyCode = viewModel.Currency.Code,
@@ -322,12 +322,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                            Id = s.UnitId,
                            Code = s.UnitCode,
                            Name = s.UnitName,
-                           Division = new Division()
-                           {
-                               DivisionId = s.UnitDivisionId,
-                               DivisionName = s.UnitDivisionName
-                           }
                            
+                       },
+                       Division = new Division()
+                       {
+                           Id = s.UnitDivisionId,
+                           Name = s.UnitDivisionName
                        },
                        Currency = new CurrencyVBRequest()
                        {

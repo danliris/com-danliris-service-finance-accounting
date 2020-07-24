@@ -221,7 +221,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody6.Colspan = 2;
             //cellHeaderBody6.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody6);
-            cellHeaderBody6.Phrase = new Phrase($"Tanggal {viewModel.numberVB.Date?.AddHours(timeoffsset).ToString("dd MMMM", new CultureInfo("id-ID"))}", normal_font);
+            cellHeaderBody6.Phrase = new Phrase($"Tanggal VB : {viewModel.numberVB.Date?.AddHours(timeoffsset).ToString("dd-MMMM-yy", new CultureInfo("id-ID"))}", normal_font);
             headerTable3.AddCell(cellHeaderBody6);
             //
             cellHeaderBody1.Phrase = new Phrase($"No.VB: {viewModel.numberVB.VBNo}", normal_font);

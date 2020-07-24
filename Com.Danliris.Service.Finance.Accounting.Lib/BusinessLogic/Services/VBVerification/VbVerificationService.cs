@@ -80,7 +80,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
                    Diff = real.DifferenceReqReal,
                    Status_ReqReal = real.StatusReqReal,
 
-                   Usage = real.UsageVBRequest,
+                   Usage = rqst.Usage,
                    Amount_Request = real.Amount_VB,
                    Amount_Vat = real.VatAmount,
 
