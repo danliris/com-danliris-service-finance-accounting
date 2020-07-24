@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             headerTable_A.WidthPercentage = 100;
             headerTable3.SetWidths(new float[] { 40f, 4f, 100f });
             headerTable3.WidthPercentage = 100;
-            headerTable3a.SetWidths(new float[] { 3f, 10f, 3f, 10f, 3f, 10f, 3f, 10f, 3f, 10f});
+            headerTable3a.SetWidths(new float[] { 3f, 10f, 3f, 10f, 3f, 10f, 3f, 10f, 3f, 10f });
             headerTable3a.WidthPercentage = 100;
             headerTable4.SetWidths(new float[] { 10f, 40f });
             headerTable4.WidthPercentage = 100;
@@ -125,7 +125,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase("Rp. " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            
+
 
             cellHeaderBody.Phrase = new Phrase("Terbilang", normal_font);
             headerTable3.AddCell(cellHeaderBody);
@@ -176,12 +176,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
             cellHeaderBody.Phrase = new Phrase("", normal_font);
 
-            //Create_Box(writer,headerTable3a);
 
             PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
             cellform.FixedHeight = 5f;
             //initiate form checkbox 
-            
+
             PdfFormField _checkGroup = PdfFormField.CreateEmpty(writer);
             RadioCheckField _radioG;
             PdfFormField _radioField1;
@@ -192,14 +191,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             _radioG.BorderColor = BaseColor.Black;
             _radioG.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            if(unit.Contains("Spinning 1"))
+            if (unit.Contains("Spinning 1"))
             {
                 _radioG.Checked = true;
             }
             else
             {
                 _radioG.Checked = false;
-            }            
+            }
             _radioG.Rotation = 90;
             _radioG.Options = TextField.READ_ONLY;
             _radioField1 = _radioG.CheckField;
@@ -473,20 +472,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             _radioG9.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
             string res;
-            if (viewModel.Others == true)
+            if (ValidateOthers(lastitem))
             {
                 _radioG9.Checked = true;
                 res = lastitem;
-                
+
             }
             else
             {
                 _radioG9.Checked = false;
                 res = ".......";
             }
-            //lastitem != "Spinning 1" || lastitem != "Spinning 2" || lastitem != "Spinning 3" || lastitem != "Weaving 1" || lastitem != "Weaving 2" &&
-            //    lastitem != "Printing" || lastitem != "Finishing" || lastitem != "Konfeksi 1A" || lastitem != "Konfeksi 1B"
-            //    || lastitem != "Konfeksi 2A" || lastitem != "Konfeksi 2B" || lastitem != "Konfeksi 2C" || lastitem != "Umum"
+            
             _radioG9.Rotation = 90;
             _radioG9.Options = TextField.READ_ONLY;
             _radioField19 = _radioG9.CheckField;
@@ -671,7 +668,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                 VerticalAlignment = Element.ALIGN_MIDDLE,
             };
 
-            
+
             cell.Phrase = new Phrase("", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase("", normal_font);
@@ -730,6 +727,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             stream.Position = 0;
 
             return stream;
+        }
+
+        public bool ValidateOthers(string lastitem)
+        {
+            bool res;
+            if (lastitem == "Spinning 1" || lastitem == "Spinning 2" || lastitem == "Spinning 3" || lastitem == "Weaving 1" || lastitem == "Weaving 2" &&
+                lastitem == "Printing" || lastitem == "Finishing" || lastitem == "Konfeksi 1A" || lastitem == "Konfeksi 1B"
+                || lastitem == "Konfeksi 2A" || lastitem == "Konfeksi 2B" || lastitem == "Konfeksi 2C" || lastitem == "Umum")
+            {
+                res = false;
+            }
+            else
+            {
+                res = true;
+            }
+
+            return res;
         }
     }
 }

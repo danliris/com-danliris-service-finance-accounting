@@ -24,6 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBExpeditionRea
         public string Verificator { get; set; }
         public DateTimeOffset DateVerifSend { get; set; }
         public string Status { get; set; }
+        public string VerificationStatus { get; set; }
         public string Notes { get; set; }
         public DateTimeOffset DateCashierReceive { get; set; }
         public DateTime LastModifiedUtc { get; set; }

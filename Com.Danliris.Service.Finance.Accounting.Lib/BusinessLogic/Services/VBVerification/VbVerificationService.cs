@@ -86,7 +86,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
                    DetailItems = real.RealizationVbDetail.Select(s => new ModelVbItem
                    {
-
+                       DateSPB = s.DateSPB,
+                       NoSPB = s.NoSPB,
+                       SupplierName = s.SupplierName,
+                       PriceTotalSPB = s.PriceTotalSPB,
                        Date = s.DateNonPO,
                        Remark = s.Remark,
                        Amount = s.AmountNonPO,
@@ -192,7 +195,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
                 {
                     DetailItems = model.RealizationVbDetail.Select(s => new VbVerificationDetailViewModel()
                     {
-
+                        DateSPB = s.DateSPB,
+                        NoSPB = s.NoSPB,
+                        SupplierName = s.SupplierName,
+                        PriceTotalSPB = s.PriceTotalSPB,
                         Date = s.DateNonPO,
                         Remark = s.Remark,
                         Amount = s.AmountNonPO,

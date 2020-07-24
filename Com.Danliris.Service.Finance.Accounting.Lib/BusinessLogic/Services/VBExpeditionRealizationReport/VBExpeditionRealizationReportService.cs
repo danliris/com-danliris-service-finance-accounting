@@ -121,12 +121,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         DateVerifReceive = null,
                         Verificator = real.VerifiedName,
                         DateVerifSend = real.VerifiedDate,
-                        Status = real.isVerified ? "Kasir" : "Retur",
+                        Status = real.isVerified ? "K" : "",
+                        VerificationStatus = real.isNotVeridied ? "R" : "",
                         Notes = real.Reason_NotVerified,
                         DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
                     })
-                    .Where(t => t.Status == "Kasir")
+                    //.Where(t => t.Status == "K" && t.VerificationStatus != "R")
+                    .Where(t => t.Status == "K" && t.VerificationStatus == "")
                     .OrderByDescending(s => s.LastModifiedUtc)
                     .ToList();
                     break;
@@ -162,12 +164,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         DateVerifReceive = null,
                         Verificator = real.VerifiedName,
                         DateVerifSend = real.VerifiedDate,
-                        Status = real.isVerified ? "Kasir" : "Retur",
+                        Status = real.isVerified ? "K" : "",
+                        VerificationStatus = real.isNotVeridied ? "R" : "",
                         Notes = real.Reason_NotVerified,
                         DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
                     })
-                    .Where(t => t.Status == "Retur")
+                    //.Where(t => t.Status != "K" && t.VerificationStatus == "R")
+                    .Where(t => t.Status == "" && t.VerificationStatus == "R")
                     .OrderByDescending(s => s.LastModifiedUtc)
                     .ToList();
                     break;
@@ -203,12 +207,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         DateVerifReceive = null,
                         Verificator = real.VerifiedName,
                         DateVerifSend = real.VerifiedDate,
-                        Status = real.isVerified ? "Kasir" : "Retur",
+                        Status = real.isVerified ? "K" : "",
+                        VerificationStatus = real.isNotVeridied ? "R" : "",
                         Notes = real.Reason_NotVerified,
                         DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
                     })
-                    .Where(t => t.Status == "Kasir" || t.Status == "Retur")
+                    //.Where(t => t.Status == "K" || t.VerificationStatus == "R")
                     .OrderByDescending(s => s.LastModifiedUtc)
                     .ToList();
                     break;
