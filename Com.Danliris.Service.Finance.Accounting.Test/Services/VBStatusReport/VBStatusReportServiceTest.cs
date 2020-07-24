@@ -71,16 +71,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
             VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData_Outstanding_ById();
 
-            var Response = service.GetReport(data.UnitId, data.Id, true, data.Date, data.Date, data.Date, data.Date, 7);
+            var Response = service.GetReport(data.UnitId, data.Id, "CreatedBy", "Clearance", data.Date, data.Date, data.Date, data.Date, 7);
             Assert.NotNull(Response);
 
-            Response = service.GetReport(data.UnitId, data.Id, null, null, null, null, null, 7);
+            Response = service.GetReport(data.UnitId, data.Id, null, null, null, null, null, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GetReport(data.UnitId, data.Id, false, data.Date, null, data.Date, null, 7);
+            Response = service.GetReport(data.UnitId, data.Id, "CreatedBy", "Outstanding", data.Date, null, data.Date, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GetReport(data.UnitId, data.Id, false, null, data.Date, null, data.Date, 7);
+            Response = service.GetReport(data.UnitId, data.Id, "CreatedBy", "Outstanding", null, data.Date, null, data.Date, 7);
             Assert.NotNull(Response);
         }
 
@@ -103,10 +103,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
             service._DbContext.RealizationVbs.Add(dataRealisation);
             service._DbContext.SaveChanges();
 
-            var Response = service.GenerateExcel(data.UnitId, data.Id, data.Realization_Status, null, null, null, null, 7);
+            var Response = service.GenerateExcel(data.UnitId, data.Id, "CreatedBy", "Clearance", null, null, null, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GenerateExcel(data.UnitId, data.Id, false, null, null, null, null, 7);
+            Response = service.GenerateExcel(data.UnitId, data.Id, "CreatedBy", "Outstanding", null, null, null, null, 7);
             Assert.NotNull(Response);
         }
 
@@ -129,10 +129,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
             service._DbContext.RealizationVbs.Add(dataRealisation);
             service._DbContext.SaveChanges();
             
-            var Response = service.GenerateExcel(data.UnitId, data.Id, data.Realization_Status, null, null, null, null, 7);
+            var Response = service.GenerateExcel(data.UnitId, data.Id, "CreatedBy", "Outstanding", null, null, null, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GenerateExcel(data.UnitId, data.Id, true, null, null, null, null, 7);
+            Response = service.GenerateExcel(data.UnitId, data.Id, "CreatedBy", "Clearance", null, null, null, null, 7);
             Assert.NotNull(Response);
         }
 

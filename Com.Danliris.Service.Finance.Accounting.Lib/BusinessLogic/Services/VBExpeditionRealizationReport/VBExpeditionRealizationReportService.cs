@@ -35,7 +35,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
             _IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
-        //private async Task<List<VBExpeditionRealizationReportViewModel>> GetReportQuery(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, bool? isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         private async Task<List<VBExpeditionRealizationReportViewModel>> GetReportQuery(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, string isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
             var requestQuery = _DbSet.AsQueryable();
@@ -57,14 +56,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
 
             if (divisionId != 0)
             {
-                requestQuery = requestQuery.Where(s => s.UnitId == divisionId);
+                requestQuery = requestQuery.Where(s => s.UnitDivisionId == divisionId);
             }
-
-            //if (isVerified.HasValue)
-            //{
-            //    requestQuery = requestQuery.Where(s => s.Realization_Status == isVerified.GetValueOrDefault());
-            //}
-
 
             var realizationQuery = _RealizationDbSet.AsQueryable();
 
@@ -127,8 +120,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
                     })
-                    //.Where(t => t.Status == "K" && t.VerificationStatus != "R")
-                    .Where(t => t.Status == "K" && t.VerificationStatus == "")
+                    .Where(t => t.Status == "K" && t.VerificationStatus != "R")
                     .OrderByDescending(s => s.LastModifiedUtc)
                     .ToList();
                     break;
@@ -170,8 +162,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
                     })
-                    //.Where(t => t.Status != "K" && t.VerificationStatus == "R")
-                    .Where(t => t.Status == "" && t.VerificationStatus == "R")
+                    .Where(t => t.Status != "K" && t.VerificationStatus == "R")
                     .OrderByDescending(s => s.LastModifiedUtc)
                     .ToList();
                     break;
@@ -213,99 +204,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
                     })
-                    //.Where(t => t.Status == "K" || t.VerificationStatus == "R")
+                    .Where(t => t.Status == "K" || t.VerificationStatus == "R")
                     .OrderByDescending(s => s.LastModifiedUtc)
                     .ToList();
                     break;
-
             }
-            //if (isVerified.GetValueOrDefault())
-            //{
-            //    result = requestQuery
-            //    .Join(realizationQuery,
-            //    (rqst) => rqst.VBNo,
-            //    (real) => real.VBNo,
-            //    (rqst, real) => new VBExpeditionRealizationReportViewModel()
-            //    {
-            //        Id = rqst.Id,
-            //        RequestVBNo = rqst.VBNo,
-            //        RealizationVBNo = real.VBNoRealize,
-            //        Applicant = rqst.CreatedBy,
-            //        Unit = new Unit()
-            //        {
-            //            Id = rqst.Id,
-            //            Name = rqst.UnitName,
-            //        },
-            //        Division = new Division()
-            //        {
-            //            Id = rqst.Id,
-            //            Name = rqst.UnitDivisionName,
-            //        },
-            //        DateUnitSend = null,
-            //        Usage = rqst.Usage,
-            //        RequestCurrency = rqst.CurrencyCode,
-            //        RequestAmount = rqst.Amount,
-            //        RealizationCurrency = real.CurrencyCode,
-            //        RealizationAmount = real.Amount,
-            //        RealizationDate = real.Date,
-            //        DateVerifReceive = null,
-            //        Verificator = real.VerifiedName,
-            //        DateVerifSend = real.VerifiedDate,
-            //        Status = real.isVerified ? "Kasir" : "Retur",
-            //        Notes = real.Reason_NotVerified,
-            //        DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
-            //        LastModifiedUtc = real.LastModifiedUtc,
-            //    })
-            //    .OrderByDescending(s => s.LastModifiedUtc)
-            //    .Where(t => t.Status == "Kasir")
-            //    .ToList();
-            //}
-            //else
-            //{
-            //    result = requestQuery
-            //    .Join(realizationQuery,
-            //    (rqst) => rqst.VBNo,
-            //    (real) => real.VBNo,
-            //    (rqst, real) => new VBExpeditionRealizationReportViewModel()
-            //    {
-            //        Id = rqst.Id,
-            //        RequestVBNo = rqst.VBNo,
-            //        RealizationVBNo = real.VBNoRealize,
-            //        Applicant = rqst.CreatedBy,
-            //        Unit = new Unit()
-            //        {
-            //            Id = rqst.Id,
-            //            Name = rqst.UnitName,
-            //        },
-            //        Division = new Division()
-            //        {
-            //            Id = rqst.Id,
-            //            Name = rqst.UnitDivisionName,
-            //        },
-            //        DateUnitSend = null,
-            //        Usage = rqst.Usage,
-            //        RequestCurrency = rqst.CurrencyCode,
-            //        RequestAmount = rqst.Amount,
-            //        RealizationCurrency = real.CurrencyCode,
-            //        RealizationAmount = real.Amount,
-            //        RealizationDate = real.Date,
-            //        DateVerifReceive = null,
-            //        Verificator = real.VerifiedName,
-            //        DateVerifSend = real.VerifiedDate,
-            //        Status = real.isVerified ? "Kasir" : "Retur",
-            //        Notes = real.Reason_NotVerified,
-            //        DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
-            //        LastModifiedUtc = real.LastModifiedUtc,
-            //    })
-            //    .OrderByDescending(s => s.LastModifiedUtc)
-            //    .Where(t => t.Status == "Kasir")
-            //    .ToList();
-            //}
 
             return result.ToList();
         }
 
-        //public async Task<List<VBExpeditionRealizationReportViewModel>> GetReport(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, bool? isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         public async Task<List<VBExpeditionRealizationReportViewModel>> GetReport(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, string isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
             var data = await GetReportQuery(vbRequestId, vbRealizeId, ApplicantName, unitId, divisionId, isVerified, realizeDateFrom, realizeDateTo, offSet);
@@ -313,7 +220,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
             return data;
         }
 
-        //public async Task<MemoryStream> GenerateExcel(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, bool? isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         public async Task<MemoryStream> GenerateExcel(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, string isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
             var data = await GetReportQuery(vbRequestId, vbRealizeId, ApplicantName, unitId, divisionId, isVerified, realizeDateFrom, realizeDateTo, offSet);

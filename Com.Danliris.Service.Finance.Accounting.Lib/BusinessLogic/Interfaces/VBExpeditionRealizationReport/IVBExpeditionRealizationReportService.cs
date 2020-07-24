@@ -9,8 +9,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.V
 {
     public interface IVBExpeditionRealizationReportService
     {
-        //Task<List<VBExpeditionRealizationReportViewModel>> GetReport(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, bool? isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet);
-        //Task<MemoryStream> GenerateExcel(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, bool? isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet);
         Task<List<VBExpeditionRealizationReportViewModel>> GetReport(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, string isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet);
         Task<MemoryStream> GenerateExcel(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, string isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet);
     }

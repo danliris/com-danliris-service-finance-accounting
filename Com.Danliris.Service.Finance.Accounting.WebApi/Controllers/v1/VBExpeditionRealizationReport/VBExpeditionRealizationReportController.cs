@@ -43,7 +43,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBExpedi
         }
 
         [HttpGet("reports")]
-        //public async Task<IActionResult> GetReportAll(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, bool? isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         public async Task<IActionResult> GetReportAll(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, string isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         {
             int offset = Convert.ToInt32(timezone);
@@ -71,7 +70,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBExpedi
         }
 
         [HttpGet("reports/xls")]
-        //public async Task<IActionResult> GetXlsAll(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, bool? isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         public async Task<IActionResult> GetXlsAll(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, string isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         {
 

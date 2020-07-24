@@ -22,6 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBStatusReport
             VbRequestModel TestData = new VbRequestModel()
             {
                 Realization_Status = true,
+                Complete_Status = true,
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
                 DateEstimate = DateTimeOffset.UtcNow,
@@ -39,6 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBStatusReport
             VbRequestModel TestData = new VbRequestModel()
             {
                 Realization_Status = false,
+                Complete_Status = false,
                 VBNo = "VBNo",
                 Date = DateTimeOffset.UtcNow,
                 DateEstimate = DateTimeOffset.UtcNow,
