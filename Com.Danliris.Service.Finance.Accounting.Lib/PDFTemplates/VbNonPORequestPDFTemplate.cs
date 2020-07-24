@@ -176,7 +176,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
             cellHeaderBody.Phrase = new Phrase("", normal_font);
 
-            //Create_Box(writer,headerTable3a);
 
             PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
             cellform.FixedHeight = 5f;
