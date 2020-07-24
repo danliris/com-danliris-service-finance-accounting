@@ -218,6 +218,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
             };
         }
 
+        public VbRequestModel GetDataRequestVB2()
+        {
+            return new VbRequestModel()
+            {
+                Id = 10,
+                VBNo = "VBNo",
+                Realization_Status = false,
+                IsDeleted = false,
+            };
+        }
+
         //public async Task<RealizationVbModel> GetTestData()
         //{
         //    RealizationVbModel model = GetNewData();

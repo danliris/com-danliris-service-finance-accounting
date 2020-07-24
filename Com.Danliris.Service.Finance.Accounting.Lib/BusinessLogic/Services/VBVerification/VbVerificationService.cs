@@ -37,7 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
         public ReadResponse<VbVerificationList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _dbContext.RealizationVbs.AsQueryable();
-            var query2 = _RequestDbSet.AsQueryable();
+            var query2 = _RequestDbSet.Where(en => en.Apporve_Status == true).AsQueryable();
 
             var searchAttributes = new List<string>()
             {
@@ -60,38 +60,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
             var pageable = new Pageable<RealizationVbModel>(query, page - 1, size);
 
-            var data = query.Include(s => s.RealizationVbDetail).Select(real => new VbVerificationList()
-            {
-                Id = real.Id,
-                VBNo = real.VBNo,
-                DateRealization = real.Date,
-                DateEstimate = real.DateEstimate,
-                UnitLoad = real.UnitLoad,
-                Amount_Realization = real.Amount,
-                VBNoRealize = real.VBNoRealize,
-                RequestVbName = real.RequestVbName,
-                DateVB = real.DateVB,
-                Currency = real.CurrencyCode,
-                UnitName = real.UnitName,
-                VBRealizeCategory = real.VBRealizeCategory.Contains("NONPO") ? "Non PO" : "PO",
-                Diff = real.DifferenceReqReal,
-                Status_ReqReal = real.StatusReqReal,
+            var data = query.Include(s => s.RealizationVbDetail).Join(query2,
+               (real) => real.VBNo,
+               (rqst) => rqst.VBNo,
+               (real, rqst) => new VbVerificationList()
+               {
+                   Id = real.Id,
+                   VBNo = real.VBNo,
+                   DateRealization = real.Date,
+                   DateEstimate = real.DateEstimate,
+                   UnitLoad = real.UnitLoad,
+                   Amount_Realization = real.Amount,
+                   VBNoRealize = real.VBNoRealize,
+                   RequestVbName = real.RequestVbName,
+                   DateVB = real.DateVB,
+                   Currency = real.CurrencyCode,
+                   UnitName = real.UnitName,
+                   VBRealizeCategory = real.VBRealizeCategory.Contains("NONPO") ? "Non PO" : "PO",
+                   Diff = real.DifferenceReqReal,
+                   Status_ReqReal = real.StatusReqReal,
 
-                Usage = real.UsageVBRequest,
-                Amount_Request = real.Amount_VB,
-                Amount_Vat = real.VatAmount,
+                   Usage = real.UsageVBRequest,
+                   Amount_Request = real.Amount_VB,
+                   Amount_Vat = real.VatAmount,
 
-                DetailItems = real.RealizationVbDetail.Select(s => new ModelVbItem
-                {
+                   DetailItems = real.RealizationVbDetail.Select(s => new ModelVbItem
+                   {
 
-                    Date = s.DateNonPO,
-                    Remark = s.Remark,
-                    Amount = s.AmountNonPO,
-                    isGetPPn = s.isGetPPn
+                       Date = s.DateNonPO,
+                       Remark = s.Remark,
+                       Amount = s.AmountNonPO,
+                       isGetPPn = s.isGetPPn
 
-                }).ToList()
+                   }).ToList()
 
-            }).ToList();
+               }).ToList();
 
             int totalData = pageable.TotalCount;
 
