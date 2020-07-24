@@ -58,7 +58,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             model.VBRealizeCategory = "PO";
             model.isVerified = false;
             model.isClosed = false;
-            model.isNotVeridied = true;
+            model.isNotVeridied = false;
             model.RequestVbName = viewmodel.numberVB.CreateBy;
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
