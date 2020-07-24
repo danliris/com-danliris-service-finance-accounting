@@ -1,11 +1,16 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.RealizationVBNonPO;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBVerification;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierApproval;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWIthPO;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbVerification;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
@@ -56,6 +61,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             var serviceProvider = new Mock<IServiceProvider>();
 
             serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientTestService());
+
+            serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
 
@@ -101,9 +110,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             return new RealizationVbWithPODataUtil(service);
         }
 
+        private CashierApprovalDataUtil _dataUtilCashier(CashierApprovalService service)
+        {
+            return new CashierApprovalDataUtil(service);
+        }
+
         private VbVerificationDataUtil _dataUtil2(VbVerificationService service)
         {
             return new VbVerificationDataUtil(service);
+        }
+
+        private VbNonPORequestDataUtil _dataUtil3(VbNonPORequestService service)
+        {
+            return new VbNonPORequestDataUtil(service);
         }
 
         [Fact]
@@ -112,15 +131,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             var dbContext = GetDbContext(GetCurrentMethod());
             RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
             VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
+
+            CashierApprovalService service3 = new CashierApprovalService(GetServiceProvider().Object, dbContext);
+
+            VbNonPORequestService service4 = new VbNonPORequestService(dbContext, GetServiceProvider().Object);
+
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
-            var dataRequestVb = _dataUtil(service).GetDataRequestVB();
+            var dataRequestVb = _dataUtil(service).GetDataRequestVB2();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
 
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
             await service.CreateAsync(model, viewModel);
 
+            CashierApprovalViewModel viewModelCashier = _dataUtilCashier(service3).GetDataToValidate();
+            await service3.CashierAproval(viewModelCashier);            
 
             var response = service2.Read(1, 1, "{}", new List<string>(), "", "{}");
             Assert.NotNull(response);
