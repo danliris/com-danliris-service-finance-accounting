@@ -18,11 +18,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Realiza
                 .ForPath(d => d.numberVB.UnitName, opt => opt.MapFrom(s => s.UnitName))
                 .ForPath(d => d.numberVB.Date, opt => opt.MapFrom(s => s.DateVB))
                 .ForPath(d => d.numberVB.UnitLoad, opt => opt.MapFrom(s => s.UnitLoad))
-                .ForPath(d => d.numberVB.Amount, opt => opt.MapFrom(s => s.AmountNonPO))
-                .ForPath(d => d.numberVB.CurrencyCode, opt => opt.MapFrom(s => s.CurrencyCodeNonPO))
-                .ForPath(d => d.numberVB.CurrencyRate, opt => opt.MapFrom(s => s.CurrencyRateNonPO))
+                .ForPath(d => d.numberVB.Amount, opt => opt.MapFrom(s => s.Amount_VB))
+                .ForPath(d => d.numberVB.CurrencyCode, opt => opt.MapFrom(s => s.CurrencyCode))
+                .ForPath(d => d.numberVB.CurrencyRate, opt => opt.MapFrom(s => s.CurrencyRate))
                 .ForPath(d => d.numberVB.UnitLoad, opt => opt.MapFrom(s => s.UnitLoad))
                 .ForPath(d => d.numberVB.VBRequestCategory, opt => opt.MapFrom(s => s.VBRealizeCategory))
+                .ForPath(d => d.numberVB.Usage, opt => opt.MapFrom(s => s.UsageVBRequest))
             .ReverseMap();
 
             CreateMap<RealizationVbDetailModel, VbNonPORequestDetailViewModel>()

@@ -16,5 +16,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
         public string UnitName { get; set; }
         public string VBNo { get; set; }
         public string VBRequestCategory { get; set; }
+        public string Usage { get; set; }
     }
 }

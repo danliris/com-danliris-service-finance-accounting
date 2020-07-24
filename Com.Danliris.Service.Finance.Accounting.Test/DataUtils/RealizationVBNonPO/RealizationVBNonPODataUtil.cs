@@ -112,6 +112,49 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             };
         }
 
+        public RealizationVbNonPOViewModel GetNewViewModelNew()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                IsDeleted = false,
+                Active = true,
+                CreatedUtc = DateTime.Now,
+                CreatedBy = "CreatedBy",
+                CreatedAgent = "CreatedAgent",
+                LastModifiedUtc = DateTime.Now,
+                LastModifiedBy = "LastModifiedBy",
+                LastModifiedAgent = "LastModifiedAgent",
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreateBy = "CreateBy",
+                    CurrencyCode = "IDR",
+                    CurrencyRate = 1,
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    UnitLoad = "UnitLoad",
+                    UnitName = "UnitName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false
+                    }
+                }
+            };
+        }
+
         public RealizationVbNonPOViewModel GetNewViewModel2()
         {
             return new RealizationVbNonPOViewModel()
@@ -182,6 +225,76 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             };
         }
 
+        public RealizationVbNonPOViewModel GetNewViewModel4()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 0,
+                    CreateBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    UnitLoad = "UnitLoad",
+                    UnitName = "UnitName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false
+                    }
+                }
+            };
+        }
+
+        public RealizationVbNonPOViewModel GetNewViewModel5()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreateBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    UnitLoad = "UnitLoad",
+                    UnitName = "UnitName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 0,
+                        isGetPPn = false
+                    }
+                }
+            };
+        }
+
         public RealizationVbNonPOViewModel GetNewViewModelFalse()
         {
             return new RealizationVbNonPOViewModel()
@@ -223,6 +336,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             {
                 VBNo = "VBNo",
                 Realization_Status = false,
+                IsDeleted = false,
+            };
+        }
+
+        public RealizationVbModel GetDataRealizationVB()
+        {
+            return new RealizationVbModel()
+            {
+                VBNo = "VBNo",
+                isVerified = true,
                 IsDeleted = false,
             };
         }

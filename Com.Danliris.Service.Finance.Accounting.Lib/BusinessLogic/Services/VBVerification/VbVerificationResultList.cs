@@ -4,6 +4,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
     public class VbVerificationResultList
     {
+        public int Id { get; set; }
         public DateTimeOffset DateVerified { get; set; }
         public string RealizeNo { get; set; }
         public DateTimeOffset DateRealize { get; set; }
@@ -14,5 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string VBCategory { get; set; }
         public string Currency { get; set; }
         public bool isVerified { get; set; }
+        public decimal Amount { get; set; }
+        public string Usage { get; set; }
     }
 }

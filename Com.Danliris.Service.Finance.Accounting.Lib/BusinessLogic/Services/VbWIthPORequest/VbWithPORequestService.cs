@@ -289,14 +289,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             {
                 VbRequestDetail = listDetail,
                 Active = viewModel.Active,
+                
                 Id = viewModel.Id,
                 Date = (DateTimeOffset)viewModel.Date,
+                DateEstimate = (DateTimeOffset)viewModel.DateEstimate,
                 UnitId = viewModel.Unit.Id,
                 UnitCode = viewModel.Unit.Code,
                 UnitName = viewModel.Unit.Name,
                 VBNo = viewModel.VBNo,
+                CreatedUtc = viewModel.CreatedUtc,
                 CreatedBy = viewModel.CreatedBy,
                 CreatedAgent = viewModel.CreatedAgent,
+                LastModifiedUtc = DateTime.Now,
                 LastModifiedAgent = viewModel.LastModifiedAgent,
                 LastModifiedBy = viewModel.LastModifiedBy,
                 VBMoney = viewModel.VBMoney,

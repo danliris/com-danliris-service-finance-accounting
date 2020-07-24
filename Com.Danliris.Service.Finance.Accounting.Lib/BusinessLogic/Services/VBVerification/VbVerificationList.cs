@@ -20,6 +20,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public decimal Diff { get; set; }
         public string Usage { get; set; }
         public decimal Amount_Request { get; set; }
+        public string Status_ReqReal { get; set; }
+        public decimal Amount_Vat { get; set; }
 
         public List<ModelVbItem> DetailItems { get; set; }
     }

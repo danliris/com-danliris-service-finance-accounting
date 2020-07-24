@@ -43,13 +43,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             model.isNotVeridied = true;
             decimal temp_total = 0;
             decimal convert_total = 0;
+            decimal total_vat = 0;
 
             foreach (var item2 in viewmodel.Items)
             {
                 decimal count_total;
+                
                 if (item2.isGetPPn == true)
                 {
                     decimal temp = item2.Amount * 0.1m;
+                    total_vat += temp;
                     count_total = item2.Amount + temp;
                     convert_total += ConvertRate(count_total, viewmodel);
                     temp_total += count_total;
@@ -62,8 +65,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 }
             }
 
-            model.Amount_VB = temp_total;
-            model.DifferenceReqReal = convert_total;
+            model.Amount = temp_total;
+            model.VatAmount = total_vat;
+
+            var ResultDiffReqReal = viewmodel.numberVB.Amount - convert_total;
+
+            if (ResultDiffReqReal > 0)
+            {
+                model.DifferenceReqReal = ResultDiffReqReal;
+                model.StatusReqReal = "Sisa";
+            }
+            else if (ResultDiffReqReal == 0)
+            {
+                model.DifferenceReqReal = ResultDiffReqReal;
+                model.StatusReqReal = "Sesuai";
+            }
+            else
+            {
+                model.DifferenceReqReal = ResultDiffReqReal * -1;
+                model.StatusReqReal = "Kurang";
+            }
+
+            
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
 
@@ -203,10 +226,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 Date = model.Date,
                 numberVB = new DetailRequestNonPO()
                 {
-                    Amount = model.AmountNonPO,
+                    Amount = model.Amount_VB,
                     CreateBy = model.RequestVbName,
-                    CurrencyCode = model.CurrencyCodeNonPO,
-                    CurrencyRate = model.CurrencyRateNonPO,
+                    CurrencyCode = model.CurrencyCode,
+                    CurrencyRate = model.CurrencyRate,
                     Date = model.DateVB,
                     DateEstimate = model.DateEstimate,
                     UnitCode = model.UnitCode,
@@ -277,6 +300,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
             decimal temp_total = 0;
             decimal convert_total = 0;
+            decimal total_vat = 0;
+
             foreach (var itm in viewModel.Items)
             {
 
@@ -284,6 +309,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 if (itm.isGetPPn == true)
                 {
                     decimal temp = itm.Amount * 0.1m;
+                    total_vat += temp;
                     count_total = itm.Amount + temp;
                     convert_total += ConvertRate(count_total, viewModel);
                     temp_total += count_total;
@@ -313,6 +339,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 listDetail.Add(item);
             }
 
+            var ResultDiffReqReal = viewModel.numberVB.Amount - convert_total;
+            string StatusReqReal;
+
+
+            decimal DifferenceReqReal;
+            if (ResultDiffReqReal > 0)
+            {
+                DifferenceReqReal = ResultDiffReqReal;
+                StatusReqReal = "Sisa";
+            }
+            else if (ResultDiffReqReal == 0)
+            {
+                DifferenceReqReal = ResultDiffReqReal;
+                StatusReqReal = "Sesuai";
+            }
+            else
+            {
+                DifferenceReqReal = ResultDiffReqReal * -1;
+                StatusReqReal = "Kurang";
+            }
+
             var result = new RealizationVbModel()
             {
                 RealizationVbDetail = listDetail,
@@ -325,12 +372,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 VBNoRealize = viewModel.VBRealizationNo,
                 DateEstimate = (DateTimeOffset)viewModel.numberVB.DateEstimate,
                 DateVB = (DateTimeOffset)viewModel.numberVB.Date,
-                CurrencyCodeNonPO = viewModel.numberVB.CurrencyCode,
-                CurrencyRateNonPO = viewModel.numberVB.CurrencyRate,
+                CurrencyCode = viewModel.numberVB.CurrencyCode,
+                CurrencyRate = viewModel.numberVB.CurrencyRate,
                 UnitLoad = viewModel.numberVB.UnitLoad,
                 RequestVbName = viewModel.numberVB.CreateBy,
-                Amount_VB = temp_total,
-                AmountNonPO = viewModel.numberVB.Amount,
+                UsageVBRequest = viewModel.numberVB.Usage,
+                Amount = temp_total,
+                Amount_VB = viewModel.numberVB.Amount,
                 isVerified = false,
                 isClosed = false,
                 isNotVeridied = true,
@@ -339,7 +387,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 LastModifiedAgent = viewModel.LastModifiedAgent,
                 LastModifiedBy = viewModel.LastModifiedBy,
                 VBRealizeCategory = viewModel.numberVB.VBRequestCategory,
-                DifferenceReqReal = convert_total
+                DifferenceReqReal = DifferenceReqReal,
+                VatAmount = total_vat,
+                StatusReqReal = StatusReqReal
+
             };
 
             return result;
