@@ -36,7 +36,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
         public ReadResponse<VbVerificationList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.RealizationVbs.AsQueryable();
+            var query = _dbContext.RealizationVbs.Where(a => a.isNotVeridied == false && a.isVerified == false).AsQueryable();
             var query2 = _RequestDbSet.Where(en => en.Apporve_Status == true).AsQueryable();
 
             var searchAttributes = new List<string>()
