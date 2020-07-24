@@ -73,6 +73,8 @@
     <Compile Remove="Migrations\20200723042240_UpdateTabelVBRequestandRealizationVb.Designer.cs" />
     <Compile Remove="Migrations\20200723082143_UpdateTabelRealizationVb3.cs" />
     <Compile Remove="Migrations\20200723082143_UpdateTabelRealizationVb3.Designer.cs" />
+    <Compile Remove="Migrations\20200724072306_test.cs" />
+    <Compile Remove="Migrations\20200724072306_test.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

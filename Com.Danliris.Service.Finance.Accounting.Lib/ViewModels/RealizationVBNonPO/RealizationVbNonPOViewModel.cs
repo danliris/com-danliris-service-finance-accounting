@@ -53,6 +53,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         CountItemsError++;
                         ItemsError += "'Amount': 'Jumlah harus lebih besar dari 0', ";
                     }
+                    ItemsError += "}, ";
                 }
 
                 ItemsError += "]";
