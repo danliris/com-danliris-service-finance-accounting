@@ -792,7 +792,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
             var vm = new VbWithPORequestViewModel()
             {
                 VBNo = "VBNo",
-                Date = DateTimeOffset.Now,
+                Date = null,
                 Unit = new Unit()
                 {
                     Id = 1,

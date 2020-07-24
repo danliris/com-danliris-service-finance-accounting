@@ -689,7 +689,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
             var vm = new VbNonPORequestViewModel()
             {
                 VBNo = "VBNo",
-                Date = DateTimeOffset.Now,
+                Date = null,
                 Unit = new Unit()
                 {
                     Id = 1,
