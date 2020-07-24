@@ -163,6 +163,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         }
 
         [Fact]
+        public async Task Should_Success_Mapping()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var modelToCreate = dataUtil.GetNewData();
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+            var viewmodel = dataUtil.GetNewViewModel5();
+            var viewmodel1 = dataUtil.GetNewViewModel6();
+            await service.CreateAsync(modelToCreate, viewmodel);
+
+            var result = await service.MappingData(viewmodel1);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Update_Model()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
