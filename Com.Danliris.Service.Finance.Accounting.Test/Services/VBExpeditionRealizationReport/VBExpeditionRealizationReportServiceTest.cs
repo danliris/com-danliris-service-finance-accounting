@@ -70,21 +70,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBExpeditionReal
             VBExpeditionRealizationReportService service = new VBExpeditionRealizationReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData_ById();
 
-            var Response = service.GetReport(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, true, data.Date, data.Date, 7);
+            //var Response = service.GetReport(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, true, data.Date, data.Date, 7);
+            var Response = service.GetReport(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, "ALL", data.Date, data.Date, 7);
             Assert.NotNull(Response);
 
             Response = service.GetReport(data.Id, data.Id, null, data.UnitId, data.UnitId, null, null, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitId, true, null, data.Date, 7);
+            //Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitId, true, null, data.Date, 7);
+            Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitId, "CASHIER", null, data.Date, 7);
             Assert.NotNull(Response);
 
-            Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitId, true, data.Date, null, 7);
+            //Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitId, true, data.Date, null, 7);
+            Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitId, "RETURN", data.Date, null, 7);
             Assert.NotNull(Response);
         }
 
         [Fact]
-        public async Task Should_Success_GenerateExcel_Realisasi()
+        public async Task Should_Success_GenerateExcel()
         {
             VBExpeditionRealizationReportService service = new VBExpeditionRealizationReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData_ById();
@@ -102,7 +105,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBExpeditionReal
             service._DbContext.RealizationVbs.Add(dataRealisation);
             service._DbContext.SaveChanges();
 
-            var Response = service.GenerateExcel(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, true, data.Date, data.Date, 7);
+            //var Response = service.GenerateExcel(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, true, data.Date, data.Date, 7);
+            var Response = service.GenerateExcel(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, "ALL", data.Date, data.Date, 7);
+            Assert.NotNull(Response);
+            Response = service.GenerateExcel(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, "CASHIER", data.Date, data.Date, 7);
+            Assert.NotNull(Response);
+            Response = service.GenerateExcel(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, "RETURN", data.Date, data.Date, 7);
             Assert.NotNull(Response);
 
             Response = service.GenerateExcel(data.Id, data.Id, null, data.UnitId, data.UnitId, null, null, null, 7);
