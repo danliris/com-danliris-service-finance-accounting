@@ -172,7 +172,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             await service.CreateAsync(model, viewModel);
 
             await service2.CreateAsync(viewmodel2);
-
+            //
             var response = service2.ReadVerification(1, 1, "{}", new List<string>(), "", "{}");
             Assert.NotNull(response);
 
