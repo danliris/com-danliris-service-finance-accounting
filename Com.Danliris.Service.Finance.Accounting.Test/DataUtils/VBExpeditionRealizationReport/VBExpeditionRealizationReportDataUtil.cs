@@ -20,17 +20,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBExpeditionRea
         {
             VbRequestModel TestData = new VbRequestModel()
             {
-                Realization_Status = true,
                 VBNo = "VBNo",
-                Date = DateTimeOffset.UtcNow,
-                DateEstimate = DateTimeOffset.UtcNow,
+                CreatedBy = "CreatedBy",
                 UnitId = 1,
                 UnitName = "UnitName",
-                CreatedBy = "CreatedBy",
                 UnitDivisionId = 1,
                 UnitDivisionName = "UnitDivisionName",
                 Usage = "Usage",
+                CurrencyCode = "IDR",
                 Amount = 1000,
+                CompleteDate = DateTimeOffset.UtcNow,
+                Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                Realization_Status = true,
             };
 
             return TestData;
