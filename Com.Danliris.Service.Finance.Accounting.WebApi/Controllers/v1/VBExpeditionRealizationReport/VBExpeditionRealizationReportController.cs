@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBStatusReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBExpeditionRealizationReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
@@ -9,22 +9,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatusReport
+
+namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBExpeditionRealizationReport
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("v{version:apiVersion}/vb-status-report")]
+    [Route("v{version:apiVersion}/vb-expedition-realization-report")]
     [Authorize]
 
-    public class VBStatusReportController : Controller
+    public class VBExpeditionRealizationReportController : Controller
     {
         private IIdentityService IdentityService;
         private readonly IValidateService ValidateService;
-        private readonly IVBStatusReportService Service;
+        private readonly IVBExpeditionRealizationReportService Service;
         private readonly string ApiVersion;
         private readonly IMapper Mapper;
 
-        public VBStatusReportController(IIdentityService identityService, IValidateService validateService, IMapper mapper, IVBStatusReportService service)
+        public VBExpeditionRealizationReportController(IIdentityService identityService, IValidateService validateService, IMapper mapper, IVBExpeditionRealizationReportService service)
         {
             IdentityService = identityService;
             ValidateService = validateService;
@@ -41,40 +42,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
 
         }
 
-        [HttpGet("by-applicant/{applicantName}")]
-        public async Task<IActionResult> GetByApplicantName([FromRoute] string applicantName)
-        {
-            try
-            {
-                ValidateUser();
-                var data = await Service.GetByApplicantName(applicantName);
-
-                return Ok(new
-                {
-                    apiVersion = ApiVersion,
-                    data,
-                    message = General.OK_MESSAGE,
-                    statusCode = General.OK_STATUS_CODE
-                });
-            }
-            catch (Exception e)
-            {
-                Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
-            }
-        }
-
         [HttpGet("reports")]
-        public async Task<IActionResult> GetReportAll(int unitId, int vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
+        public async Task<IActionResult> GetReportAll(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, string isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         {
             int offset = Convert.ToInt32(timezone);
 
             try
             {
                 ValidateUser();
-                var data = await Service.GetReport(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offset);
+                var data = await Service.GetReport(vbRequestId, vbRealizeId, ApplicantName, unitId, divisionId, isVerified, realizeDateFrom, realizeDateTo, offset);
 
                 return Ok(new
                 {
@@ -94,7 +70,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
         }
 
         [HttpGet("reports/xls")]
-        public async Task<IActionResult> GetXlsAll(int unitId, int vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
+        public async Task<IActionResult> GetXlsAll(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, string isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         {
 
             try
@@ -103,7 +79,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
                 byte[] xlsInBytes;
                 int offset = Convert.ToInt32(timezone);
 
-                var xls = await Service.GenerateExcel(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offset);
+                var xls = await Service.GenerateExcel(vbRequestId, vbRealizeId, ApplicantName, unitId, divisionId, isVerified, realizeDateFrom, realizeDateTo, offset);
 
                 string filename = "Laporan Status VB.xlsx";
 
