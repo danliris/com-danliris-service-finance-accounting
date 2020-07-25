@@ -17,7 +17,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBExpeditionRe
             string RealizationVBNo = "RealizationVBNo";
             string Applicant = "Applicant";
             Unit uvm = new Unit();
-            Division dvm = new Division();
             DateTimeOffset DateUnitSend = DateTimeOffset.Now;
             string Usage = "Usage";
             string RequestCurrency = "RequestCurrency";
@@ -29,6 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBExpeditionRe
             string Verificator = "Verificator";
             DateTimeOffset DateVerifSend = DateTimeOffset.Now;
             string Status = "Status";
+            string VerificationStatus = "VerificationStatus";
             string Notes = "Notes";
             DateTimeOffset DateCashierReceive = DateTimeOffset.Now;
             DateTime LastModifiedUtc = DateTime.Now;
@@ -39,7 +39,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBExpeditionRe
             vrrvm.RealizationVBNo = RealizationVBNo;
             vrrvm.Applicant = Applicant;
             vrrvm.Unit = uvm;
-            vrrvm.Division = dvm;
             vrrvm.DateUnitSend = DateUnitSend;
             vrrvm.Usage = Usage;
             vrrvm.RequestCurrency = RequestCurrency;
@@ -51,6 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBExpeditionRe
             vrrvm.Verificator = Verificator;
             vrrvm.DateVerifSend = DateVerifSend;
             vrrvm.Status = Status;
+            vrrvm.VerificationStatus = VerificationStatus;
             vrrvm.Notes = Notes;
             vrrvm.DateCashierReceive = DateCashierReceive;
             vrrvm.LastModifiedUtc = LastModifiedUtc;
@@ -61,7 +61,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBExpeditionRe
             Assert.Equal(RealizationVBNo, vrrvm.RealizationVBNo);
             Assert.Equal(Applicant, vrrvm.Applicant);
             Assert.Equal(uvm, vrrvm.Unit);
-            Assert.Equal(dvm, vrrvm.Division);
             Assert.Equal(DateUnitSend, vrrvm.DateUnitSend);
             Assert.Equal(Usage, vrrvm.Usage);
             Assert.Equal(RequestCurrency, vrrvm.RequestCurrency);
@@ -73,6 +72,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBExpeditionRe
             Assert.Equal(Verificator, vrrvm.Verificator);
             Assert.Equal(DateVerifSend, vrrvm.DateVerifSend);
             Assert.Equal(Status, vrrvm.Status);
+            Assert.Equal(VerificationStatus, vrrvm.VerificationStatus);
             Assert.Equal(Notes, vrrvm.Notes);
             Assert.Equal(DateCashierReceive, vrrvm.DateCashierReceive);
             Assert.Equal(LastModifiedUtc, vrrvm.LastModifiedUtc);

@@ -105,13 +105,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBExpeditionReal
             var Response = service.GenerateExcel(0, 0, null, 0, 0, "All", null, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GenerateExcel(0, 0, null, 0, 0, "All", null, null, 7);
+            Response = service.GenerateExcel(0, 0, null, 0, 0, "Cashier", null, null, 7);
+            Assert.NotNull(Response);
+
+            Response = service.GenerateExcel(0, 0, null, 0, 0, "Return", null, null, 7);
             Assert.NotNull(Response);
 
             Response = service.GenerateExcel(data.Id, dataRealization.Id, data.CreatedBy, data.UnitId, data.UnitDivisionId, "Cashier", dataRealization.Date, dataRealization.Date, 7);
             Assert.NotNull(Response);
 
-            Response = service.GenerateExcel(data.Id, dataRealization.Id, "CreatedBy", data.UnitId, data.UnitDivisionId, "Return", dataRealization.Date, dataRealization.Date, 7);
+            Response = service.GenerateExcel(data.Id, dataRealization.Id, data.CreatedBy, data.UnitId, data.UnitDivisionId, "Return", dataRealization.Date, dataRealization.Date, 7);
             Assert.NotNull(Response);
         }
     }

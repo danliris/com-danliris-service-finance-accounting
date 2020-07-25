@@ -12,7 +12,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBExpeditionRea
         public string RealizationVBNo { get; set; }
         public string Applicant { get; set; }
         public Unit Unit { get; set; }
-        public Division Division { get; set; }
         public DateTimeOffset? DateUnitSend { get; set; }
         public string Usage { get; set; }
         public string RequestCurrency { get; set; }

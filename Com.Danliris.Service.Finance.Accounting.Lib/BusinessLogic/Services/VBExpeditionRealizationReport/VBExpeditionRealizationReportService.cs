@@ -98,11 +98,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         {
                             Id = rqst.Id,
                             Name = rqst.UnitName,
-                        },
-                        Division = new Division()
-                        {
-                            Id = rqst.Id,
-                            Name = rqst.UnitDivisionName,
+                            DivisionId = rqst.Id,
+                            DivisionName = rqst.UnitDivisionName,
                         },
                         DateUnitSend = null,
                         Usage = rqst.Usage,
@@ -140,11 +137,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         {
                             Id = rqst.Id,
                             Name = rqst.UnitName,
-                        },
-                        Division = new Division()
-                        {
-                            Id = rqst.Id,
-                            Name = rqst.UnitDivisionName,
+                            DivisionId = rqst.Id,
+                            DivisionName = rqst.UnitDivisionName,
                         },
                         DateUnitSend = null,
                         Usage = rqst.Usage,
@@ -182,11 +176,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         {
                             Id = rqst.Id,
                             Name = rqst.UnitName,
-                        },
-                        Division = new Division()
-                        {
-                            Id = rqst.Id,
-                            Name = rqst.UnitDivisionName,
+                            DivisionId = rqst.Id,
+                            DivisionName = rqst.UnitDivisionName,
                         },
                         DateUnitSend = null,
                         Usage = rqst.Usage,
@@ -258,7 +249,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         item.RealizationVBNo,
                         item.Applicant,
                         item.Unit.Name,
-                        item.Division.Name,
+                        item.Unit.DivisionName,
                         item.DateUnitSend?.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.Usage,
                         item.RequestCurrency,
