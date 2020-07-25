@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.RealizationVBNonPO;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNonPO;
@@ -313,27 +314,99 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         }
 
         //[Fact]
-        //public async Task Should_Success_Update_Model_Remove_Items()
+        //public async Task Should_Success_Update_Model6()
         //{
         //    var dbContext = GetDbContext(GetCurrentMethod());
         //    var serviceProviderMock = GetServiceProviderMock();
         //    var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
         //    var dataUtil = new RealizationVBNonPODataUtil(service);
-        //    var modelToUpdate = await dataUtil.GetCreatedData();
-        //    modelToUpdate.Items = new List<MemoItemModel>();
-        //    modelToUpdate.Items.Add(new MemoItemModel()
+        //    var viewmodel = dataUtil.GetNewViewModelNew();
+        //    viewmodel.Items.Add(new VbNonPORequestDetailViewModel()
         //    {
-        //        CurrencyCode = "CurrencyCode",
-        //        CurrencyId = 1,
-        //        CurrencyRate = 1,
-        //        Interest = 1,
-        //        PaymentAmount = 1
+        //        DateDetail = DateTimeOffset.Now,
+        //        Amount = 1000,
+        //        Remark = "Remark",
+        //        isGetPPn = false
         //    });
 
-        //    var result = await service.UpdateAsync(modelToUpdate.Id, modelToUpdate);
+        //    var dataRequestVb = dataUtil.GetDataRequestVB();
+        //    dbContext.VbRequests.Add(dataRequestVb);
+        //    dbContext.SaveChanges();
+
+        //    var viewmodel1 = dataUtil.GetNewViewModel6();
+
+        //    await service.MappingData(viewmodel1);
+
+        //    var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
 
         //    Assert.NotEqual(0, result);
         //}
+
+        [Fact]
+        public async Task Should_Success_UpdateAsync_When_Data_Exist()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var modelToCreate = dataUtil.GetNewData();
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+            var viewmodel = dataUtil.GetNewViewModel5();
+
+            var viewmodelnew = dataUtil.GetNewViewModelNew1();
+            viewmodelnew.Items.Add(new VbNonPORequestDetailViewModel()
+            {
+                DateDetail = DateTimeOffset.Now,
+                Amount = 1000,
+                Remark = "Remark",
+                isGetPPn = false
+            });
+
+            var viewmodel1 = dataUtil.GetNewViewModel6();
+            await service.CreateAsync(modelToCreate, viewmodel);
+
+            await service.MappingData(viewmodel1);
+            var result = await service.UpdateAsync(modelToCreate.Id, viewmodelnew);
+
+            Assert.NotEqual(0, result);
+        }
+
+        //[Fact]
+        //public async Task Should_Success_UpdateAsync_When_Data_NoExist()
+        //{
+        //    var dbContext = GetDbContext(GetCurrentMethod());
+        //    var serviceProviderMock = GetServiceProviderMock();
+        //    var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+        //    var dataUtil = new RealizationVBNonPODataUtil(service);
+        //    var modelToCreate = dataUtil.GetNewData();
+        //    var dataRequestVb = dataUtil.GetDataRequestVB();
+        //    dbContext.VbRequests.Add(dataRequestVb);
+        //    dbContext.SaveChanges();
+        //    dbContext.VbRequestsDetails.Add(new VbRequestDetailModel());
+        //    dbContext.SaveChanges();
+        //    var viewmodel = dataUtil.GetNewViewModel5();
+
+        //    var viewmodelnew = dataUtil.GetNewViewModelNew1();
+        //    viewmodelnew.Items.Add(new VbNonPORequestDetailViewModel()
+        //    {
+        //        DateDetail = DateTimeOffset.Now,
+        //        Amount = 1000,
+        //        Remark = "Remark",
+        //        isGetPPn = false
+        //    });
+
+        //    var viewmodel1 = dataUtil.GetNewViewModel6();
+        //    await service.CreateAsync(modelToCreate, viewmodel);
+
+        //    await service.MappingData(viewmodel1);
+        //    viewmodel.Id = 1;
+        //    var result = await service.UpdateAsync(modelToCreate.Id, viewmodel);
+
+        //    Assert.NotEqual(0, result);
+        //}
+
 
         [Fact]
         public async Task Should_Success_Read_Data()
