@@ -36,16 +36,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 foreach (var item in Items)
                 {
                     ItemsError += "{ ";
+
                     if (item.DateDetail == null)
                     {
                         CountItemsError++;
                         ItemsError += "'DateDetail': 'Tanggal harus diisi', ";
                     }
-                    else if (item.DateDetail > numberVB.DateEstimate)
-                    {
-                        CountItemsError++;
-                        ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Estimasi Tanggal Realisasi', ";
-                    }
+
+                    //if (!item.DateDetail.HasValue || item.DateDetail.Value > numberVB.DateEstimate)
+                    //{
+                    //    CountItemsError++;
+                    //    ItemsError += "'DateDetail': 'Tanggal Nota harus diisi dan harus kurang atau sama dengan Estimasi Tanggal Realisasi', ";
+                    //}
 
                     if (string.IsNullOrWhiteSpace(item.Remark))
                     {

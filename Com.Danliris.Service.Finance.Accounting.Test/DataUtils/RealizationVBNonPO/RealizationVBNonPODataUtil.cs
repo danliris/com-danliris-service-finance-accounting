@@ -401,6 +401,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 {
                     new VbNonPORequestDetailViewModel()
                     {
+                        DateDetail = DateTimeOffset.Now.AddDays(5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
                         DateDetail = null,
                         Remark = "",
                         Amount = -1,
@@ -408,18 +415,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     },
                     new VbNonPORequestDetailViewModel()
                     {
-                        DateDetail = DateTimeOffset.Now.AddDays(1),
+                        DateDetail = DateTimeOffset.Now.AddDays(-5),
                         Remark = "",
                         Amount = -1,
                         isGetPPn = false
                     },
-                    new VbNonPORequestDetailViewModel()
-                    {
-                        DateDetail = DateTimeOffset.Now.AddDays(-1),
-                        Remark = "",
-                        Amount = -1,
-                        isGetPPn = false
-                    }
                 }
             };
         }
