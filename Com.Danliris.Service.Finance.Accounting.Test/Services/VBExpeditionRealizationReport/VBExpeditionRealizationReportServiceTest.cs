@@ -70,19 +70,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBExpeditionReal
             VBExpeditionRealizationReportService service = new VBExpeditionRealizationReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData_ById();
 
-            //var Response = service.GetReport(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, true, data.Date, data.Date, 7);
-            var Response = service.GetReport(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, "ALL", data.Date, data.Date, 7);
+            var Response = service.GetReport(data.Id, data.Id, "CreatedBy", data.UnitId, data.UnitDivisionId, "All", data.Date, data.Date, 7);
             Assert.NotNull(Response);
 
-            Response = service.GetReport(data.Id, data.Id, null, data.UnitId, data.UnitId, null, null, null, 7);
+            Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitDivisionId, "Cashier", null, data.Date, 7);
             Assert.NotNull(Response);
 
-            //Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitId, true, null, data.Date, 7);
-            Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitId, "CASHIER", null, data.Date, 7);
+            Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitDivisionId, "Return", data.Date, null, 7);
             Assert.NotNull(Response);
 
-            //Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitId, true, data.Date, null, 7);
-            Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitId, "RETURN", data.Date, null, 7);
+            Response = service.GetReport(data.Id, data.Id, null, data.UnitId, data.UnitDivisionId, null, null, null, 7);
             Assert.NotNull(Response);
         }
 
@@ -92,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBExpeditionReal
             VBExpeditionRealizationReportService service = new VBExpeditionRealizationReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData_ById();
 
-            var dataRealisation = new RealizationVbModel()
+            var dataRealization = new RealizationVbModel()
             {
                 DateEstimate = DateTimeOffset.Now,
                 VBNoRealize = "VBNoRealize",
@@ -102,18 +99,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBExpeditionReal
                 isVerified = false,
                 LastModifiedUtc = DateTime.Now,
             };
-            service._DbContext.RealizationVbs.Add(dataRealisation);
+            service._DbContext.RealizationVbs.Add(dataRealization);
             service._DbContext.SaveChanges();
 
-            //var Response = service.GenerateExcel(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, true, data.Date, data.Date, 7);
-            var Response = service.GenerateExcel(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, "ALL", data.Date, data.Date, 7);
-            Assert.NotNull(Response);
-            Response = service.GenerateExcel(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, "CASHIER", data.Date, data.Date, 7);
-            Assert.NotNull(Response);
-            Response = service.GenerateExcel(data.Id, data.Id, "Applicant", data.UnitId, data.UnitId, "RETURN", data.Date, data.Date, 7);
+            var Response = service.GenerateExcel(0, 0, null, 0, 0, "All", null, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GenerateExcel(data.Id, data.Id, null, data.UnitId, data.UnitId, null, null, null, 7);
+            Response = service.GenerateExcel(0, 0, null, 0, 0, "All", null, null, 7);
+            Assert.NotNull(Response);
+
+            Response = service.GenerateExcel(data.Id, dataRealization.Id, data.CreatedBy, data.UnitId, data.UnitDivisionId, "Cashier", dataRealization.Date, dataRealization.Date, 7);
+            Assert.NotNull(Response);
+
+            Response = service.GenerateExcel(data.Id, dataRealization.Id, "CreatedBy", data.UnitId, data.UnitDivisionId, "Return", dataRealization.Date, dataRealization.Date, 7);
             Assert.NotNull(Response);
         }
     }

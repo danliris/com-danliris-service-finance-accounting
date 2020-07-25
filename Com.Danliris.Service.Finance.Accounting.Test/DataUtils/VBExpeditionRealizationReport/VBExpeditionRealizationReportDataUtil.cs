@@ -27,6 +27,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBExpeditionRea
                 UnitId = 1,
                 UnitName = "UnitName",
                 CreatedBy = "CreatedBy",
+                UnitDivisionId = 1,
+                UnitDivisionName = "UnitDivisionName",
                 Usage = "Usage",
                 Amount = 1000,
             };

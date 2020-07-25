@@ -85,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
         }
 
         [Fact]
-        public async Task Should_Success_GenerateExcel_Realisasi()
+        public async Task Should_Success_GenerateExcel()
         {
             VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData_Realisasi_ById();
@@ -108,31 +108,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
 
             Response = service.GenerateExcel(data.UnitId, data.Id, "CreatedBy", "Outstanding", null, null, null, null, 7);
             Assert.NotNull(Response);
-        }
 
-        [Fact]
-        public async Task Should_Success_GenerateExcel_Outstanding()
-        {
-            VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = await _dataUtil(service).GetTestData_Outstanding_ById();
-
-            var dataRealisation = new RealizationVbModel()
-            {
-                DateEstimate = DateTimeOffset.Now,
-                VBNoRealize = "VBNoRealize",
-                VBNo = "VBNo",
-                Date = DateTimeOffset.Now,
-                Amount = 100,
-                isVerified = false,
-                LastModifiedUtc = DateTime.Now,
-            };
-            service._DbContext.RealizationVbs.Add(dataRealisation);
-            service._DbContext.SaveChanges();
-            
-            var Response = service.GenerateExcel(data.UnitId, data.Id, "CreatedBy", "Outstanding", null, null, null, null, 7);
+            Response = service.GenerateExcel(data.UnitId, data.Id, null, "All", null, null, null, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GenerateExcel(data.UnitId, data.Id, "CreatedBy", "Clearance", null, null, null, null, 7);
+            Response = service.GenerateExcel(0, 0, null, "Outstanding", null, null, null, null, 7);
             Assert.NotNull(Response);
         }
 

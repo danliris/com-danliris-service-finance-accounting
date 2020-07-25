@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBExpeditionR
                 .ReturnsAsync(new List<VBExpeditionRealizationReportViewModel>());
 
             var controller = GetController(mocks);
-            var response = controller.GetReportAll(1, 1, "Applicant", 1, 1, "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
+            var response = controller.GetReportAll(1, 1, "CreatedBy", 1, 1, "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
             var statusCode = GetStatusCode(response.Result);
 
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBExpeditionR
                 .Throws(new Exception());
 
             var controller = GetController(mocks);
-            var response = controller.GetReportAll(1, 1, "Applicant", 1, 1, "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
+            var response = controller.GetReportAll(1, 1, "CreatedBy", 1, 1, "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
             var statusCode = GetStatusCode(response.Result);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
@@ -85,22 +85,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBExpeditionR
                 .ReturnsAsync(new System.IO.MemoryStream());
 
             var controller = GetController(mocks);
-            var response = controller.GetReportAll(1, 1, "Applicant", 1, 1, "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
+            var response = controller.GetXlsAll(1, 1, "CreatedBy", 1, 1, "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
             Assert.NotNull(response);
         }
 
-        //[Fact]
-        //public void GetXlsAll_WithException_InternalServerError()
-        //{
-        //    var mocks = GetMocks();
-        //    mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>()))
-        //       .Throws(new Exception());
+        [Fact]
+        public void GetXlsAll_WithException_InternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>()))
+               .Throws(new Exception());
 
-        //    var controller = GetController(mocks);
-        //    var response = controller.GetReportAll(1, 1, "Applicant", 1, 1, "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
-        //    var statusCode = GetStatusCode(response.Result);
+            var controller = GetController(mocks);
+            var response = controller.GetXlsAll(1, 1, "CreatedBy", 1, 1, "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
+            var statusCode = GetStatusCode(response.Result);
 
-        //    Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
-        //}
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
     }
 }

@@ -171,7 +171,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                         Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
                         LastModifiedUtc = real.LastModifiedUtc,
                     })
-                    .Where(t => t.Status == "Clearance" || t.Status != "Clearance")
+                    .Where(t => t.Status == "Clearance" || t.Status == "Outstanding")
                     .OrderByDescending(s => s.LastModifiedUtc)
                     .ToList();
                     break;
@@ -216,7 +216,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 data = data.OrderBy(s => s.Id).ToList();
                 foreach (var item in data)
                 {
-                    if (item.Status != "Clearance")
+                    if (item.Status == "Outstanding")
                     {
                         dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Unit.Name, item.CreateBy, "", "",
