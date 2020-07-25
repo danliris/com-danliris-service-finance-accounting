@@ -283,6 +283,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             Assert.NotEqual(0, result);
         }
 
+        [Fact]
+        public async Task Should_Success_Update_Model5()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewmodel = dataUtil.GetNewViewModelNew();
+            viewmodel.Items.Add(new VbNonPORequestDetailViewModel()
+            {
+                DateDetail = DateTimeOffset.Now,
+                Amount = -1000,
+                Remark = "Remark",
+                isGetPPn = false
+            });
+
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
+            var viewmodel1 = dataUtil.GetNewViewModel6();
+
+            await service.MappingData(viewmodel1);
+
+            var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
+
+            Assert.NotEqual(0, result);
+        }
+
         //[Fact]
         //public async Task Should_Success_Update_Model_Remove_Items()
         //{
@@ -304,7 +333,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         //    var result = await service.UpdateAsync(modelToUpdate.Id, modelToUpdate);
 
         //    Assert.NotEqual(0, result);
-        //}asd
+        //}
 
         [Fact]
         public async Task Should_Success_Read_Data()
