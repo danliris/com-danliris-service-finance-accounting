@@ -79,13 +79,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         }
 
         [Fact]
-        public void Should_Success_Validate_Date_ObjectProperty()
+        public void Should_Success_Validate_Date_Failed_ObjectProperty()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var viewModel = dataUtil.GetNewViewModelDateFalse();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_Date_Success_ObjectProperty()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewModel = dataUtil.GetNewViewModelDateTrue();
 
             Assert.True(viewModel.Validate(null).Count() > 0);
         }
