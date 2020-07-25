@@ -72,7 +72,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 Approve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
-                Usage = entity.Usage
+                Usage = entity.Usage,
+                RealizationStatus = entity.Realization_Status
 
             }).Where(entity => entity.VBRequestCategory == "NONPO").ToList();
 

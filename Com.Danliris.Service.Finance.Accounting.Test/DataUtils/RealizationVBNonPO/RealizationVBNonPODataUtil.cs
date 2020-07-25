@@ -410,6 +410,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             };
         }
 
+        public RealizationVbNonPOViewModel GetNewViewModelDateFalse()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreateBy = "CreateBy",
+                    CurrencyCode = "IDR",
+                    CurrencyRate = 123,
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    UnitLoad = "UnitLoad",
+                    UnitName = "UnitName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(1),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false
+                    }
+                }
+            };
+        }
+
         public VbRequestModel GetDataRequestVB()
         {
             return new VbRequestModel()
