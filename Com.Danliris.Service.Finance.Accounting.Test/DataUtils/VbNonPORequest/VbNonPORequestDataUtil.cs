@@ -115,6 +115,59 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
                     Code = "Code",
                     Name = "Name",
                 },
+                Division = new Division()
+                {
+                    Id = 1,
+                    Name = "DivisionName"
+                },
+                Currency = new CurrencyVBRequest()
+                {
+                    Id = 0,
+                    Code = "",
+                    Rate = 123,
+                    Symbol = "$"
+                },
+                Amount = 123,
+                Usage = "Usage",
+                Spinning1 = true,
+                Spinning2 = true,
+                Spinning3 = true,
+                Weaving1 = true,
+                Weaving2 = true,
+                Finishing = true,
+                Printing = true,
+                Konfeksi1A = true,
+                Konfeksi1B = true,
+                Konfeksi2A = true,
+                Konfeksi2B = true,
+                Konfeksi2C = true,
+                Umum = true,
+                Others = true,
+                DetailOthers = "",
+                UnitLoad = "UnitLoad,UnitLoad,UnitLoad"
+
+            };
+        }
+
+        public VbNonPORequestViewModel GetViewModel2()
+        {
+            return new VbNonPORequestViewModel()
+            {
+                Id = 1,
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Division = new Division()
+                {
+                    Id = 1,
+                    Name = "DivisionName"
+                },
                 Currency = new CurrencyVBRequest()
                 {
                     Id = 0,

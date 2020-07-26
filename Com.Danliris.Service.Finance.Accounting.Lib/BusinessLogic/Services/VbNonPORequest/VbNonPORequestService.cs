@@ -72,7 +72,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 Approve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
-                Usage = entity.Usage
+                Usage = entity.Usage,
+                RealizationStatus = entity.Realization_Status
 
             }).Where(entity => entity.VBRequestCategory == "NONPO").ToList();
 
@@ -170,8 +171,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 UnitId = viewModel.Unit.Id,
                 UnitCode = viewModel.Unit.Code,
                 UnitName = viewModel.Unit.Name,
-                UnitDivisionId = viewModel.Unit.DivisionId,
-                UnitDivisionName = viewModel.Unit.DivisionName,
+                UnitDivisionId = viewModel.Division.Id,
+                UnitDivisionName = viewModel.Division.Name,
                 VBNo = viewModel.VBNo,
                 CurrencyId = viewModel.Currency.Id,
                 CurrencyCode = viewModel.Currency.Code,
@@ -321,7 +322,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                        {
                            Id = s.UnitId,
                            Code = s.UnitCode,
-                           Name = s.UnitName
+                           Name = s.UnitName,
+                           
+                       },
+                       Division = new Division()
+                       {
+                           Id = s.UnitDivisionId,
+                           Name = s.UnitDivisionName
                        },
                        Currency = new CurrencyVBRequest()
                        {

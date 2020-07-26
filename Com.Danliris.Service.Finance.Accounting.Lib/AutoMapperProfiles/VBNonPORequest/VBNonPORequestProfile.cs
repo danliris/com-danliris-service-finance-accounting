@@ -20,8 +20,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.VBNonPO
                 .ForPath(d => d.Unit.Id, opt => opt.MapFrom(s => s.UnitId))
                 .ForPath(d => d.Unit.Code, opt => opt.MapFrom(s => s.UnitCode))
                 .ForPath(d => d.Unit.Name, opt => opt.MapFrom(s => s.UnitName))
-                .ForPath(d => d.Unit.DivisionName, opt => opt.MapFrom(s => s.UnitDivisionName))
-                .ForPath(d => d.Unit.DivisionId, opt => opt.MapFrom(s => s.UnitDivisionId))
+
+                .ForPath(d => d.Division.Id, opt => opt.MapFrom(s => s.UnitDivisionId))
+                .ForPath(d => d.Division.Name, opt => opt.MapFrom(s => s.UnitDivisionName))
 
                 .ReverseMap();
         }

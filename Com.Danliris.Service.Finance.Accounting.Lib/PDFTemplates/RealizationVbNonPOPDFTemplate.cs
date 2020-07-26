@@ -135,6 +135,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             var items = viewModel.numberVB.UnitLoad.Split(",");
 
+            string lastitem = items[items.Length - 1];
+
+            lastitem = lastitem.Trim();
+
             decimal total_all = 0;
             foreach (var item in viewModel.Items)
             {
@@ -221,7 +225,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody6.Colspan = 2;
             //cellHeaderBody6.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody6);
-            cellHeaderBody6.Phrase = new Phrase($"Tanggal {viewModel.numberVB.Date?.AddHours(timeoffsset).ToString("dd MMMM", new CultureInfo("id-ID"))}", normal_font);
+            cellHeaderBody6.Phrase = new Phrase($"Tanggal VB : {viewModel.numberVB.Date?.AddHours(timeoffsset).ToString("dd-MMMM-yy", new CultureInfo("id-ID"))}", normal_font);
             headerTable3.AddCell(cellHeaderBody6);
             //
             cellHeaderBody1.Phrase = new Phrase($"No.VB: {viewModel.numberVB.VBNo}", normal_font);
@@ -307,6 +311,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody.Phrase = new Phrase("", normal_font_8);
 
             //Create_Box(writer,headerTable3a);
+            
 
             PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
             cellform.FixedHeight = 5f;
@@ -824,13 +829,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
-            if (!viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 1") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 2") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 3")
-                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 1") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 2") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("PRINTING")
-                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("DYEING") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1A") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1B")
-                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2A") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2B") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2C")
-                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("UMUM"))
+            if (CheckVerified(lastitem))
             {
-                cellHeaderBody.Phrase = new Phrase(viewModel.numberVB.UnitLoad.ToUpper(), normal_font_8);
+                cellHeaderBody.Phrase = new Phrase(lastitem, normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -853,11 +854,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG9.BorderColor = BaseColor.Black;
             _radioG9.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            if (!viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 1") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 2") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 3")
-                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 1") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 2") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("PRINTING")
-                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("DYEING") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1A") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1B")
-                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2A") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2B") && !viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2C")
-                && !viewModel.numberVB.UnitLoad.ToUpper().Contains("UMUM"))
+            if (CheckVerified(lastitem))
             {
                 _radioG9.Checked = true;
                 flag = true;
@@ -1087,6 +1084,26 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             stream.Position = 0;
 
             return stream;
+        }
+
+        private bool CheckVerified(string Unit)
+        {
+            bool res;
+
+            if(Unit == "SPINNING 1" || Unit == "SPINNING 2" || Unit == "SPINNING 3"
+                || Unit == "WEAVING 1" || Unit == "WEAVING 2" || Unit == "PRINTING"
+                || Unit == "DYEING" || Unit == "KONFEKSI 1A" || Unit == "KONFEKSI 1B"
+                || Unit == "KONFEKSI 2A" || Unit == "KONFEKSI 2B" || Unit == "KONFEKSI 2C"
+                || Unit == "UMUM")
+            {
+                res = false;
+            }
+            else
+            {
+                res = true;
+            }
+
+            return res;
         }
 
         private string Nom(decimal total)

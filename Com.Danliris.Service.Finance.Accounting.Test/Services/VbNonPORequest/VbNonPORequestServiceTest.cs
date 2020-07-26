@@ -102,6 +102,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
         }
 
         [Fact]
+        public async Task Should_Success_Create_Maping()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbNonPORequestDataUtil(service);
+            var modelToCreate = dataUtil.GetVbRequestModelToCreate();
+            var viewmodelToCreate = dataUtil.GetViewModel();
+            var viewmodelToCreate2 = dataUtil.GetViewModel2(); 
+            await service.CreateAsync(modelToCreate, viewmodelToCreate);
+
+            var result = await service.MappingData(viewmodelToCreate2);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Create_Same_()
         {
             var dbContext = GetDbContext(GetCurrentMethod());

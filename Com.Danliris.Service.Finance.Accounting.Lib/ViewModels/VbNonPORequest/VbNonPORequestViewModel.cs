@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DateTimeOffset? Date { get; set; }
         public DateTimeOffset? DateEstimate { get; set; }
         public Unit Unit { get; set; }
+        public Division Division { get; set; }
         public CurrencyVBRequest Currency { get; set; }
         public decimal Amount { get; set; }
         public string Usage { get; set; }

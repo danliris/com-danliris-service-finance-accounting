@@ -179,7 +179,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
             PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
             cellform.FixedHeight = 5f;
-            //initiate form checkbox 
 
             PdfFormField _checkGroup = PdfFormField.CreateEmpty(writer);
             RadioCheckField _radioG;

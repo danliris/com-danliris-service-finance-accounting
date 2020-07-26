@@ -25,6 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public bool Complete_Status { get; set; }
         public string VBRequestCategory { get; set; }
         public string Usage { get; set; }
+        public bool RealizationStatus { get; set; }
         public List<VbRequestDetailModel> PONo { get; set; }
     }
 }
