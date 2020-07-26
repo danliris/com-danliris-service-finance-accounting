@@ -78,6 +78,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             Assert.True(viewModel.Validate(null).Count() > 0);
         }
 
+        [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty2()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewModel = dataUtil.GetNewViewModelFalse2();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
         //[Fact]
         //public void Should_Success_Validate_Date_Failed_ObjectProperty()
         //{

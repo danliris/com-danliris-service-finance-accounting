@@ -26,7 +26,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (Items == null || Items.Count.Equals(0))
             {
-                yield return new ValidationResult("Daftar harus diisi", new List<string> { "Item" });
+                yield return new ValidationResult("Daftar harus diisi!", new List<string> { "Item" });
+            }
+            else if (numberVB == null)
+            {
+                yield return new ValidationResult("Estimasi Tanggal Realisasi harus ada!", new List<string> { "Item" });
             }
             else if (Items.Count > 0)
             {
@@ -37,22 +41,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 {
                     ItemsError += "{ ";
 
-                    if (!item.DateDetail.HasValue || item.DateDetail.Value > numberVB.DateEstimate.Value)
+                    if (item.DateDetail == null)
                     {
                         CountItemsError++;
-                        ItemsError += "'DateDetail': 'Tanggal Nota harus diisi dan harus kurang atau sama dengan Estimasi Tanggal Realisasi', ";
+                        ItemsError += "'DateDetail': 'Tanggal harus diisi!', ";
+                    }
+
+                    if (item.DateDetail.HasValue && item.DateDetail.Value > numberVB.DateEstimate.Value)
+                    {
+                        CountItemsError++;
+                        ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Estimasi Tanggal Realisasi!', ";
                     }
 
                     if (string.IsNullOrWhiteSpace(item.Remark))
                     {
                         CountItemsError++;
-                        ItemsError += "'Remark': 'Keterangan harus diisi', ";
+                        ItemsError += "'Remark': 'Keterangan harus diisi!', ";
                     }
 
                     if (item.Amount <= 0)
                     {
                         CountItemsError++;
-                        ItemsError += "'Amount': 'Jumlah harus lebih besar dari 0', ";
+                        ItemsError += "'Amount': 'Jumlah harus lebih besar dari 0!', ";
                     }
                     ItemsError += "}, ";
                 }
