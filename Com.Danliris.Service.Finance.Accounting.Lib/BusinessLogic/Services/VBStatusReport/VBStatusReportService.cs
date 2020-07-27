@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
 
         private async Task<List<VBStatusReportViewModel>> GetReportQuery(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
-            var requestQuery = _DbSet.AsQueryable();
+            var requestQuery = _DbSet.AsQueryable().Where(s => s.IsDeleted == false);
 
             if (unitId != 0)
             {
@@ -65,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 requestQuery = requestQuery.Where(s => s.Date.AddHours(offSet).Date <= requestDateTo.Value.Date);
             }
 
-            var realizationQuery = _RealizationDbSet.AsQueryable();
+            var realizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.IsDeleted == false);
 
             if (realizeDateFrom.HasValue && realizeDateTo.HasValue)
             {
@@ -213,7 +213,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             }
             else
             {
-                data = data.OrderBy(s => s.Id).ToList();
+                data = data.OrderByDescending(s => s.LastModifiedUtc).ToList();
                 foreach (var item in data)
                 {
                     if (item.Status == "Outstanding")
