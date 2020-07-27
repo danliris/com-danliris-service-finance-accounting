@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                 yield return new ValidationResult("Kegunaan harus diisi!", new List<string> { "Usage" });
 
             if (Unit == null || Unit.Id <= 0)
-                yield return new ValidationResult("Kode VB harus diisi!", new List<string> { "VBCode" });
+                yield return new ValidationResult("Unit VB harus diisi!", new List<string> { "Unit" });
 
             if (Items == null || Items.Count == 0)
             {
