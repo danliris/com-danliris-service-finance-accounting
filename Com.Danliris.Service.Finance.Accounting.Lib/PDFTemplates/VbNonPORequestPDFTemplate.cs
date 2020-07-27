@@ -731,7 +731,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public bool ValidateOthers(string lastitem)
         {
             bool res;
-            if (lastitem == "Spinning 1" || lastitem == "Spinning 2" || lastitem == "Spinning 3" || lastitem == "Weaving 1" || lastitem == "Weaving 2" &&
+            if (lastitem == "Spinning 1" || lastitem == "Spinning 2" || lastitem == "Spinning 3" || lastitem == "Weaving 1" || lastitem == "Weaving 2" ||
                 lastitem == "Printing" || lastitem == "Finishing" || lastitem == "Konfeksi 1A" || lastitem == "Konfeksi 1B"
                 || lastitem == "Konfeksi 2A" || lastitem == "Konfeksi 2B" || lastitem == "Konfeksi 2C" || lastitem == "Umum")
             {

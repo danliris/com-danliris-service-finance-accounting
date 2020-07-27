@@ -429,7 +429,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             return new RealizationVbNonPOViewModel()
             {
                 VBRealizationNo = "VBRealizationNo",
-                Date = DateTimeOffset.Now,
                 Items = new List<VbNonPORequestDetailViewModel>()
                 {
                     new VbNonPORequestDetailViewModel()
