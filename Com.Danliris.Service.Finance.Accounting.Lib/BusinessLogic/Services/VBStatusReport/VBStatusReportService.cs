@@ -245,19 +245,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 data = data.OrderByDescending(s => s.LastModifiedUtc).ToList();
                 foreach (var item in data)
                 {
-                    if (item.Status == "Outstanding")
-                    {
-                        dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                        item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Unit.Name, item.CreateBy, "", "",
-                        item.Usage, item.Aging, item.Amount, item.RealizationAmount, item.Difference, item.Status);
-                    }
-                    else
-                    {
-                        dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                        item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Unit.Name, item.CreateBy, item.RealizationNo,
-                        item.RealizationDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                        item.Usage, item.Aging, item.Amount, item.RealizationAmount, item.Difference, item.Status);
-                    }
+                    dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                    item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Unit.Name, item.CreateBy, item.RealizationNo,
+                    item.RealizationDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                    item.Usage, item.Aging, item.Amount, item.RealizationAmount, item.Difference, item.Status);
                 }
             }
 
