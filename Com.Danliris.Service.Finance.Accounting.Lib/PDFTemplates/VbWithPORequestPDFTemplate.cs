@@ -82,12 +82,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             cellHeaderBody2.Phrase = new Phrase("PERMOHONAN VB", bold_font);
             headerTable3.AddCell(cellHeaderBody2);
 
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody3.Colspan = 3;
             cellHeaderBody3.Phrase = new Phrase($"No     : {viewModel.VBNo}", normal_font);
@@ -97,12 +97,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             cellHeaderBody3.Phrase = new Phrase($"Tanggal     : {viewModel.Date?.AddHours(clientTimeZoneOffset).ToString("dd/MM/yyyy")}", normal_font);
             headerTable3.AddCell(cellHeaderBody3);
 
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("VB Uang", normal_font);
             headerTable3.AddCell(cellHeaderBody);
@@ -163,16 +163,22 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            //cellHeaderBody.Phrase = new Phrase(Usage, normal_font);
             cellHeaderBody.Phrase = new Phrase(viewModel.Usage, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            cellHeaderBody.Phrase = new Phrase("Total Permohonan", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Symbol} " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody);
+
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("Beban Unit  :", normal_font);
             headerTable3.AddCell(cellHeaderBody);
@@ -503,7 +509,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             _radioG9.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
             string res;
-            if (lastitem.ToUpper() == "SPINNING 1" || lastitem.ToUpper() == "SPINNING 2" || lastitem.ToUpper() == "SPINNING 3" || lastitem.ToUpper() == "WEAVING 1" || lastitem.ToUpper() == "WEAVING 2" &&
+            if (lastitem.ToUpper() == "SPINNING 1" || lastitem.ToUpper() == "SPINNING 2" || lastitem.ToUpper() == "SPINNING 3" || lastitem.ToUpper() == "WEAVING 1" || lastitem.ToUpper() == "WEAVING 2" ||
                 lastitem.ToUpper() == "PRINTING" || lastitem.ToUpper() == "FINISHING" || lastitem.ToUpper() == "KONFEKSI 1A" || lastitem.ToUpper() == "KONFEKSI 1B"
                 || lastitem.ToUpper() == "KONFEKSI 2A" || lastitem.ToUpper() == "KONFEKSI 2B" || lastitem.ToUpper() == "KONFEKSI 2C" || lastitem.ToUpper() == "UMUM")
             {

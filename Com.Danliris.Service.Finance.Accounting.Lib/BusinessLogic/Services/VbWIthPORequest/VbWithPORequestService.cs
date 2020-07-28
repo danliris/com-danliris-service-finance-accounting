@@ -46,7 +46,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             {
                 "VBNo",
                 "UnitLoad",
-                "CreatedBy"
+                "CreatedBy",
+                "UnitName"
             };
 
             query = QueryHelper<VbRequestModel>.Search(query, searchAttributes, keyword);
@@ -235,6 +236,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                             Details = t.Item.Select(
                                 u => new VbWithPORequestDetailItemsViewModel
                                 {
+                                    Id = u.Id,
                                     Conversion = u.Conversion,
                                     dealQuantity = u.DealQuantity,
                                     dealUom = new dealUom()
@@ -277,17 +279,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             foreach (var itemId in itemIds)
             {
                 var item = model.VbRequestDetail.FirstOrDefault(element => element.Id == itemId);
-                if (item == null)
-                {
+                //if (item == null)
+                //{
                     var itemToDelete = _dbContext.VbRequestsDetails.FirstOrDefault(entity => entity.Id == itemId);
                     EntityExtension.FlagForDelete(itemToDelete, _identityService.Username, UserAgent);
                     _dbContext.VbRequestsDetails.Update(itemToDelete);
-                }
-                else
-                {
-                    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
-                    _dbContext.VbRequestsDetails.Update(item);
-                }
+                //}
+                //else
+                //{
+                //    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
+                //    _dbContext.VbRequestsDetails.Update(item);
+                //}
             }
 
             foreach (var item in model.VbRequestDetail)
@@ -315,7 +317,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 {
                     var item = new VbRequestDetailModel()
                     {
-                        Id = itm2.Id,
+                        //Id = itm2.Id,
                         VBId = id,
                         POId = 0,
                         PONo = itm1.no,
