@@ -621,6 +621,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -709,6 +717,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -799,6 +815,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "USD",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -887,6 +911,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -977,6 +1009,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -1065,6 +1105,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -1155,6 +1203,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -1243,6 +1299,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -1333,6 +1397,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -1421,6 +1493,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -1511,6 +1591,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -1599,6 +1687,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -1689,6 +1785,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -1777,6 +1881,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
