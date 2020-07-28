@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
 
         private async Task<List<VBStatusReportViewModel>> GetReportQuery(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
-            var requestQuery = _DbSet.AsQueryable();
+            var requestQuery = _DbSet.AsQueryable().Where(s => s.IsDeleted == false);
 
             if (unitId != 0)
             {
@@ -65,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 requestQuery = requestQuery.Where(s => s.Date.AddHours(offSet).Date <= requestDateTo.Value.Date);
             }
 
-            var realizationQuery = _RealizationDbSet.AsQueryable();
+            var realizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.IsDeleted == false);
 
             if (realizeDateFrom.HasValue && realizeDateTo.HasValue)
             {
@@ -117,27 +117,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     break;
 
                 case "OUTSTANDING":
-                    decimal amount = 0;
-                    result = requestQuery.OrderBy(s => s.LastModifiedUtc)
-                    .Select(s => new VBStatusReportViewModel()
+                    //decimal amount = 0;
+                    //result = requestQuery.OrderBy(s => s.LastModifiedUtc)
+                    //.Select(s => new VBStatusReportViewModel()
+                    //{
+                    //    Id = s.Id,
+                    //    VBNo = s.VBNo,
+                    //    Date = s.Date,
+                    //    DateEstimate = s.DateEstimate,
+                    //    Unit = new Unit()
+                    //    {
+                    //        Id = s.Id,
+                    //        Name = s.UnitName,
+                    //    },
+                    //    CreateBy = s.CreatedBy,
+                    //    Usage = s.Usage,
+                    //    Aging = (int)(requestDateTo.GetValueOrDefault() - s.Date).TotalDays,
+                    //    Amount = s.Amount,
+                    //    RealizationAmount = amount,
+                    //    Difference = amount,
+                    //    Status = s.Complete_Status ? "Clearance" : "Outstanding",
+                    //    LastModifiedUtc = s.LastModifiedUtc,
+                    //})
+                    //.Where(t => t.Status == "Outstanding")
+                    //.OrderByDescending(s => s.LastModifiedUtc)
+                    //.ToList();
+                    result = requestQuery
+                    .Join(realizationQuery,
+                    (rqst) => rqst.VBNo,
+                    (real) => real.VBNo,
+                    (rqst, real) => new VBStatusReportViewModel()
                     {
-                        Id = s.Id,
-                        VBNo = s.VBNo,
-                        Date = s.Date,
-                        DateEstimate = s.DateEstimate,
+                        Id = rqst.Id,
+                        VBNo = rqst.VBNo,
+                        Date = rqst.Date,
+                        DateEstimate = real.DateEstimate,
                         Unit = new Unit()
                         {
-                            Id = s.Id,
-                            Name = s.UnitName,
+                            Id = rqst.Id,
+                            Name = rqst.UnitName,
                         },
-                        CreateBy = s.CreatedBy,
-                        Usage = s.Usage,
-                        Aging = (int)(requestDateTo.GetValueOrDefault() - s.Date).TotalDays,
-                        Amount = s.Amount,
-                        RealizationAmount = amount,
-                        Difference = amount,
-                        Status = s.Complete_Status ? "Clearance" : "Outstanding",
-                        LastModifiedUtc = s.LastModifiedUtc,
+                        CreateBy = rqst.CreatedBy,
+                        RealizationNo = real.VBNoRealize,
+                        RealizationDate = real.Date,
+                        Usage = rqst.Usage,
+                        Aging = (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
+                        Amount = rqst.Amount,
+                        RealizationAmount = real.Amount,
+                        Difference = rqst.Amount - real.Amount,
+                        Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
+                        LastModifiedUtc = real.LastModifiedUtc,
                     })
                     .Where(t => t.Status == "Outstanding")
                     .OrderByDescending(s => s.LastModifiedUtc)
@@ -213,7 +242,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             }
             else
             {
-                data = data.OrderBy(s => s.Id).ToList();
+                data = data.OrderByDescending(s => s.LastModifiedUtc).ToList();
                 foreach (var item in data)
                 {
                     if (item.Status == "Outstanding")

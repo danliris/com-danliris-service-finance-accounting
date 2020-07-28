@@ -37,7 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
 
         private async Task<List<VBExpeditionRealizationReportViewModel>> GetReportQuery(int vbRequestId, int vbRealizeId, string ApplicantName, int unitId, int divisionId, string isVerified, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
-            var requestQuery = _DbSet.AsQueryable();
+            var requestQuery = _DbSet.AsQueryable().Where(s => s.IsDeleted == false);
 
             if (vbRequestId != 0)
             {
@@ -59,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                 requestQuery = requestQuery.Where(s => s.UnitDivisionId == divisionId);
             }
 
-            var realizationQuery = _RealizationDbSet.AsQueryable();
+            var realizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.IsDeleted == false);
 
             if (vbRealizeId != 0)
             {
@@ -241,7 +241,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
             }
             else
             {
-                data = data.OrderBy(s => s.Id).ToList();
+                data = data.OrderByDescending(s => s.LastModifiedUtc).ToList();
                 foreach (var item in data)
                 {
                     dt.Rows.Add(
