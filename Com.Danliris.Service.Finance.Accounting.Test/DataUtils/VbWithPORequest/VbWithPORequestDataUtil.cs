@@ -34,6 +34,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "USD",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "Description"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
