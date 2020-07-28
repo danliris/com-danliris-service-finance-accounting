@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Sales.Lib.Utilities;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Http.Internal;
@@ -29,20 +30,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             PdfWriter writer = PdfWriter.GetInstance(document, stream);
             document.Open();
 
+            string TotalPaidString;
+
+
             #region CustomModel
 
-            decimal convertCurrency = 0;
-
+            decimal convertCurrency;
+            string CurrencySay;
             if (viewModel.Currency.Symbol == "Rp")
             {
                 convertCurrency = viewModel.Amount;
+                TotalPaidString = NumberToTextIDN.terbilang(decimal.ToDouble(convertCurrency));
+                CurrencySay = "Rupiah";
             }
             else
             {
-                convertCurrency = (Math.Round((decimal)viewModel.Amount * (decimal)viewModel.Currency.Rate));
-            }
+                convertCurrency = viewModel.Amount;
+                TotalPaidString = NumberToTextEN.toWords(decimal.ToDouble(convertCurrency));
 
-            string TotalPaidString = NumberToTextIDN.terbilang(Decimal.ToDouble(convertCurrency));
+                CurrencySay = viewModel.Currency.Description;
+                CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CurrencySay.ToLower());
+            }
 
             #endregion CustomModel
 
@@ -123,7 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase("Rp. " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Symbol} " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
 
@@ -131,7 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " Rupiah", normal_font);
+            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + CurrencySay, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
 

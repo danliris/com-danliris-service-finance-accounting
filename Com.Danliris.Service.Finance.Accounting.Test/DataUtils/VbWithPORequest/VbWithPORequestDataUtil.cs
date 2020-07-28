@@ -163,6 +163,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                     Code = "Code",
                     Name = "Name",
                 },
+                Division = new Division()
+                {
+                    Id = 1,
+                    Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "Description"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -174,6 +187,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                             Code = "Code",
                             Name = "Name",
                         },
+                        CurrencyCode = "CurrencyCode",
+                        CurrencyRate = 1,
+                        IncomeTax = new IncomeTax()
+                        {
+                            _id = "id",
+                            Name = "Name",
+                            Rate = "Rate"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy",
 
                         Details = new List<VbWithPORequestDetailItemsViewModel>()
                         {
@@ -222,6 +244,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 CurrencyCode = "CurrencyCode",
                 CurrencyRate = 123,
                 CurrencySymbol = "CurrencySymbol",
+                CurrencyDescription = "CurrencyDescription",
                 Amount = 123,
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",

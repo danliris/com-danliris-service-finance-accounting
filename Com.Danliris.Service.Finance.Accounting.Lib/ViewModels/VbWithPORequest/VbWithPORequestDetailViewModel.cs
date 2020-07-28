@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
+using System.Collections.Generic;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -6,6 +7,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
     {
         public string no { get; set; }
         public Unit unit { get; set; } 
+        public string CurrencyCode { get; set; }
+        public decimal CurrencyRate { get; set; }
+        public IncomeTax IncomeTax { get; set; }
+        public string IncomeTaxBy { get; set; }
         public ICollection<VbWithPORequestDetailItemsViewModel> Details { get; set; }
     }
 }
