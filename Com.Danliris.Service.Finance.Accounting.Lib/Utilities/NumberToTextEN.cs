@@ -21,12 +21,12 @@ namespace Com.Danliris.Service.Sales.Lib.Utilities
             double number;
             bool isNumeric = double.TryParse(s.ToString(), out number);
 
-            if (!isNumeric) return "not a number";
+            //if (!isNumeric) return "not a number";
             var x = s.ToString().IndexOf(".");
             if (x == -1)
                 x = s.ToString().Length;
-            if (x > 15)
-                return "too big";
+            //if (x > 15)
+            //    return "too big";
             var n = s;
             var str = "";
             var sk = 0;

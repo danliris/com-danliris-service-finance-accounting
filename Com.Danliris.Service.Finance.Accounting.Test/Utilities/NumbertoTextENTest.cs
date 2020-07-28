@@ -32,5 +32,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Utilities
             Assert.NotEmpty(result);
             Assert.Equal("Twenty One  ", result);
         }
+
+        //[Fact]
+        //public void toWords_withThousandNumber_Return_Success()
+        //{
+        //    var result = NumberToTextEN.toWords(2000000000000000);
+        //    Assert.NotEmpty(result);
+        //    Assert.Equal("Two Thousand  ", result);
+        //}
     }
 }
