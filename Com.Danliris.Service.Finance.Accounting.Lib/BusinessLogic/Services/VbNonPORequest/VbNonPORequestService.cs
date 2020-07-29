@@ -82,6 +82,62 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             return new ReadResponse<VbRequestList>(data, totalData, orderDictionary, new List<string>());
         }
 
+        public ReadResponse<VbRequestList> ReadWithDateFilter(DateTimeOffset? dateFilter, int offSet, int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            var query = _dbContext.VbRequests.Where(entity => entity.VBRequestCategory == "NONPO").AsQueryable();
+
+            if(dateFilter.HasValue)
+            {
+                query = query.Where(s => dateFilter.Value.Date == s.Date.AddHours(offSet).Date);
+            }
+
+            var searchAttributes = new List<string>()
+            {
+                "VBNo",
+                "UnitLoad",
+                "CreatedBy",
+                "CurrencyCode",
+                "UnitName",
+            };
+
+            query = QueryHelper<VbRequestModel>.Search(query, searchAttributes, keyword);
+
+            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            query = QueryHelper<VbRequestModel>.Filter(query, filterDictionary);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<VbRequestModel>.Order(query, orderDictionary);
+
+            var pageable = new Pageable<VbRequestModel>(query, page - 1, size);
+            var data = pageable.Data.Select(entity => new VbRequestList()
+            {
+                Id = entity.Id,
+                VBNo = entity.VBNo,
+                Date = entity.Date,
+                DateEstimate = entity.DateEstimate,
+                UnitLoad = entity.UnitLoad,
+                Amount = entity.Amount,
+                CurrencyCode = entity.CurrencyCode,
+                CurrencyRate = entity.CurrencyRate,
+                UnitId = entity.UnitId,
+                UnitCode = entity.UnitCode,
+                UnitName = entity.UnitName,
+                UnitDivisionId = entity.UnitDivisionId,
+                UnitDivisionName = entity.UnitDivisionName,
+                CreateBy = entity.CreatedBy,
+                Approve_Status = entity.Apporve_Status,
+                Complete_Status = entity.Complete_Status,
+                VBRequestCategory = entity.VBRequestCategory,
+                Usage = entity.Usage,
+                RealizationStatus = entity.Realization_Status
+
+            }).Where(entity => entity.VBRequestCategory == "NONPO").ToList();
+
+            int totalData = pageable.TotalCount;
+
+            return new ReadResponse<VbRequestList>(data, totalData, orderDictionary, new List<string>());
+        }
+
         public Task<int> CreateAsync(VbRequestModel model, VbNonPORequestViewModel viewmodel)
         {
             model.VBNo = GetVbNonPoNo(model);

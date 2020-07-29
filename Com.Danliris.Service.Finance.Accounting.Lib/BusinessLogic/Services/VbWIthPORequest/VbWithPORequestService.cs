@@ -93,6 +93,65 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             return new ReadResponse<VbRequestWIthPOList>(data, totalData, orderDictionary, new List<string>());
         }
 
+        public ReadResponse<VbRequestWIthPOList> ReadWithDateFilter(DateTimeOffset? dateFilter, int offSet, int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            var query = _dbContext.VbRequests.Where(entity => entity.VBRequestCategory == "PO").AsQueryable();
+
+            if (dateFilter.HasValue)
+            {
+                query = query.Where(s => dateFilter.Value.Date == s.Date.AddHours(offSet).Date);
+            }
+
+            var searchAttributes = new List<string>()
+            {
+                "VBNo",
+                "UnitLoad",
+                "CreatedBy"
+            };
+
+            query = QueryHelper<VbRequestModel>.Search(query, searchAttributes, keyword);
+
+            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            query = QueryHelper<VbRequestModel>.Filter(query, filterDictionary);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<VbRequestModel>.Order(query, orderDictionary);
+
+            var pageable = new Pageable<VbRequestModel>(query, page - 1, size);
+            var data = query.Include(s => s.VbRequestDetail).Select(entity => new VbRequestWIthPOList
+            {
+                Id = entity.Id,
+                VBNo = entity.VBNo,
+                Date = entity.Date,
+                DateEstimate = entity.DateEstimate,
+                ApproveDate = entity.ApproveDate,
+                UnitLoad = entity.UnitLoad,
+                UnitId = entity.UnitId,
+                UnitCode = entity.UnitCode,
+                UnitName = entity.UnitName,
+                CurrencyId = entity.CurrencyId,
+                CurrencyCode = entity.CurrencyCode,
+                CurrencyRate = entity.CurrencyRate,
+                CurrencySymbol = entity.CurrencySymbol,
+                CreateBy = entity.CreatedBy,
+                Amount = entity.Amount,
+                Approve_Status = entity.Apporve_Status,
+                Complete_Status = entity.Complete_Status,
+                VBRequestCategory = entity.VBRequestCategory,
+                PONo = entity.VbRequestDetail.Select(s => new ModelVbPONumber
+                {
+                    PONo = s.PONo,
+                    VBId = s.VBId,
+                    DealQuantity = s.DealQuantity,
+                    Price = s.Price
+                }).ToList()
+            }).ToList();
+
+            int totalData = pageable.TotalCount;
+
+            return new ReadResponse<VbRequestWIthPOList>(data, totalData, orderDictionary, new List<string>());
+        }
+
         public Task<int> CreateAsync(VbRequestModel model, VbWithPORequestViewModel viewmodel)
         {
             model.VBNo = GetVbNonPoNo(model);
@@ -481,6 +540,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             return _dbContext.SaveChangesAsync();
 
         }
-
     }
 }
