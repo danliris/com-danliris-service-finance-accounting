@@ -178,6 +178,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 CurrencyCode = viewModel.Currency.Code,
                 CurrencyRate = viewModel.Currency.Rate,
                 CurrencySymbol = viewModel.Currency.Symbol,
+                CurrencyDescription = viewModel.Currency.Description,
                 Amount = viewModel.Amount,
                 Usage = viewModel.Usage,
                 UnitLoad = viewModel.UnitLoad,
@@ -335,7 +336,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                            Id = s.CurrencyId,
                            Code = s.CurrencyCode,
                            Rate = s.CurrencyRate,
-                           Symbol = s.CurrencySymbol
+                           Symbol = s.CurrencySymbol,
+                           Description = s.CurrencyDescription,
                        },
                        Amount = s.Amount,
                        Usage = s.Usage,

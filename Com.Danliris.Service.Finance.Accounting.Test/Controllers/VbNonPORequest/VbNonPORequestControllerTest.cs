@@ -629,7 +629,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
                     Id = 1,
                     Code = "IDR",
                     Rate = 1,
-                    Symbol = "$"
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Amount = 123,
                 Usage = "Usage",
@@ -701,7 +702,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
                     Id = 1,
                     Code = "IDR",
                     Rate = 1,
-                    Symbol = "$"
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Amount = 123,
                 Usage = "Usage",
@@ -774,7 +776,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
                     Id = 1,
                     Code = "IDR",
                     Rate = 1,
-                    Symbol = "$"
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Amount = 123,
                 Usage = "Usage",
@@ -846,7 +849,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
                     Id = 1,
                     Code = "IDR",
                     Rate = 1,
-                    Symbol = "$"
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Amount = 123,
                 Usage = "Usage",

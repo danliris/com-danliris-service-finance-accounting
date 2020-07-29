@@ -75,6 +75,10 @@
     <Compile Remove="Migrations\20200723082143_UpdateTabelRealizationVb3.Designer.cs" />
     <Compile Remove="Migrations\20200724072401_test.cs" />
     <Compile Remove="Migrations\20200724072401_test.Designer.cs" />
+    <Compile Remove="Migrations\20200727130508_test.cs" />
+    <Compile Remove="Migrations\20200727130508_test.Designer.cs" />
+    <Compile Remove="Migrations\20200727131715_UpdateVbRequestAndVbRequestDetail.cs" />
+    <Compile Remove="Migrations\20200727131715_UpdateVbRequestAndVbRequestDetail.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

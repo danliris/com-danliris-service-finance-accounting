@@ -88,6 +88,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
         }
 
         [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty3()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbNonPORequestDataUtil(service);
+            var viewModel = dataUtil.GetViewModelToValidateOthers3();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
+        [Fact]
         public async Task Should_Success_Create_Model()
         {
             var dbContext = GetDbContext(GetCurrentMethod());

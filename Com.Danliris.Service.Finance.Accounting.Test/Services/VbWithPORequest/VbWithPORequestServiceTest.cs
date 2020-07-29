@@ -6,6 +6,7 @@ using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -35,10 +36,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
 
         private FinanceDbContext GetDbContext(string testName)
         {
+            var serviceProvider = new ServiceCollection()
+                .AddEntityFrameworkInMemoryDatabase()
+                .BuildServiceProvider();
+
             DbContextOptionsBuilder<FinanceDbContext> optionsBuilder = new DbContextOptionsBuilder<FinanceDbContext>();
             optionsBuilder
                 .UseInMemoryDatabase(testName)
-                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .UseInternalServiceProvider(serviceProvider);
 
             FinanceDbContext dbContext = new FinanceDbContext(optionsBuilder.Options);
 
@@ -51,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
                 .Returns(new HttpClientTestService());
-               
+
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
@@ -156,6 +162,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
             var dataUtil = new VbWithPORequestDataUtil(service);
             var modelToCreate = dataUtil.GetVbRequestModelToCreate();
             var viewmodelToCreate = dataUtil.GetViewModel();
+            await service.CreateAsync(modelToCreate, viewmodelToCreate);
+            
             var result = await service.MappingData(viewmodelToCreate);
 
             Assert.NotEqual(0, result);
@@ -190,6 +198,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
 
             Assert.NotEqual(0, result);
         }
+
+        //[Fact]
+        //public async Task Should_Success_Update_Model2()
+        //{
+        //    var dbContext = GetDbContext(GetCurrentMethod());
+        //    var serviceProviderMock = GetServiceProviderMock();
+        //    var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+        //    var dataUtil = new VbWithPORequestDataUtil(service);
+        //    var modelToUpdate = await dataUtil.GetCreatedData();
+        //    var viewmodelToCreate = dataUtil.GetViewModel();
+        //    await service.MappingData(viewmodelToCreate);
+
+        //    var result = await service.UpdateAsync(modelToUpdate.Id, viewmodelToCreate);
+
+        //    Assert.NotEqual(0, result);
+        //}
 
         [Fact]
         public async Task Should_Success_Update_Model_Remove_Items()

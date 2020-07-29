@@ -41,6 +41,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         [MaxLength(64)]
         public string UnitDivisionName { get; set; }
         public int UnitDivisionId { get; set; }
+        [MaxLength(64)]
+        public string IncomeTaxId { get; set; }
+        [MaxLength(64)]
+        public string IncomeTaxName { get; set; }
+        [MaxLength(64)]
+        public string IncomeTaxRate { get; set; }
+        [MaxLength(64)]
+        public string IncomeTaxBy { get; set; }
+        [MaxLength(64)]
+        public string CurrencyDescription { get; set; }
         public virtual ICollection<VbRequestDetailModel> VbRequestDetail { get; set; }
     }
 }

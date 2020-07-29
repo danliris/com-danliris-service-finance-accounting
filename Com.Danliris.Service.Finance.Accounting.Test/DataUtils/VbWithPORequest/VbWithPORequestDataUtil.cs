@@ -34,6 +34,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "USD",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "Description"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -163,6 +171,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                     Code = "Code",
                     Name = "Name",
                 },
+                Division = new Division()
+                {
+                    Id = 1,
+                    Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "Description"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -174,11 +195,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                             Code = "Code",
                             Name = "Name",
                         },
+                        CurrencyCode = "CurrencyCode",
+                        CurrencyRate = 1,
+                        IncomeTax = new IncomeTax()
+                        {
+                            _id = "id",
+                            Name = "Name",
+                            Rate = "Rate"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy",
 
                         Details = new List<VbWithPORequestDetailItemsViewModel>()
                         {
                             new VbWithPORequestDetailItemsViewModel()
                             {
+                                Id = 1,
                                 Conversion = 123,
                                 dealQuantity = 123,
                                 dealUom  = new dealUom()
@@ -207,6 +238,173 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
             };
         }
 
+        public VbWithPORequestViewModel GetViewModel2()
+        {
+            return new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                VBMoney = 1,
+                Usage = "Usage",
+                Unit = new Unit()
+                {
+                 //   Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Division = new Division()
+                {
+                  //  Id = 1,
+                    Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                   // Id = 1,
+                    Code = "Code",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "Description"
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            //Id = 1,
+                            Code = "Code",
+                            Name = "Name",
+                        },
+                        CurrencyCode = "CurrencyCode",
+                        CurrencyRate = 1,
+                        IncomeTax = new IncomeTax()
+                        {
+                         //   _id = "1",
+                            Name = "Name",
+                            Rate = "Rate"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy",
+
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                Id= 1,
+                                Conversion = 123,
+                                dealQuantity = 123,
+                                dealUom  = new dealUom()
+                                {
+                                    _id = "1",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 123,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id="1",
+                                    unit = "unit"
+                                },
+                                priceBeforeTax = 123,
+                                product = new Product_VB()
+                                {
+                                    _id = "1",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+
+                        }
+                    }
+                }
+            };
+        }
+
+        public VbWithPORequestViewModel GetViewModel3()
+        {
+            return new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                VBMoney = 1,
+                Usage = "Usage",
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Division = new Division()
+                {
+                    Id = 1,
+                    Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "Description"
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 1,
+                            Code = "Code",
+                            Name = "Name",
+                        },
+                        CurrencyCode = "CurrencyCode",
+                        CurrencyRate = 1,
+                        IncomeTax = new IncomeTax()
+                        {
+                            _id = "1",
+                            Name = "Name",
+                            Rate = "Rate"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy",
+
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                //Id= 0,
+                                Conversion = 123,
+                                dealQuantity = 123,
+                                dealUom  = new dealUom()
+                                {
+                                    _id = "1",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 123,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id="1",
+                                    unit = "unit"
+                                },
+                                priceBeforeTax = 123,
+                                product = new Product_VB()
+                                {
+                                    _id = "1",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+
+                        }
+                    }
+                }
+            };
+        }
+
         public VbRequestModel GetVbRequestModelToCreate()
         {
             return new VbRequestModel()
@@ -222,6 +420,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 CurrencyCode = "CurrencyCode",
                 CurrencyRate = 123,
                 CurrencySymbol = "CurrencySymbol",
+                CurrencyDescription = "CurrencyDescription",
                 Amount = 123,
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
@@ -308,6 +507,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
             };
         }
 
+       
         public async Task<VbWithPORequestViewModel> GetCreatedData()
         {
             var viewmodel = GetViewModel();

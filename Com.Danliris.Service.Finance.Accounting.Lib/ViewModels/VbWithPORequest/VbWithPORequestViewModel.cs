@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,7 +13,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string VBNo { get; set; }
         public DateTimeOffset? Date { get; set; }
         public DateTimeOffset? DateEstimate { get; set; }
+        public CurrencyVB Currency { get; set; }
         public Unit Unit { get; set; }
+        public Division Division { get; set; }
         public decimal VBMoney { get; set; }
         public string Usage { get; set; }
 
@@ -26,14 +29,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             if (DateEstimate == null)
                 yield return new ValidationResult("Estimasi Tanggal Realisasi harus diisi!", new List<string> { "DateEstimate" });
 
-            if(VBMoney <= 0)
+            if (VBMoney <= 0)
                 yield return new ValidationResult("VB Uang harus lebih dari nol!", new List<string> { "VBMoney" });
 
-            if(string.IsNullOrWhiteSpace(Usage))
+            if (string.IsNullOrWhiteSpace(Usage))
                 yield return new ValidationResult("Kegunaan harus diisi!", new List<string> { "Usage" });
 
             if (Unit == null || Unit.Id <= 0)
                 yield return new ValidationResult("Unit VB harus diisi!", new List<string> { "Unit" });
+
+            if (Currency == null || Currency.Id <= 0)
+                yield return new ValidationResult("Mata Uang harus diisi!", new List<string> { "Currency" });
 
             if (Items == null || Items.Count == 0)
             {
