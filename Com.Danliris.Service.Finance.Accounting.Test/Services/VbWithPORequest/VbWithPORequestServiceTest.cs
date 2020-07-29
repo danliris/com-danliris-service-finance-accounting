@@ -275,5 +275,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
 
             Assert.NotEqual(0, result);
         }
+
+        [Fact]
+        public async Task Should_Success_ReadWithDateFilter_Data()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            await dataUtil.GetCreatedData();
+
+            var result = service.ReadWithDateFilter(DateTimeOffset.UtcNow, 7, 1, 10, "{}", new List<string>(), "", "{}");
+
+            Assert.NotEmpty(result.Data);
+        }
     }
 }
