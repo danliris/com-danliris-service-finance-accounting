@@ -93,13 +93,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         Id = rqst.Id,
                         RequestVBNo = rqst.VBNo,
                         RealizationVBNo = real.VBNoRealize,
+                        VbType = rqst.VBRequestCategory,
                         Applicant = rqst.CreatedBy,
                         Unit = new Unit()
                         {
                             Id = rqst.Id,
                             Name = rqst.UnitName,
-                            //DivisionId = rqst.Id,
-                            //DivisionName = rqst.UnitDivisionName,
+                        },
+                        Division = new Division()
+                        {
+                            Id = rqst.Id,
+                            Name = rqst.UnitDivisionName,
                         },
                         DateUnitSend = null,
                         Usage = rqst.Usage,
@@ -109,12 +113,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         RealizationAmount = real.Amount,
                         RealizationDate = real.Date,
                         DateVerifReceive = null,
-                        Verificator = real.VerifiedName,
+                        Verificator = real.CreatedBy,
                         DateVerifSend = real.VerifiedDate,
                         Status = real.isVerified ? "K" : "",
                         VerificationStatus = real.isNotVeridied ? "R" : "",
                         Notes = real.Reason_NotVerified,
-                        DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
+                        DateCashierReceive = rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
                     })
                     .Where(t => t.Status == "K" && t.VerificationStatus != "R")
@@ -132,13 +136,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         Id = rqst.Id,
                         RequestVBNo = rqst.VBNo,
                         RealizationVBNo = real.VBNoRealize,
+                        VbType = rqst.VBRequestCategory,
                         Applicant = rqst.CreatedBy,
                         Unit = new Unit()
                         {
                             Id = rqst.Id,
                             Name = rqst.UnitName,
-                            //DivisionId = rqst.Id,
-                            //DivisionName = rqst.UnitDivisionName,
+                        },
+                        Division = new Division()
+                        {
+                            Id = rqst.Id,
+                            Name = rqst.UnitDivisionName,
                         },
                         DateUnitSend = null,
                         Usage = rqst.Usage,
@@ -148,12 +156,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         RealizationAmount = real.Amount,
                         RealizationDate = real.Date,
                         DateVerifReceive = null,
-                        Verificator = real.VerifiedName,
+                        Verificator = real.CreatedBy,
                         DateVerifSend = real.VerifiedDate,
                         Status = real.isVerified ? "K" : "",
                         VerificationStatus = real.isNotVeridied ? "R" : "",
                         Notes = real.Reason_NotVerified,
-                        DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
+                        DateCashierReceive = rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
                     })
                     .Where(t => t.Status != "K" && t.VerificationStatus == "R")
@@ -171,13 +179,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         Id = rqst.Id,
                         RequestVBNo = rqst.VBNo,
                         RealizationVBNo = real.VBNoRealize,
+                        VbType = rqst.VBRequestCategory,
                         Applicant = rqst.CreatedBy,
                         Unit = new Unit()
                         {
                             Id = rqst.Id,
                             Name = rqst.UnitName,
-                            //DivisionId = rqst.Id,
-                            //DivisionName = rqst.UnitDivisionName,
+                        },
+                        Division = new Division()
+                        {
+                            Id = rqst.Id,
+                            Name = rqst.UnitDivisionName,
                         },
                         DateUnitSend = null,
                         Usage = rqst.Usage,
@@ -187,12 +199,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         RealizationAmount = real.Amount,
                         RealizationDate = real.Date,
                         DateVerifReceive = null,
-                        Verificator = real.VerifiedName,
+                        Verificator = real.CreatedBy,
                         DateVerifSend = real.VerifiedDate,
                         Status = real.isVerified ? "K" : "",
                         VerificationStatus = real.isNotVeridied ? "R" : "",
                         Notes = real.Reason_NotVerified,
-                        DateCashierReceive = (DateTimeOffset)rqst.CompleteDate,
+                        DateCashierReceive = rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
                     })
                     .Where(t => t.Status == "K" || t.VerificationStatus == "R")
@@ -218,6 +230,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Realisasi VB", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tipe VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nama", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Bagian/Unit", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Divisi", DataType = typeof(string) });
@@ -237,7 +250,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
 
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
             }
             else
             {
@@ -247,9 +260,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                     dt.Rows.Add(
                         item.RequestVBNo,
                         item.RealizationVBNo,
+                        item.VbType,
                         item.Applicant,
                         item.Unit.Name,
-                        //item.Unit.DivisionName,
+                        item.Division.Name,
                         item.DateUnitSend?.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.Usage,
                         item.RequestCurrency,
@@ -262,7 +276,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         item.DateVerifSend.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.Status,
                         item.Notes,
-                        item.DateCashierReceive.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID"))
+                        item.DateCashierReceive?.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID"))
                         );
                 }
             }
