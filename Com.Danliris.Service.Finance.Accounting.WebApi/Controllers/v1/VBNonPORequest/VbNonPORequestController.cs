@@ -152,22 +152,22 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VbNonPOR
             }
         }
 
-        [HttpPost("post")]
-        public async Task<IActionResult> UpdateStatusAsync([FromBody] List<VbRequestModel> ListVbRequestViewModel)
-        {
-            _identityService.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
-            try
-            {
+        //[HttpPost("post")]
+        //public async Task<IActionResult> UpdateStatusAsync([FromBody] List<VbRequestModel> ListVbRequestViewModel)
+        //{
+        //    _identityService.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+        //    try
+        //    {
 
-                await _service.UpdateStatusAsync(ListVbRequestViewModel, _identityService.Username);
+        //        await _service.UpdateStatusAsync(ListVbRequestViewModel, _identityService.Username);
 
-                return NoContent();
-            }
-            catch (Exception)
-            {
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
-            }
-        }
+        //        return NoContent();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+        //    }
+        //}
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)

@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200727132012_UpdateVbRequestAndVbRequestDetail")]
+    partial class UpdateVbRequestAndVbRequestDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1953,9 +1955,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("CurrencyCode")
                         .HasMaxLength(64);
 
-                    b.Property<string>("CurrencyDescription")
-                        .HasMaxLength(64);
-
                     b.Property<int>("CurrencyId");
 
                     b.Property<decimal>("CurrencyRate");
@@ -1977,17 +1976,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("DeletedUtc");
 
-                    b.Property<string>("IncomeTaxBy")
-                        .HasMaxLength(64);
+                    b.Property<string>("IncomeTaxBy");
 
-                    b.Property<string>("IncomeTaxId")
-                        .HasMaxLength(64);
+                    b.Property<string>("IncomeTaxId");
 
-                    b.Property<string>("IncomeTaxName")
-                        .HasMaxLength(64);
+                    b.Property<string>("IncomeTaxName");
 
-                    b.Property<string>("IncomeTaxRate")
-                        .HasMaxLength(64);
+                    b.Property<string>("IncomeTaxRate");
 
                     b.Property<bool>("IsDeleted");
 

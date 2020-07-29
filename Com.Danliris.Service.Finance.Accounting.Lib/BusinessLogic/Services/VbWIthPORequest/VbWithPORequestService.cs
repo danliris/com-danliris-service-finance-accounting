@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using System.Net.Http;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
+using OfficeOpenXml.FormulaParsing.Utilities;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest
 {
@@ -45,7 +46,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             {
                 "VBNo",
                 "UnitLoad",
-                "CreatedBy"
+                "CreatedBy",
+                "UnitName"
             };
 
             query = QueryHelper<VbRequestModel>.Search(query, searchAttributes, keyword);
@@ -159,11 +161,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             model.Apporve_Status = false;
             model.Complete_Status = false;
             model.Usage_Input = viewmodel.Usage;
+            string temp = "";
 
             foreach (var itm in viewmodel.Items)
             {
-                model.UnitLoad = itm.unit.Name;
+                temp += itm.unit.Name + ", ";
+                temp = temp.Remove(temp.Length - 2);
+
+                model.IncomeTaxId = itm.IncomeTax._id;
+                model.IncomeTaxName = itm.IncomeTax.Name;
+                model.IncomeTaxRate = itm.IncomeTax.Rate;
+                model.IncomeTaxBy = itm.IncomeTaxBy;
+
+                foreach (var itm2 in itm.Details)
+                {
+                    model.Amount += itm2.priceBeforeTax;
+                }
             }
+
+            model.UnitLoad = temp;
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
 
@@ -178,8 +194,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
                 UpdateToPOExternal(itm1.no, updateModel);
             }
-
-
 
             return _dbContext.SaveChangesAsync();
 
@@ -239,11 +253,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     DateEstimate = s.DateEstimate,
                     VBMoney = s.VBMoney,
                     Usage = s.Usage_Input,
+                    Currency = new CurrencyVB()
+                    {
+                        Id = s.CurrencyId,
+                        Code = s.CurrencyCode,
+                        Rate = s.CurrencyRate,
+                        Symbol = s.CurrencySymbol,
+                        Description = s.CurrencyDescription
+                    },
                     Unit = new Unit()
                     {
                         Id = s.UnitId,
                         Code = s.UnitCode,
                         Name = s.UnitName
+                    },
+                    Division = new Division()
+                    {
+                        Id = s.UnitDivisionId,
+                        Name = s.UnitDivisionName
                     },
                     Items = s.VbRequestDetail.GroupBy(
                             groupkey => new { groupkey.PONo, groupkey.UnitName },
@@ -257,10 +284,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                             {
                                 Name = t.Group.UnitName
                             },
+                            IncomeTax = new IncomeTax()
+                            {
+                                _id = s.IncomeTaxId,
+                                Rate = s.IncomeTaxRate,
+                                Name = s.IncomeTaxName
+                            },
+                            IncomeTaxBy = s.IncomeTaxBy,
 
                             Details = t.Item.Select(
                                 u => new VbWithPORequestDetailItemsViewModel
                                 {
+                                    Id = u.Id,
                                     Conversion = u.Conversion,
                                     dealQuantity = u.DealQuantity,
                                     dealUom = new dealUom()
@@ -281,7 +316,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                                         code = u.ProductCode,
                                         name = u.ProductName
                                     },
-                                    productRemark = u.ProductRemark
+                                    productRemark = u.ProductRemark,
+                                    includePpn = u.IsUseVat
                                 }
                                 ).ToList()
                         }
@@ -294,12 +330,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
         public Task<int> UpdateAsync(int id, VbWithPORequestViewModel viewmodel)
         {
             var model = MappingData2(id, viewmodel);
-            model.VBRequestCategory = "PO";
-
-            model.Apporve_Status = false;
-            model.Complete_Status = false;
 
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+
+            var itemIds = _dbContext.VbRequestsDetails.Where(entity => entity.VBId == id).Select(entity => entity.Id).ToList();
+
+            foreach (var itemId in itemIds)
+            {
+                var item = model.VbRequestDetail.FirstOrDefault(element => element.Id == itemId);
+                //if (item == null)
+                //{
+                    var itemToDelete = _dbContext.VbRequestsDetails.FirstOrDefault(entity => entity.Id == itemId);
+                    EntityExtension.FlagForDelete(itemToDelete, _identityService.Username, UserAgent);
+                    _dbContext.VbRequestsDetails.Update(itemToDelete);
+                //}
+                //else
+                //{
+                //    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
+                //    _dbContext.VbRequestsDetails.Update(item);
+                //}
+            }
+
+            foreach (var item in model.VbRequestDetail)
+            {
+                if (item.Id <= 0)
+                {
+                    EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
+                    _dbContext.VbRequestsDetails.Add(item);
+                }
+            }
+
 
             _dbContext.VbRequests.Update(model);
 
@@ -316,10 +376,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 {
                     var item = new VbRequestDetailModel()
                     {
+                        //Id = itm2.Id,
                         VBId = id,
                         POId = 0,
                         PONo = itm1.no,
-                        UnitName = viewModel.Unit.Name,
+                        VBNo = viewModel.VBNo,
+                        UnitName = itm1.unit.Name,
                         Conversion = itm2.Conversion,
                         DealQuantity = itm2.dealQuantity,
                         DealUOMId = itm2.dealUom._id,
@@ -337,11 +399,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                         DeletedBy = "",
                         DeletedAgent = "",
                         CreatedBy = viewModel.CreatedBy,
-                        CreatedAgent = viewModel.CreatedAgent
+                        CreatedAgent = viewModel.CreatedAgent,
+                        IsUseVat = itm2.includePpn,
                     };
 
                     listDetail.Add(item);
                 }
+            }
+
+            string IncomeTaxBy = "";
+            string IncomeTaxId = "";
+            string IncomeTaxName = "";
+            string IncomeTaxRate = "";
+            string temp = "";
+
+            foreach (var itm in viewModel.Items)
+            {
+                IncomeTaxBy = itm.IncomeTaxBy;
+                IncomeTaxId = itm.IncomeTax._id;
+                IncomeTaxName = itm.IncomeTax.Name;
+                IncomeTaxRate = itm.IncomeTax.Rate;
+
+                temp += itm.unit.Name + ", ";
+                temp = temp.Remove(temp.Length - 2);
             }
 
             var result = new VbRequestModel()
@@ -363,7 +443,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 LastModifiedAgent = viewModel.LastModifiedAgent,
                 LastModifiedBy = viewModel.LastModifiedBy,
                 VBMoney = viewModel.VBMoney,
-                Usage_Input = viewModel.Usage
+                Usage_Input = viewModel.Usage,
+                CurrencyId = viewModel.Currency.Id,
+                CurrencyCode = viewModel.Currency.Code,
+                CurrencyRate = viewModel.Currency.Rate,
+                CurrencySymbol = viewModel.Currency.Symbol,
+                CurrencyDescription = viewModel.Currency.Symbol,
+                UnitDivisionId = viewModel.Division.Id,
+                UnitDivisionName = viewModel.Division.Name,
+                IncomeTaxBy = IncomeTaxBy,
+                IncomeTaxId = IncomeTaxId,
+                IncomeTaxName = IncomeTaxName,
+                IncomeTaxRate = IncomeTaxRate,
+                UnitLoad = temp,
+                VBRequestCategory = "PO",
+                Apporve_Status = false,
+                Complete_Status = false
             };
 
             return result;
@@ -379,6 +474,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             if (model != null)
             {
                 EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
+
+                foreach (var item in model.VbRequestDetail)
+                    EntityExtension.FlagForDelete(item, _identityService.Username, UserAgent);
 
                 _dbContext.VbRequests.Update(model);
             }
@@ -404,6 +502,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                             .Select(r => r.Id)
                             .First().ToString());
 
+            string VbNo = _DbSet.OrderByDescending(p => p.Id)
+                            .Select(r => r.VBNo)
+                            .First().ToString();
+
             foreach (var itm1 in viewmodel.Items)
             {
 
@@ -411,6 +513,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 {
                     var item = new VbRequestDetailModel()
                     {
+                        VBNo = VbNo,
                         PONo = itm1.no,
                         UnitName = itm1.unit.Name,
                         VBId = value,
@@ -425,7 +528,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                         DealUOMUnit = itm2.dealUom.unit,
                         Conversion = itm2.Conversion,
                         Price = itm2.priceBeforeTax,
-                        ProductRemark = itm2.productRemark
+                        ProductRemark = itm2.productRemark,
+                        IsUseVat = itm2.includePpn,
 
                     };
                     EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);

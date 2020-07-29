@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VbNonPORequest
+﻿namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
-    public class CurrencyVBRequest
+    public class CurrencyVB
     {
         public int Id { get; set; }
         public string Code { get; set; }
