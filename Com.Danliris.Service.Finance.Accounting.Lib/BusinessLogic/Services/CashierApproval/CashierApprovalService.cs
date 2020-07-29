@@ -53,6 +53,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                             approvals.Add(item.VBNo);
                             VbRequestModel model = DbContext.VbRequests.Single(x => x.Id == item.Id);
                             model.Apporve_Status = true;
+                            model.Complete_Status = false;
                             model.ApproveDate = DateTimeOffset.UtcNow;
                             model.Amount = item.Amount;
 
@@ -68,6 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                             approvals.Add(item.VBNo);
                             VbRequestModel model = DbContext.VbRequests.Single(x => x.Id == item.Id);
                             model.Apporve_Status = true;
+                            model.Complete_Status = false;
                             model.ApproveDate = DateTimeOffset.UtcNow;
 
                             EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
@@ -105,6 +107,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                     if (approvals.VBRequestCategory == "PO")
                     {
                         approvals.Apporve_Status = false;
+                        approvals.Complete_Status = false;
                         approvals.ApproveDate = null;
                         approvals.Amount = 0;
 
@@ -115,6 +118,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                     else if (approvals.VBRequestCategory == "NONPO")
                     {
                         approvals.Apporve_Status = false;
+                        approvals.Complete_Status = false;
                         approvals.ApproveDate = null;
 
                         EntityExtension.FlagForUpdate(approvals, IdentityService.Username, UserAgent);

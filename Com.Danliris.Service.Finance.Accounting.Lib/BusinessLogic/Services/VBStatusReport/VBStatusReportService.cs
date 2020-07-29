@@ -117,31 +117,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     break;
 
                 case "OUTSTANDING":
-                    //decimal amount = 0;
-                    //result = requestQuery.OrderBy(s => s.LastModifiedUtc)
-                    //.Select(s => new VBStatusReportViewModel()
-                    //{
-                    //    Id = s.Id,
-                    //    VBNo = s.VBNo,
-                    //    Date = s.Date,
-                    //    DateEstimate = s.DateEstimate,
-                    //    Unit = new Unit()
-                    //    {
-                    //        Id = s.Id,
-                    //        Name = s.UnitName,
-                    //    },
-                    //    CreateBy = s.CreatedBy,
-                    //    Usage = s.Usage,
-                    //    Aging = (int)(requestDateTo.GetValueOrDefault() - s.Date).TotalDays,
-                    //    Amount = s.Amount,
-                    //    RealizationAmount = amount,
-                    //    Difference = amount,
-                    //    Status = s.Complete_Status ? "Clearance" : "Outstanding",
-                    //    LastModifiedUtc = s.LastModifiedUtc,
-                    //})
-                    //.Where(t => t.Status == "Outstanding")
-                    //.OrderByDescending(s => s.LastModifiedUtc)
-                    //.ToList();
                     result = requestQuery
                     .Join(realizationQuery,
                     (rqst) => rqst.VBNo,
