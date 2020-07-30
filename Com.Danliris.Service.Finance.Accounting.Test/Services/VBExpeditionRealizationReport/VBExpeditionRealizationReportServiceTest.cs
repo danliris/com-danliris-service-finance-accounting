@@ -76,10 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBExpeditionReal
             Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitDivisionId, "Cashier", null, data.Date, 7);
             Assert.NotNull(Response);
 
-            Response = service.GetReport(data.Id, data.Id, "", data.UnitId, data.UnitDivisionId, "Return", data.Date, null, 7);
-            Assert.NotNull(Response);
-
-            Response = service.GetReport(data.Id, data.Id, null, data.UnitId, data.UnitDivisionId, null, null, null, 7);
+            Response = service.GetReport(data.Id, data.Id, null, data.UnitId, data.UnitDivisionId, "Return", data.Date, null, 7);
             Assert.NotNull(Response);
         }
 
@@ -109,44 +106,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBExpeditionReal
             var Response = service.GenerateExcel(0, 0, null, 0, 0, "All", null, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GenerateExcel(0, 0, null, 0, 0, "Cashier", null, null, 7);
+            Response = service.GenerateExcel(0, 0, null, 0, 0, "Cashier", data.Date, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GenerateExcel(0, 0, null, 0, 0, "Return", null, null, 7);
+            Response = service.GenerateExcel(0, 0, null, 0, 0, "Return", null, data.Date, 7);
             Assert.NotNull(Response);
         }
-
-        //[Fact]
-        //public async Task Should_Success_GenerateExcel2()
-        //{
-        //    VBExpeditionRealizationReportService service = new VBExpeditionRealizationReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-        //    var data = await _dataUtil(service).GetTestData_ById();
-
-        //    var dataRealization = new RealizationVbModel()
-        //    {
-        //        VBNo = "VBNo",
-        //        VBNoRealize = "VBNoRealize",
-        //        CurrencyCode = "IDR",
-        //        Amount = 100,
-        //        Date = DateTimeOffset.Now,
-        //        VerifiedName = "VerifiedName",
-        //        VerifiedDate = DateTimeOffset.Now,
-        //        isVerified = false,
-        //        isNotVeridied = true,
-        //        Reason_NotVerified = "Reason_NotVerified",
-        //        LastModifiedUtc = DateTime.Now,
-        //    };
-        //    service._DbContext.RealizationVbs.Add(dataRealization);
-        //    service._DbContext.SaveChanges();
-
-        //    var Response = service.GenerateExcel(0, 0, null, 0, 0, "All", null, null, 7);
-        //    Assert.NotNull(Response);
-
-        //    Response = service.GenerateExcel(0, 0, null, 0, 0, "Cashier", null, null, 7);
-        //    Assert.NotNull(Response);
-
-        //    Response = service.GenerateExcel(0, 0, null, 0, 0, "Return", null, null, 7);
-        //    Assert.NotNull(Response);
-        //}
     }
 }

@@ -71,16 +71,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
             VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestData_Outstanding_ById();
 
-            var Response = service.GetReport(data.UnitId, data.Id, "CreatedBy", "Clearance", data.Date, data.Date, data.Date, data.Date, 7);
+            var Response = service.GetReport(data.UnitId, data.Id, "CreatedBy", "All", data.Date, data.Date, data.Date, data.Date, 7);
             Assert.NotNull(Response);
 
-            Response = service.GetReport(data.UnitId, data.Id, null, null, null, null, null, null, 7);
+            Response = service.GetReport(0, 0, null, "Outstanding", data.Date, null, data.Date, null, 7);
             Assert.NotNull(Response);
 
-            Response = service.GetReport(data.UnitId, data.Id, "CreatedBy", "Outstanding", data.Date, null, data.Date, null, 7);
-            Assert.NotNull(Response);
-
-            Response = service.GetReport(data.UnitId, data.Id, "CreatedBy", "Outstanding", null, data.Date, null, data.Date, 7);
+            Response = service.GetReport(0, 0, null, "Clearance", null, data.Date, null, data.Date, 7);
             Assert.NotNull(Response);
         }
 

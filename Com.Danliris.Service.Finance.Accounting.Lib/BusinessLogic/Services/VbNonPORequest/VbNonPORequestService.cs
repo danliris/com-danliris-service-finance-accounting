@@ -82,13 +82,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             return new ReadResponse<VbRequestList>(data, totalData, orderDictionary, new List<string>());
         }
 
-        public ReadResponse<VbRequestList> ReadWithDateFilter(DateTimeOffset? dateFilter, int offSet, int page, int size, string order, List<string> select, string keyword, string filter)
+        public ReadResponse<VbRequestList> ReadWithDateFilter(DateTime? dateFilter, int offSet, int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _dbContext.VbRequests.Where(entity => entity.VBRequestCategory == "NONPO").AsQueryable();
 
             if(dateFilter.HasValue)
             {
-                query = query.Where(s => dateFilter.Value.Date == s.Date.AddHours(offSet).Date);
+                //query = query.Where(s => dateFilter.Value.Date == s.Date.AddHours(offSet).Date);
+                query = query.Where(s => dateFilter.Value.Date == s.Date);
             }
 
             var searchAttributes = new List<string>()
