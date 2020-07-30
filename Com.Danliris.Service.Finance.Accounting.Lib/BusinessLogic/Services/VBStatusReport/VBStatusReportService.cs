@@ -85,99 +85,189 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             switch (clearanceStatus.ToUpper())
             {
                 case "CLEARANCE":
-                    result = requestQuery
-                    .Join(realizationQuery,
-                    (rqst) => rqst.VBNo,
-                    (real) => real.VBNo,
-                    (rqst, real) => new VBStatusReportViewModel()
-                    {
-                        Id = rqst.Id,
-                        VBNo = rqst.VBNo,
-                        Date = rqst.Date,
-                        DateEstimate = real.DateEstimate,
-                        Unit = new Unit()
-                        {
-                            Id = rqst.Id,
-                            Name = rqst.UnitName,
-                        },
-                        CreateBy = rqst.CreatedBy,
-                        RealizationNo = real.VBNoRealize,
-                        RealizationDate = real.Date,
-                        Usage = rqst.Usage,
-                        Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
-                        Amount = rqst.Amount,
-                        RealizationAmount = real.Amount,
-                        Difference = rqst.Amount - real.Amount,
-                        Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
-                        LastModifiedUtc = real.LastModifiedUtc,
-                    })
-                    .Where(t => t.Status == "Clearance")
-                    .OrderByDescending(s => s.LastModifiedUtc)
-                    .ToList();
+                    result = (from rqst in requestQuery
+                              join real in realizationQuery
+                              on rqst.VBNo equals real.VBNo into data
+                              from real in data.DefaultIfEmpty()
+                              select new VBStatusReportViewModel()
+                              {
+                                  Id = rqst.Id,
+                                  VBNo = rqst.VBNo,
+                                  Date = rqst.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  DateEstimate = real.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  Unit = new Unit()
+                                  {
+                                      Id = rqst.Id,
+                                      Name = rqst.UnitName,
+                                  },
+                                  CreateBy = rqst.CreatedBy,
+                                  RealizationNo = real.VBNoRealize,
+                                  RealizationDate = real.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  Usage = rqst.Usage,
+                                  Aging = (int)(real.Date - rqst.Date).TotalDays,
+                                  Amount = rqst.Amount,
+                                  RealizationAmount = real.Amount,
+                                  Difference = rqst.Amount - real.Amount,
+                                  Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
+                                  LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                              })
+                              .Where(t => t.Status == "Clearance")
+                              .OrderByDescending(s => s.LastModifiedUtc)
+                              .ToList();
+
+                    //result = requestQuery
+                    //.Join(realizationQuery,
+                    //(rqst) => rqst.VBNo,
+                    //(real) => real.VBNo,
+                    //(rqst, real) => new VBStatusReportViewModel()
+                    //{
+                    //    Id = rqst.Id,
+                    //    VBNo = rqst.VBNo,
+                    //    //Date = rqst.Date,
+                    //    //DateEstimate = real.DateEstimate,
+                    //    Unit = new Unit()
+                    //    {
+                    //        Id = rqst.Id,
+                    //        Name = rqst.UnitName,
+                    //    },
+                    //    CreateBy = rqst.CreatedBy,
+                    //    RealizationNo = real.VBNoRealize,
+                    //    //RealizationDate = real.Date,
+                    //    Usage = rqst.Usage,
+                    //    Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
+                    //    Amount = rqst.Amount,
+                    //    RealizationAmount = real.Amount,
+                    //    Difference = rqst.Amount - real.Amount,
+                    //    Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
+                    //    //LastModifiedUtc = real.LastModifiedUtc,
+                    //})
+                    //.Where(t => t.Status == "Clearance")
+                    ////.OrderByDescending(s => s.LastModifiedUtc)
+                    //.ToList();
                     break;
 
                 case "OUTSTANDING":
-                    result = requestQuery
-                    .Join(realizationQuery,
-                    (rqst) => rqst.VBNo,
-                    (real) => real.VBNo,
-                    (rqst, real) => new VBStatusReportViewModel()
-                    {
-                        Id = rqst.Id,
-                        VBNo = rqst.VBNo,
-                        Date = rqst.Date,
-                        DateEstimate = real.DateEstimate,
-                        Unit = new Unit()
-                        {
-                            Id = rqst.Id,
-                            Name = rqst.UnitName,
-                        },
-                        CreateBy = rqst.CreatedBy,
-                        RealizationNo = real.VBNoRealize,
-                        RealizationDate = real.Date,
-                        Usage = rqst.Usage,
-                        Aging = (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
-                        Amount = rqst.Amount,
-                        RealizationAmount = real.Amount,
-                        Difference = rqst.Amount - real.Amount,
-                        Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
-                        LastModifiedUtc = real.LastModifiedUtc,
-                    })
-                    .Where(t => t.Status == "Outstanding")
-                    .OrderByDescending(s => s.LastModifiedUtc)
-                    .ToList();
+                    result = (from rqst in requestQuery
+                              join real in realizationQuery
+                              on rqst.VBNo equals real.VBNo into data
+                              from real in data.DefaultIfEmpty()
+                              select new VBStatusReportViewModel()
+                              {
+                                  Id = rqst.Id,
+                                  VBNo = rqst.VBNo,
+                                  Date = rqst.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  DateEstimate = real.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  Unit = new Unit()
+                                  {
+                                      Id = rqst.Id,
+                                      Name = rqst.UnitName,
+                                  },
+                                  CreateBy = rqst.CreatedBy,
+                                  RealizationNo = real.VBNoRealize == null ? "" : real.VBNoRealize,
+                                  RealizationDate = real.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  Usage = rqst.Usage,
+                                  Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
+                                  Amount = rqst.Amount,
+                                  RealizationAmount = real.Amount != null ? real.Amount : 0,
+                                  Difference = real.Amount != null ? (rqst.Amount - real.Amount == null ? 0 : real.Amount) : 0,
+                                  Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
+                                  LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                              })
+                              .Where(t => t.Status == "Outstanding")
+                              .OrderByDescending(s => s.LastModifiedUtc)
+                              .ToList();
+
+                    //result = requestQuery
+                    //.Join(realizationQuery,
+                    //(rqst) => rqst.VBNo,
+                    //(real) => real.VBNo,
+                    //(rqst, real) => new VBStatusReportViewModel()
+                    //{
+                    //    Id = rqst.Id,
+                    //    VBNo = rqst.VBNo,
+                    //    Date = rqst.Date,
+                    //    DateEstimate = real.DateEstimate,
+                    //    Unit = new Unit()
+                    //    {
+                    //        Id = rqst.Id,
+                    //        Name = rqst.UnitName,
+                    //    },
+                    //    CreateBy = rqst.CreatedBy,
+                    //    RealizationNo = real.VBNoRealize,
+                    //    RealizationDate = real.Date,
+                    //    Usage = rqst.Usage,
+                    //    Aging = (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
+                    //    Amount = rqst.Amount,
+                    //    RealizationAmount = real.Amount,
+                    //    Difference = rqst.Amount - real.Amount,
+                    //    Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
+                    //    LastModifiedUtc = real.LastModifiedUtc,
+                    //})
+                    //.Where(t => t.Status == "Outstanding")
+                    //.OrderByDescending(s => s.LastModifiedUtc)
+                    //.ToList();
                     break;
 
                 case "ALL":
-                    result = requestQuery
-                    .Join(realizationQuery,
-                    (rqst) => rqst.VBNo,
-                    (real) => real.VBNo,
-                    (rqst, real) => new VBStatusReportViewModel()
-                    {
-                        Id = rqst.Id,
-                        VBNo = rqst.VBNo,
-                        Date = rqst.Date,
-                        DateEstimate = real.DateEstimate,
-                        Unit = new Unit()
-                        {
-                            Id = rqst.Id,
-                            Name = rqst.UnitName,
-                        },
-                        CreateBy = rqst.CreatedBy,
-                        RealizationNo = real.VBNoRealize,
-                        RealizationDate = real.Date,
-                        Usage = rqst.Usage,
-                        Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
-                        Amount = rqst.Amount,
-                        RealizationAmount = real.Amount,
-                        Difference = rqst.Amount - real.Amount,
-                        Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
-                        LastModifiedUtc = real.LastModifiedUtc,
-                    })
-                    .Where(t => t.Status == "Clearance" || t.Status == "Outstanding")
-                    .OrderByDescending(s => s.LastModifiedUtc)
-                    .ToList();
+                    result = (from rqst in requestQuery
+                              join real in realizationQuery
+                              on rqst.VBNo equals real.VBNo into data
+                              from real in data.DefaultIfEmpty()
+                              select new VBStatusReportViewModel()
+                              {
+                                  Id = rqst.Id,
+                                  VBNo = rqst.VBNo,
+                                  Date = rqst.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  DateEstimate = real.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  Unit = new Unit()
+                                  {
+                                      Id = rqst.Id,
+                                      Name = rqst.UnitName,
+                                  },
+                                  CreateBy = rqst.CreatedBy,
+                                  RealizationNo = real.VBNoRealize == null ? "" : real.VBNoRealize,
+                                  RealizationDate = real.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  Usage = rqst.Usage,
+                                  Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
+                                  Amount = rqst.Amount,
+                                  RealizationAmount = real.Amount != null ? real.Amount : 0,
+                                  Difference = real.Amount != null ? (rqst.Amount - real.Amount == null ? 0 : real.Amount) : 0,
+                                  Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
+                                  LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                              })
+                              .Where(t => t.Status == "Clearance" || t.Status == "Outstanding")
+                              .OrderByDescending(s => s.LastModifiedUtc)
+                              .ToList();
+
+                    //result = requestQuery
+                    //.Join(realizationQuery,
+                    //(rqst) => rqst.VBNo,
+                    //(real) => real.VBNo,
+                    //(rqst, real) => new VBStatusReportViewModel()
+                    //{
+                    //    Id = rqst.Id,
+                    //    VBNo = rqst.VBNo,
+                    //    Date = rqst.Date,
+                    //    DateEstimate = real.DateEstimate,
+                    //    Unit = new Unit()
+                    //    {
+                    //        Id = rqst.Id,
+                    //        Name = rqst.UnitName,
+                    //    },
+                    //    CreateBy = rqst.CreatedBy,
+                    //    RealizationNo = real.VBNoRealize,
+                    //    RealizationDate = real.Date,
+                    //    Usage = rqst.Usage,
+                    //    Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
+                    //    Amount = rqst.Amount,
+                    //    RealizationAmount = real.Amount,
+                    //    Difference = rqst.Amount - real.Amount,
+                    //    Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
+                    //    LastModifiedUtc = real.LastModifiedUtc,
+                    //})
+                    //.Where(t => t.Status == "Clearance" || t.Status == "Outstanding")
+                    //.OrderByDescending(s => s.LastModifiedUtc)
+                    //.ToList();
                     break;
 
             }
@@ -220,9 +310,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 data = data.OrderByDescending(s => s.LastModifiedUtc).ToList();
                 foreach (var item in data)
                 {
-                    dt.Rows.Add(item.VBNo, item.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    item.DateEstimate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.Unit.Name, item.CreateBy, item.RealizationNo,
-                    item.RealizationDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                    dt.Rows.Add(item.VBNo, item.Date,
+                    item.DateEstimate, item.Unit.Name, item.CreateBy, item.RealizationNo,
+                    item.RealizationDate,
                     item.Usage, item.Aging, item.Amount, item.RealizationAmount, item.Difference, item.Status);
                 }
             }
