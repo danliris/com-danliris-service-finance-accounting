@@ -9,7 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
     public interface IVbWithPORequestService
     {
         ReadResponse<VbRequestWIthPOList> Read(int page, int size, string order, List<string> select, string keyword, string filter);
-        ReadResponse<VbRequestWIthPOList> ReadWithDateFilter(DateTime? dateFilter, int offSet, int page, int size, string order, List<string> select, string keyword, string filter);
+        ReadResponse<VbRequestWIthPOList> ReadWithDateFilter(DateTimeOffset? dateFilter, int offSet, int page, int size, string order, List<string> select, string keyword, string filter);
         Task<int> CreateAsync(VbRequestModel model, VbWithPORequestViewModel viewmodel);
         Task<VbWithPORequestViewModel> ReadByIdAsync2(int id);
         Task<int> UpdateAsync(int id, VbWithPORequestViewModel viewmodel);

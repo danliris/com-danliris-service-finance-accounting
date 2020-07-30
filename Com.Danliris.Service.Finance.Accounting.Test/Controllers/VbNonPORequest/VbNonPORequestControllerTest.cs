@@ -978,7 +978,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
 
             var serviceMock = new Mock<IVbNonPORequestService>();
             serviceMock
-                .Setup(service => service.ReadWithDateFilter(It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(service => service.ReadWithDateFilter(It.IsAny<DateTimeOffset?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(new ReadResponse<VbRequestList>(new List<VbRequestList>(), 1, new Dictionary<string, string>(), new List<string>()));
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbNonPORequestService))).Returns(serviceMock.Object);
@@ -995,7 +995,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = controller.GetWithDateFilter(DateTime.UtcNow, "7", 1, 1, "string", new List<string>(), "string", "string");
+            var response = controller.GetWithDateFilter(DateTimeOffset.UtcNow, "7", 1, 1, "string", new List<string>(), "string", "string");
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
@@ -1008,7 +1008,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
 
             var serviceMock = new Mock<IVbNonPORequestService>();
             serviceMock
-                .Setup(service => service.ReadWithDateFilter(It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(service => service.ReadWithDateFilter(It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception());
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbNonPORequestService))).Returns(serviceMock.Object);
@@ -1025,7 +1025,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbNonPOReques
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = controller.GetWithDateFilter(DateTime.UtcNow, "7", 1, 1, "string", new List<string>(), "string", "string");
+            var response = controller.GetWithDateFilter(DateTimeOffset.UtcNow, "7", 1, 1, "string", new List<string>(), "string", "string");
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
