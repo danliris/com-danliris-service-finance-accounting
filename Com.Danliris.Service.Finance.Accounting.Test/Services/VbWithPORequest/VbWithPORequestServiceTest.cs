@@ -309,7 +309,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
             var dataUtil = new VbWithPORequestDataUtil(service);
             await dataUtil.GetCreatedData();
 
-            var result = service.ReadWithDateFilter(null, 7, 1, 10, "{}", new List<string>(), "", "{}");
+            var result = service.ReadWithDateFilter(DateTimeOffset.Now, 7, 1, 10, "{}", new List<string>(), "", "{}");
 
             Assert.NotEmpty(result.Data);
         }
