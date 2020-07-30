@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
 
         private async Task<List<VBStatusReportViewModel>> GetReportQuery(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
-            var requestQuery = _DbSet.AsQueryable().Where(s => s.IsDeleted == false);
+            var requestQuery = _DbSet.AsQueryable().Where(s => s.IsDeleted == false && s.Apporve_Status == true);
 
             if (unitId != 0)
             {
