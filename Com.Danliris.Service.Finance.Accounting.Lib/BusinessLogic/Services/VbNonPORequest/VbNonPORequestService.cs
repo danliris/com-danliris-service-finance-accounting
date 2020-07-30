@@ -89,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             if(dateFilter.HasValue)
             {
                 //query = query.Where(s => dateFilter.Value.Date == s.Date.AddHours(offSet).Date);
-                query = query.Where(s => dateFilter.Value.Date == s.Date);
+                query = query.Where(s => dateFilter.Value.Date == s.Date.Date);
             }
 
             var searchAttributes = new List<string>()

@@ -100,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             if (dateFilter.HasValue)
             {
                 //query = query.Where(s => dateFilter.Value.Date == s.Date.AddHours(offSet).Date);
-                query = query.Where(s => dateFilter.Value.Date == s.Date);
+                query = query.Where(s => dateFilter.Value.Date == s.Date.Date);
             }
 
             var searchAttributes = new List<string>()
