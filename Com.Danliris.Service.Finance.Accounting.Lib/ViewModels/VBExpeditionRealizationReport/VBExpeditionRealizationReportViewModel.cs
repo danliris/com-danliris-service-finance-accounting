@@ -10,8 +10,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBExpeditionRea
         public int Id { get; set; }
         public string RequestVBNo { get; set; }
         public string RealizationVBNo { get; set; }
+        public string VbType { get; set; }
         public string Applicant { get; set; }
         public Unit Unit { get; set; }
+        public Division Division { get; set; }
         public DateTimeOffset? DateUnitSend { get; set; }
         public string Usage { get; set; }
         public string RequestCurrency { get; set; }
@@ -25,7 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBExpeditionRea
         public string Status { get; set; }
         public string VerificationStatus { get; set; }
         public string Notes { get; set; }
-        public DateTimeOffset DateCashierReceive { get; set; }
+        public DateTimeOffset? DateCashierReceive { get; set; }
         public DateTime LastModifiedUtc { get; set; }
     }
 }

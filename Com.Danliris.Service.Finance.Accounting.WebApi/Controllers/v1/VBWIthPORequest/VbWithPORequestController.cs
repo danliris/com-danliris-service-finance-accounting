@@ -100,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
         }
 
         [HttpGet("with-date-filter")]
-        public IActionResult GetWithDateFilter(DateTimeOffset? dateFilter, [FromHeader(Name = "x-timezone-offset")] string timezone, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        public IActionResult GetWithDateFilter(DateTime? dateFilter, [FromHeader(Name = "x-timezone-offset")] string timezone, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
         {
 
             int offset = Convert.ToInt32(timezone);
@@ -227,26 +227,5 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
-
-        //[HttpGet("filter-by-applicant/{createBy}")]
-        //public virtual IActionResult ReadByAplicant([FromRoute] string createBy)
-        //{
-        //    try
-        //    {
-        //        List<VbRequestModel> model = _service.ReadByAplicant(createBy);
-        //        List<VbWithPORequestViewModel> viewModel = Mapper.Map<List<VbWithPORequestViewModel>>(model);
-        //        Dictionary<string, object> Result =
-        //            new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
-        //            .Ok(_mapper, viewModel, 100, viewModel.Count, viewModel.Count, viewModel.Count, new Dictionary<string, string>(), new List<string>());
-        //        return Ok(Result);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Dictionary<string, object> Result =
-        //            new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-        //            .Fail();
-        //        return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
-        //    }
-        //}
     }
 }
