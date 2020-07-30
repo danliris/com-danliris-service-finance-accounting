@@ -69,7 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
         public async Task Should_Success_GetReport()
         {
             VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = await _dataUtil(service).GetTestData_Outstanding_ById();
+            var data = await _dataUtil(service).GetTestData_ById();
 
             var Response = service.GetReport(data.UnitId, data.Id, "CreatedBy", "All", data.Date, data.Date, data.Date, data.Date, 7);
             Assert.NotNull(Response);
@@ -85,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
         public async Task Should_Success_GenerateExcel()
         {
             VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = await _dataUtil(service).GetTestData_Realisasi_ById();
+            var data = await _dataUtil(service).GetTestData_ById();
 
             var dataRealisation = new RealizationVbModel()
             {
@@ -100,16 +100,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
             service._DbContext.RealizationVbs.Add(dataRealisation);
             service._DbContext.SaveChanges();
 
-            var Response = service.GenerateExcel(data.UnitId, data.Id, "CreatedBy", "Clearance", null, null, null, null, 7);
+            var Response = service.GenerateExcel(0, 0, null, "Clearance", null, null, null, null, 7);
             Assert.NotNull(Response);
-
-            Response = service.GenerateExcel(data.UnitId, data.Id, "CreatedBy", "Outstanding", null, null, null, null, 7);
-            Assert.NotNull(Response);
-
-            Response = service.GenerateExcel(data.UnitId, data.Id, null, "All", null, null, null, null, 7);
-            Assert.NotNull(Response);
-
             Response = service.GenerateExcel(0, 0, null, "Outstanding", null, null, null, null, 7);
+            Assert.NotNull(Response);
+            Response = service.GenerateExcel(0, 0, null, "All", null, null, null, null, 7);
             Assert.NotNull(Response);
         }
 
@@ -117,7 +112,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
         public async Task Should_Success_Get_Data_By_Applicant_Name()
         {
             VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = await _dataUtil(service).GetTestData_Outstanding_ById();
+            var data = await _dataUtil(service).GetTestData_ById();
             var Response = await service.GetByApplicantName(data.CreatedBy);
             Assert.NotNull(Response);
         }
