@@ -93,14 +93,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             return new ReadResponse<VbRequestWIthPOList>(data, totalData, orderDictionary, new List<string>());
         }
 
-        public ReadResponse<VbRequestWIthPOList> ReadWithDateFilter(DateTime? dateFilter, int offSet, int page, int size, string order, List<string> select, string keyword, string filter)
+        public ReadResponse<VbRequestWIthPOList> ReadWithDateFilter(DateTimeOffset? dateFilter, int offSet, int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _dbContext.VbRequests.Where(entity => entity.VBRequestCategory == "PO").AsQueryable();
 
             if (dateFilter.HasValue)
             {
-                //query = query.Where(s => dateFilter.Value.Date == s.Date.AddHours(offSet).Date);
-                query = query.Where(s => dateFilter.Value.Date == s.Date.Date);
+                query = query.Where(s => dateFilter.Value.Date == s.Date.AddHours(offSet).Date);
+                //query = query.Where(s => dateFilter.Value.Date == s.Date.Date);
             }
 
             var searchAttributes = new List<string>()

@@ -100,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
         }
 
         [HttpGet("with-date-filter")]
-        public IActionResult GetWithDateFilter(DateTime? dateFilter, [FromHeader(Name = "x-timezone-offset")] string timezone, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        public IActionResult GetWithDateFilter(DateTimeOffset? dateFilter, [FromHeader(Name = "x-timezone-offset")] string timezone, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
         {
 
             int offset = Convert.ToInt32(timezone);
