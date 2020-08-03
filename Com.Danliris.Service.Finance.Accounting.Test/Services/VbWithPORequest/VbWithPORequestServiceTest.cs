@@ -1,14 +1,19 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest;
+using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,10 +36,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
 
         private FinanceDbContext GetDbContext(string testName)
         {
+            var serviceProvider = new ServiceCollection()
+                .AddEntityFrameworkInMemoryDatabase()
+                .BuildServiceProvider();
+
             DbContextOptionsBuilder<FinanceDbContext> optionsBuilder = new DbContextOptionsBuilder<FinanceDbContext>();
             optionsBuilder
                 .UseInMemoryDatabase(testName)
-                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .UseInternalServiceProvider(serviceProvider);
 
             FinanceDbContext dbContext = new FinanceDbContext(optionsBuilder.Options);
 
@@ -44,6 +54,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
         private Mock<IServiceProvider> GetServiceProviderMock()
         {
             var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientTestService());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -74,6 +87,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
         }
 
         [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty_Duplicate()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            var viewModel = dataUtil.GetViewModelToValidateDuplicate();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
+        [Fact]
         public async Task Should_Success_Create_Model()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
@@ -85,6 +110,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
             var result = await service.CreateAsync(modelToCreate, viewmodelToCreate);
 
             Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Model_Failed_Purchasing()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProvider = new Mock<IServiceProvider>();
+
+            Mock<IHttpClientService> httpMock = new Mock<IHttpClientService>();
+            var response = new HttpResponseMessage(HttpStatusCode.NotFound) { Content = new StringContent("Your message here") };
+
+            httpMock.Setup(s => s.PutAsync(It.IsAny<string>(), It.IsAny<HttpContent>())).Returns(Task.Run(() => response));
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(httpMock.Object);
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            var service = new VbWithPORequestService(dbContext, serviceProvider.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            var modelToCreate = dataUtil.GetVbRequestModelToCreateFailed();
+            var viewmodelToCreate = dataUtil.GetViewModel();
+
+            await Assert.ThrowsAsync<Exception>(() => service.CreateAsync(modelToCreate, viewmodelToCreate));
         }
 
         [Fact]
@@ -103,6 +154,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
         }
 
         [Fact]
+        public async Task Should_Success_Create_Model_Mapping()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            var modelToCreate = dataUtil.GetVbRequestModelToCreate();
+            var viewmodelToCreate = dataUtil.GetViewModel();
+            await service.CreateAsync(modelToCreate, viewmodelToCreate);
+            
+            var result = await service.MappingData(viewmodelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Same_Mapping()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            await dataUtil.GetCreatedData();
+            var modelToCreate = dataUtil.GetVbRequestModelToCreate();
+            var viewmodelToCreate = dataUtil.GetViewModel();
+            var result = await service.MappingData(viewmodelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Update_Model()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
@@ -116,6 +198,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
 
             Assert.NotEqual(0, result);
         }
+
+        //[Fact]
+        //public async Task Should_Success_Update_Model2()
+        //{
+        //    var dbContext = GetDbContext(GetCurrentMethod());
+        //    var serviceProviderMock = GetServiceProviderMock();
+        //    var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+        //    var dataUtil = new VbWithPORequestDataUtil(service);
+        //    var modelToUpdate = await dataUtil.GetCreatedData();
+        //    var viewmodelToCreate = dataUtil.GetViewModel();
+        //    await service.MappingData(viewmodelToCreate);
+
+        //    var result = await service.UpdateAsync(modelToUpdate.Id, viewmodelToCreate);
+
+        //    Assert.NotEqual(0, result);
+        //}
 
         [Fact]
         public async Task Should_Success_Update_Model_Remove_Items()
@@ -200,6 +298,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
             var result = await service.DeleteAsync(data.Id);
 
             Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_ReadWithDateFilter_Data()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            await dataUtil.GetCreatedData();
+
+            var result = service.ReadWithDateFilter(DateTimeOffset.Now, 7, 1, 10, "{}", new List<string>(), "", "{}");
+
+            Assert.NotEmpty(result.Data);
         }
     }
 }

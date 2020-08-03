@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DateTimeOffset Date { get; set; }
         public DateTimeOffset? ApproveDate { get; set; }
         public DateTimeOffset DateEstimate { get; set; }
+        public DateTimeOffset? CompleteDate { get; set; }
         public int UnitId { get; set; }
         [MaxLength(64)]
         public string UnitCode { get; set; }
@@ -30,10 +31,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         [MaxLength(255)]
         public string UnitLoad { get; set; }
         public bool Apporve_Status { get; set; }
+        public bool Realization_Status { get; set; }
         public bool Complete_Status { get; set; }
         [MaxLength(255)]
         public string VBRequestCategory { get; set; }
-
+        public decimal VBMoney { get; set; }
+        [MaxLength(255)]
+        public string Usage_Input { get; set; }
+        [MaxLength(64)]
+        public string UnitDivisionName { get; set; }
+        public int UnitDivisionId { get; set; }
+        [MaxLength(64)]
+        public string IncomeTaxId { get; set; }
+        [MaxLength(64)]
+        public string IncomeTaxName { get; set; }
+        [MaxLength(64)]
+        public string IncomeTaxRate { get; set; }
+        [MaxLength(64)]
+        public string IncomeTaxBy { get; set; }
+        [MaxLength(64)]
+        public string CurrencyDescription { get; set; }
         public virtual ICollection<VbRequestDetailModel> VbRequestDetail { get; set; }
     }
 }

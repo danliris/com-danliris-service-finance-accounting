@@ -57,7 +57,90 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
                 Others = false,
                 DetailOthers = "",
                 UnitLoad = "UnitLoad,UnitLoad,UnitLoad"
+            };
+        }
 
+        public VbNonPORequestViewModel GetViewModelToValidateOthers()
+        {
+            return new VbNonPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                //ApprovedDate = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                Unit = new Unit()
+                {
+                    Id = 0,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Currency = new CurrencyVBRequest()
+                {
+                    Id = 0,
+                    Code = "",
+                    Rate = 123,
+                    Symbol = "$"
+                },
+                Amount = 123,
+                Usage = "Usage",
+                Spinning1 = false,
+                Spinning2 = false,
+                Spinning3 = false,
+                Weaving1 = false,
+                Weaving2 = false,
+                Finishing = false,
+                Printing = false,
+                Konfeksi1A = false,
+                Konfeksi1B = false,
+                Konfeksi2A = false,
+                Konfeksi2B = false,
+                Konfeksi2C = false,
+                Umum = false,
+                Others = true,
+                DetailOthers = "",
+                UnitLoad = "UnitLoad,UnitLoad,UnitLoad"
+            };
+        }
+
+        public VbNonPORequestViewModel GetViewModelToValidateOthers3()
+        {
+            return new VbNonPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                //ApprovedDate = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                Unit = new Unit()
+                {
+                    Id = 0,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Currency = new CurrencyVBRequest()
+                {
+                    Id = 0,
+                    Code = "",
+                    Rate = 123,
+                    Symbol = "$"
+                },
+                Amount = 123,
+                Usage = "Usage",
+                Spinning1 = true,
+                Spinning2 = true,
+                Spinning3 = true,
+                Weaving1 = true,
+                Weaving2 = true,
+                Finishing = true,
+                Printing = true,
+                Konfeksi1A = true,
+                Konfeksi1B = true,
+                Konfeksi2A = true,
+                Konfeksi2B = true,
+                Konfeksi2C = true,
+                Umum = true,
+                Others = false,
+                DetailOthers = "",
+                UnitLoad = "UnitLoad,UnitLoad,UnitLoad"
             };
         }
 
@@ -73,6 +156,59 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Division = new Division()
+                {
+                    Id = 1,
+                    Name = "DivisionName"
+                },
+                Currency = new CurrencyVBRequest()
+                {
+                    Id = 0,
+                    Code = "",
+                    Rate = 123,
+                    Symbol = "$"
+                },
+                Amount = 123,
+                Usage = "Usage",
+                Spinning1 = true,
+                Spinning2 = true,
+                Spinning3 = true,
+                Weaving1 = true,
+                Weaving2 = true,
+                Finishing = true,
+                Printing = true,
+                Konfeksi1A = true,
+                Konfeksi1B = true,
+                Konfeksi2A = true,
+                Konfeksi2B = true,
+                Konfeksi2C = true,
+                Umum = true,
+                Others = true,
+                DetailOthers = "",
+                UnitLoad = "UnitLoad,UnitLoad,UnitLoad"
+
+            };
+        }
+
+        public VbNonPORequestViewModel GetViewModel2()
+        {
+            return new VbNonPORequestViewModel()
+            {
+                Id = 1,
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Division = new Division()
+                {
+                    Id = 1,
+                    Name = "DivisionName"
                 },
                 Currency = new CurrencyVBRequest()
                 {
@@ -121,10 +257,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
                 Amount = 123,
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
-                //Status_Post = true,
                 Apporve_Status = true,
                 Complete_Status = true,
-                VBRequestCategory = "VBRequestCategory",
+                VBRequestCategory = "NONPO",
                 CreatedBy = "CreatedBy"
 
             };

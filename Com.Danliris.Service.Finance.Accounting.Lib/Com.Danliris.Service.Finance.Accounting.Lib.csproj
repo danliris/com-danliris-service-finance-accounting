@@ -45,6 +45,40 @@
     <Compile Remove="Migrations\20200706145901_removestringVBRequest.Designer.cs" />
     <Compile Remove="Migrations\20200706151824_UpdateVBRequest3.cs" />
     <Compile Remove="Migrations\20200706151824_UpdateVBRequest3.Designer.cs" />
+    <Compile Remove="Migrations\20200710150937_UpdateVbRealization2.cs" />
+    <Compile Remove="Migrations\20200710150937_UpdateVbRealization2.Designer.cs" />
+    <Compile Remove="Migrations\20200710151152_UpdateVbRealization2.cs" />
+    <Compile Remove="Migrations\20200710151152_UpdateVbRealization2.Designer.cs" />
+    <Compile Remove="Migrations\20200714104148_UpdateVBRealization3.cs" />
+    <Compile Remove="Migrations\20200714104148_UpdateVBRealization3.Designer.cs" />
+    <Compile Remove="Migrations\20200715073752_test.cs" />
+    <Compile Remove="Migrations\20200715073752_test.Designer.cs" />
+    <Compile Remove="Migrations\20200721154624_testMigration.cs" />
+    <Compile Remove="Migrations\20200721154624_testMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200722035128_UpdateRealizationVB.cs" />
+    <Compile Remove="Migrations\20200722035128_UpdateRealizationVB.Designer.cs" />
+    <Compile Remove="Migrations\20200722035750_UpdateRealizationVB.cs" />
+    <Compile Remove="Migrations\20200722035750_UpdateRealizationVB.Designer.cs" />
+    <Compile Remove="Migrations\20200722035956_UpdateRealizationVB.cs" />
+    <Compile Remove="Migrations\20200722035956_UpdateRealizationVB.Designer.cs" />
+    <Compile Remove="Migrations\20200722041053_UpdateRealizationVB2.cs" />
+    <Compile Remove="Migrations\20200722041053_UpdateRealizationVB2.Designer.cs" />
+    <Compile Remove="Migrations\20200723033858_test.cs" />
+    <Compile Remove="Migrations\20200723033858_test.Designer.cs" />
+    <Compile Remove="Migrations\20200723034304_test.cs" />
+    <Compile Remove="Migrations\20200723034304_test.Designer.cs" />
+    <Compile Remove="Migrations\20200723040048_UpdateTabelVBRequest.cs" />
+    <Compile Remove="Migrations\20200723040048_UpdateTabelVBRequest.Designer.cs" />
+    <Compile Remove="Migrations\20200723042240_UpdateTabelVBRequestandRealizationVb.cs" />
+    <Compile Remove="Migrations\20200723042240_UpdateTabelVBRequestandRealizationVb.Designer.cs" />
+    <Compile Remove="Migrations\20200723082143_UpdateTabelRealizationVb3.cs" />
+    <Compile Remove="Migrations\20200723082143_UpdateTabelRealizationVb3.Designer.cs" />
+    <Compile Remove="Migrations\20200724072401_test.cs" />
+    <Compile Remove="Migrations\20200724072401_test.Designer.cs" />
+    <Compile Remove="Migrations\20200727130508_test.cs" />
+    <Compile Remove="Migrations\20200727130508_test.Designer.cs" />
+    <Compile Remove="Migrations\20200727131715_UpdateVbRequestAndVbRequestDetail.cs" />
+    <Compile Remove="Migrations\20200727131715_UpdateVbRequestAndVbRequestDetail.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

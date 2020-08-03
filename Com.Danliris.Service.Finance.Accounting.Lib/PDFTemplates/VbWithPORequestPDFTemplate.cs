@@ -1,6 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Sales.Lib.Utilities;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Http.Internal;
@@ -14,10 +15,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
 {
     public class VbWithPORequestPDFTemplate
     {
-        public VbWithPORequestPDFTemplate()
-        {
-        }
-
         public MemoryStream GeneratePdfTemplate(VbWithPORequestViewModel viewModel, int clientTimeZoneOffset)
         {
             const int MARGIN = 20;
@@ -85,12 +82,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             cellHeaderBody2.Phrase = new Phrase("PERMOHONAN VB", bold_font);
             headerTable3.AddCell(cellHeaderBody2);
 
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody3.Colspan = 3;
             cellHeaderBody3.Phrase = new Phrase($"No     : {viewModel.VBNo}", normal_font);
@@ -100,12 +97,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             cellHeaderBody3.Phrase = new Phrase($"Tanggal     : {viewModel.Date?.AddHours(clientTimeZoneOffset).ToString("dd/MM/yyyy")}", normal_font);
             headerTable3.AddCell(cellHeaderBody3);
 
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("VB Uang", normal_font);
             headerTable3.AddCell(cellHeaderBody);
@@ -114,9 +111,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
 
             decimal convertCurrency = 0;
             string Usage = "";
+            string PoNumber = "";
 
             foreach (var itm1 in viewModel.Items)
             {
+                PoNumber += itm1.no + ", ";
+
                 foreach (var itm2 in itm1.Details)
                 {
                     convertCurrency += itm2.priceBeforeTax;
@@ -124,8 +124,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
                 }
             }
             Usage = Usage.Remove(Usage.Length - 2);
+            PoNumber = PoNumber.Remove(PoNumber.Length - 2);
 
-            cellHeaderBody.Phrase = new Phrase("Rp. " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Symbol} " + viewModel.VBMoney.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
 
@@ -134,24 +135,50 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
-            string TotalPaidString = NumberToTextIDN.terbilang(Decimal.ToDouble(convertCurrency));
+            string TotalPaidString;
+            string CurrencySay;
+            if (viewModel.Currency.Code == "IDR")
+            {
+                TotalPaidString = NumberToTextIDN.terbilang(decimal.ToDouble(viewModel.VBMoney));
+                CurrencySay = "Rupiah";
+            }
+            else
+            {
+                TotalPaidString = NumberToTextEN.toWords(decimal.ToDouble(viewModel.VBMoney));
+                CurrencySay = viewModel.Currency.Description;
+                CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CurrencySay.ToLower());
+            }            
 
-            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " Rupiah", normal_font);
+            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + CurrencySay, normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+
+            cellHeaderBody.Phrase = new Phrase("No PO", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase(":", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase(PoNumber, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("Kegunaan", normal_font);
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(Usage, normal_font);
+            cellHeaderBody.Phrase = new Phrase(viewModel.Usage, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            cellHeaderBody.Phrase = new Phrase("Total Permohonan", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Symbol} " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody);
+
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("Beban Unit  :", normal_font);
             headerTable3.AddCell(cellHeaderBody);
@@ -482,7 +509,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             _radioG9.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
             string res;
-            if (lastitem.ToUpper() == "SPINNING 1" || lastitem.ToUpper() == "SPINNING 2" || lastitem.ToUpper() == "SPINNING 3" || lastitem.ToUpper() == "WEAVING 1" || lastitem.ToUpper() == "WEAVING 2" &&
+            if (lastitem.ToUpper() == "SPINNING 1" || lastitem.ToUpper() == "SPINNING 2" || lastitem.ToUpper() == "SPINNING 3" || lastitem.ToUpper() == "WEAVING 1" || lastitem.ToUpper() == "WEAVING 2" ||
                 lastitem.ToUpper() == "PRINTING" || lastitem.ToUpper() == "FINISHING" || lastitem.ToUpper() == "KONFEKSI 1A" || lastitem.ToUpper() == "KONFEKSI 1B"
                 || lastitem.ToUpper() == "KONFEKSI 2A" || lastitem.ToUpper() == "KONFEKSI 2B" || lastitem.ToUpper() == "KONFEKSI 2C" || lastitem.ToUpper() == "UMUM")
             {
@@ -724,9 +751,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             table.AddCell(cell);
             cell.Phrase = new Phrase("Anggaran", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("Kabag Garment", normal_font);
+            cell.Phrase = new Phrase("..................", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("Bag. Garment", normal_font);
+            cell.Phrase = new Phrase($"Bag. {viewModel.Unit.Name}", normal_font);
             table.AddCell(cell);
 
             document.Add(table);

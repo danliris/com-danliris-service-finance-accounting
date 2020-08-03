@@ -1668,6 +1668,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("IsDeleted");
 
+                    b.Property<bool>("IsUseVat");
+
                     b.Property<string>("LastModifiedAgent")
                         .IsRequired()
                         .HasMaxLength(255);
@@ -1714,6 +1716,212 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.ToTable("VbRequestsDetails");
                 });
 
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.RealizationVbDetailModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<decimal>("AmountNonPO");
+
+                    b.Property<string>("CodeProductSPB")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreatedUtc");
+
+                    b.Property<string>("CurrencyCode")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("CurrencyId")
+                        .HasMaxLength(64);
+
+                    b.Property<double>("CurrencyRate");
+
+                    b.Property<string>("CurrencySymbol")
+                        .HasMaxLength(64);
+
+                    b.Property<DateTimeOffset?>("DateNonPO");
+
+                    b.Property<DateTimeOffset?>("DateSPB");
+
+                    b.Property<string>("DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DeletedUtc");
+
+                    b.Property<string>("DivisionSPB")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("IdProductSPB")
+                        .HasMaxLength(64);
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("LastModifiedUtc");
+
+                    b.Property<string>("NameProductSPB")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("NoPOSPB")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("NoSPB")
+                        .HasMaxLength(64);
+
+                    b.Property<decimal>("PriceTotalSPB");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("SupplierCode")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("SupplierName")
+                        .HasMaxLength(64);
+
+                    b.Property<int>("VBRealizationId");
+
+                    b.Property<bool>("isGetPPn");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VBRealizationId");
+
+                    b.ToTable("RealizationVbDetails");
+                });
+
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.RealizationVbModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<decimal>("AmountNonPO");
+
+                    b.Property<decimal>("Amount_VB");
+
+                    b.Property<DateTimeOffset>("CloseDate");
+
+                    b.Property<string>("CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreatedUtc");
+
+                    b.Property<string>("CurrencyCode")
+                        .HasMaxLength(64);
+
+                    b.Property<decimal>("CurrencyRate");
+
+                    b.Property<DateTimeOffset>("Date");
+
+                    b.Property<DateTimeOffset>("DateEstimate");
+
+                    b.Property<DateTimeOffset>("DateVB");
+
+                    b.Property<string>("DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DeletedUtc");
+
+                    b.Property<decimal>("DifferenceReqReal");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("LastModifiedUtc");
+
+                    b.Property<string>("Reason_NotVerified")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("RequestVbName")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("StatusReqReal")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("UnitCode")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("UnitLoad")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("UnitName")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("UsageVBRequest")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("VBNo")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("VBNoRealize")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("VBRealizeCategory")
+                        .HasMaxLength(64);
+
+                    b.Property<decimal>("VatAmount");
+
+                    b.Property<DateTimeOffset>("VerifiedDate");
+
+                    b.Property<string>("VerifiedName")
+                        .HasMaxLength(255);
+
+                    b.Property<bool>("isClosed");
+
+                    b.Property<bool>("isNotVeridied");
+
+                    b.Property<bool>("isVerified");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RealizationVbs");
+                });
+
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.VbRequestModel", b =>
                 {
                     b.Property<int>("Id")
@@ -1724,9 +1932,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("Amount");
 
-                    b.Property<bool?>("Apporve_Status");
+                    b.Property<bool>("Apporve_Status");
 
                     b.Property<DateTimeOffset?>("ApproveDate");
+
+                    b.Property<DateTimeOffset?>("CompleteDate");
 
                     b.Property<bool>("Complete_Status");
 
@@ -1741,6 +1951,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<DateTime>("CreatedUtc");
 
                     b.Property<string>("CurrencyCode")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("CurrencyDescription")
                         .HasMaxLength(64);
 
                     b.Property<int>("CurrencyId");
@@ -1764,6 +1977,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("DeletedUtc");
 
+                    b.Property<string>("IncomeTaxBy")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("IncomeTaxId")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("IncomeTaxName")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("IncomeTaxRate")
+                        .HasMaxLength(64);
+
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LastModifiedAgent")
@@ -1779,6 +2004,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("UnitCode")
                         .HasMaxLength(64);
 
+                    b.Property<int>("UnitDivisionId");
+
+                    b.Property<string>("UnitDivisionName")
+                        .HasMaxLength(64);
+
                     b.Property<int>("UnitId");
 
                     b.Property<string>("UnitLoad")
@@ -1789,6 +2019,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("Usage")
                         .HasMaxLength(255);
+
+                    b.Property<string>("Usage_Input")
+                        .HasMaxLength(255);
+
+                    b.Property<decimal>("VBMoney");
 
                     b.Property<string>("VBNo")
                         .HasMaxLength(64);
@@ -1859,6 +2094,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.VbRequestModel", "VbRequestDetail")
                         .WithMany("VbRequestDetail")
                         .HasForeignKey("VBId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.RealizationVbDetailModel", b =>
+                {
+                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.RealizationVbModel", "RealizationVbDetail")
+                        .WithMany("RealizationVbDetail")
+                        .HasForeignKey("VBRealizationId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

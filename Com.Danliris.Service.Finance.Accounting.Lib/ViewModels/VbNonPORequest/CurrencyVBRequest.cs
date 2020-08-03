@@ -10,5 +10,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VbNonPORequest
         public string Code { get; set; }
         public decimal Rate { get; set; }
         public string Symbol { get; set; }
+        public string Description { get; set; }
     }
 }

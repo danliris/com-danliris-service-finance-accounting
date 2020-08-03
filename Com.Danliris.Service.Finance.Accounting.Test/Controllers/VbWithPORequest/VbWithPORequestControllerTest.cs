@@ -613,11 +613,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
             {
                 VBNo = "VBNo",
                 Date = DateTimeOffset.Now,
+                VBMoney = 1,
+                Usage = "Usaage",
                 Unit = new Unit()
                 {
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -708,6 +718,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -790,12 +808,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
             var vm = new VbWithPORequestViewModel()
             {
                 VBNo = "VBNo",
-                Date = DateTimeOffset.Now,
+                Date = null,
                 Unit = new Unit()
                 {
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "USD",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -886,6 +912,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -974,6 +1008,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -1064,6 +1106,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -1152,6 +1202,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -1242,6 +1300,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -1330,6 +1396,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -1420,6 +1494,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -1508,6 +1590,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -1598,6 +1688,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -1686,6 +1784,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Id = 1,
                     Code = "Code",
                     Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
                 },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
@@ -1776,6 +1882,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
                     Code = "Code",
                     Name = "Name",
                 },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "IDR",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "DOLLAR"
+                },
                 Items = new List<VbWithPORequestDetailViewModel>()
                 {
                     new VbWithPORequestDetailViewModel()
@@ -1850,6 +1964,67 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbWithPOReque
             //var statusCode = GetStatusCode(response);
 
             Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void GetWithDateFilter_WithoutException_ReturnOK()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadWithDateFilter(It.IsAny<DateTimeOffset?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new ReadResponse<VbRequestWIthPOList>(new List<VbRequestWIthPOList>(), 1, new Dictionary<string, string>(), new List<string>()));
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = controller.GetWithDateFilter(DateTimeOffset.UtcNow, "7", 1, 1, "string", new List<string>(), "string", "string");
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public void GetWithDateFilter_WithException_InternalServerError()
+        {
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IVbWithPORequestService>();
+            serviceMock
+                .Setup(service => service.ReadWithDateFilter(It.IsAny<DateTimeOffset?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+            var mapperMock = new Mock<IMapper>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = controller.GetWithDateFilter(DateTimeOffset.UtcNow, "7", 1, 1, "string", new List<string>(), "string", "string");
+            var statusCode = GetStatusCode(response);
+
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
     }
 }

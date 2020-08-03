@@ -14,14 +14,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public int UnitId { get; set; }
         public string UnitCode { get; set; }
         public string UnitName { get; set; }
+        public int UnitDivisionId { get; set; }
+        public string UnitDivisionName { get; set; }
         public string CurrencyCode { get; set; }
+        public decimal CurrencyRate { get; set; }
         public decimal Amount { get; set; }
         public string CreateBy { get; set; }
         public bool Status_Post { get; set; }
         public bool Approve_Status { get; set; }
         public bool Complete_Status { get; set; }
         public string VBRequestCategory { get; set; }
+        public string Usage { get; set; }
+        public bool RealizationStatus { get; set; }
         public List<VbRequestDetailModel> PONo { get; set; }
-
     }
 }

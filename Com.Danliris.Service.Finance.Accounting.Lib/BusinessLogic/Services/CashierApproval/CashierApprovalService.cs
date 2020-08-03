@@ -53,6 +53,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                             approvals.Add(item.VBNo);
                             VbRequestModel model = DbContext.VbRequests.Single(x => x.Id == item.Id);
                             model.Apporve_Status = true;
+                            model.Complete_Status = false;
                             model.ApproveDate = DateTimeOffset.UtcNow;
                             model.Amount = item.Amount;
 
@@ -68,6 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                             approvals.Add(item.VBNo);
                             VbRequestModel model = DbContext.VbRequests.Single(x => x.Id == item.Id);
                             model.Apporve_Status = true;
+                            model.Complete_Status = false;
                             model.ApproveDate = DateTimeOffset.UtcNow;
 
                             EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
@@ -105,6 +107,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                     if (approvals.VBRequestCategory == "PO")
                     {
                         approvals.Apporve_Status = false;
+                        approvals.Complete_Status = false;
                         approvals.ApproveDate = null;
                         approvals.Amount = 0;
 
@@ -115,6 +118,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                     else if (approvals.VBRequestCategory == "NONPO")
                     {
                         approvals.Apporve_Status = false;
+                        approvals.Complete_Status = false;
                         approvals.ApproveDate = null;
 
                         EntityExtension.FlagForUpdate(approvals, IdentityService.Username, UserAgent);
@@ -147,25 +151,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
         {
             return DbContext.VbRequests.Where(entity => entity.Id == id).FirstOrDefaultAsync();
         }
-
-        //public ReadResponse<VbRequestModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<int> UpdateAsync(int id, VbRequestModel model)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<int> DeleteAsync(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<int> CreateAsync(VbRequestModel model)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Com.Danliris.Service.Finance.Accounting.Lib
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
+
+namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
     public class Unit
     {

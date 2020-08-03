@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DateTimeOffset? Date { get; set; }
         public DateTimeOffset? DateEstimate { get; set; }
         public Unit Unit { get; set; }
+        public Division Division { get; set; }
         public CurrencyVBRequest Currency { get; set; }
         public decimal Amount { get; set; }
         public string Usage { get; set; }
@@ -59,8 +60,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                 && Printing == false && Konfeksi1A == false && Konfeksi1B == false && Konfeksi2A == false && Konfeksi2B == false
                 && Konfeksi2C == false && Umum == false && Others == false)
                 yield return new ValidationResult("Beban Unit harus dipilih salah satu!", new List<string> { "UnitLoadCheck" });
-
-            if (Others == true && DetailOthers == "")
+            //
+            if (Others == true && string.IsNullOrWhiteSpace(DetailOthers))
                 yield return new ValidationResult("Isian harus diisi!", new List<string> { "DetailOthers" });
         }
     }

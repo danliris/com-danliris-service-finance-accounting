@@ -76,6 +76,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
         }
 
         [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty2()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbNonPORequestDataUtil(service);
+            var viewModel = dataUtil.GetViewModelToValidateOthers();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty3()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbNonPORequestDataUtil(service);
+            var viewModel = dataUtil.GetViewModelToValidateOthers3();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
+        [Fact]
         public async Task Should_Success_Create_Model()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
@@ -85,6 +109,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
             var modelToCreate = dataUtil.GetVbRequestModelToCreate();
             var viewmodelToCreate = dataUtil.GetViewModel();
             var result = await service.CreateAsync(modelToCreate, viewmodelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Maping()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbNonPORequestDataUtil(service);
+            var modelToCreate = dataUtil.GetVbRequestModelToCreate();
+            var viewmodelToCreate = dataUtil.GetViewModel();
+            var viewmodelToCreate2 = dataUtil.GetViewModel2(); 
+            await service.CreateAsync(modelToCreate, viewmodelToCreate);
+
+            var result = await service.MappingData(viewmodelToCreate2);
 
             Assert.NotEqual(0, result);
         }
@@ -219,6 +260,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
             var result = await service.DeleteAsync(data.Id);
 
             Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_ReadWithDateFilter_Data()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbNonPORequestDataUtil(service);
+            await dataUtil.GetCreatedData();
+
+            var result = service.ReadWithDateFilter(DateTimeOffset.Now, 7, 1, 10, "{}", new List<string>(), "", "{}");
+
+            Assert.NotEmpty(result.Data);
         }
     }
 }

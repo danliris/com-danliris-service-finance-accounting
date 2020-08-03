@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
 
         public ReadResponse<VbRequestList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.VbRequests.AsQueryable();
+            var query = _dbContext.VbRequests.Where(entity => entity.VBRequestCategory == "NONPO").AsQueryable();
 
             var searchAttributes = new List<string>()
             {
@@ -62,16 +62,77 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 UnitLoad = entity.UnitLoad,
                 Amount = entity.Amount,
                 CurrencyCode = entity.CurrencyCode,
+                CurrencyRate = entity.CurrencyRate,
                 UnitId = entity.UnitId,
                 UnitCode = entity.UnitCode,
                 UnitName = entity.UnitName,
+                UnitDivisionId = entity.UnitDivisionId,
+                UnitDivisionName = entity.UnitDivisionName,
                 CreateBy = entity.CreatedBy,
-                //Status_Post = entity.Status_Post,
                 Approve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
-                VBRequestCategory = entity.VBRequestCategory
+                VBRequestCategory = entity.VBRequestCategory,
+                Usage = entity.Usage,
+                RealizationStatus = entity.Realization_Status
 
-            }).ToList();
+            }).Where(entity => entity.VBRequestCategory == "NONPO").ToList();
+
+            int totalData = pageable.TotalCount;
+
+            return new ReadResponse<VbRequestList>(data, totalData, orderDictionary, new List<string>());
+        }
+
+        public ReadResponse<VbRequestList> ReadWithDateFilter(DateTimeOffset? dateFilter, int offSet, int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            var query = _dbContext.VbRequests.Where(entity => entity.VBRequestCategory == "NONPO").AsQueryable();
+
+            if(dateFilter.HasValue)
+            {
+                query = query.Where(s => dateFilter.Value.Date == s.Date.AddHours(offSet).Date);
+                //query = query.Where(s => dateFilter.Value.Date == s.Date.Date);
+            }
+
+            var searchAttributes = new List<string>()
+            {
+                "VBNo",
+                "UnitLoad",
+                "CreatedBy",
+                "CurrencyCode",
+                "UnitName",
+            };
+
+            query = QueryHelper<VbRequestModel>.Search(query, searchAttributes, keyword);
+
+            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            query = QueryHelper<VbRequestModel>.Filter(query, filterDictionary);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<VbRequestModel>.Order(query, orderDictionary);
+
+            var pageable = new Pageable<VbRequestModel>(query, page - 1, size);
+            var data = pageable.Data.Select(entity => new VbRequestList()
+            {
+                Id = entity.Id,
+                VBNo = entity.VBNo,
+                Date = entity.Date,
+                DateEstimate = entity.DateEstimate,
+                UnitLoad = entity.UnitLoad,
+                Amount = entity.Amount,
+                CurrencyCode = entity.CurrencyCode,
+                CurrencyRate = entity.CurrencyRate,
+                UnitId = entity.UnitId,
+                UnitCode = entity.UnitCode,
+                UnitName = entity.UnitName,
+                UnitDivisionId = entity.UnitDivisionId,
+                UnitDivisionName = entity.UnitDivisionName,
+                CreateBy = entity.CreatedBy,
+                Approve_Status = entity.Apporve_Status,
+                Complete_Status = entity.Complete_Status,
+                VBRequestCategory = entity.VBRequestCategory,
+                Usage = entity.Usage,
+                RealizationStatus = entity.Realization_Status
+
+            }).Where(entity => entity.VBRequestCategory == "NONPO").ToList();
 
             int totalData = pageable.TotalCount;
 
@@ -163,21 +224,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 Active = viewModel.Active,
                 Id = viewModel.Id,
                 Date = (DateTimeOffset)viewModel.Date,
+                DateEstimate = (DateTimeOffset)viewModel.DateEstimate,
                 UnitId = viewModel.Unit.Id,
                 UnitCode = viewModel.Unit.Code,
                 UnitName = viewModel.Unit.Name,
+                UnitDivisionId = viewModel.Division.Id,
+                UnitDivisionName = viewModel.Division.Name,
                 VBNo = viewModel.VBNo,
                 CurrencyId = viewModel.Currency.Id,
                 CurrencyCode = viewModel.Currency.Code,
                 CurrencyRate = viewModel.Currency.Rate,
                 CurrencySymbol = viewModel.Currency.Symbol,
+                CurrencyDescription = viewModel.Currency.Description,
                 Amount = viewModel.Amount,
                 Usage = viewModel.Usage,
                 UnitLoad = viewModel.UnitLoad,
                 CreatedBy = viewModel.CreatedBy,
                 CreatedAgent = viewModel.CreatedAgent,
                 LastModifiedAgent = viewModel.LastModifiedAgent,
-                LastModifiedBy = viewModel.LastModifiedBy
+                LastModifiedBy = viewModel.LastModifiedBy,
+                LastModifiedUtc = DateTime.Now,
+                CreatedUtc = viewModel.CreatedUtc
             };
 
             return result;
@@ -274,7 +341,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
 
             var documentNo = $"VB-{month}{year}-";
 
-            var countSameDocumentNo = _dbContext.VbRequests.Where(a => a.Date.Month == model.Date.Month).Count(entity => entity.UnitCode.Contains(model.UnitCode));
+            var countSameDocumentNo = _dbContext.VbRequests.Where(a => a.Date.Month == model.Date.Month).Count();
 
             if (countSameDocumentNo >= 0)
             {
@@ -313,14 +380,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                        {
                            Id = s.UnitId,
                            Code = s.UnitCode,
-                           Name = s.UnitName
+                           Name = s.UnitName,
+                           
+                       },
+                       Division = new Division()
+                       {
+                           Id = s.UnitDivisionId,
+                           Name = s.UnitDivisionName
                        },
                        Currency = new CurrencyVBRequest()
                        {
                            Id = s.CurrencyId,
                            Code = s.CurrencyCode,
                            Rate = s.CurrencyRate,
-                           Symbol = s.CurrencySymbol
+                           Symbol = s.CurrencySymbol,
+                           Description = s.CurrencyDescription,
                        },
                        Amount = s.Amount,
                        Usage = s.Usage,
@@ -352,7 +426,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             model.VBRequestCategory = "NONPO";
             model.UnitLoad = GetUnitLoad(viewModel);
 
-            //model.Status_Post = false;
             model.Apporve_Status = false;
             model.Complete_Status = false;
 

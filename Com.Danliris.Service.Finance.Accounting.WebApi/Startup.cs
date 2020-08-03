@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierApproval;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
@@ -11,7 +12,11 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Payme
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PaymentDispositionNotVerifiedReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.SalesReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBExpeditionRealizationReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBRequestAll;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBStatusReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CashierApproval;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
@@ -23,14 +28,20 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Memo;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNotVerifiedReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.SalesReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBExpeditionRealizationReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbNonPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBRequestAll;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBStatusReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBVerification;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
@@ -100,9 +111,16 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IMemoService, MemoService>()
                 .AddTransient<ISalesReceiptService, SalesReceiptService>()
                 .AddTransient<ICashierAprovalService, CashierApprovalService>()
+                .AddTransient<IVBStatusReportService, VBStatusReportService>()
+                .AddTransient<IVBExpeditionRealizationReportService, VBExpeditionRealizationReportService>()
+                .AddTransient<IClearaceVBService, ClearaceVBService>()
+                .AddTransient<IVBRequestAllService, VBRequestAllService>()
                 .AddTransient<IDownPaymentService, DownPaymentService>()
                 .AddTransient<IVbNonPORequestService, VbNonPORequestService>()
-                .AddTransient<IVbWithPORequestService, VbWithPORequestService>();
+                .AddTransient<IVbWithPORequestService, VbWithPORequestService>()
+                .AddTransient<IRealizationVbWithPOService, RealizationVbWithPOService>()
+                .AddTransient<IRealizationVbNonPOService, RealizationVbNonPOService>()
+                .AddTransient<IVbVerificationService, VbVerificationService>();
         }
 
 

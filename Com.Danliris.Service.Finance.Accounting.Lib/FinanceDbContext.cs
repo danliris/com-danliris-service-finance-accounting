@@ -58,6 +58,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<VbRequestModel> VbRequests { get; set; }
         public DbSet<VbRequestDetailModel> VbRequestsDetails { get; set; }
 
+        public DbSet<RealizationVbModel> RealizationVbs { get; set; }
+        public DbSet<RealizationVbDetailModel> RealizationVbDetails { get; set; }
+
         public DbSet<VBRealizationDocumentExpeditionModel> VBRealizationDocumentExpeditions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
