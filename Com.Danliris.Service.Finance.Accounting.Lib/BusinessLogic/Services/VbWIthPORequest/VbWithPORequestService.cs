@@ -254,6 +254,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     DateEstimate = s.DateEstimate,
                     VBMoney = s.VBMoney,
                     Usage = s.Usage_Input,
+                    Approve_Status = s.Apporve_Status,
+                    Realization_Status = s.Realization_Status,
+                    Complete_Status = s.Complete_Status,
                     Currency = new CurrencyVB()
                     {
                         Id = s.CurrencyId,

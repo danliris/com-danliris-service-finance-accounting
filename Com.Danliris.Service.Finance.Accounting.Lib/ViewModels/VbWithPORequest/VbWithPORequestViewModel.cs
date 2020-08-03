@@ -18,6 +18,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public Division Division { get; set; }
         public decimal VBMoney { get; set; }
         public string Usage { get; set; }
+        public bool Approve_Status { get; set; }
+        public bool Realization_Status { get; set; }
+        public bool Complete_Status { get; set; }
 
         public ICollection<VbWithPORequestDetailViewModel> Items { get; set; }
 
