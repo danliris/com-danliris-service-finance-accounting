@@ -17,52 +17,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBStatusReport
             this.service = service;
         }
 
-        public VbRequestModel GetNewData_Realisasi()
+        public VbRequestModel GetNewData()
         {
             VbRequestModel TestData = new VbRequestModel()
             {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                UnitId = 1,
+                UnitName = "UnitName",
+                CreatedBy = "CreatedBy",
+                Usage = "Usage",
+                Amount = 1000,
+                Apporve_Status = true,
                 Realization_Status = true,
                 Complete_Status = true,
-                VBNo = "VBNo",
-                Date = DateTimeOffset.UtcNow,
-                DateEstimate = DateTimeOffset.UtcNow,
-                UnitId = 1,
-                UnitName = "UnitName",
-                CreatedBy = "CreatedBy",
-                Usage = "Usage",
-                Amount = 1000,
-            };
-
-            return TestData;
-        }
-        public VbRequestModel GetNewData_Outstanding()
-        {
-            VbRequestModel TestData = new VbRequestModel()
-            {
-                Realization_Status = false,
-                Complete_Status = false,
-                VBNo = "VBNo",
-                Date = DateTimeOffset.UtcNow,
-                DateEstimate = DateTimeOffset.UtcNow,
-                UnitId = 1,
-                UnitName = "UnitName",
-                CreatedBy = "CreatedBy",
-                Usage = "Usage",
-                Amount = 1000,
+                IsDeleted = false,
             };
 
             return TestData;
         }
 
-        public async Task<VbRequestModel> GetTestData_Realisasi_ById()
+        public async Task<VbRequestModel> GetTestData_ById()
         {
-            VbRequestModel model = GetNewData_Realisasi();
-            await service.CreateAsync(model);
-            return await service.ReadByIdAsync(model.Id);
-        }
-        public async Task<VbRequestModel> GetTestData_Outstanding_ById()
-        {
-            VbRequestModel model = GetNewData_Outstanding();
+            VbRequestModel model = GetNewData();
             await service.CreateAsync(model);
             return await service.ReadByIdAsync(model.Id);
         }
