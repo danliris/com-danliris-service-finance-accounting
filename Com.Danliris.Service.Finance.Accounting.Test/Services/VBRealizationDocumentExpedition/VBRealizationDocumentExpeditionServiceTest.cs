@@ -90,7 +90,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             VBRealizationDocumentExpeditionService service = new  VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
           
-            var data = model.Id + 1;
+            var data = model.VBRealizationId + 1;
             int result = await service.CashierReceipt(new List<int>() { data });
             Assert.Equal(0, result);
         }
@@ -126,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-            int result = await service.Reject(model.Id, "reason");
+            int result = await service.Reject(model.VBRealizationId, "reason");
             Assert.NotEqual(0, result);
         }
 
@@ -137,7 +137,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-            var data = model.Id + 1;
+            var data = model.VBRealizationId + 1;
             int result = await service.SubmitToVerification(new List<int>() { data });
             Assert.Equal(0, result);
         }
@@ -150,8 +150,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-            var data = model.Id + 1;
-            int result = await service.VerificationDocumentReceipt(new List<int>() { data });
+          
+            int result = await service.VerifiedToCashier(new List<int>() { model.VBRealizationId +1 });
             Assert.Equal(0, result);
         }
 
@@ -162,7 +162,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-            var data = model.Id + 1;
+            var data = model.VBRealizationId + 1;
             int result = await service.VerificationDocumentReceipt(new List<int>() { data });
             Assert.Equal(0, result);
         }
@@ -175,7 +175,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             RealizationVbModel model = _dataUtil(service, dbContext).GetTestData_RealizationVbs();
-            List<RealizationVbModel> result =  service.ReadRelizationToVerification(model.Id);
+            List<RealizationVbModel> result =  service.ReadRelizationToVerification(model.Position);
             Assert.NotNull(result);
         }
 
