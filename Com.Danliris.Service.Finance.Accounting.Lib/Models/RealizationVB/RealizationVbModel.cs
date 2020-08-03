@@ -48,5 +48,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string VBRealizeCategory { get; set; }
 
         public virtual ICollection<RealizationVbDetailModel> RealizationVbDetail { get; set; }
+        public int VBId { get; set; }
+        public int UnitId { get; set; }
+        public int DivisionId { get; set; }
+        public string DivisionName { get; set; }
+        public int Position { get; set; }
     }
 }
