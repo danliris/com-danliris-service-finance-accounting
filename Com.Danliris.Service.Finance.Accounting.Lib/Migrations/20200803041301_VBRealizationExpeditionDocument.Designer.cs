@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200803041301_VBRealizationExpeditionDocument")]
+    partial class VBRealizationExpeditionDocument
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1724,10 +1726,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<string>("CashierReceiptBy")
+                    b.Property<string>("CashierBy")
                         .HasMaxLength(256);
 
-                    b.Property<DateTimeOffset?>("CashierReceiptDate");
+                    b.Property<DateTimeOffset?>("CashierDate");
 
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
@@ -1738,10 +1740,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(255);
 
                     b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<string>("CurrencyCode");
-
-                    b.Property<double>("CurrencyRate");
 
                     b.Property<string>("DeletedAgent")
                         .IsRequired()
@@ -1779,6 +1777,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<int>("Position");
 
+                    b.Property<string>("SendToCashierBy")
+                        .HasMaxLength(256);
+
+                    b.Property<DateTimeOffset?>("SendToCashierDate");
+
                     b.Property<string>("SendToVerificationBy")
                         .HasMaxLength(256);
 
@@ -1808,15 +1811,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("VBRequestName")
                         .HasMaxLength(256);
 
-                    b.Property<string>("VerificationReceiptBy")
+                    b.Property<DateTimeOffset?>("VerifedDate");
+
+                    b.Property<string>("VerifiedBy")
                         .HasMaxLength(256);
-
-                    b.Property<DateTimeOffset?>("VerificationReceiptDate");
-
-                    b.Property<string>("VerifiedToCashierBy")
-                        .HasMaxLength(256);
-
-                    b.Property<DateTimeOffset?>("VerifiedToCashierDate");
 
                     b.HasKey("Id");
 
@@ -1969,10 +1967,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("DifferenceReqReal");
 
-                    b.Property<int>("DivisionId");
-
-                    b.Property<string>("DivisionName");
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LastModifiedAgent")
@@ -1984,8 +1978,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(255);
 
                     b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<int>("Position");
 
                     b.Property<string>("Reason_NotVerified")
                         .HasMaxLength(255);
@@ -1999,8 +1991,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("UnitCode")
                         .HasMaxLength(64);
 
-                    b.Property<int>("UnitId");
-
                     b.Property<string>("UnitLoad")
                         .HasMaxLength(64);
 
@@ -2009,8 +1999,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("UsageVBRequest")
                         .HasMaxLength(255);
-
-                    b.Property<int>("VBId");
 
                     b.Property<string>("VBNo")
                         .HasMaxLength(64);
