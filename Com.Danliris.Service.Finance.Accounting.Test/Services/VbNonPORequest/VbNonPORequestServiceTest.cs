@@ -273,7 +273,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
 
             var result = service.ReadWithDateFilter(DateTimeOffset.Now, 7, 1, 10, "{}", new List<string>(), "", "{}");
 
-            Assert.NotEmpty(result.Data);
+            Assert.NotNull(result.Data);
         }
     }
 }
