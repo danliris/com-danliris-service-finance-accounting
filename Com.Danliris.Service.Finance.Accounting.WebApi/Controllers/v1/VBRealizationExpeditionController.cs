@@ -96,7 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpPost("vb-to-verification")]
+        [HttpPut("vb-to-verification")]
         public async Task<IActionResult> Post([FromBody] VBRealizationIdListDto viewModel)
         {
             try
@@ -105,6 +105,60 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 _validateService.Validate(viewModel);
 
                 await _service.SubmitToVerification(viewModel.VBRealizationIds);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return Created(string.Concat(Request.Path, "/", 0), Result);
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("vb-verified/{id}")]
+        public async Task<IActionResult> Verify([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.VerifiedToCashier(id);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return Created(string.Concat(Request.Path, "/", 0), Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("vb-reject/{id}")]
+        public async Task<IActionResult> reject([FromRoute] int id, [FromBody] VBRealizationExpeditionRejectDto viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(viewModel);
+
+                await _service.Reject(id, viewModel.Reason);
 
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
