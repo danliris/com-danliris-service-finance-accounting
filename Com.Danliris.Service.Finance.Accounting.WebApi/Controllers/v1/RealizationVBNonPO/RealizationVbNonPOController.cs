@@ -67,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, timeoffsset);
                     return new FileStreamResult(stream, "application/pdf")
                     {
-                        FileDownloadName = $"Bukti Realisasi Non PO - {viewModel.VBRealizationNo}.pdf"
+                        FileDownloadName = $"Realisasi VB Tanpa PO - {viewModel.VBRealizationNo}.pdf"
                     };
                 }
             }

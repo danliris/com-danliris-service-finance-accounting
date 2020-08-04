@@ -434,6 +434,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
 
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
 
+            var itemIds = _dbContext.VbRequestsDetails.Where(entity => entity.VBId == id).Select(entity => entity.Id).ToList();
+
+            foreach (var itemId in itemIds)
+            {
+                var item = model.VbRequestDetail.FirstOrDefault(element => element.Id == itemId);
+                if (item == null)
+                {
+                    var itemToDelete = _dbContext.VbRequestsDetails.FirstOrDefault(entity => entity.Id == itemId);
+                    EntityExtension.FlagForDelete(itemToDelete, _identityService.Username, UserAgent);
+                    _dbContext.VbRequestsDetails.Update(itemToDelete);
+                }
+                else
+                {
+                    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
+                    _dbContext.VbRequestsDetails.Update(item);
+                }
+            }
+
+            foreach (var item in model.VbRequestDetail)
+            {
+                if (item.Id <= 0)
+                {
+                    EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
+                    _dbContext.VbRequestsDetails.Add(item);
+                }
+            }
+
             _dbContext.VbRequests.Update(model);
 
             return _dbContext.SaveChangesAsync();

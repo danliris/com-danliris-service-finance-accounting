@@ -67,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
                     MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, timeoffsset);
                     return new FileStreamResult(stream, "application/pdf")
                     {
-                        FileDownloadName = "Bukti Permohonan dengan PO - " + viewModel.VBNo + ".pdf"
+                        FileDownloadName = "Permohonan VB dengan PO - " + viewModel.VBNo + ".pdf"
                     };
                 }
             }

@@ -95,7 +95,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             //return await _dbContext.SaveChangesAsync();
 
             _dbContext.SaveChangesAsync();
-            return _iVBRealizationDocumentExpeditionService.InitializeExpedition(model.Id);
+
+            int value = int.Parse(_DbSet.OrderByDescending(p => p.Id)
+                            .Select(r => r.Id)
+                            .First().ToString());
+
+            return _iVBRealizationDocumentExpeditionService.InitializeExpedition(value);
         }
 
         private decimal ConvertRate(decimal count, RealizationVbNonPOViewModel viewmodel)
