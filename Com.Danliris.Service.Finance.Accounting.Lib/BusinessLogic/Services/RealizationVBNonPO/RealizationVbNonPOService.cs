@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             _DetailDbSet = _dbContext.Set<RealizationVbDetailModel>();
         }
 
-        public Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
+        public async Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
         {
             var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
             updateTotalRequestVb.Realization_Status = true;
@@ -94,13 +94,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
             //return await _dbContext.SaveChangesAsync();
 
-            _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             int value = int.Parse(_DbSet.OrderByDescending(p => p.Id)
                             .Select(r => r.Id)
                             .First().ToString());
 
-            return _iVBRealizationDocumentExpeditionService.InitializeExpedition(value);
+            return await _iVBRealizationDocumentExpeditionService.InitializeExpedition(value);
         }
 
         private decimal ConvertRate(decimal count, RealizationVbNonPOViewModel viewmodel)
