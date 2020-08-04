@@ -8,20 +8,15 @@ This application is a microservices application consisting of services based on 
 
 ## Prerequisites
 * Windows, Mac or Linux
-* [Visual Studio Code](https://code.visualstudio.com/) or [Visual Studio 2017](https://visualstudio.microsoft.com/vs/whatsnew/)
-* [IIS Web Server](https://www.iis.net/) (Already part of Visual Studio 2019)
-* [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)(Already part of Visual Studio 2019)
-* [.NET Core SDK](https://www.microsoft.com/net/download/core#/current) (Already part of Visual Studio 2019)
-
-## Technologies
-* .NET Core 3
-* ASP.NET Core 3
-* Entity Framework Core 3
+* [Visual Studio Code](https://code.visualstudio.com/) or [Visual Studio](https://visualstudio.microsoft.com/vs/whatsnew/)
+* [IIS Web Server](https://www.iis.net/) 
+* [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+* [.NET Core SDK](https://www.microsoft.com/net/download/core#/current) (v2.0.9,  SDK 2.1.202, ASP.NET Core Runtime 2.0.9 )
 
 
 ## Getting Started
 
-- Fork the repository and then Clone the repository using command  `git clone https://github/YOUR-USERNAME/com-danliris-service-finance-accounting.git`  checkout the `dev` branch.
+- Fork the repository and then clone the repository using command  `git clone https://github/YOUR-USERNAME/com-danliris-service-finance-accounting.git`  checkout the `dev` branch.
 
 
 ### Command Line
@@ -29,12 +24,82 @@ This application is a microservices application consisting of services based on 
 - Install the latest version of the .NET Core SDK from this page <https://www.microsoft.com/net/download/core>
 - Next, navigate to root project or wherever your folder is on the command line in administrator mode.
 - Create empty database.
-- Setting connection to database using Connection Strings in appsettings.json and appsettings.Developtment.json
+- Setting connection to database using Connection Strings in appsettings.json. Your appsettings.json look like this:
+
+```
+{
+  "Logging": {
+    "IncludeScopes": false,
+    "Debug": {
+      "LogLevel": {
+        "Default": "Warning"
+      }
+    },
+    "Console": {
+      "LogLevel": {
+        "Default": "Warning"
+      }
+    }
+  },
+
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=YourDbServer;Database=com-danliris-service-finance-accounting;Trusted_Connection=True;MultipleActiveResultSets=true",
+  },
+  "ClientId": "your ClientId",
+  "Secret": "Your Secret",
+  "ASPNETCORE_ENVIRONMENT": "Development"
+}
+```
+and  Your appsettings.Developtment.json look like this :
+```
+{
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  }
+}
+```
 - Make sure port application has no conflict, setting port application in launchSettings.json
 ```
-Com.Danliris.Service.Production.WebApi 
- ┗ Properties
-   ┗ launchSettings.json
+com-danliris-service-finance-accounting
+ ┣ Com.Danliris.Service.Finance.Accounting.WebApi
+    ┗ Properties
+       ┗ launchSettings.json
+```
+
+file launchSettings.json look like this :
+```
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:52409/",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Com.Danliris.Service.Finance.Accounting.WebApi": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    }
+  }
+} 
 ```
 - Call `dotnet run`.
 - Then open the `http://localhost:5000` URL in your browser.
@@ -102,7 +167,7 @@ ViewModels
 
 ModelConfigs
 
-- Collection of classes to setup entity model  that will be used in EF framework to generate table
+- Collection of classes to setup entity model  that will be used in EF framework to generate schema database.
 
 Migrations
 
@@ -430,11 +495,15 @@ com-danliris-service-finance-accounting
 
 **File .travis.yml**
 
-Travis CI is configured by adding a file named .travis.yml. This file in a YAML format text file, located in root directory of the repository. This file specifies the programming language used, the desired building and testing environment (including dependencies which must be installed before the software can be built and tested), and various other parameters
+Travis CI (continuous integration) is configured by adding a file named .travis.yml. This file in a YAML format text file, located in root directory of the repository. This file specifies the programming language used, the desired building and testing environment (including dependencies which must be installed before the software can be built and tested), and various other parameters
 
 **File .codecov.yml**
 
 This file is used to configure code coverage in unit tests.
 
+**Com.Danliris.Service.Finance.Accounting.sln**
+
+File .sln is extention for *solution* aka file solution for .Net Core, this file is used to manage all project by code editor.
+
  ### Validation
-Data validation using [FluentValidation](https://github.com/JeremySkinner/FluentValidation)
+Data validation using **IValidatableObject**
