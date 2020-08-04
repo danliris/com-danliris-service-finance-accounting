@@ -175,7 +175,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             RealizationVbModel model = _dataUtil(service, dbContext).GetTestData_RealizationVbs();
-            List<RealizationVbModel> result =  service.ReadRelizationToVerification(model.Position);
+            var result =  service.ReadRealizationToVerification();
             Assert.NotNull(result);
         }
 
