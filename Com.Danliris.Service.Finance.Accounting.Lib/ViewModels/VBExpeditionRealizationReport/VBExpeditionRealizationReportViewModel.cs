@@ -29,5 +29,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBExpeditionRea
         public string Notes { get; set; }
         public DateTimeOffset? DateCashierReceive { get; set; }
         public DateTime LastModifiedUtc { get; set; }
+        public int Position { get; set; }
     }
 }
