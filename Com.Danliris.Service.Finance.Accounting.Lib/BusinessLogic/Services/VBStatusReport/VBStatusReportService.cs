@@ -94,7 +94,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                   Id = rqst.Id,
                                   VBNo = rqst.VBNo,
                                   Date = rqst.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                                  DateEstimate = real.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  DateEstimate = rqst.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                                   Unit = new Unit()
                                   {
                                       Id = rqst.Id,
@@ -124,7 +124,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     //    Id = rqst.Id,
                     //    VBNo = rqst.VBNo,
                     //    //Date = rqst.Date,
-                    //    //DateEstimate = real.DateEstimate,
+                    //    //DateEstimate = rqst.DateEstimate,
                     //    Unit = new Unit()
                     //    {
                     //        Id = rqst.Id,
@@ -156,7 +156,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                   Id = rqst.Id,
                                   VBNo = rqst.VBNo,
                                   Date = rqst.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                                  DateEstimate = real.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  DateEstimate = rqst.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                                   Unit = new Unit()
                                   {
                                       Id = rqst.Id,
@@ -166,10 +166,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                   RealizationNo = real.VBNoRealize == null ? "" : real.VBNoRealize,
                                   RealizationDate = real.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                                   Usage = rqst.Usage,
-                                  Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
+                                  Aging = (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
                                   Amount = rqst.Amount,
                                   RealizationAmount = real.Amount != null ? real.Amount : 0,
-                                  Difference = real.Amount != null ? (rqst.Amount - real.Amount == null ? 0 : real.Amount) : 0,
+                                  Difference = real.Amount != null ? (rqst.Amount - real.Amount) : 0,
                                   Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
                                   LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                               })
@@ -186,7 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     //    Id = rqst.Id,
                     //    VBNo = rqst.VBNo,
                     //    Date = rqst.Date,
-                    //    DateEstimate = real.DateEstimate,
+                    //    DateEstimate = rqst.DateEstimate,
                     //    Unit = new Unit()
                     //    {
                     //        Id = rqst.Id,
@@ -218,7 +218,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                   Id = rqst.Id,
                                   VBNo = rqst.VBNo,
                                   Date = rqst.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                                  DateEstimate = real.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  DateEstimate = rqst.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                                   Unit = new Unit()
                                   {
                                       Id = rqst.Id,
@@ -231,7 +231,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                   Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
                                   Amount = rqst.Amount,
                                   RealizationAmount = real.Amount != null ? real.Amount : 0,
-                                  Difference = real.Amount != null ? (rqst.Amount - real.Amount == null ? 0 : real.Amount) : 0,
+                                  Difference = real.Amount != null ? (rqst.Amount - real.Amount) : 0,
                                   Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
                                   LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                               })
@@ -248,7 +248,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     //    Id = rqst.Id,
                     //    VBNo = rqst.VBNo,
                     //    Date = rqst.Date,
-                    //    DateEstimate = real.DateEstimate,
+                    //    DateEstimate = rqst.DateEstimate,
                     //    Unit = new Unit()
                     //    {
                     //        Id = rqst.Id,
