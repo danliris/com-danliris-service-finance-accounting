@@ -17,5 +17,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public bool isVerified { get; set; }
         public decimal Amount { get; set; }
         public string Usage { get; set; }
+        public bool IsVerified { get; set; }
+        public bool isNotVeridied { get; set; }
+
+        public string Reason_NotVerified { get; set; }
     }
 }
