@@ -28,6 +28,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 DateEstimate = DateTimeOffset.UtcNow,
                 VBMoney = 1,
                 Usage = "Usage",
+                Approve_Status = false,
+                Realization_Status = false,
+                Complete_Status = false,
                 Unit = new Unit()
                 {
                     Id = 0,
@@ -96,6 +99,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 DateEstimate = DateTimeOffset.UtcNow,
                 VBMoney = 0,
                 Usage = "",
+                Approve_Status = false,
+                Realization_Status = false,
+                Complete_Status = false,
                 Unit = new Unit()
                 {
                     Id = 0,
@@ -165,6 +171,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 DateEstimate = DateTimeOffset.UtcNow,
                 VBMoney = 1,
                 Usage = "Usage",
+                Approve_Status = false,
+                Realization_Status = false,
+                Complete_Status = false,
                 Unit = new Unit()
                 {
                     Id = 1,
@@ -247,6 +256,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 DateEstimate = DateTimeOffset.UtcNow,
                 VBMoney = 1,
                 Usage = "Usage",
+                Approve_Status = false,
+                Realization_Status = false,
+                Complete_Status = false,
                 Unit = new Unit()
                 {
                  //   Id = 1,
@@ -330,6 +342,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 DateEstimate = DateTimeOffset.UtcNow,
                 VBMoney = 1,
                 Usage = "Usage",
+                Approve_Status = false,
+                Realization_Status = false,
+                Complete_Status = false,
                 Unit = new Unit()
                 {
                     Id = 1,
@@ -425,6 +440,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
                 Apporve_Status = true,
+                Realization_Status = true,
                 Complete_Status = true,
                 VBRequestCategory = "PO",
                 CreatedBy = "CreatedBy",
@@ -476,6 +492,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                 Usage = "Usage",
                 UnitLoad = "UnitLoad",
                 Apporve_Status = true,
+                Realization_Status = true,
                 Complete_Status = true,
                 VBRequestCategory = "PO",
                 CreatedBy = "CreatedBy",

@@ -3,17 +3,19 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cashier
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBVerification;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWIthPO;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbVerification;
-using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
+using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBWIthPO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -129,12 +131,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
         public async Task Read_Return_Success()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
-            VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
 
-            CashierApprovalService service3 = new CashierApprovalService(GetServiceProvider().Object, dbContext);
-
-            VbNonPORequestService service4 = new VbNonPORequestService(dbContext, GetServiceProvider().Object);
+            var serviceProviderMock = GetServiceProvider();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
+            VbVerificationService service2 = new VbVerificationService(dbContext, serviceProviderMock.Object);
+            CashierApprovalService service3 = new CashierApprovalService(serviceProviderMock.Object, dbContext);
+            VbNonPORequestService service4 = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
 
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
@@ -157,8 +161,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
         public async Task Read_Return_Success2()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
-            VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
+            var serviceProviderMock = GetServiceProvider();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
+            VbVerificationService service2 = new VbVerificationService(dbContext, serviceProviderMock.Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
             var dataRequestVb = _dataUtil(service).GetDataRequestVB();
@@ -217,6 +224,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var service2 = new VbVerificationService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
@@ -227,6 +236,70 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             var result = await service2.ReadById(data.Id);
 
             Assert.NotNull(result);
+        }
+
+        internal class RealizationVbServiceHelper : IVBRealizationDocumentExpeditionService
+        {
+            public RealizationVbServiceHelper()
+            {
+            }
+
+            public Task<int> CashierReceipt(List<int> vbRealizationIds)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> InitializeExpedition(int vbRealizationId)
+            {
+                //throw new NotImplementedException();
+
+                return Task.FromResult(1);
+            }
+
+            public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position)
+            {
+                throw new NotImplementedException();
+            }
+
+            public ReadResponse<RealizationVbModel> ReadRealizationToVerification()
+            {
+                throw new NotImplementedException();
+            }
+
+            public List<RealizationVbModel> ReadRelizationToVerification(int position)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> Reject(int vbRealizationId, string reason)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> SubmitToVerification(List<int> vbRealizationIds)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> VerificationDocumentReceipt(List<int> vbRealizationIds)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> VerifiedToCashier(List<int> vbRealizationIds)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> VerifiedToCashier(int vbRealizationId)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

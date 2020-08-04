@@ -12,6 +12,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewMode
 using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -19,6 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
     {
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
+        private readonly IVBRealizationDocumentExpeditionService _iVBRealizationDocumentExpeditionService;
         private const string UserAgent = "finance-service";
         protected DbSet<RealizationVbModel> _DbSet;
         protected DbSet<RealizationVbDetailModel> _DetailDbSet;
@@ -27,7 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         {
             _dbContext = dbContext;
             _identityService = serviceProvider.GetService<IIdentityService>();
-
+            _iVBRealizationDocumentExpeditionService = serviceProvider.GetService<IVBRealizationDocumentExpeditionService>();
             _DbSet = _dbContext.Set<RealizationVbModel>();
             _DetailDbSet = _dbContext.Set<RealizationVbDetailModel>();
         }
@@ -65,7 +67,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
             _dbContext.RealizationVbs.Add(model);
 
-            return _dbContext.SaveChangesAsync();
+            //return _dbContext.SaveChangesAsync();
+
+            _dbContext.SaveChangesAsync();
+            return _iVBRealizationDocumentExpeditionService.InitializeExpedition(model.Id);
         }
 
         private string GetVbRealizePoNo(RealizationVbModel model)

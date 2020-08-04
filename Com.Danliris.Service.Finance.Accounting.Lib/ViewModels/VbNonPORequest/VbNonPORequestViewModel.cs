@@ -17,6 +17,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public CurrencyVBRequest Currency { get; set; }
         public decimal Amount { get; set; }
         public string Usage { get; set; }
+        public bool Approve_Status { get; set; }
+        public bool Realization_Status { get; set; }
+        public bool Complete_Status { get; set; }
         public bool Spinning1 { get; set; }
         public bool Spinning2 { get; set; }
         public bool Spinning3 { get; set; }
