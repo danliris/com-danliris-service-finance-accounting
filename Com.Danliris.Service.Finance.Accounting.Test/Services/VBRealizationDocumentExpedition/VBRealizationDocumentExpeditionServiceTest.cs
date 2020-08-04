@@ -130,7 +130,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             Assert.NotEqual(0, result);
         }
 
-    //    [Fact]
+      // [Fact]
         public async Task SubmitToVerification_Return_Success()
         {
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
@@ -144,7 +144,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
 
         [Fact]
-        public async Task VerifiedToCashier_Return_Success()
+        public async Task VerifiedToCashier_with_multipleData_Return_Success()
         {
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
 
@@ -153,6 +153,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             int result = await service.VerifiedToCashier(new List<int>() { model.VBRealizationId });
            
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task VerifiedToCashier_with_singleData_Return_Success()
+        {
+            FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+            VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
+
+            int result = await service.VerifiedToCashier(model.VBRealizationId);
+
             Assert.NotEqual(0, result);
         }
 
@@ -167,8 +180,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             int result = await service.VerificationDocumentReceipt(new List<int>() { data });
             Assert.NotEqual(0, result);
         }
-        
 
+        
         [Fact]
         public void  ReadRelizationToVerification_Return_Success()
         {
@@ -180,5 +193,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             Assert.NotNull(result);
         }
 
+       
     }
 }
