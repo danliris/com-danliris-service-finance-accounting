@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             _DetailDbSet = _dbContext.Set<RealizationVbDetailModel>();
         }
 
-        public async Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
+        public Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
         {
             var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
             updateTotalRequestVb.Realization_Status = true;
@@ -50,7 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             foreach (var item2 in viewmodel.Items)
             {
                 decimal count_total;
-                
+
                 if (item2.isGetPPn == true)
                 {
                     decimal temp = item2.Amount * 0.1m;
@@ -88,16 +88,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 model.StatusReqReal = "Kurang";
             }
 
-            
-
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
 
             _dbContext.RealizationVbs.Add(model);
 
             //return await _dbContext.SaveChangesAsync();
 
-            await _dbContext.SaveChangesAsync();
-            return await _iVBRealizationDocumentExpeditionService.InitializeExpedition(model.Id);
+            _dbContext.SaveChangesAsync();
+            return _iVBRealizationDocumentExpeditionService.InitializeExpedition(model.Id);
         }
 
         private decimal ConvertRate(decimal count, RealizationVbNonPOViewModel viewmodel)
