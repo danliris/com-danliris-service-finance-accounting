@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             });
 
-            _dbContext.VBRealizationDocumentExpeditions.AddRange(models);
+            _dbContext.VBRealizationDocumentExpeditions.UpdateRange(models);
             UpdateVBRealizationPosition(vbRealizationIds, (int)VBRealizationPosition.Cashier);
 
             return _dbContext.SaveChangesAsync();
@@ -144,8 +144,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             vbRealizationExpedition.VerificationRejected(_identityService.Username, reason);
             EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
+
             _dbContext.VBRealizationDocumentExpeditions.Update(vbRealizationExpedition);
             UpdateVBRealizationPosition(vbRealizationId, (int)VBRealizationPosition.NotVerified);
+
             return _dbContext.SaveChangesAsync();
         }
 
@@ -159,7 +161,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             });
 
-            _dbContext.VBRealizationDocumentExpeditions.AddRange(models);
+            _dbContext.VBRealizationDocumentExpeditions.UpdateRange(models);
             UpdateVBRealizationPosition(vbRealizationIds, (int)VBRealizationPosition.PurchasingToVerification);
 
             return _dbContext.SaveChangesAsync();
