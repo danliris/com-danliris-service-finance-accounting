@@ -445,11 +445,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                     EntityExtension.FlagForDelete(itemToDelete, _identityService.Username, UserAgent);
                     _dbContext.VbRequestsDetails.Update(itemToDelete);
                 }
-                else
-                {
-                    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
-                    _dbContext.VbRequestsDetails.Update(item);
-                }
+                //else
+                //{
+                //    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
+                //    _dbContext.VbRequestsDetails.Update(item);
+                //}
             }
 
             foreach (var item in model.VbRequestDetail)
