@@ -35,8 +35,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             });
 
             _dbContext.VBRealizationDocumentExpeditions.AddRange(models);
+            UpdateVBRealizationPosition(vbRealizationIds, (int)VBRealizationPosition.Cashier);
 
             return _dbContext.SaveChangesAsync();
+        }
+
+        private void UpdateVBRealizationPosition(int vbRealizationId, int position)
+        {
+            var model = _dbContext.RealizationVbs.FirstOrDefault(entity => entity.Id == vbRealizationId);
+            model.Position = position;
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.RealizationVbs.Update(model);
+        }
+
+        private void UpdateVBRealizationPosition(List<int> vbRealizationIds, int position)
+        {
+            var models = _dbContext.RealizationVbs.Where(entity => vbRealizationIds.Contains(entity.Id)).ToList();
+            models.ForEach(model =>
+            {
+                model.Position = position;
+                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            });
+            _dbContext.RealizationVbs.UpdateRange(models);
         }
 
         public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
@@ -66,13 +86,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+
             _dbContext.Add(model);
+            UpdateVBRealizationPosition(vbRealizationId, (int)VBRealizationPosition.Purchasing);
+            
             return _dbContext.SaveChangesAsync();
         }
 
         public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position)
         {
             var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
+
+            if (position > 0)
+                query = query.Where(entity => entity.Position == position);
 
             //query = query
             //    .Select(entity => new VBRealizationDocumentExpeditionIndexDto
@@ -114,11 +140,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> Reject(int vbRealizationId, string reason)
         {
-            var vbRealizationExpedtion = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId);
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId);
 
-            vbRealizationExpedtion.VerificationRejected(_identityService.Username, reason);
-            EntityExtension.FlagForUpdate(vbRealizationExpedtion, _identityService.Username, UserAgent);
-            _dbContext.VBRealizationDocumentExpeditions.Update(vbRealizationExpedtion);
+            vbRealizationExpedition.VerificationRejected(_identityService.Username, reason);
+            EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
+            _dbContext.VBRealizationDocumentExpeditions.Update(vbRealizationExpedition);
+            UpdateVBRealizationPosition(vbRealizationId, (int)VBRealizationPosition.NotVerified);
             return _dbContext.SaveChangesAsync();
         }
 
@@ -133,6 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             });
 
             _dbContext.VBRealizationDocumentExpeditions.AddRange(models);
+            UpdateVBRealizationPosition(vbRealizationIds, (int)VBRealizationPosition.PurchasingToVerification);
 
             return _dbContext.SaveChangesAsync();
         }
@@ -147,7 +175,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             });
 
-            _dbContext.VBRealizationDocumentExpeditions.AddRange(models);
+            _dbContext.VBRealizationDocumentExpeditions.UpdateRange(models);
+            UpdateVBRealizationPosition(vbRealizationIds, (int)VBRealizationPosition.VerifiedToCashier);
 
             return _dbContext.SaveChangesAsync();
         }
@@ -162,15 +191,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             });
 
-            _dbContext.VBRealizationDocumentExpeditions.AddRange(models);
+            _dbContext.VBRealizationDocumentExpeditions.UpdateRange(models);
+            UpdateVBRealizationPosition(vbRealizationIds, (int)VBRealizationPosition.Verification);
 
             return _dbContext.SaveChangesAsync();
         }
 
-        public List<RealizationVbModel> ReadRelizationToVerification(int position)
+        public ReadResponse<RealizationVbModel> ReadRealizationToVerification()
         {
-            var result = _dbContext.RealizationVbs.Where(entity => entity.Position == position).ToList();
-            return result;
+            var result = _dbContext.RealizationVbs.Where(entity => entity.Position == (int)VBRealizationPosition.Purchasing).ToList();
+            return new ReadResponse<RealizationVbModel>(result, result.Count, new Dictionary<string, string>(), new List<string>());
+        }
+
+        public Task<int> VerifiedToCashier(int vbRealizationId)
+        {
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId);
+
+            vbRealizationExpedition.SendToCashier(_identityService.Username);
+            EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
+
+            _dbContext.VBRealizationDocumentExpeditions.Update(vbRealizationExpedition);
+
+            UpdateVBRealizationPosition(vbRealizationId, (int)VBRealizationPosition.VerifiedToCashier);
+
+            return _dbContext.SaveChangesAsync();
         }
     }
 }

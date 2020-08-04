@@ -570,6 +570,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 throw new NotImplementedException();
             }
 
+            public ReadResponse<RealizationVbModel> ReadRealizationToVerification()
+            {
+                throw new NotImplementedException();
+            }
+
             public List<RealizationVbModel> ReadRelizationToVerification(int position)
             {
                 throw new NotImplementedException();
@@ -591,6 +596,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             }
 
             public Task<int> VerifiedToCashier(List<int> vbRealizationIds)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> VerifiedToCashier(int vbRealizationId)
             {
                 throw new NotImplementedException();
             }
