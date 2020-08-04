@@ -22,7 +22,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
 
         public VBRealizationDocumentExpeditionModel GetTestData_VBRealizationDocumentExpedition()
         {
-            var data = new VBRealizationDocumentExpeditionModel(0, 0, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 0, "meter", 0, "divisionName", 0, 0, "IDR", 0);
+            var vbRealization = GetTestData_RealizationVbs();
+            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 0, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 0, "meter", 0, "divisionName", 0, 0, "IDR", 0);
             dbContext.VBRealizationDocumentExpeditions.Add(data);
             dbContext.SaveChanges();
             return data;
