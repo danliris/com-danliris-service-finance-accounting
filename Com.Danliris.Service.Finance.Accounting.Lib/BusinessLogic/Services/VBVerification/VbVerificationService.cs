@@ -106,7 +106,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
         public ReadResponse<VbVerificationResultList> ReadVerification(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.RealizationVbs.Where(entity => entity.isVerified == true).AsQueryable();
+            var query = _dbContext.RealizationVbs.Where(entity => entity.isVerified == true)
+                .Union(_dbContext.RealizationVbs.Where(entity => entity.isNotVeridied == true).AsQueryable()).AsQueryable();
+            //var query2 = _dbContext.RealizationVbs.Where(entity => entity.isNotVeridied == true).AsQueryable();
 
             var searchAttributes = new List<string>()
             {
@@ -143,9 +145,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
                 Currency = entity.CurrencyCode,
                 isVerified = entity.isVerified,
                 Amount = entity.Amount,
-                Usage = entity.UsageVBRequest
+                Usage = entity.UsageVBRequest,
+                Reason_NotVerified = entity.Reason_NotVerified,
+                IsVerified = entity.isVerified,
+                isNotVeridied = entity.isNotVeridied
 
-            }).Where(entity => entity.isVerified == true).ToList();
+            }).ToList();
 
             int totalData = pageable.TotalCount;
 
@@ -163,10 +168,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
                 m.isNotVeridied = viewmodel.isNotVeridied;
                 m.VerifiedName = _identityService.Username;
 
-                if (viewmodel.isVerified == true)
-                {
-                    m.VerifiedDate = (DateTimeOffset)viewmodel.VerifyDate;
-                }
+                m.VerifiedDate = (DateTimeOffset)viewmodel.VerifyDate;
 
                 if (string.IsNullOrEmpty(viewmodel.Reason))
                 {

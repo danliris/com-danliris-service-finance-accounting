@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB;
 using System.Linq.Dynamic.Core;
+using System.Globalization;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB
 {
@@ -146,16 +147,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
         public ReadResponse<ClearaceVBViewModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _RequestDbSet.AsQueryable();
-            var realizationQuery = _RealizationDbSet.AsQueryable();
+            var realizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.isVerified == true);
 
             List<string> SearchAttributes = new List<string>()
             {
                 "RqstNo","VBCategory","Appliciant","RealNo","Status","DiffStatus"
             };
 
-
-            var diffStatus = "";
-
+            int offSet = 7;
             var data = query
                .Join(realizationQuery,
                (rqst) => rqst.VBNo,
@@ -166,6 +165,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                    RqstNo = rqst.VBNo,
                    VBCategory = rqst.VBRequestCategory,
                    RqstDate = rqst.Date,
+                   //RqstDate = rqst.Date.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                    Unit = new Unit()
                    {
                        Id = rqst.Id,
@@ -174,13 +174,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                    Appliciant = rqst.CreatedBy,
                    RealNo = real.VBNoRealize,
                    RealDate = real.Date,
-                   VerDate = null,
-
-                   //DiffStatus = real.StatusReqReal,
-                   DiffStatus = diffStatus,
-
+                   //RealDate = rqst.Realization_Status == true ? real.Date.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
+                   VerDate = real.VerifiedDate,
+                   //VerDate = real.isVerified == true ? real.VerifiedDate.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
+                   DiffStatus = real.StatusReqReal,
                    DiffAmount = real.DifferenceReqReal,
                    ClearanceDate = rqst.CompleteDate,
+                   //ClearanceDate = rqst.Complete_Status == true ? rqst.CompleteDate.ToString() : "",
                    IsPosted = rqst.Complete_Status,
                    Status = rqst.Complete_Status ? "Completed" : "Uncompleted",
                    LastModifiedUtc = real.LastModifiedUtc,

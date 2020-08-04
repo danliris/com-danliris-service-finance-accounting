@@ -98,7 +98,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody6.HorizontalAlignment = Element.ALIGN_LEFT;
 
             cellHeaderBody2.Colspan = 5;
-            cellHeaderBody2.Phrase = new Phrase("REALISASI VB", bold_font);
+            cellHeaderBody2.Phrase = new Phrase("REALISASI VB tanpa PO", bold_font);
             headerTable3.AddCell(cellHeaderBody2);
 
             cellHeaderBody.Phrase = new Phrase(" ", normal_font);

@@ -120,8 +120,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         Notes = real.Reason_NotVerified,
                         DateCashierReceive = rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
+                        Position = real.Position,
                     })
-                    .Where(t => t.Status == "K" && t.VerificationStatus != "R")
+                    //.Where(t => t.Status == "K" && t.VerificationStatus != "R")
+                    .Where(t => t.Position == 5)
                     .OrderByDescending(s => s.LastModifiedUtc)
                     .ToList();
                     break;
@@ -163,8 +165,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         Notes = real.Reason_NotVerified,
                         DateCashierReceive = rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
+                        Position = real.Position,
                     })
-                    .Where(t => t.Status != "K" && t.VerificationStatus == "R")
+                    //.Where(t => t.Status != "K" && t.VerificationStatus == "R")
+                    .Where(t => t.Position == 6)
                     .OrderByDescending(s => s.LastModifiedUtc)
                     .ToList();
                     break;
@@ -206,8 +210,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBE
                         Notes = real.Reason_NotVerified,
                         DateCashierReceive = rqst.CompleteDate,
                         LastModifiedUtc = real.LastModifiedUtc,
+                        Position = real.Position,
                     })
-                    .Where(t => t.Status == "K" || t.VerificationStatus == "R")
+                    //.Where(t => t.Status == "K" || t.VerificationStatus == "R")
+                    .Where(t => t.Position == 5 || t.Position == 6)
                     .OrderByDescending(s => s.LastModifiedUtc)
                     .ToList();
                     break;

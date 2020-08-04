@@ -99,6 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBExpeditionReal
                 isNotVeridied = false,
                 Reason_NotVerified = "Reason_NotVerified",
                 LastModifiedUtc = DateTime.Now,
+                Position = 5
             };
             service._DbContext.RealizationVbs.Add(dataRealization);
             service._DbContext.SaveChanges();
