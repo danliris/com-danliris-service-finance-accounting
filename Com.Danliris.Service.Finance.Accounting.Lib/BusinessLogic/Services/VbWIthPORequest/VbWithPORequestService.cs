@@ -447,6 +447,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
             foreach (var itm in viewModel.Items)
             {
+                if (string.IsNullOrEmpty(itm.IncomeTax._id))
+                {
+                    IncomeTaxId = "";
+                }
+                else
+                {
+                    IncomeTaxId = itm.IncomeTax._id;
+                }
+
+                if (string.IsNullOrEmpty(itm.IncomeTax.Name))
+                {
+                    IncomeTaxName = "";
+                }
+                else
+                {
+                    IncomeTaxName = itm.IncomeTax.Name;
+                }
+
+                if (string.IsNullOrEmpty(itm.IncomeTax.Rate))
+                {
+                    IncomeTaxRate = "";
+                }
+                else
+                {
+                    IncomeTaxRate = itm.IncomeTax.Rate;
+                }
+
+                if (string.IsNullOrEmpty(itm.IncomeTaxBy))
+                {
+                    IncomeTaxBy = "";
+                }
+                else
+                {
+                    IncomeTaxBy = itm.IncomeTaxBy;
+                }
+
                 IncomeTaxBy = itm.IncomeTaxBy;
                 IncomeTaxId = itm.IncomeTax._id;
                 IncomeTaxName = itm.IncomeTax.Name;

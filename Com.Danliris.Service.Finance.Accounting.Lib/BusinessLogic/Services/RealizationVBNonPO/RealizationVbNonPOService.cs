@@ -281,11 +281,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     EntityExtension.FlagForDelete(itemToDelete, _identityService.Username, UserAgent);
                     _dbContext.RealizationVbDetails.Update(itemToDelete);
                 }
-                else
-                {
-                    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
-                    _dbContext.RealizationVbDetails.Update(item);
-                }
+                //else
+                //{
+                //    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
+                //    _dbContext.RealizationVbDetails.Update(item);
+                //}
             }
 
             foreach (var item in model.RealizationVbDetail)
