@@ -113,6 +113,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
         }
 
         [Fact]
+        public async Task Should_Success_Create_Model2()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            var modelToCreate = dataUtil.GetVbRequestModelToCreate();
+            var viewmodelToCreate = dataUtil.GetViewModel1();
+            var result = await service.CreateAsync(modelToCreate, viewmodelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public async Task Should_Success_Create_Model_Failed_Purchasing()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
@@ -193,6 +207,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
             var dataUtil = new VbWithPORequestDataUtil(service);
             var modelToUpdate = await dataUtil.GetCreatedData();
             var viewmodelToCreate = dataUtil.GetViewModel();
+
+            var result = await service.UpdateAsync(modelToUpdate.Id, viewmodelToCreate);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Update_Model2()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbWithPORequestDataUtil(service);
+            var modelToUpdate = await dataUtil.GetCreatedData();
+            var viewmodelToCreate = dataUtil.GetViewModel1();
 
             var result = await service.UpdateAsync(modelToUpdate.Id, viewmodelToCreate);
 
