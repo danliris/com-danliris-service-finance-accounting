@@ -270,6 +270,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest
             var viewmodel = GetViewModel();
             var model = GetVbRequestModelToCreate();
             await _service.CreateAsync(model, viewmodel);
+            await _service.MappingData(viewmodel);
             return await _service.ReadByIdAsync(model.Id);
         }
 
