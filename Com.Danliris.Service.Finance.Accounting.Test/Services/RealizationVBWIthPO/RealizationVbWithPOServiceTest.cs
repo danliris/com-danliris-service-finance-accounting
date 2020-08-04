@@ -1,8 +1,12 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWIthPO;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
+using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBWIthPO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -86,7 +90,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         public async Task Should_Success_Create_Data()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
+            var serviceProviderMock = GetServiceProvider();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbWithPOServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
             var dataRequestVb = _dataUtil(service).GetDataRequestVB();
@@ -102,7 +109,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         public async Task Should_Success_Create_Data_Mapping()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
+            var serviceProviderMock = GetServiceProvider();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbWithPOServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
             var dataRequestVb = _dataUtil(service).GetDataRequestVB();
@@ -119,7 +129,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         public async Task DeleteAsync_Return_Success()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
+            var serviceProviderMock = GetServiceProvider();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbWithPOServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
             var dataRequestVb = _dataUtil(service).GetDataRequestVB();
@@ -136,7 +149,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         public async Task ReadByIdAsync2_Return_Success()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
+            var serviceProviderMock = GetServiceProvider();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbWithPOServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
             var dataRequestVb = _dataUtil(service).GetDataRequestVB();
@@ -164,7 +180,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         public async Task Read_Return_Success()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
+            var serviceProviderMock = GetServiceProvider();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbWithPOServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
             var dataRequestVb = _dataUtil(service).GetDataRequestVB();
@@ -206,5 +225,57 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
             Assert.True(vm.Validate(null).Count() > 0);
         }
 
+        internal class RealizationVbWithPOServiceHelper : IVBRealizationDocumentExpeditionService
+        {
+            public RealizationVbWithPOServiceHelper()
+            {
+            }
+
+            public Task<int> CashierReceipt(List<int> vbRealizationIds)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> InitializeExpedition(int vbRealizationId)
+            {
+                //throw new NotImplementedException();
+                return Task.FromResult(1);
+            }
+
+            public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position)
+            {
+                throw new NotImplementedException();
+            }
+
+            public List<RealizationVbModel> ReadRelizationToVerification(int position)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> Reject(int vbRealizationId, string reason)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> SubmitToVerification(List<int> vbRealizationIds)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> VerificationDocumentReceipt(List<int> vbRealizationIds)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> VerifiedToCashier(List<int> vbRealizationIds)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

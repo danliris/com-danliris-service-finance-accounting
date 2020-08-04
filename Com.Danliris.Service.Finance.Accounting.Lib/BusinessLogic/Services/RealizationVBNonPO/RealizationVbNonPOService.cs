@@ -12,6 +12,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewMode
 using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
 using System.Net.Http.Headers;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.RealizationVBNonPO
 {
@@ -19,6 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
     {
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
+        private readonly IVBRealizationDocumentExpeditionService _iVBRealizationDocumentExpeditionService;
         private const string UserAgent = "finance-service";
         protected DbSet<RealizationVbModel> _DbSet;
         protected DbSet<RealizationVbDetailModel> _DetailDbSet;
@@ -27,12 +29,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
         {
             _dbContext = dbContext;
             _identityService = serviceProvider.GetService<IIdentityService>();
-
+            _iVBRealizationDocumentExpeditionService = serviceProvider.GetService<IVBRealizationDocumentExpeditionService>();
             _DbSet = _dbContext.Set<RealizationVbModel>();
             _DetailDbSet = _dbContext.Set<RealizationVbDetailModel>();
         }
 
-        public Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
+        public async Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
         {
             var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
             updateTotalRequestVb.Realization_Status = true;
@@ -92,7 +94,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
             _dbContext.RealizationVbs.Add(model);
 
-            return _dbContext.SaveChangesAsync();
+            //return await _dbContext.SaveChangesAsync();
+
+            await _dbContext.SaveChangesAsync();
+            return await _iVBRealizationDocumentExpeditionService.InitializeExpedition(model.Id);
         }
 
         private decimal ConvertRate(decimal count, RealizationVbNonPOViewModel viewmodel)
