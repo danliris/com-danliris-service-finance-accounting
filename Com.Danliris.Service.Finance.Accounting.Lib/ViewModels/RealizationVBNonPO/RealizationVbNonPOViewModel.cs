@@ -33,6 +33,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             {
                 yield return new ValidationResult("Tanggal Realisasi harus ada!", new List<string> { "Item" });
             }
+            else if (numberVB == null)
+            {
+                yield return new ValidationResult("No VB harus ada!", new List<string> { "Item" });
+            }
             else if (Items.Count > 0)
             {
                 int CountItemsError = 0;
