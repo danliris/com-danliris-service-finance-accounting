@@ -97,6 +97,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -142,6 +144,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -188,6 +192,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -225,6 +231,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -262,6 +270,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -299,6 +309,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -336,6 +348,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -374,6 +388,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -411,6 +427,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 

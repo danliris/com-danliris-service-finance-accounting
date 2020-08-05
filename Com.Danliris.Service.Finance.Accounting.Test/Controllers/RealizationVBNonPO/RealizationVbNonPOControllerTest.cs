@@ -735,6 +735,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -797,6 +799,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -860,6 +864,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -922,6 +928,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "SPINNING 1",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -984,6 +992,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "SPINNING 2",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1046,6 +1056,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "SPINNING 3",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1108,6 +1120,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "WEAVING 1",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1170,6 +1184,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "WEAVING 2",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1232,6 +1248,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "PRINTING",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1294,6 +1312,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "DYEING",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1356,6 +1376,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "FINISHING",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1418,6 +1440,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "KONFEKSI 1A",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1483,6 +1507,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "KONFEKSI 1B",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1545,6 +1571,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "KONFEKSI 2A",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1607,6 +1635,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "KONFEKSI 2B",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1669,6 +1699,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "KONFEKSI 2C",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1731,6 +1763,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                     UnitId = 1,
                     UnitLoad = "UMUM",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
