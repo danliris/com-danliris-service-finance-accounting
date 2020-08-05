@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
         public string VBRealizationNo { get; set; }
 
         public DateTimeOffset? Date { get; set; }
+        public string TypeVBNonPO { get; set; }
 
         public DetailRequestNonPO numberVB { get; set; }
 
@@ -47,10 +48,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         ItemsError += "'DateDetail': 'Tanggal harus diisi!', ";
                     }
 
-                    if (item.DateDetail.HasValue && item.DateDetail.Value > Date.Value)
+                    if (item.DateDetail.HasValue && item.DateDetail.Value >= Date.Value)
                     {
                         CountItemsError++;
                         ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Tanggal Realisasi!', ";
+                    }
+                    else if(item.DateDetail.HasValue && item.DateDetail.Value <= numberVB.Date)
+                    {
+                        CountItemsError++;
+                        ItemsError += "'DateDetail': 'Tanggal Nota harus lebih atau sama dengan Tanggal VB!', ";
                     }
 
                     if (string.IsNullOrWhiteSpace(item.Remark))
@@ -64,6 +70,24 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         CountItemsError++;
                         ItemsError += "'Amount': 'Jumlah harus lebih besar dari 0!', ";
                     }
+
+                    if(item.isGetPPh == true)
+                    {
+                        if (item.incomeTax == null)
+                        {
+                            CountItemsError++;
+                            ItemsError += "'incomeTax': 'Nomor PPh Harus Diisi!', ";
+                        }
+
+                        if (string.IsNullOrWhiteSpace(item.IncomeTaxBy))
+                        {
+                            CountItemsError++;
+                            ItemsError += "'IncomeTaxBy': 'Ditanggung Oleh harus Dipilih!', ";
+                        }
+                    }
+
+                    
+
                     ItemsError += "}, ";
                 }
 

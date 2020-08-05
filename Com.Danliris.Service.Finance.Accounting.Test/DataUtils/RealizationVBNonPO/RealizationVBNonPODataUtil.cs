@@ -34,6 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 VBNoRealize = "VBNoRealize",
                 VBRealizeCategory = "NONPO",
                 VerifiedDate = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 RealizationVbDetail = new List<RealizationVbDetailModel>()
                 {
                     new RealizationVbDetailModel()
@@ -63,6 +64,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         VBRealizationId =1,
                         IdProductSPB ="IdProductSPB",
                         DateSPB =DateTimeOffset.Now,
+                        IncomeTaxId = "1",
+                        IncomeTaxName = "IncomeTaxName",
+                        IncomeTaxBy = "IncomeTaxBy",
+                        IncomeTaxRate = "1"
 
                     }
                 }
@@ -83,6 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 LastModifiedAgent = "LastModifiedAgent",
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -110,7 +116,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 123,
-                        isGetPPn = true
+                        isGetPPn = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy"
                     }
                 }
             };
@@ -130,6 +143,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 LastModifiedAgent = "LastModifiedAgent",
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -157,7 +171,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 123,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy"
                     }
                 }
             };
@@ -178,6 +199,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 LastModifiedAgent = "LastModifiedAgent",
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -205,7 +227,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 123,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy"
                     }
                 }
             };
@@ -334,6 +363,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             {
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -361,7 +391,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 0,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy"
                     }
                 }
             };
@@ -374,6 +411,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -401,7 +439,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 0,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy"
                     }
                 }
             };
