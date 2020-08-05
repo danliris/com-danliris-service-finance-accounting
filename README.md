@@ -324,7 +324,7 @@ com-danliris-service-finance-accounting
 
 **2. Com.Danliris.Service.Finance.Accounting.WebApi**
 
-This folder consists of Controller API. The controller has responsibility to processing data and  HTTP requests and then send it to a web page. 
+This folder consists of controller API. The controller has responsibility to processing data and  HTTP requests and then send it to a web page. All responses from the HTTP requests API are formatted as JSON (JavaScript Object Notation) objects containing information related to the request, and any status.
 
 The folder tree in this folder is:
 
@@ -376,7 +376,7 @@ com-danliris-service-finance-accounting
 
 **3. Com.Danliris.Service.Finance.Accounting.Test**
 
-This folder is collection of classes to run code testing. The code testing used in this app is  a unit test using libraries of moq and xunit.
+This folder is collection of classes to run code testing. The automation type testing used in this app is  a unit testing with using moq and xunit libraries.
 
 DataUtils:
 
@@ -500,7 +500,7 @@ com-danliris-service-finance-accounting
 
 **FinanceDbContext.cs**
 
-The class contain context class that derives from DbContext in entity framework. DbContext is an important class in Entity Framework API. It is a bridge between domain or entity classes and the database. DbContext and context class  is the primary class that is responsible for interacting with the database.
+This file contain context class that derives from DbContext in entity framework. DbContext is an important class in Entity Framework API. It is a bridge between domain or entity classes and the database. DbContext and context class  is the primary class that is responsible for interacting with the database.
 
 
 **File Program.cs**
@@ -517,7 +517,7 @@ This file is used to configure code coverage in unit tests.
 
 **File .travis.yml**
 
-Travis CI (continuous integration) is configured by adding a file named .travis.yml. This file in a YAML format text file, located in root directory of the repository. This file specifies the programming language used, the desired building and testing environment (including dependencies which must be installed before the software can be built and tested), and various other parameters
+Travis CI (continuous integration) is configured by adding a file named .travis.yml. This file in a YAML format text file, located in root directory of the repository. This file specifies the programming language used, the desired building and testing environment (including dependencies which must be installed before the software can be built and tested), and various other parameters.
 
 **File .codecov.yml**
 
