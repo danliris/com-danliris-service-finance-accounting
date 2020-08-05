@@ -25,6 +25,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             if (numberVB == null)
                 yield return new ValidationResult("No VB harus diisi!", new List<string> { "VBCode" });
 
+            if (TypeVBNonPO == null)
+                yield return new ValidationResult("Tipe VB harus dipilih!", new List<string> { "TypeVBNonPO" });
+
             if (Items == null || Items.Count.Equals(0))
             {
                 yield return new ValidationResult("Daftar harus diisi!", new List<string> { "Item" });
