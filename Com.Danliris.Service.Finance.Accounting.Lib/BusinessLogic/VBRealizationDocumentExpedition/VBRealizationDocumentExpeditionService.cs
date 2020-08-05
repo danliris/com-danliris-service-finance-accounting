@@ -67,6 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public Task<int> InitializeExpedition(int vbRealizationId)
         {
             var realizationVB = _dbContext.RealizationVbs.FirstOrDefault(entity => entity.Id == vbRealizationId);
+            var vbRequest = _dbContext.VbRequests.FirstOrDefault(entity => entity.Id == realizationVB.VBId);
 
             var model = new VBRealizationDocumentExpeditionModel(
                 realizationVB.Id,
@@ -82,7 +83,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 realizationVB.Amount_VB,
                 realizationVB.Amount,
                 realizationVB.CurrencyCode,
-                (double)realizationVB.CurrencyRate
+                (double)realizationVB.CurrencyRate,
+                vbRequest.VBRequestCategory
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
