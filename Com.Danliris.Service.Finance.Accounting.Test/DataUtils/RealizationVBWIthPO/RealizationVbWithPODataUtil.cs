@@ -77,6 +77,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
+                    Id = 1,
                     DateEstimate = DateTimeOffset.Now,
                     PONo = new List<PODetail>()
                     {

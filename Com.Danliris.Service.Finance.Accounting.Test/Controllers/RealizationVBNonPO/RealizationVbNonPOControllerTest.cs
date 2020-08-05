@@ -723,6 +723,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "IDR",
@@ -783,6 +784,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -844,6 +846,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -904,6 +907,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = null,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -964,6 +968,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1024,6 +1029,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1084,6 +1090,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1144,6 +1151,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1204,6 +1212,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1264,6 +1273,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1324,6 +1334,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1384,6 +1395,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1447,6 +1459,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1507,6 +1520,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1567,6 +1581,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1627,6 +1642,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 0,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
@@ -1687,6 +1703,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "USD",
