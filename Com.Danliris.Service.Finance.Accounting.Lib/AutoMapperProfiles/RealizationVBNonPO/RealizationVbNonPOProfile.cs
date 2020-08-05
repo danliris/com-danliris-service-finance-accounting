@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Realiza
         public RealizationVbNonPOProfile()
         {
             CreateMap<RealizationVbModel, RealizationVbNonPOViewModel>()
+                .ForPath(d => d.numberVB.Id, opt => opt.MapFrom(s => s.VBId))
                 .ForPath(d => d.numberVB.VBNo, opt => opt.MapFrom(s => s.VBNo))
                 .ForPath(d => d.numberVB.DateEstimate, opt => opt.MapFrom(s => s.DateEstimate))
                 .ForPath(d => d.numberVB.CreateBy, opt => opt.MapFrom(s => s.RequestVbName))

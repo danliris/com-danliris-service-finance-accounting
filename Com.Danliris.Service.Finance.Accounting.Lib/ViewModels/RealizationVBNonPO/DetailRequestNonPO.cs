@@ -4,6 +4,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 {
     public class DetailRequestNonPO
     {
+        public long Id { get; set; }
         public decimal Amount { get; set; }
         public string CreateBy { get; set; }
         public string CurrencyCode { get; set; }
