@@ -184,7 +184,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
         public ReadResponse<RealizationVbList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.RealizationVbs.AsQueryable();
+            var query = _dbContext.RealizationVbs.Where(entity => entity.VBRealizeCategory == "NONPO").AsQueryable();
 
             var searchAttributes = new List<string>()
             {
@@ -235,9 +235,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = model.Amount_VB,
-                    CreateBy = model.RequestVbName,
+                    CreatedBy = model.RequestVbName,
                     CurrencyCode = model.CurrencyCode,
                     CurrencyRate = model.CurrencyRate,
+                    CurrencyDescription = model.CurrencyDescription,
+                    CurrencySymbol = model.CurrencySymbol,
                     Date = model.DateVB,
                     DateEstimate = model.DateEstimate,
                     UnitCode = model.UnitCode,
@@ -383,7 +385,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 CurrencyCode = viewModel.numberVB.CurrencyCode,
                 CurrencyRate = viewModel.numberVB.CurrencyRate,
                 UnitLoad = viewModel.numberVB.UnitLoad,
-                RequestVbName = viewModel.numberVB.CreateBy,
+                RequestVbName = viewModel.numberVB.CreatedBy,
                 UsageVBRequest = viewModel.numberVB.Usage,
                 Amount = temp_total,
                 Amount_VB = viewModel.numberVB.Amount,

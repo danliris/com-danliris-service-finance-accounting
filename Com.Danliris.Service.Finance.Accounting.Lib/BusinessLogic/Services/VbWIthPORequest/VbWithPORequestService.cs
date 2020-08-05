@@ -74,9 +74,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 CurrencyCode = entity.CurrencyCode,
                 CurrencyRate = entity.CurrencyRate,
                 CurrencySymbol = entity.CurrencySymbol,
-                CreateBy = entity.CreatedBy,
+                CreatedBy = entity.CreatedBy,
                 Amount = entity.Amount,
-                Approve_Status = entity.Apporve_Status,
+                Apporve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
                 PONo = entity.VbRequestDetail.Select(s => new ModelVbPONumber
@@ -134,9 +134,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 CurrencyCode = entity.CurrencyCode,
                 CurrencyRate = entity.CurrencyRate,
                 CurrencySymbol = entity.CurrencySymbol,
-                CreateBy = entity.CreatedBy,
+                CreatedBy = entity.CreatedBy,
                 Amount = entity.Amount,
-                Approve_Status = entity.Apporve_Status,
+                Apporve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
                 PONo = entity.VbRequestDetail.Select(s => new ModelVbPONumber
@@ -155,6 +155,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
         public Task<int> CreateAsync(VbRequestModel model, VbWithPORequestViewModel viewmodel)
         {
+            decimal Amt = 0;
+
             model.VBNo = GetVbNonPoNo(model);
 
             model.VBRequestCategory = "PO";
@@ -207,10 +209,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
                 foreach (var itm2 in itm.Details)
                 {
-                    model.Amount += itm2.priceBeforeTax;
+                    Amt += itm2.priceBeforeTax * itm2.dealQuantity;
                 }
             }
 
+            model.Amount = Amt;
             model.UnitLoad = temp;
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -444,6 +447,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             string IncomeTaxName = "";
             string IncomeTaxRate = "";
             string temp = "";
+            decimal Amount = 0;
 
             foreach (var itm in viewModel.Items)
             {
@@ -483,6 +487,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     IncomeTaxBy = itm.IncomeTaxBy;
                 }
 
+                foreach (var itm2 in itm.Details)
+                {
+                    Amount += itm2.priceBeforeTax * itm2.dealQuantity;
+                }
+
                 IncomeTaxBy = itm.IncomeTaxBy;
                 IncomeTaxId = itm.IncomeTax._id;
                 IncomeTaxName = itm.IncomeTax.Name;
@@ -517,6 +526,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 CurrencyRate = viewModel.Currency.Rate,
                 CurrencySymbol = viewModel.Currency.Symbol,
                 CurrencyDescription = viewModel.Currency.Symbol,
+                Amount = Amount,
                 UnitDivisionId = viewModel.Division.Id,
                 UnitDivisionName = viewModel.Division.Name,
                 IncomeTaxBy = IncomeTaxBy,

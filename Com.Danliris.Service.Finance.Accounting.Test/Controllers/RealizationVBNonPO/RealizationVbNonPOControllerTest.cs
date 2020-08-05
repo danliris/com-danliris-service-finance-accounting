@@ -724,15 +724,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "IDR",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "Rp",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -784,15 +788,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -845,15 +853,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
                     UnitLoad = "UnitLoad",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -905,15 +917,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
                     UnitLoad = "SPINNING 1",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -965,15 +981,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = null,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "SPINNING 2",
                     UnitId = 1,
                     UnitLoad = "SPINNING 2",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1025,15 +1045,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "SPINNING 3",
                     UnitId = 1,
                     UnitLoad = "SPINNING 3",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1085,15 +1109,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "WEAVING 1",
                     UnitId = 1,
                     UnitLoad = "WEAVING 1",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1145,15 +1173,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "WEAVING 2",
                     UnitId = 1,
                     UnitLoad = "WEAVING 2",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1205,15 +1237,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "PRINTING",
                     UnitId = 1,
                     UnitLoad = "PRINTING",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1265,15 +1301,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "DYEING",
                     UnitId = 1,
                     UnitLoad = "DYEING",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1325,15 +1365,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "FINISHING",
                     UnitId = 1,
                     UnitLoad = "FINISHING",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1385,15 +1429,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "KONFEKSI 1A",
                     UnitId = 1,
                     UnitLoad = "KONFEKSI 1A",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1448,15 +1496,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "KONFEKSI 1B",
                     UnitId = 1,
                     UnitLoad = "KONFEKSI 1B",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1508,15 +1560,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "KONFEKSI 2A",
                     UnitId = 1,
                     UnitLoad = "KONFEKSI 2A",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1568,15 +1624,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "KONFEKSI 2B",
                     UnitId = 1,
                     UnitLoad = "KONFEKSI 2B",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1628,15 +1688,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 0,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "KONFEKSI 2C",
                     UnitId = 1,
                     UnitLoad = "KONFEKSI 2C",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 
@@ -1688,15 +1752,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     CurrencyCode = "USD",
                     CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
                     Date = DateTimeOffset.Now,
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UMUM",
                     UnitId = 1,
                     UnitLoad = "UMUM",
                     UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
                     VBNo = "VBNo",
                     VBRequestCategory = "NONPO"
 

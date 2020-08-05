@@ -79,7 +79,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             cellHeaderBody3.HorizontalAlignment = Element.ALIGN_RIGHT;
 
             cellHeaderBody2.Colspan = 3;
-            cellHeaderBody2.Phrase = new Phrase("PERMOHONAN VB tanpa PO", bold_font);
+            cellHeaderBody2.Phrase = new Phrase("PERMOHONAN VB DENGAN PO", bold_font);
             headerTable3.AddCell(cellHeaderBody2);
 
             //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
@@ -119,7 +119,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
 
                 foreach (var itm2 in itm1.Details)
                 {
-                    convertCurrency += itm2.priceBeforeTax;
+                    convertCurrency += itm2.priceBeforeTax * itm2.dealQuantity;
                     Usage += itm2.product.name + ", ";
                 }
             }
@@ -166,7 +166,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             cellHeaderBody.Phrase = new Phrase(viewModel.Usage, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
-            cellHeaderBody.Phrase = new Phrase("Total Permohonan", normal_font);
+            cellHeaderBody.Phrase = new Phrase("Total Harga PO", normal_font);
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);

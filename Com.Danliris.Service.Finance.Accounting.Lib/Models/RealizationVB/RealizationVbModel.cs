@@ -19,6 +19,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string CurrencyCode { get; set; }
         public decimal CurrencyRate { get; set; }
         [MaxLength(64)]
+        public string CurrencySymbol { get; set; }
+        [MaxLength(64)]
+        public string CurrencyDescription { get; set; }
+        [MaxLength(64)]
         public string UnitLoad { get; set; }
         [MaxLength(64)]
         public string UnitCode { get; set; }

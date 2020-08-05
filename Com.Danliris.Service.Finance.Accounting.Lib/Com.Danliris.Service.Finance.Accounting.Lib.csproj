@@ -79,6 +79,8 @@
     <Compile Remove="Migrations\20200727130508_test.Designer.cs" />
     <Compile Remove="Migrations\20200727131715_UpdateVbRequestAndVbRequestDetail.cs" />
     <Compile Remove="Migrations\20200727131715_UpdateVbRequestAndVbRequestDetail.Designer.cs" />
+    <Compile Remove="Migrations\20200804165237_test.cs" />
+    <Compile Remove="Migrations\20200804165237_test.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
