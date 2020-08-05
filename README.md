@@ -117,6 +117,37 @@ com-danliris-service-finance-accounting
     ┗ Properties
        ┗ launchSettings.json
 ```
+file launchSettings.json look like this :
+```
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:52409/",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Com.Danliris.Service.Finance.Accounting.WebApi": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    }
+  }
+} 
+```
+
 - Ensure `Com.Danliris.Service.Finance.Accounting.WebApi` is the startup project and run it and the browser will launched in new tab http://localhost:5000/swagger/index.html
 
 
@@ -187,6 +218,10 @@ Helpers
 Utilities
 
 - Collection of classes that frequently used as utility in various class. 
+
+Services
+
+- Collection of classes and interfaces to validation and authentication user.
 
 
 The folder tree in this folder is:
