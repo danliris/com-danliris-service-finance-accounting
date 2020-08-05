@@ -85,6 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailRequestNonPO()
                 {
+                    Id = 1,
                     Amount = 123,
                     CreateBy = "CreateBy",
                     CurrencyCode = "IDR",
