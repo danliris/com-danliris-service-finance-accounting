@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         CountItemsError++;
                         ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Tanggal Realisasi!', ";
                     }
-                    else if(item.DateDetail.HasValue && item.DateDetail.Value <= numberVB.Date)
+                    else if(item.DateDetail.HasValue && item.DateDetail.Value <= numberVB.Date.Value)
                     {
                         CountItemsError++;
                         ItemsError += "'DateDetail': 'Tanggal Nota harus lebih atau sama dengan Tanggal VB!', ";
