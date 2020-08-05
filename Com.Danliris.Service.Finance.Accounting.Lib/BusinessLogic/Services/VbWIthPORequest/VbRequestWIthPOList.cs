@@ -20,8 +20,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
         public string CurrencySymbol { get; set; }
         public decimal Amount { get; set; }
         public string UnitName { get; set; }
-        public string CreateBy { get; set; }
-        public bool Approve_Status { get; set; }
+        public string CreatedBy { get; set; }
+        public bool Apporve_Status { get; set; }
         public bool Complete_Status { get; set; }
         public string VBRequestCategory { get; set; }
         public List<ModelVbPONumber> PONo { get; set; }
