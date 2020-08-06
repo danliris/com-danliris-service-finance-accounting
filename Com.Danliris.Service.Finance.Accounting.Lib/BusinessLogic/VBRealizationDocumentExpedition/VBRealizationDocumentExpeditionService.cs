@@ -213,7 +213,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             if (realizationDate.HasValue)
             {
-                var date = realizationDate.GetValueOrDefault().AddDays(_identityService.TimezoneOffset * -1);
+                var date = realizationDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset * -1);
                 query = query.Where(entity => entity.VBRealizationDate.Date == date.Date);
             }
 
