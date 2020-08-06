@@ -19,13 +19,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string CurrencyCode { get; set; }
         public decimal CurrencyRate { get; set; }
         public decimal Amount { get; set; }
-        public string CreateBy { get; set; }
+        public string CreatedBy { get; set; }
         public bool Status_Post { get; set; }
-        public bool Approve_Status { get; set; }
+        public bool Apporve_Status { get; set; }
         public bool Complete_Status { get; set; }
         public string VBRequestCategory { get; set; }
         public string Usage { get; set; }
         public bool RealizationStatus { get; set; }
+        public string CurrencySymbol { get; set; }
+        public string CurrencyDescription { get; set; }
         public List<VbRequestDetailModel> PONo { get; set; }
     }
 }

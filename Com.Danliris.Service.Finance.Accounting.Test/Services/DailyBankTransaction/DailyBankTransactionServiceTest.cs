@@ -235,7 +235,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                 name = "Name",
             };
 
-
+            Assert.Equal("Code", supplier.code);
+            Assert.Equal("Name", supplier.name);
+            Assert.Equal("", supplier._id);
             Assert.True(supplier != null);
         }
 
@@ -260,11 +262,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             {
                 _id = "",
                 code = "Code",
-                accountName = "Name",
-                bankName = "Name",
-                accountCurrencyId= "",
-                accountNumber= "",
-                bankCode = "",
+                accountName = "accountName",
+                bankName = "bankName",
+                accountCurrencyId= "123",
+                accountNumber= "123",
+                bankCode = "bankCode",
                 currency = new Lib.ViewModels.IntegrationViewModel.CurrencyViewModel()
                 {
                     code = "",
@@ -275,7 +277,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                 }
             };
 
-
+            Assert.Equal("Code", supplier.code);
+            Assert.Equal("accountName", supplier.accountName);
+            Assert.Equal("bankName", supplier.bankName);
+            Assert.Equal("bankCode", supplier.bankCode);
+            Assert.Equal("123", supplier.accountCurrencyId);
+            Assert.Equal("123", supplier.accountNumber);
+            Assert.NotNull(supplier.currency);
             Assert.True(supplier != null);
         }
 

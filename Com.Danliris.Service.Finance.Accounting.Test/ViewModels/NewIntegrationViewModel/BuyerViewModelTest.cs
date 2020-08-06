@@ -7,27 +7,29 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.NewIntegrationViewModel
 {
-   
+
     public class BuyerViewModelTest
     {
         [Fact]
         public void Should_Succes_Instantiate_BuyerViewModel()
         {
-            string id= "id test";
-            string nama =  "name test";
+            string id = "id test";
+            string nama = "name test";
             string code = "name test";
             string address = "address test";
 
-            BuyerViewModel bvm = new BuyerViewModel();
-            bvm.Id = id;
-            bvm.Name = nama;
-            bvm.Code = code;
-            bvm.Address = address;
+            BuyerViewModel viewModel = new BuyerViewModel()
+            {
+                Id = id,
+                Name = nama,
+                Code = code,
+                Address = address
+            };
 
-            Assert.Equal(id, bvm.Id);
-            Assert.Equal(nama, bvm.Name);
-            Assert.Equal(code, bvm.Code);
-            Assert.Equal(address, bvm.Address);
+            Assert.Equal(id, viewModel.Id);
+            Assert.Equal(nama, viewModel.Name);
+            Assert.Equal(code, viewModel.Code);
+            Assert.Equal(address, viewModel.Address);
 
         }
 

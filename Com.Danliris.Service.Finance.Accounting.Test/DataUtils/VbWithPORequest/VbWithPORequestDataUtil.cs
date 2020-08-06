@@ -247,6 +247,91 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
             };
         }
 
+        public VbWithPORequestViewModel GetViewModel1()
+        {
+            return new VbWithPORequestViewModel()
+            {
+                VBNo = "VBNo",
+                Date = DateTimeOffset.UtcNow,
+                DateEstimate = DateTimeOffset.UtcNow,
+                VBMoney = 1,
+                Usage = "Usage",
+                Approve_Status = false,
+                Realization_Status = false,
+                Complete_Status = false,
+                Unit = new Unit()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Name = "Name",
+                },
+                Division = new Division()
+                {
+                    Id = 1,
+                    Name = "Name",
+                },
+                Currency = new CurrencyVB()
+                {
+                    Id = 1,
+                    Code = "Code",
+                    Rate = 1,
+                    Symbol = "$",
+                    Description = "Description"
+                },
+                Items = new List<VbWithPORequestDetailViewModel>()
+                {
+                    new VbWithPORequestDetailViewModel()
+                    {
+                        no = "no",
+                        unit = new Unit()
+                        {
+                            Id = 1,
+                            Code = "Code",
+                            Name = "Name",
+                        },
+                        CurrencyCode = "CurrencyCode",
+                        CurrencyRate = 1,
+                        IncomeTax = new IncomeTax()
+                        {
+                            _id = "",
+                            Name = "",
+                            Rate = ""
+                        },
+                        IncomeTaxBy = "",
+
+                        Details = new List<VbWithPORequestDetailItemsViewModel>()
+                        {
+                            new VbWithPORequestDetailItemsViewModel()
+                            {
+                                Id = 1,
+                                Conversion = 123,
+                                dealQuantity = 123,
+                                dealUom  = new dealUom()
+                                {
+                                    _id = "id",
+                                    unit = "unit"
+                                },
+                                defaultQuantity = 123,
+                                defaultUom = new defaultUom()
+                                {
+                                    _id="id",
+                                    unit = "unit"
+                                },
+                                priceBeforeTax = 123,
+                                product = new Product_VB()
+                                {
+                                    _id = "id",
+                                    code = "code",
+                                    name = "name"
+                                },
+                                productRemark = "productRemark"
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
         public VbWithPORequestViewModel GetViewModel2()
         {
             return new VbWithPORequestViewModel()

@@ -102,7 +102,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             cellHeaderBody3.HorizontalAlignment = Element.ALIGN_RIGHT;
 
             cellHeaderBody2.Colspan = 3;
-            cellHeaderBody2.Phrase = new Phrase("PERMOHONAN VB", bold_font);
+            cellHeaderBody2.Phrase = new Phrase("PERMOHONAN VB TANPA PO", bold_font);
             headerTable3.AddCell(cellHeaderBody2);
 
             cellHeaderBody.Phrase = new Phrase(" ", normal_font);

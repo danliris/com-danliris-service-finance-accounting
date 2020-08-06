@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             _DetailDbSet = _dbContext.Set<RealizationVbDetailModel>();
         }
 
-        public Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
+        public async Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
         {
             var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
             updateTotalRequestVb.Realization_Status = true;
@@ -94,8 +94,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
             //return await _dbContext.SaveChangesAsync();
 
-            _dbContext.SaveChangesAsync();
-            return _iVBRealizationDocumentExpeditionService.InitializeExpedition(model.Id);
+            await _dbContext.SaveChangesAsync();
+
+            int value = int.Parse(_DbSet.OrderByDescending(p => p.Id)
+                            .Select(r => r.Id)
+                            .First().ToString());
+
+            return await _iVBRealizationDocumentExpeditionService.InitializeExpedition(value);
         }
 
         private decimal ConvertRate(decimal count, RealizationVbNonPOViewModel viewmodel)
@@ -179,7 +184,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
         public ReadResponse<RealizationVbList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.RealizationVbs.AsQueryable();
+            var query = _dbContext.RealizationVbs.Where(entity => entity.VBRealizeCategory == "NONPO").AsQueryable();
 
             var searchAttributes = new List<string>()
             {
@@ -230,9 +235,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = model.Amount_VB,
-                    CreateBy = model.RequestVbName,
+                    CreatedBy = model.RequestVbName,
                     CurrencyCode = model.CurrencyCode,
                     CurrencyRate = model.CurrencyRate,
+                    CurrencyDescription = model.CurrencyDescription,
+                    CurrencySymbol = model.CurrencySymbol,
                     Date = model.DateVB,
                     DateEstimate = model.DateEstimate,
                     UnitCode = model.UnitCode,
@@ -276,11 +283,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     EntityExtension.FlagForDelete(itemToDelete, _identityService.Username, UserAgent);
                     _dbContext.RealizationVbDetails.Update(itemToDelete);
                 }
-                else
-                {
-                    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
-                    _dbContext.RealizationVbDetails.Update(item);
-                }
+                //else
+                //{
+                //    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
+                //    _dbContext.RealizationVbDetails.Update(item);
+                //}
             }
 
             foreach (var item in model.RealizationVbDetail)
@@ -378,7 +385,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 CurrencyCode = viewModel.numberVB.CurrencyCode,
                 CurrencyRate = viewModel.numberVB.CurrencyRate,
                 UnitLoad = viewModel.numberVB.UnitLoad,
-                RequestVbName = viewModel.numberVB.CreateBy,
+                RequestVbName = viewModel.numberVB.CreatedBy,
                 UsageVBRequest = viewModel.numberVB.Usage,
                 Amount = temp_total,
                 Amount_VB = viewModel.numberVB.Amount,
