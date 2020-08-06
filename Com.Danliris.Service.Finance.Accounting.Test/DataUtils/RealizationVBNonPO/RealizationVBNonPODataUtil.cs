@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 VBNoRealize = "VBNoRealize",
                 VBRealizeCategory = "NONPO",
                 VerifiedDate = DateTimeOffset.Now,
-                TypeVBNonPO = "Supplier",
+                TypeWithOrWithoutVB = "Supplier",
                 RealizationVbDetail = new List<RealizationVbDetailModel>()
                 {
                     new RealizationVbDetailModel()
