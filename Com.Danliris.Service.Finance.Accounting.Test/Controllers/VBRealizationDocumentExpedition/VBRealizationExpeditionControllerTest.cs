@@ -186,7 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var serviceProviderMock = new Mock<IServiceProvider>();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
-            service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).Throws( GetServiceValidationException());
+            service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).ThrowsAsync( GetServiceValidationException());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
@@ -203,7 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var serviceProviderMock = new Mock<IServiceProvider>();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
          
-            service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).Throws(new Exception());
+            service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).ThrowsAsync(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
