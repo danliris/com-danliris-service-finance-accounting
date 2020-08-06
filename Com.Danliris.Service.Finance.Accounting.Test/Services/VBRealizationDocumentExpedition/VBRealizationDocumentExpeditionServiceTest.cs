@@ -82,7 +82,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             return new VBRealizationDocumentExpeditionDataUtil(service, financeDbContext);
         }
 
-        //  [Fact]
+        [Fact]
         public async Task CashierReceipt_Return_Success()
         {
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
@@ -109,6 +109,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
 
         [Fact]
+        public void GetReports_Throws_NotImplementedException() {
+            FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+
+            RealizationVbModel vb = _dataUtil(service, dbContext).GetTestData_RealizationVbs();
+            VBRealizationDocumentExpeditionModel vbRealization = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
+            Assert.ThrowsAnyAsync<NotImplementedException>(() => service.GetReports(vb.Id, vbRealization.VBRealizationId, vb.RequestVbName, vb.UnitId, vb.Date, vb.Date, 1, 25));
+        }
+
+
+        [Fact]
         public void Read_Return_Success()
         {
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
@@ -130,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             Assert.NotEqual(0, result);
         }
 
-        // [Fact]
+        [Fact]
         public async Task SubmitToVerification_Return_Success()
         {
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());

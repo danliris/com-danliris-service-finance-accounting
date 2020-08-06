@@ -63,13 +63,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 Amount = entity.Amount,
                 CurrencyCode = entity.CurrencyCode,
                 CurrencyRate = entity.CurrencyRate,
+                CurrencySymbol = entity.CurrencySymbol,
+                CurrencyDescription = entity.CurrencyDescription,
                 UnitId = entity.UnitId,
                 UnitCode = entity.UnitCode,
                 UnitName = entity.UnitName,
                 UnitDivisionId = entity.UnitDivisionId,
                 UnitDivisionName = entity.UnitDivisionName,
-                CreateBy = entity.CreatedBy,
-                Approve_Status = entity.Apporve_Status,
+                CreatedBy = entity.CreatedBy,
+                Apporve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
                 Usage = entity.Usage,
@@ -125,8 +127,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 UnitName = entity.UnitName,
                 UnitDivisionId = entity.UnitDivisionId,
                 UnitDivisionName = entity.UnitDivisionName,
-                CreateBy = entity.CreatedBy,
-                Approve_Status = entity.Apporve_Status,
+                CreatedBy = entity.CreatedBy,
+                Apporve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
                 Usage = entity.Usage,
@@ -433,6 +435,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
             model.Complete_Status = false;
 
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+
+            var itemIds = _dbContext.VbRequestsDetails.Where(entity => entity.VBId == id).Select(entity => entity.Id).ToList();
+
+            foreach (var itemId in itemIds)
+            {
+                var item = model.VbRequestDetail.FirstOrDefault(element => element.Id == itemId);
+                if (item == null)
+                {
+                    var itemToDelete = _dbContext.VbRequestsDetails.FirstOrDefault(entity => entity.Id == itemId);
+                    EntityExtension.FlagForDelete(itemToDelete, _identityService.Username, UserAgent);
+                    _dbContext.VbRequestsDetails.Update(itemToDelete);
+                }
+                //else
+                //{
+                //    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
+                //    _dbContext.VbRequestsDetails.Update(item);
+                //}//
+            }
+
+            foreach (var item in model.VbRequestDetail)
+            {
+                if (item.Id <= 0)
+                {
+                    EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
+                    _dbContext.VbRequestsDetails.Add(item);
+                }
+            }
 
             _dbContext.VbRequests.Update(model);
 

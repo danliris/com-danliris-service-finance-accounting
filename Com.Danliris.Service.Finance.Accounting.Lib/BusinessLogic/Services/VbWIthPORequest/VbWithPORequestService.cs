@@ -74,9 +74,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 CurrencyCode = entity.CurrencyCode,
                 CurrencyRate = entity.CurrencyRate,
                 CurrencySymbol = entity.CurrencySymbol,
-                CreateBy = entity.CreatedBy,
+                CreatedBy = entity.CreatedBy,
                 Amount = entity.Amount,
-                Approve_Status = entity.Apporve_Status,
+                Apporve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
                 PONo = entity.VbRequestDetail.Select(s => new ModelVbPONumber
@@ -134,9 +134,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 CurrencyCode = entity.CurrencyCode,
                 CurrencyRate = entity.CurrencyRate,
                 CurrencySymbol = entity.CurrencySymbol,
-                CreateBy = entity.CreatedBy,
+                CreatedBy = entity.CreatedBy,
                 Amount = entity.Amount,
-                Approve_Status = entity.Apporve_Status,
+                Apporve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
                 PONo = entity.VbRequestDetail.Select(s => new ModelVbPONumber
@@ -155,6 +155,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
         public Task<int> CreateAsync(VbRequestModel model, VbWithPORequestViewModel viewmodel)
         {
+            decimal Amt = 0;
+
             model.VBNo = GetVbNonPoNo(model);
 
             model.VBRequestCategory = "PO";
@@ -169,17 +171,49 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 temp += itm.unit.Name + ", ";
                 temp = temp.Remove(temp.Length - 2);
 
-                model.IncomeTaxId = itm.IncomeTax._id;
-                model.IncomeTaxName = itm.IncomeTax.Name;
-                model.IncomeTaxRate = itm.IncomeTax.Rate;
-                model.IncomeTaxBy = itm.IncomeTaxBy;
+                if (string.IsNullOrEmpty(itm.IncomeTax._id))
+                {
+                    model.IncomeTaxId = "";
+                }
+                else
+                {
+                    model.IncomeTaxId = itm.IncomeTax._id;
+                }
+
+                if (string.IsNullOrEmpty(itm.IncomeTax.Name))
+                {
+                    model.IncomeTaxName = "";
+                }
+                else
+                {
+                    model.IncomeTaxName = itm.IncomeTax.Name;
+                }
+
+                if (string.IsNullOrEmpty(itm.IncomeTax.Rate))
+                {
+                    model.IncomeTaxRate = "";
+                }
+                else
+                {
+                    model.IncomeTaxRate = itm.IncomeTax.Rate;
+                }
+
+                if (string.IsNullOrEmpty(itm.IncomeTaxBy))
+                {
+                    model.IncomeTaxBy = "";
+                }
+                else
+                {
+                    model.IncomeTaxBy = itm.IncomeTaxBy;
+                }
 
                 foreach (var itm2 in itm.Details)
                 {
-                    model.Amount += itm2.priceBeforeTax;
+                    Amt += itm2.priceBeforeTax * itm2.dealQuantity;
                 }
             }
 
+            model.Amount = Amt;
             model.UnitLoad = temp;
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -254,9 +288,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     DateEstimate = s.DateEstimate,
                     VBMoney = s.VBMoney,
                     Usage = s.Usage_Input,
-                    Approve_Status = s.Apporve_Status,
-                    Realization_Status = s.Realization_Status,
-                    Complete_Status = s.Complete_Status,
                     Currency = new CurrencyVB()
                     {
                         Id = s.CurrencyId,
@@ -416,9 +447,51 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             string IncomeTaxName = "";
             string IncomeTaxRate = "";
             string temp = "";
+            decimal Amount = 0;
 
             foreach (var itm in viewModel.Items)
             {
+                if (string.IsNullOrEmpty(itm.IncomeTax._id))
+                {
+                    IncomeTaxId = "";
+                }
+                else
+                {
+                    IncomeTaxId = itm.IncomeTax._id;
+                }
+
+                if (string.IsNullOrEmpty(itm.IncomeTax.Name))
+                {
+                    IncomeTaxName = "";
+                }
+                else
+                {
+                    IncomeTaxName = itm.IncomeTax.Name;
+                }
+
+                if (string.IsNullOrEmpty(itm.IncomeTax.Rate))
+                {
+                    IncomeTaxRate = "";
+                }
+                else
+                {
+                    IncomeTaxRate = itm.IncomeTax.Rate;
+                }
+
+                if (string.IsNullOrEmpty(itm.IncomeTaxBy))
+                {
+                    IncomeTaxBy = "";
+                }
+                else
+                {
+                    IncomeTaxBy = itm.IncomeTaxBy;
+                }
+
+                foreach (var itm2 in itm.Details)
+                {
+                    Amount += itm2.priceBeforeTax * itm2.dealQuantity;
+                }
+
                 IncomeTaxBy = itm.IncomeTaxBy;
                 IncomeTaxId = itm.IncomeTax._id;
                 IncomeTaxName = itm.IncomeTax.Name;
@@ -453,6 +526,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 CurrencyRate = viewModel.Currency.Rate,
                 CurrencySymbol = viewModel.Currency.Symbol,
                 CurrencyDescription = viewModel.Currency.Symbol,
+                Amount = Amount,
                 UnitDivisionId = viewModel.Division.Id,
                 UnitDivisionName = viewModel.Division.Name,
                 IncomeTaxBy = IncomeTaxBy,
