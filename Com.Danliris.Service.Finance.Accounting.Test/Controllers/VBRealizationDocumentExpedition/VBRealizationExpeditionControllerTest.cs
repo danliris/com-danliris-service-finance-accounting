@@ -176,7 +176,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
 
             IActionResult response =await  GetController(serviceProviderMock).Post(vBRealizationIdListDto);
             int statusCode = this.GetStatusCode(response);
-            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
         }
         
 
@@ -229,7 +229,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
 
             IActionResult response = await GetController(serviceProviderMock).Verify(1);
             int statusCode = this.GetStatusCode(response);
-            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
         }
 
 
@@ -263,7 +263,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
 
             IActionResult response = await GetController(serviceProviderMock).reject(1, rejectDto);
             int statusCode = this.GetStatusCode(response);
-            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
         }
 
         [Fact]
