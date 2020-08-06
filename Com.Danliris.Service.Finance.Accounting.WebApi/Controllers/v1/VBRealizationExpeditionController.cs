@@ -109,7 +109,69 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
                     .Ok();
-                return Created(string.Concat(Request.Path, "/", 0), Result);
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("accept-for-verification")]
+        public async Task<IActionResult> AcceptForVerification([FromBody] VBRealizationIdListDto viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(viewModel);
+
+                await _service.VerificationDocumentReceipt(viewModel.VBRealizationIds);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("accept-for-cashier")]
+        public async Task<IActionResult> AcceptForCashier([FromBody] VBRealizationIdListDto viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(viewModel);
+
+                await _service.CashierReceipt(viewModel.VBRealizationIds);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return NoContent();
             }
             catch (ServiceValidationException e)
             {
@@ -139,7 +201,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
                     .Ok();
-                return Created(string.Concat(Request.Path, "/", 0), Result);
+                return NoContent();
             }
             catch (Exception e)
             {
@@ -163,7 +225,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
                     .Ok();
-                return Created(string.Concat(Request.Path, "/", 0), Result);
+                return NoContent();
             }
             catch (ServiceValidationException e)
             {
