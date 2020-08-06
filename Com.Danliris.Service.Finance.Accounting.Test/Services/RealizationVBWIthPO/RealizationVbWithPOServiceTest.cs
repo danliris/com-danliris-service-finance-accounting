@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.RealizationVBWithPO;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -223,6 +225,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
             RealizationVbWithPOViewModel vm = _dataUtil(service).GetNewViewModelFalse();
 
             Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Mapping_With_AutoMapper_Profiles()
+        {
+            var configuration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<RealizationVBWithPOProfile>();
+            });
+            var mapper = configuration.CreateMapper();
+
+            RealizationVbWithPOViewModel salesReceiptViewModel = new RealizationVbWithPOViewModel { Id = 1 };
+            RealizationVbModel salesReceiptModel = mapper.Map<RealizationVbModel>(salesReceiptViewModel);
+
+            Assert.Equal(salesReceiptViewModel.Id, salesReceiptModel.Id);
         }
 
         internal class RealizationVbWithPOServiceHelper : IVBRealizationDocumentExpeditionService

@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
@@ -621,6 +623,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             Assert.NotEqual(0, result);
         }
 
+        [Fact]
+        public void Mapping_With_AutoMapper_Profiles()
+        {
+            var configuration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<RealizationVbNonPOProfile>();
+            });
+            var mapper = configuration.CreateMapper();
+
+            RealizationVbNonPOViewModel salesReceiptViewModel = new RealizationVbNonPOViewModel { Id = 1 };
+            RealizationVbModel salesReceiptModel = mapper.Map<RealizationVbModel>(salesReceiptViewModel);
+
+            Assert.Equal(salesReceiptViewModel.Id, salesReceiptModel.Id);
+        }
         internal class RealizationVbNonPOServiceHelper : IVBRealizationDocumentExpeditionService
         {
             public RealizationVbNonPOServiceHelper()
