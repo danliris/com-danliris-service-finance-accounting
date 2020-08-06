@@ -203,7 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
             var result = service.ReadRealizationToVerification(0, 0, null, null, 0);
             Assert.NotNull(result);
-            Assert.True(result.Count > 0);
+            Assert.NotEqual(0,result.Count);
         }
 
         [Fact]
@@ -215,7 +215,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
             var result = service.ReadRealizationToVerification(model.VBId, model.VBRealizationId, model.VBRealizationDate, model.VBRequestName, model.UnitId);
             Assert.NotNull(result);
-            Assert.True(result.Count > 0);
+            Assert.NotEqual(0, result.Count);
+           
         }
 
 
