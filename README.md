@@ -554,10 +554,6 @@ This file is used to configure code coverage in unit tests.
 
 Travis CI (continuous integration) is configured by adding a file named .travis.yml. This file in a YAML format text file, located in root directory of the repository. This file specifies the programming language used, the desired building and testing environment (including dependencies which must be installed before the software can be built and tested), and various other parameters.
 
-**File .codecov.yml**
-
-This file is used to configure code coverage in unit tests.
-
 **Com.Danliris.Service.Finance.Accounting.sln**
 
 File .sln is extention for *solution* aka file solution for .Net Core, this file is used to manage all project by code editor.
