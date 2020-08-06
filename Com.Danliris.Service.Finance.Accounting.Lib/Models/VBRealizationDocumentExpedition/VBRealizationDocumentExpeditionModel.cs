@@ -26,7 +26,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             decimal vbAmount,
             decimal vbRealizationAmount,
             string currencyCode,
-            double currencyRate
+            double currencyRate,
+            string vbType
             )
         {
             VBRealizationId = vbRealizationId;
@@ -43,6 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             VBRealizationAmount = vbRealizationAmount;
             CurrencyCode = currencyCode;
             CurrencyRate = currencyRate;
+            VBType = vbType;
 
             Position = (int)VBRealizationPosition.Purchasing;
         }
@@ -83,6 +85,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public string NotVerifiedBy { get; private set; }
         public DateTimeOffset? NotVerifiedDate { get; private set; }
         public int Position { get; private set; }
+        [MaxLength(64)]
+        public string VBType { get; set; }
 
         public void SubmitToVerification(string name)
         {

@@ -200,9 +200,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
-            RealizationVbModel model = _dataUtil(service, dbContext).GetTestData_RealizationVbs();
-            var result = service.ReadRealizationToVerification();
+          //  VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
+            ReadResponse<VBRealizationDocumentExpeditionModel> result = service.ReadRealizationToVerification(0, 0, null, null, 0);
             Assert.NotNull(result);
+           // Assert.NotEqual(0,result.Count);
+        }
+
+        [Fact]
+        public void ReadRelizationToVerification_with_dataTest_Return_Success()
+        {
+            FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+            VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
+            ReadResponse<VBRealizationDocumentExpeditionModel> result = service.ReadRealizationToVerification(model.VBId, model.VBRealizationId, model.VBRealizationDate, model.VBRequestName, model.UnitId);
+            Assert.NotNull(result);
+            //Assert.NotEqual(0, result.Count);
+           
         }
 
 

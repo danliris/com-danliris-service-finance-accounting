@@ -39,12 +39,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("vb-realization-to-verification")]
-        public IActionResult GetVbRealizationToVerification()
+        public IActionResult GetVbRealizationToVerification([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] DateTimeOffset? realizationDate, [FromQuery] string vbRealizationRequestPerson, [FromQuery] int unitId)
         {
             try
             {
                 VerifyUser();
-                var data = _service.ReadRealizationToVerification();
+                var data = _service.ReadRealizationToVerification(vbId, vbRealizationId, realizationDate, vbRealizationRequestPerson, unitId);
 
                 return Ok(new
                 {
@@ -96,7 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpPost("vb-to-verification")]
+        [HttpPut("vb-to-verification")]
         public async Task<IActionResult> Post([FromBody] VBRealizationIdListDto viewModel)
         {
             try
@@ -109,7 +109,123 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
                     .Ok();
-                return Created(string.Concat(Request.Path, "/", 0), Result);
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("accept-for-verification")]
+        public async Task<IActionResult> AcceptForVerification([FromBody] VBRealizationIdListDto viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(viewModel);
+
+                await _service.VerificationDocumentReceipt(viewModel.VBRealizationIds);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("accept-for-cashier")]
+        public async Task<IActionResult> AcceptForCashier([FromBody] VBRealizationIdListDto viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(viewModel);
+
+                await _service.CashierReceipt(viewModel.VBRealizationIds);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("vb-verified/{id}")]
+        public async Task<IActionResult> Verify([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.VerifiedToCashier(id);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("vb-reject/{id}")]
+        public async Task<IActionResult> reject([FromRoute] int id, [FromBody] VBRealizationExpeditionRejectDto viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(viewModel);
+
+                await _service.Reject(id, viewModel.Reason);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return NoContent();
             }
             catch (ServiceValidationException e)
             {
