@@ -239,7 +239,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var serviceProviderMock = new Mock<IServiceProvider>();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
-            service.Setup(s => s.VerifiedToCashier(It.IsAny<int>())).Throws(new Exception());
+            service.Setup(s => s.VerifiedToCashier(It.IsAny<int>())).ThrowsAsync(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
