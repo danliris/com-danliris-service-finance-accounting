@@ -39,6 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
             updateTotalRequestVb.Realization_Status = true;
 
+            model.TypeVBNonPO = viewmodel.TypeVBNonPO;
             model.VBNoRealize = GetVbRealizeNo(model);
             model.isVerified = false;
             model.isClosed = false;
@@ -46,6 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             decimal temp_total = 0;
             decimal convert_total = 0;
             decimal total_vat = 0;
+            decimal temp_income_amount = 0;
 
             foreach (var item2 in viewmodel.Items)
             {
@@ -56,19 +58,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     decimal temp = item2.Amount * 0.1m;
                     total_vat += temp;
                     count_total = item2.Amount + temp;
-                    convert_total += ConvertRate(count_total, viewmodel);
+                    convert_total += count_total;
                     temp_total += count_total;
                 }
                 else
                 {
                     count_total = item2.Amount;
-                    convert_total += ConvertRate(count_total, viewmodel);
+                    convert_total += count_total;
                     temp_total += item2.Amount;
                 }
             }
 
-            model.Amount = temp_total;
+            temp_income_amount += GetIncomeTaxAmount(viewmodel);
+
+            model.Amount = temp_total - temp_income_amount;
             model.VatAmount = total_vat;
+            model.IncomeTaxAmount = temp_income_amount;
 
             var ResultDiffReqReal = viewmodel.numberVB.Amount - convert_total;
 
@@ -103,20 +108,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             return await _iVBRealizationDocumentExpeditionService.InitializeExpedition(value);
         }
 
-        private decimal ConvertRate(decimal count, RealizationVbNonPOViewModel viewmodel)
+        //private decimal ConvertRate(decimal count, RealizationVbNonPOViewModel viewmodel)
+        //{
+        //    double convertCurrency;
+        //    //if (viewmodel.numberVB.CurrencyCode == "IDR")
+        //    //{
+        //    //    convertCurrency = (double)count;
+        //    //}
+        //    //else
+        //    //{
+        //    //    convertCurrency = (Math.Round((double)count * (double)viewmodel.numberVB.CurrencyRate));
+        //    //}
+        //    convertCurrency = (double)count;
+
+        //    return (decimal)convertCurrency;
+        //}
+
+        private decimal GetIncomeTaxAmount(RealizationVbNonPOViewModel viewmodel)
         {
-            double convertCurrency;
-            if (viewmodel.numberVB.CurrencyCode == "IDR")
+            decimal amount = 0;
+
+            foreach (var itm in viewmodel.Items)
             {
-                convertCurrency = (double)count;
-            }
-            else
-            {
-                convertCurrency = (Math.Round((double)count * (double)viewmodel.numberVB.CurrencyRate));
+                if(itm.isGetPPh == true && itm.IncomeTaxBy == "Supplier")
+                {
+                    amount += itm.Amount * (Convert.ToDecimal(itm.incomeTax.rate) / 100);
+                }
+                
             }
 
-
-            return (decimal)convertCurrency;
+            return amount;
         }
 
         private string GetVbRealizeNo(RealizationVbModel model)
@@ -172,7 +193,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     AmountNonPO = itm1.Amount,
                     DateNonPO = itm1.DateDetail,
                     Remark = itm1.Remark,
-                    isGetPPn = itm1.isGetPPn
+                    isGetPPn = itm1.isGetPPn,
+                    isGetPPh = itm1.isGetPPh,
+                    IncomeTaxId = itm1.incomeTax._id,
+                    IncomeTaxName = itm1.incomeTax.name,
+                    IncomeTaxRate = itm1.incomeTax.rate,
+                    IncomeTaxBy = itm1.IncomeTaxBy
                 };
 
                 EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
@@ -232,6 +258,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 LastModifiedBy = model.LastModifiedBy,
                 VBRealizationNo = model.VBNoRealize,
                 Date = model.Date,
+                TypeVBNonPO = model.TypeVBNonPO,
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = model.Amount_VB,
@@ -254,7 +281,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     DateDetail = s.DateNonPO,
                     Remark = s.Remark,
                     Amount = s.AmountNonPO,
-                    isGetPPn = s.isGetPPn
+                    isGetPPn = s.isGetPPn,
+                    isGetPPh = s.isGetPPh,
+                    incomeTax = new IncomeTaxNew()
+                    {
+                        _id = s.IncomeTaxId,
+                        name = s.IncomeTaxName,
+                        rate = s.IncomeTaxRate,
+                    },
+                    IncomeTaxBy = s.IncomeTaxBy
 
                 }).ToList()
             };
@@ -321,13 +356,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     decimal temp = itm.Amount * 0.1m;
                     total_vat += temp;
                     count_total = itm.Amount + temp;
-                    convert_total += ConvertRate(count_total, viewModel);
+                    convert_total += count_total;
                     temp_total += count_total;
                 }
                 else
                 {
                     count_total = itm.Amount;
-                    convert_total += ConvertRate(count_total, viewModel);
+                    convert_total += count_total;
                     temp_total += itm.Amount;
                 }
 
@@ -343,7 +378,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     DateNonPO = itm.DateDetail,
                     Remark = itm.Remark,
                     AmountNonPO = itm.Amount,
-                    isGetPPn = itm.isGetPPn
+                    isGetPPn = itm.isGetPPn,
+                    isGetPPh = itm.isGetPPh,
+                    IncomeTaxId = itm.incomeTax._id,
+                    IncomeTaxName = itm.incomeTax.name,
+                    IncomeTaxRate = itm.incomeTax.rate,
+                    IncomeTaxBy = itm.IncomeTaxBy
                 };
 
                 listDetail.Add(item);

@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
         public string VBRealizationNo { get; set; }
 
         public DateTimeOffset? Date { get; set; }
+        public string TypeVBNonPO { get; set; }
 
         public DetailRequestNonPO numberVB { get; set; }
 
@@ -24,6 +25,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             if (numberVB == null)
                 yield return new ValidationResult("No VB harus diisi!", new List<string> { "VBCode" });
 
+            if (TypeVBNonPO == null)
+                yield return new ValidationResult("Tipe VB harus dipilih!", new List<string> { "TypeVBNonPO" });
+
             if (Items == null || Items.Count.Equals(0))
             {
                 yield return new ValidationResult("Daftar harus diisi!", new List<string> { "Item" });
@@ -31,6 +35,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             else if (Date == null)
             {
                 yield return new ValidationResult("Tanggal Realisasi harus ada!", new List<string> { "Item" });
+            }
+            else if (numberVB == null)
+            {
+                yield return new ValidationResult("No VB harus ada!", new List<string> { "Item" });
             }
             else if (Items.Count > 0)
             {
@@ -47,10 +55,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         ItemsError += "'DateDetail': 'Tanggal harus diisi!', ";
                     }
 
-                    if (item.DateDetail.HasValue && item.DateDetail.Value > Date.Value)
+                    if (item.DateDetail.HasValue && item.DateDetail.Value >= Date.Value)
                     {
                         CountItemsError++;
                         ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Tanggal Realisasi!', ";
+                    }
+                    else if(item.DateDetail.HasValue && item.DateDetail.Value <= numberVB.Date.Value)
+                    {
+                        CountItemsError++;
+                        ItemsError += "'DateDetail': 'Tanggal Nota harus lebih atau sama dengan Tanggal VB!', ";
                     }
 
                     if (string.IsNullOrWhiteSpace(item.Remark))
@@ -64,6 +77,24 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                         CountItemsError++;
                         ItemsError += "'Amount': 'Jumlah harus lebih besar dari 0!', ";
                     }
+
+                    if(item.isGetPPh == true)
+                    {
+                        if (item.incomeTax == null)
+                        {
+                            CountItemsError++;
+                            ItemsError += "'incomeTax': 'Nomor PPh Harus Diisi!', ";
+                        }
+
+                        if (string.IsNullOrWhiteSpace(item.IncomeTaxBy))
+                        {
+                            CountItemsError++;
+                            ItemsError += "'IncomeTaxBy': 'Ditanggung Oleh harus Dipilih!', ";
+                        }
+                    }
+
+                    
+
                     ItemsError += "}, ";
                 }
 

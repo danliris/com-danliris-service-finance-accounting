@@ -34,6 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 VBNoRealize = "VBNoRealize",
                 VBRealizeCategory = "NONPO",
                 VerifiedDate = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 RealizationVbDetail = new List<RealizationVbDetailModel>()
                 {
                     new RealizationVbDetailModel()
@@ -63,6 +64,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         VBRealizationId =1,
                         IdProductSPB ="IdProductSPB",
                         DateSPB =DateTimeOffset.Now,
+                        IncomeTaxId = "1",
+                        IncomeTaxName = "IncomeTaxName",
+                        IncomeTaxBy = "IncomeTaxBy",
+                        IncomeTaxRate = "1"
 
                     }
                 }
@@ -83,6 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 LastModifiedAgent = "LastModifiedAgent",
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 numberVB = new DetailRequestNonPO()
                 {
                     Id = 1,
@@ -111,7 +117,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 123,
-                        isGetPPn = true
+                        isGetPPn = true,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "Supplier"
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = true,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "Danliris"
                     }
                 }
             };
@@ -131,6 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 LastModifiedAgent = "LastModifiedAgent",
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -158,7 +188,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 123,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy"
                     }
                 }
             };
@@ -179,6 +216,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 LastModifiedAgent = "LastModifiedAgent",
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -206,7 +244,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 123,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy"
                     }
                 }
             };
@@ -335,6 +380,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             {
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -362,7 +408,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 0,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy"
                     }
                 }
             };
@@ -372,9 +425,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
         {
             return new RealizationVbNonPOViewModel()
             {
-               
+
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Supplier",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -402,7 +456,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 0,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "IncomeTaxBy"
                     }
                 }
             };
@@ -466,6 +527,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             return new RealizationVbNonPOViewModel()
             {
                 VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 1,
+                    Date = DateTimeOffset.Now,
+                },
                 Items = new List<VbNonPORequestDetailViewModel>()
                 {
                     new VbNonPORequestDetailViewModel()
@@ -473,14 +540,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         DateDetail = DateTimeOffset.Now.AddDays(5),
                         Remark = "",
                         Amount = -1,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "income"
                     },
                     new VbNonPORequestDetailViewModel()
                     {
                         DateDetail = null,
                         Remark = "",
                         Amount = -1,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        IncomeTaxBy = ""
                     },
                     new VbNonPORequestDetailViewModel()
                     {
@@ -489,6 +566,122 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = -1,
                         isGetPPn = false
                     },
+                }
+            };
+        }
+
+        public RealizationVbNonPOViewModel GetNewViewModelFalse3()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                VBRealizationNo = "VBRealizationNo",
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "income"
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = null,
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        IncomeTaxBy = ""
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(-5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false
+                    },
+                }
+            };
+        }
+
+        public RealizationVbNonPOViewModel GetNewViewModelFalse4()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "income"
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = null,
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        IncomeTaxBy = ""
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(-5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false
+                    },
+                }
+            };
+        }
+
+        public RealizationVbNonPOViewModel GetNewViewModelFalse5()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now.AddDays(10),
+                numberVB = new DetailRequestNonPO()
+                {
+                    Date = DateTimeOffset.Now.AddDays(-10),
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "income"
+                    }
                 }
             };
         }

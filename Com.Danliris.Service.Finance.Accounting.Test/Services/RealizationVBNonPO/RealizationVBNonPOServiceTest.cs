@@ -94,6 +94,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             Assert.True(viewModel.Validate(null).Count() > 0);
         }
 
+        [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty3()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewModel = dataUtil.GetNewViewModelFalse3();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty4()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewModel = dataUtil.GetNewViewModelFalse4();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty5()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewModel = dataUtil.GetNewViewModelFalse4();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
         //[Fact]
         //public void Should_Success_Validate_Date_Failed_ObjectProperty()
         //{
@@ -272,7 +308,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 DateDetail = DateTimeOffset.Now,
                 Amount = 123,
                 Remark = "Remark",
-                isGetPPn = true
+                isGetPPn = true,
+                incomeTax = new IncomeTaxNew()
+                {
+                    _id = "1",
+                    name = "name",
+                    rate = "1"
+                },
+                IncomeTaxBy = "income"
             });
 
             var dataRequestVb = dataUtil.GetDataRequestVB();
@@ -297,7 +340,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 DateDetail = DateTimeOffset.Now,
                 Amount = 123,
                 Remark = "Remark",
-                isGetPPn = false
+                isGetPPn = false,
+                incomeTax = new IncomeTaxNew()
+                {
+                    _id = "1",
+                    name = "name",
+                    rate = "1"
+                },
+                IncomeTaxBy = "income"
             });
 
             var dataRequestVb = dataUtil.GetDataRequestVB();
@@ -322,7 +372,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 DateDetail = DateTimeOffset.Now,
                 Amount = 0,
                 Remark = "Remark",
-                isGetPPn = false
+                isGetPPn = false,
+                incomeTax = new IncomeTaxNew()
+                {
+                    _id = "1",
+                    name = "name",
+                    rate = "1"
+                },
+                IncomeTaxBy = "income"
             });
 
             var dataRequestVb = dataUtil.GetDataRequestVB();
@@ -347,7 +404,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 DateDetail = DateTimeOffset.Now,
                 Amount = -1000,
                 Remark = "Remark",
-                isGetPPn = false
+                isGetPPn = false,
+                incomeTax = new IncomeTaxNew()
+                {
+                    _id = "1",
+                    name = "name",
+                    rate = "1"
+                },
+                IncomeTaxBy = "income"
             });
 
             var dataRequestVb = dataUtil.GetDataRequestVB();
@@ -372,7 +436,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 DateDetail = DateTimeOffset.Now,
                 Amount = -1000,
                 Remark = "Remark",
-                isGetPPn = false
+                isGetPPn = false,
+                incomeTax = new IncomeTaxNew()
+                {
+                    _id = "1",
+                    name = "name",
+                    rate = "1"
+                },
+                IncomeTaxBy = "income"
             });
 
             var dataRequestVb = dataUtil.GetDataRequestVB();
@@ -438,7 +509,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 DateDetail = DateTimeOffset.Now,
                 Amount = 1000,
                 Remark = "Remark",
-                isGetPPn = false
+                isGetPPn = false,
+                incomeTax = new IncomeTaxNew()
+                {
+                    _id = "1",
+                    name = "name",
+                    rate = "1"
+                },
+                IncomeTaxBy = "income"
             });
 
             var viewmodel1 = dataUtil.GetNewViewModel6();
