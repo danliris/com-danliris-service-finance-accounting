@@ -13,16 +13,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.NewIntegration
             string vatType = "vatType test";
             CurrencyViewModel cvm = new CurrencyViewModel();
 
-            SalesInvoiceViewModel sivm = new SalesInvoiceViewModel();
-            sivm.Id = id;
-            sivm.SalesInvoiceNo = salesInvoiceNo;
-            sivm.VatType = vatType;
-            sivm.Currency = cvm;
+            SalesInvoiceViewModel viewModel = new SalesInvoiceViewModel()
+            {
+                Id = id,
+                SalesInvoiceNo = salesInvoiceNo,
+                VatType = vatType,
+                Currency = cvm
+            };
 
-            Assert.Equal(id, sivm.Id);
-            Assert.Equal(salesInvoiceNo, sivm.SalesInvoiceNo);
-            Assert.Equal(vatType, sivm.VatType);
-            Assert.Equal(cvm, sivm.Currency);
+            Assert.Equal(id, viewModel.Id);
+            Assert.Equal(salesInvoiceNo, viewModel.SalesInvoiceNo);
+            Assert.Equal(vatType, viewModel.VatType);
+            Assert.Equal(cvm, viewModel.Currency);
 
         }
     }

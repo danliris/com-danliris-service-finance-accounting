@@ -54,11 +54,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             return controller;
         }
 
-        protected ServiceValidationException GetServiceValidationExeption()
+        protected ServiceValidationException GetServiceValidationException()
         {
             var serviceProvider = new Mock<IServiceProvider>();
             var validationResults = new List<ValidationResult>();
-            System.ComponentModel.DataAnnotations.ValidationContext validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(viewModel, serviceProvider.Object, null);
+            System.ComponentModel.DataAnnotations.ValidationContext validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(vBRealizationIdListDto, serviceProvider.Object, null);
             return new ServiceValidationException(validationContext, validationResults);
         }
 
@@ -67,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
         }
 
-        public VBRealizationIdListDto viewModel
+        public VBRealizationIdListDto vBRealizationIdListDto
         {
             get
             {
@@ -81,6 +81,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             }
         }
 
+        VBRealizationExpeditionRejectDto rejectDto
+        {
+            get
+            {
+                return new VBRealizationExpeditionRejectDto()
+                {
+                    Reason= "Reason"
+                };
+            }
+        }
         [Fact]
         public void GetVbRealizationToVerification_Return_OK()
         {
@@ -88,13 +98,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
             Dictionary<string, string> order = new Dictionary<string, string>();
             
-            service.Setup(s => s.ReadRealizationToVerification()).Returns(new ReadResponse<RealizationVbModel>(new List<RealizationVbModel>(),1, order,new List<string>()));
+            service.Setup(s => s.ReadRealizationToVerification(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new ReadResponse<VBRealizationDocumentExpeditionModel>(new List<VBRealizationDocumentExpeditionModel>(),1, order,new List<string>()));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response =  GetController(serviceProviderMock).GetVbRealizationToVerification();
+            IActionResult response =  GetController(serviceProviderMock).GetVbRealizationToVerification(0, 0, null, null, 0);
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
@@ -106,13 +116,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
             Dictionary<string, string> order = new Dictionary<string, string>();
 
-            service.Setup(s => s.ReadRealizationToVerification()).Throws(new Exception());
+            service.Setup(s => s.ReadRealizationToVerification(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response = GetController(serviceProviderMock).GetVbRealizationToVerification();
+            IActionResult response = GetController(serviceProviderMock).GetVbRealizationToVerification(0, 0, null, null, 0);
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
@@ -140,8 +150,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
-            Dictionary<string, string> order = new Dictionary<string, string>();
-
+            
             service.Setup(s => s.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
 
             serviceProviderMock
@@ -158,7 +167,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
-            Dictionary<string, string> order = new Dictionary<string, string>();
 
             service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).ReturnsAsync(1);
 
@@ -166,9 +174,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response =await  GetController(serviceProviderMock).Post(viewModel);
+            IActionResult response =await  GetController(serviceProviderMock).Post(new VBRealizationIdListDto() { VBRealizationIds =new List<int>() { 1} });
             int statusCode = this.GetStatusCode(response);
-            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
         }
         
 
@@ -177,15 +185,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
-            Dictionary<string, string> order = new Dictionary<string, string>();
 
-            service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).Throws( GetServiceValidationExeption());
+            service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).ThrowsAsync( GetServiceValidationException());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response = await GetController(serviceProviderMock).Post(viewModel);
+            IActionResult response = await GetController(serviceProviderMock).Post(vBRealizationIdListDto);
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
         }
@@ -195,15 +202,101 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
-            Dictionary<string, string> order = new Dictionary<string, string>();
-
-            service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).Throws(new Exception());
+         
+            service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).ThrowsAsync(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response = await GetController(serviceProviderMock).Post(viewModel);
+            IActionResult response = await GetController(serviceProviderMock).Post(vBRealizationIdListDto);
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public async Task Verify_Return_Created()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+           
+            service.Setup(s => s.VerifiedToCashier(It.IsAny<int>())).ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).Verify(1);
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+
+        [Fact]
+        public async Task Verify_Return_InternalServerError()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.VerifiedToCashier(It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).Verify(1);
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+        [Fact]
+        public async Task reject_Return_Created()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.Reject(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).reject(1, rejectDto);
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+        [Fact]
+        public async Task reject_Throws_ServiceValidationException()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.Reject(It.IsAny<int>(), It.IsAny<string>())).ThrowsAsync(GetServiceValidationException());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).reject(1, rejectDto);
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+
+        [Fact]
+        public async Task reject_Return_InternalServerError()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.Reject(It.IsAny<int>(), It.IsAny<string>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).reject(1, rejectDto);
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }

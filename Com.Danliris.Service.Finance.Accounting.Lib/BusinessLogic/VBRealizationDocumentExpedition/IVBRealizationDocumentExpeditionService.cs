@@ -17,7 +17,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         Task<int> CashierReceipt(List<int> vbRealizationIds);
         Task<int> Reject(int vbRealizationId, string reason);
         ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position);
-        ReadResponse<RealizationVbModel> ReadRealizationToVerification();
+        ReadResponse<VBRealizationDocumentExpeditionModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId);
         Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25);
+
     }
 }

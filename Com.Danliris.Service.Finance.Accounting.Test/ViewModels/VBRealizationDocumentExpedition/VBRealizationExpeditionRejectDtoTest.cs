@@ -7,18 +7,12 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBRealizationDocumentExpedition
 {
-  public  class VBRealizationIdListDtoTest
+    public class VBRealizationExpeditionRejectDtoTest
     {
         [Fact]
         public void validate_default()
         {
-            VBRealizationIdListDto dto = new VBRealizationIdListDto()
-            {
-                VBRealizationIds = new List<int>()
-                {
-                    
-                }
-            };
+            VBRealizationExpeditionRejectDto dto = new VBRealizationExpeditionRejectDto();
             var result = dto.Validate(null);
             Assert.True(0 < result.Count());
         }

@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200806002440_AddColumnCategoryVB")]
+    partial class AddColumnCategoryVB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1880,18 +1882,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("IdProductSPB")
                         .HasMaxLength(64);
 
-                    b.Property<string>("IncomeTaxBy")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("IncomeTaxId")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("IncomeTaxName")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("IncomeTaxRate")
-                        .HasMaxLength(64);
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LastModifiedAgent")
@@ -1925,8 +1915,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(64);
 
                     b.Property<int>("VBRealizationId");
-
-                    b.Property<bool>("isGetPPh");
 
                     b.Property<bool>("isGetPPn");
 
@@ -1966,13 +1954,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("CurrencyCode")
                         .HasMaxLength(64);
 
-                    b.Property<string>("CurrencyDescription")
-                        .HasMaxLength(64);
-
                     b.Property<decimal>("CurrencyRate");
-
-                    b.Property<string>("CurrencySymbol")
-                        .HasMaxLength(64);
 
                     b.Property<DateTimeOffset>("Date");
 
@@ -1996,8 +1978,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("DivisionName");
 
-                    b.Property<decimal>("IncomeTaxAmount");
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LastModifiedAgent")
@@ -2020,9 +2000,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("StatusReqReal")
                         .HasMaxLength(64);
-
-                    b.Property<string>("TypeVBNonPO")
-                        .HasMaxLength(255);
 
                     b.Property<string>("UnitCode")
                         .HasMaxLength(64);
