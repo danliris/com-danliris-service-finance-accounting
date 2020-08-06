@@ -201,7 +201,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-            var result = service.ReadRealizationToVerification(0, 0, null, null, 0);
+            ReadResponse<VBRealizationDocumentExpeditionModel> result = service.ReadRealizationToVerification(0, 0, null, null, 0);
             Assert.NotNull(result);
             Assert.NotEqual(0,result.Count);
         }
@@ -213,7 +213,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-            var result = service.ReadRealizationToVerification(model.VBId, model.VBRealizationId, model.VBRealizationDate, model.VBRequestName, model.UnitId);
+            ReadResponse<VBRealizationDocumentExpeditionModel> result = service.ReadRealizationToVerification(model.VBId, model.VBRealizationId, model.VBRealizationDate, model.VBRequestName, model.UnitId);
             Assert.NotNull(result);
             Assert.NotEqual(0, result.Count);
            
