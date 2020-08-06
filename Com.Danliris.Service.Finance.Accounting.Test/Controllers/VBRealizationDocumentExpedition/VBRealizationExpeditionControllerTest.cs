@@ -88,13 +88,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
             Dictionary<string, string> order = new Dictionary<string, string>();
             
-            service.Setup(s => s.ReadRealizationToVerification()).Returns(new ReadResponse<RealizationVbModel>(new List<RealizationVbModel>(),1, order,new List<string>()));
+            service.Setup(s => s.ReadRealizationToVerification(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new ReadResponse<VBRealizationDocumentExpeditionModel>(new List<VBRealizationDocumentExpeditionModel>(),1, order,new List<string>()));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response =  GetController(serviceProviderMock).GetVbRealizationToVerification();
+            IActionResult response =  GetController(serviceProviderMock).GetVbRealizationToVerification(0, 0, null, null, 0);
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
@@ -106,13 +106,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
             Dictionary<string, string> order = new Dictionary<string, string>();
 
-            service.Setup(s => s.ReadRealizationToVerification()).Throws(new Exception());
+            service.Setup(s => s.ReadRealizationToVerification(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response = GetController(serviceProviderMock).GetVbRealizationToVerification();
+            IActionResult response = GetController(serviceProviderMock).GetVbRealizationToVerification(0, 0, null, null, 0);
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }

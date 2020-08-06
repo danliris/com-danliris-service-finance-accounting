@@ -67,7 +67,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public Task<int> InitializeExpedition(int vbRealizationId)
         {
             var realizationVB = _dbContext.RealizationVbs.FirstOrDefault(entity => entity.Id == vbRealizationId);
-            var vbRequest = _dbContext.VbRequests.FirstOrDefault(entity => entity.Id == realizationVB.VBId);
 
             var model = new VBRealizationDocumentExpeditionModel(
                 realizationVB.Id,
@@ -84,7 +83,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 realizationVB.Amount,
                 realizationVB.CurrencyCode,
                 (double)realizationVB.CurrencyRate,
-                vbRequest.VBRequestCategory
+                realizationVB.VBRealizeCategory
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -201,10 +200,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             return _dbContext.SaveChangesAsync();
         }
 
-        public ReadResponse<RealizationVbModel> ReadRealizationToVerification()
+        public ReadResponse<VBRealizationDocumentExpeditionModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
         {
-            var result = _dbContext.RealizationVbs.Where(entity => entity.Position == (int)VBRealizationPosition.Purchasing).ToList();
-            return new ReadResponse<RealizationVbModel>(result, result.Count, new Dictionary<string, string>(), new List<string>());
+            var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
+            query = query.Where(entity => entity.Position == (int)VBRealizationPosition.Purchasing);
+
+            if (vbId > 0)
+                query = query.Where(entity => entity.VBId == vbId);
+
+            if (vbRealizationId > 0)
+                query = query.Where(entity => entity.VBRealizationId == vbRealizationId);
+
+            if (realizationDate.HasValue)
+            {
+                var date = realizationDate.GetValueOrDefault().AddDays(_identityService.TimezoneOffset * -1);
+                query = query.Where(entity => entity.VBRealizationDate.Date == date.Date);
+            }
+
+            if (!string.IsNullOrWhiteSpace(vbRealizationRequestPerson))
+                query = query.Where(entity => entity.VBRequestName == vbRealizationRequestPerson);
+
+            if (unitId > 0)
+                query = query.Where(entity => entity.UnitId == unitId);
+
+            var result = query.ToList();
+            return new ReadResponse<VBRealizationDocumentExpeditionModel>(result, result.Count, new Dictionary<string, string>(), new List<string>());
         }
 
         public Task<int> VerifiedToCashier(int vbRealizationId)

@@ -257,6 +257,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
                 throw new NotImplementedException();
             }
 
+            public ReadResponse<VBRealizationDocumentExpeditionModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
+            {
+                throw new NotImplementedException();
+            }
+
             public List<RealizationVbModel> ReadRelizationToVerification(int position)
             {
                 throw new NotImplementedException();

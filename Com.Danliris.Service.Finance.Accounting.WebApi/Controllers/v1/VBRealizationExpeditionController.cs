@@ -39,12 +39,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("vb-realization-to-verification")]
-        public IActionResult GetVbRealizationToVerification()
+        public IActionResult GetVbRealizationToVerification([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] DateTimeOffset? realizationDate, [FromQuery] string vbRealizationRequestPerson, [FromQuery] int unitId)
         {
             try
             {
                 VerifyUser();
-                var data = _service.ReadRealizationToVerification();
+                var data = _service.ReadRealizationToVerification(vbId, vbRealizationId, realizationDate, vbRealizationRequestPerson, unitId);
 
                 return Ok(new
                 {

@@ -85,6 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public string NotVerifiedBy { get; private set; }
         public DateTimeOffset? NotVerifiedDate { get; private set; }
         public int Position { get; private set; }
+        [MaxLength(64)]
         public string VBType { get; set; }
 
         public void SubmitToVerification(string name)
