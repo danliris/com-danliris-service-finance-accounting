@@ -212,16 +212,24 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody1b1.Phrase = new Phrase($"{currencysymbol}       " + (count_price - total_realization).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1b1);
 
-
+            cellHeaderBody1b1.Phrase = new Phrase(" ", normal_font);
+            headerTable3.AddCell(cellHeaderBody1b1);
+            //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody1b);
+            cellHeaderBody1a1.Colspan = 2;
+            cellHeaderBody1a1.Phrase = new Phrase("PPh", normal_font);
+            headerTable3.AddCell(cellHeaderBody1a1);
+            cellHeaderBody1b1.Phrase = new Phrase($"{currencysymbol}       " + (GetPPhValue(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            headerTable3.AddCell(cellHeaderBody1b1);
 
             cellHeaderBody1b2.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody1b2);
             //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody1b);
             cellHeaderBody1a2.Colspan = 2;
-            cellHeaderBody1a2.Phrase = new Phrase("Total Realisasi", normal_font);
+            cellHeaderBody1a2.Phrase = new Phrase("Total Keseluruhan", normal_font);
             headerTable3.AddCell(cellHeaderBody1a2);
-            cellHeaderBody1b2.Phrase = new Phrase($"{currencysymbol}       " + count_price.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1b2.Phrase = new Phrase($"{currencysymbol}       " + (count_price - GetPPhValue(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1b2);
 
             //cellHeaderBody1.Colspan = 2;
@@ -238,7 +246,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             var priceterbilang = count_price;
 
-            var res = count_price - viewModel.numberVB.Amount;
+            var res = (count_price - GetPPhValue(viewModel)) - viewModel.numberVB.Amount;
 
             cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody5);
@@ -1134,6 +1142,27 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             convertCurrency = (double)price;
 
             return (decimal)convertCurrency;
+        }
+
+        private decimal GetPPhValue(RealizationVbNonPOViewModel viewModel)
+        {
+            decimal val = 0;
+
+            foreach (var itm in viewModel.Items)
+            {
+                if (itm.isGetPPh == true && itm.IncomeTaxBy == "Supplier")
+                {
+                    if (itm.incomeTax.rate.Contains("."))
+                    {
+                        itm.incomeTax.rate = itm.incomeTax.rate.Replace(".", ",");
+                    }
+
+                    val += itm.Amount * (Convert.ToDecimal(itm.incomeTax.rate) / 100);
+                }
+
+            }
+
+            return val;
         }
     }
 }

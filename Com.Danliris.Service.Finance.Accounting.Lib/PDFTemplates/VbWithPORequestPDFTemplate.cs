@@ -159,18 +159,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             cellHeaderBody.Phrase = new Phrase(PoNumber, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
-            cellHeaderBody.Phrase = new Phrase("Kegunaan", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(":", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(viewModel.Usage, normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-
             cellHeaderBody.Phrase = new Phrase("Total Harga PO", normal_font);
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Symbol} " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+
+            cellHeaderBody.Phrase = new Phrase("Kegunaan", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase(":", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase(viewModel.Usage, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             //cellHeaderBody.Phrase = new Phrase(" ", normal_font);

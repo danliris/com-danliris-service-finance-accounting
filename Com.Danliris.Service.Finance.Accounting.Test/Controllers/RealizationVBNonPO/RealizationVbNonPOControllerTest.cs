@@ -1712,7 +1712,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 123,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1.5"
+                        },
+                        IncomeTaxBy = "Supplier"
                     }
                 }
 
@@ -1776,7 +1784,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                         DateDetail = DateTimeOffset.Now,
                         Remark = "Remark",
                         Amount = 123,
-                        isGetPPn = false
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "Danliris"
                     }
                 }
 
