@@ -174,7 +174,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response =await  GetController(serviceProviderMock).Post(vBRealizationIdListDto);
+            IActionResult response =await  GetController(serviceProviderMock).Post(new VBRealizationIdListDto() { VBRealizationIds =new List<int>() { 1} });
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.Created, statusCode);
         }
