@@ -53,6 +53,36 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
         public decimal AmountKonfeksi1B { get; set; }
         public decimal AmountKonfeksi2C { get; set; }
 
+        public bool Spinning1VB { get; set; }
+        public bool Spinning2VB { get; set; }
+        public bool Spinning3VB { get; set; }
+        public bool Weaving1VB { get; set; }
+        public bool Weaving2VB { get; set; }
+        public bool FinishingVB { get; set; }
+        public bool PrintingVB { get; set; }
+        public bool Konfeksi1AVB { get; set; }
+        public bool Konfeksi1BVB { get; set; }
+        public bool Konfeksi2AVB { get; set; }
+        public bool Konfeksi2BVB { get; set; }
+        public bool Konfeksi2CVB { get; set; }
+        public bool UmumVB { get; set; }
+        public bool OthersVB { get; set; }
+        public string DetailOthersVB { get; set; }
+
+        public decimal AmountSpinning1VB { get; set; }
+        public decimal AmountWeaving1VB { get; set; }
+        public decimal AmountPrintingVB { get; set; }
+        public decimal AmountKonfeksi2AVB { get; set; }
+        public decimal AmountUmumVB { get; set; }
+        public decimal AmountSpinning2VB { get; set; }
+        public decimal AmountWeaving2VB { get; set; }
+        public decimal AmountKonfeksi1AVB { get; set; }
+        public decimal AmountKonfeksi2BVB { get; set; }
+        public decimal AmountOthersVB { get; set; }
+        public decimal AmountSpinning3VB { get; set; }
+        public decimal AmountFinishingVB { get; set; }
+        public decimal AmountKonfeksi1BVB { get; set; }
+        public decimal AmountKonfeksi2CVB { get; set; }
 
         public ICollection<VbNonPORequestDetailViewModel> Items { get; set; }
 
@@ -141,6 +171,48 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             {
                 if (numberVB == null)
                     yield return new ValidationResult("No VB harus diisi!", new List<string> { "VBCode" });
+
+                if (Spinning1VB == true && AmountSpinning1VB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountSpinning1VB" });
+
+                if (Spinning2VB == true && AmountSpinning2VB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountSpinning2VB" });
+
+                if (Spinning3VB == true && AmountSpinning3VB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountSpinning3VB" });
+
+                if (Weaving1VB == true && AmountWeaving1VB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountWeaving1VB" });
+
+                if (Weaving2VB == true && AmountWeaving2VB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountWeaving2VB" });
+
+                if (FinishingVB == true && AmountFinishingVB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountFinishingVB" });
+
+                if (PrintingVB == true && AmountPrintingVB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountPrintingVB" });
+
+                if (Konfeksi1AVB == true && AmountKonfeksi1AVB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountKonfeksi1AVB" });
+
+                if (Konfeksi1BVB == true && AmountKonfeksi1BVB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountKonfeksi1BVB" });
+
+                if (Konfeksi2AVB == true && AmountKonfeksi2AVB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountKonfeksi2AVB" });
+
+                if (Konfeksi2BVB == true && AmountKonfeksi2BVB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountKonfeksi2BVB" });
+
+                if (Konfeksi2CVB == true && AmountKonfeksi2CVB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountKonfeksi2CVB" });
+
+                if (UmumVB == true && AmountUmumVB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountUmumVB" });
+
+                if (OthersVB == true && AmountOthersVB <= 0)
+                    yield return new ValidationResult("Nominal harus diisi!", new List<string> { "AmountOthersVB" });
 
             }
 

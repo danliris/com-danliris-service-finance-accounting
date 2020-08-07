@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
 
         public ReadResponse<VbRequestList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.VbRequests.Where(entity => entity.VBRequestCategory == "NONPO").AsQueryable();
+            var query = _dbContext.VbRequests.Include(entity => entity.VbRequestDetail).Where(entity => entity.VBRequestCategory == "NONPO").AsQueryable();
 
             var searchAttributes = new List<string>()
             {
@@ -75,7 +75,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbN
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
                 Usage = entity.Usage,
-                RealizationStatus = entity.Realization_Status
+                RealizationStatus = entity.Realization_Status,
+                PONo = entity.VbRequestDetail.Select(en => new VbRequestDetailModel()
+                {
+                    UnitName = en.UnitName
+                }).ToList()
 
             }).Where(entity => entity.VBRequestCategory == "NONPO").ToList();
 
