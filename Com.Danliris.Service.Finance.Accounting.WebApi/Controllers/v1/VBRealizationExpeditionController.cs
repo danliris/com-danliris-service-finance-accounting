@@ -68,12 +68,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] int position = 0, [FromQuery] int page = 1, [FromQuery] int size = 25, [FromQuery] string order = "{}", [FromQuery] string keyword = "")
+        public IActionResult Get([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] DateTimeOffset? realizationDate, [FromQuery] string vbRealizationRequestPerson, [FromQuery] int unitId, [FromQuery] int position = 0, [FromQuery] int page = 1, [FromQuery] int size = 25, [FromQuery] string order = "{}", [FromQuery] string keyword = "")
         {
             try
             {
                 VerifyUser();
-                var data = _service.Read(page, size, order, keyword, position);
+                var data = _service.Read(page, size, order, keyword, position, vbId, vbRealizationId, realizationDate, vbRealizationRequestPerson, unitId);
 
                 return Ok(new
                 {
