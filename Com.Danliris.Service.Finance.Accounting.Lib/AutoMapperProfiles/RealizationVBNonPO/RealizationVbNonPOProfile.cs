@@ -24,7 +24,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Realiza
                 .ForPath(d => d.numberVB.CurrencyRate, opt => opt.MapFrom(s => s.CurrencyRate))
                 .ForPath(d => d.numberVB.CurrencySymbol, opt => opt.MapFrom(s => s.CurrencySymbol))
                 .ForPath(d => d.numberVB.CurrencyDescription, opt => opt.MapFrom(s => s.CurrencyDescription))
-                .ForPath(d => d.numberVB.UnitLoad, opt => opt.MapFrom(s => s.UnitLoad))
                 .ForPath(d => d.numberVB.VBRequestCategory, opt => opt.MapFrom(s => s.VBRealizeCategory))
                 .ForPath(d => d.numberVB.Usage, opt => opt.MapFrom(s => s.UsageVBRequest))
                 .ForPath(d => d.numberVB.UnitDivisionId, opt => opt.MapFrom(s => s.DivisionId))

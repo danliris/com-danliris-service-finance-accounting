@@ -439,6 +439,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 Amount = -1000,
                 Remark = "Remark",
                 isGetPPn = false,
+                isGetPPh = true,
                 incomeTax = new IncomeTaxNew()
                 {
                     _id = "1",
@@ -512,6 +513,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 Amount = 1000,
                 Remark = "Remark",
                 isGetPPn = false,
+                isGetPPh = true,
                 incomeTax = new IncomeTaxNew()
                 {
                     _id = "1",
@@ -637,6 +639,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
 
             Assert.Equal(salesReceiptViewModel.Id, salesReceiptModel.Id);
         }
+        
+        public async Task Should_Success_Delete_ById2()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var data = await dataUtil.GetCreatedData2();
+
+            var dataRequestVb = dataUtil.GetDataRequestVB();
+            dbContext.VbRequests.Add(dataRequestVb);
+            dbContext.SaveChanges();
+
+            var result = await service.DeleteAsync(data.Id);
+
+            Assert.NotEqual(0, result);
+        }
+
         internal class RealizationVbNonPOServiceHelper : IVBRealizationDocumentExpeditionService
         {
             public RealizationVbNonPOServiceHelper()

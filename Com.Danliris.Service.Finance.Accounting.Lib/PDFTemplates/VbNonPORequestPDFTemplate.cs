@@ -68,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             headerTable_A.WidthPercentage = 100;
             headerTable3.SetWidths(new float[] { 40f, 4f, 100f });
             headerTable3.WidthPercentage = 100;
-            headerTable3a.SetWidths(new float[] { 3f, 10f, 3f, 10f, 3f, 10f, 3f, 10f, 3f, 10f });
+            headerTable3a.SetWidths(new float[] { 3f, 10f, 3f, 10f, 3f, 10f, 3f, 10f, 3f, 13f });
             headerTable3a.WidthPercentage = 100;
             headerTable4.SetWidths(new float[] { 10f, 40f });
             headerTable4.WidthPercentage = 100;
@@ -113,7 +113,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody3.Colspan = 3;
-            cellHeaderBody3.Phrase = new Phrase($"No     : {viewModel.VBNo}", normal_font);
+            cellHeaderBody3.Phrase = new Phrase($"No          : {viewModel.VBNo}", normal_font);
             headerTable3.AddCell(cellHeaderBody3);
 
             cellHeaderBody3.Colspan = 3;
@@ -308,7 +308,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                  = new BebanUnitEvent(_checkGroup3, _radioField13, 1);
             headerTable3a.AddCell(cellform3);
 
-            cellHeaderBody.Phrase = new Phrase("Konfeksi 2 A", normal_font);
+            cellHeaderBody.Phrase = new Phrase("Konfeksi 2A", normal_font);
             headerTable3a.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("", normal_font);
@@ -461,7 +461,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             cellform8.CellEvent
                  = new BebanUnitEvent(_checkGroup8, _radioField18, 1);
             headerTable3a.AddCell(cellform8);
-            cellHeaderBody.Phrase = new Phrase("Konfeksi 2 B", normal_font);
+            cellHeaderBody.Phrase = new Phrase("Konfeksi 2B", normal_font);
             headerTable3a.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("", normal_font);

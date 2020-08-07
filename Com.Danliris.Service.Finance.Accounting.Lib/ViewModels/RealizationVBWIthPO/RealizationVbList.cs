@@ -9,7 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public string VBNoRealize { get; set; }
         public DateTimeOffset Date { get; set; }
         public DateTimeOffset DateEstimate { get; set; }
-        public string RequestVbName { get; set; }
+        public string CreatedBy { get; set; }
         public bool isVerified { get; set; }
         public string VBRealizeCategory { get; set; }
     }
