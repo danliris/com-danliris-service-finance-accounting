@@ -288,10 +288,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
         public Task<int> DeleteAsync(int id)
         {
+
             var model = _dbContext.RealizationVbs.Where(entity => entity.Id == id).FirstOrDefault();
 
-            var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
-            updateTotalRequestVb.Realization_Status = false;
+            if (model.TypeWithOrWithoutVB == "Dengan Nomor VB")
+            {
+                var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
+                updateTotalRequestVb.Realization_Status = false;
+            }
 
             if (model != null)
             {

@@ -89,7 +89,59 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 LastModifiedAgent = "LastModifiedAgent",
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
-                TypeVBNonPO = "Supplier",
+
+                TypeVBNonPO = "Tanpa Nomor VB",
+                AmountVB = 100,
+                Spinning1 = true,
+                Spinning2 = true,
+                Spinning3 = true,
+                Weaving1 = true,
+                Weaving2 = true,
+                Finishing = true,
+                Printing = true,
+                Konfeksi1A = true,
+                Konfeksi1B = true,
+                Konfeksi2A = true,
+                Konfeksi2B = true,
+                Konfeksi2C = true,
+                Umum = true,
+                Others = true,
+                DetailOthers = "DetailOthers",
+
+                AmountSpinning1 = 123,
+                AmountSpinning2 = 123,
+                AmountSpinning3 = 123,
+                AmountWeaving1 = 123,
+                AmountWeaving2 = 123,
+                AmountFinishing = 123,
+                AmountPrinting = 123,
+                AmountKonfeksi1A = 123,
+                AmountKonfeksi1B = 123,
+                AmountKonfeksi2A = 123,
+                AmountKonfeksi2B = 123,
+                AmountKonfeksi2C = 123,
+                AmountUmum = 123,
+                AmountOthers = 123,
+                DateEstimateVB = DateTimeOffset.Now,
+                Unit = new Unit()
+                {
+                    Code = "code",
+                    Name = "name"
+                },
+                DateVB = DateTimeOffset.Now,
+                Currency = new CurrencyVBRequest()
+                {
+                    Code = "code",
+                    Rate = 1,
+                    Description = "des",
+                    Symbol = "Rp"
+                },
+                Division = new Division()
+                {
+                    Id = 1,
+                    Name = "name"
+                },
+
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -160,7 +212,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                 LastModifiedAgent = "LastModifiedAgent",
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
-                TypeVBNonPO = "Supplier",
+                TypeVBNonPO = "Dengan Nomor VB",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -263,6 +315,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             {
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -517,6 +570,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Remark = "Remark",
                         Amount = 0,
                         isGetPPn = false,
+                        isGetPPh = true,
                         incomeTax = new IncomeTaxNew()
                         {
                             _id = "1",
@@ -752,7 +806,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             {
                 VBNo = "VBNo",
                 Realization_Status = false,
-                IsDeleted = false,
+                IsDeleted = false
             };
         }
 
@@ -770,6 +824,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
         {
             var model = GetNewData();
             var viewmodel = GetNewViewModel();
+            await Service.CreateAsync(model, viewmodel);
+            return await Service.ReadByIdAsync2(model.Id);
+        }
+
+        public async Task<RealizationVbNonPOViewModel> GetCreatedData2()
+        {
+            var model = GetNewData();
+            var viewmodel = GetNewViewModelNew();
             await Service.CreateAsync(model, viewmodel);
             return await Service.ReadByIdAsync2(model.Id);
         }
