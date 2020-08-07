@@ -13,6 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VbNonPORequest;
 using OfficeOpenXml.FormulaParsing.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBVerification
 {
@@ -20,7 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
     {
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
-
+        private readonly IVBRealizationDocumentExpeditionService _expeditionService;
         private const string UserAgent = "finance-service";
         private readonly DbSet<RealizationVbModel> dbSet;
         private readonly DbSet<VbRequestModel> _RequestDbSet;
@@ -29,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
         {
             _dbContext = dbContext;
             _identityService = serviceProvider.GetService<IIdentityService>();
+            _expeditionService = serviceProvider.GetService<IVBRealizationDocumentExpeditionService>();
 
             dbSet = _dbContext.Set<RealizationVbModel>();
             _RequestDbSet = _dbContext.Set<VbRequestModel>();
@@ -36,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
         public ReadResponse<VbVerificationList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.RealizationVbs.Where(a => a.isNotVeridied == false && a.isVerified == false).AsQueryable();
+            var query = _dbContext.RealizationVbs.Where(a => a.Position == (int)VBRealizationPosition.Verification).AsQueryable();
             var query2 = _RequestDbSet.Where(en => en.Apporve_Status == true).AsQueryable();
 
             var searchAttributes = new List<string>()
@@ -106,8 +109,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
         public ReadResponse<VbVerificationResultList> ReadVerification(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.RealizationVbs.Where(entity => entity.isVerified == true)
-                .Union(_dbContext.RealizationVbs.Where(entity => entity.isNotVeridied == true).AsQueryable()).AsQueryable();
+            var query = _dbContext.RealizationVbs.Where(entity => entity.Position == (int)VBRealizationPosition.VerifiedToCashier || entity.Position == (int)VBRealizationPosition.NotVerified);
+            //.Union(_dbContext.RealizationVbs.Where(entity => entity.isNotVeridied == true).AsQueryable()).AsQueryable();
             //var query2 = _dbContext.RealizationVbs.Where(entity => entity.isNotVeridied == true).AsQueryable();
 
             var searchAttributes = new List<string>()
@@ -157,32 +160,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
             return new ReadResponse<VbVerificationResultList>(data, totalData, orderDictionary, new List<string>());
         }
 
-        public Task<int> CreateAsync(VbVerificationViewModel viewmodel)
+        public async Task<int> CreateAsync(VbVerificationViewModel viewmodel)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            //using (var transaction = _dbContext.Database.BeginTransaction())
+            //{
+
+            var m = dbSet.SingleOrDefault(e => e.Id == viewmodel.numberVB.Id);
+            EntityExtension.FlagForUpdate(m, _identityService.Username, UserAgent);
+            m.isVerified = viewmodel.isVerified;
+            m.isNotVeridied = viewmodel.isNotVeridied;
+            m.VerifiedName = _identityService.Username;
+
+            m.VerifiedDate = (DateTimeOffset)viewmodel.VerifyDate;
+
+            if (string.IsNullOrEmpty(viewmodel.Reason))
             {
-
-                var m = dbSet.SingleOrDefault(e => e.Id == viewmodel.numberVB.Id);
-                EntityExtension.FlagForUpdate(m, _identityService.Username, UserAgent);
-                m.isVerified = viewmodel.isVerified;
-                m.isNotVeridied = viewmodel.isNotVeridied;
-                m.VerifiedName = _identityService.Username;
-
-                m.VerifiedDate = (DateTimeOffset)viewmodel.VerifyDate;
-
-                if (string.IsNullOrEmpty(viewmodel.Reason))
-                {
-                    m.Reason_NotVerified = "";
-                }
-                else
-                {
-                    m.Reason_NotVerified = viewmodel.Reason;
-                }
-
-                transaction.Commit();
+                m.Reason_NotVerified = "";
+            }
+            else
+            {
+                m.Reason_NotVerified = viewmodel.Reason;
             }
 
-            return _dbContext.SaveChangesAsync();
+            //transaction.Commit();
+            //}
+
+            await _dbContext.SaveChangesAsync();
+
+            if (m.isVerified)
+                await _expeditionService.VerifiedToCashier(m.Id);
+            else
+                await _expeditionService.Reject(m.Id, viewmodel.Reason);
+
+            return m.Id;
         }
 
         public async Task<VbVerificationViewModel> ReadById(int id)
