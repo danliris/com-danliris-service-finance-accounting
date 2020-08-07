@@ -300,5 +300,111 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
+
+
+        [Fact]
+        public async Task AcceptForVerification_Sucees_Return_NoContent()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.VerificationDocumentReceipt(It.IsAny<List<int>>())).ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).AcceptForVerification(new VBRealizationIdListDto() { VBRealizationIds = new List<int>() { 1 } });
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+        [Fact]
+        public async Task AcceptForVerification_Throws_ServiceValidationException()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.VerificationDocumentReceipt(It.IsAny<List<int>>())).ThrowsAsync(GetServiceValidationException());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).AcceptForVerification(new VBRealizationIdListDto() { VBRealizationIds = new List<int>() { 1 } });
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+
+        [Fact]
+        public async Task AcceptForVerification_Return_InternalServerError()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.VerificationDocumentReceipt(It.IsAny<List<int>>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).AcceptForVerification(new VBRealizationIdListDto() { VBRealizationIds = new List<int>() { 1 } });
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public async Task AcceptForCashier_Sucees_Return_NoContent()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.CashierReceipt(It.IsAny<List<int>>())).ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).AcceptForCashier(new VBRealizationIdListDto() { VBRealizationIds = new List<int>() { 1 } });
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+        [Fact]
+        public async Task AcceptForCashier_Throws_ServiceValidationException()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.CashierReceipt(It.IsAny<List<int>>())).ThrowsAsync(GetServiceValidationException());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).AcceptForCashier(new VBRealizationIdListDto() { VBRealizationIds = new List<int>() { 1 } });
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
+        public async Task AcceptForCashier_REturn_InternalServerError()
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.CashierReceipt(It.IsAny<List<int>>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).AcceptForCashier(new VBRealizationIdListDto() { VBRealizationIds = new List<int>() { 1 } });
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
     }
 }

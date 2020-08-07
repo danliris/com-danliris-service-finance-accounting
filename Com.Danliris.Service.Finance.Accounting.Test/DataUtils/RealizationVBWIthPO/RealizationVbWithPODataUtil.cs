@@ -21,7 +21,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
         public RealizationVbModel GetNewData()
         {
             return new RealizationVbModel()
-            {
+            {  
+                Position=4,
                 DateEstimate = DateTimeOffset.Now,
                 CloseDate = DateTimeOffset.Now,
                 Date = DateTimeOffset.Now,
@@ -218,7 +219,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
             };
         }
 
-        public VbRequestModel GetDataRequestVB2()
+        public VbRequestModel GetVbRequestModel()
         {
             return new VbRequestModel()
             {

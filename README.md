@@ -102,7 +102,7 @@ file launchSettings.json look like this :
 } 
 ```
 - Call `dotnet run`.
-- Then open the `http://localhost:5000` URL in your browser.
+- Then open the `http://localhost:52409` URL in your browser.
 
 ### Visual Studio
 
