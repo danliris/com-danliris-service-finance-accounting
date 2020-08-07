@@ -157,67 +157,67 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
 
         }
 
-        [Fact]
-        public async Task Read_Return_Success2()
-        {
-            var dbContext = GetDbContext(GetCurrentMethod());
-            var serviceProviderMock = GetServiceProvider();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbServiceHelper());
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
-            VbVerificationService service2 = new VbVerificationService(dbContext, serviceProviderMock.Object);
-            RealizationVbModel model = _dataUtil(service).GetNewData();
+        //[Fact]
+        //public async Task Read_Return_Success2()
+        //{
+        //    var dbContext = GetDbContext(GetCurrentMethod());
+        //    var serviceProviderMock = GetServiceProvider();
+        //    serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbServiceHelper());
+        //    serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+        //    RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
+        //    VbVerificationService service2 = new VbVerificationService(dbContext, serviceProviderMock.Object);
+        //    RealizationVbModel model = _dataUtil(service).GetNewData();
 
-            var dataRequestVb = _dataUtil(service).GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
+        //    var dataRequestVb = _dataUtil(service).GetDataRequestVB();
+        //    dbContext.VbRequests.Add(dataRequestVb);
+        //    dbContext.SaveChanges();
 
-            RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
+        //    RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
 
-            VbVerificationViewModel viewmodel2 = _dataUtil2(service2).GetViewModelToValidate();
+        //    VbVerificationViewModel viewmodel2 = _dataUtil2(service2).GetViewModelToValidate();
 
-            await service.CreateAsync(model, viewModel);
+        //    await service.CreateAsync(model, viewModel);
 
-            await service2.CreateAsync(viewmodel2);
-            //
-            var response = service2.ReadVerification(1, 1, "{}", new List<string>(), "", "{}");
-            Assert.NotNull(response);
+        //    await service2.CreateAsync(viewmodel2);
+        //    //
+        //    var response = service2.ReadVerification(1, 1, "{}", new List<string>(), "", "{}");
+        //    Assert.NotNull(response);
 
-        }
+        //}
 
-        [Fact]
-        public async Task Should_Success_Create_Data()
-        {
-            var dbContext = GetDbContext(GetCurrentMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
-            VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
-            RealizationVbModel model = _dataUtil(service).GetNewData();
+        //[Fact]
+        //public async Task Should_Success_Create_Data()
+        //{
+        //    var dbContext = GetDbContext(GetCurrentMethod());
+        //    RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
+        //    VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
+        //    RealizationVbModel model = _dataUtil(service).GetNewData();
 
-            var dataRequestVb = _dataUtil(service).GetNewData();
-            dbContext.RealizationVbs.Add(dataRequestVb);
-            dbContext.SaveChanges();
+        //    var dataRequestVb = _dataUtil(service).GetNewData();
+        //    dbContext.RealizationVbs.Add(dataRequestVb);
+        //    dbContext.SaveChanges();
 
-            VbVerificationViewModel viewModel = _dataUtil2(service2).GetViewModelToValidate();
-            var Response = await service2.CreateAsync(viewModel);
-            Assert.NotEqual(0, Response);
-        }
+        //    VbVerificationViewModel viewModel = _dataUtil2(service2).GetViewModelToValidate();
+        //    var Response = await service2.CreateAsync(viewModel);
+        //    Assert.NotEqual(0, Response);
+        //}
 
-        [Fact]
-        public async Task Should_Success_Create_Data2()
-        {
-            var dbContext = GetDbContext(GetCurrentMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
-            VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
-            RealizationVbModel model = _dataUtil(service).GetNewData();
+        //[Fact]
+        //public async Task Should_Success_Create_Data2()
+        //{
+        //    var dbContext = GetDbContext(GetCurrentMethod());
+        //    RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
+        //    VbVerificationService service2 = new VbVerificationService(dbContext, GetServiceProvider().Object);
+        //    RealizationVbModel model = _dataUtil(service).GetNewData();
 
-            var dataRequestVb = _dataUtil(service).GetNewData();
-            dbContext.RealizationVbs.Add(dataRequestVb);
-            dbContext.SaveChanges();
+        //    var dataRequestVb = _dataUtil(service).GetNewData();
+        //    dbContext.RealizationVbs.Add(dataRequestVb);
+        //    dbContext.SaveChanges();
 
-            VbVerificationViewModel viewModel = _dataUtil2(service2).GetViewModelToValidate2();
-            var Response = await service2.CreateAsync(viewModel);
-            Assert.NotEqual(0, Response);
-        }
+        //    VbVerificationViewModel viewModel = _dataUtil2(service2).GetViewModelToValidate2();
+        //    var Response = await service2.CreateAsync(viewModel);
+        //    Assert.NotEqual(0, Response);
+        //}
 
         [Fact]
         public async Task Should_Success_Read_ById()
