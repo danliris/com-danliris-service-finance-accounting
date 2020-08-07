@@ -109,6 +109,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         }
 
         [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty3a()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewModel = dataUtil.GetNewViewModelFalse3a();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty3b()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewModel = dataUtil.GetNewViewModelFalse3b();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
+        [Fact]
         public void Should_Success_Validate_All_Null_ObjectProperty4()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
@@ -121,13 +145,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         }
 
         [Fact]
-        public void Should_Success_Validate_All_Null_ObjectProperty5()
+        public void Should_Success_Validate_All_Null_ObjectProperty4a()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
-            var viewModel = dataUtil.GetNewViewModelFalse4();
+            var viewModel = dataUtil.GetNewViewModelFalse4a();
+
+            Assert.True(viewModel.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_ObjectProperty4b()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new RealizationVBNonPODataUtil(service);
+            var viewModel = dataUtil.GetNewViewModelFalse4b();
 
             Assert.True(viewModel.Validate(null).Count() > 0);
         }
@@ -682,6 +718,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             }
 
             public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position)
+            {
+                throw new NotImplementedException();
+            }
+
+            public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
             {
                 throw new NotImplementedException();
             }
