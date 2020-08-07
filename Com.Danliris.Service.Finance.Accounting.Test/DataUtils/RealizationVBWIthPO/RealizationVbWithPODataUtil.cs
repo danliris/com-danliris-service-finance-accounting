@@ -74,7 +74,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
         {
             return new RealizationVbWithPOViewModel()
             {
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
                     Id = 1,
@@ -151,7 +151,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
         {
             return new RealizationVbWithPOViewModel()
             {
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
                     DateEstimate = DateTimeOffset.Now,

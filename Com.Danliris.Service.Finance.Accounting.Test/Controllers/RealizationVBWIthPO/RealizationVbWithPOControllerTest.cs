@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -79,10 +80,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 return new RealizationVbWithPOViewModel()
                 {
                     Id = 1,
-                    Date = DateTimeOffset.Now,
+                    VBRealizationDate = DateTimeOffset.Now,
                     numberVB = new DetailVB()
                     {
-                        CreateBy = "CreateBy",
+                        CreatedBy = "CreateBy",
                         DateEstimate = DateTimeOffset.Now,
                         UnitCode = "UnitCode",
                         UnitId = 1,
@@ -177,10 +178,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -281,10 +282,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -385,10 +386,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = null,
+                VBRealizationDate = null,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -489,10 +490,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -593,10 +594,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -697,10 +698,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -801,10 +802,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -905,10 +906,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -1009,10 +1010,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -1113,10 +1114,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -1217,10 +1218,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -1321,10 +1322,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -1425,10 +1426,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -1529,10 +1530,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -1633,10 +1634,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var vm = new RealizationVbWithPOViewModel()
             {
                 Id = 1,
-                Date = DateTimeOffset.Now,
+                VBRealizationDate = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
-                    CreateBy = "CreateBy",
+                    CreatedBy = "CreateBy",
                     DateEstimate = DateTimeOffset.Now,
                     UnitCode = "UnitCode",
                     UnitId = 1,
@@ -1779,12 +1780,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
             var serviceProviderMock = new Mock<IServiceProvider>();
 
             var RealizationVbWithPOMock = new Mock<IRealizationVbWithPOService>();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             RealizationVbWithPOMock.Setup(s => s.CreateAsync(It.IsAny<RealizationVbModel>(), It.IsAny<RealizationVbWithPOViewModel>())).ReturnsAsync(1);
+            service.Setup(s => s.InitializeExpedition(It.IsAny<int>())).ReturnsAsync(1);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService)))
                .Returns(RealizationVbWithPOMock.Object);
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
 
             IActionResult response = await GetController(serviceProviderMock).Post(realizationVbWithPOViewModel);
             int statusCode = this.GetStatusCode(response);

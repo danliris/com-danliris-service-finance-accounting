@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             _DetailDbSet = _dbContext.Set<RealizationVbDetailModel>();
         }
 
-        public Task<int> CreateAsync(RealizationVbModel model, RealizationVbWithPOViewModel viewmodel)
+        public async Task<int> CreateAsync(RealizationVbModel model, RealizationVbWithPOViewModel viewmodel)
         {
             model.VBNoRealize = GetVbRealizePoNo(model);
 
@@ -61,7 +61,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             model.isVerified = false;
             model.isClosed = false;
             model.isNotVeridied = false;
-            model.RequestVbName = viewmodel.numberVB.CreateBy;
+            model.RequestVbName = viewmodel.numberVB.CreatedBy;
+            //model.TypeVBNonPO = viewmodel.TypeWithOrWithoutVB;
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
 
@@ -69,8 +70,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
             //return _dbContext.SaveChangesAsync();
 
-            _dbContext.SaveChangesAsync();
-            return _iVBRealizationDocumentExpeditionService.InitializeExpedition(model.Id);
+            await _dbContext.SaveChangesAsync();
+            return model.Id;
         }
 
         private string GetVbRealizePoNo(RealizationVbModel model)
@@ -205,11 +206,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                 LastModifiedAgent = model.LastModifiedAgent,
                 LastModifiedBy = model.LastModifiedBy,
                 VBRealizationNo = model.VBNoRealize,
-                Date = model.Date,
+                VBRealizationDate = model.Date,
                 numberVB = new DetailVB()
                 {
                     VBNo = model.VBNo,
-                    CreateBy = model.RequestVbName,
+                    CreatedBy = model.RequestVbName,
                     DateEstimate = model.DateEstimate,
                     UnitCode = model.UnitCode,
                     UnitName = model.UnitName,

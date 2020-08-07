@@ -104,11 +104,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody3.Colspan = 5;
+
+            cellHeaderBody3.HorizontalAlignment = Element.ALIGN_RIGHT;
+            cellHeaderBody3.Phrase = new Phrase($"No. Realisasi : {viewModel.VBRealizationNo}", bold_font);
+            headerTable3.AddCell(cellHeaderBody3);
+
+            cellHeaderBody3.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody3.Phrase = new Phrase($"Realisasi VB Bagian: {viewModel.numberVB.UnitName}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
             cellHeaderBody3.Colspan = 5;
-            cellHeaderBody3.Phrase = new Phrase($"Tanggal: {viewModel.Date?.AddHours(timeoffsset).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}", bold_font);
+            cellHeaderBody3.Phrase = new Phrase($"Tanggal: {viewModel.VBRealizationDate?.AddHours(timeoffsset).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
             cellHeaderBody1.Phrase = new Phrase("No", normal_font);
@@ -190,7 +196,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             //cellHeaderBody1.Colspan = 2;
             cellHeaderBody1.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
-            cellHeaderBody1.Phrase = new Phrase(" ", normal_font);
+            cellHeaderBody1.Phrase = new Phrase($"Tgl.VB: {viewModel.numberVB.Date}", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
             cellHeaderBody6.Colspan = 2;
             cellHeaderBody6.Phrase = new Phrase($"No.VB: {viewModel.numberVB.VBNo}", normal_font);
@@ -1187,16 +1193,16 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             table.AddCell(cell);
             cell.Phrase = new Phrase("(..................)", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase($"({viewModel.numberVB.CreateBy})", normal_font);
+            cell.Phrase = new Phrase($"({viewModel.numberVB.CreatedBy})", normal_font);
             table.AddCell(cell);
 
             cell.Phrase = new Phrase("Kasir", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase("Verifikasi", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase($"Dir {viewModel.numberVB.UnitName}", normal_font);
+            cell.Phrase = new Phrase($"Dir ..................", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase($"Kabag {viewModel.numberVB.UnitName}", normal_font);
+            cell.Phrase = new Phrase($"Kabag ..................", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase(viewModel.numberVB.UnitName, normal_font);
             table.AddCell(cell);

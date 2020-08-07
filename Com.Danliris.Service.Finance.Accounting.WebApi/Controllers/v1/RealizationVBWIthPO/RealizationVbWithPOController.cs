@@ -12,6 +12,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using System.IO;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBWIthPO
 {
@@ -27,12 +28,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
         private readonly IRealizationVbWithPOService _service;
         private readonly IMapper _mapper;
         private const string ApiVersion = "1.0";
+        private readonly IVBRealizationDocumentExpeditionService _iVBRealizationDocumentExpeditionService;
 
         public RealizationVbWithPOController(IServiceProvider serviceProvider)
         {
             _identityService = serviceProvider.GetService<IIdentityService>();
             _validateService = serviceProvider.GetService<IValidateService>();
             _service = serviceProvider.GetService<IRealizationVbWithPOService>();
+            _iVBRealizationDocumentExpeditionService = serviceProvider.GetService<IVBRealizationDocumentExpeditionService>();
             _mapper = serviceProvider.GetService<IMapper>();
         }
 
@@ -109,9 +112,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
                 var model = _mapper.Map<RealizationVbModel>(viewModel);
 
-                await _service.CreateAsync(model, viewModel);
+                var id = await _service.CreateAsync(model, viewModel);
 
                 await _service.MappingData(viewModel);
+
+                await _iVBRealizationDocumentExpeditionService.InitializeExpedition(id);
 
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
 
