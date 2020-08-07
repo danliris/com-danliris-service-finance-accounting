@@ -621,7 +621,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             {
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
-                TypeVBNonPO = "Supplier",
+                TypeVBNonPO = "Dengan Nomor VB",
 
                 Spinning1VB = true,
                 Spinning2VB = true,
@@ -701,7 +701,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
 
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
-                TypeVBNonPO = "Supplier",
+                TypeVBNonPO = "Dengan Nomor VB",
 
                 Spinning1VB = true,
                 Spinning2VB = true,
@@ -884,6 +884,186 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             return new RealizationVbNonPOViewModel()
             {
                 VBRealizationNo = "VBRealizationNo",
+                TypeVBNonPO = "Tanpa Nomor VB",
+                AmountVB = 100,
+                Spinning1 = true,
+                Spinning2 = true,
+                Spinning3 = true,
+                Weaving1 = true,
+                Weaving2 = true,
+                Finishing = true,
+                Printing = true,
+                Konfeksi1A = true,
+                Konfeksi1B = true,
+                Konfeksi2A = true,
+                Konfeksi2B = true,
+                Konfeksi2C = true,
+                Umum = true,
+                Others = true,
+                DetailOthers = "DetailOthers",
+
+                AmountSpinning1 = 123,
+                AmountSpinning2 = 123,
+                AmountSpinning3 = 123,
+                AmountWeaving1 = 123,
+                AmountWeaving2 = 123,
+                AmountFinishing = 123,
+                AmountPrinting = 123,
+                AmountKonfeksi1A = 123,
+                AmountKonfeksi1B = 123,
+                AmountKonfeksi2A = 123,
+                AmountKonfeksi2B = 123,
+                AmountKonfeksi2C = 123,
+                AmountUmum = 123,
+                AmountOthers = 123,
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "income"
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = null,
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        IncomeTaxBy = ""
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(-5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false
+                    },
+                }
+            };
+        }
+
+        public RealizationVbNonPOViewModel GetNewViewModelFalse3a()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                VBRealizationNo = "VBRealizationNo",
+                TypeVBNonPO = "Tanpa Nomor VB",
+                AmountVB = 100,
+                Spinning1 = false,
+                Spinning2 = false,
+                Spinning3 = false,
+                Weaving1 = false,
+                Weaving2 = false,
+                Finishing = false,
+                Printing = false,
+                Konfeksi1A = false,
+                Konfeksi1B = false,
+                Konfeksi2A = false,
+                Konfeksi2B = false,
+                Konfeksi2C = false,
+                Umum = false,
+                Others = false,
+                DetailOthers = "",
+
+                AmountSpinning1 = 0,
+                AmountSpinning2 = 0,
+                AmountSpinning3 = 0,
+                AmountWeaving1 = 0,
+                AmountWeaving2 = 0,
+                AmountFinishing = 0,
+                AmountPrinting = 0,
+                AmountKonfeksi1A = 0,
+                AmountKonfeksi1B = 0,
+                AmountKonfeksi2A = 0,
+                AmountKonfeksi2B = 0,
+                AmountKonfeksi2C = 0,
+                AmountUmum = 0,
+                AmountOthers = 0,
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "income"
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = null,
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        IncomeTaxBy = ""
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(-5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false
+                    },
+                }
+            };
+        }
+
+        public RealizationVbNonPOViewModel GetNewViewModelFalse3b()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                VBRealizationNo = "VBRealizationNo",
+                TypeVBNonPO = "Tanpa Nomor VB",
+                AmountVB = 100,
+                Spinning1 = true,
+                Spinning2 = true,
+                Spinning3 = true,
+                Weaving1 = true,
+                Weaving2 = true,
+                Finishing = true,
+                Printing = true,
+                Konfeksi1A = true,
+                Konfeksi1B = true,
+                Konfeksi2A = true,
+                Konfeksi2B = true,
+                Konfeksi2C = true,
+                Umum = true,
+                Others = true,
+                DetailOthers = "DetailOthers",
+
+                AmountSpinning1 = -1,
+                AmountSpinning2 = -1,
+                AmountSpinning3 = -1,
+                AmountWeaving1 = -1,
+                AmountWeaving2 = -1,
+                AmountFinishing = -1,
+                AmountPrinting = -1,
+                AmountKonfeksi1A = -1,
+                AmountKonfeksi1B = -1,
+                AmountKonfeksi2A = -1,
+                AmountKonfeksi2B = -1,
+                AmountKonfeksi2C = -1,
+                AmountUmum = -1,
+                AmountOthers = -1,
                 Items = new List<VbNonPORequestDetailViewModel>()
                 {
                     new VbNonPORequestDetailViewModel()
@@ -926,7 +1106,201 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             return new RealizationVbNonPOViewModel()
             {
                 VBRealizationNo = "VBRealizationNo",
+                DateVB = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                Spinning1VB = false,
+                Spinning2VB = false,
+                Spinning3VB = false,
+                Weaving1VB = false,
+                Weaving2VB = false,
+                FinishingVB = false,
+                PrintingVB = false,
+                Konfeksi1AVB = false,
+                Konfeksi1BVB = false,
+                Konfeksi2AVB = false,
+                Konfeksi2BVB = false,
+                Konfeksi2CVB = false,
+                UmumVB = false,
+                OthersVB = false,
+                DetailOthersVB = "",
+
+                AmountSpinning1VB = 0,
+                AmountSpinning2VB = 0,
+                AmountSpinning3VB = 0,
+                AmountWeaving1VB = 0,
+                AmountWeaving2VB = 0,
+                AmountFinishingVB = 0,
+                AmountPrintingVB = 0,
+                AmountKonfeksi1AVB = 0,
+                AmountKonfeksi1BVB = 0,
+                AmountKonfeksi2AVB = 0,
+                AmountKonfeksi2BVB = 0,
+                AmountKonfeksi2CVB = 0,
+                AmountUmumVB = 0,
+                AmountOthersVB = 0,
+
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "income"
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = null,
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        IncomeTaxBy = ""
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(-5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "income"
+                    },
+                }
+            };
+        }
+
+        public RealizationVbNonPOViewModel GetNewViewModelFalse4a()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                DateVB = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                Spinning1VB = true,
+                Spinning2VB = true,
+                Spinning3VB = true,
+                Weaving1VB = true,
+                Weaving2VB = true,
+                FinishingVB = true,
+                PrintingVB = true,
+                Konfeksi1AVB = true,
+                Konfeksi1BVB = true,
+                Konfeksi2AVB = true,
+                Konfeksi2BVB = true,
+                Konfeksi2CVB = true,
+                UmumVB = true,
+                OthersVB = true,
+                DetailOthersVB = "detail",
+
+                AmountSpinning1VB = 123,
+                AmountSpinning2VB = 123,
+                AmountSpinning3VB = 123,
+                AmountWeaving1VB = 123,
+                AmountWeaving2VB = 123,
+                AmountFinishingVB = 123,
+                AmountPrintingVB = 123,
+                AmountKonfeksi1AVB = 123,
+                AmountKonfeksi1BVB = 123,
+                AmountKonfeksi2AVB = 123,
+                AmountKonfeksi2BVB = 123,
+                AmountKonfeksi2CVB = 123,
+                AmountUmumVB = 123,
+                AmountOthersVB = 123,
+
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "income"
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = null,
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        IncomeTaxBy = ""
+                    },
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now.AddDays(-5),
+                        Remark = "",
+                        Amount = -1,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        IncomeTaxBy = ""
+                    },
+                }
+            };
+        }
+
+        public RealizationVbNonPOViewModel GetNewViewModelFalse4b()
+        {
+            return new RealizationVbNonPOViewModel()
+            {
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                DateVB = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                Spinning1VB = true,
+                Spinning2VB = true,
+                Spinning3VB = true,
+                Weaving1VB = true,
+                Weaving2VB = true,
+                FinishingVB = true,
+                PrintingVB = true,
+                Konfeksi1AVB = true,
+                Konfeksi1BVB = true,
+                Konfeksi2AVB = true,
+                Konfeksi2BVB = true,
+                Konfeksi2CVB = true,
+                UmumVB = true,
+                OthersVB = true,
+                DetailOthersVB = "detail",
+
+                AmountSpinning1VB = -1,
+                AmountSpinning2VB = -1,
+                AmountSpinning3VB = -1,
+                AmountWeaving1VB = -1,
+                AmountWeaving2VB = -1,
+                AmountFinishingVB = -1,
+                AmountPrintingVB = -1,
+                AmountKonfeksi1AVB = -1,
+                AmountKonfeksi1BVB = -1,
+                AmountKonfeksi2AVB = -1,
+                AmountKonfeksi2BVB = -1,
+                AmountKonfeksi2CVB = -1,
+                AmountUmumVB = -1,
+                AmountOthersVB = -1,
+
                 Items = new List<VbNonPORequestDetailViewModel>()
                 {
                     new VbNonPORequestDetailViewModel()
