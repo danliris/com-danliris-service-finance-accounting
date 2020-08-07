@@ -914,6 +914,74 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Id = 1,
                 VBRealizationNo = "VBRealizationNo",
                 Date = null,
+                TypeVBNonPO = "Tanpa Nomor VB",
+                AmountSpinning1 = 1,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UnitCode",
+                    UnitId = 1,
+                    UnitLoad = "SPINNING 1",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = null,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_SPINNING1VB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = null,
+                TypeVBNonPO = "Dengan Nomor VB",
+                AmountSpinning1VB = 1,
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -1035,6 +1103,72 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
         }
 
         [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_SPINNING2VB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                AmountSpinning2VB = 1,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = null,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "SPINNING 2",
+                    UnitId = 1,
+                    UnitLoad = "SPINNING 2",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public async Task Get_Sales_Receipt_PDF_Success_SPINNING3()
         {
             var vm = new RealizationVbNonPOViewModel()
@@ -1042,6 +1176,72 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Id = 1,
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "SPINNING 3",
+                    UnitId = 1,
+                    UnitLoad = "SPINNING 3",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_SPINNING3VB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                AmountSpinning3VB = 1,
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -1163,6 +1363,72 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
         }
 
         [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_WEAVING1VB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                AmountWeaving1VB = 1,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "WEAVING 1",
+                    UnitId = 1,
+                    UnitLoad = "WEAVING 1",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public async Task Get_Sales_Receipt_PDF_Success_WEAVING2()
         {
             var vm = new RealizationVbNonPOViewModel()
@@ -1227,6 +1493,72 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
         }
 
         [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_WEAVING2VB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                AmountWeaving2VB = 1,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "WEAVING 2",
+                    UnitId = 1,
+                    UnitLoad = "WEAVING 2",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public async Task Get_Sales_Receipt_PDF_Success_PRINTING()
         {
             var vm = new RealizationVbNonPOViewModel()
@@ -1234,6 +1566,71 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Id = 1,
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "PRINTING",
+                    UnitId = 1,
+                    UnitLoad = "PRINTING",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_PRINTINGVB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -1419,6 +1816,72 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
         }
 
         [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_FINISHINGVB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                AmountFinishingVB = 1,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "FINISHING",
+                    UnitId = 1,
+                    UnitLoad = "FINISHING",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public async Task Get_Sales_Receipt_PDF_Success_KONFEKSI1A()
         {
             var vm = new RealizationVbNonPOViewModel()
@@ -1426,6 +1889,75 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Id = 1,
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "KONFEKSI 1A",
+                    UnitId = 1,
+                    UnitLoad = "KONFEKSI 1A",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_KONFEKSI1AVB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                AmountKonfeksi1AVB = 1,
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
@@ -1741,6 +2273,72 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
         }
 
         [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_KONFEKSI2BVB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                AmountKonfeksi2BVB = 1,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "KONFEKSI 2B",
+                    UnitId = 1,
+                    UnitLoad = "KONFEKSI 2B",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 0,
+                        isGetPPn = false
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public async Task Get_Sales_Receipt_PDF_Success_KONFEKSI2C()
         {
             var vm = new RealizationVbNonPOViewModel()
@@ -1813,6 +2411,80 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
         }
 
         [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_KONFEKSI2CVB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                AmountKonfeksi2CVB = 1,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 0,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "KONFEKSI 2C",
+                    UnitId = 1,
+                    UnitLoad = "KONFEKSI 2C",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1.5"
+                        },
+                        IncomeTaxBy = "Supplier"
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public async Task Get_Sales_Receipt_PDF_Success_UMUM()
         {
             var vm = new RealizationVbNonPOViewModel()
@@ -1820,6 +2492,80 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                 Id = 1,
                 VBRealizationNo = "VBRealizationNo",
                 Date = DateTimeOffset.Now,
+                numberVB = new DetailRequestNonPO()
+                {
+                    Amount = 123,
+                    CreatedBy = "CreateBy",
+                    CurrencyCode = "USD",
+                    CurrencyRate = 123,
+                    CurrencyDescription = "CurrencyDescription",
+                    CurrencySymbol = "$",
+                    Date = DateTimeOffset.Now,
+                    DateEstimate = DateTimeOffset.Now,
+                    UnitCode = "UMUM",
+                    UnitId = 1,
+                    UnitLoad = "UMUM",
+                    UnitName = "UnitName",
+                    UnitDivisionId = 1,
+                    UnitDivisionName = "UnitDivisionName",
+                    VBNo = "VBNo",
+                    VBRequestCategory = "NONPO"
+
+                },
+                Items = new List<VbNonPORequestDetailViewModel>()
+                {
+                    new VbNonPORequestDetailViewModel()
+                    {
+                        DateDetail = DateTimeOffset.Now,
+                        Remark = "Remark",
+                        Amount = 123,
+                        isGetPPn = false,
+                        isGetPPh = true,
+                        incomeTax = new IncomeTaxNew()
+                        {
+                            _id = "1",
+                            name = "name",
+                            rate = "1"
+                        },
+                        IncomeTaxBy = "Danliris"
+                    }
+                }
+
+            };
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+
+            var serviceMock = new Mock<IRealizationVbNonPOService>();
+            serviceMock
+                .Setup(service => service.ReadByIdAsync2(It.IsAny<int>()))
+                .ReturnsAsync(vm);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbNonPOService))).Returns(serviceMock.Object);
+
+            var validateServiceMock = new Mock<IValidateService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            var response = await controller.RealizationVbNonPORequestPDF(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Get_Sales_Receipt_PDF_Success_UMUMVB()
+        {
+            var vm = new RealizationVbNonPOViewModel()
+            {
+                Id = 1,
+                VBRealizationNo = "VBRealizationNo",
+                Date = DateTimeOffset.Now,
+                TypeVBNonPO = "Dengan Nomor VB",
+                AmountUmumVB = 1,
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = 123,
