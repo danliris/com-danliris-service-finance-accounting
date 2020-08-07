@@ -109,7 +109,45 @@ file launchSettings.json look like this :
 - Download Visual Studio 2019 (any edition) from https://www.visualstudio.com/downloads/ .
 - Open `Com.Danliris.Service.Finance.Accounting.sln` and wait for Visual Studio to restore all Nuget packages.
 - Create empty database.
-- Setting connection to database using ConnectionStrings in appsettings.json and appsettings.Developtment.json.
+- Setting connection to database using Connection Strings in appsettings.json. Your appsettings.json look like this:
+
+```
+{
+  "Logging": {
+    "IncludeScopes": false,
+    "Debug": {
+      "LogLevel": {
+        "Default": "Warning"
+      }
+    },
+    "Console": {
+      "LogLevel": {
+        "Default": "Warning"
+      }
+    }
+  },
+
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=YourDbServer;Database=your_parent_database;Trusted_Connection=True;MultipleActiveResultSets=true",
+  },
+  "ClientId": "your ClientId",
+  "Secret": "Your Secret",
+  "ASPNETCORE_ENVIRONMENT": "Development"
+}
+```
+and  Your appsettings.Developtment.json look like this :
+```
+{
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  }
+}
+```
 - Make sure port application has no conflict, setting port application in launchSettings.json.
 ```
 com-danliris-service-finance-accounting
