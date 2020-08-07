@@ -50,7 +50,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public decimal VatAmount { get; set; }
         public decimal IncomeTaxAmount { get; set; }
         [MaxLength(255)]
-        public string TypeVBNonPO { get; set; }
+        public string TypeWithOrWithoutVB { get; set; }
+        [MaxLength(255)]
+        public string AmountUnitLoadNoVB { get; set; }
         [MaxLength(64)]
         public string VBRealizeCategory { get; set; }
 

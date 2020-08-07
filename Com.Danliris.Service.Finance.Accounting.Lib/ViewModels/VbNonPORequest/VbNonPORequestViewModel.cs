@@ -51,7 +51,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                 yield return new ValidationResult("Kode VB harus diisi!", new List<string> { "VBCode" });
 
             if (Currency == null || Currency.Id <= 0)
-                yield return new ValidationResult("Kurs harus diisi!", new List<string> { "Currency" });
+                yield return new ValidationResult("Mata Uang harus diisi!", new List<string> { "Currency" });
 
             if (Amount <= 0)
                 yield return new ValidationResult("Jumlah Uang harus diisi!", new List<string> { "Amount" });

@@ -164,7 +164,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             {
                 "VBNo",
                 "VBNoRealize",
-                "RequestVbName"
+                "CreatedBy"
             };
 
             query = QueryHelper<RealizationVbModel>.Search(query, searchAttributes, keyword);
@@ -183,7 +183,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
                 VBNoRealize = entity.VBNoRealize,
                 Date = entity.Date,
                 DateEstimate = entity.DateEstimate,
-                RequestVbName = entity.RequestVbName,
+                CreatedBy = entity.CreatedBy,
                 isVerified = entity.isVerified,
 
             }).ToList();

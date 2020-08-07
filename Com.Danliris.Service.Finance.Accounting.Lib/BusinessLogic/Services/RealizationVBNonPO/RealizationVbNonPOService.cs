@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
 using System.Net.Http.Headers;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VbNonPORequest;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.RealizationVBNonPO
 {
@@ -36,10 +38,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
         public async Task<int> CreateAsync(RealizationVbModel model, RealizationVbNonPOViewModel viewmodel)
         {
-            var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
-            updateTotalRequestVb.Realization_Status = true;
+            if (viewmodel.TypeVBNonPO == "Dengan Nomor VB")
+            {
+                var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
+                updateTotalRequestVb.Realization_Status = true;
+            }
 
-            model.TypeVBNonPO = viewmodel.TypeVBNonPO;
+            model.TypeWithOrWithoutVB = viewmodel.TypeVBNonPO;
             model.VBNoRealize = GetVbRealizeNo(model);
             model.isVerified = false;
             model.isClosed = false;
@@ -75,7 +80,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             model.VatAmount = total_vat;
             model.IncomeTaxAmount = temp_income_amount;
 
-            var ResultDiffReqReal = viewmodel.numberVB.Amount - convert_total;
+            decimal ResultDiffReqReal = 0;
+            if (viewmodel.TypeVBNonPO == "Tanpa Nomor VB")
+            {
+                ResultDiffReqReal = viewmodel.AmountVB - convert_total;
+            }
+            else
+            {
+                ResultDiffReqReal = viewmodel.numberVB.Amount - convert_total;
+            }
+
 
             if (ResultDiffReqReal > 0)
             {
@@ -92,6 +106,118 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 model.DifferenceReqReal = ResultDiffReqReal * -1;
                 model.StatusReqReal = "Kurang";
             }
+
+            string result = "";
+            string val_result = "";
+            if (viewmodel.TypeVBNonPO == "Tanpa Nomor VB")
+            {
+                if (viewmodel.Spinning1 == true)
+                {
+                    result += "Spinning 1,";
+                    val_result += viewmodel.AmountSpinning1.ToString() + ",";
+                }
+
+                if (viewmodel.Spinning2 == true)
+                {
+                    result += "Spinning 2,";
+                    val_result += viewmodel.AmountSpinning2.ToString() + ",";
+                }
+
+                if (viewmodel.Spinning3 == true)
+                {
+                    result += "Spinning 3,";
+                    val_result += viewmodel.AmountSpinning3.ToString() + ",";
+                }
+
+                if (viewmodel.Weaving1 == true)
+                {
+                    result += "Weaving 1,";
+                    val_result += viewmodel.AmountWeaving1.ToString() + ",";
+                }
+
+                if (viewmodel.Weaving2 == true)
+                {
+                    result += "Weaving 2,";
+                    val_result += viewmodel.AmountWeaving2.ToString() + ",";
+                }
+
+                if (viewmodel.Finishing == true)
+                {
+                    result += "Finishing,";
+                    val_result += viewmodel.AmountFinishing.ToString() + ",";
+                }
+
+                if (viewmodel.Printing == true)
+                {
+                    result += "Printing,";
+                    val_result += viewmodel.AmountPrinting.ToString() + ",";
+                }
+
+                if (viewmodel.Konfeksi1A == true)
+                {
+                    result += "Konfeksi 1A,";
+                    val_result += viewmodel.AmountKonfeksi1A.ToString() + ",";
+                }
+
+                if (viewmodel.Konfeksi1B == true)
+                {
+                    result += "Konfeksi 1B,";
+                    val_result += viewmodel.AmountKonfeksi1B.ToString() + ",";
+                }
+
+                if (viewmodel.Konfeksi2A == true)
+                {
+                    result += "Konfeksi 2A,";
+                    val_result += viewmodel.AmountKonfeksi2A.ToString() + ",";
+                }
+
+                if (viewmodel.Konfeksi2B == true)
+                {
+                    result += "Konfeksi 2B,";
+                    val_result += viewmodel.AmountKonfeksi2B.ToString() + ",";
+                }
+
+                if (viewmodel.Konfeksi2C == true)
+                {
+                    result += "Konfeksi 2C,";
+                    val_result += viewmodel.AmountKonfeksi2C.ToString() + ",";
+                }
+
+                if (viewmodel.Umum == true)
+                {
+                    result += "Umum,";
+                    val_result += viewmodel.AmountUmum.ToString() + ",";
+                }
+
+                if (viewmodel.Others == true)
+                {
+                    result += viewmodel.DetailOthers + ",";
+                    val_result += viewmodel.AmountOthers.ToString() + ",";
+                }
+
+                result = result.Remove(result.Length - 1);
+                val_result = val_result.Remove(val_result.Length - 1);
+
+                model.UnitLoad = result;
+                model.AmountUnitLoadNoVB = val_result;
+
+                model.VBNo = "";
+                model.DateEstimate = (DateTimeOffset)viewmodel.DateEstimateVB;
+                model.RequestVbName = "";
+                model.UnitCode = viewmodel.Unit.Code;
+                model.UnitName = viewmodel.Unit.Name;
+                model.DateVB = (DateTimeOffset)viewmodel.DateVB;
+                model.Amount_VB = 0;
+                model.CurrencyCode = viewmodel.Currency.Code;
+                model.CurrencyRate = viewmodel.Currency.Rate;
+                model.CurrencyDescription = viewmodel.Currency.Description;
+                model.CurrencySymbol = viewmodel.Currency.Symbol;
+                model.VBRealizeCategory = "NONPO";
+                model.UsageVBRequest = "";
+                model.DivisionId = viewmodel.Division.Id;
+                model.DivisionName = viewmodel.Division.Name;
+            }
+
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
 
@@ -130,11 +256,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
             foreach (var itm in viewmodel.Items)
             {
-                if(itm.isGetPPh == true && itm.IncomeTaxBy == "Supplier")
+                if (itm.isGetPPh == true && itm.IncomeTaxBy == "Supplier")
                 {
                     amount += itm.Amount * (Convert.ToDecimal(itm.incomeTax.rate) / 100);
                 }
-                
+
             }
 
             return amount;
@@ -162,10 +288,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
         public Task<int> DeleteAsync(int id)
         {
+
             var model = _dbContext.RealizationVbs.Where(entity => entity.Id == id).FirstOrDefault();
 
-            var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
-            updateTotalRequestVb.Realization_Status = false;
+            if (model.TypeWithOrWithoutVB == "Dengan Nomor VB")
+            {
+                var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
+                updateTotalRequestVb.Realization_Status = false;
+            }
 
             if (model != null)
             {
@@ -187,6 +317,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
             foreach (var itm1 in viewmodel.Items)
             {
+                string incometaxid = "";
+                string incometaxname = "";
+                string incometaxrate = "";
+
+                if (itm1.isGetPPh == true)
+                {
+                    incometaxid = itm1.incomeTax._id;
+                    incometaxname = itm1.incomeTax.name;
+                    incometaxrate = itm1.incomeTax.rate;
+                }
+
                 var item = new RealizationVbDetailModel()
                 {
                     VBRealizationId = value,
@@ -195,9 +336,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     Remark = itm1.Remark,
                     isGetPPn = itm1.isGetPPn,
                     isGetPPh = itm1.isGetPPh,
-                    IncomeTaxId = itm1.incomeTax._id,
-                    IncomeTaxName = itm1.incomeTax.name,
-                    IncomeTaxRate = itm1.incomeTax.rate,
+                    IncomeTaxId = incometaxid,
+                    IncomeTaxName = incometaxname,
+                    IncomeTaxRate = incometaxrate,
                     IncomeTaxBy = itm1.IncomeTaxBy
                 };
 
@@ -235,7 +376,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 VBNoRealize = entity.VBNoRealize,
                 Date = entity.Date,
                 DateEstimate = entity.DateEstimate,
-                RequestVbName = entity.RequestVbName,
+                CreatedBy = entity.CreatedBy,
                 isVerified = entity.isVerified,
                 VBRealizeCategory = entity.VBRealizeCategory
 
@@ -249,6 +390,128 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
         public async Task<RealizationVbNonPOViewModel> ReadByIdAsync2(int id)
         {
             var model = await _dbContext.RealizationVbs.Include(entity => entity.RealizationVbDetail).Where(entity => entity.Id == id).FirstOrDefaultAsync();
+
+            string res_unit = "";
+            string res_amount = "";
+
+            bool spinning1 = false;
+            bool spinning2 = false;
+            bool spinning3 = false;
+            bool weaving1 = false;
+            bool weaving2 = false;
+            bool finishing = false;
+            bool printing = false;
+            bool konfeksi1a = false;
+            bool konfeksi1b = false;
+            bool konfeksi2a = false;
+            bool konfeksi2b = false;
+            bool konfeksi2c = false;
+            bool umum = false;
+            bool other = false;
+
+            decimal amountspinning1 = 0;
+            decimal amountspinning2 = 0;
+            decimal amountspinning3 = 0;
+            decimal amountweaving1 = 0;
+            decimal amountweaving2 = 0;
+            decimal amountfinishing = 0;
+            decimal amountprinting = 0;
+            decimal amountkonfeksi1a = 0;
+            decimal amountkonfeksi1b = 0;
+            decimal amountkonfeksi2a = 0;
+            decimal amountkonfeksi2b = 0;
+            decimal amountkonfeksi2c = 0;
+            decimal amountumum = 0;
+            decimal amountother = 0;
+
+            if (model.TypeWithOrWithoutVB == "Tanpa Nomor VB")
+            {
+                res_unit = model.UnitLoad;
+                res_amount = model.AmountUnitLoadNoVB;
+
+                string[] unitload = res_unit.Split(",");
+                string[] amountload = res_amount.Split(",");
+
+                for (int i = 0; i < unitload.Length; i++)
+                {
+                    if (unitload[i] == "Spinning 1")
+                    {
+                        spinning1 = true;
+                        amountspinning1 = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Spinning 2")
+                    {
+                        spinning2 = true;
+                        amountspinning2 = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Spinning 3")
+                    {
+                        spinning3 = true;
+                        amountspinning3 = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Weaving 1")
+                    {
+                        weaving1 = true;
+                        amountweaving1 = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Weaving 2")
+                    {
+                        weaving2 = true;
+                        amountweaving2 = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Finishing")
+                    {
+                        finishing = true;
+                        amountfinishing = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Printing")
+                    {
+                        printing = true;
+                        amountprinting = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Konfeksi 1A")
+                    {
+                        konfeksi1a = true;
+                        amountkonfeksi1a = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Konfeksi 1B")
+                    {
+                        konfeksi1b = true;
+                        amountkonfeksi1b = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Konfeksi 2A")
+                    {
+                        konfeksi2a = true;
+                        amountkonfeksi2a = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Konfeksi 2B")
+                    {
+                        konfeksi2b = true;
+                        amountkonfeksi2b = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Konfeksi 2C")
+                    {
+                        konfeksi2c = true;
+                        amountkonfeksi2c = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Umum")
+                    {
+                        umum = true;
+                        amountumum = Convert.ToDecimal(amountload[i]);
+                    }
+                    else
+                    {
+                        other = true;
+                        amountother = Convert.ToDecimal(amountload[i]);
+                    }
+                }
+
+            }
+            else
+            {
+                res_unit = model.UnitLoad;
+            }
+
             var result = new RealizationVbNonPOViewModel()
             {
                 Id = model.Id,
@@ -258,7 +521,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 LastModifiedBy = model.LastModifiedBy,
                 VBRealizationNo = model.VBNoRealize,
                 Date = model.Date,
-                TypeVBNonPO = model.TypeVBNonPO,
+                TypeVBNonPO = model.TypeWithOrWithoutVB,
                 numberVB = new DetailRequestNonPO()
                 {
                     Amount = model.Amount_VB,
@@ -270,11 +533,65 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     Date = model.DateVB,
                     DateEstimate = model.DateEstimate,
                     UnitCode = model.UnitCode,
-                    UnitLoad = model.UnitLoad,
+                    UnitLoad = res_unit,
                     UnitName = model.UnitName,
                     VBNo = model.VBNo,
                     VBRequestCategory = model.VBRealizeCategory
                 },
+
+                Unit = new Unit()
+                {
+                    Id = model.UnitId,
+                    Code = model.UnitCode,
+                    Name = model.UnitName
+                },
+                Division = new Division()
+                {
+                    Id = model.DivisionId,
+                    Name = model.DivisionName
+                },
+                Currency = new CurrencyVBRequest()
+                {
+                    //Id = 0,
+                    Code = model.CurrencyCode,
+                    Rate = model.CurrencyRate,
+                    Description = model.CurrencyDescription,
+                    Symbol = model.CurrencySymbol
+                },
+
+                AmountVB = model.Amount,
+                DateVB = model.DateVB,
+                DateEstimateVB = model.DateEstimate,
+                Spinning1 = spinning1,
+                Spinning2 = spinning2,
+                Spinning3 = spinning3,
+                Weaving1 = weaving1,
+                Weaving2 = weaving2,
+                Finishing = finishing,
+                Printing = printing,
+                Konfeksi1A = konfeksi1a,
+                Konfeksi1B = konfeksi1b,
+                Konfeksi2A = konfeksi2a,
+                Konfeksi2B = konfeksi2b,
+                Konfeksi2C = konfeksi2c,
+                Umum = umum,
+                Others = other,
+
+                AmountSpinning1 = amountspinning1,
+                AmountSpinning2 = amountspinning2,
+                AmountSpinning3 = amountspinning3,
+                AmountWeaving1 = amountweaving1,
+                AmountWeaving2 = amountweaving2,
+                AmountFinishing = amountfinishing,
+                AmountPrinting = amountprinting,
+                AmountKonfeksi1A = amountkonfeksi1a,
+                AmountKonfeksi1B = amountkonfeksi1b,
+                AmountKonfeksi2A = amountkonfeksi2a,
+                AmountKonfeksi2B = amountkonfeksi2b,
+                AmountKonfeksi2C = amountkonfeksi2c,
+                AmountUmum = amountumum,
+                AmountOthers = amountother,
+
                 Items = model.RealizationVbDetail.Select(s => new VbNonPORequestDetailViewModel()
                 {
 
@@ -301,8 +618,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
         {
             var model = MappingData2(id, viewModel);
 
-            var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
-            updateTotalRequestVb.Realization_Status = true;
+            if (viewModel.TypeVBNonPO == "Dengan Nomor VB")
+            {
+                var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
+                updateTotalRequestVb.Realization_Status = true;
+            }
 
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
 
@@ -410,37 +730,217 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 StatusReqReal = "Kurang";
             }
 
+            string res = "";
+            string val_result = "";
+            if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+            {
+                if (viewModel.Spinning1 == true)
+                {
+                    res += "Spinning 1,";
+                    val_result += viewModel.AmountSpinning1.ToString() + ",";
+                }
+
+                if (viewModel.Spinning2 == true)
+                {
+                    res += "Spinning 2,";
+                    val_result += viewModel.AmountSpinning2.ToString() + ",";
+                }
+
+                if (viewModel.Spinning3 == true)
+                {
+                    res += "Spinning 3,";
+                    val_result += viewModel.AmountSpinning3.ToString() + ",";
+                }
+
+                if (viewModel.Weaving1 == true)
+                {
+                    res += "Weaving 1,";
+                    val_result += viewModel.AmountWeaving1.ToString() + ",";
+                }
+
+                if (viewModel.Weaving2 == true)
+                {
+                    res += "Weaving 2,";
+                    val_result += viewModel.AmountWeaving2.ToString() + ",";
+                }
+
+                if (viewModel.Finishing == true)
+                {
+                    res += "Finishing,";
+                    val_result += viewModel.AmountFinishing.ToString() + ",";
+                }
+
+                if (viewModel.Printing == true)
+                {
+                    res += "Printing,";
+                    val_result += viewModel.AmountPrinting.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi1A == true)
+                {
+                    res += "Konfeksi 1A,";
+                    val_result += viewModel.AmountKonfeksi1A.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi1B == true)
+                {
+                    res += "Konfeksi 1B,";
+                    val_result += viewModel.AmountKonfeksi1B.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi2A == true)
+                {
+                    res += "Konfeksi 2A,";
+                    val_result += viewModel.AmountKonfeksi2A.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi2B == true)
+                {
+                    res += "Konfeksi 2B,";
+                    val_result += viewModel.AmountKonfeksi2B.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi2C == true)
+                {
+                    res += "Konfeksi 2C,";
+                    val_result += viewModel.AmountKonfeksi2C.ToString() + ",";
+                }
+
+                if (viewModel.Umum == true)
+                {
+                    res += "Umum,";
+                    val_result += viewModel.AmountUmum.ToString() + ",";
+                }
+
+                if (viewModel.Others == true)
+                {
+                    res += viewModel.DetailOthers + ",";
+                    val_result += viewModel.AmountOthers.ToString() + ",";
+                }
+
+                res = res.Remove(res.Length - 1);
+                val_result = val_result.Remove(val_result.Length - 1);
+
+            }
+
+            string unitload = "";
+            string amountunitloadnovb = "";
+            string vbno = "";
+            DateTimeOffset dateestimate;
+            string requestvbname = "";
+            int unitid = 0;
+            string unitcode = "";
+            string unitname = "";
+            DateTimeOffset datevb;
+            decimal amount_vb = 0;
+            string currencycode = "";
+            decimal currencyrate = 0;
+            string currencydescription = "";
+            string currencysymbol = "";
+            string vbrealizecategory = "";
+            string usagevbrequest = "";
+            int divisionid = 0;
+            string divisioname = "";
+
+            if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+            {
+                unitload = res;
+                amountunitloadnovb = val_result;
+                vbno = "";
+                dateestimate = (DateTimeOffset)viewModel.DateEstimateVB;
+                requestvbname = "";
+                unitid = viewModel.Unit.Id;
+                unitcode = viewModel.Unit.Code;
+                unitname = viewModel.Unit.Name;
+                datevb = (DateTimeOffset)viewModel.DateVB;
+                amount_vb = 0;
+                currencycode = viewModel.Currency.Code;
+                currencyrate = viewModel.Currency.Rate;
+                currencydescription = viewModel.Currency.Description;
+                currencysymbol = viewModel.Currency.Symbol;
+                vbrealizecategory = "NONPO";
+                usagevbrequest = "";
+                divisionid = viewModel.Division.Id;
+                divisioname = viewModel.Division.Name;                
+
+            }
+            else
+            {
+                unitload = viewModel.numberVB.UnitLoad;
+                amountunitloadnovb = "";
+                vbno = viewModel.numberVB.VBNo;
+                dateestimate = (DateTimeOffset)viewModel.numberVB.DateEstimate;
+                requestvbname = viewModel.numberVB.CreatedBy;
+                unitid = viewModel.numberVB.UnitId;
+                unitcode = viewModel.numberVB.UnitCode;
+                unitname = viewModel.numberVB.UnitName;
+                datevb = (DateTimeOffset)viewModel.numberVB.Date;
+                amount_vb = viewModel.numberVB.Amount;
+                currencycode = viewModel.numberVB.CurrencyCode;
+                currencyrate = viewModel.numberVB.CurrencyRate;
+                currencydescription = viewModel.numberVB.CurrencyDescription;
+                currencysymbol = viewModel.numberVB.CurrencySymbol;
+                vbrealizecategory = viewModel.numberVB.VBRequestCategory;
+                usagevbrequest = viewModel.numberVB.Usage;
+                divisionid = viewModel.numberVB.UnitDivisionId;
+                divisioname = viewModel.numberVB.UnitDivisionName;
+            }
+
             var result = new RealizationVbModel()
             {
                 RealizationVbDetail = listDetail,
                 Active = viewModel.Active,
                 Id = viewModel.Id,
                 Date = (DateTimeOffset)viewModel.Date,
-                UnitCode = viewModel.numberVB.UnitCode,
-                UnitName = viewModel.numberVB.UnitName,
-                VBNo = viewModel.numberVB.VBNo,
+                UnitId = unitid,
+                UnitCode = unitcode,
+                UnitName = unitname,
+                DivisionId = divisionid,
+                DivisionName = divisioname,
+                VBNo = vbno,
                 VBNoRealize = viewModel.VBRealizationNo,
-                DateEstimate = (DateTimeOffset)viewModel.numberVB.DateEstimate,
-                DateVB = (DateTimeOffset)viewModel.numberVB.Date,
-                CurrencyCode = viewModel.numberVB.CurrencyCode,
-                CurrencyRate = viewModel.numberVB.CurrencyRate,
-                UnitLoad = viewModel.numberVB.UnitLoad,
-                RequestVbName = viewModel.numberVB.CreatedBy,
-                UsageVBRequest = viewModel.numberVB.Usage,
+                DateEstimate = dateestimate,
+                DateVB = datevb,
+                CurrencyCode = currencycode,
+                CurrencyRate = currencyrate,
+                CurrencyDescription = currencydescription,
+                CurrencySymbol = currencysymbol,
+                UnitLoad = unitload,
+                RequestVbName = requestvbname,
+                UsageVBRequest = usagevbrequest,
                 Amount = temp_total,
-                Amount_VB = viewModel.numberVB.Amount,
+                Amount_VB = amount_vb,
                 isVerified = false,
                 isClosed = false,
                 isNotVeridied = false,
+                CreatedUtc = viewModel.CreatedUtc,
                 CreatedBy = viewModel.CreatedBy,
                 CreatedAgent = viewModel.CreatedAgent,
                 LastModifiedAgent = viewModel.LastModifiedAgent,
                 LastModifiedBy = viewModel.LastModifiedBy,
                 LastModifiedUtc = DateTime.Now,
-                VBRealizeCategory = viewModel.numberVB.VBRequestCategory,
+                VBRealizeCategory = vbrealizecategory,
                 DifferenceReqReal = DifferenceReqReal,
                 VatAmount = total_vat,
-                StatusReqReal = StatusReqReal
+                StatusReqReal = StatusReqReal,
+                //UnitLoad = res,
+                AmountUnitLoadNoVB = amountunitloadnovb,
+                TypeWithOrWithoutVB = viewModel.TypeVBNonPO,
+                //VBNo = "",
+                //DateEstimate = (DateTimeOffset)viewModel.DateEstimateVB,
+                //RequestVbName = "",
+                //UnitCode = viewModel.Unit.Code,
+                //UnitName = viewModel.Unit.Name,
+                //DateVB = (DateTimeOffset)viewModel.Date,
+                //Amount_VB = 0,
+                //CurrencyCode = viewModel.Currency.Code,
+                //CurrencyRate = viewModel.Currency.Rate,
+                //CurrencyDescription = viewModel.Currency.Description,
+                //CurrencySymbol = viewModel.Currency.Symbol,
+                //VBRealizeCategory = "NONPO",
+                //UsageVBRequest = "",
+                //DivisionId = viewModel.Division.Id,
+                //DivisionName = viewModel.Division.Name,
 
             };
 

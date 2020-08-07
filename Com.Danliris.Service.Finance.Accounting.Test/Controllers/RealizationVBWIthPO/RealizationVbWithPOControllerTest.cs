@@ -1722,9 +1722,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
 
             var RealizationVbWithPOMock = new Mock<IRealizationVbWithPOService>();
             Dictionary<string, string> order = new Dictionary<string, string>();
-            order.Add("RequestVbName", "desc");
+            order.Add("CreatedBy", "desc");
 
-            var queryResult = new ReadResponse<RealizationVbList>(new List<RealizationVbList>(), 1, order, new List<string>() { "RequestVbName", "RequestVbName" });
+            var queryResult = new ReadResponse<RealizationVbList>(new List<RealizationVbList>(), 1, order, new List<string>() { "CreatedBy", "CreatedBy" });
 
             RealizationVbWithPOMock.Setup(s => s.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Returns(queryResult);
 
@@ -1732,9 +1732,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IRealizationVbWithPOService)))
                .Returns(RealizationVbWithPOMock.Object);
 
-            IActionResult response = GetController(serviceProviderMock).Get(1, 25, "{}", new List<string>() { "RequestVbName" }, "", "{}");
+            IActionResult response = GetController(serviceProviderMock).Get(1, 25, "{}", new List<string>() { "CreatedBy" }, "", "{}");
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
+            //OK
         }
 
 
