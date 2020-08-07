@@ -94,12 +94,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             return _dbContext.SaveChangesAsync();
         }
 
-        public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position)
+        public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
         {
             var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
 
             if (position > 0)
                 query = query.Where(entity => entity.Position == position);
+
+            if (vbId > 0)
+                query = query.Where(entity => entity.VBId == vbId);
+
+            if (vbRealizationId > 0)
+                query = query.Where(entity => entity.VBRealizationId == vbRealizationId);
+
+            if (realizationDate.HasValue)
+            {
+                var date = realizationDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset * -1);
+                query = query.Where(entity => entity.VBRealizationDate.Date == date.Date);
+            }
+
+            if (!string.IsNullOrWhiteSpace(vbRealizationRequestPerson))
+                query = query.Where(entity => entity.VBRequestName == vbRealizationRequestPerson);
+
+            if (unitId > 0)
+                query = query.Where(entity => entity.UnitId == unitId);
 
             //query = query
             //    .Select(entity => new VBRealizationDocumentExpeditionIndexDto
