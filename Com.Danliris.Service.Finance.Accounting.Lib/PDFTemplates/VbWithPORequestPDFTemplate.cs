@@ -1,5 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Sales.Lib.Utilities;
 using iTextSharp.text;
@@ -144,12 +146,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             }
             else
             {
-                TotalPaidString = NumberToTextEN.toWords(decimal.ToDouble(viewModel.VBMoney));
+                TotalPaidString = NumberToTextIDN.terbilang(decimal.ToDouble(viewModel.VBMoney));
                 CurrencySay = viewModel.Currency.Description;
                 CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CurrencySay.ToLower());
             }            
 
-            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + CurrencySay, normal_font);
+            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + viewModel.Currency.Code, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("No PO", normal_font);
