@@ -220,15 +220,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
             _dbContext.VbRequests.Add(model);
 
-            foreach (var itm1 in viewmodel.Items)
-            {
-                var updateModel = new POExternalUpdateModel()
-                {
-                    IsCreateOnVBRequest = true
-                };
+            //foreach (var itm1 in viewmodel.Items)
+            //{
+            //    var updateModel = new POExternalUpdateModel()
+            //    {
+            //        IsCreateOnVBRequest = true
+            //    };
 
-                UpdateToPOExternal(itm1.no, updateModel);
-            }
+            //    UpdateToPOExternal(itm1.no, updateModel);
+            //}
 
             return _dbContext.SaveChangesAsync();
 
@@ -288,6 +288,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     DateEstimate = s.DateEstimate,
                     VBMoney = s.VBMoney,
                     Usage = s.Usage_Input,
+                    Approve_Status = s.Apporve_Status,
                     Currency = new CurrencyVB()
                     {
                         Id = s.CurrencyId,
@@ -559,15 +560,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 _dbContext.VbRequests.Update(model);
             }
 
-            foreach (var itm1 in model.VbRequestDetail)
-            {
-                var updateModel = new POExternalUpdateModel()
-                {
-                    IsCreateOnVBRequest = false
-                };
+            //foreach (var itm1 in model.VbRequestDetail)
+            //{
+            //    var updateModel = new POExternalUpdateModel()
+            //    {
+            //        IsCreateOnVBRequest = false
+            //    };
 
-                UpdateToPOExternal(itm1.PONo.ToString(), updateModel);
-            }
+            //    UpdateToPOExternal(itm1.PONo.ToString(), updateModel);
+            //}
 
             return _dbContext.SaveChangesAsync();
         }
