@@ -254,23 +254,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             return documentNo;
         }
 
-        private void UpdateToPOExternal(string PONo, POExternalUpdateModel model)
-        {
-            string PurchasingUri = "external-purchase-orders/update-from-vb-with-po-req-finance/";
+        //private void UpdateToPOExternal(string PONo, POExternalUpdateModel model)
+        //{
+        //    string PurchasingUri = "external-purchase-orders/update-from-vb-with-po-req-finance/";
 
-            string Uri = $"{APIEndpoint.Purchasing}{PurchasingUri}{PONo}";
-            var data = new
-            {
-                model.IsCreateOnVBRequest
-            };
+        //    string Uri = $"{APIEndpoint.Purchasing}{PurchasingUri}{PONo}";
+        //    var data = new
+        //    {
+        //        model.IsCreateOnVBRequest
+        //    };
 
-            IHttpClientService httpClient = (IHttpClientService)this._serviceProvider.GetService(typeof(IHttpClientService));
-            var response = httpClient.PutAsync(Uri, new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, "failed"));
-            }
-        }
+        //    IHttpClientService httpClient = (IHttpClientService)this._serviceProvider.GetService(typeof(IHttpClientService));
+        //    var response = httpClient.PutAsync(Uri, new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+        //    if (!response.IsSuccessStatusCode)
+        //    {
+        //        throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, "failed"));
+        //    }
+        //}
 
         public async Task<VbWithPORequestViewModel> ReadByIdAsync2(int id)
         {
