@@ -46,7 +46,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             else
             {
                 convertCurrency = viewModel.Amount;
-                TotalPaidString = NumberToTextEN.toWords(decimal.ToDouble(convertCurrency));
+                TotalPaidString = NumberToTextIDN.terbilang(decimal.ToDouble(convertCurrency));
 
                 CurrencySay = viewModel.Currency.Description;
                 CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CurrencySay.ToLower());
@@ -131,7 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Symbol} " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Code} " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
 
@@ -139,7 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + CurrencySay, normal_font);
+            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + viewModel.Currency.Code, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
 
