@@ -2375,11 +2375,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                         Amount = 123,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1.5"
+                            rate = 1.5
                         },
                         IncomeTaxBy = "Supplier"
                     }
@@ -2449,11 +2449,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                         Amount = 123,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1.5"
+                            rate = 1.5
                         },
                         IncomeTaxBy = "Supplier"
                     }
@@ -2521,11 +2521,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                         Amount = 123,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1.5
                         },
                         IncomeTaxBy = "Danliris"
                     }
@@ -2595,11 +2595,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.RealizationVB
                         Amount = 123,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1.5
                         },
                         IncomeTaxBy = "Danliris"
                     }

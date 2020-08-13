@@ -2,8 +2,8 @@
 {
     public class IncomeTaxNew
     {
-        public string _id { get; set; }
+        public int? Id { get; set; }
         public string name { get; set; }
-        public string rate { get; set; }
+        public double? rate { get; set; }
     }
 }

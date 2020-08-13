@@ -65,10 +65,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         VBRealizationId =1,
                         IdProductSPB ="IdProductSPB",
                         DateSPB =DateTimeOffset.Now,
-                        IncomeTaxId = "1",
+                        IncomeTaxId = 1,
                         IncomeTaxName = "IncomeTaxName",
                         IncomeTaxBy = "IncomeTaxBy",
-                        IncomeTaxRate = "1"
+                        IncomeTaxRate = 1
 
                     }
                 }
@@ -171,11 +171,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = 123,
                         isGetPPn = true,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "Supplier"
                     },
@@ -186,11 +186,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = 123,
                         isGetPPn = true,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "Danliris"
                     }
@@ -273,11 +273,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Remark = "Remark",
                         Amount = 123,
                         isGetPPn = false,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "IncomeTaxBy"
                     }
@@ -361,11 +361,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Remark = "Remark",
                         Amount = 123,
                         isGetPPn = false,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "IncomeTaxBy"
                     }
@@ -603,11 +603,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = 123,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "2",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "Dan Liris"
                     }
@@ -682,11 +682,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Remark = "Remark",
                         Amount = 0,
                         isGetPPn = false,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "IncomeTaxBy"
                     }
@@ -763,11 +763,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = 0,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "IncomeTaxBy"
                     }
@@ -851,11 +851,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = -1,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "income"
                     },
@@ -925,11 +925,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = -1,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "income"
                     },
@@ -999,11 +999,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = -1,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "income"
                     },
@@ -1073,11 +1073,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = -1,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "income"
                     },
@@ -1148,11 +1148,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = -1,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "income"
                     },
@@ -1172,11 +1172,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = -1,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "income"
                     },
@@ -1232,11 +1232,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = -1,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "income"
                     },
@@ -1310,11 +1310,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = -1,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "income"
                     },
@@ -1357,11 +1357,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
                         Amount = -1,
                         isGetPPn = false,
                         isGetPPh = true,
-                        incomeTax = new IncomeTaxNew()
+                        IncomeTax = new IncomeTaxNew()
                         {
-                            _id = "1",
+                            Id = 1,
                             name = "name",
-                            rate = "1"
+                            rate = 1
                         },
                         IncomeTaxBy = "income"
                     }

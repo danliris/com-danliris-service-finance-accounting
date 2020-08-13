@@ -41,16 +41,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public bool isGetPPn { get; set; }
         public bool isGetPPh { get; set; }
         [MaxLength(64)]
-        public string IncomeTaxId { get; set; }
+        public int IncomeTaxId { get; set; }
         [MaxLength(64)]
         public string IncomeTaxName { get; set; }
         [MaxLength(64)]
-        public string IncomeTaxRate { get; set; }
+        public double IncomeTaxRate { get; set; }
         [MaxLength(64)]
         public string IncomeTaxBy { get; set; }
         public int VBRealizationId { get; set; }
 
         [ForeignKey("VBRealizationId")]
         public virtual RealizationVbModel RealizationVbDetail { get; set; }
+        public double Total { get; set; }
     }
 }

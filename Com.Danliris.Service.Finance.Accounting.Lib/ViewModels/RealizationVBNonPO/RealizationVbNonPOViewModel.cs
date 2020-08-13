@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VbNonPORequest;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBNonPO
 {
@@ -38,20 +39,20 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
         public bool Others { get; set; }
         public string DetailOthers { get; set; }
 
-        public decimal AmountSpinning1 { get; set; }
-        public decimal AmountWeaving1 { get; set; }
-        public decimal AmountPrinting { get; set; }
-        public decimal AmountKonfeksi2A { get; set; }
-        public decimal AmountUmum { get; set; }
-        public decimal AmountSpinning2 { get; set; }
-        public decimal AmountWeaving2 { get; set; }
-        public decimal AmountKonfeksi1A { get; set; }
-        public decimal AmountKonfeksi2B { get; set; }
-        public decimal AmountOthers { get; set; }
-        public decimal AmountSpinning3 { get; set; }
-        public decimal AmountFinishing { get; set; }
-        public decimal AmountKonfeksi1B { get; set; }
-        public decimal AmountKonfeksi2C { get; set; }
+        public decimal? AmountSpinning1 { get; set; }
+        public decimal? AmountWeaving1 { get; set; }
+        public decimal? AmountPrinting { get; set; }
+        public decimal? AmountKonfeksi2A { get; set; }
+        public decimal? AmountUmum { get; set; }
+        public decimal? AmountSpinning2 { get; set; }
+        public decimal? AmountWeaving2 { get; set; }
+        public decimal? AmountKonfeksi1A { get; set; }
+        public decimal? AmountKonfeksi2B { get; set; }
+        public decimal? AmountOthers { get; set; }
+        public decimal? AmountSpinning3 { get; set; }
+        public decimal? AmountFinishing { get; set; }
+        public decimal? AmountKonfeksi1B { get; set; }
+        public decimal? AmountKonfeksi2C { get; set; }
 
         public bool Spinning1VB { get; set; }
         public bool Spinning2VB { get; set; }
@@ -69,22 +70,34 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
         public bool OthersVB { get; set; }
         public string DetailOthersVB { get; set; }
 
-        public decimal AmountSpinning1VB { get; set; }
-        public decimal AmountWeaving1VB { get; set; }
-        public decimal AmountPrintingVB { get; set; }
-        public decimal AmountKonfeksi2AVB { get; set; }
-        public decimal AmountUmumVB { get; set; }
-        public decimal AmountSpinning2VB { get; set; }
-        public decimal AmountWeaving2VB { get; set; }
-        public decimal AmountKonfeksi1AVB { get; set; }
-        public decimal AmountKonfeksi2BVB { get; set; }
-        public decimal AmountOthersVB { get; set; }
-        public decimal AmountSpinning3VB { get; set; }
-        public decimal AmountFinishingVB { get; set; }
-        public decimal AmountKonfeksi1BVB { get; set; }
-        public decimal AmountKonfeksi2CVB { get; set; }
+        public decimal? AmountSpinning1VB { get; set; }
+        public decimal? AmountWeaving1VB { get; set; }
+        public decimal? AmountPrintingVB { get; set; }
+        public decimal? AmountKonfeksi2AVB { get; set; }
+        public decimal? AmountUmumVB { get; set; }
+        public decimal? AmountSpinning2VB { get; set; }
+        public decimal? AmountWeaving2VB { get; set; }
+        public decimal? AmountKonfeksi1AVB { get; set; }
+        public decimal? AmountKonfeksi2BVB { get; set; }
+        public decimal? AmountOthersVB { get; set; }
+        public decimal? AmountSpinning3VB { get; set; }
+        public decimal? AmountFinishingVB { get; set; }
+        public decimal? AmountKonfeksi1BVB { get; set; }
+        public decimal? AmountKonfeksi2CVB { get; set; }
 
         public ICollection<VbNonPORequestDetailViewModel> Items { get; set; }
+
+        private decimal SumUnitCostNonVB()
+        {
+            var result = AmountSpinning1.GetValueOrDefault() + AmountWeaving1.GetValueOrDefault() + AmountPrinting.GetValueOrDefault() + AmountKonfeksi2A.GetValueOrDefault() + AmountUmum.GetValueOrDefault() + AmountSpinning2.GetValueOrDefault() + AmountWeaving2.GetValueOrDefault() + AmountKonfeksi1A.GetValueOrDefault() + AmountKonfeksi2B.GetValueOrDefault() + AmountOthers.GetValueOrDefault() + AmountSpinning3.GetValueOrDefault() + AmountFinishing.GetValueOrDefault() + AmountKonfeksi1B.GetValueOrDefault() + AmountKonfeksi2C.GetValueOrDefault();
+            return result;
+        }
+
+        private decimal SumUnitCostVB()
+        {
+            var result = AmountSpinning1VB.GetValueOrDefault() + AmountWeaving1VB.GetValueOrDefault() + AmountPrintingVB.GetValueOrDefault() + AmountKonfeksi2AVB.GetValueOrDefault() + AmountUmumVB.GetValueOrDefault() + AmountSpinning2VB.GetValueOrDefault() + AmountWeaving2VB.GetValueOrDefault() + AmountKonfeksi1AVB.GetValueOrDefault() + AmountKonfeksi2BVB.GetValueOrDefault() + AmountOthersVB.GetValueOrDefault() + AmountSpinning3VB.GetValueOrDefault() + AmountFinishingVB.GetValueOrDefault() + AmountKonfeksi1BVB.GetValueOrDefault() + AmountKonfeksi2CVB.GetValueOrDefault();
+            return result;
+        }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -96,11 +109,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             else if (TypeVBNonPO == "Tanpa Nomor VB")
             {
 
-                if (DateEstimateVB == null)
-                    yield return new ValidationResult("Estimasi Tanggal Realisasi harus diisi!", new List<string> { "DateEstimateVB" });
+                //if (DateEstimateVB == null)
+                //    yield return new ValidationResult("Estimasi Tanggal Realisasi harus diisi!", new List<string> { "DateEstimateVB" });
 
-                if (DateVB == null)
-                    yield return new ValidationResult("Tanggal VB harus diisi!", new List<string> { "DateVB" });
+                //if (DateVB == null)
+                //    yield return new ValidationResult("Tanggal VB harus diisi!", new List<string> { "DateVB" });
 
                 if (Unit == null || Unit.Id <= 0)
                     yield return new ValidationResult("Kode VB harus diisi!", new List<string> { "VBCodeManual" });
@@ -245,16 +258,16 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                             ItemsError += "'DateDetail': 'Tanggal harus diisi!', ";
                         }
 
-                        if (item.DateDetail.HasValue && item.DateDetail.Value >= Date.Value)
+                        if (item.DateDetail.HasValue && item.DateDetail.Value.Date > Date.Value.Date)
                         {
                             CountItemsError++;
                             ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Tanggal Realisasi!', ";
                         }
-                        else if (item.DateDetail.HasValue && item.DateDetail.Value <= DateVB.Value)
-                        {
-                            CountItemsError++;
-                            ItemsError += "'DateDetail': 'Tanggal Nota harus lebih atau sama dengan Tanggal VB!', ";
-                        }
+                        //else if (item.DateDetail.HasValue && item.DateDetail.Value.Date > DateVB.Value.Date)
+                        //{
+                        //    CountItemsError++;
+                        //    ItemsError += "'DateDetail': 'Tanggal Nota harus lebih atau sama dengan Tanggal VB!', ";
+                        //}
 
                         if (string.IsNullOrWhiteSpace(item.Remark))
                         {
@@ -270,7 +283,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
                         if (item.isGetPPh == true)
                         {
-                            if (item.incomeTax == null)
+                            if (item.IncomeTax == null)
                             {
                                 CountItemsError++;
                                 ItemsError += "'incomeTax': 'Nomor PPh Harus Diisi!', ";
@@ -292,7 +305,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
                     if (CountItemsError > 0)
                         yield return new ValidationResult(ItemsError, new List<string> { "Items" });
+
+                    if (SumUnitCostNonVB() != (decimal)Items.Sum(element => element.Total.GetValueOrDefault()))
+                        yield return new ValidationResult("Nominal beban unit dan total nota harus sama!", new List<string> { "CompareNominal" });
                 }
+                
             }
             else
             {
@@ -324,15 +341,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                             ItemsError += "'DateDetail': 'Tanggal harus diisi!', ";
                         }
 
-                        if (item.DateDetail.HasValue && item.DateDetail.Value >= Date.Value)
+                        if (item.DateDetail.HasValue && item.DateDetail.GetValueOrDefault().Date > Date.GetValueOrDefault().Date)
                         {
                             CountItemsError++;
                             ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Tanggal Realisasi!', ";
                         }
-                        else if (item.DateDetail.HasValue && item.DateDetail.Value <= numberVB.Date.Value)
+                        else if (item.DateDetail.HasValue && item.DateDetail.GetValueOrDefault().Date > numberVB.Date.GetValueOrDefault().Date)
                         {
                             CountItemsError++;
-                            ItemsError += "'DateDetail': 'Tanggal Nota harus lebih atau sama dengan Tanggal VB!', ";
+                            ItemsError += "'DateDetail': 'Tanggal Nota harus lebih kecil atau sama dengan Tanggal VB!', ";
                         }
 
                         if (string.IsNullOrWhiteSpace(item.Remark))
@@ -349,7 +366,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
                         if (item.isGetPPh == true)
                         {
-                            if (item.incomeTax == null)
+                            if (item.IncomeTax == null)
                             {
                                 CountItemsError++;
                                 ItemsError += "'incomeTax': 'Nomor PPh Harus Diisi!', ";
@@ -371,6 +388,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
                     if (CountItemsError > 0)
                         yield return new ValidationResult(ItemsError, new List<string> { "Items" });
+
+                    if (SumUnitCostVB() != (decimal)Items.Sum(element => element.Total.GetValueOrDefault()))
+                        yield return new ValidationResult("Nominal beban unit dan total nota harus sama!", new List<string> { "CompareNominal" });
                 }
             }
 

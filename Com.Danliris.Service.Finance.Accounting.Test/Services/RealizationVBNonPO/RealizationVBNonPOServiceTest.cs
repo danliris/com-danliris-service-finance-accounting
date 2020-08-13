@@ -345,11 +345,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 Amount = 123,
                 Remark = "Remark",
                 isGetPPn = true,
-                incomeTax = new IncomeTaxNew()
+                IncomeTax = new IncomeTaxNew()
                 {
-                    _id = "1",
+                    Id = 1,
                     name = "name",
-                    rate = "1"
+                    rate = 1
                 },
                 IncomeTaxBy = "income"
             });
@@ -377,11 +377,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 Amount = 123,
                 Remark = "Remark",
                 isGetPPn = false,
-                incomeTax = new IncomeTaxNew()
+                IncomeTax = new IncomeTaxNew()
                 {
-                    _id = "1",
+                    Id = 1,
                     name = "name",
-                    rate = "1"
+                    rate = 1
                 },
                 IncomeTaxBy = "income"
             });
@@ -409,11 +409,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 Amount = 0,
                 Remark = "Remark",
                 isGetPPn = false,
-                incomeTax = new IncomeTaxNew()
+                IncomeTax = new IncomeTaxNew()
                 {
-                    _id = "1",
+                    Id = 1,
                     name = "name",
-                    rate = "1"
+                    rate = 1
                 },
                 IncomeTaxBy = "income"
             });
@@ -441,11 +441,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 Amount = -1000,
                 Remark = "Remark",
                 isGetPPn = false,
-                incomeTax = new IncomeTaxNew()
+                IncomeTax = new IncomeTaxNew()
                 {
-                    _id = "1",
+                    Id = 1,
                     name = "name",
-                    rate = "1"
+                    rate = 1
                 },
                 IncomeTaxBy = "income"
             });
@@ -474,11 +474,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 Remark = "Remark",
                 isGetPPn = false,
                 isGetPPh = true,
-                incomeTax = new IncomeTaxNew()
+                IncomeTax = new IncomeTaxNew()
                 {
-                    _id = "1",
+                    Id = 1,
                     name = "name",
-                    rate = "1"
+                    rate = 1
                 },
                 IncomeTaxBy = "income"
             });
@@ -548,11 +548,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 Remark = "Remark",
                 isGetPPn = false,
                 isGetPPh = true,
-                incomeTax = new IncomeTaxNew()
+                IncomeTax = new IncomeTaxNew()
                 {
-                    _id = "1",
+                    Id = 1,
                     name = "name",
-                    rate = "1"
+                    rate = 1
                 },
                 IncomeTaxBy = "income"
             });
