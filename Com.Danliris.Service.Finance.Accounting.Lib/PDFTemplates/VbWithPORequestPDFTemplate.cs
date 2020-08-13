@@ -121,7 +121,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
 
                 foreach (var itm2 in itm1.Details)
                 {
-                    convertCurrency += itm2.priceBeforeTax * itm2.dealQuantity;
+                    var price = itm2.priceBeforeTax * itm2.dealQuantity;
+                    if (itm2.useVat && !itm2.includePpn)
+                        price += price * (decimal)0.1;
+                    convertCurrency += price;
                     Usage += itm2.product.name + ", ";
                 }
             }

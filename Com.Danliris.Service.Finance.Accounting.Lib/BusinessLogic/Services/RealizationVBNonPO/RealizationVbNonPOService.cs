@@ -60,17 +60,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
                 if (item2.isGetPPn == true)
                 {
-                    decimal temp = item2.Amount * 0.1m;
+                    decimal temp = item2.Amount.GetValueOrDefault() * 0.1m;
                     total_vat += temp;
-                    count_total = item2.Amount + temp;
+                    count_total = item2.Amount.GetValueOrDefault() + temp;
                     convert_total += count_total;
                     temp_total += count_total;
                 }
                 else
                 {
-                    count_total = item2.Amount;
+                    count_total = item2.Amount.GetValueOrDefault();
                     convert_total += count_total;
-                    temp_total += item2.Amount;
+                    temp_total += item2.Amount.GetValueOrDefault();
                 }
             }
 
@@ -198,12 +198,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 result = result.Remove(result.Length - 1);
                 val_result = val_result.Remove(val_result.Length - 1);
 
-                model.VBNo = "";
-                model.DateEstimate = (DateTimeOffset)viewmodel.DateEstimateVB;
+                //model.VBNo = "";
+                model.DateEstimate = viewmodel.DateEstimateVB.GetValueOrDefault();
                 model.RequestVbName = "";
                 model.UnitCode = viewmodel.Unit.Code;
                 model.UnitName = viewmodel.Unit.Name;
-                model.DateVB = (DateTimeOffset)viewmodel.DateVB;
+                model.DateVB = viewmodel.DateVB.GetValueOrDefault();
                 model.Amount_VB = 0;
                 model.CurrencyCode = viewmodel.Currency.Code;
                 model.CurrencyRate = viewmodel.Currency.Rate;
@@ -347,7 +347,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             {
                 if (itm.isGetPPh == true && itm.IncomeTaxBy == "Supplier")
                 {
-                    amount += itm.Amount * (Convert.ToDecimal(itm.incomeTax.rate) / 100);
+                    amount += itm.Amount.GetValueOrDefault() * (Convert.ToDecimal(itm.IncomeTax.rate.GetValueOrDefault()) / 100);
                 }
 
             }
@@ -406,25 +406,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
             foreach (var itm1 in viewmodel.Items)
             {
-                string incometaxid = "";
-                string incometaxname = "";
-                string incometaxrate = "";
+                var incometaxid = 0;
+                var incometaxname = "";
+                var incometaxrate = 0.0;
 
                 if (itm1.isGetPPh == true)
                 {
-                    incometaxid = itm1.incomeTax._id;
-                    incometaxname = itm1.incomeTax.name;
-                    incometaxrate = itm1.incomeTax.rate;
+                    incometaxid = itm1.IncomeTax.Id.GetValueOrDefault();
+                    incometaxname = itm1.IncomeTax.name;
+                    incometaxrate = itm1.IncomeTax.rate.GetValueOrDefault();
                 }
 
                 var item = new RealizationVbDetailModel()
                 {
                     VBRealizationId = value,
-                    AmountNonPO = itm1.Amount,
+                    AmountNonPO = itm1.Amount.GetValueOrDefault(),
                     DateNonPO = itm1.DateDetail,
                     Remark = itm1.Remark,
-                    isGetPPn = itm1.isGetPPn,
-                    isGetPPh = itm1.isGetPPh,
+                    isGetPPn = itm1.isGetPPn.GetValueOrDefault(),
+                    isGetPPh = itm1.isGetPPh.GetValueOrDefault(),
                     IncomeTaxId = incometaxid,
                     IncomeTaxName = incometaxname,
                     IncomeTaxRate = incometaxrate,
@@ -828,9 +828,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     Amount = s.AmountNonPO,
                     isGetPPn = s.isGetPPn,
                     isGetPPh = s.isGetPPh,
-                    incomeTax = new IncomeTaxNew()
+                    Total = s.Total,
+                    IncomeTax = new IncomeTaxNew()
                     {
-                        _id = s.IncomeTaxId,
+                        Id = s.IncomeTaxId,
                         name = s.IncomeTaxName,
                         rate = s.IncomeTaxRate,
                     },
@@ -901,17 +902,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 decimal count_total;
                 if (itm.isGetPPn == true)
                 {
-                    decimal temp = itm.Amount * 0.1m;
+                    decimal temp = itm.Amount.GetValueOrDefault() * 0.1m;
                     total_vat += temp;
-                    count_total = itm.Amount + temp;
+                    count_total = itm.Amount.GetValueOrDefault() + temp;
                     convert_total += count_total;
                     temp_total += count_total;
                 }
                 else
                 {
-                    count_total = itm.Amount;
+                    count_total = itm.Amount.GetValueOrDefault();
                     convert_total += count_total;
-                    temp_total += itm.Amount;
+                    temp_total += itm.Amount.GetValueOrDefault();
                 }
 
                 var item = new RealizationVbDetailModel()
@@ -925,13 +926,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     CreatedAgent = viewModel.CreatedAgent,
                     DateNonPO = itm.DateDetail,
                     Remark = itm.Remark,
-                    AmountNonPO = itm.Amount,
-                    isGetPPn = itm.isGetPPn,
-                    isGetPPh = itm.isGetPPh,
-                    IncomeTaxId = itm.incomeTax._id,
-                    IncomeTaxName = itm.incomeTax.name,
-                    IncomeTaxRate = itm.incomeTax.rate,
-                    IncomeTaxBy = itm.IncomeTaxBy
+                    AmountNonPO = itm.Amount.GetValueOrDefault(),
+                    isGetPPn = itm.isGetPPn.GetValueOrDefault(),
+                    isGetPPh = itm.isGetPPh.GetValueOrDefault(),
+                    IncomeTaxId = itm.IncomeTax.Id.GetValueOrDefault(),
+                    IncomeTaxName = itm.IncomeTax.name,
+                    IncomeTaxRate = itm.IncomeTax.rate.GetValueOrDefault(),
+                    IncomeTaxBy = itm.IncomeTaxBy,
+                    Total = itm.Total.GetValueOrDefault()
                 };
 
                 listDetail.Add(item);
@@ -1163,13 +1165,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             {
                 unitload = res;
                 amountunitloadnovb = val_result;
-                vbno = "";
-                dateestimate = (DateTimeOffset)viewModel.DateEstimateVB;
+                vbno = viewModel.numberVB != null ? viewModel.numberVB.VBNo : "";
+                dateestimate = viewModel.numberVB != null ? viewModel.numberVB.DateEstimate.GetValueOrDefault() : DateTimeOffset.MinValue;
+                datevb = viewModel.numberVB != null ? viewModel.numberVB.Date.GetValueOrDefault() : DateTimeOffset.MinValue;
+                //dateestimate = (DateTimeOffset)viewModel.DateEstimateVB;
                 requestvbname = "";
                 unitid = viewModel.Unit.Id;
                 unitcode = viewModel.Unit.Code;
                 unitname = viewModel.Unit.Name;
-                datevb = (DateTimeOffset)viewModel.DateVB;
                 amount_vb = 0;
                 currencycode = viewModel.Currency.Code;
                 currencyrate = viewModel.Currency.Rate;
