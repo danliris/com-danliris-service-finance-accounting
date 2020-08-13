@@ -135,7 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 CurrencyRate = entity.CurrencyRate,
                 CurrencySymbol = entity.CurrencySymbol,
                 CreatedBy = entity.CreatedBy,
-                Amount = entity.Amount,
+                Amount = entity.VBMoney,
                 Apporve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
