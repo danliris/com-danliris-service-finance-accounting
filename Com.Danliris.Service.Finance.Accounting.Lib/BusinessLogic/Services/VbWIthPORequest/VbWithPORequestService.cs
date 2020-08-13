@@ -209,7 +209,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
                 foreach (var itm2 in itm.Details)
                 {
-                    Amt += itm2.priceBeforeTax * itm2.dealQuantity;
+                    var price = itm2.priceBeforeTax * itm2.dealQuantity;
+                    if (!itm2.includePpn && itm2.useVat)
+                        price += price * (decimal)0.1;
+
+                    Amt += price;
                 }
             }
 
@@ -353,7 +357,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                                         name = u.ProductName
                                     },
                                     productRemark = u.ProductRemark,
-                                    includePpn = u.IsUseVat
+                                    includePpn = u.IsUseVat,
+                                    useVat = u.POExtUseVat
                                 }
                                 ).ToList()
                         }
@@ -609,6 +614,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                         Price = itm2.priceBeforeTax,
                         ProductRemark = itm2.productRemark,
                         IsUseVat = itm2.includePpn,
+                        POExtUseVat = itm2.useVat
 
                     };
                     EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);

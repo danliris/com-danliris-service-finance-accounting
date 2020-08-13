@@ -165,7 +165,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Symbol} " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Code} " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("Kegunaan", normal_font);

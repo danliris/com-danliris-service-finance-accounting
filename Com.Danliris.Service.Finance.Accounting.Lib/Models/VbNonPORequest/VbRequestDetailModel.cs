@@ -40,7 +40,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest
         [MaxLength(64)]
         public string ProductRemark { get; set; }
         public int VBId { get; set; }
-        public bool IsUseVat { get; set; }
+        public bool IsUseVat { get; set; } // include ppn?
+        public bool POExtUseVat { get; set; }
 
         [ForeignKey("VBId")]
         public virtual VbRequestModel VbRequestDetail { get; set; }
