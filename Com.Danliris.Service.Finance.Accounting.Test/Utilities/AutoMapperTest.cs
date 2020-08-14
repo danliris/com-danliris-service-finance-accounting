@@ -10,6 +10,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.PurchasingD
 using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.RealizationVBWithPO;
 using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.VBNonPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.VBWithPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.LockTransaction;
@@ -80,6 +81,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Utilities
             var vm = mapper.Map<DailyBankTransactionViewModel>(model);
             Assert.True(true);
         }
+
+        [Fact]
+        public void Should_Success_Map_VBWithPORequest()
+        {
+            var mapper = new MapperConfiguration(configuration => configuration.AddProfile<VBWithPORequestProfile>()).CreateMapper();
+            var model = new VbRequestModel();
+            var vm = mapper.Map<VbWithPORequestViewModel>(model);
+            Assert.NotNull(vm);
+        }
+
 
         [Fact]
         public void Should_Success_Map_JournalTransaction()
