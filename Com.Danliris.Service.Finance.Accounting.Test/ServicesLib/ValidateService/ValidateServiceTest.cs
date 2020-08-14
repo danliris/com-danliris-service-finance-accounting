@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DownPayment;
 using Moq;
 using Xunit;
@@ -17,9 +18,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ServicesLib.ValidateServi
         public void Should_Succes_Instantiate_validateService()
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
-            var sut = new Lib.Services.ValidateService.ValidateService(serviceProviderMock.Object);
+            var service = new Lib.Services.ValidateService.ValidateService(serviceProviderMock.Object);
 
-            Assert.NotNull(sut);
+            CreditBalanceViewModel viewModel = new CreditBalanceViewModel();
+            service.Validate(viewModel);
+
+            Assert.NotNull(service);
         }
 
        
