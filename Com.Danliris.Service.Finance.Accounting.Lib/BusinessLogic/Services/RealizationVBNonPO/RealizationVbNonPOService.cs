@@ -60,17 +60,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
                 if (item2.isGetPPn == true)
                 {
-                    decimal temp = item2.Amount * 0.1m;
+                    decimal temp = item2.Amount.GetValueOrDefault() * 0.1m;
                     total_vat += temp;
-                    count_total = item2.Amount + temp;
+                    count_total = item2.Amount.GetValueOrDefault() + temp;
                     convert_total += count_total;
                     temp_total += count_total;
                 }
                 else
                 {
-                    count_total = item2.Amount;
+                    count_total = item2.Amount.GetValueOrDefault();
                     convert_total += count_total;
-                    temp_total += item2.Amount;
+                    temp_total += item2.Amount.GetValueOrDefault();
                 }
             }
 
@@ -198,15 +198,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 result = result.Remove(result.Length - 1);
                 val_result = val_result.Remove(val_result.Length - 1);
 
-                model.UnitLoad = result;
-                model.AmountUnitLoadNoVB = val_result;
-
-                model.VBNo = "";
-                model.DateEstimate = (DateTimeOffset)viewmodel.DateEstimateVB;
+                //model.VBNo = "";
+                model.DateEstimate = viewmodel.DateEstimateVB.GetValueOrDefault();
                 model.RequestVbName = "";
                 model.UnitCode = viewmodel.Unit.Code;
                 model.UnitName = viewmodel.Unit.Name;
-                model.DateVB = (DateTimeOffset)viewmodel.DateVB;
+                model.DateVB = viewmodel.DateVB.GetValueOrDefault();
                 model.Amount_VB = 0;
                 model.CurrencyCode = viewmodel.Currency.Code;
                 model.CurrencyRate = viewmodel.Currency.Rate;
@@ -217,6 +214,98 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 model.DivisionId = viewmodel.Division.Id;
                 model.DivisionName = viewmodel.Division.Name;
             }
+            else
+            {
+                if (viewmodel.Spinning1VB == true)
+                {
+                    result += "Spinning 1,";
+                    val_result += viewmodel.AmountSpinning1VB.ToString() + ",";
+                }
+
+                if (viewmodel.Spinning2VB == true)
+                {
+                    result += "Spinning 2,";
+                    val_result += viewmodel.AmountSpinning2VB.ToString() + ",";
+                }
+
+                if (viewmodel.Spinning3VB == true)
+                {
+                    result += "Spinning 3,";
+                    val_result += viewmodel.AmountSpinning3VB.ToString() + ",";
+                }
+
+                if (viewmodel.Weaving1VB == true)
+                {
+                    result += "Weaving 1,";
+                    val_result += viewmodel.AmountWeaving1VB.ToString() + ",";
+                }
+
+                if (viewmodel.Weaving2VB == true)
+                {
+                    result += "Weaving 2,";
+                    val_result += viewmodel.AmountWeaving2VB.ToString() + ",";
+                }
+
+                if (viewmodel.FinishingVB == true)
+                {
+                    result += "Finishing,";
+                    val_result += viewmodel.AmountFinishingVB.ToString() + ",";
+                }
+
+                if (viewmodel.PrintingVB == true)
+                {
+                    result += "Printing,";
+                    val_result += viewmodel.AmountPrintingVB.ToString() + ",";
+                }
+
+                if (viewmodel.Konfeksi1AVB == true)
+                {
+                    result += "Konfeksi 1A,";
+                    val_result += viewmodel.AmountKonfeksi1AVB.ToString() + ",";
+                }
+
+                if (viewmodel.Konfeksi1BVB == true)
+                {
+                    result += "Konfeksi 1B,";
+                    val_result += viewmodel.AmountKonfeksi1BVB.ToString() + ",";
+                }
+
+                if (viewmodel.Konfeksi2AVB == true)
+                {
+                    result += "Konfeksi 2A,";
+                    val_result += viewmodel.AmountKonfeksi2AVB.ToString() + ",";
+                }
+
+                if (viewmodel.Konfeksi2BVB == true)
+                {
+                    result += "Konfeksi 2B,";
+                    val_result += viewmodel.AmountKonfeksi2BVB.ToString() + ",";
+                }
+
+                if (viewmodel.Konfeksi2CVB == true)
+                {
+                    result += "Konfeksi 2C,";
+                    val_result += viewmodel.AmountKonfeksi2CVB.ToString() + ",";
+                }
+
+                if (viewmodel.UmumVB == true)
+                {
+                    result += "Umum,";
+                    val_result += viewmodel.AmountUmumVB.ToString() + ",";
+                }
+
+                if (viewmodel.OthersVB == true)
+                {
+                    result += viewmodel.DetailOthersVB + ",";
+                    val_result += viewmodel.AmountOthersVB.ToString() + ",";
+                }
+
+                result = result.Remove(result.Length - 1);
+                val_result = val_result.Remove(val_result.Length - 1);
+            }
+
+            model.UnitLoad = result;
+            model.AmountUnitLoadNoVB = val_result;
 
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -258,7 +347,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             {
                 if (itm.isGetPPh == true && itm.IncomeTaxBy == "Supplier")
                 {
-                    amount += itm.Amount * (Convert.ToDecimal(itm.incomeTax.rate) / 100);
+                    amount += itm.Amount.GetValueOrDefault() * (Convert.ToDecimal(itm.IncomeTax.rate.GetValueOrDefault()) / 100);
                 }
 
             }
@@ -317,25 +406,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
             foreach (var itm1 in viewmodel.Items)
             {
-                string incometaxid = "";
-                string incometaxname = "";
-                string incometaxrate = "";
+                var incometaxid = 0;
+                var incometaxname = "";
+                var incometaxrate = 0.0;
 
                 if (itm1.isGetPPh == true)
                 {
-                    incometaxid = itm1.incomeTax._id;
-                    incometaxname = itm1.incomeTax.name;
-                    incometaxrate = itm1.incomeTax.rate;
+                    incometaxid = itm1.IncomeTax.Id.GetValueOrDefault();
+                    incometaxname = itm1.IncomeTax.name;
+                    incometaxrate = itm1.IncomeTax.rate.GetValueOrDefault();
                 }
 
                 var item = new RealizationVbDetailModel()
                 {
                     VBRealizationId = value,
-                    AmountNonPO = itm1.Amount,
+                    AmountNonPO = itm1.Amount.GetValueOrDefault(),
                     DateNonPO = itm1.DateDetail,
                     Remark = itm1.Remark,
-                    isGetPPn = itm1.isGetPPn,
-                    isGetPPh = itm1.isGetPPh,
+                    isGetPPn = itm1.isGetPPn.GetValueOrDefault(),
+                    isGetPPh = itm1.isGetPPh.GetValueOrDefault(),
                     IncomeTaxId = incometaxid,
                     IncomeTaxName = incometaxname,
                     IncomeTaxRate = incometaxrate,
@@ -424,6 +513,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             decimal amountumum = 0;
             decimal amountother = 0;
 
+            bool spinning1VB = false;
+            bool spinning2VB = false;
+            bool spinning3VB = false;
+            bool weaving1VB = false;
+            bool weaving2VB = false;
+            bool finishingVB = false;
+            bool printingVB = false;
+            bool konfeksi1aVB = false;
+            bool konfeksi1bVB = false;
+            bool konfeksi2aVB = false;
+            bool konfeksi2bVB = false;
+            bool konfeksi2cVB = false;
+            bool umumVB = false;
+            bool otherVB = false;
+
+            decimal amountspinning1VB = 0;
+            decimal amountspinning2VB = 0;
+            decimal amountspinning3VB = 0;
+            decimal amountweaving1VB = 0;
+            decimal amountweaving2VB = 0;
+            decimal amountfinishingVB = 0;
+            decimal amountprintingVB = 0;
+            decimal amountkonfeksi1aVB = 0;
+            decimal amountkonfeksi1bVB = 0;
+            decimal amountkonfeksi2aVB = 0;
+            decimal amountkonfeksi2bVB = 0;
+            decimal amountkonfeksi2cVB = 0;
+            decimal amountumumVB = 0;
+            decimal amountotherVB = 0;
+
             if (model.TypeWithOrWithoutVB == "Tanpa Nomor VB")
             {
                 res_unit = model.UnitLoad;
@@ -510,6 +629,84 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             else
             {
                 res_unit = model.UnitLoad;
+                res_amount = model.AmountUnitLoadNoVB;
+
+                string[] unitload = res_unit.Split(",");
+                string[] amountload = res_amount.Split(",");
+
+                for (int i = 0; i < unitload.Length; i++)
+                {
+                    if (unitload[i] == "Spinning 1")
+                    {
+                        spinning1VB = true;
+                        amountspinning1VB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Spinning 2")
+                    {
+                        spinning2VB = true;
+                        amountspinning2VB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Spinning 3")
+                    {
+                        spinning3VB = true;
+                        amountspinning3VB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Weaving 1")
+                    {
+                        weaving1VB = true;
+                        amountweaving1VB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Weaving 2")
+                    {
+                        weaving2VB = true;
+                        amountweaving2 = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Finishing")
+                    {
+                        finishingVB = true;
+                        amountfinishingVB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Printing")
+                    {
+                        printingVB = true;
+                        amountprintingVB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Konfeksi 1A")
+                    {
+                        konfeksi1aVB = true;
+                        amountkonfeksi1aVB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Konfeksi 1B")
+                    {
+                        konfeksi1bVB = true;
+                        amountkonfeksi1bVB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Konfeksi 2A")
+                    {
+                        konfeksi2aVB = true;
+                        amountkonfeksi2aVB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Konfeksi 2B")
+                    {
+                        konfeksi2bVB = true;
+                        amountkonfeksi2bVB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Konfeksi 2C")
+                    {
+                        konfeksi2cVB = true;
+                        amountkonfeksi2cVB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else if (unitload[i] == "Umum")
+                    {
+                        umumVB = true;
+                        amountumumVB = Convert.ToDecimal(amountload[i]);
+                    }
+                    else
+                    {
+                        otherVB = true;
+                        amountotherVB = Convert.ToDecimal(amountload[i]);
+                    }
+                }
             }
 
             var result = new RealizationVbNonPOViewModel()
@@ -562,6 +759,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 AmountVB = model.Amount,
                 DateVB = model.DateVB,
                 DateEstimateVB = model.DateEstimate,
+
                 Spinning1 = spinning1,
                 Spinning2 = spinning2,
                 Spinning3 = spinning3,
@@ -592,6 +790,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 AmountUmum = amountumum,
                 AmountOthers = amountother,
 
+                Spinning1VB = spinning1VB,
+                Spinning2VB = spinning2VB,
+                Spinning3VB = spinning3VB,
+                Weaving1VB = weaving1VB,
+                Weaving2VB = weaving2VB,
+                FinishingVB = finishingVB,
+                PrintingVB = printingVB,
+                Konfeksi1AVB = konfeksi1aVB,
+                Konfeksi1BVB = konfeksi1bVB,
+                Konfeksi2AVB = konfeksi2aVB,
+                Konfeksi2BVB = konfeksi2bVB,
+                Konfeksi2CVB = konfeksi2cVB,
+                UmumVB = umumVB,
+                OthersVB = otherVB,
+
+                AmountSpinning1VB = amountspinning1VB,
+                AmountSpinning2VB = amountspinning2VB,
+                AmountSpinning3VB = amountspinning3VB,
+                AmountWeaving1VB = amountweaving1VB,
+                AmountWeaving2VB = amountweaving2VB,
+                AmountFinishingVB = amountfinishingVB,
+                AmountPrintingVB = amountprintingVB,
+                AmountKonfeksi1AVB = amountkonfeksi1aVB,
+                AmountKonfeksi1BVB = amountkonfeksi1bVB,
+                AmountKonfeksi2AVB = amountkonfeksi2aVB,
+                AmountKonfeksi2BVB = amountkonfeksi2bVB,
+                AmountKonfeksi2CVB = amountkonfeksi2cVB,
+                AmountUmumVB = amountumumVB,
+                AmountOthersVB = amountotherVB,
+
                 Items = model.RealizationVbDetail.Select(s => new VbNonPORequestDetailViewModel()
                 {
 
@@ -600,9 +828,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     Amount = s.AmountNonPO,
                     isGetPPn = s.isGetPPn,
                     isGetPPh = s.isGetPPh,
-                    incomeTax = new IncomeTaxNew()
+                    Total = s.Total,
+                    IncomeTax = new IncomeTaxNew()
                     {
-                        _id = s.IncomeTaxId,
+                        Id = s.IncomeTaxId,
                         name = s.IncomeTaxName,
                         rate = s.IncomeTaxRate,
                     },
@@ -673,17 +902,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 decimal count_total;
                 if (itm.isGetPPn == true)
                 {
-                    decimal temp = itm.Amount * 0.1m;
+                    decimal temp = itm.Amount.GetValueOrDefault() * 0.1m;
                     total_vat += temp;
-                    count_total = itm.Amount + temp;
+                    count_total = itm.Amount.GetValueOrDefault() + temp;
                     convert_total += count_total;
                     temp_total += count_total;
                 }
                 else
                 {
-                    count_total = itm.Amount;
+                    count_total = itm.Amount.GetValueOrDefault();
                     convert_total += count_total;
-                    temp_total += itm.Amount;
+                    temp_total += itm.Amount.GetValueOrDefault();
                 }
 
                 var item = new RealizationVbDetailModel()
@@ -697,13 +926,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     CreatedAgent = viewModel.CreatedAgent,
                     DateNonPO = itm.DateDetail,
                     Remark = itm.Remark,
-                    AmountNonPO = itm.Amount,
-                    isGetPPn = itm.isGetPPn,
-                    isGetPPh = itm.isGetPPh,
-                    IncomeTaxId = itm.incomeTax._id,
-                    IncomeTaxName = itm.incomeTax.name,
-                    IncomeTaxRate = itm.incomeTax.rate,
-                    IncomeTaxBy = itm.IncomeTaxBy
+                    AmountNonPO = itm.Amount.GetValueOrDefault(),
+                    isGetPPn = itm.isGetPPn.GetValueOrDefault(),
+                    isGetPPh = itm.isGetPPh.GetValueOrDefault(),
+                    IncomeTaxId = itm.IncomeTax.Id.GetValueOrDefault(),
+                    IncomeTaxName = itm.IncomeTax.name,
+                    IncomeTaxRate = itm.IncomeTax.rate.GetValueOrDefault(),
+                    IncomeTaxBy = itm.IncomeTaxBy,
+                    Total = itm.Total.GetValueOrDefault()
                 };
 
                 listDetail.Add(item);
@@ -822,6 +1052,95 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 val_result = val_result.Remove(val_result.Length - 1);
 
             }
+            else
+            {
+                if (viewModel.Spinning1VB == true)
+                {
+                    res += "Spinning 1,";
+                    val_result += viewModel.AmountSpinning1VB.ToString() + ",";
+                }
+
+                if (viewModel.Spinning2VB == true)
+                {
+                    res += "Spinning 2,";
+                    val_result += viewModel.AmountSpinning2VB.ToString() + ",";
+                }
+
+                if (viewModel.Spinning3VB == true)
+                {
+                    res += "Spinning 3,";
+                    val_result += viewModel.AmountSpinning3VB.ToString() + ",";
+                }
+
+                if (viewModel.Weaving1VB == true)
+                {
+                    res += "Weaving 1,";
+                    val_result += viewModel.AmountWeaving1VB.ToString() + ",";
+                }
+
+                if (viewModel.Weaving2VB == true)
+                {
+                    res += "Weaving 2,";
+                    val_result += viewModel.AmountWeaving2VB.ToString() + ",";
+                }
+
+                if (viewModel.FinishingVB == true)
+                {
+                    res += "Finishing,";
+                    val_result += viewModel.AmountFinishingVB.ToString() + ",";
+                }
+
+                if (viewModel.PrintingVB == true)
+                {
+                    res += "Printing,";
+                    val_result += viewModel.AmountPrintingVB.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi1AVB == true)
+                {
+                    res += "Konfeksi 1A,";
+                    val_result += viewModel.AmountKonfeksi1AVB.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi1BVB == true)
+                {
+                    res += "Konfeksi 1B,";
+                    val_result += viewModel.AmountKonfeksi1BVB.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi2AVB == true)
+                {
+                    res += "Konfeksi 2A,";
+                    val_result += viewModel.AmountKonfeksi2AVB.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi2BVB == true)
+                {
+                    res += "Konfeksi 2B,";
+                    val_result += viewModel.AmountKonfeksi2BVB.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi2CVB == true)
+                {
+                    res += "Konfeksi 2C,";
+                    val_result += viewModel.AmountKonfeksi2CVB.ToString() + ",";
+                }
+
+                if (viewModel.UmumVB == true)
+                {
+                    res += "Umum,";
+                    val_result += viewModel.AmountUmumVB.ToString() + ",";
+                }
+
+                if (viewModel.OthersVB == true)
+                {
+                    res += viewModel.DetailOthersVB + ",";
+                    val_result += viewModel.AmountOthersVB.ToString() + ",";
+                }
+
+                res = res.Remove(res.Length - 1);
+                val_result = val_result.Remove(val_result.Length - 1);
+            }
 
             string unitload = "";
             string amountunitloadnovb = "";
@@ -846,13 +1165,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             {
                 unitload = res;
                 amountunitloadnovb = val_result;
-                vbno = "";
-                dateestimate = (DateTimeOffset)viewModel.DateEstimateVB;
+                vbno = viewModel.numberVB != null ? viewModel.numberVB.VBNo : "";
+                dateestimate = viewModel.numberVB != null ? viewModel.numberVB.DateEstimate.GetValueOrDefault() : DateTimeOffset.MinValue;
+                datevb = viewModel.numberVB != null ? viewModel.numberVB.Date.GetValueOrDefault() : DateTimeOffset.MinValue;
+                //dateestimate = (DateTimeOffset)viewModel.DateEstimateVB;
                 requestvbname = "";
                 unitid = viewModel.Unit.Id;
                 unitcode = viewModel.Unit.Code;
                 unitname = viewModel.Unit.Name;
-                datevb = (DateTimeOffset)viewModel.DateVB;
                 amount_vb = 0;
                 currencycode = viewModel.Currency.Code;
                 currencyrate = viewModel.Currency.Rate;
@@ -866,8 +1186,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             }
             else
             {
-                unitload = viewModel.numberVB.UnitLoad;
-                amountunitloadnovb = "";
+                unitload = res;
+                amountunitloadnovb = val_result;
                 vbno = viewModel.numberVB.VBNo;
                 dateestimate = (DateTimeOffset)viewModel.numberVB.DateEstimate;
                 requestvbname = viewModel.numberVB.CreatedBy;

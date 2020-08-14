@@ -135,7 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 CurrencyRate = entity.CurrencyRate,
                 CurrencySymbol = entity.CurrencySymbol,
                 CreatedBy = entity.CreatedBy,
-                Amount = entity.Amount,
+                Amount = entity.VBMoney,
                 Apporve_Status = entity.Apporve_Status,
                 Complete_Status = entity.Complete_Status,
                 VBRequestCategory = entity.VBRequestCategory,
@@ -209,7 +209,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
                 foreach (var itm2 in itm.Details)
                 {
-                    Amt += itm2.priceBeforeTax * itm2.dealQuantity;
+                    var price = itm2.priceBeforeTax * itm2.dealQuantity;
+                    if (!itm2.includePpn && itm2.useVat)
+                        price += price * (decimal)0.1;
+
+                    Amt += price;
                 }
             }
 
@@ -220,15 +224,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
 
             _dbContext.VbRequests.Add(model);
 
-            foreach (var itm1 in viewmodel.Items)
-            {
-                var updateModel = new POExternalUpdateModel()
-                {
-                    IsCreateOnVBRequest = true
-                };
+            //foreach (var itm1 in viewmodel.Items)
+            //{
+            //    var updateModel = new POExternalUpdateModel()
+            //    {
+            //        IsCreateOnVBRequest = true
+            //    };
 
-                UpdateToPOExternal(itm1.no, updateModel);
-            }
+            //    UpdateToPOExternal(itm1.no, updateModel);
+            //}
 
             return _dbContext.SaveChangesAsync();
 
@@ -254,23 +258,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
             return documentNo;
         }
 
-        private void UpdateToPOExternal(string PONo, POExternalUpdateModel model)
-        {
-            string PurchasingUri = "external-purchase-orders/update-from-vb-with-po-req-finance/";
+        //private void UpdateToPOExternal(string PONo, POExternalUpdateModel model)
+        //{
+        //    string PurchasingUri = "external-purchase-orders/update-from-vb-with-po-req-finance/";
 
-            string Uri = $"{APIEndpoint.Purchasing}{PurchasingUri}{PONo}";
-            var data = new
-            {
-                model.IsCreateOnVBRequest
-            };
+        //    string Uri = $"{APIEndpoint.Purchasing}{PurchasingUri}{PONo}";
+        //    var data = new
+        //    {
+        //        model.IsCreateOnVBRequest
+        //    };
 
-            IHttpClientService httpClient = (IHttpClientService)this._serviceProvider.GetService(typeof(IHttpClientService));
-            var response = httpClient.PutAsync(Uri, new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, "failed"));
-            }
-        }
+        //    IHttpClientService httpClient = (IHttpClientService)this._serviceProvider.GetService(typeof(IHttpClientService));
+        //    var response = httpClient.PutAsync(Uri, new StringContent(JsonConvert.SerializeObject(data).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+        //    if (!response.IsSuccessStatusCode)
+        //    {
+        //        throw new Exception(string.Format("{0}, {1}, {2}", response.StatusCode, response.Content, "failed"));
+        //    }
+        //}
 
         public async Task<VbWithPORequestViewModel> ReadByIdAsync2(int id)
         {
@@ -288,6 +292,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     DateEstimate = s.DateEstimate,
                     VBMoney = s.VBMoney,
                     Usage = s.Usage_Input,
+                    Approve_Status = s.Apporve_Status,
                     Currency = new CurrencyVB()
                     {
                         Id = s.CurrencyId,
@@ -352,7 +357,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                                         name = u.ProductName
                                     },
                                     productRemark = u.ProductRemark,
-                                    includePpn = u.IsUseVat
+                                    includePpn = u.IsUseVat,
+                                    useVat = u.POExtUseVat
                                 }
                                 ).ToList()
                         }
@@ -559,15 +565,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                 _dbContext.VbRequests.Update(model);
             }
 
-            foreach (var itm1 in model.VbRequestDetail)
-            {
-                var updateModel = new POExternalUpdateModel()
-                {
-                    IsCreateOnVBRequest = false
-                };
+            //foreach (var itm1 in model.VbRequestDetail)
+            //{
+            //    var updateModel = new POExternalUpdateModel()
+            //    {
+            //        IsCreateOnVBRequest = false
+            //    };
 
-                UpdateToPOExternal(itm1.PONo.ToString(), updateModel);
-            }
+            //    UpdateToPOExternal(itm1.PONo.ToString(), updateModel);
+            //}
 
             return _dbContext.SaveChangesAsync();
         }
@@ -608,6 +614,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                         Price = itm2.priceBeforeTax,
                         ProductRemark = itm2.productRemark,
                         IsUseVat = itm2.includePpn,
+                        POExtUseVat = itm2.useVat
 
                     };
                     EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);

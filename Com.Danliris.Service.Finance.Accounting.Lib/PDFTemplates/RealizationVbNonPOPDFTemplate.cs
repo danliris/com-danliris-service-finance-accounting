@@ -145,12 +145,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             {
                 if (item.isGetPPn == true)
                 {
-                    var temp = item.Amount * 0.1m;
-                    total_all += item.Amount + temp;
+                    var temp = item.Amount.GetValueOrDefault() * 0.1m;
+                    total_all += item.Amount.GetValueOrDefault() + temp;
                 }
                 else
                 {
-                    total_all += item.Amount;
+                    total_all += item.Amount.GetValueOrDefault();
                 }
             }
 
@@ -175,19 +175,19 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
                 if (itm.isGetPPn == true)
                 {
-                    var temp = itm.Amount * 0.1m;
-                    total_all = itm.Amount + temp;
+                    var temp = itm.Amount.GetValueOrDefault() * 0.1m;
+                    total_all = itm.Amount.GetValueOrDefault() + temp;
 
                 }
                 else
                 {
-                    total_all = itm.Amount;
+                    total_all = itm.Amount.GetValueOrDefault();
                 }
 
-                cellHeaderBody1.Phrase = new Phrase($"{currencysymbol}        " + Convert_Rate(itm.Amount, currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody1.Phrase = new Phrase($"{currencysymbol}        " + Convert_Rate(itm.Amount.GetValueOrDefault(), currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
                 count_price += Convert_Rate(total_all, currencycode, currencyrate);
-                total_realization += Convert_Rate(itm.Amount, currencycode, currencyrate);
+                total_realization += Convert_Rate(itm.Amount.GetValueOrDefault(), currencycode, currencyrate);
             }
 
             cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
@@ -316,6 +316,106 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             #region CheckBox
 
+            string weightunit = "";
+            string resunit = "";
+            string val_result = "";
+
+            if (viewModel.TypeVBNonPO == "Dengan Nomor VB")
+            {
+                weightunit = viewModel.numberVB.UnitLoad.ToUpper();
+            }
+            else if(viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+            {
+                if (viewModel.Spinning1 == true)
+                {
+                    resunit += "Spinning 1,";
+                    val_result += viewModel.AmountSpinning1.ToString() + ",";
+                }
+
+                if (viewModel.Spinning2 == true)
+                {
+                    resunit += "Spinning 2,";
+                    val_result += viewModel.AmountSpinning2.ToString() + ",";
+                }
+
+                if (viewModel.Spinning3 == true)
+                {
+                    resunit += "Spinning 3,";
+                    val_result += viewModel.AmountSpinning3.ToString() + ",";
+                }
+
+                if (viewModel.Weaving1 == true)
+                {
+                    resunit += "Weaving 1,";
+                    val_result += viewModel.AmountWeaving1.ToString() + ",";
+                }
+
+                if (viewModel.Weaving2 == true)
+                {
+                    resunit += "Weaving 2,";
+                    val_result += viewModel.AmountWeaving2.ToString() + ",";
+                }
+
+                if (viewModel.Finishing == true)
+                {
+                    resunit += "Finishing,";
+                    val_result += viewModel.AmountFinishing.ToString() + ",";
+                }
+
+                if (viewModel.Printing == true)
+                {
+                    resunit += "Printing,";
+                    val_result += viewModel.AmountPrinting.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi1A == true)
+                {
+                    resunit += "Konfeksi 1A,";
+                    val_result += viewModel.AmountKonfeksi1A.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi1B == true)
+                {
+                    resunit += "Konfeksi 1B,";
+                    val_result += viewModel.AmountKonfeksi1B.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi2A == true)
+                {
+                    resunit += "Konfeksi 2A,";
+                    val_result += viewModel.AmountKonfeksi2A.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi2B == true)
+                {
+                    resunit += "Konfeksi 2B,";
+                    val_result += viewModel.AmountKonfeksi2B.ToString() + ",";
+                }
+
+                if (viewModel.Konfeksi2C == true)
+                {
+                    resunit += "Konfeksi 2C,";
+                    val_result += viewModel.AmountKonfeksi2C.ToString() + ",";
+                }
+
+                if (viewModel.Umum == true)
+                {
+                    resunit += "Umum,";
+                    val_result += viewModel.AmountUmum.ToString() + ",";
+                }
+
+                if (viewModel.Others == true)
+                {
+                    resunit += viewModel.DetailOthers + ",";
+                    val_result += viewModel.AmountOthers.ToString() + ",";
+                }
+
+                resunit = resunit.Remove(resunit.Length - 1);
+                val_result = val_result.Remove(val_result.Length - 1);
+
+                weightunit = resunit.ToUpper();
+            }
+
             cellHeaderBody.Phrase = new Phrase("Spinning 1", normal_font_8);
             headerTable3a.AddCell(cellHeaderBody);
 
@@ -339,7 +439,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
             bool flag;
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 1"))
+            if (weightunit.Contains("SPINNING 1"))
             {
                 _radioG.Checked = true;
                 flag = true;
@@ -365,7 +465,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if(viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountSpinning1.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountSpinning1VB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8); //total
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -387,7 +498,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG11.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("PRINTING"))
+            if (weightunit.Contains("PRINTING"))
             {
                 _radioG11.Checked = true;
                 flag = true;
@@ -412,7 +523,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountPrinting.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountPrintingVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -435,7 +557,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG8.BorderColor = BaseColor.Black;
             _radioG8.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2B"))
+            if (weightunit.Contains("KONFEKSI 2B"))
             {
                 _radioG8.Checked = true;
                 flag = true;
@@ -461,7 +583,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountKonfeksi2B.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountKonfeksi2BVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -483,7 +616,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG5.BorderColor = BaseColor.Black;
             _radioG5.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 2"))
+            if (weightunit.Contains("SPINNING 2"))
             {
                 _radioG5.Checked = true;
                 flag = true;
@@ -508,7 +641,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountSpinning2.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountSpinning2VB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -530,7 +674,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG5a.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("DYEING"))
+            if (weightunit.Contains("DYEING"))
             {
                 _radioG5a.Checked = true;
                 flag = true;
@@ -577,7 +721,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG13.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2C"))
+            if (weightunit.Contains("KONFEKSI 2C"))
             {
                 _radioG13.Checked = true;
                 flag = true;
@@ -602,7 +746,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountKonfeksi2C.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountKonfeksi2CVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -623,7 +778,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG10.BorderColor = BaseColor.Black;
             _radioG10.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("SPINNING 3"))
+            if (weightunit.Contains("SPINNING 3"))
             {
                 _radioG10.Checked = true;
                 flag = true;
@@ -648,7 +803,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountSpinning3.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountSpinning3VB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -670,7 +836,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG7.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1A"))
+            if (weightunit.Contains("KONFEKSI 1A"))
             {
                 _radioG7.Checked = true;
                 flag = true;
@@ -695,7 +861,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountKonfeksi1A.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountKonfeksi1AVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -717,7 +894,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG4.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("UMUM"))
+            if (weightunit.Contains("UMUM"))
             {
                 _radioG4.Checked = true;
                 flag = true;
@@ -742,7 +919,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountUmum.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountUmumVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -764,7 +952,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG1.BorderColor = BaseColor.Black;
             _radioG1.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 1"))
+            if (weightunit.Contains("WEAVING 1"))
             {
                 _radioG1.Checked = true;
                 flag = true;
@@ -790,7 +978,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountWeaving1.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountWeaving1VB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -811,7 +1010,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG12.BorderColor = BaseColor.Black;
             _radioG12.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 1B"))
+            if (weightunit.Contains("KONFEKSI 1B"))
             {
                 _radioG12.Checked = true;
                 flag = true;
@@ -836,11 +1035,22 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountKonfeksi1B.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountKonfeksi1BVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
-            if (CheckVerified(lastitem))
+            if (CheckVerified(lastitem.ToUpper()))
             {
                 cellHeaderBody.Phrase = new Phrase(lastitem, normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -865,7 +1075,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG9.BorderColor = BaseColor.Black;
             _radioG9.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            if (CheckVerified(lastitem))
+            if (CheckVerified(lastitem.ToUpper()))
             {
                 _radioG9.Checked = true;
                 flag = true;
@@ -891,7 +1101,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountOthers.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountOthersVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -914,7 +1135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG6.BorderColor = BaseColor.Black;
             _radioG6.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("WEAVING 2"))
+            if (weightunit.Contains("WEAVING 2"))
             {
                 _radioG6.Checked = true;
                 flag = true;
@@ -939,7 +1160,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountWeaving2.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountWeaving2VB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -960,7 +1192,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             _radioG3.BorderColor = BaseColor.Black;
             _radioG3.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-            if (viewModel.numberVB.UnitLoad.ToUpper().Contains("KONFEKSI 2A"))
+            if (weightunit.Contains("KONFEKSI 2A"))
             {
                 _radioG3.Checked = true;
                 flag = true;
@@ -985,7 +1217,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                var nom = "";
+
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                {
+                    nom = viewModel.AmountKonfeksi2A.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+                else
+                {
+                    nom = viewModel.AmountKonfeksi2AVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
+                }
+
+                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -1152,12 +1395,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             {
                 if (itm.isGetPPh == true && itm.IncomeTaxBy == "Supplier")
                 {
-                    if (itm.incomeTax.rate.Contains("."))
-                    {
-                        itm.incomeTax.rate = itm.incomeTax.rate.Replace(".", ",");
-                    }
+                    //if (itm.IncomeTax.rate.GetValueOrDefault().Contains("."))
+                    //{
+                    //    itm.IncomeTax.rate = itm.incomeTax.rate.Replace(".", ",");
+                    //}
 
-                    val += itm.Amount * (Convert.ToDecimal(itm.incomeTax.rate) / 100);
+                    val += itm.Amount.GetValueOrDefault() * ((decimal)itm.IncomeTax.rate.GetValueOrDefault() / 100);
                 }
 
             }

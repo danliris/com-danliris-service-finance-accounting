@@ -14,5 +14,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public Product_VB product { get; set; }
         public string productRemark { get; set; }
         public bool includePpn { get; set; }
+        public bool useVat { get; set; }
     }    
 }

@@ -1,5 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Sales.Lib.Utilities;
 using iTextSharp.text;
@@ -119,14 +121,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
 
                 foreach (var itm2 in itm1.Details)
                 {
-                    convertCurrency += itm2.priceBeforeTax * itm2.dealQuantity;
+                    var price = itm2.priceBeforeTax * itm2.dealQuantity;
+                    if (itm2.useVat && !itm2.includePpn)
+                        price += price * (decimal)0.1;
+                    convertCurrency += price;
                     Usage += itm2.product.name + ", ";
                 }
             }
             Usage = Usage.Remove(Usage.Length - 2);
             PoNumber = PoNumber.Remove(PoNumber.Length - 2);
 
-            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Symbol} " + viewModel.VBMoney.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Code} " + viewModel.VBMoney.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
 
@@ -144,12 +149,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             }
             else
             {
-                TotalPaidString = NumberToTextEN.toWords(decimal.ToDouble(viewModel.VBMoney));
+                TotalPaidString = NumberToTextIDN.terbilang(decimal.ToDouble(viewModel.VBMoney));
                 CurrencySay = viewModel.Currency.Description;
                 CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CurrencySay.ToLower());
             }            
 
-            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + CurrencySay, normal_font);
+            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + viewModel.Currency.Code, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("No PO", normal_font);
@@ -163,7 +168,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Symbol} " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody.Phrase = new Phrase($"{viewModel.Currency.Code} " + convertCurrency.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("Kegunaan", normal_font);

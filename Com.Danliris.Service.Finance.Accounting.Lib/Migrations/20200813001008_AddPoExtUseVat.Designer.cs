@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200813001008_AddPoExtUseVat")]
+    partial class AddPoExtUseVat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1885,13 +1887,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("IncomeTaxBy")
                         .HasMaxLength(64);
 
-                    b.Property<int>("IncomeTaxId")
+                    b.Property<string>("IncomeTaxId")
                         .HasMaxLength(64);
 
                     b.Property<string>("IncomeTaxName")
                         .HasMaxLength(64);
 
-                    b.Property<double>("IncomeTaxRate")
+                    b.Property<string>("IncomeTaxRate")
                         .HasMaxLength(64);
 
                     b.Property<bool>("IsDeleted");
@@ -1925,8 +1927,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("SupplierName")
                         .HasMaxLength(64);
-
-                    b.Property<double>("Total");
 
                     b.Property<int>("VBRealizationId");
 

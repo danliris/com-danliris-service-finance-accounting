@@ -127,7 +127,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
 
-            var result = service.Read(1, 1, "{}", "", 1);
+            var result = service.Read(1, 1, "{}", "", 0, 0, 0, null, null, 0);
             Assert.NotNull(result);
         }
 
