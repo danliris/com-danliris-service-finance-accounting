@@ -97,7 +97,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             CreditorAccountUnitPaymentOrderPostedViewModel postedData = new CreditorAccountUnitPaymentOrderPostedViewModel()
             {
                 InvoiceNo = "InvoiceNo",
-                CreditorAccounts = null
+                CreditorAccounts = null,
+                MemoDate =DateTimeOffset.Now,
+                MemoNo ="1",
+                PaymentDuration= "PaymentDuration"
             };
             var updateResponse = await service.UpdateFromUnitPaymentOrderAsync(postedData);
 

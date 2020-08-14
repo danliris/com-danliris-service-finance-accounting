@@ -146,7 +146,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
         }
 
         [Fact]
-        public async Task Should_Success_Update_Model()
+        public async Task Should_Success_UpdateAsync()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
@@ -161,7 +161,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
         }
 
         [Fact]
-        public async Task Should_Success_Update_Model_2()
+        public async Task Should_Success_UpdateStatusAsync()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
@@ -175,6 +175,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbNonPORequest
             var result = await service.UpdateStatusAsync(modelList, "user");
 
             Assert.NotEqual(1, result);
+        }
+
+        [Fact]
+        public async Task Should_ThrowsException_UpdateStatusAsync()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new VbNonPORequestService(dbContext, serviceProviderMock.Object);
+            var dataUtil = new VbNonPORequestDataUtil(service);
+
+
+            await Assert.ThrowsAsync<Exception>(()=>service.UpdateStatusAsync(null, "user"));
+           
         }
 
         [Fact]

@@ -293,6 +293,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             Assert.NotNull(reportResponse2);
         }
 
+
         [Fact]
         public async Task Should_Success_Generate_SubLedger()
         {
@@ -458,6 +459,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var model = _dataUtil(service).GetNewPostedData();
             await service.CreateAsync(model);
 
+            var response = await service.GetGeneralLedgerReportXls(DateTime.Now.AddYears(-1), DateTime.Now.AddYears(1), 0);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetGeneralLedgerReportXls_When_DataNoExist()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+          
             var response = await service.GetGeneralLedgerReportXls(DateTime.Now.AddYears(-1), DateTime.Now.AddYears(1), 0);
 
             Assert.NotNull(response);

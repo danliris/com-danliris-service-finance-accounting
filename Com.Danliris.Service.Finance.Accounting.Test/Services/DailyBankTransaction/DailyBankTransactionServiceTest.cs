@@ -88,6 +88,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public void Should_Success_GenerateExcel_when_dataEmpty()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+           
+            var Response = service.GenerateExcel(0, 0, 0, 0);
+            Assert.NotNull(Response);
+        }
+
+        [Fact]
         public async Task Should_Success_Get_Report()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
@@ -510,6 +519,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             var data = service.GenerateExcelDailyBalance(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), 0);
             Assert.NotNull(data);
+        }
+
+        [Fact]
+        public void Should_Success_ReportDailyBalance_Excel_When_DataNoExist()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            
+            var result = service.GenerateExcelDailyBalance(1, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), 0);
+            Assert.NotNull(result);
         }
 
         [Fact]
