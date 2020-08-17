@@ -22,6 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Utilities
             Assert.NotNull(terbilang);
         }
 
+
         //[Fact]
         //public void Should_Success_Terbilang_IsNegative_Decimal()
         //{

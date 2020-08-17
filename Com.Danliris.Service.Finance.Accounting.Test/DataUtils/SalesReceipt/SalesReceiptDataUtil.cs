@@ -63,25 +63,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.SalesReceipt
                         OverPaid = 0,
                         IsPaidOff = false,
                     },
-                    new SalesReceiptDetailModel()
-                    {
-                        SalesInvoiceId = Convert.ToInt32(1),
-                        SalesInvoiceNo = "SalesInvoiceNo",
-                        DueDate = DateTimeOffset.UtcNow.AddYears(2),
-                        VatType = "PPN BUMN",
-                        Tempo = 16,
-                        CurrencyId = 1,
-                        CurrencyCode = "USD",
-                        CurrencySymbol = "$",
-                        CurrencyRate = 14447,
-                        TotalPayment = 10000,
-                        TotalPaid = 1000,
-                        Paid = 1000,
-                        Nominal = 1000,
-                        Unpaid = 8000,
-                        OverPaid = 0,
-                        IsPaidOff = false,
-                    }
+                   
                 }
             };
 

@@ -351,6 +351,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             nullVM.PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>();
 
             Assert.True(nullVM.Validate(null).Count() > 0);
+
             PurchasingDispositionAcceptanceViewModel vm = new PurchasingDispositionAcceptanceViewModel();
             vm.PurchasingDispositionExpedition = new List<PurchasingDispositionAcceptanceItemViewModel>()
             {
