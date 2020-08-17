@@ -160,7 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 }
             }
 
-            var currencysymbol = viewModel.numberVB.CurrencySymbol;
+            var currencyCode = viewModel.numberVB.CurrencyCode;
             var currencydescription = viewModel.numberVB.CurrencyDescription;
 
             foreach (var itm in viewModel.Items)
@@ -190,7 +190,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     total_all = itm.Amount.GetValueOrDefault();
                 }
 
-                cellHeaderBody1.Phrase = new Phrase($"{currencysymbol}        " + Convert_Rate(itm.Amount.GetValueOrDefault(), currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody1.Phrase = new Phrase($"{currencyCode}        " + Convert_Rate(itm.Amount.GetValueOrDefault(), currencycode, currencyrate).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
                 count_price += Convert_Rate(total_all, currencycode, currencyrate);
                 total_realization += Convert_Rate(itm.Amount.GetValueOrDefault(), currencycode, currencyrate);
@@ -203,7 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody1a.Colspan = 2;
             cellHeaderBody1a.Phrase = new Phrase("Jumlah Realisasi", normal_font);
             headerTable3.AddCell(cellHeaderBody1a);
-            cellHeaderBody1b.Phrase = new Phrase($"{currencysymbol}       " + total_realization.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1b.Phrase = new Phrase($"{currencyCode}       " + total_realization.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1b);
 
 
@@ -215,7 +215,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody1a1.Colspan = 2;
             cellHeaderBody1a1.Phrase = new Phrase("PPn", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
-            cellHeaderBody1b1.Phrase = new Phrase($"{currencysymbol}       " + (count_price - total_realization).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1b1.Phrase = new Phrase($"{currencyCode}       " + (count_price - total_realization).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1b1);
 
             cellHeaderBody1b1.Phrase = new Phrase(" ", normal_font);
@@ -225,7 +225,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody1a1.Colspan = 2;
             cellHeaderBody1a1.Phrase = new Phrase("PPh", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
-            cellHeaderBody1b1.Phrase = new Phrase($"{currencysymbol}       " + (GetPPhValue(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1b1.Phrase = new Phrase($"{currencyCode}       " + (GetPPhValue(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1b1);
 
             cellHeaderBody1b2.Phrase = new Phrase(" ", normal_font);
@@ -236,19 +236,26 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody1a2.Phrase = new Phrase("Total Keseluruhan", normal_font);
             var grandTotal = count_price - GetPPhValue(viewModel);
             headerTable3.AddCell(cellHeaderBody1a2);
-            cellHeaderBody1b2.Phrase = new Phrase($"{currencysymbol}       " + grandTotal.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1b2.Phrase = new Phrase($"{currencyCode}       " + grandTotal.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1b2);
 
             //cellHeaderBody1.Colspan = 2;
             cellHeaderBody6.Colspan = 2;
             //cellHeaderBody6.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody6);
-            cellHeaderBody6.Phrase = new Phrase($"Tanggal VB : {viewModel.numberVB.Date?.AddHours(timeoffsset).ToString("dd-MMMM-yy", new CultureInfo("id-ID"))}", normal_font);
+            var vbDate = viewModel.numberVB.Date?.AddHours(timeoffsset).ToString("dd-MMMM-yy", new CultureInfo("id-ID"));
+            if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                if (viewModel.numberVB != null && !string.IsNullOrWhiteSpace(viewModel.numberVB.VBNo))
+                    vbDate = viewModel.numberVB.Date?.AddHours(timeoffsset).ToString("dd-MMMM-yy", new CultureInfo("id-ID"));
+                else
+                    vbDate = "";
+
+            cellHeaderBody6.Phrase = new Phrase($"Tanggal VB : {vbDate}", normal_font);
             headerTable3.AddCell(cellHeaderBody6);
             //
             cellHeaderBody1.Phrase = new Phrase($"No.VB: {viewModel.numberVB.VBNo}", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
-            cellHeaderBody1.Phrase = new Phrase($"{currencysymbol}        " + viewModel.numberVB.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1.Phrase = new Phrase($"{currencyCode}        " + viewModel.numberVB.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1);
 
             var priceterbilang = count_price;
@@ -268,7 +275,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 cellHeaderBody5.Phrase = new Phrase("Kurang", bold_font);
                 headerTable3.AddCell(cellHeaderBody5);
 
-                cellHeaderBody5a.Phrase = new Phrase($"({currencysymbol}      " + res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
+                cellHeaderBody5a.Phrase = new Phrase($"({currencyCode}      " + res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
                 headerTable3.AddCell(cellHeaderBody5a);
             }
             else
@@ -276,7 +283,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 cellHeaderBody5.Phrase = new Phrase("Sisa", bold_font);
                 headerTable3.AddCell(cellHeaderBody5);
 
-                cellHeaderBody5a.Phrase = new Phrase($"{currencysymbol}       " + (res * -1).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody5a.Phrase = new Phrase($"{currencyCode}       " + (res * -1).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                 headerTable3.AddCell(cellHeaderBody5a);
             }
 
@@ -297,7 +304,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             cellHeaderBody4a.Phrase = new Phrase("Terbilang : ", normal_font);
             headerTable3.AddCell(cellHeaderBody4a);
             cellHeaderBody4b.Colspan = 2;
-            cellHeaderBody4b.Phrase = new Phrase(Nom(grandTotal, currencysymbol, currencydescription), normal_font);
+            cellHeaderBody4b.Phrase = new Phrase(Nom(grandTotal, currencyCode, currencydescription), normal_font);
             headerTable3.AddCell(cellHeaderBody4b);
             //cellHeaderBody4b.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody4b);
@@ -331,7 +338,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             {
                 weightunit = viewModel.numberVB.UnitLoad.ToUpper();
             }
-            else if(viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+            else if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
             {
                 if (viewModel.Spinning1 == true)
                 {
@@ -467,14 +474,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
             {
                 var nom = "";
 
-                if(viewModel.TypeVBNonPO == "Tanpa Nomor VB")
+                if (viewModel.TypeVBNonPO == "Tanpa Nomor VB")
                 {
                     nom = viewModel.AmountSpinning1.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
@@ -483,7 +490,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountSpinning1VB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8); //total
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8); //total
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -525,7 +532,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -541,7 +548,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountPrintingVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -585,7 +592,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -601,7 +608,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountKonfeksi2BVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -643,7 +650,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -659,7 +666,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountSpinning2VB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -701,12 +708,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {total}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {total}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -748,7 +755,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -764,7 +771,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountKonfeksi2CVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -805,7 +812,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -821,7 +828,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountSpinning3VB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -863,7 +870,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -879,7 +886,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountKonfeksi1AVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -921,7 +928,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -937,7 +944,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountUmumVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -980,7 +987,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -996,7 +1003,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountWeaving1VB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -1037,7 +1044,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -1053,7 +1060,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountKonfeksi1BVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -1103,7 +1110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             //headerTable3a.AddCell(cellHeaderBody);
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -1119,7 +1126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountOthersVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -1162,7 +1169,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -1178,7 +1185,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountWeaving2VB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -1219,7 +1226,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             if (flag == false)
             {
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}...........", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
             else
@@ -1235,7 +1242,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                     nom = viewModel.AmountKonfeksi2AVB.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"));
                 }
 
-                cellHeaderBody.Phrase = new Phrase($"{currencysymbol}   {nom}", normal_font_8);
+                cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
             }
 
@@ -1371,7 +1378,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
         {
             string TotalPaidString;
             string CurrencySay;
-            if (symbol == "Rp")
+            if (symbol == "Rp" || symbol.ToUpper() == "IDR")
             {
                 TotalPaidString = NumberToTextIDN.terbilang((double)total);
                 CurrencySay = "Rupiah";
@@ -1380,7 +1387,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             {
                 TotalPaidString = NumberToTextEN.toWords(decimal.ToDouble(total));
                 CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(description.ToLower());
-            }            
+            }
 
             return TotalPaidString + " " + CurrencySay;
         }
