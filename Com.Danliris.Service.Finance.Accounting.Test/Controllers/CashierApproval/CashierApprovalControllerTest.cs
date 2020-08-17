@@ -89,8 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CashierApprov
             mocks.Service.Setup(f => f.CashierAproval(It.IsAny<CashierApprovalViewModel>())).ReturnsAsync(1);
 
             var controller = GetController(mocks);
-            Thread.Sleep(2000);
-
+            
             var response = await controller.Post(ViewModel);
 
             Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
