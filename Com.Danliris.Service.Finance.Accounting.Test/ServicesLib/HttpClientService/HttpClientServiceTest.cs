@@ -21,7 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ServicesLib.ValidateServi
             identity.Setup(s => s.Username).Returns("usernameTest");
             HttpClientService httpClient = new HttpClientService(identity.Object);
 
-            var result = await httpClient.GetAsync("http://localhost/");
+            var result = await httpClient.GetAsync("https://stackoverflow.com/");
             Assert.NotNull(result);
         }
 
