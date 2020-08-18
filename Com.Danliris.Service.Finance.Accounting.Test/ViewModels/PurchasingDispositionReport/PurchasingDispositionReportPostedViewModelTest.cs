@@ -9,6 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.PurchasingDisp
 {
   public  class PurchasingDispositionReportPostedViewModelTest
     {
+        [Fact]
         public void should_success_intantiate()
         {
             PurchasingDispositionReportPostedViewModel viewModel = new PurchasingDispositionReportPostedViewModel()
