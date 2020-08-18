@@ -543,6 +543,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             decimal amountumumVB = 0;
             decimal amountotherVB = 0;
 
+            var otherUnit = "";
+
             if (model.TypeWithOrWithoutVB == "Tanpa Nomor VB")
             {
                 res_unit = model.UnitLoad;
@@ -620,6 +622,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     }
                     else
                     {
+                        otherUnit = unitload[i];
                         other = true;
                         amountother = Convert.ToDecimal(amountload[i]);
                     }
@@ -703,6 +706,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                     }
                     else
                     {
+                        otherUnit = unitload[i];
                         otherVB = true;
                         amountotherVB = Convert.ToDecimal(amountload[i]);
                     }
@@ -759,6 +763,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 AmountVB = model.Amount,
                 DateVB = model.DateVB,
                 DateEstimateVB = model.DateEstimate,
+                DetailOthers = otherUnit,
 
                 Spinning1 = spinning1,
                 Spinning2 = spinning2,

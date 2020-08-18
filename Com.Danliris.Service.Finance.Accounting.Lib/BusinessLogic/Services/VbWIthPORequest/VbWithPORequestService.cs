@@ -419,10 +419,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     {
                         //Id = itm2.Id,
                         VBId = id,
-                        POId = 0,
+                        POId = itm1._id.GetValueOrDefault(),
                         PONo = itm1.no,
                         VBNo = viewModel.VBNo,
                         UnitName = itm1.unit.Name,
+                        UnitId = itm1.unit.Id,
                         Conversion = itm2.Conversion,
                         DealQuantity = itm2.dealQuantity,
                         DealUOMId = itm2.dealUom._id,
@@ -614,8 +615,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                         Price = itm2.priceBeforeTax,
                         ProductRemark = itm2.productRemark,
                         IsUseVat = itm2.includePpn,
-                        POExtUseVat = itm2.useVat
-
+                        POExtUseVat = itm2.useVat,
+                        POId = itm1._id.GetValueOrDefault(),
+                        UnitId = itm1.unit.Id
                     };
                     EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
                     _dbContext.VbRequestsDetails.Add(item);

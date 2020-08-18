@@ -346,7 +346,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                             CountItemsError++;
                             ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Tanggal Realisasi!', ";
                         }
-                        else if (item.DateDetail.HasValue && item.DateDetail.GetValueOrDefault().Date > numberVB.Date.GetValueOrDefault().Date)
+                        else if (item.DateDetail.HasValue && item.DateDetail.GetValueOrDefault().Date < numberVB.Date.GetValueOrDefault().Date)
                         {
                             CountItemsError++;
                             ItemsError += "'DateDetail': 'Tanggal Nota harus lebih kecil atau sama dengan Tanggal VB!', ";
@@ -358,7 +358,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                             ItemsError += "'Remark': 'Keterangan harus diisi!', ";
                         }
 
-                        if (item.Amount <= 0)
+                        if (item.Amount.GetValueOrDefault() <= 0)
                         {
                             CountItemsError++;
                             ItemsError += "'Amount': 'Jumlah harus lebih besar dari 0!', ";
