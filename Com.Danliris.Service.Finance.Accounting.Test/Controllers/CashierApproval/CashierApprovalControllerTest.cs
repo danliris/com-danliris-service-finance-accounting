@@ -15,6 +15,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CashierApproval
@@ -79,13 +81,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CashierApprov
             }
         }
 
+
         [Fact]
-        public void Post_Success()
+        public async Task Post_Success()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.CashierAproval(It.IsAny<CashierApprovalViewModel>())).ReturnsAsync(1);
 
-            var response = GetController(mocks).Post(ViewModel).Result;
+            var controller = GetController(mocks);
+            
+            var response = await controller.Post(ViewModel);
+
             Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
         }
 

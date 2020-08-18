@@ -19,6 +19,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
 {
@@ -62,6 +63,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
         }
 
         [Fact]
+        public async Task Should_ThrowsNullException_Create_Data()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            await Assert.ThrowsAsync<System.Exception>(() => service.CreateAsync(null));
+        }
+
+        [Fact]
         public async Task Should_Success_Create_Data()
         {
             SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
@@ -80,13 +89,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
         }
 
         [Fact]
-        public async Task Should_Success_Update_Data()
+        public async Task Should_Success_UpdateAsync_existData()
         {
             SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             SalesReceiptModel model = await _dataUtil(service).GetTestDataById();
             var newModel = await service.ReadByIdAsync(model.Id);
             var Response = await service.UpdateAsync(newModel.Id, newModel);
             Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_UpdateAsync_newData()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            SalesReceiptModel model = await _dataUtil(service).GetTestDataById();
+            var newModel = _dataUtil(service).GetNewData();
+            var Response = await service.UpdateAsync(model.Id, newModel);
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_ThrowsException_UpdateAsync()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            SalesReceiptModel model = await _dataUtil(service).GetTestDataById();
+
+            await Assert.ThrowsAsync<Exception>(() => service.UpdateAsync(model.Id, null));
+
         }
 
         [Fact]
@@ -99,6 +128,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
             var Response = await service.DeleteAsync(newModel.Id);
             Assert.NotEqual(0, Response);
         }
+
+        [Fact]
+        public async Task Should_ThrowsException_Delete_Data()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            SalesReceiptModel model = await _dataUtil(service).GetTestDataById();
+
+            await Assert.ThrowsAsync<System.Exception>(() => service.DeleteAsync(-1));
+
+        }
+
 
         [Fact]
         public void Should_No_Error_Validate_Data()

@@ -612,7 +612,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
         {
             
             var vm = new DownPaymentViewModel()
-            {
+            {  
+                CategoryAcceptance= "CategoryAcceptance",
                 DatePayment = DateTimeOffset.Now,
                 Bank = new Bank()
                 {
@@ -623,7 +624,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DownPayment
                     {
                         Code = "USD"
                     },
-
+                    
                 },
                 Buyer = new Buyer()
                 {

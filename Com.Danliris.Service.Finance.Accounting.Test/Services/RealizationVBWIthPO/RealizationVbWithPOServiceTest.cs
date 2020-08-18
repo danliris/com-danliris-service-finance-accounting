@@ -217,6 +217,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         }
 
         [Fact]
+        public async Task UpdateAsync_Throws_NotImplementedException()
+        {
+            RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+            RealizationVbWithPOViewModel dataVm = _dataUtil(service).GetNewViewModel();
+
+            await Assert.ThrowsAsync<NotImplementedException>(() => service.UpdateAsync(dataVm.Id, dataVm));
+
+        }
+        [Fact]
         public void Should_No_Error_Validate_Data_False()
         {
             RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);

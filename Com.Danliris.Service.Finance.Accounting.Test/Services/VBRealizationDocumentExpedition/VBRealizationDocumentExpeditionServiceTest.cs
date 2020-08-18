@@ -132,6 +132,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
         }
 
         [Fact]
+        public void Read_with_Data_Return_Success()
+        {
+            //Setup
+            FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+            var data = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
+            
+            //Act
+            var result = service.Read(1, 1, "{}","", data.Position,data.VBId, data.VBRealizationId, data.VBRealizationDate,data.VBRequestName,data.UnitId);
+           
+            //Assert
+            Assert.NotNull(result);
+        }
+
+        [Fact]
         public async Task Reject_Return_Success()
         {
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
