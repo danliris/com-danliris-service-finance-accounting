@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             _DetailDbSet = _dbContext.Set<RealizationVbDetailModel>();
         }
 
-        public Task<int> CreateAsync(RealizationVbModel model, RealizationVbWithPOViewModel viewmodel)
+        public async Task<int> CreateAsync(RealizationVbModel model, RealizationVbWithPOViewModel viewmodel)
         {
             model.VBNoRealize = GetVbRealizePoNo(model);
 
@@ -69,8 +69,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
             //return _dbContext.SaveChangesAsync();
 
-            _dbContext.SaveChangesAsync();
-            return _iVBRealizationDocumentExpeditionService.InitializeExpedition(model.Id);
+            await _dbContext.SaveChangesAsync();
+            return await _iVBRealizationDocumentExpeditionService.InitializeExpedition(model.Id);
         }
 
         private string GetVbRealizePoNo(RealizationVbModel model)
