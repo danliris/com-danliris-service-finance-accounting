@@ -1385,7 +1385,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             }
             else
             {
-                TotalPaidString = NumberToTextEN.toWords(decimal.ToDouble(total));
+                TotalPaidString = NumberToTextIDN.terbilang((double)total);
                 CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(description.ToLower());
             }
 

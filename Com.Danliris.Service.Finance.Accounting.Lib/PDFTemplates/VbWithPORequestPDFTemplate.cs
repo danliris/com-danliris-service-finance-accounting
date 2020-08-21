@@ -144,17 +144,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBWIthPO
             string CurrencySay;
             if (viewModel.Currency.Code == "IDR")
             {
-                TotalPaidString = NumberToTextIDN.terbilang(decimal.ToDouble(viewModel.VBMoney));
+                TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.VBMoney);
                 CurrencySay = "Rupiah";
             }
             else
             {
-                TotalPaidString = NumberToTextIDN.terbilang(decimal.ToDouble(viewModel.VBMoney));
+                TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.VBMoney);
                 CurrencySay = viewModel.Currency.Description;
                 CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CurrencySay.ToLower());
             }            
 
-            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + viewModel.Currency.Code, normal_font);
+            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + CurrencySay, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("No PO", normal_font);
