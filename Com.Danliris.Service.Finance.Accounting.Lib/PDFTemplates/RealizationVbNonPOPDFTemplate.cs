@@ -1416,7 +1416,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
                     val += itm.Amount.GetValueOrDefault() * ((decimal)itm.IncomeTax.rate.GetValueOrDefault() / 100);
                 }
-
             }
 
             return val;
