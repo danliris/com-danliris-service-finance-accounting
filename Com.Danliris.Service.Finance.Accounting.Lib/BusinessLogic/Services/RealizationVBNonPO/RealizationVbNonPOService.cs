@@ -307,19 +307,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 val_result = val_result.Remove(val_result.Length - 1);
                 model.DateEstimate = viewmodel.DateEstimateVB.GetValueOrDefault();
                 model.RequestVbName = "";
-                model.UnitId = viewmodel.Unit.Id;
-                model.UnitCode = viewmodel.Unit.Code;
-                model.UnitName = viewmodel.Unit.Name;
+                model.UnitId = (viewmodel.Unit?.Id).GetValueOrDefault();
+                model.UnitCode = viewmodel.Unit?.Code;
+                model.UnitName = viewmodel.Unit?.Name;
                 model.DateVB = viewmodel.DateVB.GetValueOrDefault();
                 model.Amount_VB = 0;
-                model.CurrencyCode = viewmodel.Currency.Code;
-                model.CurrencyRate = viewmodel.Currency.Rate;
-                model.CurrencyDescription = viewmodel.Currency.Description;
-                model.CurrencySymbol = viewmodel.Currency.Symbol;
+                model.CurrencyCode = viewmodel.Currency?.Code;
+                model.CurrencyRate = (viewmodel.Currency?.Rate).GetValueOrDefault();
+                model.CurrencyDescription = viewmodel.Currency?.Description;
+                model.CurrencySymbol = viewmodel.Currency?.Symbol;
                 model.VBRealizeCategory = "NONPO";
                 model.UsageVBRequest = "";
-                model.DivisionId = viewmodel.Division.Id;
-                model.DivisionName = viewmodel.Division.Name;
+                model.DivisionId = (viewmodel.Division?.Id).GetValueOrDefault();
+                model.DivisionName = viewmodel.Division?.Name;
             }
 
             model.UnitLoad = result;
@@ -910,19 +910,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
 
             model.DateEstimate = viewModel.DateEstimateVB.GetValueOrDefault();
             model.RequestVbName = "";
-            model.UnitId = viewModel.Unit.Id;
-            model.UnitCode = viewModel.Unit.Code;
-            model.UnitName = viewModel.Unit.Name;
+            model.UnitId = (viewModel.Unit?.Id).GetValueOrDefault();
+            model.UnitCode = viewModel.Unit?.Code;
+            model.UnitName = viewModel.Unit?.Name;
             model.DateVB = viewModel.DateVB.GetValueOrDefault();
             model.Amount_VB = 0;
-            model.CurrencyCode = viewModel.Currency.Code;
-            model.CurrencyRate = viewModel.Currency.Rate;
-            model.CurrencyDescription = viewModel.Currency.Description;
-            model.CurrencySymbol = viewModel.Currency.Symbol;
+            model.CurrencyCode = viewModel.Currency?.Code;
+            model.CurrencyRate = (viewModel.Currency?.Rate).GetValueOrDefault();
+            model.CurrencyDescription = viewModel.Currency?.Description;
+            model.CurrencySymbol = viewModel.Currency?.Symbol;
             model.VBRealizeCategory = "NONPO";
             model.UsageVBRequest = "";
-            model.DivisionId = viewModel.Division.Id;
-            model.DivisionName = viewModel.Division.Name;
+            model.DivisionId = (viewModel.Division?.Id).GetValueOrDefault();
+            model.DivisionName = viewModel.Division?.Name;
 
             _dbContext.RealizationVbs.Update(model);
             _dbContext.SaveChanges();
