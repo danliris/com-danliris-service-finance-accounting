@@ -65,6 +65,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBVerifi
             }
         }
 
+        [HttpGet("to-verified")]
+        public IActionResult GetToVerified(int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        {
+            try
+            {
+                var queryResult = _service.ReadToVerified(page, size, order, select, keyword, filter);
+
+                var result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(_mapper, queryResult.Data, page, size, queryResult.Count, queryResult.Data.Count, queryResult.Order, select);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
         //list of verification result
         [HttpGet("verified")]
         public IActionResult GetVerification(int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")

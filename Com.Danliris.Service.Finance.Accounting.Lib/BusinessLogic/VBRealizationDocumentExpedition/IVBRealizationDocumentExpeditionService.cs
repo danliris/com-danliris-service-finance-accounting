@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
     public interface IVBRealizationDocumentExpeditionService
     {
         Task<int> InitializeExpedition(int vbRealizationId);
+        Task<int> UpdateExpeditionByRealizationId(int vbRealizationId);
         Task<int> SubmitToVerification(List<int> vbRealizationIds);
         Task<int> VerificationDocumentReceipt(List<int> vbRealizationIds);
         Task<int> VerifiedToCashier(List<int> vbRealizationIds);
@@ -19,6 +20,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId);
         ReadResponse<VBRealizationDocumentExpeditionModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId);
         Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25);
-
     }
 }

@@ -39,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
         public ReadResponse<VbVerificationList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.RealizationVbs.Where(a => a.Position == (int)VBRealizationPosition.Verification).AsQueryable();
+            var query = _dbContext.RealizationVbs.AsQueryable();
             var query2 = _RequestDbSet.AsQueryable();
 
             var searchAttributes = new List<string>()
@@ -245,6 +245,76 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
             return result;
 
+        }
+
+        public ReadResponse<VbVerificationList> ReadToVerified(int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            var query = _dbContext.RealizationVbs.Where(a => a.Position == (int)VBRealizationPosition.Verification).AsQueryable();
+            var query2 = _RequestDbSet.AsQueryable();
+
+            var searchAttributes = new List<string>()
+            {
+                "VBNo",
+                "UnitLoad",
+                "VBNoRealize",
+                "RequestVbName",
+                "CurrencyCode",
+                "UnitName",
+                "VBRealizeCategory"
+            };
+
+            query = QueryHelper<RealizationVbModel>.Search(query, searchAttributes, keyword);
+
+            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            query = QueryHelper<RealizationVbModel>.Filter(query, filterDictionary);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<RealizationVbModel>.Order(query, orderDictionary);
+
+            var pageable = new Pageable<RealizationVbModel>(query, page - 1, size);
+
+            var data = query.Include(s => s.RealizationVbDetail).Join(query2,
+               (real) => real.VBNo,
+               (rqst) => rqst.VBNo,
+               (real, rqst) => new VbVerificationList()
+               {
+                   Id = real.Id,
+                   VBNo = real.VBNo,
+                   DateRealization = real.Date,
+                   DateEstimate = real.DateEstimate,
+                   UnitLoad = real.UnitLoad,
+                   Amount_Realization = real.Amount,
+                   VBNoRealize = real.VBNoRealize,
+                   RequestVbName = real.RequestVbName,
+                   DateVB = real.DateVB,
+                   Currency = real.CurrencyCode,
+                   UnitName = real.UnitName,
+                   VBRealizeCategory = real.VBRealizeCategory.Contains("NONPO") ? "Non PO" : "PO",
+                   Diff = real.DifferenceReqReal,
+                   Status_ReqReal = real.StatusReqReal,
+
+                   Usage = rqst.Usage,
+                   Amount_Request = real.Amount_VB,
+                   Amount_Vat = real.VatAmount,
+
+                   DetailItems = real.RealizationVbDetail.Select(s => new ModelVbItem
+                   {
+                       DateSPB = s.DateSPB,
+                       NoSPB = s.NoSPB,
+                       SupplierName = s.SupplierName,
+                       PriceTotalSPB = s.PriceTotalSPB,
+                       Date = s.DateNonPO,
+                       Remark = s.Remark,
+                       Amount = s.AmountNonPO,
+                       isGetPPn = s.isGetPPn
+
+                   }).ToList()
+
+               }).ToList();
+
+            int totalData = pageable.TotalCount;
+
+            return new ReadResponse<VbVerificationList>(data, totalData, orderDictionary, new List<string>());
         }
     }
 }

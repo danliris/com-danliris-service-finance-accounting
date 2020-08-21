@@ -40,13 +40,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             if (viewModel.Currency.Symbol == "Rp")
             {
                 convertCurrency = viewModel.Amount;
-                TotalPaidString = NumberToTextIDN.terbilang(decimal.ToDouble(convertCurrency));
+                TotalPaidString = NumberToTextIDN.terbilang((double)convertCurrency);
                 CurrencySay = "Rupiah";
             }
             else
             {
                 convertCurrency = viewModel.Amount;
-                TotalPaidString = NumberToTextIDN.terbilang(decimal.ToDouble(convertCurrency));
+                TotalPaidString = NumberToTextIDN.terbilang((double)convertCurrency);
 
                 CurrencySay = viewModel.Currency.Description;
                 CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CurrencySay.ToLower());
@@ -139,7 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + viewModel.Currency.Code, normal_font);
+            cellHeaderBody.Phrase = new Phrase(TotalPaidString + " " + CurrencySay, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
 

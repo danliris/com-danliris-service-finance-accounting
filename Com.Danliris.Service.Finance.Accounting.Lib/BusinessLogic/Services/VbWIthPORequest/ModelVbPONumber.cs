@@ -6,5 +6,6 @@
         public string PONo { get; set; }
         public decimal Price { get; set; }
         public decimal DealQuantity { get; set; }
+        public int POId { get; set; }
     }
 }
