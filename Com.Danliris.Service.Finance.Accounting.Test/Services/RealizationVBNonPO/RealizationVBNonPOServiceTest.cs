@@ -335,7 +335,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
+
             var dataUtil = new RealizationVBNonPODataUtil(service);
             //var modelToUpdate = await dataUtil.GetCreatedData();
             var viewmodel = dataUtil.GetNewViewModel();
@@ -368,6 +370,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var viewmodel = dataUtil.GetNewViewModel();
@@ -400,6 +403,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var viewmodel = dataUtil.GetNewViewModelNew();
@@ -432,6 +436,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var viewmodel = dataUtil.GetNewViewModelNew();
@@ -464,6 +469,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var viewmodel = dataUtil.GetNewViewModelNew();
@@ -734,6 +741,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             public Task<int> SubmitToVerification(List<int> vbRealizationIds)
             {
                 throw new NotImplementedException();
+            }
+
+            public Task<int> UpdateExpeditionByRealizationId(int vbRealizationId)
+            {
+                return Task.FromResult(1);
             }
 
             public Task<int> VerificationDocumentReceipt(List<int> vbRealizationIds)
