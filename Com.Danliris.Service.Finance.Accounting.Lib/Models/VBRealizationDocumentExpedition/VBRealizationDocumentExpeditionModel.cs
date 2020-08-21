@@ -140,8 +140,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             VBRealizationAmount = realizationVB.Amount;
             CurrencyCode = realizationVB.CurrencyCode;
             CurrencyRate = (double)realizationVB.CurrencyRate;
-            VBType = realizationVB.VBRealizeCategory;
-            throw new NotImplementedException();
         }
     }
 }

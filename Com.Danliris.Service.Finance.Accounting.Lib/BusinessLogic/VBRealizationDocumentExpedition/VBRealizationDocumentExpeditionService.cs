@@ -266,9 +266,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var model = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId);
 
             model.UpdateVBRealizationInfo(realizationVB);
-
-
-            throw new NotImplementedException();
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.VBRealizationDocumentExpeditions.Update(model);
+            return _dbContext.SaveChangesAsync();
         }
     }
 }
