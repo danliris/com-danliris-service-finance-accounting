@@ -291,6 +291,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
                 throw new NotImplementedException();
             }
 
+            public Task<int> UpdateExpeditionByRealizationId(int vbRealizationId)
+            {
+                throw new NotImplementedException();
+            }
+
             public Task<int> VerificationDocumentReceipt(List<int> vbRealizationIds)
             {
                 throw new NotImplementedException();
