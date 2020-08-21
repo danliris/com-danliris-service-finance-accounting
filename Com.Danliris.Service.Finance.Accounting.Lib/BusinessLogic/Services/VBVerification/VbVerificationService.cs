@@ -39,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBV
 
         public ReadResponse<VbVerificationList> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.RealizationVbs.Where(a => a.Position == (int)VBRealizationPosition.Purchasing).AsQueryable();
+            var query = _dbContext.RealizationVbs.AsQueryable();
             var query2 = _RequestDbSet.AsQueryable();
 
             var searchAttributes = new List<string>()
