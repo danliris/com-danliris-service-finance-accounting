@@ -111,8 +111,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
 
         public void CashierVerification(string name)
         {
-            VerifiedToCashierBy = name;
-            VerifiedToCashierDate = DateTimeOffset.Now;
+            CashierReceiptBy = name;
+            CashierReceiptDate = DateTimeOffset.Now;
             Position = (int)VBRealizationPosition.Cashier;
         }
 

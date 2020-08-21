@@ -49,6 +49,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
             model.isVerified = false;
             model.isClosed = false;
             model.isNotVeridied = false;
+            model.VBId = viewmodel.numberVB != null ? viewmodel.numberVB.Id.GetValueOrDefault() : 0;
+            
             decimal temp_total = 0;
             decimal convert_total = 0;
             decimal total_vat = 0;
@@ -201,6 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
                 //model.VBNo = "";
                 model.DateEstimate = viewmodel.DateEstimateVB.GetValueOrDefault();
                 model.RequestVbName = "";
+                model.UnitId = viewmodel.Unit.Id;
                 model.UnitCode = viewmodel.Unit.Code;
                 model.UnitName = viewmodel.Unit.Name;
                 model.DateVB = viewmodel.DateVB.GetValueOrDefault();
@@ -851,6 +854,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rea
         public Task<int> UpdateAsync(int id, RealizationVbNonPOViewModel viewModel)
         {
             var model = MappingData2(id, viewModel);
+            model.VBId = viewModel.numberVB != null ? viewModel.numberVB.Id.GetValueOrDefault() : 0;
 
             if (viewModel.TypeVBNonPO == "Dengan Nomor VB")
             {
