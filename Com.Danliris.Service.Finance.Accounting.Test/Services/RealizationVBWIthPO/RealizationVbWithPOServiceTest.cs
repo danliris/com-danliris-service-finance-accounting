@@ -225,14 +225,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
             await Assert.ThrowsAsync<NotImplementedException>(() => service.UpdateAsync(dataVm.Id, dataVm));
 
         }
-        [Fact]
-        public void Should_No_Error_Validate_Data_False()
-        {
-            RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-            RealizationVbWithPOViewModel vm = _dataUtil(service).GetNewViewModelFalse();
+        //[Fact]
+        //public void Should_No_Error_Validate_Data_False()
+        //{
+        //    RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
+        //    RealizationVbWithPOViewModel vm = _dataUtil(service).GetNewViewModelFalse();
 
-            Assert.True(vm.Validate(null).Count() > 0);
-        }
+        //    Assert.True(vm.Validate(null).Count() > 0);
+        //}
 
         internal class RealizationVbWithPOServiceHelper : IVBRealizationDocumentExpeditionService
         {
