@@ -84,7 +84,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     PONo = s.PONo,
                     VBId = s.VBId,
                     DealQuantity = s.DealQuantity,
-                    Price = s.Price
+                    Price = s.Price,
+                    POId = s.POId
                 }).ToList()
             }).ToList();
 
@@ -144,7 +145,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     PONo = s.PONo,
                     VBId = s.VBId,
                     DealQuantity = s.DealQuantity,
-                    Price = s.Price
+                    Price = s.Price,
+                    POId = s.POId
                 }).ToList()
             }).ToList();
 
@@ -600,6 +602,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequ
                     {
                         VBNo = VbNo,
                         PONo = itm1.no,
+                        //POId = itm1._id.GetValueOrDefault(),
                         UnitName = itm1.unit.Name,
                         VBId = value,
                         ProductId = itm2.product._id,
