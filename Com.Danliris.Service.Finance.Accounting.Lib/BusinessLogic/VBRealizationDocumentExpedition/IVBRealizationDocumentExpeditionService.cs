@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
     public interface IVBRealizationDocumentExpeditionService
     {
         Task<int> InitializeExpedition(int vbRealizationId);
+        Task<int> UpdateExpeditionByRealizationId(int vbRealizationId);
         Task<int> SubmitToVerification(List<int> vbRealizationIds);
         Task<int> VerificationDocumentReceipt(List<int> vbRealizationIds);
         Task<int> VerifiedToCashier(List<int> vbRealizationIds);

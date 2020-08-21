@@ -123,5 +123,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             NotVerifiedReason = reason;
             Position = (int)VBRealizationPosition.NotVerified   ;
         }
+
+        public void UpdateVBRealizationInfo(RealizationVbModel realizationVB)
+        {
+            VBRealizationId = realizationVB.Id;
+            VBId = realizationVB.VBId;
+            VBNo = realizationVB.VBNo;
+            VBRealizationNo = realizationVB.VBNoRealize;
+            VBRealizationDate = realizationVB.Date;
+            VBRequestName = realizationVB.RequestVbName;
+            UnitId = realizationVB.UnitId;
+            UnitName = realizationVB.UnitName;
+            DivisionId = realizationVB.DivisionId;
+            DivisionName = realizationVB.DivisionName;
+            VBAmount = realizationVB.Amount_VB;
+            VBRealizationAmount = realizationVB.Amount;
+            CurrencyCode = realizationVB.CurrencyCode;
+            CurrencyRate = (double)realizationVB.CurrencyRate;
+            VBType = realizationVB.VBRealizeCategory;
+            throw new NotImplementedException();
+        }
     }
 }
