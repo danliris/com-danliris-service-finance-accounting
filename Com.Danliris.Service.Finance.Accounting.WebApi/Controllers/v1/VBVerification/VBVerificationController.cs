@@ -70,7 +70,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBVerifi
         {
             try
             {
-                var queryResult = _service.Read(page, size, order, select, keyword, filter);
+                var queryResult = _service.ReadToVerified(page, size, order, select, keyword, filter);
 
                 var result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
