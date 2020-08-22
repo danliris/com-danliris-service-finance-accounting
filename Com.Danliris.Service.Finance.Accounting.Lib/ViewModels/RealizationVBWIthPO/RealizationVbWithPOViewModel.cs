@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 else
                 {
                     if (DateEstimate != null)
-                        yield return new ValidationResult("Tanggal Estimasi harus diisi!", new List<string> { "VBCode" });
+                        yield return new ValidationResult("Tanggal Estimasi harus diisi!", new List<string> { "DateEstimate" });
                 }
             }
 
@@ -41,7 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 
             int cnt = 0;
 
-            if (Items == null)
+            if (Items == null || Items.Count <= 0)
             {
                 yield return new ValidationResult("Data harus diisi!", new List<string> { "Item" });
             }
