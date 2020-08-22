@@ -117,6 +117,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             Assert.Null(newData);
         }
 
+
+        [Fact]
+        public async Task Should_Success_CreateAsync()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetNewData_CreditorAccountModel();
+            
+            var result = await service.CreateAsync(data);
+            Assert.NotEqual(0,result);
+        }
+
+        [Fact]
+        public async Task Should_Success_DeleteAsync()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestData_CreditorAccountModel();
+
+            var result = await service.DeleteAsync(data.Id);
+            Assert.NotEqual(0, result);
+        }
+
         [Fact]
         public async Task Should_Success_Get_UnitReceiptNote_WithoutInvoiceNo()
         {
