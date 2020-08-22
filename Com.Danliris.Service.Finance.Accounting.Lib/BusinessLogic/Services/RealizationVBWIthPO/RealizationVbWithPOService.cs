@@ -39,7 +39,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             model.VBNoRealize = GetVbRealizePoNo(model);
 
             var updateTotalRequestVb = _dbContext.VbRequests.FirstOrDefault(x => x.VBNo == model.VBNo && x.IsDeleted == false);
-            updateTotalRequestVb.Realization_Status = true;
+            if (updateTotalRequestVb != null)
+            {
+                model.RequestVbName = viewmodel.numberVB.CreateBy;
+                updateTotalRequestVb.Realization_Status = true;
+            }
 
             decimal totalAmount = 0;
 
@@ -61,7 +65,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             model.isVerified = false;
             model.isClosed = false;
             model.isNotVeridied = false;
-            model.RequestVbName = viewmodel.numberVB.CreateBy;
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
 
