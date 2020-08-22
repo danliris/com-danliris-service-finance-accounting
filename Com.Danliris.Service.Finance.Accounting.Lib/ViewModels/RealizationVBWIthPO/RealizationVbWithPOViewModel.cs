@@ -32,7 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
                 }
                 else
                 {
-                    if (DateEstimate != null)
+                    if (DateEstimate == null)
                         yield return new ValidationResult("Tanggal Estimasi harus diisi!", new List<string> { "DateEstimate" });
                 }
             }
