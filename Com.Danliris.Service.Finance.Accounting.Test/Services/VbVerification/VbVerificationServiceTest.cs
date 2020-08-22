@@ -114,9 +114,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             return new CashierApprovalDataUtil(service);
         }
 
-        private VbVerificationDataUtil _vbVerificationDataUtil(VbVerificationService service)
+        private VbVerificationDataUtil _vbVerificationDataUtil(VbVerificationService service, FinanceDbContext dbContext)
         {
-            return new VbVerificationDataUtil(service);
+            return new VbVerificationDataUtil(service,dbContext);
         }
 
         private VbNonPORequestDataUtil _dataUtil3(VbNonPORequestService service)
@@ -124,7 +124,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             return new VbNonPORequestDataUtil(service);
         }
 
-        
 
 
         [Fact]
@@ -133,23 +132,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             //Setup
             var dbContext = GetDbContext(GetCurrentAsyncMethod());
             var serviceProviderMock = GetServiceProvider();
-          
-            var realizationVbWithPOService = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
+
             var vbVerificationService = new VbVerificationService(dbContext, serviceProviderMock.Object);
-            var cashierApprovalService = new CashierApprovalService(serviceProviderMock.Object, dbContext);
           
-
-            var vbRequestModel = _realizationVbWithPODataUtil(realizationVbWithPOService).GetVbRequestModel();
-            dbContext.VbRequests.Add(vbRequestModel);
-            dbContext.SaveChanges();
-
-            var realizationVbModel = _realizationVbWithPODataUtil(realizationVbWithPOService).GetNewData();
-            var realizationVbWithPOViewModel = _realizationVbWithPODataUtil(realizationVbWithPOService).GetNewViewModel();
-
-            await realizationVbWithPOService.CreateAsync(realizationVbModel, realizationVbWithPOViewModel);
-
-            var cashierApprovalViewModel = _cashierApprovalDataUtil(cashierApprovalService).GetDataToValidate();
-            await cashierApprovalService.CashierAproval(cashierApprovalViewModel);
+            var dataRealizationVbModel = await _vbVerificationDataUtil(vbVerificationService, dbContext).GetTestData_RealizationVbModel();
+            var dataVbRequestModel = await _vbVerificationDataUtil(vbVerificationService, dbContext).GetTestData_VbRequestModel();
 
             //Act
             var response = vbVerificationService.Read(1, 1, "{}", new List<string>(), "", "{}");
@@ -159,8 +146,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
 
         }
 
-       
-
 
         [Fact]
         public async Task ReadVerification_Return_Success()
@@ -169,19 +154,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProvider();
 
-            RealizationVbWithPOService realizationVbWithPOService = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
-            VbVerificationService vbVerificationService = new VbVerificationService(dbContext, serviceProviderMock.Object);
-            RealizationVbModel realizationVbModel = _realizationVbWithPODataUtil(realizationVbWithPOService).GetNewData();
+            var vbVerificationService = new VbVerificationService(dbContext, serviceProviderMock.Object);
 
-            var vbRequestModel = _realizationVbWithPODataUtil(realizationVbWithPOService).GetDataRequestVB();
-            dbContext.VbRequests.Add(vbRequestModel);
-            dbContext.SaveChanges();
-
-            RealizationVbWithPOViewModel realizationVbWithPOViewModel = _realizationVbWithPODataUtil(realizationVbWithPOService).GetNewViewModel();
-            VbVerificationViewModel vbVerificationViewModel = _vbVerificationDataUtil(vbVerificationService).GetVbVerificationViewModel();
-
-            await realizationVbWithPOService.CreateAsync(realizationVbModel, realizationVbWithPOViewModel);
-            await vbVerificationService.CreateAsync(vbVerificationViewModel);
+            RealizationVbModel data = await _vbVerificationDataUtil(vbVerificationService, dbContext).GetTestData_RealizationVbModel();
 
             //Act
             var response = vbVerificationService.ReadVerification(1, 1, "{}", new List<string>(), "", "{}");
@@ -194,41 +169,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
 
 
         [Fact]
-        public async Task Should_Success_Create_Data()
+        public async Task Should_Success_CreateAsync()
         {
             //Setup
             var dbContext = GetDbContext(GetCurrentAsyncMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
-
+          
             VbVerificationService vbVerificationService = new VbVerificationService(dbContext, GetServiceProvider().Object);
-            RealizationVbModel dataRealizationVb = _realizationVbWithPODataUtil(service).GetNewData();
-
-            dbContext.RealizationVbs.Add(dataRealizationVb);
-            dbContext.SaveChanges();
-
-            VbVerificationViewModel viewModel = _vbVerificationDataUtil(vbVerificationService).GetVbVerificationViewModel();
-
-            //Act
-            var Response = await vbVerificationService.CreateAsync(viewModel);
-
-            //Assert
-            Assert.NotEqual(0, Response);
-        }
-
-        [Fact]
-        public async Task Should_Success_Create_Data_with_DataIsVerified()
-        {
-            //Setup
-            var dbContext = GetDbContext(GetCurrentAsyncMethod());
-            RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, GetServiceProvider().Object);
-
-            VbVerificationService vbVerificationService = new VbVerificationService(dbContext, GetServiceProvider().Object);
-            RealizationVbModel dataRealizationVb = _realizationVbWithPODataUtil(service).GetNewData();
-
-            dbContext.RealizationVbs.Add(dataRealizationVb);
-            dbContext.SaveChanges();
-
-            VbVerificationViewModel viewModel = _vbVerificationDataUtil(vbVerificationService).GetVbVerificationViewModelNotVerified();
+          
+            VbVerificationViewModel viewModel = _vbVerificationDataUtil(vbVerificationService,dbContext).Get_Verified_VbVerificationViewModel();
+            RealizationVbModel data = await _vbVerificationDataUtil(vbVerificationService, dbContext).GetTestData_RealizationVbModel();
             
             //Act
             var Response = await vbVerificationService.CreateAsync(viewModel);
@@ -237,25 +186,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             Assert.NotEqual(0, Response);
         }
 
+        [Fact]
+        public async Task Should_Success_CreateAsync_with_DataNotVerified()
+        {
+            //Setup
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            
+            VbVerificationService vbVerificationService = new VbVerificationService(dbContext, GetServiceProvider().Object);
+           
+            VbVerificationViewModel viewModel = _vbVerificationDataUtil(vbVerificationService,dbContext).Get_NotVerified_VbVerificationViewModel();
+            RealizationVbModel data = await _vbVerificationDataUtil(vbVerificationService, dbContext).GetTestData_RealizationVbModel();
+
+            //Act
+            var Response = await vbVerificationService.CreateAsync(viewModel);
+
+            //Assert
+            Assert.NotEqual(0, Response);
+        }
+
+
+       
 
         [Fact]
-        public async Task Should_Success_Read_ById()
+        public async Task Should_Success_ReadById()
         {
-           //Setup
+            //Setup
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProvider();
 
-            var realizationVbNonPOService = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var vbVerificationService = new VbVerificationService(dbContext, serviceProviderMock.Object);
-
-            var dataRequestVb = _realizationVBNonPODataUtil(realizationVbNonPOService).GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-
-            var data = await _realizationVBNonPODataUtil(realizationVbNonPOService).GetCreatedData();
-
+            RealizationVbModel data = await _vbVerificationDataUtil(vbVerificationService, dbContext).GetTestData_RealizationVbModel();
+           
             //Act
             var result = await vbVerificationService.ReadById(data.Id);
+
+            //Assert
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task ReadToVerified_Success()
+        {
+            //Setup
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProvider();
+            var vbVerificationService = new VbVerificationService(dbContext, serviceProviderMock.Object);
+
+            RealizationVbModel data = await _vbVerificationDataUtil(vbVerificationService, dbContext).GetTestData_RealizationVbModel();
+
+            //Act
+            var result =  vbVerificationService.ReadToVerified(1,25,"{}",new List<string>(),"","{}");
 
             //Assert
             Assert.NotNull(result);
