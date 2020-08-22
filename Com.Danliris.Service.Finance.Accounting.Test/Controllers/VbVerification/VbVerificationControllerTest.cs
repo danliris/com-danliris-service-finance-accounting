@@ -20,23 +20,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
 {
     public class VbVerificationControllerTest
     {
-        private VbVerificationViewModel ViewModel
-        {
-            get { return new VbVerificationViewModel(); }
-        }
-
-        private int GetStatusCode(IActionResult response)
-        {
-            return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
-        }
-
-        protected ServiceValidationException GetServiceValidationExeption()
-        {
-            var serviceProvider = new Mock<IServiceProvider>();
-            var validationResults = new List<ValidationResult>();
-            System.ComponentModel.DataAnnotations.ValidationContext validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(ViewModel, serviceProvider.Object, null);
-            return new ServiceValidationException(validationContext, validationResults);
-        }
 
         private VBVerificationController GetController(IServiceProvider serviceProvider)
         {
@@ -60,10 +43,87 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
             return controller;
         }
 
+        private Mock<IServiceProvider> GetServiceProvider()
+        {
+            Mock<IServiceProvider> serviceProviderMock = new Mock<IServiceProvider>();
+            var validateServiceMock = new Mock<IValidateService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
+            var identityServiceMock = new Mock<IIdentityService>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
+
+            var mapperMock = new Mock<IMapper>();
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
+
+            return serviceProviderMock;
+        }
+
+        private VbVerificationViewModel ViewModel
+        {
+            get { return new VbVerificationViewModel(); }
+        }
+
+        private VbVerificationList vbVerificationList
+        {
+            get
+            {
+                return new VbVerificationList()
+                {
+                    Amount_Realization=1,
+                    Amount_Request =1,
+                    Amount_Vat=1,
+                    Currency="RP",
+                    DateEstimate =DateTimeOffset.Now,
+                    DateRealization =DateTimeOffset.Now,
+                    DateVB =DateTimeOffset.Now,
+                    Diff =1,
+                    RequestVbName = "RequestVbName",
+                    Status_ReqReal = "RequestVbName",
+                    UnitLoad = "UnitLoad",
+                    UnitName = "UnitName",
+                    Usage = "Usage",
+                    VBNo = "VBNo",
+                    VBNoRealize= "VBNoRealize",
+                    VBRealizeCategory = "VBRealizeCategory",
+                    DetailItems =new List<ModelVbItem>()
+                    {
+                        new ModelVbItem()
+                        {
+                            Amount=1,
+                            DateSPB =DateTimeOffset.Now,
+                            NoSPB ="NoSPB",
+                            PriceTotalSPB=1,
+                            Remark ="Remark",
+                            isGetPPn =true,
+                            SupplierName ="SupplierName",
+                            Total =1,
+                            Date =DateTimeOffset.Now
+                        }
+                    }
+                };
+            }
+        }
+
+        private int GetStatusCode(IActionResult response)
+        {
+            return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
+        }
+
+        protected ServiceValidationException GetServiceValidationExeption()
+        {
+            var serviceProvider = new Mock<IServiceProvider>();
+            var validationResults = new List<ValidationResult>();
+            System.ComponentModel.DataAnnotations.ValidationContext validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(ViewModel, serviceProvider.Object, null);
+            return new ServiceValidationException(validationContext, validationResults);
+        }
+
         [Fact]
         public void Get_WithoutException_ReturnOK()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = GetServiceProvider();
 
             var serviceMock = new Mock<IVbVerificationService>();
             serviceMock
@@ -71,14 +131,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
                 .Returns(new ReadResponse<VbVerificationList>(new List<VbVerificationList>(), 1, new Dictionary<string, string>(), new List<string>()));
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
-
-            var validateServiceMock = new Mock<IValidateService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
-            var identityServiceMock = new Mock<IIdentityService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
-            
 
             var controller = GetController(serviceProviderMock.Object);
 
@@ -91,7 +143,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
         [Fact]
         public void Get_WithException_ReturnInternalServerError()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = GetServiceProvider();
 
             var serviceMock = new Mock<IVbWithPORequestService>();
             serviceMock
@@ -100,15 +152,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
 
-            var validateServiceMock = new Mock<IValidateService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
-            var identityServiceMock = new Mock<IIdentityService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
-            var mapperMock = new Mock<IMapper>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
 
@@ -122,7 +165,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
         [Fact]
         public void Get_WithoutException_ReturnOKReadVerification()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = GetServiceProvider();
 
             var serviceMock = new Mock<IVbVerificationService>();
             serviceMock
@@ -131,15 +174,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
 
-            var validateServiceMock = new Mock<IValidateService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
-            var identityServiceMock = new Mock<IIdentityService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
-            //var mapperMock = new Mock<IMapper>();
-            //serviceProviderMock
-            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
 
@@ -152,7 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
         [Fact]
         public void Get_WithException_ReturnInternalServerErrorReadVerification()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = GetServiceProvider(); ;
 
             var serviceMock = new Mock<IVbVerificationService>();
             serviceMock
@@ -160,16 +194,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
                 .Throws(new Exception());
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
-
-            var validateServiceMock = new Mock<IValidateService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
-            var identityServiceMock = new Mock<IIdentityService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
-            var mapperMock = new Mock<IMapper>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
 
@@ -182,7 +206,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
         [Fact]
         public async Task Post_WithoutException_ReturnCreated()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = GetServiceProvider();
 
             var serviceMock = new Mock<IVbVerificationService>();
             serviceMock
@@ -191,21 +215,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
 
-            var validateServiceMock = new Mock<IValidateService>();
-            validateServiceMock
-                .Setup(validateService => validateService.Validate(It.IsAny<VbVerificationViewModel>()))
-                .Verifiable();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
-            var identityServiceMock = new Mock<IIdentityService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
-            //var mapperMock = new Mock<IMapper>();
-            //mapperMock
-            //    .Setup(mapper => mapper.Map<VbRequestModel>(It.IsAny<VbVerificationViewModel>()))
-            //    .Returns(It.IsAny<VbRequestModel>());
-            //serviceProviderMock
-            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IMapper))).Returns(mapperMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
 
@@ -218,7 +227,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
         [Fact]
         public async Task Post_WithValidationException_ReturnBadRequest()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = GetServiceProvider();
 
             var serviceMock = new Mock<IVbVerificationService>();
             serviceMock
@@ -226,17 +235,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
                 .Throws(GetServiceValidationExeption());
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
-
-            var validateServiceMock = new Mock<IValidateService>();
-            validateServiceMock
-              .Setup(validateService => validateService.Validate(It.IsAny<VbVerificationViewModel>()))
-              .Verifiable();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
-            var identityServiceMock = new Mock<IIdentityService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
-           
 
             var controller = GetController(serviceProviderMock.Object);
 
@@ -249,7 +247,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
         [Fact]
         public async Task Post_WithException_ReturnInternalServerError()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = GetServiceProvider();
 
             var serviceMock = new Mock<IVbVerificationService>();
             serviceMock
@@ -257,17 +255,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
                 .ReturnsAsync(1);
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbWithPORequestService))).Returns(serviceMock.Object);
-
-            var validateServiceMock = new Mock<IValidateService>();
-            validateServiceMock
-                .Setup(validateService => validateService.Validate(It.IsAny<VbVerificationViewModel>()))
-                .Throws(new Exception());
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
-            var identityServiceMock = new Mock<IIdentityService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
-            
 
             var controller = GetController(serviceProviderMock.Object);
 
@@ -277,10 +264,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
 
+
+
         [Fact]
         public async Task GetById_WithoutException_ReturnOK()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = GetServiceProvider();
 
             var serviceMock = new Mock<IVbVerificationService>();
             serviceMock
@@ -288,14 +277,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
                 .ReturnsAsync(new VbVerificationViewModel());
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
-
-            var validateServiceMock = new Mock<IValidateService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
-            var identityServiceMock = new Mock<IIdentityService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
-          
 
             var controller = GetController(serviceProviderMock.Object);
 
@@ -305,10 +286,55 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
 
+
+        [Fact]
+        public void GetToVerified_Return_OK()
+        {
+            //Setup
+            var serviceProviderMock = GetServiceProvider();
+            var serviceMock = new Mock<IVbVerificationService>();
+            serviceMock
+                .Setup(service => service.ReadToVerified(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new ReadResponse<VbVerificationList>(new List<VbVerificationList>() { vbVerificationList }, 1, new Dictionary<string, string>(), new List<string>()));
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            //Act
+            var response =  controller.GetToVerified(1,25,"{}",new List<string>() { "UnitName" },"","{}");
+            var statusCode = GetStatusCode(response);
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public void GetToVerified_Return_InternalServerError()
+        {
+            //Setup
+            var serviceProviderMock = GetServiceProvider();
+            var serviceMock = new Mock<IVbVerificationService>();
+            serviceMock
+                .Setup(service => service.ReadToVerified(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
+
+            var controller = GetController(serviceProviderMock.Object);
+
+            //Act
+            var response = controller.GetToVerified();
+            var statusCode = GetStatusCode(response);
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
         [Fact]
         public async Task GetById_WithException_ReturnInternalServerError()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = GetServiceProvider();
 
             var serviceMock = new Mock<IVbVerificationService>();
             serviceMock
@@ -316,13 +342,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
                 .Throws(new Exception());
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
-
-            var validateServiceMock = new Mock<IValidateService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
-            var identityServiceMock = new Mock<IIdentityService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
 
             var controller = GetController(serviceProviderMock.Object);
 
@@ -335,7 +354,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
         [Fact]
         public async Task GetById_WithInvalidId_ReturnNotFound()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = GetServiceProvider();
 
             var serviceMock = new Mock<IVbVerificationService>();
             serviceMock
@@ -343,14 +362,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VbVerificatio
                 .ReturnsAsync((VbVerificationViewModel)null);
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(IVbVerificationService))).Returns(serviceMock.Object);
-
-            var validateServiceMock = new Mock<IValidateService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IValidateService))).Returns(validateServiceMock.Object);
-            var identityServiceMock = new Mock<IIdentityService>();
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(identityServiceMock.Object);
-           
 
             var controller = GetController(serviceProviderMock.Object);
 
