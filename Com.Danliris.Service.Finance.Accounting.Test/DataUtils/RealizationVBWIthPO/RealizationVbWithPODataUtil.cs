@@ -75,6 +75,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
         {
             return new RealizationVbWithPOViewModel()
             {
+                TypeVBNonPO= "Dengan Nomor VB",
                 Date = DateTimeOffset.Now,
                 numberVB = new DetailVB()
                 {
