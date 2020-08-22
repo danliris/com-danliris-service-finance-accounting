@@ -8,6 +8,7 @@ using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -35,10 +36,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
 
         private FinanceDbContext _dbContext(string testName)
         {
+            ServiceProvider serviceProvider = new ServiceCollection()
+                .AddEntityFrameworkInMemoryDatabase()
+                .BuildServiceProvider();
+
             DbContextOptionsBuilder<FinanceDbContext> optionsBuilder = new DbContextOptionsBuilder<FinanceDbContext>();
             optionsBuilder
                 .UseInMemoryDatabase(testName)
-                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .UseInternalServiceProvider(serviceProvider);
 
             FinanceDbContext dbContext = new FinanceDbContext(optionsBuilder.Options);
 
@@ -182,7 +188,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditorAccountUnitReceiptNotePostedViewModel newData = new CreditorAccountUnitReceiptNotePostedViewModel();
-            await Assert.ThrowsAnyAsync<Exception>(() => service.UpdateFromUnitReceiptNoteAsync(newData));
+            await Assert.ThrowsAnyAsync<NotFoundException>(() => service.UpdateFromUnitReceiptNoteAsync(newData));
 
         }
 
@@ -287,7 +293,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditorAccountBankExpenditureNotePostedViewModel newData = new CreditorAccountBankExpenditureNotePostedViewModel();
-            await Assert.ThrowsAnyAsync<Exception>(() => service.UpdateFromBankExpenditureNoteAsync(newData));
+            await Assert.ThrowsAnyAsync<NotFoundException>(() => service.UpdateFromBankExpenditureNoteAsync(newData));
 
         }
 
@@ -394,7 +400,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditorAccountMemoPostedViewModel memoData = new CreditorAccountMemoPostedViewModel();
-            await Assert.ThrowsAnyAsync<Exception>(() => service.CreateFromMemoAsync(memoData));
+            await Assert.ThrowsAnyAsync<NotFoundException>(() => service.CreateFromMemoAsync(memoData));
 
         }
 
