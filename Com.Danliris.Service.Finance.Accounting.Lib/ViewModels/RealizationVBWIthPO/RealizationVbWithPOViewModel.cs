@@ -8,25 +8,42 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
 {
     public class RealizationVbWithPOViewModel : BaseViewModel, IValidatableObject
     {
-        public string VBRealizationNo { get; set; }        
+        public string VBRealizationNo { get; set; }
+        public string TypeVBNonPO { get; set; }
         public DateTimeOffset? Date { get; set; }
+        public DateTimeOffset? DateEstimate { get; set; }
         public ICollection<DetailSPB> Items { get; set; }
         public DetailVB numberVB { get; set; }
-        
+
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (Date == null)
                 yield return new ValidationResult("Tanggal harus diisi!", new List<string> { "Date" });
 
-            if (numberVB == null)
-                yield return new ValidationResult("Data harus diisi!", new List<string> { "VBCode" });
+            if (string.IsNullOrWhiteSpace(TypeVBNonPO))
+                yield return new ValidationResult("Jenis VB harus diisi!", new List<string> { "TypeVBNonPO" });
+            else
+            {
+                if (TypeVBNonPO == "Dengan Nomor VB")
+                {
+                    if (numberVB == null)
+                        yield return new ValidationResult("Nomor VB harus diisi!", new List<string> { "VBCode" });
+                }
+                else
+                {
+                    if (DateEstimate != null)
+                        yield return new ValidationResult("Tanggal Estimasi harus diisi!", new List<string> { "VBCode" });
+                }
+            }
 
-            int cnt=0;
+
+
+            int cnt = 0;
 
             if (Items == null)
             {
-                yield return new ValidationResult("Data harus diisi!", new List<string> { "VBCode" });
+                yield return new ValidationResult("Data harus diisi!", new List<string> { "Item" });
             }
             //else
             //{
@@ -43,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
             //    //    yield return new ValidationResult("Data harus dipilih!", new List<string> { "Item" });
             //    //}
             //}
-            
+
         }
     }
 }
