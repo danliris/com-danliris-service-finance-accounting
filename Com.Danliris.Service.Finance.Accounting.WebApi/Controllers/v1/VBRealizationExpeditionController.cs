@@ -325,7 +325,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             dt.Columns.Add(new DataColumn() { ColumnName = "Nominal VB", DataType = typeof(decimal) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang Realisasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nominal Realisasi", DataType = typeof(decimal) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Terima Realisasi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Terima Verifikasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nama Verifikator", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Kirim Kasir/Retur", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan", DataType = typeof(string) });
@@ -340,16 +340,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 foreach (var datum in data)
                 {
                     var verificationReceiptDate = datum.VerificationReceiptDate.HasValue ? datum.VerificationReceiptDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
+                    var sendToVerificationDate = datum.SendToVerificationDate.HasValue ? datum.SendToVerificationDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
                     var verifiedToCashierDate = datum.VerifiedToCashierDate.HasValue ? datum.VerifiedToCashierDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
                     var cashierReceiptDate = datum.CashierReceiptDate.HasValue ? datum.CashierReceiptDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
-                    var vbRealizationDate = datum.VBRealizationDate.AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    //var vbRealizationDate = datum.VBRealizationDate.AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
                     dt.Rows.Add(
-                        $"{verificationReceiptDate}",
+                        $"{sendToVerificationDate}",
                         $"{datum.CurrencyCode}",
                         datum.VBAmount,
                         $"{datum.CurrencyCode}",
                         datum.VBRealizationAmount,
-                        $"{vbRealizationDate}",
+                        $"{verificationReceiptDate}",
                         $"{datum.VerificationReceiptBy}",
                         $"{verifiedToCashierDate}",
                         $"{datum.NotVerifiedReason}",
