@@ -22,5 +22,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBRealizationD
             var result = dto.Validate(null);
             Assert.True(0 < result.Count());
         }
+
+        [Fact]
+        public void validate_Null_Data()
+        {
+            VBRealizationIdListDto dto = new VBRealizationIdListDto()
+            {
+                VBRealizationIds = null
+            };
+            var result = dto.Validate(null);
+            Assert.True(0 < result.Count());
+        }
     }
 }
