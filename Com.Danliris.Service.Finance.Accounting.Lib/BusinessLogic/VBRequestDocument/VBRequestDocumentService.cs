@@ -140,7 +140,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             List<string> searchAttributes = new List<string>()
             {
-                "DocumentNo", "ReferenceNo", "Description"
+                "DocumentNo", "SuppliantUnitName"
             };
 
             query = QueryHelper<VBRequestDocumentModel>.Search(query, searchAttributes, keyword);
