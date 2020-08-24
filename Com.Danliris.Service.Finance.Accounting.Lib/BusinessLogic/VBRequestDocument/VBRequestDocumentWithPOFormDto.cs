@@ -29,7 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             if (Currency == null || Currency.Id.GetValueOrDefault() <= 0)
                 yield return new ValidationResult("Mata Uang harus diisi", new List<string> { "Currency" });
 
-            if (Amount <= 0)
+            if (Amount.GetValueOrDefault() <= 0)
                 yield return new ValidationResult("Nominal harus diisi", new List<string> { "Amount" });
 
             if (Items == null || Items.Count.Equals(0))
