@@ -88,30 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         {
             var internalTransaction = _dbContext.Database.CurrentTransaction == null;
             var transaction = !internalTransaction ? _dbContext.Database.CurrentTransaction : _dbContext.Database.BeginTransaction();
-            var documentNo = GetDocumentNo(form);
-            var model = new VBRequestDocumentModel(
-                documentNo,
-                form.Date.GetValueOrDefault(),
-                form.RealizationEstimationDate.GetValueOrDefault(),
-                form.SuppliantUnit.Id.GetValueOrDefault(),
-                form.SuppliantUnit.Code,
-                form.SuppliantUnit.Name,
-                form.SuppliantUnit.Division.Id.GetValueOrDefault(),
-                form.SuppliantUnit.Division.Code,
-                form.SuppliantUnit.Division.Name,
-                form.Currency.Id.GetValueOrDefault(),
-                form.Currency.Code,
-                form.Currency.Symbol,
-                form.Currency.Description,
-                form.Currency.Rate.GetValueOrDefault(),
-                form.Purpose,
-                form.Amount.GetValueOrDefault(),
-                false,
-                false,
-                false,
-                VBType.NonPO
-                );
-
+            
             try
             {
                 var documentNo = GetDocumentNo(form);
@@ -129,7 +106,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     form.Currency.Code,
                     form.Currency.Symbol,
                     form.Currency.Description,
-                    form.Currency.Rate,
+                    form.Currency.Rate.GetValueOrDefault(),
                     form.Purpose,
                     form.Amount.GetValueOrDefault(),
                     false,
