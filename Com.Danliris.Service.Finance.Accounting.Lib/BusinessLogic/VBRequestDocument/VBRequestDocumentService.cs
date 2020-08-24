@@ -3,12 +3,14 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument
 {
@@ -53,8 +55,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return documentNo;
         }
 
-
-        public int CreateNonPO(VBRequestDocumentNonPOFormDto form)
+        public async Task<int> CreateNonPO(VBRequestDocumentNonPOFormDto form)
         {
             var documentNo = GetDocumentNo(form);
             var model = new VBRequestDocumentModel(
@@ -82,10 +83,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.VBRequestDocuments.Add(model);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             AddItems(model.Id, form.Items);
-            throw new NotImplementedException();
+            return model.Id;
         }
 
         private void AddItems(int id, List<VBRequestDocumentNonPOItemFormDto> items)
@@ -108,7 +109,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     0,
                     string.Empty,
                     0,
-                    element.IsSelected
+                    element.IsSelected,
+                    element.Unit.VBDocumentLayoutOrder
                     );
 
                 EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
@@ -140,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             List<string> searchAttributes = new List<string>()
             {
-                "DocumentNo", "ReferenceNo", "Description"
+                "DocumentNo", "SuppliantUnitName"
             };
 
             query = QueryHelper<VBRequestDocumentModel>.Search(query, searchAttributes, keyword);
@@ -159,9 +161,84 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return new ReadResponse<VBRequestDocumentModel>(data, TotalData, orderDictionary, new List<string>());
         }
 
-        public VBRequestDocumentNonPODto GetNonPOById(int id)
+        private VBRequestDocumentNonPODto MapToNonPODTO(VBRequestDocumentModel model, List<VBRequestDocumentItemModel> items)
         {
-            throw new NotImplementedException();
+            return new VBRequestDocumentNonPODto()
+            {
+                Active = model.Active,
+                Amount = model.Amount,
+                CreatedAgent = model.CreatedAgent,
+                Items = items.Select(s => new VBRequestDocumentNonPOItemDto()
+                {
+                    IsSelected = s.IsSelected,
+                    Unit = new UnitDto()
+                    {
+                        Code = s.UnitCode,
+                        Division = new DivisionDto()
+                        {
+                            Code = s.DivisionCode,
+                            Id = s.DivisionId,
+                            Name = s.DivisionName
+                        },
+                        Name = s.UnitName,
+                        Id = s.UnitId,
+                        VBDocumentLayoutOrder = s.VBDocumentLayoutOrder
+                    },
+                    Id = s.Id,
+                    Active = s.Active,
+                    CreatedAgent = s.CreatedAgent,
+                    CreatedBy = s.CreatedBy,
+                    CreatedUtc =s.CreatedUtc,
+                    IsDeleted = s.IsDeleted,
+                    LastModifiedAgent = s.LastModifiedAgent,
+                    LastModifiedBy = s.LastModifiedBy,
+                    LastModifiedUtc = s.LastModifiedUtc
+                }).ToList(),
+                LastModifiedUtc = model.LastModifiedUtc,
+                LastModifiedBy = model.LastModifiedBy,
+                LastModifiedAgent = model.LastModifiedAgent,
+                IsDeleted = model.IsDeleted,
+                CreatedUtc = model.CreatedUtc,
+                CreatedBy = model.CreatedBy,
+                Currency = new CurrencyDto()
+                {
+                    Code = model.CurrencyCode,
+                    Description = model.CurrencyDescription,
+                    Id = model.CurrencyId,
+                    Rate = model.CurrencyRate,
+                    Symbol = model.CurrencySymbol
+                },
+                Id = model.Id,
+                Date = model.Date,
+                Purpose = model.Purpose,
+                RealizationEstimationDate = model.RealizationEstimationDate,
+                SuppliantUnit = new UnitDto()
+                {
+                    Id = model.SuppliantUnitId,
+                    Code = model.SuppliantUnitCode,
+                    Name = model.SuppliantUnitName,
+                    Division = new DivisionDto()
+                    {
+                        Name = model.SuppliantDivisionName,
+                        Code = model.SuppliantDivisionCode,
+                        Id = model.SuppliantDivisionId
+                    }
+                }
+            };
+        }
+
+        public async Task<VBRequestDocumentNonPODto> GetNonPOById(int id)
+        {
+            var data = await _dbContext.VBRequestDocuments.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (data == null)
+                return null;
+
+            var items = _dbContext.VBRequestDocumentItems.Where(s => s.VBRequestDocumentId == id).OrderBy(s => s.VBDocumentLayoutOrder).ToList();
+
+            var result = MapToNonPODTO(data, items);
+
+            return result;
         }
 
         public VBRequestDocumentWithPODto GetWithPOById(int id)
