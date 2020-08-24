@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument
 {
@@ -53,7 +54,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return documentNo;
         }
 
-        public int CreateNonPO(VBRequestDocumentNonPOFormDto form)
+        public async Task<int> CreateNonPO(VBRequestDocumentNonPOFormDto form)
         {
             var documentNo = GetDocumentNo(form);
             var model = new VBRequestDocumentModel(
@@ -81,10 +82,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.VBRequestDocuments.Add(model);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             AddItems(model.Id, form.Items);
-            throw new NotImplementedException();
+            return model.Id;
         }
 
         private void AddItems(int id, List<VBRequestDocumentNonPOItemFormDto> items)
@@ -107,7 +108,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     0,
                     string.Empty,
                     0,
-                    element.IsSelected
+                    element.IsSelected,
+                    element.Unit.VBDocumentLayoutOrder
                     );
 
                 EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
@@ -158,7 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return new ReadResponse<VBRequestDocumentModel>(data, TotalData, orderDictionary, new List<string>());
         }
 
-        public VBRequestDocumentNonPODto GetNonPOById(int id)
+        public Task<VBRequestDocumentNonPODto> GetNonPOById(int id)
         {
             throw new NotImplementedException();
         }

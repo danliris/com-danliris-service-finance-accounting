@@ -3,14 +3,15 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument
 {
     public interface  IVBRequestDocumentService
     {
-        int CreateNonPO(VBRequestDocumentNonPOFormDto form);
+        Task<int> CreateNonPO(VBRequestDocumentNonPOFormDto form);
         int UpdateNonPO(int id, VBRequestDocumentNonPOFormDto form);
-        VBRequestDocumentNonPODto GetNonPOById(int id);
+        Task<VBRequestDocumentNonPODto> GetNonPOById(int id);
         int DeleteNonPO(int id);
 
         int CreateWithPO(VBRequestDocumentWithPOFormDto form);

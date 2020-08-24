@@ -40,19 +40,19 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPost("non-po")]
-        public IActionResult Post([FromBody] VBRequestDocumentNonPOFormDto form)
+        public async Task<IActionResult> Post([FromBody] VBRequestDocumentNonPOFormDto form)
         {
             try
             {
                 VerifyUser();
                 _validateService.Validate(form);
 
-                 _service.CreateNonPO(form);
+                var id = await _service.CreateNonPO(form);
 
 
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
 
-                return Created(string.Concat(Request.Path, "/", 0), result);
+                return Created(string.Concat(Request.Path, "/", id), result);
             }
             catch (ServiceValidationException e)
             {
@@ -81,6 +81,37 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                     .Ok(null, read.Data, page, size, read.Count, read.Data.Count, read.Order, read.Selected);
                 return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("non-po/{Id}")]
+        public virtual async Task<IActionResult> GetById([FromRoute] int id)
+        {
+            try
+            {
+                var model = await _service.GetNonPOById(id);
+
+                if (model == null)
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                        .Fail();
+                    return NotFound(Result);
+                }
+                else
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                        .Ok(null, model);
+                    return Ok(Result);
+                }
             }
             catch (Exception e)
             {

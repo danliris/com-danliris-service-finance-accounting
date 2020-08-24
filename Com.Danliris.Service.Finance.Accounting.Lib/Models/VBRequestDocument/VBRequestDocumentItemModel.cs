@@ -19,7 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             string unitName,
             string unitCode,
             int divisionId,
-            string divisionName, 
+            string divisionName,
             string divisionCode,
             int epoId,
             string epoNo,
@@ -29,7 +29,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             double incomeTaxRate,
             string incomeTaxBy,
             double amountByUnit,
-            bool isSelected
+            bool isSelected,
+            int vbDocumentLayoutOrder
             )
         {
             VBRequestDocumentId = vbRequestDocumentId;
@@ -42,12 +43,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             EPOId = epoId;
             EPONo = epoNo;
             UseIncomeTax = useIncomeTax;
-            IncomeTaxId= incomeTaxId;
+            IncomeTaxId = incomeTaxId;
             IncomeTaxName = incomeTaxName;
             IncomeTaxRate = incomeTaxRate;
             IncomeTaxBy = incomeTaxBy;
             AmountByUnit = amountByUnit;
             IsSelected = isSelected;
+
+            VBDocumentLayoutOrder = vbDocumentLayoutOrder;
         }
 
         public int VBRequestDocumentId { get; private set; }
@@ -73,5 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public string IncomeTaxBy { get; private set; }
         public double AmountByUnit { get; private set; }
         public bool IsSelected { get; private set; }
+
+        public int VBDocumentLayoutOrder { get; private set; }
     }
 }
