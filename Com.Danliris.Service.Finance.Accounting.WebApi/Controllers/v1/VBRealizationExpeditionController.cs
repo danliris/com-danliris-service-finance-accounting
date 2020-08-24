@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -8,6 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -241,6 +245,121 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
+        }
+
+        [HttpGet("reports")]
+        public async Task<IActionResult> GetReport([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] string vbRequestName, [FromQuery] int unitId, [FromQuery] int divisionId, [FromQuery] DateTimeOffset? dateStart, [FromQuery] DateTimeOffset? dateEnd, [FromQuery] int page = 1, [FromQuery] int size = 25)
+        {
+            try
+            {
+                VerifyUser();
+
+                if (dateEnd == null)
+                    dateEnd = DateTimeOffset.Now;
+
+                if (dateStart == null)
+                    dateStart = dateEnd.GetValueOrDefault().AddMonths(-1);
+
+                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault(), page, size);
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data = reportResult.Data,
+                    info = new
+                    {
+                        total = reportResult.Total,
+                        page,
+                        size
+                    },
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                   new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                   .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("reports/xls")]
+        public async Task<IActionResult> GetReportXls([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] string vbRequestName, [FromQuery] int unitId, [FromQuery] int divisionId, [FromQuery] DateTimeOffset? dateStart, [FromQuery] DateTimeOffset? dateEnd)
+        {
+            try
+            {
+                VerifyUser();
+
+                if (dateEnd == null)
+                    dateEnd = DateTimeOffset.Now;
+
+                if (dateStart == null)
+                    dateStart = dateEnd.GetValueOrDefault().AddMonths(-1);
+
+                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault(), 1, int.MaxValue);
+                var stream = GenerateExcel(reportResult.Data);
+
+                var xls = stream.ToArray();
+
+                var file = File(xls, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Laporan Ekspedisi");
+
+                return file;
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                   new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                   .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        private MemoryStream GenerateExcel(IList<VBRealizationDocumentExpeditionModel> data)
+        {
+            var timezoneoffset = _identityService.TimezoneOffset;
+            DataTable dt = new DataTable();
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Unit Kirim", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang VB", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal VB", DataType = typeof(decimal) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang Realisasi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal Realisasi", DataType = typeof(decimal) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Terima Verifikasi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nama Verifikator", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Kirim Kasir/Retur", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Terima Kasir", DataType = typeof(string) });
+
+            if (data.Count == 0)
+            {
+                dt.Rows.Add("", "", 0, "", 0, "", "", "", "", "");
+            }
+            else
+            {
+                foreach (var datum in data)
+                {
+                    var verificationReceiptDate = datum.VerificationReceiptDate.HasValue ? datum.VerificationReceiptDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
+                    var sendToVerificationDate = datum.SendToVerificationDate.HasValue ? datum.SendToVerificationDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
+                    var verifiedToCashierDate = datum.VerifiedToCashierDate.HasValue ? datum.VerifiedToCashierDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
+                    var cashierReceiptDate = datum.CashierReceiptDate.HasValue ? datum.CashierReceiptDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
+                    //var vbRealizationDate = datum.VBRealizationDate.AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    dt.Rows.Add(
+                        $"{sendToVerificationDate}",
+                        $"{datum.CurrencyCode}",
+                        datum.VBAmount,
+                        $"{datum.CurrencyCode}",
+                        datum.VBRealizationAmount,
+                        $"{verificationReceiptDate}",
+                        $"{datum.VerificationReceiptBy}",
+                        $"{verifiedToCashierDate}",
+                        $"{datum.NotVerifiedReason}",
+                        $"{cashierReceiptDate}"
+                        );
+                }
+            }
+
+            return Lib.Helpers.Excel.CreateExcelNoFilters(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Reports") }, true);
         }
     }
 }

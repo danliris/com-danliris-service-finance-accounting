@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
@@ -59,9 +60,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             _dbContext.RealizationVbs.UpdateRange(models);
         }
 
-        public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
+        public async Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, int divisionId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
         {
-            throw new NotImplementedException();
+            var query = _dbContext.VBRealizationDocumentExpeditions.AsQueryable();
+            query = query.Where(entity => entity.VBRealizationDate >= dateStart && entity.VBRealizationDate <= dateEnd);
+
+            if (divisionId > 0)
+                query = query.Where(entity => entity.DivisionId == divisionId);
+
+            var result = query.Skip((page - 1) * size).Take(size).ToList();
+            var total = await query.CountAsync();
+            return new VBRealizationDocumentExpeditionReportDto(result, total, size, page);
         }
 
         public Task<int> InitializeExpedition(int vbRealizationId)
@@ -90,7 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             _dbContext.Add(model);
             UpdateVBRealizationPosition(vbRealizationId, (int)VBRealizationPosition.Purchasing);
-            
+
             return _dbContext.SaveChangesAsync();
         }
 
