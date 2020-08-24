@@ -124,8 +124,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
         [HttpPut("non-po/{id}")]
         public virtual async Task<IActionResult> Put([FromRoute] int id, [FromBody] VBRequestDocumentNonPOFormDto form)
-        [HttpPost("with-po")]
-        public IActionResult PostWithPO([FromBody] VBRequestDocumentWithPOFormDto form)
         {
             try
             {
@@ -170,6 +168,24 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 await _service.DeleteNonPO(id);
 
                 return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPost("with-po")]
+        public IActionResult PostWithPO([FromBody] VBRequestDocumentWithPOFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(form);
+
                 var id = _service.CreateWithPO(form);
 
 
