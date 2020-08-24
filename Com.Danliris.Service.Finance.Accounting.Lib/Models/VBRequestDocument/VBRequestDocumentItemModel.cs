@@ -78,5 +78,65 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public bool IsSelected { get; private set; }
 
         public int VBDocumentLayoutOrder { get; private set; }
+
+        public void SetUnit(int newUnitId,string newUnitName, string newUnitCode, string user, string userAgent)
+        {
+            if(newUnitId != UnitId)
+            {
+                UnitId = newUnitId;
+                this.FlagForUpdate(user, userAgent);
+            }
+
+            if (newUnitName != UnitName)
+            {
+                UnitName = newUnitName;
+                this.FlagForUpdate(user, userAgent);
+            }
+
+            if (newUnitCode != UnitCode)
+            {
+                UnitCode = newUnitCode;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetDivision(int newDivisionId, string newDivisionName, string newDivisionCode, string user, string userAgent)
+        {
+            if (newDivisionId != DivisionId)
+            {
+                DivisionId = newDivisionId;
+                this.FlagForUpdate(user, userAgent);
+            }
+
+            if (newDivisionName != DivisionName)
+            {
+                DivisionName = newDivisionName;
+                this.FlagForUpdate(user, userAgent);
+            }
+
+            if (newDivisionCode != DivisionCode)
+            {
+                DivisionCode = newDivisionCode;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetIsSelected(bool newFlagIsSelected, string user, string userAgent)
+        {
+            if (newFlagIsSelected != IsSelected)
+            {
+                IsSelected = newFlagIsSelected;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetVBDocumentLayoutOrder(int newVBDocumentLayoutOrder, string user, string userAgent)
+        {
+            if (newVBDocumentLayoutOrder != VBDocumentLayoutOrder)
+            {
+                VBDocumentLayoutOrder = newVBDocumentLayoutOrder;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
     }
 }
