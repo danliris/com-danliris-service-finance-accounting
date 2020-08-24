@@ -119,8 +119,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             var result = await service.GetReports(vb.Id, vbRealization.VBRealizationId, vb.RequestVbName, vb.UnitId, vb.DivisionId,DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now.AddDays(1), 1, 25);
             Assert.True(0 <result.Data.Count());
+            Assert.True(1 == result.Page);
+            Assert.True(25 == result.Size);
 
-           
         }
 
 
