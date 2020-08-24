@@ -109,14 +109,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
 
         [Fact]
-        public void GetReports_Throws_NotImplementedException() {
+        public async Task GetReports_Return_Success() {
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
 
             RealizationVbModel vb = _dataUtil(service, dbContext).GetTestData_RealizationVbs();
             VBRealizationDocumentExpeditionModel vbRealization = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-            Assert.ThrowsAnyAsync<NotImplementedException>(() => service.GetReports(vb.Id, vbRealization.VBRealizationId, vb.RequestVbName, vb.UnitId, vb.Date, vb.Date, 1, 25));
+
+            var result = await service.GetReports(vb.Id, vbRealization.VBRealizationId, vb.RequestVbName, vb.UnitId, vb.DivisionId,DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now.AddDays(1), 1, 25);
+            Assert.True(0 <result.Data.Count());
+
+           
         }
 
 
