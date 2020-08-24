@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,7 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPost("non-po")]
-        public async Task<IActionResult> Post([FromBody] VBRequestDocumentNonPOFormDto form)
+        public async Task<IActionResult> PostNonPO([FromBody] VBRequestDocumentNonPOFormDto form)
         {
             try
             {
@@ -92,7 +94,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("non-po/{id}")]
-        public virtual async Task<IActionResult> GetById([FromRoute] int id)
+        public async Task<IActionResult> GetNonPOById([FromRoute] int id)
         {
             try
             {
@@ -123,7 +125,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPut("non-po/{id}")]
-        public virtual async Task<IActionResult> Put([FromRoute] int id, [FromBody] VBRequestDocumentNonPOFormDto form)
+        public virtual async Task<IActionResult> PutNonPO([FromRoute] int id, [FromBody] VBRequestDocumentNonPOFormDto form)
         {
             try
             {
@@ -159,7 +161,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpDelete("non-po/{id}")]
-        public virtual async Task<IActionResult> Delete([FromRoute] int id)
+        public virtual async Task<IActionResult> DeleteNonPO([FromRoute] int id)
         {
             try
             {
@@ -168,6 +170,41 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 await _service.DeleteNonPO(id);
 
                 return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("non-po/pdf/{id}")]
+        public async Task<IActionResult> GetPDFNonPO([FromRoute] int id)
+        {
+            try
+            {
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                int timeoffsset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                var data = await _service.GetNonPOById(id);
+
+                if (data == null)
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                        .Fail();
+                    return NotFound(Result);
+                }
+                else
+                {
+                    VBRequestDocumentNonPOPDFTemplate PdfTemplate = new VBRequestDocumentNonPOPDFTemplate();
+                    MemoryStream stream = PdfTemplate.GeneratePdfTemplate(data, timeoffsset);
+                    return new FileStreamResult(stream, "application/pdf")
+                    {
+                        FileDownloadName = "Permohonan VB Tanpa PO - " + data.DocumentNo + ".pdf"
+                    };
+                }
             }
             catch (Exception e)
             {

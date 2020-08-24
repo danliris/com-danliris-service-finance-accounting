@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             Items = new List<VBRequestDocumentNonPOItemDto>();
         }
 
+        public string DocumentNo { get; set; }
         public DateTimeOffset? Date { get; set; }
         public DateTimeOffset? RealizationEstimationDate { get; set; }
         public UnitDto SuppliantUnit { get; set; }
