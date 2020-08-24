@@ -29,7 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         private string GetDocumentNo(VBRequestDocumentNonPOFormDto form)
         {
-            var now = form.Date.GetValueOrDefault();
+            var now = form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset);
             var year = now.ToString("yy");
             var month = now.ToString("MM");
 
@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
-            var countSameDocumentNo = _dbContext.VBRequestDocuments.Where(a => a.Date.Month == form.Date.GetValueOrDefault().Month).Count();
+            var countSameDocumentNo = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).Count();
 
             if (countSameDocumentNo >= 0)
             {
@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         private string GetDocumentNo(VBRequestDocumentWithPOFormDto form)
         {
-            var now = form.Date.GetValueOrDefault();
+            var now = form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset);
             var year = now.ToString("yy");
             var month = now.ToString("MM");
 
@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
-            var countSameDocumentNo = _dbContext.VBRequestDocuments.Where(a => a.Date.Month == form.Date.GetValueOrDefault().Month).Count();
+            var countSameDocumentNo = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).Count();
 
             if (countSameDocumentNo >= 0)
             {
@@ -101,7 +101,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 form.Currency.Code,
                 form.Currency.Symbol,
                 form.Currency.Description,
-                form.Currency.Rate,
+                form.Currency.Rate.GetValueOrDefault(),
                 form.Purpose,
                 form.Amount.GetValueOrDefault(),
                 false,
@@ -144,7 +144,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     string.Empty,
                     0,
                     element.IsSelected,
-                    element.Unit.VBDocumentLayoutOrder
+                    element.Unit.VBDocumentLayoutOrder.GetValueOrDefault()
                     );
 
                 EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
@@ -172,7 +172,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 form.Currency.Code,
                 form.Currency.Symbol,
                 form.Currency.Description,
-                form.Currency.Rate,
+                form.Currency.Rate.GetValueOrDefault(),
                 form.Purpose,
                 form.Amount.GetValueOrDefault(),
                 false,
@@ -421,6 +421,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     Symbol = model.CurrencySymbol
                 },
                 Date = model.Date,
+                RealizationEstimationDate = model.RealizationEstimationDate,
+                SuppliantUnit = new UnitDto()
+                {
+                    Id = model.SuppliantUnitId,
+                    Code = model.SuppliantUnitCode,
+                    Name = model.SuppliantUnitName,
+                    Division = new DivisionDto()
+                    {
+                        Code = model.SuppliantDivisionCode,
+                        Id = model.SuppliantDivisionId,
+                        Name = model.SuppliantDivisionName
+                    }
+                },
                 DocumentNo = model.DocumentNo,
                 Id = model.Id,
                 Items = items.Select(element =>
@@ -493,7 +506,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             
             data.SetDate(form.Date.GetValueOrDefault(), _identityService.Username, UserAgent);
             data.SetRealizationEstimationDate(form.RealizationEstimationDate.GetValueOrDefault(), _identityService.Username, UserAgent);
-            data.SetCurrency(form.Currency.Id.GetValueOrDefault(), form.Currency.Code, form.Currency.Symbol, form.Currency.Rate, form.Currency.Description, _identityService.Username, UserAgent);
+            data.SetCurrency(form.Currency.Id.GetValueOrDefault(), form.Currency.Code, form.Currency.Symbol, form.Currency.Rate.GetValueOrDefault(), form.Currency.Description, _identityService.Username, UserAgent);
             data.SetAmount(form.Amount.GetValueOrDefault(), _identityService.Username, UserAgent);
             data.SetPurpose(form.Purpose, _identityService.Username, UserAgent);
             
@@ -516,7 +529,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     item.SetIsSelected(formItem.IsSelected, _identityService.Username, UserAgent);
                     item.SetUnit(formItem.Unit.Id.GetValueOrDefault(), formItem.Unit.Name, formItem.Unit.Code, _identityService.Username, UserAgent);
                     item.SetDivision(formItem.Unit.Division.Id.GetValueOrDefault(), formItem.Unit.Division.Name, formItem.Unit.Division.Code, _identityService.Username, UserAgent);
-                    item.SetVBDocumentLayoutOrder(formItem.Unit.VBDocumentLayoutOrder, _identityService.Username, UserAgent);
+                    item.SetVBDocumentLayoutOrder(formItem.Unit.VBDocumentLayoutOrder.GetValueOrDefault(), _identityService.Username, UserAgent);
                 }
             }
 
@@ -539,7 +552,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     string.Empty,
                     0,
                     element.IsSelected,
-                    element.Unit.VBDocumentLayoutOrder
+                    element.Unit.VBDocumentLayoutOrder.GetValueOrDefault()
                     );
 
                 result.FlagForCreate(_identityService.Username, UserAgent);
