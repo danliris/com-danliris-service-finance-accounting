@@ -22,7 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
 {
     public class VBRealizationExpeditionControllerTest
     {
-
+        
         protected VBRealizationExpeditionController GetController(Mock<IServiceProvider> serviceProvider)
         {
             var user = new Mock<ClaimsPrincipal>();
@@ -31,15 +31,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                 new Claim("username", "unittestusername")
             };
             user.Setup(u => u.Claims).Returns(claims);
-
-            serviceProvider
-              .Setup(s => s.GetService(typeof(IIdentityService)))
-              .Returns(new IdentityService() { TimezoneOffset = 1, Token = "token", Username = "username" });
-
-            var validateService = new Mock<IValidateService>();
-            serviceProvider
-              .Setup(s => s.GetService(typeof(IValidateService)))
-              .Returns(validateService.Object);
 
             VBRealizationExpeditionController controller = new VBRealizationExpeditionController(serviceProvider.Object);
             controller.ControllerContext = new ControllerContext()
@@ -52,6 +43,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             controller.ControllerContext.HttpContext.Request.Headers["Authorization"] = "Bearer unittesttoken";
             controller.ControllerContext.HttpContext.Request.Path = new PathString("/v1/unit-test");
             return controller;
+        }
+
+        Mock<IServiceProvider> GetServiceProvider()
+        {
+            Mock<IServiceProvider> serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider
+              .Setup(s => s.GetService(typeof(IIdentityService)))
+              .Returns(new IdentityService() { TimezoneOffset = 1, Token = "token", Username = "username" });
+
+            var validateService = new Mock<IValidateService>();
+            serviceProvider
+              .Setup(s => s.GetService(typeof(IValidateService)))
+              .Returns(validateService.Object);
+            return serviceProvider;
         }
 
         protected ServiceValidationException GetServiceValidationException()
@@ -91,10 +96,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                 };
             }
         }
+
+        VBRealizationDocumentExpeditionModel vBRealizationDocumentExpeditionModel
+        {
+            get
+            {
+                return new VBRealizationDocumentExpeditionModel(1, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "unitName", 1, "divisionName", 1, 1, "currencyCode", 1, "with PO");
+               
+            }
+        }
         [Fact]
         public void GetVbRealizationToVerification_Return_OK()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
             Dictionary<string, string> order = new Dictionary<string, string>();
 
@@ -112,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public void GetVbRealizationToVerification_Return_InternalServerError()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
             Dictionary<string, string> order = new Dictionary<string, string>();
 
@@ -130,7 +144,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public void Get_Return_OK()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
             Dictionary<string, string> order = new Dictionary<string, string>();
 
@@ -148,7 +162,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public void Get_Return_InternalServerError()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
@@ -165,7 +179,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task Post_Succes_Return_NoContent()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).ReturnsAsync(1);
@@ -183,7 +197,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task Post_Throws_ServiceValidationExeption()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).ThrowsAsync(GetServiceValidationException());
@@ -200,7 +214,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task Post_Return_InternalServerError()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.SubmitToVerification(It.IsAny<List<int>>())).ThrowsAsync(new Exception());
@@ -218,7 +232,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task Verify_Return_NoContent()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.VerifiedToCashier(It.IsAny<int>())).ReturnsAsync(1);
@@ -236,7 +250,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task Verify_Return_InternalServerError()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.VerifiedToCashier(It.IsAny<int>())).ThrowsAsync(new Exception());
@@ -252,7 +266,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task reject_Return_Created()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.Reject(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(1);
@@ -269,7 +283,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task reject_Throws_ServiceValidationException()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.Reject(It.IsAny<int>(), It.IsAny<string>())).ThrowsAsync(GetServiceValidationException());
@@ -287,7 +301,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task reject_Return_InternalServerError()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.Reject(It.IsAny<int>(), It.IsAny<string>())).ThrowsAsync(new Exception());
@@ -305,7 +319,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task AcceptForVerification_Sucees_Return_NoContent()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.VerificationDocumentReceipt(It.IsAny<List<int>>())).ReturnsAsync(1);
@@ -322,7 +336,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task AcceptForVerification_Throws_ServiceValidationException()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.VerificationDocumentReceipt(It.IsAny<List<int>>())).ThrowsAsync(GetServiceValidationException());
@@ -340,7 +354,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task AcceptForVerification_Return_InternalServerError()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.VerificationDocumentReceipt(It.IsAny<List<int>>())).ThrowsAsync(new Exception());
@@ -357,7 +371,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task AcceptForCashier_Sucees_Return_NoContent()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.CashierReceipt(It.IsAny<List<int>>())).ReturnsAsync(1);
@@ -374,7 +388,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task AcceptForCashier_Throws_ServiceValidationException()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.CashierReceipt(It.IsAny<List<int>>())).ThrowsAsync(GetServiceValidationException());
@@ -391,7 +405,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         [Fact]
         public async Task AcceptForCashier_REturn_InternalServerError()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.CashierReceipt(It.IsAny<List<int>>())).ThrowsAsync(new Exception());
@@ -405,6 +419,88 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
 
+        [Fact]
+        public async Task GetReport_Return_OK()
+        {
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
+            service.Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<VBRealizationDocumentExpeditionModel>() { new VBRealizationDocumentExpeditionModel()},1,1,25));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).GetReport(1,1,"",1,1,null,null,1,25);
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public async Task GetReport_Return_InternalServerError()
+        {
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).GetReport(1, 1, "", 1, 1, null, null, 1, 25);
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public async Task GetReportXls_Return_OK()
+        {
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<VBRealizationDocumentExpeditionModel>() { vBRealizationDocumentExpeditionModel }, 1, 1, 25));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null);
+            Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
+            
+        }
+
+        [Fact]
+        public async Task GetReportXls_when_DataEmpty_Return_OK()
+        {
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<VBRealizationDocumentExpeditionModel>(), 1, 1, 25));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null);
+            Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
+
+        [Fact]
+        public async Task GetReportXls_Return_InternalServerError()
+        {
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null);
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
     }
 }
