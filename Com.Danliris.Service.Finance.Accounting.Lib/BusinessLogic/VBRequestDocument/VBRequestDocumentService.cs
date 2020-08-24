@@ -86,41 +86,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         //public int CreateNonPO(VBRequestDocumentNonPOFormDto form)
         public async Task<int> CreateNonPO(VBRequestDocumentNonPOFormDto form)
         {
-            var documentNo = GetDocumentNo(form);
-            var model = new VBRequestDocumentModel(
-                documentNo,
-                form.Date.GetValueOrDefault(),
-                form.RealizationEstimationDate.GetValueOrDefault(),
-                form.SuppliantUnit.Id.GetValueOrDefault(),
-                form.SuppliantUnit.Code,
-                form.SuppliantUnit.Name,
-                form.SuppliantUnit.Division.Id.GetValueOrDefault(),
-                form.SuppliantUnit.Division.Code,
-                form.SuppliantUnit.Division.Name,
-                form.Currency.Id.GetValueOrDefault(),
-                form.Currency.Code,
-                form.Currency.Symbol,
-                form.Currency.Description,
-                form.Currency.Rate,
-                form.Purpose,
-                form.Amount.GetValueOrDefault(),
-                false,
-                false,
-                false,
-                VBType.NonPO
-                );
+            var internalTransaction = _dbContext.Database.CurrentTransaction == null;
+            var transaction = !internalTransaction ? _dbContext.Database.CurrentTransaction : _dbContext.Database.BeginTransaction();
 
-            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+            try
+            {
+                var documentNo = GetDocumentNo(form);
+                var model = new VBRequestDocumentModel(
+                    documentNo,
+                    form.Date.GetValueOrDefault(),
+                    form.RealizationEstimationDate.GetValueOrDefault(),
+                    form.SuppliantUnit.Id.GetValueOrDefault(),
+                    form.SuppliantUnit.Code,
+                    form.SuppliantUnit.Name,
+                    form.SuppliantUnit.Division.Id.GetValueOrDefault(),
+                    form.SuppliantUnit.Division.Code,
+                    form.SuppliantUnit.Division.Name,
+                    form.Currency.Id.GetValueOrDefault(),
+                    form.Currency.Code,
+                    form.Currency.Symbol,
+                    form.Currency.Description,
+                    form.Currency.Rate,
+                    form.Purpose,
+                    form.Amount.GetValueOrDefault(),
+                    false,
+                    false,
+                    false,
+                    VBType.NonPO
+                    );
 
-            _dbContext.VBRequestDocuments.Add(model);
-            await _dbContext.SaveChangesAsync();
+                model.FlagForCreate(_identityService.Username, UserAgent);
+                _dbContext.VBRequestDocuments.Add(model);
+                await _dbContext.SaveChangesAsync();
 
-            var items = AddNonPOItems(model.Id, form.Items);
+                var items = AddNonPOItems(model.Id, form.Items);
 
-            _dbContext.VBRequestDocumentItems.AddRange(items);
-            await _dbContext.SaveChangesAsync();
+                _dbContext.VBRequestDocumentItems.AddRange(items);
+                await _dbContext.SaveChangesAsync();
 
-            return model.Id;
+                if (internalTransaction)
+                    transaction.Commit();
+
+                return model.Id;
+            }
+            catch (Exception ex)
+            {
+                if (internalTransaction)
+                    transaction.Rollback();
+                throw ex;
+            }
+
         }
 
         private List<VBRequestDocumentItemModel> AddNonPOItems(int id, List<VBRequestDocumentNonPOItemFormDto> items)
@@ -132,9 +147,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     element.Unit.Id.GetValueOrDefault(),
                     element.Unit.Name,
                     element.Unit.Code,
-                    element.Unit.Division.Id.GetValueOrDefault(),
-                    element.Unit.Division.Name,
-                    element.Unit.Division.Code,
+                    element.Unit.Division == null ? 0 : element.Unit.Division.Id.GetValueOrDefault(),
+                    element.Unit.Division?.Name,
+                    element.Unit.Division?.Code,
                     0,
                     string.Empty,
                     false,
@@ -147,7 +162,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     element.Unit.VBDocumentLayoutOrder
                     );
 
-                EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
+                result.FlagForCreate(_identityService.Username, UserAgent);
                 return result;
             }).ToList();
 
@@ -265,7 +280,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public Task<int> DeleteNonPO(int id)
         {
-            var data =  _dbContext.VBRequestDocuments.FirstOrDefault(s => s.Id == id);
+            var data = _dbContext.VBRequestDocuments.FirstOrDefault(s => s.Id == id);
             data.FlagForDelete(_identityService.Username, UserAgent);
 
             DeleteItemNonPO(id);
@@ -490,13 +505,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public Task<int> UpdateNonPO(int id, VBRequestDocumentNonPOFormDto form)
         {
             var data = _dbContext.VBRequestDocuments.FirstOrDefault(s => s.Id == id);
-            
+
             data.SetDate(form.Date.GetValueOrDefault(), _identityService.Username, UserAgent);
             data.SetRealizationEstimationDate(form.RealizationEstimationDate.GetValueOrDefault(), _identityService.Username, UserAgent);
             data.SetCurrency(form.Currency.Id.GetValueOrDefault(), form.Currency.Code, form.Currency.Symbol, form.Currency.Rate, form.Currency.Description, _identityService.Username, UserAgent);
             data.SetAmount(form.Amount.GetValueOrDefault(), _identityService.Username, UserAgent);
             data.SetPurpose(form.Purpose, _identityService.Username, UserAgent);
-            
+
             EditNonPOItems(id, form.Items);
             return _dbContext.SaveChangesAsync();
         }
@@ -527,9 +542,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     element.Unit.Id.GetValueOrDefault(),
                     element.Unit.Name,
                     element.Unit.Code,
-                    element.Unit.Division.Id.GetValueOrDefault(),
-                    element.Unit.Division.Name,
-                    element.Unit.Division.Code,
+                    element.Unit.Division == null ? 0 : element.Unit.Division.Id.GetValueOrDefault(),
+                    element.Unit.Division?.Name,
+                    element.Unit.Division?.Code,
                     0,
                     string.Empty,
                     false,
