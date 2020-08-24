@@ -53,7 +53,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return documentNo;
         }
 
-
         public int CreateNonPO(VBRequestDocumentNonPOFormDto form)
         {
             var documentNo = GetDocumentNo(form);
