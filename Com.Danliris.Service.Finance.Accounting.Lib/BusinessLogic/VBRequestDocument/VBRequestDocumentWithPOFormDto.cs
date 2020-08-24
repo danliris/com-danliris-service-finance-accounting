@@ -21,7 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 yield return new ValidationResult("Tanggal harus diisi", new List<string> { "Date" });
 
             if (RealizationEstimationDate == null)
-                yield return new ValidationResult("Estimasi Tanggal Realisasi harus diisi", new List<string> { "Date" });
+                yield return new ValidationResult("Estimasi Tanggal Realisasi harus diisi", new List<string> { "RealizationEstimationDate" });
 
             if (SuppliantUnit == null || SuppliantUnit.Id.GetValueOrDefault() <= 0)
                 yield return new ValidationResult("Unit Pemohon harus diisi", new List<string> { "SuppliantUnit" });
