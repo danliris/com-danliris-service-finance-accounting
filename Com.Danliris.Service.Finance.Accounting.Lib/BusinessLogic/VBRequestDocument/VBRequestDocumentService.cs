@@ -55,6 +55,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return documentNo;
         }
 
+        private string GetDocumentNo(VBRequestDocumentWithPOFormDto form)
+        {
+            var now = form.Date.GetValueOrDefault();
+            var year = now.ToString("yy");
+            var month = now.ToString("MM");
+
+
+            //var unit = model.UnitCode.ToString().Split(" - ");
+
+            var unitCode = "T";
+            if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
+                unitCode = "G";
+
+
+            var documentNo = $"VB-{unitCode}-{month}{year}-";
+
+            var countSameDocumentNo = _dbContext.VBRequestDocuments.Where(a => a.Date.Month == form.Date.GetValueOrDefault().Month).Count();
+
+            if (countSameDocumentNo >= 0)
+            {
+                countSameDocumentNo += 1;
+
+                documentNo += string.Format("{0:000}", countSameDocumentNo);
+            }
+
+            return documentNo;
+        }
+
+        //public int CreateNonPO(VBRequestDocumentNonPOFormDto form)
         public async Task<int> CreateNonPO(VBRequestDocumentNonPOFormDto form)
         {
             var documentNo = GetDocumentNo(form);
@@ -123,7 +152,101 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public int CreateWithPO(VBRequestDocumentWithPOFormDto form)
         {
-            throw new NotImplementedException();
+            var documentNo = GetDocumentNo(form);
+
+            var model = new VBRequestDocumentModel(
+                documentNo,
+                form.Date.GetValueOrDefault(),
+                form.RealizationEstimationDate.GetValueOrDefault(),
+                form.SuppliantUnit.Id.GetValueOrDefault(),
+                form.SuppliantUnit.Code,
+                form.SuppliantUnit.Name,
+                form.SuppliantUnit.Division.Id.GetValueOrDefault(),
+                form.SuppliantUnit.Division.Code,
+                form.SuppliantUnit.Division.Name,
+                form.Currency.Id.GetValueOrDefault(),
+                form.Currency.Code,
+                form.Currency.Symbol,
+                form.Currency.Description,
+                form.Currency.Rate,
+                form.Purpose,
+                form.Amount.GetValueOrDefault(),
+                false,
+                false,
+                false,
+                VBType.WithPO
+                );
+
+            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+            _dbContext.VBRequestDocuments.Add(model);
+            _dbContext.SaveChanges();
+
+            AddItems(model.Id, form.Items);
+
+            return model.Id;
+        }
+
+        private void AddItems(int id, List<VBRequestDocumentWithPOItemFormDto> items)
+        {
+            foreach (var item in items)
+            {
+                var documentItem = new VBRequestDocumentItemModel(
+                    id,
+                    item.PurchaseOrderExternal.unit._id.GetValueOrDefault(),
+                    item.PurchaseOrderExternal.unit.name,
+                    item.PurchaseOrderExternal.unit.code,
+                    item.PurchaseOrderExternal.unit.division._id.GetValueOrDefault(),
+                    item.PurchaseOrderExternal.unit.division.name,
+                    item.PurchaseOrderExternal.unit.division.code,
+                    item.PurchaseOrderExternal._id.GetValueOrDefault(),
+                    item.PurchaseOrderExternal.no,
+                    item.PurchaseOrderExternal.useIncomeTax,
+                    item.PurchaseOrderExternal.useIncomeTax ? item.PurchaseOrderExternal.incomeTax._id.GetValueOrDefault() : 0,
+                    item.PurchaseOrderExternal.useIncomeTax ? item.PurchaseOrderExternal.incomeTax.name : "",
+                    item.PurchaseOrderExternal.useIncomeTax ? item.PurchaseOrderExternal.incomeTax.rate.GetValueOrDefault() : 0,
+                    item.PurchaseOrderExternal.incomeTaxBy,
+                    0,
+                    false,
+                    0
+                    );
+
+                EntityExtension.FlagForCreate(documentItem, _identityService.Username, UserAgent);
+                _dbContext.VBRequestDocumentItems.Add(documentItem);
+                _dbContext.SaveChanges();
+
+                AddDetails(documentItem.Id, documentItem.EPOId, item.PurchaseOrderExternal.Items);
+            }
+        }
+
+        private void AddDetails(int id, int epoId, List<PurchaseOrderExternalItem> items)
+        {
+            var models = items.Select(element =>
+            {
+                var result = new VBRequestDocumentEPODetailModel(
+                    id,
+                    epoId,
+                    element.Product._id.GetValueOrDefault(),
+                    element.Product.code,
+                    element.Product.name,
+                    element.DefaultQuantity.GetValueOrDefault(),
+                    element.Product.uom._id.GetValueOrDefault(),
+                    element.Product.uom.unit,
+                    element.DealQuantity.GetValueOrDefault(),
+                    element.DealUOM._id.GetValueOrDefault(),
+                    element.DealUOM.unit,
+                    element.Conversion.GetValueOrDefault(),
+                    element.Price.GetValueOrDefault(),
+                    element.UseVat,
+                    string.Empty
+                    );
+
+                EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
+                return result;
+            }).ToList();
+
+            _dbContext.VBRequestDocumentEPODetails.AddRange(models);
+            _dbContext.SaveChanges();
+
         }
 
         public int DeleteNonPO(int id)
@@ -133,7 +256,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public int DeleteWithPO(int id)
         {
-            throw new NotImplementedException();
+            var model = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == id);
+            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
+            _dbContext.Update(model);
+
+            var items = _dbContext.VBRequestDocumentItems.Where(entity => entity.VBRequestDocumentId == model.Id).ToList();
+            items = items.Select(element =>
+            {
+                EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                return element;
+            }).ToList();
+
+            var itemIds = items.Select(element => element.Id).ToList();
+            var details = _dbContext.VBRequestDocumentEPODetails.Where(entity => itemIds.Contains(entity.VBRequestDocumentItemId)).ToList();
+            details = details.Select(element =>
+            {
+                EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                return element;
+            }).ToList();
+
+            _dbContext.SaveChanges();
+
+            return model.Id;
         }
 
         public ReadResponse<VBRequestDocumentModel> Get(int page, int size, string order, List<string> select, string keyword, string filter)
@@ -188,7 +332,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     Active = s.Active,
                     CreatedAgent = s.CreatedAgent,
                     CreatedBy = s.CreatedBy,
-                    CreatedUtc =s.CreatedUtc,
+                    CreatedUtc = s.CreatedUtc,
                     IsDeleted = s.IsDeleted,
                     LastModifiedAgent = s.LastModifiedAgent,
                     LastModifiedBy = s.LastModifiedBy,
@@ -243,7 +387,85 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public VBRequestDocumentWithPODto GetWithPOById(int id)
         {
-            throw new NotImplementedException();
+            var model = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == id);
+            var items = _dbContext.VBRequestDocumentItems.Where(entity => entity.VBRequestDocumentId == id).ToList();
+
+            var result = new VBRequestDocumentWithPODto()
+            {
+                Amount = model.Amount,
+                Currency = new CurrencyDto()
+                {
+                    Code = model.CurrencyCode,
+                    Description = model.CurrencyDescription,
+                    Id = model.CurrencyId,
+                    Rate = model.CurrencyRate,
+                    Symbol = model.CurrencySymbol
+                },
+                Date = model.Date,
+                DocumentNo = model.DocumentNo,
+                Id = model.Id,
+                Items = items.Select(element =>
+                {
+                    var details = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentItemId == element.Id);
+                    var elementResult = new VBRequestDocumentWithPOItemDto()
+                    {
+                        PurchaseOrderExternal = new PurchaseOrderExternal()
+                        {
+                            incomeTax = new IncomeTaxDto()
+                            {
+                                name = element.IncomeTaxName,
+                                rate = element.IncomeTaxRate,
+                                _id = element.IncomeTaxId
+                            },
+                            incomeTaxBy = element.IncomeTaxBy,
+                            no = element.EPONo,
+                            unit = new OldUnitDto()
+                            {
+                                name = element.UnitName,
+                                _id = element.UnitId,
+                                code = element.UnitCode,
+                                division = new OldDivisionDto()
+                                {
+                                    code = element.DivisionCode,
+                                    name = element.DivisionName,
+                                    _id = element.DivisionId
+                                }
+                            },
+                            useIncomeTax = element.UseIncomeTax,
+                            _id = element.EPOId,
+                            Items = details.Select(entity => new PurchaseOrderExternalItem()
+                            {
+                                Conversion = entity.Conversion,
+                                DealQuantity = entity.DealQuantity,
+                                DealUOM = new UnitOfMeasurement()
+                                {
+                                    unit = entity.DealUOMUnit,
+                                    _id = entity.DealUOMId
+                                },
+                                DefaultQuantity = entity.DefaultQuantity,
+                                Id = entity.Id,
+                                Price = entity.Price,
+                                Product = new Product()
+                                {
+                                    code = entity.ProductCode,
+                                    name = entity.ProductName,
+                                    uom = new UnitOfMeasurement()
+                                    {
+                                        unit = entity.DefaultUOMUnit,
+                                        _id = entity.DefaultUOMId
+                                    },
+                                    _id = entity.ProductId
+                                },
+                                UseVat = entity.UseVat
+                            }).ToList()
+                        }
+                    };
+
+                    return elementResult;
+                }).ToList()
+            };
+
+            return result;
         }
 
         public int UpdateNonPO(int id, VBRequestDocumentNonPOFormDto form)

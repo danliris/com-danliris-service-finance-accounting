@@ -14,6 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         }
 
         public VBRequestDocumentEPODetailModel(
+            int vbRequestDocumentItemId,
             int epoId,
             int productId,
             string productCode,
@@ -30,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             string remark
             )
         {
+            VBRequestDocumentItemId = vbRequestDocumentItemId;
             EPOId = epoId;
             ProductId = productId;
             ProductCode = productCode;
@@ -46,6 +48,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             Remark = remark;
         }
 
+        public int VBRequestDocumentItemId { get; private set; }
         public int EPOId { get; private set; }
         public int ProductId { get; private set; }
         [MaxLength(64)]
