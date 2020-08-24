@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
-            var countSameDocumentNo = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).Count();
+            var countSameDocumentNo = _dbContext.VBRequestDocuments.IgnoreQueryFilters().Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).Count();
 
             if (countSameDocumentNo >= 0)
             {
