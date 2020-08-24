@@ -277,6 +277,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
                 throw new NotImplementedException();
             }
 
+            public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, int divisionId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
+            {
+                throw new NotImplementedException();
+            }
+
             public Task<int> InitializeExpedition(int vbRealizationId)
             {
                 //throw new NotImplementedException();

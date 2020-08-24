@@ -10,6 +10,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionEx
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.SalesReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Moonlay.Data.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -62,6 +63,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<RealizationVbDetailModel> RealizationVbDetails { get; set; }
 
         public DbSet<VBRealizationDocumentExpeditionModel> VBRealizationDocumentExpeditions { get; set; }
+
+        public DbSet<VBRequestDocumentModel> VBRequestDocuments { get; set; }
+        public DbSet<VBRequestDocumentItemModel> VBRequestDocumentItems { get; set; }
+        public DbSet<VBRequestDocumentEPODetailModel> VBRequestDocumentEPODetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
