@@ -471,12 +471,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         }
 
         [Fact]
-        public async Task GetReportXls_when_DataEmpty_Return_OK()
+        public async Task GetReportXls_when_DataNull_Return_OK()
         {
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service.Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<VBRealizationDocumentExpeditionModel>(), 1, 1, 25));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null);
+            Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
+
+        [Fact]
+        public async Task GetReportXls_when_DataEmpty_Return_OK()
+        {
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<VBRealizationDocumentExpeditionModel>() { new VBRealizationDocumentExpeditionModel()}, 1, 1, 25));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
