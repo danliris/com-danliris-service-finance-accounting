@@ -6,6 +6,6 @@
         public string Code { get; set; }
         public string Name { get; set; }
         public DivisionDto Division { get; set; }
-        public int VBDocumentLayoutOrder { get; set; }
+        public int? VBDocumentLayoutOrder { get; set; }
     }
 }

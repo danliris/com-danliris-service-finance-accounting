@@ -10,9 +10,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
     public interface  IVBRequestDocumentService
     {
         Task<int> CreateNonPO(VBRequestDocumentNonPOFormDto form);
-        int UpdateNonPO(int id, VBRequestDocumentNonPOFormDto form);
+        Task<int> UpdateNonPO(int id, VBRequestDocumentNonPOFormDto form);
         Task<VBRequestDocumentNonPODto> GetNonPOById(int id);
-        int DeleteNonPO(int id);
+        Task<int> DeleteNonPO(int id);
 
         int CreateWithPO(VBRequestDocumentWithPOFormDto form);
         int UpdateWithPO(int id, VBRequestDocumentWithPOFormDto form);
