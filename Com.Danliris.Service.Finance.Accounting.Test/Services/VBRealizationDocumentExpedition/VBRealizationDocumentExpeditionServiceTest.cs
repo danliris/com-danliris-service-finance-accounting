@@ -234,7 +234,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
             ReadResponse<VBRealizationDocumentExpeditionModel> result = service.ReadRealizationToVerification(model.VBId, model.VBRealizationId, model.VBRealizationDate, model.VBRequestName, model.UnitId);
             Assert.NotNull(result);
-            Assert.NotEqual(0, result.Count);
+            Assert.True(0 < result.Data.Count());
            
         }
 
