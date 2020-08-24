@@ -89,5 +89,74 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public string SuppliantDivisionCode { get; private set; }
         [MaxLength(256)]
         public string SuppliantDivisionName { get; private set; }
+
+        public void SetDate(DateTimeOffset newDate, string user, string userAgent)
+        {
+            if(newDate != Date)
+            {
+                Date = newDate;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetRealizationEstimationDate(DateTimeOffset newRealizationEstimationDate, string user, string userAgent)
+        {
+            if (newRealizationEstimationDate != RealizationEstimationDate)
+            {
+                RealizationEstimationDate = newRealizationEstimationDate;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetCurrency(int newCurrencyId, string newCurrencyCode, string newCurrencySymbol, double newCurrencyRate, string newCurrencyDescription, string user, string userAgent)
+        {
+            if(newCurrencyId != CurrencyId)
+            {
+                CurrencyId = newCurrencyId;
+                this.FlagForUpdate(user, userAgent);
+            }
+
+            if (newCurrencyCode != CurrencyCode)
+            {
+                CurrencyCode = newCurrencyCode;
+                this.FlagForUpdate(user, userAgent);
+            }
+
+            if (newCurrencySymbol != CurrencySymbol)
+            {
+                CurrencySymbol = newCurrencySymbol;
+                this.FlagForUpdate(user, userAgent);
+            }
+
+            if (newCurrencyRate != CurrencyRate)
+            {
+                CurrencyRate = newCurrencyRate;
+                this.FlagForUpdate(user, userAgent);
+            }
+
+            if (newCurrencyDescription != CurrencyDescription)
+            {
+                CurrencyDescription = newCurrencyDescription;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetAmount(decimal newAmount, string user, string userAgent)
+        {
+            if (newAmount != Amount)
+            {
+                Amount = newAmount;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetPurpose(string newPurpose, string user, string userAgent)
+        {
+            if (newPurpose != Purpose)
+            {
+                Purpose = newPurpose;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
     }
 }

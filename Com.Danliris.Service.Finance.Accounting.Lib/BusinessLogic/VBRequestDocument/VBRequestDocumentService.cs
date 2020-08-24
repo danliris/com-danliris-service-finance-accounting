@@ -82,14 +82,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+
             _dbContext.VBRequestDocuments.Add(model);
             await _dbContext.SaveChangesAsync();
 
-            AddItems(model.Id, form.Items);
+            var items = AddNonPOItems(model.Id, form.Items);
+
+            _dbContext.VBRequestDocumentItems.AddRange(items);
+            await _dbContext.SaveChangesAsync();
+
             return model.Id;
         }
 
-        private void AddItems(int id, List<VBRequestDocumentNonPOItemFormDto> items)
+        private List<VBRequestDocumentItemModel> AddNonPOItems(int id, List<VBRequestDocumentNonPOItemFormDto> items)
         {
             var models = items.Select(element =>
             {
@@ -117,8 +122,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 return result;
             }).ToList();
 
-            _dbContext.VBRequestDocumentItems.AddRange(models);
-            _dbContext.SaveChanges();
+            return models;
         }
 
         public int CreateWithPO(VBRequestDocumentWithPOFormDto form)
@@ -126,9 +130,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             throw new NotImplementedException();
         }
 
-        public int DeleteNonPO(int id)
+        private void DeleteItemNonPO(int id)
         {
-            throw new NotImplementedException();
+            var items = _dbContext.VBRequestDocumentItems.Where(s => s.VBRequestDocumentId == id).OrderBy(s => s.VBDocumentLayoutOrder).ToList();
+
+            foreach (var item in items)
+            {
+                item.FlagForDelete(_identityService.Username, UserAgent);
+            }
+        }
+
+        public Task<int> DeleteNonPO(int id)
+        {
+            var data =  _dbContext.VBRequestDocuments.FirstOrDefault(s => s.Id == id);
+            data.FlagForDelete(_identityService.Username, UserAgent);
+
+            DeleteItemNonPO(id);
+
+            return _dbContext.SaveChangesAsync();
         }
 
         public int DeleteWithPO(int id)
@@ -188,7 +207,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     Active = s.Active,
                     CreatedAgent = s.CreatedAgent,
                     CreatedBy = s.CreatedBy,
-                    CreatedUtc =s.CreatedUtc,
+                    CreatedUtc = s.CreatedUtc,
                     IsDeleted = s.IsDeleted,
                     LastModifiedAgent = s.LastModifiedAgent,
                     LastModifiedBy = s.LastModifiedBy,
@@ -246,9 +265,68 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             throw new NotImplementedException();
         }
 
-        public int UpdateNonPO(int id, VBRequestDocumentNonPOFormDto form)
+        public Task<int> UpdateNonPO(int id, VBRequestDocumentNonPOFormDto form)
         {
-            throw new NotImplementedException();
+            var data = _dbContext.VBRequestDocuments.FirstOrDefault(s => s.Id == id);
+            
+            data.SetDate(form.Date.GetValueOrDefault(), _identityService.Username, UserAgent);
+            data.SetRealizationEstimationDate(form.RealizationEstimationDate.GetValueOrDefault(), _identityService.Username, UserAgent);
+            data.SetCurrency(form.Currency.Id.GetValueOrDefault(), form.Currency.Code, form.Currency.Symbol, form.Currency.Rate, form.Currency.Description, _identityService.Username, UserAgent);
+            data.SetAmount(form.Amount.GetValueOrDefault(), _identityService.Username, UserAgent);
+            data.SetPurpose(form.Purpose, _identityService.Username, UserAgent);
+            
+            EditNonPOItems(id, form.Items);
+            return _dbContext.SaveChangesAsync();
+        }
+
+        private void EditNonPOItems(int id, List<VBRequestDocumentNonPOItemFormDto> formItems)
+        {
+            var items = _dbContext.VBRequestDocumentItems.Where(s => s.VBRequestDocumentId == id).OrderBy(s => s.VBDocumentLayoutOrder).ToList();
+            foreach (var item in items)
+            {
+                var formItem = formItems.FirstOrDefault(s => s.Id == item.Id);
+                if (formItem == null)
+                {
+                    item.FlagForDelete(_identityService.Username, UserAgent);
+                }
+                else
+                {
+                    item.SetIsSelected(formItem.IsSelected, _identityService.Username, UserAgent);
+                    item.SetUnit(formItem.Unit.Id.GetValueOrDefault(), formItem.Unit.Name, formItem.Unit.Code, _identityService.Username, UserAgent);
+                    item.SetDivision(formItem.Unit.Division.Id.GetValueOrDefault(), formItem.Unit.Division.Name, formItem.Unit.Division.Code, _identityService.Username, UserAgent);
+                    item.SetVBDocumentLayoutOrder(formItem.Unit.VBDocumentLayoutOrder, _identityService.Username, UserAgent);
+                }
+            }
+
+            var newItems = formItems.Where(s => s.Id == 0).Select(element =>
+            {
+                var result = new VBRequestDocumentItemModel(
+                    id,
+                    element.Unit.Id.GetValueOrDefault(),
+                    element.Unit.Name,
+                    element.Unit.Code,
+                    element.Unit.Division.Id.GetValueOrDefault(),
+                    element.Unit.Division.Name,
+                    element.Unit.Division.Code,
+                    0,
+                    string.Empty,
+                    false,
+                    0,
+                    string.Empty,
+                    0,
+                    string.Empty,
+                    0,
+                    element.IsSelected,
+                    element.Unit.VBDocumentLayoutOrder
+                    );
+
+                result.FlagForCreate(_identityService.Username, UserAgent);
+                return result;
+            }).ToList();
+
+            _dbContext.VBRequestDocumentItems.AddRange(newItems);
+
+            //return _dbContext.SaveChangesAsync();
         }
 
         public int UpdateWithPO(int id, VBRequestDocumentWithPOFormDto form)

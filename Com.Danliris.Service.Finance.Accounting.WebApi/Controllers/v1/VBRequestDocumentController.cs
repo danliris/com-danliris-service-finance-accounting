@@ -91,7 +91,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpGet("non-po/{Id}")]
+        [HttpGet("non-po/{id}")]
         public virtual async Task<IActionResult> GetById([FromRoute] int id)
         {
             try
@@ -112,6 +112,62 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                         .Ok(null, model);
                     return Ok(Result);
                 }
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("non-po/{id}")]
+        public virtual async Task<IActionResult> Put([FromRoute] int id, [FromBody] VBRequestDocumentNonPOFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(form);
+
+                if (id != form.Id)
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                        .Fail();
+                    return BadRequest(Result);
+                }
+
+                await _service.UpdateNonPO(id, form);
+
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpDelete("non-po/{id}")]
+        public virtual async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.DeleteNonPO(id);
+
+                return NoContent();
             }
             catch (Exception e)
             {
