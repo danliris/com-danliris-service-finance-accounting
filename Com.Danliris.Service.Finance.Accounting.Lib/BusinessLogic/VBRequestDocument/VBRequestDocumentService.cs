@@ -83,7 +83,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return documentNo;
         }
 
-        public int CreateNonPO(VBRequestDocumentNonPOFormDto form)
+        //public int CreateNonPO(VBRequestDocumentNonPOFormDto form)
         public async Task<int> CreateNonPO(VBRequestDocumentNonPOFormDto form)
         {
             var documentNo = GetDocumentNo(form);
@@ -206,7 +206,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     item.PurchaseOrderExternal.useIncomeTax ? item.PurchaseOrderExternal.incomeTax.rate.GetValueOrDefault() : 0,
                     item.PurchaseOrderExternal.incomeTaxBy,
                     0,
-                    false
+                    false,
+                    0
                     );
 
                 EntityExtension.FlagForCreate(documentItem, _identityService.Username, UserAgent);
