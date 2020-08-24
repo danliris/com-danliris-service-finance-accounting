@@ -111,7 +111,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
             {
                 frac.ToString().Substring(frac.ToString().IndexOf(".") + 1);
             }
-            else
+            else if (stringFrac.IndexOf(",") > -1)
             {
                 frac.ToString().Substring(frac.ToString().IndexOf(",") + 1);
             }
