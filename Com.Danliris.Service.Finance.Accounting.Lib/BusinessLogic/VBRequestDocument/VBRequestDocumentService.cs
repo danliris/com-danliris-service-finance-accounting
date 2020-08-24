@@ -256,7 +256,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public int DeleteWithPO(int id)
         {
-            throw new NotImplementedException();
+            var model = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == id);
+            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
+            _dbContext.Update(model);
+
+            var items = _dbContext.VBRequestDocumentItems.Where(entity => entity.VBRequestDocumentId == model.Id).ToList();
+            items = items.Select(element =>
+            {
+                EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                return element;
+            }).ToList();
+
+            var itemIds = items.Select(element => element.Id).ToList();
+            var details = _dbContext.VBRequestDocumentEPODetails.Where(entity => itemIds.Contains(entity.VBRequestDocumentItemId)).ToList();
+            details = details.Select(element =>
+            {
+                EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                return element;
+            }).ToList();
+
+            _dbContext.SaveChanges();
+
+            return model.Id;
         }
 
         public ReadResponse<VBRequestDocumentModel> Get(int page, int size, string order, List<string> select, string keyword, string filter)
@@ -311,7 +332,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     Active = s.Active,
                     CreatedAgent = s.CreatedAgent,
                     CreatedBy = s.CreatedBy,
-                    CreatedUtc =s.CreatedUtc,
+                    CreatedUtc = s.CreatedUtc,
                     IsDeleted = s.IsDeleted,
                     LastModifiedAgent = s.LastModifiedAgent,
                     LastModifiedBy = s.LastModifiedBy,
@@ -366,7 +387,85 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public VBRequestDocumentWithPODto GetWithPOById(int id)
         {
-            throw new NotImplementedException();
+            var model = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == id);
+            var items = _dbContext.VBRequestDocumentItems.Where(entity => entity.VBRequestDocumentId == id).ToList();
+
+            var result = new VBRequestDocumentWithPODto()
+            {
+                Amount = model.Amount,
+                Currency = new CurrencyDto()
+                {
+                    Code = model.CurrencyCode,
+                    Description = model.CurrencyDescription,
+                    Id = model.CurrencyId,
+                    Rate = model.CurrencyRate,
+                    Symbol = model.CurrencySymbol
+                },
+                Date = model.Date,
+                DocumentNo = model.DocumentNo,
+                Id = model.Id,
+                Items = items.Select(element =>
+                {
+                    var details = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentItemId == element.Id);
+                    var elementResult = new VBRequestDocumentWithPOItemDto()
+                    {
+                        PurchaseOrderExternal = new PurchaseOrderExternal()
+                        {
+                            incomeTax = new IncomeTaxDto()
+                            {
+                                name = element.IncomeTaxName,
+                                rate = element.IncomeTaxRate,
+                                _id = element.IncomeTaxId
+                            },
+                            incomeTaxBy = element.IncomeTaxBy,
+                            no = element.EPONo,
+                            unit = new OldUnitDto()
+                            {
+                                name = element.UnitName,
+                                _id = element.UnitId,
+                                code = element.UnitCode,
+                                division = new OldDivisionDto()
+                                {
+                                    code = element.DivisionCode,
+                                    name = element.DivisionName,
+                                    _id = element.DivisionId
+                                }
+                            },
+                            useIncomeTax = element.UseIncomeTax,
+                            _id = element.EPOId,
+                            Items = details.Select(entity => new PurchaseOrderExternalItem()
+                            {
+                                Conversion = entity.Conversion,
+                                DealQuantity = entity.DealQuantity,
+                                DealUOM = new UnitOfMeasurement()
+                                {
+                                    unit = entity.DealUOMUnit,
+                                    _id = entity.DealUOMId
+                                },
+                                DefaultQuantity = entity.DefaultQuantity,
+                                Id = entity.Id,
+                                Price = entity.Price,
+                                Product = new Product()
+                                {
+                                    code = entity.ProductCode,
+                                    name = entity.ProductName,
+                                    uom = new UnitOfMeasurement()
+                                    {
+                                        unit = entity.DefaultUOMUnit,
+                                        _id = entity.DefaultUOMId
+                                    },
+                                    _id = entity.ProductId
+                                },
+                                UseVat = entity.UseVat
+                            }).ToList()
+                        }
+                    };
+
+                    return elementResult;
+                }).ToList()
+            };
+
+            return result;
         }
 
         public int UpdateNonPO(int id, VBRequestDocumentNonPOFormDto form)
