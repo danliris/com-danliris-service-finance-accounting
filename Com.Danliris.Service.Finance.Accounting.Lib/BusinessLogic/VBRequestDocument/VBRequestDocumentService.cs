@@ -218,7 +218,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 _dbContext.VBRequestDocumentItems.Add(documentItem);
                 _dbContext.SaveChanges();
 
-                AddDetails(documentItem.Id, documentItem.EPOId, item.PurchaseOrderExternal.Items);
+                AddDetails(documentItem.Id, documentItem.EPOId, item.PurchaseOrderExternal.Details);
             }
         }
 
@@ -465,7 +465,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                             },
                             useIncomeTax = element.UseIncomeTax,
                             _id = element.EPOId,
-                            Items = details.Select(entity => new PurchaseOrderExternalItem()
+                            Details = details.Select(entity => new PurchaseOrderExternalItem()
                             {
                                 Conversion = entity.Conversion,
                                 DealQuantity = entity.DealQuantity,
