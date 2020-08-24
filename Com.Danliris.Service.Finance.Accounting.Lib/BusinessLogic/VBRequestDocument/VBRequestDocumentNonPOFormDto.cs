@@ -34,9 +34,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             {
                 yield return new ValidationResult("Beban unit harus diisi", new List<string> { "Item" });
             }
-            else if (Items.Count > 0)
+            else
             {
-                if (!Items.Any(element => element.IsSelected))
+                if (!Items.Any(element => element.IsSelected && element.Unit != null && element.Unit.Id.GetValueOrDefault() != 0))
                     yield return new ValidationResult("Beban unit harus dipilih minimal 1", new List<string> { "Item" });
             }
         }
