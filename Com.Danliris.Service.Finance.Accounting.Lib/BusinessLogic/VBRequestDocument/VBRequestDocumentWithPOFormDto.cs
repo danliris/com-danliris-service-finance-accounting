@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public decimal? Amount { get; set; }
         public string Purpose { get; set; }
 
-        public List<VBRequestDocumentNonPOItemFormDto> Items { get; set; }
+        public List<VBRequestDocumentWithPOItemFormDto> Items { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -29,15 +29,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             if (Currency == null || Currency.Id.GetValueOrDefault() <= 0)
                 yield return new ValidationResult("Mata Uang harus diisi", new List<string> { "Currency" });
 
+            if (Amount <= 0)
+                yield return new ValidationResult("Nominal harus diisi", new List<string> { "Amount" });
+
             if (Items == null || Items.Count.Equals(0))
             {
                 yield return new ValidationResult("Beban unit harus diisi", new List<string> { "Item" });
             }
             else if (Items.Count > 0)
             {
-                //foreach ()
-                //if (!Items.Any(element => element.IsSelected))
-                //    yield return new ValidationResult("Beban unit harus dipilih minimal 1", new List<string> { "Item" });
+                int CountItemsError = 0;
+                string ItemsError = "[";
+
+                foreach (var item in Items)
+                {
+                    ItemsError += "{ ";
+
+                    if (item.PurchaseOrderExternal == null || item.PurchaseOrderExternal._id.GetValueOrDefault() <= 0)
+                    {
+                        CountItemsError++;
+                        ItemsError += "'PurchaseOrderExternal': 'PO External harus diisi', ";
+                    }
+
+                    ItemsError += "}, ";
+                }
+
+                ItemsError += "]";
+
+                if (CountItemsError > 0)
+                    yield return new ValidationResult(ItemsError, new List<string> { "Items" });
             }
         }
     }

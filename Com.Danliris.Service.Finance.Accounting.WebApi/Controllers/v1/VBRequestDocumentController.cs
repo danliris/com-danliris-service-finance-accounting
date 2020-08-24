@@ -124,6 +124,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
         [HttpPut("non-po/{id}")]
         public virtual async Task<IActionResult> Put([FromRoute] int id, [FromBody] VBRequestDocumentNonPOFormDto form)
+        [HttpPost("with-po")]
+        public IActionResult PostWithPO([FromBody] VBRequestDocumentWithPOFormDto form)
         {
             try
             {
@@ -168,6 +170,48 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 await _service.DeleteNonPO(id);
 
                 return NoContent();
+                var id = _service.CreateWithPO(form);
+
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return Created(string.Concat(Request.Path, "/", id), result);
+            }
+            catch (ServiceValidationException e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
+                return BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("with-po/{Id}")]
+        public IActionResult GetWithPOById([FromRoute] int id)
+        {
+            try
+            {
+                var model = _service.GetWithPOById(id);
+
+                if (model == null)
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                        .Fail();
+                    return NotFound(Result);
+                }
+                else
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                        .Ok(null, model);
+                    return Ok(Result);
+                }
             }
             catch (Exception e)
             {
