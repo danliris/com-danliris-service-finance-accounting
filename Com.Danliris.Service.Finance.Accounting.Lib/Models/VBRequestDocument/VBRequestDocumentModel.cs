@@ -15,6 +15,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
 
         }
 
+
+        // New Ctor With Index
+        public VBRequestDocumentModel(string documentNo, DateTimeOffset date, DateTimeOffset realizationEstimationDate, int suppliantUnitId, string suppliantUnitCode, string suppliantUnitName,
+                int suppliantDivisionId, string suppliantDivisionCode, string suppliantDivisionName, int currencyId, string currencyCode, string currencySymbol, string currencyDescription,
+                double currencyRate, string purpose, decimal amount, bool isPosted, bool isApproved, bool isCompleted, VBType type, int index)
+            : this(documentNo, date, realizationEstimationDate, suppliantUnitId, suppliantUnitCode, suppliantUnitName, suppliantDivisionId, suppliantDivisionCode, suppliantDivisionName,
+                currencyId, currencyCode, currencySymbol, currencyDescription, currencyRate, purpose, amount, isPosted, isApproved, isCompleted, type)
+        {
+            Index = index;
+        }
+
         public VBRequestDocumentModel(
             string documentNo,
             DateTimeOffset date,
@@ -99,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
 
         public void SetDate(DateTimeOffset newDate, string user, string userAgent)
         {
-            if(newDate != Date)
+            if (newDate != Date)
             {
                 Date = newDate;
                 this.FlagForUpdate(user, userAgent);
@@ -117,7 +128,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
 
         public void SetCurrency(int newCurrencyId, string newCurrencyCode, string newCurrencySymbol, double newCurrencyRate, string newCurrencyDescription, string user, string userAgent)
         {
-            if(newCurrencyId != CurrencyId)
+            if (newCurrencyId != CurrencyId)
             {
                 CurrencyId = newCurrencyId;
                 this.FlagForUpdate(user, userAgent);
@@ -168,7 +179,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
 
         public void SetApprove(bool newFlagIsApproved, string user, string userAgent)
         {
-            if(newFlagIsApproved != IsApproved)
+            if (newFlagIsApproved != IsApproved)
             {
                 IsApproved = newFlagIsApproved;
                 ApprovedDate = DateTimeOffset.UtcNow;
