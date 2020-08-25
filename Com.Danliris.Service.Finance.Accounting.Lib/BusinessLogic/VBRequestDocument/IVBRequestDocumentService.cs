@@ -19,6 +19,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         VBRequestDocumentWithPODto GetWithPOById(int id);
         int DeleteWithPO(int id);
 
+        List<VBRequestDocumentModel> GetNotApprovedData(int type, int vbId, int suppliantUnitId, DateTime? date, string order);
+
         ReadResponse<VBRequestDocumentModel> Get(int page, int size, string order, List<string> select, string keyword, string filter);
+
+        Task<int> ApproveData(IEnumerable<int> ids);
     }
 }

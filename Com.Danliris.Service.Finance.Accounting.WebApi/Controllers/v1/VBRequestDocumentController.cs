@@ -274,5 +274,52 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+
+        [HttpGet("not-approved")]
+        public virtual IActionResult GetNotApprovedData(int type, int vbId = 0, int suppliantUnitId = 0, DateTime? date = null, string order = "{}")
+        {
+            try
+            {
+                VerifyUser();
+                var read = _service.GetNotApprovedData(type, vbId, suppliantUnitId, date, order);
+
+                //List<TViewModel> dataVM = Mapper.Map<List<TViewModel>>(read.Data);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(null, read);
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPost("approve")]
+        public async Task<IActionResult> ApprovedData([FromBody] IEnumerable<int> ids)
+        {
+            try
+            {
+                VerifyUser();
+
+                var result = await _service.ApproveData(ids);
+
+
+                var response = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok(null, result);
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
     }
 }
