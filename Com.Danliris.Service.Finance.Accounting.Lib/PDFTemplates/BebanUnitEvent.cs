@@ -28,13 +28,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
         public void CellLayout(PdfPCell cell, Rectangle rect, PdfContentByte[] cb)
         {
             parent.AddKid(kid);
-            kid.SetWidget(new Rectangle(rect.GetLeft(padding),
-                                                        rect.GetBottom(padding),
-                                                        rect.GetRight(padding),
-                                                        rect.GetTop(padding)
-                                                        ),
-                                                        PdfAnnotation.HighlightInvert
-                                                        );
+            kid.SetWidget(new Rectangle(rect.GetLeft(padding), rect.GetTop(padding + 1f) - 11f, rect.GetRight(padding), rect.GetTop(padding + 1f)), PdfAnnotation.HighlightInvert);
+            //kid.SetWidget(new Rectangle(rect.Left, rect.Bottom + size, rect.Width, rect.Height - size), PdfAnnotation.HighlightInvert);
 
         }
 

@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
-            var countSameDocumentNo = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).Count();
+            var countSameDocumentNo = _dbContext.VBRequestDocuments.IgnoreQueryFilters().Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).Count();
 
             if (countSameDocumentNo >= 0)
             {
@@ -345,6 +345,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             {
                 Active = model.Active,
                 Amount = model.Amount,
+                DocumentNo = model.DocumentNo,
                 CreatedAgent = model.CreatedAgent,
                 Items = items.Select(s => new VBRequestDocumentNonPOItemDto()
                 {
@@ -543,8 +544,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     item.SetIsSelected(formItem.IsSelected, _identityService.Username, UserAgent);
                     item.SetUnit(formItem.Unit.Id.GetValueOrDefault(), formItem.Unit.Name, formItem.Unit.Code, _identityService.Username, UserAgent);
-                    item.SetDivision(formItem.Unit.Division.Id.GetValueOrDefault(), formItem.Unit.Division.Name, formItem.Unit.Division.Code, _identityService.Username, UserAgent);
-                    item.SetVBDocumentLayoutOrder(formItem.Unit.VBDocumentLayoutOrder.GetValueOrDefault(), _identityService.Username, UserAgent);
+
+                    if(formItem.Unit.Division == null)
+                    {
+                        item.SetDivision(0, null, null, _identityService.Username, UserAgent);
+
+                    }
+                    else
+                    {
+                        item.SetDivision(formItem.Unit.Division.Id.GetValueOrDefault(), formItem.Unit.Division.Name, formItem.Unit.Division.Code, _identityService.Username, UserAgent);
+                    }
+                    
+                    //item.SetVBDocumentLayoutOrder(formItem.Unit.VBDocumentLayoutOrder.GetValueOrDefault(), _identityService.Username, UserAgent);
                 }
             }
 
