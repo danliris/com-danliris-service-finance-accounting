@@ -6,6 +6,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 {
     public class VBRequestDocumentWithPOFormDto : IValidatableObject
     {
+        public int? Id { get; set; }
         public DateTimeOffset? Date { get; set; }
         public DateTimeOffset? RealizationEstimationDate { get; set; }
         public UnitDto SuppliantUnit { get; set; }
@@ -45,7 +46,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     ItemsError += "{ ";
 
-                    if (item.PurchaseOrderExternal == null || item.PurchaseOrderExternal._id.GetValueOrDefault() <= 0)
+                    if (item.PurchaseOrderExternal == null || item.PurchaseOrderExternal.Id.GetValueOrDefault() <= 0)
                     {
                         CountItemsError++;
                         ItemsError += "'PurchaseOrderExternal': 'PO External harus diisi', ";

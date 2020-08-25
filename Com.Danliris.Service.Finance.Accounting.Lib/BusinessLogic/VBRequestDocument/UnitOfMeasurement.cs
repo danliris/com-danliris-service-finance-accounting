@@ -2,7 +2,7 @@
 {
     public class UnitOfMeasurement
     {
-        public int? _id { get; set; }
-        public string unit { get; set; }
+        public int? Id { get; set; }
+        public string Unit { get; set; }
     }
 }
