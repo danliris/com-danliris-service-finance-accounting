@@ -595,7 +595,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             _dbContext.Update(header);
             _dbContext.SaveChanges();
 
-            UpdateWithPOEPODetail(documentId: id, form.Items);
+            UpdateWithPOEPODetail(id, form.Items);
             return id;
         }
 
