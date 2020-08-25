@@ -21,14 +21,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             int divisionId,
             string divisionName,
             string divisionCode,
-            int epoId,
-            string epoNo,
-            bool useIncomeTax,
-            int incomeTaxId,
-            string incomeTaxName,
-            double incomeTaxRate,
-            string incomeTaxBy,
-            double amountByUnit,
             bool isSelected,
             int vbDocumentLayoutOrder
             )
@@ -40,20 +32,71 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             DivisionId = divisionId;
             DivisionName = divisionName;
             DivisionCode = divisionCode;
-            EPOId = epoId;
-            EPONo = epoNo;
-            UseIncomeTax = useIncomeTax;
-            IncomeTaxId = incomeTaxId;
-            IncomeTaxName = incomeTaxName;
-            IncomeTaxRate = incomeTaxRate;
-            IncomeTaxBy = incomeTaxBy;
-            AmountByUnit = amountByUnit;
             IsSelected = isSelected;
 
             VBDocumentLayoutOrder = vbDocumentLayoutOrder;
         }
 
+        public VBRequestDocumentItemModel(
+            int vbRequestDocumentId,
+            int vbRequestDocumentEPODetailId,
+            int unitId,
+            string unitName,
+            string unitCode,
+            int divisionId,
+            string divisionName,
+            string divisionCode,
+            int epoId,
+            bool useIncomeTax,
+            int incomeTaxId,
+            string incomeTaxName,
+            double incomeTaxRate,
+            string incomeTaxBy,
+            int productId,
+            string productCode,
+            string productName,
+            double defaultQuantity,
+            int defaultUOMId,
+            string defaultUOMUnit,
+            double dealQuantity,
+            int dealUOMId,
+            string dealUOMUnit,
+            double conversion,
+            double price,
+            bool useVat
+            )
+        {
+            VBRequestDocumentId = vbRequestDocumentId;
+            VBRequestDocumentEPODetailId = vbRequestDocumentEPODetailId;
+            UnitId = unitId;
+            UnitName= unitName;
+            UnitCode= unitCode;
+            DivisionId = divisionId;
+            DivisionName = divisionName;
+            DivisionCode = divisionCode;
+            EPOId = epoId;
+            UseIncomeTax = useIncomeTax;
+            IncomeTaxId = incomeTaxId;
+            IncomeTaxName = incomeTaxName;
+            IncomeTaxRate = incomeTaxRate;
+            IncomeTaxBy = incomeTaxBy;
+            ProductId = productId;
+            ProductCode = productCode;
+            ProductName = productName;
+            DefaultQuantity = defaultQuantity;
+            DefaultUOMId = defaultUOMId;
+            DefaultUOMUnit = defaultUOMUnit;
+            DealQuantity = dealQuantity;
+            DealUOMId = dealUOMId;
+            DealUOMUnit = dealUOMUnit;
+            Conversion = conversion;
+            Price = price;
+            UseVat = useVat;
+
+        }
+
         public int VBRequestDocumentId { get; private set; }
+        public int VBRequestDocumentEPODetailId { get; private set; }
         public int UnitId { get; private set; }
         [MaxLength(256)]
         public string UnitName { get; private set; }
@@ -65,8 +108,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         [MaxLength(64)]
         public string DivisionCode { get; private set; }
         public int EPOId { get; private set; }
-        [MaxLength(64)]
-        public string EPONo { get; private set; }
         public bool UseIncomeTax { get; private set; }
         public int IncomeTaxId { get; private set; }
         [MaxLength(64)]
@@ -77,11 +118,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public double AmountByUnit { get; private set; }
         public bool IsSelected { get; private set; }
 
+        public int ProductId { get; private set; }
+        [MaxLength(64)]
+        public string ProductCode { get; private set; }
+        [MaxLength(512)]
+        public string ProductName { get; private set; }
+        public double DefaultQuantity { get; private set; }
+        public int DefaultUOMId { get; private set; }
+        [MaxLength(64)]
+        public string DefaultUOMUnit { get; private set; }
+        public double DealQuantity { get; private set; }
+        public int DealUOMId { get; private set; }
+        [MaxLength(64)]
+        public string DealUOMUnit { get; private set; }
+        public double Conversion { get; private set; }
+        public double Price { get; private set; }
+        public bool UseVat { get; private set; }
+
         public int VBDocumentLayoutOrder { get; private set; }
 
-        public void SetUnit(int newUnitId,string newUnitName, string newUnitCode, string user, string userAgent)
+        public void SetUnit(int newUnitId, string newUnitName, string newUnitCode, string user, string userAgent)
         {
-            if(newUnitId != UnitId)
+            if (newUnitId != UnitId)
             {
                 UnitId = newUnitId;
                 this.FlagForUpdate(user, userAgent);

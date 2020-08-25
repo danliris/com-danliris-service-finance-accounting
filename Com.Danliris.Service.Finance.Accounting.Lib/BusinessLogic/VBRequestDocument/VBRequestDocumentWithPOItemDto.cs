@@ -2,6 +2,7 @@
 {
     public class VBRequestDocumentWithPOItemDto
     {
+        public int Id { get; set; }
         public PurchaseOrderExternal PurchaseOrderExternal { get; set; }
     }
 }
