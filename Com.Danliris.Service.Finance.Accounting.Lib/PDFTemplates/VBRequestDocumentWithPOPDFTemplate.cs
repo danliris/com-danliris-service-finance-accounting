@@ -720,10 +720,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 annotations.Add(_checkGroup);
             }
 
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3a.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3a.AddCell(cellHeaderBody);
+            for (var i = 0; i < 10 - (2 * (units.Count % 5)); i++)
+            {
+                cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+                headerTable3a.AddCell(cellHeaderBody);
+            }
+
+
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3a.AddCell(cellHeaderBody);
 
             cellHeader3a.AddElement(headerTable3a);
             headerTable_C.AddCell(cellHeader3a);
@@ -812,7 +817,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             table.AddCell(cell);
             cell.Phrase = new Phrase("..................", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase($"Bag. ...........", normal_font);
+            cell.Phrase = new Phrase($"Bag. {data.SuppliantUnit.Name}", normal_font);
             table.AddCell(cell);
 
             document.Add(table);
