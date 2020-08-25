@@ -102,6 +102,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
 
         public int Index { get; private set; }
 
+        public bool IsRealized { get; private set; }
+
 
         public bool IsApproved { get; private set; }
         public DateTimeOffset ApprovedDate { get; private set; }
@@ -177,14 +179,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             }
         }
 
-        public void SetApprove(bool newFlagIsApproved, string user, string userAgent)
+        public void SetIsApproved(bool newFlagIsApproved, string user, string userAgent)
         {
             if (newFlagIsApproved != IsApproved)
             {
                 IsApproved = newFlagIsApproved;
-                ApprovedDate = DateTimeOffset.UtcNow;
-                ApprovedBy = user;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
 
+        public void SetApprovedDate(DateTimeOffset newApprovedDate, string user, string userAgent)
+        {
+            if (newApprovedDate != ApprovedDate)
+            {
+                ApprovedDate = newApprovedDate;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetApprovedBy(string newApprovedBy, string user, string userAgent)
+        {
+            if (newApprovedBy != ApprovedBy)
+            {
+                ApprovedBy = newApprovedBy;
                 this.FlagForUpdate(user, userAgent);
             }
         }

@@ -667,13 +667,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return query.ToList();
         }
 
-        public Task<int> ApproveData(IEnumerable<int> ids)
+        public Task<int> ApprovalData(ApprovalVBFormDto data)
         {
-            var data = _dbContext.VBRequestDocuments.Where(s => ids.Contains(s.Id));
+            var vbDocuments = _dbContext.VBRequestDocuments.Where(s => data.Ids.Contains(s.Id));
 
-            foreach (var item in data)
+            foreach (var item in vbDocuments)
             {
-                item.SetApprove(true, _identityService.Username, UserAgent);
+                item.SetIsApproved(data.IsApproved, _identityService.Username, UserAgent);
+                if (data.IsApproved)
+                {
+                    item.SetApprovedBy(_identityService.Username, _identityService.Username, UserAgent);
+                    item.SetApprovedDate(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                }
             }
 
             return _dbContext.SaveChangesAsync();
