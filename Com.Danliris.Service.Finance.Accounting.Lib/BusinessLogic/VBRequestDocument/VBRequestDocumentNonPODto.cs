@@ -19,6 +19,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public decimal? Amount { get; set; }
         public string Purpose { get; set; }
 
+        public bool IsApproved { get; set; }
+
         public List<VBRequestDocumentNonPOItemDto> Items { get; set; }
     }
 }

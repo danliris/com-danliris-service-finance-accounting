@@ -23,6 +23,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         ReadResponse<VBRequestDocumentModel> Get(int page, int size, string order, List<string> select, string keyword, string filter);
 
-        Task<int> ApproveData(IEnumerable<int> ids);
+        Task<int> ApprovalData(ApprovalVBFormDto data);
     }
 }

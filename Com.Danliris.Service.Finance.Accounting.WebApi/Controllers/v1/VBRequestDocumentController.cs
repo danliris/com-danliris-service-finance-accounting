@@ -390,14 +390,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpPost("approve")]
-        public async Task<IActionResult> ApprovedData([FromBody] IEnumerable<int> ids)
+        [HttpPost("approval")]
+        public async Task<IActionResult> ApprovalData([FromBody] ApprovalVBFormDto data)
         {
             try
             {
                 VerifyUser();
 
-                var result = await _service.ApproveData(ids);
+                var result = await _service.ApprovalData(data);
 
 
                 var response = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok(null, result);

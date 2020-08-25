@@ -28,7 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             _identityService = serviceProvider.GetService<IIdentityService>();
         }
 
-        private string GetDocumentNo(VBRequestDocumentNonPOFormDto form)
+        private Tuple<string, int> GetDocumentNo(VBRequestDocumentNonPOFormDto form, VBRequestDocumentModel existingData)
         {
             var now = form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset);
             var year = now.ToString("yy");
@@ -44,16 +44,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
-            var countSameDocumentNo = _dbContext.VBRequestDocuments.IgnoreQueryFilters().Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).Count();
+            var index = 1;
 
-            if (countSameDocumentNo >= 0)
+            if (existingData != null)
             {
-                countSameDocumentNo += 1;
-
-                documentNo += string.Format("{0:000}", countSameDocumentNo);
+                index = existingData.Index + 1;
             }
 
-            return documentNo;
+            documentNo += string.Format("{0:000}", index);
+
+            //var countSameDocumentNo = _dbContext.VBRequestDocuments.IgnoreQueryFilters().Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).Count();
+
+            //if (countSameDocumentNo >= 0)
+            //{
+            //    countSameDocumentNo += 1;
+
+            //    documentNo += string.Format("{0:000}", countSameDocumentNo);
+            //}
+
+            return new Tuple<string, int>(documentNo, index);
         }
 
         private string GetDocumentNo(VBRequestDocumentWithPOFormDto form)
@@ -92,9 +101,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             try
             {
-                var documentNo = GetDocumentNo(form);
+                var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
+                var documentNo = GetDocumentNo(form, existingData);
                 var model = new VBRequestDocumentModel(
-                    documentNo,
+                    documentNo.Item1,
                     form.Date.GetValueOrDefault(),
                     form.RealizationEstimationDate.GetValueOrDefault(),
                     form.SuppliantUnit.Id.GetValueOrDefault(),
@@ -113,7 +123,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     false,
                     false,
                     false,
-                    VBType.NonPO
+                    VBType.NonPO,
+                    documentNo.Item2
                     );
 
                 model.FlagForCreate(_identityService.Username, UserAgent);
@@ -336,6 +347,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 Active = model.Active,
                 Amount = model.Amount,
                 DocumentNo = model.DocumentNo,
+                IsApproved = model.IsApproved,
                 CreatedAgent = model.CreatedAgent,
                 Items = items.Select(s => new VBRequestDocumentNonPOItemDto()
                 {
@@ -583,7 +595,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             _dbContext.Update(header);
             _dbContext.SaveChanges();
 
-            UpdateWithPOEPODetail(documentId: id, form.Items);
+            UpdateWithPOEPODetail(id, form.Items);
             return id;
         }
 
@@ -655,13 +667,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return query.ToList();
         }
 
-        public Task<int> ApproveData(IEnumerable<int> ids)
+        public Task<int> ApprovalData(ApprovalVBFormDto data)
         {
-            var data = _dbContext.VBRequestDocuments.Where(s => ids.Contains(s.Id));
+            var vbDocuments = _dbContext.VBRequestDocuments.Where(s => data.Ids.Contains(s.Id));
 
-            foreach(var item in data)
+            foreach (var item in vbDocuments)
             {
-                item.SetApprove(true, _identityService.Username, UserAgent);
+                item.SetIsApproved(data.IsApproved, _identityService.Username, UserAgent);
+                if (data.IsApproved)
+                {
+                    item.SetApprovedBy(_identityService.Username, _identityService.Username, UserAgent);
+                    item.SetApprovedDate(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                }
             }
 
             return _dbContext.SaveChangesAsync();
