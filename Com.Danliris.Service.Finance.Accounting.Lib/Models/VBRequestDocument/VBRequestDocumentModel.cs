@@ -89,6 +89,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         [MaxLength(256)]
         public string SuppliantDivisionName { get; private set; }
 
+        public int Index { get; private set; }
+
 
         public bool IsApproved { get; private set; }
         public DateTimeOffset ApprovedDate { get; private set; }
