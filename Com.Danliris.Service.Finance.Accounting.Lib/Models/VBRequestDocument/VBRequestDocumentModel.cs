@@ -76,7 +76,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public string Purpose { get; private set; }
         public decimal Amount { get; private set; }
         public bool IsPosted { get; private set; }
-        public bool IsApproved { get; private set; }
         public bool IsCompleted { get; private set; }
         public VBType Type { get; private set; }
         public int SuppliantUnitId { get; private set; }
@@ -89,6 +88,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public string SuppliantDivisionCode { get; private set; }
         [MaxLength(256)]
         public string SuppliantDivisionName { get; private set; }
+
+
+        public bool IsApproved { get; private set; }
+        public DateTimeOffset ApprovedDate { get; private set; }
+        [MaxLength(256)]
+        public string ApprovedBy { get; private set; }
 
         public void SetDate(DateTimeOffset newDate, string user, string userAgent)
         {
@@ -155,6 +160,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             if (newPurpose != Purpose)
             {
                 Purpose = newPurpose;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetApprove(bool newFlagIsApproved, string user, string userAgent)
+        {
+            if(newFlagIsApproved != IsApproved)
+            {
+                IsApproved = newFlagIsApproved;
+                ApprovedDate = DateTimeOffset.UtcNow;
+                ApprovedBy = user;
+
                 this.FlagForUpdate(user, userAgent);
             }
         }
