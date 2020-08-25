@@ -244,7 +244,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpGet("with-po/{Id}")]
+        [HttpGet("with-po/{id}")]
         public IActionResult GetWithPOById([FromRoute] int id)
         {
             try
