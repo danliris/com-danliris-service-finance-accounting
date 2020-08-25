@@ -527,6 +527,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             data.SetPurpose(form.Purpose, _identityService.Username, UserAgent);
 
             EditNonPOItems(id, form.Items);
+            data.FlagForUpdate(_identityService.Username, UserAgent);
             return _dbContext.SaveChangesAsync();
         }
 
