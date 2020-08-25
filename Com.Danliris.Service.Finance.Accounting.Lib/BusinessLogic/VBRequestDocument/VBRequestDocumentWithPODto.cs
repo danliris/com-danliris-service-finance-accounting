@@ -7,13 +7,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
     {
         public int Id { get; set; }
         public string DocumentNo { get; set; }
-        public DateTimeOffset Date { get; set; }
-        public DateTimeOffset RealizationEstimationDate { get; set; }
+        public DateTimeOffset? Date { get; set; }
+        public DateTimeOffset? RealizationEstimationDate { get; set; }
         public UnitDto SuppliantUnit { get; set; }
         public CurrencyDto Currency { get; set; }
         public decimal? Amount { get; set; }
         public string Purpose { get; set; }
 
         public List<VBRequestDocumentWithPOItemDto> Items { get; set; }
+        public string CreatedBy { get; set; }
     }
 }

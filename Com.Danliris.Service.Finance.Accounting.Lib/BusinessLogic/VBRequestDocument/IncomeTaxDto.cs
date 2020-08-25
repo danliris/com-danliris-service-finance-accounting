@@ -2,8 +2,8 @@
 {
     public class IncomeTaxDto
     {
-        public int? _id { get; set; }
-        public double? rate { get; set; }
-        public string name { get; set; }
+        public int? Id { get; set; }
+        public double? Rate { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -188,5 +188,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
                 this.FlagForUpdate(user, userAgent);
             }
         }
+
+        public void UpdateFromForm(VBRequestDocumentWithPOFormDto form)
+        {
+            Date = form.Date.GetValueOrDefault();
+            RealizationEstimationDate = form.RealizationEstimationDate.GetValueOrDefault();
+            CurrencyId = form.Currency.Id.GetValueOrDefault();
+            CurrencyCode = form.Currency.Code;
+            CurrencySymbol = form.Currency.Symbol;
+            CurrencyRate = form.Currency.Rate.GetValueOrDefault();
+            CurrencyDescription = form.Currency.Description;
+            Purpose = form.Purpose;
+            Amount = form.Amount.GetValueOrDefault();
+            SuppliantUnitId = form.SuppliantUnit.Id.GetValueOrDefault();
+            SuppliantUnitCode = form.SuppliantUnit.Code;
+            SuppliantUnitName = form.SuppliantUnit.Name;
+            SuppliantDivisionId = form.SuppliantUnit.Division.Id.GetValueOrDefault();
+            SuppliantDivisionCode = form.SuppliantUnit.Division.Code;
+            SuppliantDivisionName = form.SuppliantUnit.Division.Name;
+        }
     }
 }
