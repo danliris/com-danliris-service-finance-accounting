@@ -88,7 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         {
             var internalTransaction = _dbContext.Database.CurrentTransaction == null;
             var transaction = !internalTransaction ? _dbContext.Database.CurrentTransaction : _dbContext.Database.BeginTransaction();
-            
+
             try
             {
                 var documentNo = GetDocumentNo(form);
@@ -527,6 +527,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             data.SetPurpose(form.Purpose, _identityService.Username, UserAgent);
 
             EditNonPOItems(id, form.Items);
+            data.FlagForUpdate(_identityService.Username, UserAgent);
             return _dbContext.SaveChangesAsync();
         }
 
@@ -545,7 +546,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     item.SetIsSelected(formItem.IsSelected, _identityService.Username, UserAgent);
                     item.SetUnit(formItem.Unit.Id.GetValueOrDefault(), formItem.Unit.Name, formItem.Unit.Code, _identityService.Username, UserAgent);
 
-                    if(formItem.Unit.Division == null)
+                    if (formItem.Unit.Division == null)
                     {
                         item.SetDivision(0, null, null, _identityService.Username, UserAgent);
 
@@ -554,7 +555,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     {
                         item.SetDivision(formItem.Unit.Division.Id.GetValueOrDefault(), formItem.Unit.Division.Name, formItem.Unit.Division.Code, _identityService.Username, UserAgent);
                     }
-                    
+
                     //item.SetVBDocumentLayoutOrder(formItem.Unit.VBDocumentLayoutOrder.GetValueOrDefault(), _identityService.Username, UserAgent);
                 }
             }
@@ -593,6 +594,45 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public int UpdateWithPO(int id, VBRequestDocumentWithPOFormDto form)
         {
             throw new NotImplementedException();
+        }
+
+        public List<VBRequestDocumentModel> GetNotApprovedData(int type, int vbId, int suppliantUnitId, DateTime? date, string order)
+        {
+            var enumType = (VBType)type;
+            var offset = _identityService.TimezoneOffset;
+            var query = _dbContext.VBRequestDocuments.Where(s => !s.IsApproved && s.Type == enumType);
+
+            if (vbId != 0)
+            {
+                query = query.Where(s => s.Id == vbId);
+            }
+
+            if (suppliantUnitId != 0)
+            {
+                query = query.Where(s => s.SuppliantUnitId == suppliantUnitId);
+            }
+
+            if (date.HasValue)
+            {
+                query = query.Where(s => s.Date.ToOffset(new TimeSpan(offset, 0, 0)).Date == date.Value.Date);
+            }
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<VBRequestDocumentModel>.Order(query, orderDictionary);
+
+            return query.ToList();
+        }
+
+        public Task<int> ApproveData(IEnumerable<int> ids)
+        {
+            var data = _dbContext.VBRequestDocuments.Where(s => ids.Contains(s.Id));
+
+            foreach(var item in data)
+            {
+                item.SetApprove(true, _identityService.Username, UserAgent);
+            }
+
+            return _dbContext.SaveChangesAsync();
         }
     }
 }
