@@ -442,6 +442,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 },
                 DocumentNo = model.DocumentNo,
                 Id = model.Id,
+                IsApproved = model.IsApproved,
                 Purpose = model.Purpose,
                 CreatedBy = model.CreatedBy,
                 Items = epoDetails.Select(epoDetail =>
@@ -606,13 +607,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                         return element;
                     }).ToList();
 
-                    _dbContext.Update(epoDetail);
+                    _dbContext.VBRequestDocumentEPODetails.Update(epoDetail);
                     _dbContext.UpdateRange(documentItems);
                 }
                 else
                 {
                     epoDetail.UpdateFromForm(item);
-                    _dbContext.Update(item);
+                    _dbContext.VBRequestDocumentEPODetails.Update(epoDetail);
 
                     var documentItems = _dbContext.VBRequestDocumentItems.Where(entity => entity.VBRequestDocumentEPODetailId == epoDetail.Id).ToList();
                     documentItems = documentItems.Select(element =>
