@@ -1,0 +1,654 @@
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocument
+{
+ public   class VBRequestDocumentControllerTest
+    {
+        protected VBRequestDocumentController GetController(Mock<IServiceProvider> serviceProvider)
+        {
+            var user = new Mock<ClaimsPrincipal>();
+            var claims = new Claim[]
+            {
+                new Claim("username", "unittestusername")
+            };
+            user.Setup(u => u.Claims).Returns(claims);
+
+            VBRequestDocumentController controller = new VBRequestDocumentController(serviceProvider.Object);
+            controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext()
+                {
+                    User = user.Object
+                }
+            };
+            controller.ControllerContext.HttpContext.Request.Headers["Authorization"] = "Bearer unittesttoken";
+            controller.ControllerContext.HttpContext.Request.Path = new PathString("/v1/unit-test");
+            return controller;
+        }
+
+        Mock<IServiceProvider> GetServiceProvider()
+        {
+            Mock<IServiceProvider> serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider
+              .Setup(s => s.GetService(typeof(IIdentityService)))
+              .Returns(new IdentityService() { TimezoneOffset = 1, Token = "token", Username = "username" });
+
+            var validateService = new Mock<IValidateService>();
+            serviceProvider
+              .Setup(s => s.GetService(typeof(IValidateService)))
+              .Returns(validateService.Object);
+            return serviceProvider;
+        }
+
+        public VBRequestDocumentNonPOFormDto vBRequestDocumentNonPOFormDto
+        {
+            get
+            {
+                return new VBRequestDocumentNonPOFormDto()
+                {
+                    Id=1,
+                    Amount=1,
+
+                };
+            }
+        }
+
+        VBRequestDocumentWithPOFormDto vBRequestDocumentWithPOFormDto
+        {
+            get
+            {
+                return new VBRequestDocumentWithPOFormDto()
+                {
+
+                };
+            }
+        }
+        protected ServiceValidationException GetServiceValidationException()
+        {
+            var serviceProvider = new Mock<IServiceProvider>();
+            var validationResults = new List<ValidationResult>();
+            System.ComponentModel.DataAnnotations.ValidationContext validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(vBRequestDocumentNonPOFormDto, serviceProvider.Object, null);
+            return new ServiceValidationException(validationContext, validationResults);
+        }
+
+        protected int GetStatusCode(IActionResult response)
+        {
+            return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
+        }
+
+        [Fact]
+        public async Task PostNonPO_Succes_Return_Created()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.CreateNonPO(It.IsAny<VBRequestDocumentNonPOFormDto>())).ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).PostNonPO(new VBRequestDocumentNonPOFormDto() );
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        }
+
+        [Fact]
+        public async Task PostNonPO_Throws_ServiceValidationException()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.CreateNonPO(It.IsAny<VBRequestDocumentNonPOFormDto>())).ThrowsAsync(GetServiceValidationException());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).PostNonPO(new VBRequestDocumentNonPOFormDto());
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+
+        [Fact]
+        public async Task PostNonPO_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.CreateNonPO(It.IsAny<VBRequestDocumentNonPOFormDto>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).PostNonPO(new VBRequestDocumentNonPOFormDto());
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void Get_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            Dictionary<string, string> order = new Dictionary<string, string>();
+
+            service.Setup(s => s.Get(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Returns(new ReadResponse<VBRequestDocumentModel>(new List<VBRequestDocumentModel>(), 1, order, new List<string>()));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response =  GetController(serviceProviderMock).Get(1, 25, "{}", null, null, "{}") ;
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public void Get_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.Get(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response =  GetController(serviceProviderMock).Get(1,25,"{}",null,null,"{}");
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public async Task GetNonPOById_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ReturnsAsync(new VBRequestDocumentNonPODto());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GetNonPOById(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public async Task GetNonPOById_Return_NotFound()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ReturnsAsync(()=>null);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GetNonPOById(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+        [Fact]
+        public async Task GetNonPOById_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GetNonPOById(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public async Task PutNonPO_Success_Return_NoContent()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.UpdateNonPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentNonPOFormDto>())).ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).PutNonPO(vBRequestDocumentNonPOFormDto.Id, vBRequestDocumentNonPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+        [Fact]
+        public async Task PutNonPO_Return_BadRequest()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.UpdateNonPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentNonPOFormDto>())).ThrowsAsync(GetServiceValidationException());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).PutNonPO(vBRequestDocumentNonPOFormDto.Id, vBRequestDocumentNonPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
+        public async Task PutNonPO_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.UpdateNonPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentNonPOFormDto>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).PutNonPO(vBRequestDocumentNonPOFormDto.Id, vBRequestDocumentNonPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public async Task DeleteNonPO_Success_Return_NoContent()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.DeleteNonPO(It.IsAny<int>())).ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).DeleteNonPO(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+        [Fact]
+        public async Task DeleteNonPO_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.DeleteNonPO(It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).DeleteNonPO(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public async Task GetPDFNonPO_Return_Success()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            Dictionary<string, string> order = new Dictionary<string, string>();
+
+            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ReturnsAsync(new VBRequestDocumentNonPODto());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GetPDFNonPO(1);
+
+            //Assert 
+            Assert.NotNull(response);
+           
+        }
+
+        [Fact]
+        public async Task GetPDFNonPO_Return_NotFound()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ReturnsAsync(()=>null);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GetPDFNonPO(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+
+        [Fact]
+        public async Task GetPDFNonPO_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            Dictionary<string, string> order = new Dictionary<string, string>();
+
+            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GetPDFNonPO(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void PostWithPO_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.CreateWithPO(It.IsAny<VBRequestDocumentWithPOFormDto>())).Returns(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response =  GetController(serviceProviderMock).PostWithPO(vBRequestDocumentWithPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        }
+
+
+        [Fact]
+        public void PostWithPO_Throws_ServiceValidationException()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.CreateWithPO(It.IsAny<VBRequestDocumentWithPOFormDto>())).Throws(GetServiceValidationException());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).PostWithPO(vBRequestDocumentWithPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
+        public void PostWithPO_Throws_Exception()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.CreateWithPO(It.IsAny<VBRequestDocumentWithPOFormDto>())).Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).PostWithPO(vBRequestDocumentWithPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void GetWithPOById_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetWithPOById(It.IsAny<int>())).Returns(new VBRequestDocumentWithPODto());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response =  GetController(serviceProviderMock).GetWithPOById(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public void GetWithPOById_Return_NotFound()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetWithPOById(It.IsAny<int>())).Returns(()=>null);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetWithPOById(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+        [Fact]
+        public void GetWithPOById_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetWithPOById(It.IsAny<int>())).Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetWithPOById(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void GetNotApprovedData_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetNotApprovedData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),  It.IsAny<DateTime?>(), It.IsAny<string>())).Returns(new List<VBRequestDocumentModel>());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetNotApprovedData(1, 25, 1, null, null);
+            
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public void GetNotApprovedData_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetNotApprovedData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<string>())).Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetNotApprovedData(1, 25, 1, null, null);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public async Task GetApprovedData_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.ApproveData(It.IsAny<List<int>>())).ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).ApprovedData(new List<int>());
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+
+        [Fact]
+        public async Task GetApprovedData_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.ApproveData(It.IsAny<List<int>>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).ApprovedData(new List<int>());
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+    }
+}
+

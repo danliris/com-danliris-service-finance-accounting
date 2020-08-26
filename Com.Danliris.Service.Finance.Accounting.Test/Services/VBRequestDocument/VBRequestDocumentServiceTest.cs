@@ -73,7 +73,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
                 .Setup(x => x.GetService(typeof(IIdentityService)))
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
 
-
             return serviceProvider;
         }
 
@@ -85,51 +84,65 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         [Fact]
         public async Task CreateNonPO_Return_Success()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentNonPOFormDto form = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
-            VBRequestDocumentModel data = _dataUtil(service, dbContext).GetTestData_VBRequestDocument();
+            VBRequestDocumentNonPOFormDto newForm = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
+            VBRequestDocumentModel testData =  _dataUtil(service, dbContext).GetTestData_VBRequestDocumentNonPO();
 
-            int result = await service.CreateNonPO(form);
+            //Act
+            int result = await service.CreateNonPO(newForm);
+
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task CreateNonPO_Throw_Exception()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentNonPOFormDto form = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
-            form.Items = null;
+            VBRequestDocumentNonPOFormDto newForm = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
+            newForm.Items = null;
 
-            await Assert.ThrowsAsync<System.ArgumentNullException>(()=>service.CreateNonPO(form));
+            //Assert
+            await Assert.ThrowsAsync<System.ArgumentNullException>(()=>service.CreateNonPO(newForm));
         }
 
 
         [Fact]
         public void CreateWithPO_Return_Success()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentWithPOFormDto form = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentWithPOFormDto();
-            VBRequestDocumentModel data = _dataUtil(service, dbContext).GetTestData_VBRequestDocument();
+            VBRequestDocumentWithPOFormDto newForm = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentWithPOFormDto();
+            VBRequestDocumentModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentNonPO();
 
-            int result =  service.CreateWithPO(form);
+            //Act
+            int result =  service.CreateWithPO(newForm);
+
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task DeleteNonPO_Return_Success()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
 
-            int result = await service.DeleteNonPO(data.Id);
+            //Act
+            int result = await service.DeleteNonPO(testData.Id);
+
+            //Assert
             Assert.NotEqual(0, result);
         }
 
@@ -137,12 +150,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         [Fact]
         public void DeleteWithPO_Return_Success()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
 
-            int result =  service.DeleteWithPO(data.Id);
+            //Act
+            int result =  service.DeleteWithPO(testData.Id);
+
+            //Assert
             Assert.NotEqual(0, result);
         }
 
@@ -150,18 +167,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         [Fact]
         public void Get_Return_Success()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
 
             var orderData = new
             {
                 DocumentNo = "desc"
             };
             string order =JsonConvert.SerializeObject(orderData);
-          
+
+            //Act
             var result = service.Get(1,1, order,new List<string>(),"","{}");
+
+            //Assert
             Assert.NotNull( result);
             Assert.True(0 < result.Data.Count());
         }
@@ -169,36 +190,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         [Fact]
         public void GetNonPOById_Return_Success()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
 
-            var result = service.GetNonPOById(data.Id);
+            //Act
+            var result = service.GetNonPOById(testData.Id);
+
+            //Assert
             Assert.NotNull(result);
         }
 
         [Fact]
         public async Task GetNonPOById_Return_Null()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
 
-            var result =await service.GetNonPOById(data.Id+1);
+            //Act
+            var result =await service.GetNonPOById(testData.Id+1);
+
+            //Assert
             Assert.Null(result);
         }
 
         [Fact]
         public void GetWithPOById_Return_Success()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
 
-            var result =  service.GetWithPOById(data.Id );
+            //Act
+            var result =  service.GetWithPOById(testData.Id );
+
+            //Assert
             Assert.NotNull(result);
             Assert.NotEqual(0,result.Id);
         }
@@ -206,15 +239,68 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         [Fact]
         public async Task UpdateNonPO_Return_Null()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentNonPOFormDto form = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
-            VBRequestDocumentItemModel data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentNonPOFormDto newForm = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
+            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
 
-            int result = await service.UpdateNonPO(data.Id, form);
+            //Act
+            int result = await service.UpdateNonPO(testData.Id, newForm);
+
+            //Assert
             Assert.NotEqual(0,result);
         }
 
+        [Fact]
+        public void UpdateWithPO_Return_Succes()
+        {
+            //Setup
+            FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+            
+            VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
+            VBRequestDocumentEPODetailModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentEPODetail();
+            VBRequestDocumentWithPOFormDto newForm = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentWithPOFormDto();
+            
+            //Act
+            int result =  service.UpdateWithPO(testData.Id, newForm);
+
+            //Assert
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public void GetNotApprovedData_Return_Succes()
+        {
+            //Setup
+            FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+
+            VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
+            VBRequestDocumentModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
+
+            //Act
+            var result = service.GetNotApprovedData((int)VBType.WithPO, testData.Id,testData.SuppliantUnitId,DateTime.Now,"{}");
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.True(0 <result.Count());
+        }
+
+        [Fact]
+        public async Task ApproveData_Return_Succes()
+        {
+            //Setup
+            FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
+            VBRequestDocumentModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
+
+            //Act
+            int result = await service.ApproveData(new List<int>() { testData.Id });
+
+            //Assert
+            Assert.True(0 < result);
+        }
     }
 }
