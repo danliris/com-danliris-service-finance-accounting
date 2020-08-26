@@ -5,6 +5,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Clear
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.GarmentInvoicePayment;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Master;
@@ -21,6 +22,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditB
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DownPayment;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentInvoicePayment;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master;
@@ -124,6 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IRealizationVbNonPOService, RealizationVbNonPOService>()
                 .AddTransient<IVbVerificationService, VbVerificationService>()
                 .AddTransient<IVBRequestDocumentService, VBRequestDocumentService>()
+                .AddTransient<IGarmentInvoicePaymentService, GarmentInvoicePaymentService>()
                 .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>();
         }
 
