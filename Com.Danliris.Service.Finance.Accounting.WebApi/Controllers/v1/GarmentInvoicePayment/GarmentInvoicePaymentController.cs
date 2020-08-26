@@ -18,7 +18,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentI
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("v{version:apiVersion}/payment-disposition-note")]
+    [Route("v{version:apiVersion}/garment-invoice-payment")]
     [Authorize]
     public class GarmentInvoicePaymentController : Controller
     {
