@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
 
         private Tuple<string, int> GetDocumentNo(VBRealizationDocumentNonPOViewModel form, VBRealizationDocumentModel existingData)
         {
-            var now = form.Date.AddHours(_identityService.TimezoneOffset);
+            var now = form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset);
             var year = now.ToString("yy");
             var month = now.ToString("MM");
 
@@ -85,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
 
             try
             {
-                var existingData = _dbContext.VBRealizationDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == vm.Date.AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
+                var existingData = _dbContext.VBRealizationDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == vm.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
                 var documentNo = GetDocumentNo(vm, existingData);
                 vm.DocumentNo = documentNo.Item1;
                 vm.Index = documentNo.Item2;

@@ -19,7 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
         public VBType Type { get; set; }
         public int Index { get; set; }
         public string DocumentNo { get; set; }
-        public DateTimeOffset Date { get; set; }
+        public DateTimeOffset? Date { get; set; }
         public string VBNonPOType { get; set; }
         public VBRequestDocumentNonPODto VBDocument { get; set; }
         public UnitViewModel Unit { get; set; }
