@@ -38,7 +38,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentInvoiceP
                         Amount=1,
                         IDRAmount=1,
                         
-                    }
+                    },
+                    new GarmentInvoicePaymentItemModel()
+                    {
+                        InvoiceId=2,
+                        InvoiceNo="no1",
+                        Amount=1,
+                        IDRAmount=1,
+
+                    },
                 }
             };
         }

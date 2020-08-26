@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePayment
 {
-    public class GarmentInvoicePaymentModel : StandardEntity, IValidatableObject
+    public class GarmentInvoicePaymentModel : StandardEntity
     {
         [MaxLength(50)]
         public string InvoicePaymentNo { get; set; }
@@ -31,9 +31,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePayme
 
         public virtual ICollection<GarmentInvoicePaymentItemModel> Items { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
