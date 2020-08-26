@@ -255,10 +255,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 annotations.Add(_checkGroup);
             }
 
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3a.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3a.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3a.AddCell(cellHeaderBody);
+            //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            //headerTable3a.AddCell(cellHeaderBody);
+
+            for (var i = 0; i < 10 - (2 * (data.Items.Count % 5)); i++)
+            {
+                cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+                headerTable3a.AddCell(cellHeaderBody);
+            }
 
             cellHeader3a.AddElement(headerTable3a);
             headerTable_C.AddCell(cellHeader3a);
