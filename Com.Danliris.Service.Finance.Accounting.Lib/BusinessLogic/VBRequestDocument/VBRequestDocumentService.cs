@@ -639,7 +639,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             }
 
             _dbContext.SaveChanges();
-            var newItems = items.Where(element => element.Id == 0).ToList();
+            var newItems = items.Where(element => element.Id.GetValueOrDefault() <= 0).ToList();
             AddItems(documentId, newItems);
         }
 
