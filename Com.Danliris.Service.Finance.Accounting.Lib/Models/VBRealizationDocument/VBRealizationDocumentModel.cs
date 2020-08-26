@@ -8,6 +8,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
 {
     public class VBRealizationDocumentModel : StandardEntity
     {
+        [MaxLength(64)]
+        public string DocumentNo { get; private set; }
         public DateTimeOffset Date { get; private set; }
         [MaxLength(32)]
         public string VBNonPoType { get; private set; }
