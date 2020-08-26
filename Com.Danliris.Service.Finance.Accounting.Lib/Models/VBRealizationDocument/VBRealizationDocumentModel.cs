@@ -9,11 +9,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
     public class VBRealizationDocumentModel : StandardEntity
     {
         public DateTimeOffset Date { get; private set; }
+        [MaxLength(32)]
+        public string VBNonPoType { get; private set; }
         public int VBRequestDocumentId { get; private set; }
         [MaxLength(64)]
         public string VBRequestDocumentNo { get; private set; }
         public DateTimeOffset? VBRequestDocumentDate { get; private set; }
         public DateTimeOffset? VBRequestDocumentRealizationEstimationDate { get; private set; }
+        [MaxLength(256)]
+        public string VBRequestDocumentCreatedBy { get; private set; }
         public int SuppliantUnitId { get; private set; }
         [MaxLength(64)]
         public string SuppliantUnitCode { get; private set; }
@@ -32,5 +36,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public double CurrencyRate { get; private set; }
         [MaxLength(256)]
         public string CurrencyDescription { get; private set; }
+        public decimal VBRequestDocumentAmount { get; private set; }
     }
 }
