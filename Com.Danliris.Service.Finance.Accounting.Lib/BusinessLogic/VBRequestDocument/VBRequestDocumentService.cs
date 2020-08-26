@@ -607,6 +607,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                         return element;
                     }).ToList();
 
+
                     _dbContext.VBRequestDocumentEPODetails.Update(epoDetail);
                     _dbContext.UpdateRange(documentItems);
                 }
@@ -625,6 +626,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 }
             }
 
+            _dbContext.SaveChanges();
             var newItems = items.Where(element => element.Id == 0).ToList();
             AddItems(documentId, newItems);
         }
