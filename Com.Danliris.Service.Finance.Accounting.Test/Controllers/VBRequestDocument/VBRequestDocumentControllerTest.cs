@@ -18,7 +18,7 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocument
 {
- public   class VBRequestDocumentControllerTest
+    public class VBRequestDocumentControllerTest
     {
         protected VBRequestDocumentController GetController(Mock<IServiceProvider> serviceProvider)
         {
@@ -62,8 +62,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             {
                 return new VBRequestDocumentNonPOFormDto()
                 {
-                    Id=1,
-                    Amount=1,
+                    Id = 1,
+                    Amount = 1,
 
                 };
             }
@@ -75,8 +75,109 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             {
                 return new VBRequestDocumentWithPOFormDto()
                 {
-
+                    Id = 1,
+                    Amount = 1,
+                    Currency = new CurrencyDto(),
+                    Date = DateTimeOffset.Now,
+                    Purpose = "Purpose",
+                    RealizationEstimationDate = DateTimeOffset.Now,
+                    SuppliantUnit = new UnitDto(),
+                    Items = new List<VBRequestDocumentWithPOItemFormDto>()
                 };
+            }
+        }
+
+        VBRequestDocumentWithPODto vBRequestDocumentWithPODto
+        {
+            get
+            {
+                return new VBRequestDocumentWithPODto()
+                {
+                    Amount = 1,
+                    Date = DateTimeOffset.Now,
+                    Purpose = "Purpose",
+                    Currency = new CurrencyDto()
+                    {
+                        Code = "IDR",
+                        Description = "Description",
+                        Rate = 1,
+                        Symbol = "Rp"
+                    },
+                    RealizationEstimationDate = DateTimeOffset.Now,
+                    SuppliantUnit = new UnitDto()
+                    {
+                        Code = "Code",
+                        Division = new DivisionDto()
+                        {
+                            Code = "Code",
+                            Name = "GARMENT"
+                        },
+                        Name = "Name",
+                        VBDocumentLayoutOrder = 1
+                    },
+                    
+                    DocumentNo = "DocumentNo",
+                    Items = new List<VBRequestDocumentWithPOItemDto>()
+                    {
+                        new VBRequestDocumentWithPOItemDto()
+                        {
+                            
+                            PurchaseOrderExternal =new PurchaseOrderExternal()
+                            {  
+                                No="1",
+                                Items=new List<PurchaseOrderExternalItem>()
+                                {
+                                    new PurchaseOrderExternalItem()
+                                    {
+                                        Conversion=1,
+                                        DealQuantity=1,
+                                        DealUOM=new UnitOfMeasurement()
+                                        {
+                                            Unit="Unit"
+                                        },
+                                        DefaultQuantity=1,
+                                        IncomeTax=new IncomeTaxDto()
+                                        {
+                                            Name="Name",
+                                            Rate=1
+                                        },
+                                        IncomeTaxBy="IncomeTaxBy",
+                                        UseIncomeTax=true,
+                                        Price=1,
+                                        Product=new Product()
+                                        {
+                                            Code="Code",
+                                            Name="Name",
+                                            UOM=new UnitOfMeasurement()
+                                            {
+                                                Unit="Unit"
+                                            }
+                                        },
+                                        Unit=new UnitDto()
+                                        {
+                                            Code="Code",
+                                            Division=new DivisionDto()
+                                            {
+                                                Code="Code",
+                                                Name="Name"
+                                            }
+                                        },
+                                        UseVat=true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+            }
+        }
+
+
+        ApprovalVBFormDto approvalVBFormDto
+        {
+            get
+            {
+                return new ApprovalVBFormDto();
             }
         }
         protected ServiceValidationException GetServiceValidationException()
@@ -106,7 +207,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).PostNonPO(new VBRequestDocumentNonPOFormDto() );
+            IActionResult response = await GetController(serviceProviderMock).PostNonPO(new VBRequestDocumentNonPOFormDto());
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -172,7 +273,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
                .Returns(service.Object);
 
             //Act
-            IActionResult response =  GetController(serviceProviderMock).Get(1, 25, "{}", null, null, "{}") ;
+            IActionResult response = GetController(serviceProviderMock).Get(1, 25, "{}", null, null, "{}");
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -193,7 +294,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
                .Returns(service.Object);
 
             //Act
-            IActionResult response =  GetController(serviceProviderMock).Get(1,25,"{}",null,null,"{}");
+            IActionResult response = GetController(serviceProviderMock).Get(1, 25, "{}", null, null, "{}");
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -228,7 +329,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ReturnsAsync(()=>null);
+            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ReturnsAsync(() => null);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -390,7 +491,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
 
             //Assert 
             Assert.NotNull(response);
-           
+
         }
 
         [Fact]
@@ -400,7 +501,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ReturnsAsync(()=>null);
+            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ReturnsAsync(() => null);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -452,7 +553,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
                .Returns(service.Object);
 
             //Act
-            IActionResult response =  GetController(serviceProviderMock).PostWithPO(vBRequestDocumentWithPOFormDto);
+            IActionResult response = GetController(serviceProviderMock).PostWithPO(vBRequestDocumentWithPOFormDto);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -516,7 +617,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
                .Returns(service.Object);
 
             //Act
-            IActionResult response =  GetController(serviceProviderMock).GetWithPOById(1);
+            IActionResult response = GetController(serviceProviderMock).GetWithPOById(1);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -530,7 +631,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.GetWithPOById(It.IsAny<int>())).Returns(()=>null);
+            service.Setup(s => s.GetWithPOById(It.IsAny<int>())).Returns(() => null);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -565,6 +666,201 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
 
+
+        [Fact]
+        public void PutWithPO_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>())).Returns(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            int id = (int)vBRequestDocumentWithPOFormDto.Id;
+            IActionResult response = GetController(serviceProviderMock).PutWithPO(id, vBRequestDocumentWithPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+
+        [Fact]
+        public void PutWithPO_Throws_ServiceValidationException()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>())).Throws(GetServiceValidationException());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            int id = (int)vBRequestDocumentWithPOFormDto.Id;
+            IActionResult response = GetController(serviceProviderMock).PutWithPO(id, vBRequestDocumentWithPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
+        public void PutWithPO_Throws_Exception()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>())).Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            int id = (int)vBRequestDocumentWithPOFormDto.Id;
+            IActionResult response = GetController(serviceProviderMock).PutWithPO(id, vBRequestDocumentWithPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void PutWithPO_Return_BadRequest()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>())).Returns(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            int id = (int)vBRequestDocumentWithPOFormDto.Id + 1;
+            IActionResult response = GetController(serviceProviderMock).PutWithPO(id, vBRequestDocumentWithPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
+        public void DeleteWithPO_Succees_Return_NoContent()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.DeleteWithPO(It.IsAny<int>())).Returns(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).DeleteWithPO(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+        [Fact]
+        public void DeleteWithPO_Succees_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.DeleteWithPO(It.IsAny<int>())).Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).DeleteWithPO(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void GetPDFWithPO_Succees_Return_NotFound()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetWithPOById(It.IsAny<int>())).Returns(() => null);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetPDFWithPO(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+        [Fact]
+        public void GetPDFWithPO_Succees()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetWithPOById(It.IsAny<int>())).Returns(vBRequestDocumentWithPODto);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetPDFWithPO(1);
+
+            //Assert
+            Assert.NotNull(response);
+           
+        }
+
+        [Fact]
+        public void GetPDFWithPO_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.GetWithPOById(It.IsAny<int>())).Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetPDFWithPO(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
         [Fact]
         public void GetNotApprovedData_Return_OK()
         {
@@ -572,7 +868,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.GetNotApprovedData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),  It.IsAny<DateTime?>(), It.IsAny<string>())).Returns(new List<VBRequestDocumentModel>());
+            service.Setup(s => s.GetNotApprovedData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<string>())).Returns(new List<VBRequestDocumentModel>());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -580,7 +876,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
 
             //Act
             IActionResult response = GetController(serviceProviderMock).GetNotApprovedData(1, 25, 1, null, null);
-            
+
             //Assert
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
@@ -614,14 +910,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.ApproveData(It.IsAny<List<int>>())).ReturnsAsync(1);
+            service.Setup(s => s.ApprovalData(It.IsAny<ApprovalVBFormDto>())).ReturnsAsync(1);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).ApprovedData(new List<int>());
+            IActionResult response = await GetController(serviceProviderMock).ApprovalData(approvalVBFormDto);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -636,14 +932,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.ApproveData(It.IsAny<List<int>>())).ThrowsAsync(new Exception());
+            service.Setup(s => s.ApprovalData(It.IsAny<ApprovalVBFormDto>())).ThrowsAsync(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).ApprovedData(new List<int>());
+            IActionResult response = await GetController(serviceProviderMock).ApprovalData(approvalVBFormDto);
 
             //Assert
             int statusCode = this.GetStatusCode(response);

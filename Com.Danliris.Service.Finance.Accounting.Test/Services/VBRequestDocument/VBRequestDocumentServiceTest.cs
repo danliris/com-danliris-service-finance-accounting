@@ -296,8 +296,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
             VBRequestDocumentModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
 
+            ApprovalVBFormDto approvalVBFormDto = new ApprovalVBFormDto()
+            {
+                IsApproved=true,
+                Ids = new List<int>() { testData.Id }
+            };
             //Act
-            int result = await service.ApproveData(new List<int>() { testData.Id });
+            int result = await service.ApprovalData(approvalVBFormDto);
 
             //Assert
             Assert.True(0 < result);
