@@ -1,4 +1,5 @@
-﻿using Com.Moonlay.Models;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
+using Com.Moonlay.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,6 +9,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
 {
     public class VBRealizationDocumentExpenditureItemModel : StandardEntity
     {
+
+        public VBRealizationDocumentExpenditureItemModel()
+        {
+
+        }
+
+        public VBRealizationDocumentExpenditureItemModel(int vbRealizationDocumentId, VBRealizationDocumentNonPOExpenditureItemViewModel viewModel)
+        {
+            Date = viewModel.DateDetail.GetValueOrDefault();
+            Remark = viewModel.Remark;
+            Amount = viewModel.Amount;
+            UseVat = viewModel.IsGetPPn;
+            UseIncomeTax = viewModel.IsGetPPh;
+            if(viewModel.IncomeTax != null)
+            {
+                IncomeTaxId = viewModel.IncomeTax.Id;
+                IncomeTaxName = viewModel.IncomeTax.Name;
+                IncomeTaxRate = viewModel.IncomeTax.Rate;
+            }
+            IncomeTaxBy = viewModel.IncomeTaxBy;
+            VBRealizationDocumentId = vbRealizationDocumentId;
+        }
+
         public DateTimeOffset Date { get; private set; }
         public string Remark { get; private set; }
         public decimal Amount { get; private set; }
