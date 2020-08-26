@@ -6,6 +6,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
     public class VBRequestDocumentWithPODto
     {
         public int Id { get; set; }
+        public bool IsApproved { get; set; }
         public string DocumentNo { get; set; }
         public DateTimeOffset? Date { get; set; }
         public DateTimeOffset? RealizationEstimationDate { get; set; }
