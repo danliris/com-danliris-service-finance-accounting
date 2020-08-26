@@ -28,6 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentInvoic
             {
                 return new GarmentInvoicePaymentViewModel
                 {
+                    InvoicePaymentNo="no",
                     BGNo="no",
                     Buyer=new Lib.ViewModels.NewIntegrationViewModel.NewBuyerViewModel
                     {

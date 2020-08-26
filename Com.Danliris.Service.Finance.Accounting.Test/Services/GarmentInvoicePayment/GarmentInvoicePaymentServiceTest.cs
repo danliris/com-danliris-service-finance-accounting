@@ -137,6 +137,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentInvoicePa
             Assert.True(vm.Validate(null).Count() > 0);
         }
 
-       
+        [Fact]
+        public void Should_Success_Validate_Null_Invoice_Data()
+        {
+            GarmentInvoicePaymentViewModel vm = new GarmentInvoicePaymentViewModel();
+            vm.Items = new List<GarmentInvoicePaymentItemViewModel>
+            {
+                new GarmentInvoicePaymentItemViewModel()
+                {
+                    InvoiceId=0,
+                    InvoiceNo=" "
+                }
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
     }
 }
