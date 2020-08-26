@@ -78,6 +78,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             modelBuilder.Entity<JournalTransactionItemModel>().Property(x => x.Debit).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<JournalTransactionItemModel>().Property(x => x.Credit).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<COAModel>().Property(x => x.Balance).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<VBRealizationDocumentModel>().Property(x => x.VBRequestDocumentAmount).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<VBRealizationDocumentExpenditureItemModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<VBRealizationDocumentUnitCostsItemModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<VBRequestDocumentModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
             base.OnModelCreating(modelBuilder);
         }
     }
