@@ -20,7 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Type = VBType.NonPO;
             Index = viewModel.Index;
             DocumentNo = viewModel.DocumentNo;
-            Date = viewModel.Date;
+            Date = viewModel.Date.GetValueOrDefault();
             VBNonPoType = viewModel.VBNonPOType;
 
             if(viewModel.VBDocument != null)
@@ -90,5 +90,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         [MaxLength(256)]
         public string CurrencyDescription { get; private set; }
         public decimal VBRequestDocumentAmount { get; private set; }
+
+        public bool IsVerified { get; private set; }
     }
 }
