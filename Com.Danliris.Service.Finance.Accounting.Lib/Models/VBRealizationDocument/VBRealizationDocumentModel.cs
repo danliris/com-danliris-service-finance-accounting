@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
 using Com.Moonlay.Models;
 using System;
@@ -55,6 +56,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 CurrencyRate = viewModel.Currency.Rate;
                 CurrencySymbol = viewModel.Currency.Symbol;
             }
+
+            Position = VBRealizationPosition.Purchasing;
         }
 
         public VBRealizationDocumentModel(CurrencyDto currency, DateTimeOffset? date, UnitDto suppliantUnit, Tuple<string, int> documentNo)
@@ -75,6 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             DocumentType = RealizationDocumentType.NonVB;
             DocumentNo = documentNo.Item1;
             Index = documentNo.Item2;
+            Position = VBRealizationPosition.Purchasing;
         }
 
         public VBRealizationDocumentModel(DateTimeOffset? date, int vbId, string vbRequestDocumentNo, DateTimeOffset realizationEstimationDate, string vbCreatedBy, Tuple<string, int> documentNo)
@@ -88,8 +92,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             VBRequestDocumentCreatedBy = vbCreatedBy;
             Index = documentNo.Item2;
             DocumentNo = documentNo.Item1;
+
+            Position = VBRealizationPosition.Purchasing;
         }
 
+        
+
+        public VBRealizationPosition Position { get; private set; }
         public VBType Type { get; private set; }
         public RealizationDocumentType DocumentType { get; private set; }
         public int Index { get; private set; }
@@ -251,6 +260,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 Amount = newAmount;
                 this.FlagForUpdate(user, userAgent);
             }
+        }
+
+        public void UpdatePosition(VBRealizationPosition position, string user, string userAgent)
+        {
+            Position = position;
+            this.FlagForUpdate(user, userAgent);
         }
     }
 }
