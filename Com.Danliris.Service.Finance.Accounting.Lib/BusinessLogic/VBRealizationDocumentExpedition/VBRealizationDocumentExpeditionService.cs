@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
@@ -227,31 +228,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             return _dbContext.SaveChangesAsync();
         }
 
-        public ReadResponse<VBRealizationDocumentExpeditionModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
+        public ReadResponse<VBRealizationDocumentModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
         {
-            var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
-            query = query.Where(entity => entity.Position == (int)VBRealizationPosition.Purchasing);
+            var query = _dbContext.Set<VBRealizationDocumentModel>().AsQueryable();
+            query = query.Where(entity => entity.Position == VBRealizationPosition.Purchasing);
 
             if (vbId > 0)
-                query = query.Where(entity => entity.VBId == vbId);
+                query = query.Where(entity => entity.VBRequestDocumentId == vbId);
 
             if (vbRealizationId > 0)
-                query = query.Where(entity => entity.VBRealizationId == vbRealizationId);
+                query = query.Where(entity => entity.Id == vbRealizationId);
 
             if (realizationDate.HasValue)
             {
                 var date = realizationDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset * -1);
-                query = query.Where(entity => entity.VBRealizationDate.Date == date.Date);
+                query = query.Where(entity => entity.Date.Date == date.Date);
             }
 
             if (!string.IsNullOrWhiteSpace(vbRealizationRequestPerson))
-                query = query.Where(entity => entity.VBRequestName == vbRealizationRequestPerson);
+                query = query.Where(entity => entity.VBRequestDocumentCreatedBy == vbRealizationRequestPerson);
 
             if (unitId > 0)
-                query = query.Where(entity => entity.UnitId == unitId);
+                query = query.Where(entity => entity.SuppliantUnitId == unitId);
 
             var result = query.ToList();
-            return new ReadResponse<VBRealizationDocumentExpeditionModel>(result, result.Count, new Dictionary<string, string>(), new List<string>());
+            return new ReadResponse<VBRealizationDocumentModel>(result, result.Count, new Dictionary<string, string>(), new List<string>());
         }
 
         public Task<int> VerifiedToCashier(int vbRealizationId)
