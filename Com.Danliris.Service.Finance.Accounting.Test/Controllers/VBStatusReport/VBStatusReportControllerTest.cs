@@ -56,11 +56,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<VBStatusReportViewModel>());
+                .Returns(new List<VBStatusReportViewModel>());
 
             var controller = GetController(mocks);
             var response = controller.GetReportAll(1, 1, "CreatedBy", "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
-            var statusCode = GetStatusCode(response.Result);
+            var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
@@ -74,7 +74,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
 
             var controller = GetController(mocks);
             var response = controller.GetReportAll(1, 1, "CreatedBy", "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
-            var statusCode = GetStatusCode(response.Result);
+            var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
@@ -84,7 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>()))
-                .ReturnsAsync(new System.IO.MemoryStream());
+                .Returns(new System.IO.MemoryStream());
 
             var controller = GetController(mocks);
             var response = controller.GetXlsAll(1, 1, "CreatedBy", "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
@@ -100,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
 
             var controller = GetController(mocks);
             var response = controller.GetXlsAll(1, 1, "CreatedBy", "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
-            var statusCode = GetStatusCode(response.Result);
+            var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }

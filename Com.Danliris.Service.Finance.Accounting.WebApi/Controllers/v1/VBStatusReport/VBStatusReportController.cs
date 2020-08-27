@@ -67,14 +67,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
         }
 
         [HttpGet("reports")]
-        public async Task<IActionResult> GetReportAll(int unitId, int vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
+        public IActionResult GetReportAll(int unitId, int vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         {
             int offset = Convert.ToInt32(timezone);
 
             try
             {
                 ValidateUser();
-                var data = await Service.GetReport(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offset);
+                var data = Service.GetReport(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offset);
 
                 return Ok(new
                 {
@@ -94,7 +94,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
         }
 
         [HttpGet("reports/xls")]
-        public async Task<IActionResult> GetXlsAll(int unitId, int vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
+        public IActionResult GetXlsAll(int unitId, int vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, [FromHeader(Name = "x-timezone-offset")] string timezone)
         {
 
             try
@@ -103,7 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
                 byte[] xlsInBytes;
                 int offset = Convert.ToInt32(timezone);
 
-                var xls = await Service.GenerateExcel(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offset);
+                var xls = Service.GenerateExcel(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offset);
 
                 string filename = "Laporan Status VB.xlsx";
 

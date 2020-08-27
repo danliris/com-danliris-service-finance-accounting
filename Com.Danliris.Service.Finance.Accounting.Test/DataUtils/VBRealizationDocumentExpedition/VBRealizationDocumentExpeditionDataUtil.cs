@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
         public VBRealizationDocumentExpeditionModel GetTestData_VBRealizationDocumentExpedition()
         {
             var vbRealization = GetTestData_RealizationVbs();
-            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "vbType");
+            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, VBType.WithPO);
             dbContext.VBRealizationDocumentExpeditions.Add(data);
             dbContext.SaveChanges();
             return data;

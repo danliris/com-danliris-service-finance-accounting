@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
 using Com.Moonlay.Models;
 using System;
@@ -22,7 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             DocumentNo = viewModel.DocumentNo;
             Date = viewModel.Date.GetValueOrDefault();
             VBNonPoType = viewModel.VBNonPOType;
-
+            Amount = viewModel.Amount;
             if (viewModel.VBDocument != null)
             {
                 VBRequestDocumentId = viewModel.VBDocument.Id;
@@ -55,9 +57,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 CurrencyRate = viewModel.Currency.Rate;
                 CurrencySymbol = viewModel.Currency.Symbol;
             }
+
+            Position = VBRealizationPosition.Purchasing;
         }
 
-        public VBRealizationDocumentModel(CurrencyDto currency, DateTimeOffset? date, UnitDto suppliantUnit, Tuple<string, int> documentNo)
+        public VBRealizationDocumentModel(CurrencyDto currency, DateTimeOffset? date, UnitDto suppliantUnit, Tuple<string, int> documentNo, decimal amount)
         {
             CurrencyCode = currency.Code;
             CurrencyDescription = currency.Description;
@@ -72,26 +76,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             SuppliantUnitId = suppliantUnit.Id.GetValueOrDefault();
             SuppliantUnitName = suppliantUnit.Name;
             Type = VBType.WithPO;
-            DocumentType = RealizatioDocumentType.NonVB;
+            DocumentType = RealizationDocumentType.NonVB;
             DocumentNo = documentNo.Item1;
             Index = documentNo.Item2;
+            Position = VBRealizationPosition.Purchasing;
         }
 
-        public VBRealizationDocumentModel(DateTimeOffset? date, int vbId, string vbRequestDocumentNo, DateTimeOffset realizationEstimationDate, string vbCreatedBy, Tuple<string, int> documentNo)
+        public VBRealizationDocumentModel(DateTimeOffset? date, VBRequestDocumentModel vbRequest, Tuple<string, int> documentNo, decimal amount)
         {
             Date = date.GetValueOrDefault();
             Type = VBType.WithPO;
-            DocumentType = RealizatioDocumentType.NonVB;
-            VBRequestDocumentId = vbId;
-            VBRequestDocumentNo = vbRequestDocumentNo;
-            VBRequestDocumentRealizationEstimationDate = realizationEstimationDate;
-            VBRequestDocumentCreatedBy = vbCreatedBy;
+            DocumentType = RealizationDocumentType.WithVB;
             Index = documentNo.Item2;
             DocumentNo = documentNo.Item1;
+
+            Amount = amount;
+            CurrencyCode = vbRequest.CurrencyCode;
+            CurrencyDescription = vbRequest.CurrencyDescription;
+            CurrencyId = vbRequest.CurrencyId;
+            CurrencyRate = vbRequest.CurrencyRate;
+            CurrencySymbol = vbRequest.CurrencySymbol;
+            SuppliantDivisionCode = vbRequest.SuppliantDivisionCode;
+            SuppliantDivisionId = vbRequest.SuppliantDivisionId;
+            SuppliantDivisionName = vbRequest.SuppliantDivisionName;
+            SuppliantUnitCode = vbRequest.SuppliantUnitCode;
+            SuppliantUnitId = vbRequest.SuppliantUnitId;
+            SuppliantUnitName = vbRequest.SuppliantUnitName;
+
+            VBRequestDocumentAmount = vbRequest.Amount;
+            VBRequestDocumentCreatedBy = vbRequest.CreatedBy;
+            VBRequestDocumentDate = vbRequest.Date;
+            VBRequestDocumentId = vbRequest.Id;
+            VBRequestDocumentNo = vbRequest.DocumentNo;
+            VBRequestDocumentRealizationEstimationDate = vbRequest.RealizationEstimationDate;
+
+            Position = VBRealizationPosition.Purchasing;
         }
 
+        
+
+        public VBRealizationPosition Position { get; private set; }
         public VBType Type { get; private set; }
-        public RealizatioDocumentType DocumentType { get; private set; }
+        public RealizationDocumentType DocumentType { get; private set; }
         public int Index { get; private set; }
         [MaxLength(64)]
         public string DocumentNo { get; private set; }
@@ -124,6 +150,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         [MaxLength(256)]
         public string CurrencyDescription { get; private set; }
         public decimal VBRequestDocumentAmount { get; private set; }
+
+        public decimal Amount { get; private set; }
 
         public bool IsVerified { get; private set; }
 
@@ -240,6 +268,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 VBRequestDocumentAmount = newVBRequestAmount;
                 this.FlagForUpdate(user, userAgent);
             }
+        }
+
+        public void SetAmount(decimal newAmount, string user, string userAgent)
+        {
+            if(newAmount != Amount)
+            {
+                Amount = newAmount;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void UpdatePosition(VBRealizationPosition position, string user, string userAgent)
+        {
+            Position = position;
+            this.FlagForUpdate(user, userAgent);
         }
     }
 }

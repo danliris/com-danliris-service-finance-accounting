@@ -12,5 +12,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public string Remark { get; set; }
         public bool? UseIncomeTax { get; set; }
         public bool? UseVat { get; set; }
+        public int Id { get; internal set; }
     }
 }
