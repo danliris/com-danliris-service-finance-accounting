@@ -138,13 +138,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                 {
                     yield return new ValidationResult("Beban unit harus dipilih minimal 1", new List<string> { "UnitCost" });
                 }
-                //else
-                //{
-                //    if (!UnitCosts.Where(d => d.IsSelected).All(s => s.Unit != null && s.Unit.Id != 0 && s.Amount > 0))
-                //    {
-                //        yield return new ValidationResult("Beban Unit harus memiliki Nama Unit dan Amount", new List<string> { "UnitCost" });
-                //    }
-                //}
+                else
+                {
+                    if (!UnitCosts.Where(d => d.IsSelected).All(s => s.Unit != null && s.Unit.Id != 0 && s.Amount > 0))
+                    {
+                        yield return new ValidationResult("Beban Unit harus memiliki Nama Unit dan Amount", new List<string> { "UnitCost" });
+                    }
+                }
 
             }
 
