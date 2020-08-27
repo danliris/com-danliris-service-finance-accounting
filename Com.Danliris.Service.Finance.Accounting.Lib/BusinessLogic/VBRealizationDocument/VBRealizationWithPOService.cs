@@ -69,14 +69,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var existingData = _dbContext.VBRealizationDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
             var documentNo = GetDocumentNo(form, existingData);
 
+            var amount = form.Items.SelectMany(element => element.UnitPaymentOrder.Items).Sum(element => element.Amount.GetValueOrDefault());
+
             if (form.Type == "Tanpa Nomor VB")
-                model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo);
+                model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo, amount);
             else
             {
                 var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
                 vbRequest.SetIsRealized(true, _identityService.Username, UserAgent);
                 _dbContext.VBRequestDocuments.Update(vbRequest);
-                model = new VBRealizationDocumentModel(form.Date, vbRequest.Id, vbRequest.DocumentNo, vbRequest.RealizationEstimationDate, vbRequest.CreatedBy, documentNo);
+
+                model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, amount);
             }
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -102,6 +105,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             {
                 var model = new VBRealizationDocumentExpenditureItemModel(id, item);
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                _dbContext.VBRealizationDocumentExpenditureItems.Add(model);
                 _dbContext.SaveChanges();
 
                 AddDetails(model.Id, item.UnitPaymentOrder.Items);
