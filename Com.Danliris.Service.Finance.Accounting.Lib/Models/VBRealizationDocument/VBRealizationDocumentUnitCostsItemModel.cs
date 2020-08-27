@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
 using Com.Moonlay.Models;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             VBRealizationDocumentId = vbRealizationDocumentId;
         }
 
+        public VBRealizationDocumentUnitCostsItemModel(int itemId, UnitPaymentOrderItemDto element)
+        {
+            VBRealizationDocumentExpenditureItemId = itemId;
+            Amount = element.Amount.GetValueOrDefault();
+            Date = element.Date.GetValueOrDefault();
+            Remark = element.Remark;
+            UseVat = element.UseVat.GetValueOrDefault();
+            UseIncomeTax = element.UseIncomeTax.GetValueOrDefault();
+            IncomeTaxId = element.IncomeTax.Id.GetValueOrDefault();
+            IncomeTaxName = element.IncomeTax.Name;
+            IncomeTaxRate = element.IncomeTax.Rate.GetValueOrDefault();
+            IncomeTaxBy = element.IncomeTaxBy;
+        }
+
         public int UnitId { get; private set; }
         [MaxLength(256)]
         public string UnitName { get; private set; }
@@ -49,7 +64,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public string DivisionName { get; private set; }
         [MaxLength(64)]
         public string DivisionCode { get; private set; }
+        public int VBRealizationDocumentExpenditureItemId { get; private set; }
         public decimal Amount { get; private set; }
+        public DateTimeOffset Date { get; private set; }
+        public string Remark { get; private set; }
+        public bool UseVat { get; private set; }
+        public bool UseIncomeTax { get; private set; }
+        public int IncomeTaxId { get; private set; }
+        public string IncomeTaxName { get; private set; }
+        public double IncomeTaxRate { get; private set; }
+        public string IncomeTaxBy { get; private set; }
         public bool IsSelected { get; private set; }
         public int VBDocumentLayoutOrder { get; private set; }
 
