@@ -72,7 +72,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             SuppliantUnitId = suppliantUnit.Id.GetValueOrDefault();
             SuppliantUnitName = suppliantUnit.Name;
             Type = VBType.WithPO;
-            DocumentType = RealizatioDocumentType.NonVB;
+            DocumentType = RealizationDocumentType.NonVB;
             DocumentNo = documentNo.Item1;
             Index = documentNo.Item2;
         }
@@ -81,7 +81,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         {
             Date = date.GetValueOrDefault();
             Type = VBType.WithPO;
-            DocumentType = RealizatioDocumentType.NonVB;
+            DocumentType = RealizationDocumentType.WithVB;
             VBRequestDocumentId = vbId;
             VBRequestDocumentNo = vbRequestDocumentNo;
             VBRequestDocumentRealizationEstimationDate = realizationEstimationDate;
@@ -91,7 +91,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         }
 
         public VBType Type { get; private set; }
-        public RealizatioDocumentType DocumentType { get; private set; }
+        public RealizationDocumentType DocumentType { get; private set; }
         public int Index { get; private set; }
         [MaxLength(64)]
         public string DocumentNo { get; private set; }

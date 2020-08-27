@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
 using Com.Moonlay.Models;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             VBRealizationDocumentId = vbRealizationDocumentId;
         }
 
+        public VBRealizationDocumentExpenditureItemModel(int headerId, FormItemDto element)
+        {
+            VBRealizationDocumentId = headerId;
+            UnitPaymentOrderId = element.UnitPaymentOrder.Id.GetValueOrDefault();
+            UnitPaymentOrderNo = element.UnitPaymentOrder.No;
+        }
+
         public DateTimeOffset Date { get; private set; }
         public string Remark { get; private set; }
         public decimal Amount { get; private set; }
@@ -45,6 +53,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public string IncomeTaxBy { get; private set; }
 
         public int VBRealizationDocumentId { get; private set; }
+        public int UnitPaymentOrderId { get; private set; }
+        public string UnitPaymentOrderNo { get; private set; }
 
         public void SetDate(DateTimeOffset newDate, string user, string userAgent)
         {

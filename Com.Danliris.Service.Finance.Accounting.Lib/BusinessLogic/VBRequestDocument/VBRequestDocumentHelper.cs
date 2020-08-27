@@ -10,7 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         NonPO
     }
 
-    public enum RealizatioDocumentType
+    public enum RealizationDocumentType
     {
         WithVB = 1,
         NonVB
