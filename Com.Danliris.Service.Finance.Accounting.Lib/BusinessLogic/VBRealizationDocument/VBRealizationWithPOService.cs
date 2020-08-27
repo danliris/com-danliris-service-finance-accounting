@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
@@ -153,7 +154,77 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public VBRealizationWithPODto ReadById(int id)
         {
-            throw new NotImplementedException();
+            var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
+            var result = (VBRealizationWithPODto)null;
+
+            if (model != null)
+            {
+                var items = _dbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == model.Id).ToList();
+
+
+                result = new VBRealizationWithPODto()
+                {
+                    Id = model.Id,
+                    Date = model.Date,
+                    Type = model.DocumentType == RealizationDocumentType.WithVB ? "Dengan Nomor VB" : "Tanpa Nomor VB",
+                    SuppliantUnit = new UnitDto()
+                    {
+                        Code = model.SuppliantUnitCode,
+                        Division = new DivisionDto()
+                        {
+                            Code = model.SuppliantDivisionCode,
+                            Id = model.SuppliantDivisionId,
+                            Name = model.SuppliantDivisionName
+                        },
+                        Id = model.SuppliantUnitId,
+                        Name = model.SuppliantUnitName
+                    },
+                    Currency = new CurrencyDto()
+                    {
+                        Code = model.CurrencyCode,
+                        Description = model.CurrencyDescription,
+                        Id = model.CurrencyId,
+                        Rate = model.CurrencyRate,
+                        Symbol = model.CurrencySymbol
+                    },
+                    Items = items.Select(item =>
+                    {
+                        var unitCostItems = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => entity.VBRealizationDocumentExpenditureItemId == item.Id).ToList();
+
+                        var itemResult = new VBRealizationWithPOItemDto()
+                        {
+                            Id = item.Id,
+                            UnitPaymentOrder = new UnitPaymentOrderDto()
+                            {
+                                Id = item.UnitPaymentOrderId,
+                                Items = unitCostItems.Select(unitCostItem => new UnitPaymentOrderItemDto()
+                                {
+                                    Id = unitCostItem.Id,
+                                    Amount = unitCostItem.Amount,
+                                    Date = unitCostItem.Date,
+                                    IncomeTax = new IncomeTaxDto()
+                                    {
+                                        Id = unitCostItem.IncomeTaxId,
+                                        Name = unitCostItem.IncomeTaxName,
+                                        Rate = unitCostItem.IncomeTaxRate
+                                    },
+                                    IncomeTaxBy = unitCostItem.IncomeTaxBy,
+                                    Remark = unitCostItem.Remark,
+                                    UseIncomeTax = unitCostItem.UseIncomeTax,
+                                    UseVat = unitCostItem.UseVat
+                                }).ToList(),
+                                No = item.UnitPaymentOrderNo
+                            }
+                        };
+                        return itemResult;
+                    }).ToList()
+                };
+
+                if (model.VBRequestDocumentId > 0)
+                    result.VBRequestDocument = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == model.VBRequestDocumentId);
+
+            }
+            return result;
         }
 
         public int Update(int id, FormDto form)
