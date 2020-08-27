@@ -102,6 +102,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             {
                 var model = new VBRealizationDocumentExpenditureItemModel(id, item);
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                _dbContext.VBRealizationDocumentExpenditureItems.Add(model);
                 _dbContext.SaveChanges();
 
                 AddDetails(model.Id, item.UnitPaymentOrder.Items);
