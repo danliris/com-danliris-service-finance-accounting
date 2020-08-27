@@ -140,9 +140,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                 }
                 else
                 {
-                    if (!UnitCosts.Where(d => d.IsSelected).All(s => s.Unit != null && s.Unit.Id != 0 && s.Amount > 0))
+                    if (!UnitCosts.Where(d => d.IsSelected).All(s => s.Unit != null && s.Unit.Id != 0))
                     {
-                        yield return new ValidationResult("Beban Unit harus memiliki Nama Unit dan Amount", new List<string> { "UnitCost" });
+                        yield return new ValidationResult("Beban Unit harus memiliki Nama Unit", new List<string> { "UnitCost" });
+                    }
+                    else if (!UnitCosts.Where(d => d.IsSelected).All(s => s.Amount > 0))
+                    {
+                        yield return new ValidationResult("Beban unit terpilih harus memiliki Amount", new List<string> { "UnitCost" });
                     }
                 }
 
