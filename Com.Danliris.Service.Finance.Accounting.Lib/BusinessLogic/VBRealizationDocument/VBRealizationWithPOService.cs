@@ -76,8 +76,46 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 model = new VBRealizationDocumentModel(form.Date, vbRequest.Id, vbRequest.DocumentNo, vbRequest.RealizationEstimationDate, vbRequest.CreatedBy, documentNo);
             }
 
+            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.VBRealizationDocuments.Add(model);
+            _dbContext.SaveChanges();
+
+            AddItems(model.Id, form.Items);
+
             return _dbContext.SaveChanges();
+        }
+
+        private void AddItems(int id, List<FormItemDto> items)
+        {
+            //var models = items.Select(element =>
+            //{
+            //    var result = new VBRealizationDocumentExpenditureItemModel(headerId: id, element);
+            //    EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
+            //    return result;
+            //}).ToList();
+
+            foreach (var item in items)
+            {
+                var model = new VBRealizationDocumentExpenditureItemModel(headerId: id, item);
+                EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                _dbContext.SaveChanges();
+
+                AddDetails(itemId: model.Id, item.UnitPaymentOrder.Items);
+            }
+
+        }
+
+        private void AddDetails(int itemId, List<UnitPaymentOrderItemDto> items)
+        {
+            var models = items.Select(element =>
+            {
+                var result = new VBRealizationDocumentUnitCostsItemModel(itemId: itemId, element);
+                EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
+                return result;
+            }).ToList();
+
+            _dbContext.VBRealizationDocumentUnitCostsItems.AddRange(models);
+            _dbContext.SaveChanges();
         }
 
         public int Delete(int id)
