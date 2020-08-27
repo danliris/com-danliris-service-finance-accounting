@@ -25,6 +25,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
         public UnitViewModel Unit { get; set; }
         public CurrencyViewModel Currency { get; set; }
 
+        public decimal Amount { get; set; }
+
         public IEnumerable<VBRealizationDocumentNonPOExpenditureItemViewModel> Items { get; set; }
         public IEnumerable<VBRealizationDocumentNonPOUnitCostViewModel> UnitCosts { get; set; }
 

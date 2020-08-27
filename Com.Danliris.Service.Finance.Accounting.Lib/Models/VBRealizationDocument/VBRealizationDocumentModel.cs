@@ -22,7 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             DocumentNo = viewModel.DocumentNo;
             Date = viewModel.Date.GetValueOrDefault();
             VBNonPoType = viewModel.VBNonPOType;
-
+            Amount = viewModel.Amount;
             if (viewModel.VBDocument != null)
             {
                 VBRequestDocumentId = viewModel.VBDocument.Id;
@@ -124,6 +124,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         [MaxLength(256)]
         public string CurrencyDescription { get; private set; }
         public decimal VBRequestDocumentAmount { get; private set; }
+
+        public decimal Amount { get; private set; }
 
         public bool IsVerified { get; private set; }
 
@@ -238,6 +240,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             if (newVBRequestAmount != VBRequestDocumentAmount)
             {
                 VBRequestDocumentAmount = newVBRequestAmount;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetAmount(decimal newAmount, string user, string userAgent)
+        {
+            if(newAmount != Amount)
+            {
+                Amount = newAmount;
                 this.FlagForUpdate(user, userAgent);
             }
         }
