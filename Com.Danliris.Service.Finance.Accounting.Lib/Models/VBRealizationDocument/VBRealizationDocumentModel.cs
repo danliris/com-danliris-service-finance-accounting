@@ -57,7 +57,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             }
         }
 
+        public VBRealizationDocumentModel(CurrencyDto currency, DateTimeOffset? date, UnitDto suppliantUnit, Tuple<string, int> documentNo)
+        {
+            CurrencyCode = currency.Code;
+            CurrencyDescription = currency.Description;
+            CurrencyId = currency.Id.GetValueOrDefault();
+            CurrencyRate = currency.Rate.GetValueOrDefault();
+            CurrencySymbol = currency.Symbol;
+            Date = date.GetValueOrDefault();
+            SuppliantDivisionCode = suppliantUnit.Division.Code;
+            SuppliantDivisionId = suppliantUnit.Division.Id.GetValueOrDefault();
+            SuppliantDivisionName = suppliantUnit.Division.Name;
+            SuppliantUnitCode = suppliantUnit.Code;
+            SuppliantUnitId = suppliantUnit.Id.GetValueOrDefault();
+            SuppliantUnitName = suppliantUnit.Name;
+            Type = VBType.WithPO;
+            DocumentType = RealizatioDocumentType.NonVB;
+            DocumentNo = documentNo.Item1;
+            Index = documentNo.Item2;
+        }
+
+        public VBRealizationDocumentModel(DateTimeOffset? date, int vbId, string vbRequestDocumentNo, DateTimeOffset realizationEstimationDate, string vbCreatedBy, Tuple<string, int> documentNo)
+        {
+            Date = date.GetValueOrDefault();
+            Type = VBType.WithPO;
+            DocumentType = RealizatioDocumentType.NonVB;
+            VBRequestDocumentId = vbId;
+            VBRequestDocumentNo = vbRequestDocumentNo;
+            VBRequestDocumentRealizationEstimationDate = realizationEstimationDate;
+            VBRequestDocumentCreatedBy = vbCreatedBy;
+            Index = documentNo.Item2;
+            DocumentNo = documentNo.Item1;
+        }
+
         public VBType Type { get; private set; }
+        public RealizatioDocumentType DocumentType { get; private set; }
         public int Index { get; private set; }
         [MaxLength(64)]
         public string DocumentNo { get; private set; }
@@ -168,7 +202,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             }
         }
 
-        public void SetVBRequest(int newVBRequestId, string newVBRequestNo, DateTimeOffset? newVBRequestDate, DateTimeOffset? newVBRequestVBRequestDocumentRealizationEstimationDate, 
+        public void SetVBRequest(int newVBRequestId, string newVBRequestNo, DateTimeOffset? newVBRequestDate, DateTimeOffset? newVBRequestVBRequestDocumentRealizationEstimationDate,
             string newVBRequestCreatedBy, decimal newVBRequestAmount, string user, string userAgent)
         {
             if (newVBRequestId != VBRequestDocumentId)
