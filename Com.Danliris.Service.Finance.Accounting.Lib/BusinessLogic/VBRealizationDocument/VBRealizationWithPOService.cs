@@ -74,6 +74,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             else
             {
                 var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
+                vbRequest.SetIsRealized(true, _identityService.Username, UserAgent);
+                _dbContext.VBRequestDocuments.Update(vbRequest);
                 model = new VBRealizationDocumentModel(form.Date, vbRequest.Id, vbRequest.DocumentNo, vbRequest.RealizationEstimationDate, vbRequest.CreatedBy, documentNo);
             }
 
@@ -82,6 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             _dbContext.SaveChanges();
 
             AddItems(model.Id, form.Items);
+
 
             return _dbContext.SaveChanges();
         }
@@ -124,6 +127,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
             EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
             _dbContext.VBRealizationDocuments.Update(model);
+
+            var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == model.VBRequestDocumentId);
+            vbRequest.SetIsRealized(false, _identityService.Username, UserAgent);
+
             return _dbContext.SaveChanges();
         }
 
