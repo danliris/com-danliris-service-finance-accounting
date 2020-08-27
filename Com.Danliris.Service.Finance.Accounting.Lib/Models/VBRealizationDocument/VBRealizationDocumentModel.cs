@@ -56,7 +56,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 CurrencyRate = viewModel.Currency.Rate;
                 CurrencySymbol = viewModel.Currency.Symbol;
             }
-
+            DocumentType = viewModel.DocumentType;
             Position = VBRealizationPosition.Purchasing;
         }
 

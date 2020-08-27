@@ -94,6 +94,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                 vm.DocumentNo = documentNo.Item1;
                 vm.Index = documentNo.Item2;
                 vm.Amount = vm.Items.Sum(s => s.Total);
+                if(vm.VBNonPOType == "Dengan Nomor VB")
+                {
+                    vm.DocumentType = RealizationDocumentType.WithVB;
+                }
+                else
+                {
+                    vm.DocumentType = RealizationDocumentType.NonVB;
+                }
                 var model = new VBRealizationDocumentModel(vm);
 
                 model.FlagForCreate(_identityService.Username, UserAgent);
