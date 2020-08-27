@@ -33,29 +33,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
             if (Date == null)
                 yield return new ValidationResult("Tanggal harus diisi!", new List<string> { "Date" });
 
-            if (Unit == null || Unit.Id == 0)
-                yield return new ValidationResult("Unit harus diisi!", new List<string> { "Unit" });
-
-            if (Currency == null || Currency.Id == 0)
-                yield return new ValidationResult("Mata Uang harus diisi!", new List<string> { "Currency" });
-
             if (string.IsNullOrWhiteSpace(VBNonPOType))
             {
-
                 yield return new ValidationResult("Tipe VB harus dipilih!", new List<string> { "VBNonPOType" });
             }
             else
             {
                 if (VBNonPOType == "Dengan Nomor VB")
                 {
-                    if(VBDocument == null || VBDocument.Id == 0)
+                    if (VBDocument == null || VBDocument.Id == 0)
                     {
                         yield return new ValidationResult("No VB harus diisi!", new List<string> { "VBDocument" });
                     }
                 }
+                else
+                {
+                    if (Unit == null || Unit.Id == 0)
+                        yield return new ValidationResult("Unit harus diisi!", new List<string> { "Unit" });
+
+                    if (Currency == null || Currency.Id == 0)
+                        yield return new ValidationResult("Mata Uang harus diisi!", new List<string> { "Currency" });
+                }
             }
 
-            if(Items.Count() == 0)
+            if (Items.Count() == 0)
             {
                 yield return new ValidationResult("Daftar harus diisi", new List<string> { "Item" });
             }
@@ -80,6 +81,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                             CountItemsError++;
                             ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Tanggal Realisasi!', ";
                         }
+                        else if (VBNonPOType == "Dengan Nomor VB" && item.DateDetail.Value < VBDocument.Date.GetValueOrDefault())
+                        {
+                            CountItemsError++;
+                            ItemsError += "'DateDetail': 'Tanggal Nota harus lebih atau sama dengan Tanggal Permohonan VB!', ";
+                        }
+
+
                     }
 
                     if (string.IsNullOrWhiteSpace(item.Remark))
@@ -128,20 +136,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                 {
                     yield return new ValidationResult("Beban unit harus dipilih minimal 1", new List<string> { "UnitCost" });
                 }
-                else
-                {
-                    if (!UnitCosts.Where(d => d.IsSelected).All(s => s.Unit != null && s.Unit.Id != 0 && s.Amount > 0))
-                    {
-                        yield return new ValidationResult("Beban Unit harus memiliki Nama Unit dan Amount", new List<string> { "UnitCost" });
-                    }
-                }
+                //else
+                //{
+                //    if (!UnitCosts.Where(d => d.IsSelected).All(s => s.Unit != null && s.Unit.Id != 0 && s.Amount > 0))
+                //    {
+                //        yield return new ValidationResult("Beban Unit harus memiliki Nama Unit dan Amount", new List<string> { "UnitCost" });
+                //    }
+                //}
 
             }
 
             if (UnitCosts.Sum(s => s.Amount) != Items.Sum(s => s.Total))
                 yield return new ValidationResult("Nominal beban unit dan total nota harus sama!", new List<string> { "CompareNominal" });
 
-            
+
         }
     }
 }
