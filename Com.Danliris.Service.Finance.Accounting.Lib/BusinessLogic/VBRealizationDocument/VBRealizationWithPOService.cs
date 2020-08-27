@@ -97,11 +97,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             foreach (var item in items)
             {
-                var model = new VBRealizationDocumentExpenditureItemModel(headerId: id, item);
+                var model = new VBRealizationDocumentExpenditureItemModel(id, item);
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                 _dbContext.SaveChanges();
 
-                AddDetails(itemId: model.Id, item.UnitPaymentOrder.Items);
+                AddDetails(model.Id, item.UnitPaymentOrder.Items);
             }
 
         }
@@ -110,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         {
             var models = items.Select(element =>
             {
-                var result = new VBRealizationDocumentUnitCostsItemModel(itemId: itemId, element);
+                var result = new VBRealizationDocumentUnitCostsItemModel(itemId, element);
                 EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
                 return result;
             }).ToList();
