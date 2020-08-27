@@ -96,6 +96,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Position = VBRealizationPosition.Purchasing;
         }
 
+        
+
         public VBRealizationPosition Position { get; private set; }
         public VBType Type { get; private set; }
         public RealizationDocumentType DocumentType { get; private set; }
@@ -258,6 +260,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 Amount = newAmount;
                 this.FlagForUpdate(user, userAgent);
             }
+        }
+
+        public void UpdatePosition(VBRealizationPosition position, string user, string userAgent)
+        {
+            Position = position;
+            this.FlagForUpdate(user, userAgent);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Moonlay.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -27,7 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             decimal vbRealizationAmount,
             string currencyCode,
             double currencyRate,
-            string vbType
+            VBType vbType
             )
         {
             VBRealizationId = vbRealizationId;
@@ -46,7 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             CurrencyRate = currencyRate;
             VBType = vbType;
 
-            Position = (int)VBRealizationPosition.Purchasing;
+            Position = VBRealizationPosition.PurchasingToVerification;
         }
 
         public int VBRealizationId { get; private set; }
@@ -84,36 +85,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         [MaxLength(256)]
         public string NotVerifiedBy { get; private set; }
         public DateTimeOffset? NotVerifiedDate { get; private set; }
-        public int Position { get; private set; }
+        public VBRealizationPosition Position { get; private set; }
         [MaxLength(64)]
-        public string VBType { get; set; }
+        public VBType VBType { get; set; }
 
         public void SubmitToVerification(string name)
         {
             SendToVerificationBy = name;
             SendToVerificationDate = DateTimeOffset.Now;
-            Position = (int)VBRealizationPosition.PurchasingToVerification;
+            Position = VBRealizationPosition.PurchasingToVerification;
         }
 
         public void VerificationReceipt(string name)
         {
             VerificationReceiptBy = name;
             VerificationReceiptDate = DateTimeOffset.Now;
-            Position = (int)VBRealizationPosition.Verification;
+            Position = VBRealizationPosition.Verification;
         }
 
         public void SendToCashier(string name)
         {
             VerifiedToCashierBy = name;
             VerifiedToCashierDate = DateTimeOffset.Now;
-            Position = (int)VBRealizationPosition.VerifiedToCashier;
+            Position = VBRealizationPosition.VerifiedToCashier;
         }
 
         public void CashierVerification(string name)
         {
             CashierReceiptBy = name;
             CashierReceiptDate = DateTimeOffset.Now;
-            Position = (int)VBRealizationPosition.Cashier;
+            Position = VBRealizationPosition.Cashier;
         }
 
         public void VerificationRejected(string name, string reason)
@@ -121,7 +122,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             NotVerifiedBy = name;
             NotVerifiedDate = DateTimeOffset.Now;
             NotVerifiedReason = reason;
-            Position = (int)VBRealizationPosition.NotVerified   ;
+            Position = VBRealizationPosition.NotVerified   ;
         }
 
         public void UpdateVBRealizationInfo(RealizationVbModel realizationVB)

@@ -135,13 +135,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
             Dictionary<string, string> order = new Dictionary<string, string>();
 
-            service.Setup(s => s.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new ReadResponse<VBRealizationDocumentExpeditionModel>(new List<VBRealizationDocumentExpeditionModel>(), 1, order, new List<string>()));
+            service.Setup(s => s.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<VBRealizationPosition>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new ReadResponse<VBRealizationDocumentExpeditionModel>(new List<VBRealizationDocumentExpeditionModel>(), 1, order, new List<string>()));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response = GetController(serviceProviderMock).Get(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>());
+            IActionResult response = GetController(serviceProviderMock).Get(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<VBRealizationPosition>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>());
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
@@ -152,13 +152,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var serviceProviderMock = new Mock<IServiceProvider>();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
-            service.Setup(s => s.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
+            service.Setup(s => s.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<VBRealizationPosition>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response = GetController(serviceProviderMock).Get(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>());
+            IActionResult response = GetController(serviceProviderMock).Get(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<VBRealizationPosition>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>());
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
