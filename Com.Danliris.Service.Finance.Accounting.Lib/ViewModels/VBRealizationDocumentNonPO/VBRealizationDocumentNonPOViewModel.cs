@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
         public VBRequestDocumentNonPODto VBDocument { get; set; }
         public UnitViewModel Unit { get; set; }
         public CurrencyViewModel Currency { get; set; }
+
+        public RealizationDocumentType DocumentType { get; set; }
 
         public decimal Amount { get; set; }
 
@@ -151,7 +154,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                 }
 
             }
-
             if (UnitCosts.Sum(s => s.Amount) != Items.Sum(s => s.Total))
                 yield return new ValidationResult("Nominal beban unit dan total nota harus sama!", new List<string> { "CompareNominal" });
 

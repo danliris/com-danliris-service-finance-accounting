@@ -129,6 +129,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRequestDocumentService, VBRequestDocumentService>()
                 .AddTransient<IVBRealizationDocumentNonPOService, VBRealizationDocumentNonPOService>()
                 .AddTransient<IVBRealizationWithPOService, VBRealizationWithPOService>()
+                .AddTransient<IVBRealizationService, VBRealizationService>()
                 .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>();
         }
 

@@ -65,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return new Tuple<string, int>(documentNo, index);
         }
 
-        private string GetDocumentNo(VBRequestDocumentWithPOFormDto form)
+        private string GetDocumentNo(VBRequestDocumentWithPOFormDto form, VBRequestDocumentModel existingData)
         {
             var now = form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset);
             var year = now.ToString("yy");
@@ -81,14 +81,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
-            var countSameDocumentNo = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).Count();
+            var index = 1;
 
-            if (countSameDocumentNo >= 0)
+            if (existingData != null)
             {
-                countSameDocumentNo += 1;
-
-                documentNo += string.Format("{0:000}", countSameDocumentNo);
+                index = existingData.Index + 1;
             }
+
+            documentNo += string.Format("{0:000}", index);
 
             return documentNo;
         }
@@ -175,7 +175,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public int CreateWithPO(VBRequestDocumentWithPOFormDto form)
         {
-            var documentNo = GetDocumentNo(form);
+            var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
+            var documentNo = GetDocumentNo(form, existingData);
 
             var model = new VBRequestDocumentModel(
                 documentNo,
