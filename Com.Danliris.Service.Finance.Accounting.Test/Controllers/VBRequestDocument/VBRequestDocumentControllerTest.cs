@@ -56,6 +56,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             return serviceProvider;
         }
 
+        protected int GetStatusCode(IActionResult response)
+        {
+            return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
+        }
+
         public VBRequestDocumentNonPOFormDto vBRequestDocumentNonPOFormDto
         {
             get
@@ -188,10 +193,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             return new ServiceValidationException(validationContext, validationResults);
         }
 
-        protected int GetStatusCode(IActionResult response)
-        {
-            return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
-        }
+       
 
         [Fact]
         public async Task PostNonPO_Succes_Return_Created()
@@ -221,7 +223,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.CreateNonPO(It.IsAny<VBRequestDocumentNonPOFormDto>())).ThrowsAsync(GetServiceValidationException());
+            service
+                .Setup(s => s.CreateNonPO(It.IsAny<VBRequestDocumentNonPOFormDto>()))
+                .ThrowsAsync(GetServiceValidationException());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -243,7 +247,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.CreateNonPO(It.IsAny<VBRequestDocumentNonPOFormDto>())).ThrowsAsync(new Exception());
+            service
+                .Setup(s => s.CreateNonPO(It.IsAny<VBRequestDocumentNonPOFormDto>()))
+                .ThrowsAsync(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -266,7 +272,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
 
             Dictionary<string, string> order = new Dictionary<string, string>();
 
-            service.Setup(s => s.Get(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Returns(new ReadResponse<VBRequestDocumentModel>(new List<VBRequestDocumentModel>(), 1, order, new List<string>()));
+            service
+                .Setup(s => s.Get(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new ReadResponse<VBRequestDocumentModel>(new List<VBRequestDocumentModel>(), 1, order, new List<string>()));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -287,7 +295,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.Get(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
+            service
+                .Setup(s => s.Get(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -308,7 +318,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ReturnsAsync(new VBRequestDocumentNonPODto());
+            service
+                .Setup(s => s.GetNonPOById(It.IsAny<int>()))
+                .ReturnsAsync(new VBRequestDocumentNonPODto());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -372,7 +384,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.UpdateNonPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentNonPOFormDto>())).ReturnsAsync(1);
+            service
+                .Setup(s => s.UpdateNonPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentNonPOFormDto>()))
+                .ReturnsAsync(1);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -393,7 +407,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.UpdateNonPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentNonPOFormDto>())).ThrowsAsync(GetServiceValidationException());
+            service
+                .Setup(s => s.UpdateNonPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentNonPOFormDto>()))
+                .ThrowsAsync(GetServiceValidationException());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -414,7 +430,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.UpdateNonPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentNonPOFormDto>())).ThrowsAsync(new Exception());
+            service
+                .Setup(s => s.UpdateNonPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentNonPOFormDto>()))
+                .ThrowsAsync(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -478,9 +496,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            Dictionary<string, string> order = new Dictionary<string, string>();
-
-            service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ReturnsAsync(new VBRequestDocumentNonPODto());
+            service
+                .Setup(s => s.GetNonPOById(It.IsAny<int>()))
+                .ReturnsAsync(new VBRequestDocumentNonPODto());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -523,8 +541,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            Dictionary<string, string> order = new Dictionary<string, string>();
-
             service.Setup(s => s.GetNonPOById(It.IsAny<int>())).ThrowsAsync(new Exception());
 
             serviceProviderMock
@@ -546,7 +562,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.CreateWithPO(It.IsAny<VBRequestDocumentWithPOFormDto>())).Returns(1);
+            service
+                .Setup(s => s.CreateWithPO(It.IsAny<VBRequestDocumentWithPOFormDto>()))
+                .Returns(1);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -568,7 +586,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.CreateWithPO(It.IsAny<VBRequestDocumentWithPOFormDto>())).Throws(GetServiceValidationException());
+            service
+                .Setup(s => s.CreateWithPO(It.IsAny<VBRequestDocumentWithPOFormDto>()))
+                .Throws(GetServiceValidationException());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -589,7 +609,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.CreateWithPO(It.IsAny<VBRequestDocumentWithPOFormDto>())).Throws(new Exception());
+            service
+                .Setup(s => s.CreateWithPO(It.IsAny<VBRequestDocumentWithPOFormDto>()))
+                .Throws(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -610,7 +632,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.GetWithPOById(It.IsAny<int>())).Returns(new VBRequestDocumentWithPODto());
+            service
+                .Setup(s => s.GetWithPOById(It.IsAny<int>()))
+                .Returns(new VBRequestDocumentWithPODto());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -674,7 +698,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>())).Returns(1);
+            service
+                .Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>()))
+                .Returns(1);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -697,7 +723,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>())).Throws(GetServiceValidationException());
+            service
+                .Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>()))
+                .Throws(GetServiceValidationException());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -719,7 +747,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>())).Throws(new Exception());
+            service
+                .Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>()))
+                .Throws(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -741,7 +771,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>())).Returns(1);
+            service
+                .Setup(s => s.UpdateWithPO(It.IsAny<int>(), It.IsAny<VBRequestDocumentWithPOFormDto>()))
+                .Returns(1);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -826,7 +858,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.GetWithPOById(It.IsAny<int>())).Returns(vBRequestDocumentWithPODto);
+            service
+                .Setup(s => s.GetWithPOById(It.IsAny<int>()))
+                .Returns(vBRequestDocumentWithPODto);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -868,7 +902,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.GetNotApprovedData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<string>())).Returns(new List<VBRequestDocumentModel>());
+            service
+                .Setup(s => s.GetNotApprovedData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<string>()))
+                .Returns(new List<VBRequestDocumentModel>());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -889,7 +925,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.GetNotApprovedData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<string>())).Throws(new Exception());
+            service
+                .Setup(s => s.GetNotApprovedData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<string>()))
+                .Throws(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -932,7 +970,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRequestDocumentService>();
 
-            service.Setup(s => s.ApprovalData(It.IsAny<ApprovalVBFormDto>())).ThrowsAsync(new Exception());
+            service
+                .Setup(s => s.ApprovalData(It.IsAny<ApprovalVBFormDto>()))
+                .ThrowsAsync(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
