@@ -91,6 +91,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 requestQuery = requestQuery.Where(s => !s.IsCompleted);
             }
 
+            requestQuery = requestQuery.Where(s => s.Id == 70);
             var result = (from rqst in requestQuery
                           join real in realizationQuery
                           on rqst.Id equals real.VBRequestDocumentId into data
@@ -110,8 +111,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                               RealizationNo = real.DocumentNo,
                               RealizationDate = real.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                               Usage = rqst.Purpose,
-                              Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)) - rqst.ApprovedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0))).TotalDays
-                                    : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)) - rqst.ApprovedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0))).TotalDays,
+                              Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
+                                    : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
                               Amount = rqst.Amount,
                               //RealizationAmount = real.Amount,
                               //Difference = rqst.Amount - real.Amount,
