@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
@@ -246,8 +247,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         {
             var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
 
-            model.Update(form);
-            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            if (form.VBRequestDocument != null && form.VBRequestDocument.Id.GetValueOrDefault() > 0)
+            {
+                var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
+                model.Update(vbRequest);
+                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            }
+
 
             var items = _dbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == id).ToList();
             items = items.Select(element =>

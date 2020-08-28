@@ -274,9 +274,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             }
         }
 
-        internal void Update(FormDto form)
+        public void Update(VBRequestDocumentModel vbRequest)
         {
-            throw new NotImplementedException();
+            VBRequestDocumentAmount = vbRequest.Amount;
+            VBRequestDocumentCreatedBy = vbRequest.CreatedBy;
+            VBRequestDocumentDate = vbRequest.Date;
+            VBRequestDocumentId = vbRequest.Id;
+            VBRequestDocumentNo = vbRequest.DocumentNo;
+            VBRequestDocumentRealizationEstimationDate = vbRequest.RealizationEstimationDate;
+        }
+
+        public void Update(FormDto form)
+        {
+            Date = form.Date.GetValueOrDefault();
+            //SuppliantDivisionCode = form.SuppliantUnit.Division.Code;
+            //SuppliantDivisionId = form.SuppliantUnit.Division.Id.GetValueOrDefault();
+            //SuppliantDivisionName = form.
+
+            //if (form.VBRequestDocument!= null && form.VBRequestDocument.Id.GetValueOrDefault() > 0)
+            //{
+
+            //}
         }
 
         public void SetAmount(decimal newAmount, string user, string userAgent)
