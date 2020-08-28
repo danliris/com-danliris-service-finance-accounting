@@ -6,7 +6,7 @@
         {
         }
 
-        public UnitPaymentOrderDto UnitPaymentOrder { get; internal set; }
-        public int Id { get; internal set; }
+        public UnitPaymentOrderDto UnitPaymentOrder { get; set; }
+        public int Id { get; set; }
     }
 }
