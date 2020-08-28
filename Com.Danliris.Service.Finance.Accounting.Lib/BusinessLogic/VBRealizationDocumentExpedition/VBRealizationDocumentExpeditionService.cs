@@ -7,6 +7,7 @@ using Com.Moonlay.NetCore.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -202,7 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                    element.CurrencyCode,
                    element.CurrencyRate,
                    element.Type);
-
+                result.SubmitToVerification(_identityService.Username);
                 EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
 
                 return result;
@@ -249,7 +250,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             });
 
             _dbContext.VBRealizationDocumentExpeditions.UpdateRange(models);
-            UpdateVBRealizationPosition(vbRealizationIds, VBRealizationPosition.PurchasingToVerification);
+            UpdateVBRealizationPosition(vbRealizationIds, VBRealizationPosition.Verification);
 
             return _dbContext.SaveChangesAsync();
 

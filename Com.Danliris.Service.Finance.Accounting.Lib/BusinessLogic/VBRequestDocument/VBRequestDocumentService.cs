@@ -65,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return new Tuple<string, int>(documentNo, index);
         }
 
-        private string GetDocumentNo(VBRequestDocumentWithPOFormDto form, VBRequestDocumentModel existingData)
+        private Tuple<string, int> GetDocumentNo(VBRequestDocumentWithPOFormDto form, VBRequestDocumentModel existingData)
         {
             var now = form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset);
             var year = now.ToString("yy");
@@ -90,7 +90,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             documentNo += string.Format("{0:000}", index);
 
-            return documentNo;
+            return new Tuple<string, int>(documentNo, index);
         }
 
         //public int CreateNonPO(VBRequestDocumentNonPOFormDto form)
@@ -179,7 +179,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             var documentNo = GetDocumentNo(form, existingData);
 
             var model = new VBRequestDocumentModel(
-                documentNo,
+                documentNo.Item1,
                 form.Date.GetValueOrDefault(),
                 form.RealizationEstimationDate.GetValueOrDefault(),
                 form.SuppliantUnit.Id.GetValueOrDefault(),
@@ -198,7 +198,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 false,
                 false,
                 false,
-                VBType.WithPO
+                VBType.WithPO,
+                documentNo.Item2
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);

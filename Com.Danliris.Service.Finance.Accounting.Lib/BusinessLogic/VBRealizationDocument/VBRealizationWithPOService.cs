@@ -176,6 +176,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 result = new VBRealizationWithPODto()
                 {
                     Id = model.Id,
+                    Position = model.Position,
                     Date = model.Date,
                     Type = model.DocumentType == RealizationDocumentType.WithVB ? "Dengan Nomor VB" : "Tanpa Nomor VB",
                     SuppliantUnit = new UnitDto()
