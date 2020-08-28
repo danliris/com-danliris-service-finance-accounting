@@ -247,6 +247,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
 
             model.Update(form);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+
+            var items = _dbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == id).ToList();
+            items = items.Select(element =>
+            {
+                EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                return element;
+            }).ToList();
+            _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);
+            AddItems(id, form.Items);
 
             return id;
         }
