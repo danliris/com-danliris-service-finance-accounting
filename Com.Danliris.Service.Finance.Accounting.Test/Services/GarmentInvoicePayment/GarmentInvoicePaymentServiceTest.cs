@@ -127,6 +127,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentInvoicePa
             newModel2.Items = new List<GarmentInvoicePaymentItemModel> { model2.Items.First() };
             var Response = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
+
+            GarmentInvoicePaymentItemModel newItem = new GarmentInvoicePaymentItemModel
+            {
+                InvoiceId=3,
+                InvoiceNo="no3",
+                Amount=3,
+                IDRAmount=3
+            };
+
+            newModel2.Items.Add(newItem);
+            var Response3 = await service.UpdateAsync(model2.Id, newModel2);
+            Assert.NotEqual(0, Response);
         }
 
         [Fact]

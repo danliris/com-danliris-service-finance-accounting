@@ -118,6 +118,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                         .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
 
             exist.PaymentDate = model.PaymentDate;
+            exist.BuyerId = model.BuyerId;
+            exist.BuyerCode = model.BuyerCode;
+            exist.BuyerName = model.BuyerName;
+            exist.BGNo = model.BGNo;
+            exist.CurrencyCode = model.CurrencyCode;
+            exist.CurrencyId = model.CurrencyId;
+            exist.CurrencyRate = model.CurrencyRate;
+            exist.Remark = model.Remark;
 
             foreach (var item in exist.Items)
             {
@@ -132,6 +140,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                 {
                     EntityExtension.FlagForUpdate(item, IdentityService.Username, UserAgent);
 
+                }
+            }
+            foreach(var newItem in model.Items)
+            {
+                if (newItem.Id == 0)
+                {
+                    exist.Items.Add(newItem);
+                    EntityExtension.FlagForCreate(newItem, IdentityService.Username, UserAgent);
                 }
             }
 
