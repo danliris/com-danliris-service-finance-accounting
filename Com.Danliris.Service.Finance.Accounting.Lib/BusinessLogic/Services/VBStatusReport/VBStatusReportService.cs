@@ -93,8 +93,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
 
             var result = (from rqst in requestQuery
                           join real in realizationQuery
-                          on rqst.Id equals real.VBRequestDocumentId into data
-                          from real in data.DefaultIfEmpty()
+                          on rqst.Id equals real.VBRequestDocumentId
                           select new VBStatusReportViewModel()
                           {
                               Id = rqst.Id,
