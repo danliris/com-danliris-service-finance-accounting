@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -109,7 +110,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
 
         [Fact]
-        public async Task GetReports_Return_Success() {
+        public async Task GetReports_Return_Success()
+        {
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
@@ -117,8 +119,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             RealizationVbModel vb = _dataUtil(service, dbContext).GetTestData_RealizationVbs();
             VBRealizationDocumentExpeditionModel vbRealization = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
 
-            var result = await service.GetReports(vb.Id, vbRealization.VBRealizationId, vb.RequestVbName, vb.UnitId, vb.DivisionId,DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now.AddDays(1), 1, 25);
-            Assert.True(0 <result.Data.Count());
+            var result = await service.GetReports(vb.Id, vbRealization.VBRealizationId, vb.RequestVbName, vb.UnitId, vb.DivisionId, DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now.AddDays(1), 1, 25);
+            Assert.True(0 < result.Data.Count());
             Assert.True(1 == result.Page);
             Assert.True(25 == result.Size);
 
@@ -144,10 +146,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             var data = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-            
+
             //Act
-            var result = service.Read(1, 1, "{}","", data.Position,data.VBId, data.VBRealizationId, data.VBRealizationDate,data.VBRequestName,data.UnitId);
-           
+            var result = service.Read(1, 1, "{}", "", data.Position, data.VBId, data.VBRealizationId, data.VBRealizationDate, data.VBRequestName, data.UnitId);
+
             //Assert
             Assert.NotNull(result);
         }
@@ -214,19 +216,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             Assert.NotEqual(0, result);
         }
 
-
         [Fact]
         public void ReadRelizationToVerification_Return_Success()
         {
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
-          
-            ReadResponse<VBRealizationDocumentExpeditionModel> result = service.ReadRealizationToVerification(0, 0, null, null, 0);
 
+            ReadResponse<VBRealizationDocumentModel> result = service.ReadRealizationToVerification(0, 0, null, null, 0);
             Assert.NotNull(result);
-           
         }
+
 
         [Fact]
         public void ReadRelizationToVerification_with_dataTest_Return_Success()
@@ -238,7 +238,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             var result = service.ReadRealizationToVerification(model.VBId, model.VBRealizationId, model.VBRealizationDate, model.VBRequestName, model.UnitId);
             Assert.NotNull(result);
             //Assert.True(0 < result.Data.Count());
-           
+
         }
 
         [Fact]
@@ -248,8 +248,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-            int result = await service.UpdateExpeditionByRealizationId( model.VBRealizationId);
-          
+            int result = await service.UpdateExpeditionByRealizationId(model.VBRealizationId);
+
             Assert.NotEqual(0, result);
 
         }

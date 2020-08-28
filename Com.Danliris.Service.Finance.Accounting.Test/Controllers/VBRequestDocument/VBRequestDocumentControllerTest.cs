@@ -74,6 +74,62 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             }
         }
 
+        VBRequestDocumentNonPODto vBRequestDocumentNonPODto {
+            get
+            {
+                return new VBRequestDocumentNonPODto()
+                {
+                    Amount=1,
+                    Date=DateTimeOffset.Now,
+                    Currency=new CurrencyDto()
+                    {
+                        Id=1,
+                        Code= "Code",
+                        Description= "Description",
+                        Rate=1,
+                        Symbol="Rp"
+                    },
+                    Id=1,
+                    DocumentNo="1",
+                    IsApproved=true,
+                    Purpose= "Purpose",
+                    RealizationEstimationDate=DateTimeOffset.Now,
+                    SuppliantUnit=new UnitDto()
+                    {
+                        Id=1,
+                        Code="Code",
+                        Division=new DivisionDto()
+                        {
+                            Id=1,
+                            Code="Code",
+                            Name="Name",
+                            
+                        }
+                    },
+                    Items =new List<VBRequestDocumentNonPOItemDto>()
+                    {
+                        new VBRequestDocumentNonPOItemDto()
+                        {
+                            Unit=new UnitDto()
+                            {
+                                Code="Code",
+                                Division=new DivisionDto()
+                                {
+                                    Code="Code",
+                                    Name="",
+                                    Id=1
+                                },
+                                Id=1,
+                                Name="Name",
+                                VBDocumentLayoutOrder=1,
+                                
+                            }
+                        }
+                    }
+                };
+            }
+           
+            }
         VBRequestDocumentWithPOFormDto vBRequestDocumentWithPOFormDto
         {
             get
@@ -401,6 +457,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
         }
 
         [Fact]
+        public async Task PutNonPO_Throws_ServiceValidationException_Return_BadRequest()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).PutNonPO(vBRequestDocumentNonPOFormDto.Id+1, vBRequestDocumentNonPOFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
         public async Task PutNonPO_Return_BadRequest()
         {
             //Setup
@@ -498,7 +573,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
 
             service
                 .Setup(s => s.GetNonPOById(It.IsAny<int>()))
-                .ReturnsAsync(new VBRequestDocumentNonPODto());
+                .ReturnsAsync(vBRequestDocumentNonPODto);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
@@ -509,7 +584,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
 
             //Assert 
             Assert.NotNull(response);
-
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+            Assert.Equal("Permohonan VB Tanpa PO - 1.pdf", response.GetType().GetProperty("FileDownloadName").GetValue(response, null));
         }
 
         [Fact]
