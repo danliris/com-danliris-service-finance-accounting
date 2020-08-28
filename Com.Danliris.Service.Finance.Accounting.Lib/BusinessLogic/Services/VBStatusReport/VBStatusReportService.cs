@@ -69,19 +69,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 requestQuery = requestQuery.Where(s => s.Date.AddHours(offSet).Date <= requestDateTo.Value.Date);
             }
 
-            if (realizeDateFrom.HasValue && realizeDateTo.HasValue)
-            {
-                realizationQuery = realizationQuery.Where(s => realizeDateFrom.Value.Date <= s.Date.AddHours(offSet).Date && s.Date.AddHours(offSet).Date <= realizeDateTo.Value.Date);
-            }
-            else if (realizeDateFrom.HasValue && !realizeDateTo.HasValue)
-            {
-                realizationQuery = realizationQuery.Where(s => realizeDateFrom.Value.Date <= s.Date.AddHours(offSet).Date);
-            }
-            else if (!realizeDateFrom.HasValue && realizeDateTo.HasValue)
-            {
-                realizationQuery = realizationQuery.Where(s => s.Date.AddHours(offSet).Date <= realizeDateTo.Value.Date);
-            }
-
             if (clearanceStatus.ToUpper() == "CLEARENCE")
             {
                 requestQuery = requestQuery.Where(s => s.IsCompleted);
@@ -91,7 +78,59 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 requestQuery = requestQuery.Where(s => !s.IsCompleted);
             }
 
-            var result = (from rqst in requestQuery
+            IQueryable<VBStatusReportViewModel> result;
+
+            if(!realizeDateFrom.HasValue && !realizeDateTo.HasValue)
+            {
+                result = (from rqst in requestQuery
+                              join real in realizationQuery
+                              on rqst.Id equals real.VBRequestDocumentId into data
+                              from real in data.DefaultIfEmpty()
+                              select new VBStatusReportViewModel()
+                              {
+                                  Id = rqst.Id,
+                                  VBNo = rqst.DocumentNo,
+                                  Date = rqst.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  DateEstimate = rqst.RealizationEstimationDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  Unit = new Unit()
+                                  {
+                                      Id = rqst.SuppliantUnitId,
+                                      Name = rqst.SuppliantUnitName
+                                  },
+                                  CreateBy = rqst.CreatedBy,
+                                  RealizationNo = real.DocumentNo,
+                                  RealizationDate = real.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  Usage = rqst.Purpose,
+                                  Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
+                                        : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
+                                  Amount = rqst.Amount,
+                                  RealizationAmount = real != null ? real.Amount : 0,
+                                  Difference = real != null ? rqst.Amount - real.Amount : 0,
+                                  Status = rqst.IsCompleted ? "Clearance" : "Outstanding",
+                                  LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                                  ApprovalDate = rqst.ApprovedDate.HasValue ? rqst.ApprovedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
+                                    : "-",
+                                  ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
+                                    : "-"
+
+                              });
+            }
+            else
+            {
+                if (realizeDateFrom.HasValue && realizeDateTo.HasValue)
+                {
+                    realizationQuery = realizationQuery.Where(s => realizeDateFrom.Value.Date <= s.Date.AddHours(offSet).Date && s.Date.AddHours(offSet).Date <= realizeDateTo.Value.Date);
+                }
+                else if (realizeDateFrom.HasValue && !realizeDateTo.HasValue)
+                {
+                    realizationQuery = realizationQuery.Where(s => realizeDateFrom.Value.Date <= s.Date.AddHours(offSet).Date);
+                }
+                else if (!realizeDateFrom.HasValue && realizeDateTo.HasValue)
+                {
+                    realizationQuery = realizationQuery.Where(s => s.Date.AddHours(offSet).Date <= realizeDateTo.Value.Date);
+                }
+
+                result = (from rqst in requestQuery
                           join real in realizationQuery
                           on rqst.Id equals real.VBRequestDocumentId
                           select new VBStatusReportViewModel()
@@ -122,6 +161,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                 : "-"
 
                           });
+            }
 
 
             return result.ToList();
