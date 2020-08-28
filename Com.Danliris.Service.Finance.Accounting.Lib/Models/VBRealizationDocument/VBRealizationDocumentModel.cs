@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 CurrencyRate = viewModel.Currency.Rate;
                 CurrencySymbol = viewModel.Currency.Symbol;
             }
-
+            DocumentType = viewModel.DocumentType;
             Position = VBRealizationPosition.Purchasing;
         }
 
@@ -154,6 +154,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public decimal Amount { get; private set; }
 
         public bool IsVerified { get; private set; }
+        public DateTimeOffset? VerificationDate { get; private set; }
+        [MaxLength(256)]
+        public string VerifiedBy { get; private set; }
 
         public void SetCurrency(int newCurrencyId, string newCurrencyCode, string newCurrencySymbol, double newCurrencyRate, string newCurrencyDescription, string user, string userAgent)
         {
