@@ -93,6 +93,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                 var documentNo = GetDocumentNo(vm, existingData);
                 vm.DocumentNo = documentNo.Item1;
                 vm.Index = documentNo.Item2;
+                vm.Amount = vm.Items.Sum(s => s.Total);
+                if(vm.VBNonPOType == "Dengan Nomor VB")
+                {
+                    vm.DocumentType = RealizationDocumentType.WithVB;
+                }
+                else
+                {
+                    vm.DocumentType = RealizationDocumentType.NonVB;
+                }
                 var model = new VBRealizationDocumentModel(vm);
 
                 model.FlagForCreate(_identityService.Username, UserAgent);
@@ -203,6 +212,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
             return new VBRealizationDocumentNonPOViewModel()
             {
                 Active = model.Active,
+                Amount = model.Amount,
                 CreatedAgent = model.CreatedAgent,
                 CreatedBy = model.CreatedBy,
                 CreatedUtc = model.CreatedUtc,
@@ -223,6 +233,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                 LastModifiedBy = model.LastModifiedBy,
                 LastModifiedUtc = model.LastModifiedUtc,
                 Type = model.Type,
+                Positon = model.Position,
                 Unit = new UnitViewModel()
                 {
                     Code = model.SuppliantUnitCode,
@@ -318,6 +329,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
         {
             var data = _dbContext.VBRealizationDocuments.FirstOrDefault(s => s.Id == id);
 
+            model.Amount = model.Items.Sum(s => s.Total);
+            data.SetAmount(model.Amount, _identityService.Username, UserAgent);
             if(data.VBRequestDocumentId != model.VBDocument.Id)
             {
                 var newVBRequest = _dbContext.VBRequestDocuments.FirstOrDefault(s => s.Id == model.VBDocument.Id);

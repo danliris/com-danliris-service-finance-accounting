@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
         public UnitViewModel Unit { get; set; }
         public CurrencyViewModel Currency { get; set; }
 
+        public RealizationDocumentType DocumentType { get; set; }
+
+        public VBRealizationPosition Positon { get; set; }
+
+        public decimal Amount { get; set; }
+
         public IEnumerable<VBRealizationDocumentNonPOExpenditureItemViewModel> Items { get; set; }
         public IEnumerable<VBRealizationDocumentNonPOUnitCostViewModel> UnitCosts { get; set; }
 
@@ -33,29 +41,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
             if (Date == null)
                 yield return new ValidationResult("Tanggal harus diisi!", new List<string> { "Date" });
 
-            if (Unit == null || Unit.Id == 0)
-                yield return new ValidationResult("Unit harus diisi!", new List<string> { "Unit" });
-
-            if (Currency == null || Currency.Id == 0)
-                yield return new ValidationResult("Mata Uang harus diisi!", new List<string> { "Currency" });
-
             if (string.IsNullOrWhiteSpace(VBNonPOType))
             {
-
                 yield return new ValidationResult("Tipe VB harus dipilih!", new List<string> { "VBNonPOType" });
             }
             else
             {
                 if (VBNonPOType == "Dengan Nomor VB")
                 {
-                    if(VBDocument == null || VBDocument.Id == 0)
+                    if (VBDocument == null || VBDocument.Id == 0)
                     {
                         yield return new ValidationResult("No VB harus diisi!", new List<string> { "VBDocument" });
                     }
                 }
+                else
+                {
+                    if (Unit == null || Unit.Id == 0)
+                        yield return new ValidationResult("Unit harus diisi!", new List<string> { "Unit" });
+
+                    if (Currency == null || Currency.Id == 0)
+                        yield return new ValidationResult("Mata Uang harus diisi!", new List<string> { "Currency" });
+                }
             }
 
-            if(Items.Count() == 0)
+            if (Items.Count() == 0)
             {
                 yield return new ValidationResult("Daftar harus diisi", new List<string> { "Item" });
             }
@@ -80,6 +89,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                             CountItemsError++;
                             ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Tanggal Realisasi!', ";
                         }
+                        else if (VBNonPOType == "Dengan Nomor VB" && item.DateDetail.Value < VBDocument.Date.GetValueOrDefault())
+                        {
+                            CountItemsError++;
+                            ItemsError += "'DateDetail': 'Tanggal Nota harus lebih atau sama dengan Tanggal Permohonan VB!', ";
+                        }
+
+
                     }
 
                     if (string.IsNullOrWhiteSpace(item.Remark))
@@ -130,18 +146,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                 }
                 else
                 {
-                    if (!UnitCosts.Where(d => d.IsSelected).All(s => s.Unit != null && s.Unit.Id != 0 && s.Amount > 0))
+                    if (!UnitCosts.Where(d => d.IsSelected).All(s => s.Unit != null && s.Unit.Id != 0))
                     {
-                        yield return new ValidationResult("Beban Unit harus memiliki Nama Unit dan Amount", new List<string> { "UnitCost" });
+                        yield return new ValidationResult("Beban Unit harus memiliki Nama Unit", new List<string> { "UnitCost" });
+                    }
+                    else if (!UnitCosts.Where(d => d.IsSelected).All(s => s.Amount > 0))
+                    {
+                        yield return new ValidationResult("Beban unit terpilih harus memiliki Amount", new List<string> { "UnitCost" });
                     }
                 }
 
             }
-
             if (UnitCosts.Sum(s => s.Amount) != Items.Sum(s => s.Total))
                 yield return new ValidationResult("Nominal beban unit dan total nota harus sama!", new List<string> { "CompareNominal" });
 
-            
+
         }
     }
 }

@@ -86,6 +86,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             modelBuilder.Entity<VBRealizationDocumentExpenditureItemModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<VBRealizationDocumentUnitCostsItemModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<VBRequestDocumentModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<VBRealizationDocumentModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
             base.OnModelCreating(modelBuilder);
         }
     }

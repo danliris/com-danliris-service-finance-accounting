@@ -39,6 +39,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBReali
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBRequestAll;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBStatusReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBVerification;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
@@ -130,6 +131,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRequestDocumentService, VBRequestDocumentService>()
                 .AddTransient<IGarmentInvoicePaymentService, GarmentInvoicePaymentService>()
                 .AddTransient<IVBRealizationDocumentNonPOService, VBRealizationDocumentNonPOService>()
+                .AddTransient<IVBRealizationWithPOService, VBRealizationWithPOService>()
+                .AddTransient<IVBRealizationService, VBRealizationService>()
                 .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>();
         }
 

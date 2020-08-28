@@ -87,7 +87,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public string Purpose { get; private set; }
         public decimal Amount { get; private set; }
         public bool IsPosted { get; private set; }
-        public bool IsCompleted { get; private set; }
         public VBType Type { get; private set; }
         public int SuppliantUnitId { get; private set; }
         [MaxLength(64)]
@@ -106,9 +105,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
 
 
         public bool IsApproved { get; private set; }
-        public DateTimeOffset ApprovedDate { get; private set; }
+        public DateTimeOffset? ApprovedDate { get; private set; }
         [MaxLength(256)]
         public string ApprovedBy { get; private set; }
+
+        public bool IsCompleted { get; private set; }
+        public DateTimeOffset? CompletedDate { get; private set; }
+        [MaxLength(256)]
+        public string CompletedBy { get; private set; }
 
         public void SetDate(DateTimeOffset newDate, string user, string userAgent)
         {
