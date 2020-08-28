@@ -113,7 +113,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                   ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                     : "-"
 
-                              });
+                              })
+                              .OrderByDescending(s => s.LastModifiedUtc);
             }
             else
             {
@@ -160,7 +161,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                               ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                 : "-"
 
-                          });
+                          })
+                          .OrderByDescending(s => s.LastModifiedUtc);
             }
 
 
