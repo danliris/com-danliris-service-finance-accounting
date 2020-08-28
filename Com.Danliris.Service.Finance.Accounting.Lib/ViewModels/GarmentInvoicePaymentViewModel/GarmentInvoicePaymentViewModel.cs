@@ -38,7 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentInvoiceP
             }
             if (this.Items == null || this.Items.Count == 0)
             {
-                yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "Items" });
+                yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "ItemsCount" });
             }
             else
             {

@@ -22,7 +22,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
 
                 .ReverseMap();
 
-
+            CreateMap<GarmentInvoicePaymentItemModel, GarmentInvoicePaymentItemViewModel>()
+                .ReverseMap();
         }
     }
 }
