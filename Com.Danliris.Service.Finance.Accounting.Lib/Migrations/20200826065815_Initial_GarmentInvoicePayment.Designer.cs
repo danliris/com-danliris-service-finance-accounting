@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200826065815_Initial_GarmentInvoicePayment")]
+    partial class Initial_GarmentInvoicePayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1846,281 +1848,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.ToTable("VbRequestsDetails");
                 });
 
-            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument.VBRealizationDocumentExpenditureItemModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CreatedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<DateTimeOffset>("Date");
-
-                    b.Property<string>("DeletedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("DeletedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<string>("IncomeTaxBy")
-                        .HasMaxLength(64);
-
-                    b.Property<int>("IncomeTaxId");
-
-                    b.Property<string>("IncomeTaxName")
-                        .HasMaxLength(64);
-
-                    b.Property<double>("IncomeTaxRate");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<string>("LastModifiedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("LastModifiedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<string>("Remark");
-
-                    b.Property<int>("UnitPaymentOrderId");
-
-                    b.Property<string>("UnitPaymentOrderNo");
-
-                    b.Property<bool>("UseIncomeTax");
-
-                    b.Property<bool>("UseVat");
-
-                    b.Property<int>("VBRealizationDocumentId");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("VBRealizationDocumentExpenditureItems");
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument.VBRealizationDocumentModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CreatedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<string>("CurrencyCode")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("CurrencyDescription")
-                        .HasMaxLength(256);
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<double>("CurrencyRate");
-
-                    b.Property<string>("CurrencySymbol")
-                        .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset>("Date");
-
-                    b.Property<string>("DeletedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("DeletedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<string>("DocumentNo")
-                        .HasMaxLength(64);
-
-                    b.Property<int>("DocumentType");
-
-                    b.Property<int>("Index");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<bool>("IsVerified");
-
-                    b.Property<string>("LastModifiedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("LastModifiedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<int>("Position");
-
-                    b.Property<string>("SuppliantDivisionCode")
-                        .HasMaxLength(64);
-
-                    b.Property<int>("SuppliantDivisionId");
-
-                    b.Property<string>("SuppliantDivisionName")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("SuppliantUnitCode")
-                        .HasMaxLength(64);
-
-                    b.Property<int>("SuppliantUnitId");
-
-                    b.Property<string>("SuppliantUnitName")
-                        .HasMaxLength(64);
-
-                    b.Property<int>("Type");
-
-                    b.Property<string>("VBNonPoType")
-                        .HasMaxLength(32);
-
-                    b.Property<decimal>("VBRequestDocumentAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("VBRequestDocumentCreatedBy")
-                        .HasMaxLength(256);
-
-                    b.Property<DateTimeOffset?>("VBRequestDocumentDate");
-
-                    b.Property<int>("VBRequestDocumentId");
-
-                    b.Property<string>("VBRequestDocumentNo")
-                        .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset?>("VBRequestDocumentRealizationEstimationDate");
-
-                    b.Property<DateTimeOffset?>("VerificationDate");
-
-                    b.Property<string>("VerifiedBy")
-                        .HasMaxLength(256);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("VBRealizationDocuments");
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument.VBRealizationDocumentUnitCostsItemModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CreatedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<DateTimeOffset>("Date");
-
-                    b.Property<string>("DeletedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("DeletedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<string>("DivisionCode")
-                        .HasMaxLength(64);
-
-                    b.Property<int>("DivisionId");
-
-                    b.Property<string>("DivisionName")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("IncomeTaxBy");
-
-                    b.Property<int>("IncomeTaxId");
-
-                    b.Property<string>("IncomeTaxName");
-
-                    b.Property<double>("IncomeTaxRate");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<bool>("IsSelected");
-
-                    b.Property<string>("LastModifiedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("LastModifiedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<string>("Remark");
-
-                    b.Property<string>("UnitCode")
-                        .HasMaxLength(64);
-
-                    b.Property<int>("UnitId");
-
-                    b.Property<string>("UnitName")
-                        .HasMaxLength(256);
-
-                    b.Property<bool>("UseIncomeTax");
-
-                    b.Property<bool>("UseVat");
-
-                    b.Property<int>("VBDocumentLayoutOrder");
-
-                    b.Property<int>("VBRealizationDocumentExpenditureItemId");
-
-                    b.Property<int>("VBRealizationDocumentId");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("VBRealizationDocumentUnitCostsItems");
-                });
-
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition.VBRealizationDocumentExpeditionModel", b =>
                 {
                     b.Property<int>("Id")
@@ -2213,7 +1940,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("VBRequestName")
                         .HasMaxLength(256);
 
-                    b.Property<int>("VBType")
+                    b.Property<string>("VBType")
                         .HasMaxLength(64);
 
                     b.Property<string>("VerificationReceiptBy")
@@ -2406,18 +2133,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("Amount");
 
                     b.Property<string>("ApprovedBy")
                         .HasMaxLength(256);
 
-                    b.Property<DateTimeOffset?>("ApprovedDate");
-
-                    b.Property<string>("CompletedBy")
-                        .HasMaxLength(256);
-
-                    b.Property<DateTimeOffset?>("CompletedDate");
+                    b.Property<DateTimeOffset>("ApprovedDate");
 
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
