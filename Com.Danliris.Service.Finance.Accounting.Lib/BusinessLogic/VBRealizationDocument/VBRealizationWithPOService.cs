@@ -69,17 +69,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var existingData = _dbContext.VBRealizationDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
             var documentNo = GetDocumentNo(form, existingData);
 
-            var amount = form.Items.SelectMany(element => element.UnitPaymentOrder.Items).Sum(element => element.Amount.GetValueOrDefault());
+            var amount = form.Items.Sum(element => element.UnitPaymentOrder.Amount.GetValueOrDefault());
 
             if (form.Type == "Tanpa Nomor VB")
-                model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo, amount);
+                model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo, (decimal)amount);
             else
             {
                 var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
                 vbRequest.SetIsRealized(true, _identityService.Username, UserAgent);
                 _dbContext.VBRequestDocuments.Update(vbRequest);
 
-                model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, amount);
+                model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, (decimal)amount);
             }
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -88,8 +88,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             AddItems(model.Id, form.Items);
 
-
-            return _dbContext.SaveChanges();
+            _dbContext.SaveChanges();
+            return model.Id;
         }
 
         private void AddItems(int id, List<FormItemDto> items)
@@ -107,8 +107,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                 _dbContext.VBRealizationDocumentExpenditureItems.Add(model);
                 _dbContext.SaveChanges();
-
-                AddDetails(model.Id, item.UnitPaymentOrder.Items);
             }
 
         }
@@ -132,10 +130,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
             _dbContext.VBRealizationDocuments.Update(model);
 
+            var items = _dbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == id).ToList();
+            items = items.Select(element =>
+            {
+                element.FlagForDelete(_identityService.Username, UserAgent);
+                return element;
+            }).ToList();
+            _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);
+
             var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == model.VBRequestDocumentId);
             vbRequest.SetIsRealized(false, _identityService.Username, UserAgent);
+            _dbContext.VBRequestDocuments.Update(vbRequest);
 
-            return _dbContext.SaveChanges();
+            _dbContext.SaveChanges();
+            return id;
         }
 
         public ReadResponse<VBRealizationDocumentModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
@@ -209,23 +217,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             UnitPaymentOrder = new UnitPaymentOrderDto()
                             {
                                 Id = item.UnitPaymentOrderId,
-                                Items = unitCostItems.Select(unitCostItem => new UnitPaymentOrderItemDto()
+                                No = item.UnitPaymentOrderNo,
+                                Amount = item.Amount,
+                                Date = item.Date,
+                                IncomeTax = new IncomeTaxDto()
                                 {
-                                    Id = unitCostItem.Id,
-                                    Amount = unitCostItem.Amount,
-                                    Date = unitCostItem.Date,
-                                    IncomeTax = new IncomeTaxDto()
-                                    {
-                                        Id = unitCostItem.IncomeTaxId,
-                                        Name = unitCostItem.IncomeTaxName,
-                                        Rate = unitCostItem.IncomeTaxRate
-                                    },
-                                    IncomeTaxBy = unitCostItem.IncomeTaxBy,
-                                    Remark = unitCostItem.Remark,
-                                    UseIncomeTax = unitCostItem.UseIncomeTax,
-                                    UseVat = unitCostItem.UseVat
-                                }).ToList(),
-                                No = item.UnitPaymentOrderNo
+                                    Id = item.IncomeTaxId,
+                                    Name = item.IncomeTaxName,
+                                    Rate = item.IncomeTaxRate
+                                },
+                                IncomeTaxBy = item.IncomeTaxBy,
+                                UseIncomeTax = item.UseIncomeTax,
+                                UseVat = item.UseVat
                             }
                         };
                         return itemResult;
@@ -241,7 +244,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public int Update(int id, FormDto form)
         {
-            throw new NotImplementedException();
+            var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
+
+            model.Update(form);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+
+            var items = _dbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == id).ToList();
+            items = items.Select(element =>
+            {
+                EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                return element;
+            }).ToList();
+            _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);
+            AddItems(id, form.Items);
+
+            return id;
         }
     }
 }

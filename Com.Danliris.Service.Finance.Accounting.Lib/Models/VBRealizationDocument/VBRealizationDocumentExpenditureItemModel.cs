@@ -38,6 +38,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             VBRealizationDocumentId = headerId;
             UnitPaymentOrderId = element.UnitPaymentOrder.Id.GetValueOrDefault();
             UnitPaymentOrderNo = element.UnitPaymentOrder.No;
+            Amount = (decimal)element.UnitPaymentOrder.Amount.GetValueOrDefault();
+            Date = element.UnitPaymentOrder.Date.GetValueOrDefault();
+            UseVat = element.UnitPaymentOrder.UseVat.GetValueOrDefault();
+            UseIncomeTax = element.UnitPaymentOrder.UseIncomeTax.GetValueOrDefault();
+            IncomeTaxId = element.UnitPaymentOrder.IncomeTax.Id.GetValueOrDefault();
+            IncomeTaxBy = element.UnitPaymentOrder.IncomeTaxBy;
+            IncomeTaxName = element.UnitPaymentOrder.IncomeTax.Name;
+            IncomeTaxRate = element.UnitPaymentOrder.IncomeTax.Rate.GetValueOrDefault();
         }
 
         public DateTimeOffset Date { get; private set; }

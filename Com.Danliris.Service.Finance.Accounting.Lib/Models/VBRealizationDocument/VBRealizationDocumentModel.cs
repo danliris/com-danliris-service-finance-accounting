@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
@@ -271,6 +272,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 VBRequestDocumentAmount = newVBRequestAmount;
                 this.FlagForUpdate(user, userAgent);
             }
+        }
+
+        internal void Update(FormDto form)
+        {
+            throw new NotImplementedException();
         }
 
         public void SetAmount(decimal newAmount, string user, string userAgent)

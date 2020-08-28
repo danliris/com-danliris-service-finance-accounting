@@ -1,12 +1,19 @@
-﻿using iTextSharp.text;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using iTextSharp.text;
+using System;
 using System.Collections.Generic;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument
 {
     public class UnitPaymentOrderDto
     {
-        public int? Id { get; set; }
-        public string No { get; set; }
-        public List<UnitPaymentOrderItemDto> Items { get; set; }
+        public int? Id { get;  set; }
+        public string No { get;  set; }
+        public DateTimeOffset? Date { get;  set; }
+        public decimal? Amount { get;  set; }
+        public bool? UseVat { get;  set; }
+        public bool? UseIncomeTax { get;  set; }
+        public IncomeTaxDto IncomeTax { get;  set; }
+        public string IncomeTaxBy { get;  set; }
     }
 }
