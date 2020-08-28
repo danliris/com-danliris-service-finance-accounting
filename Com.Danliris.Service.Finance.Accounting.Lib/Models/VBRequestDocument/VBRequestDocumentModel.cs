@@ -206,6 +206,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             }
         }
 
+        public void SetIsRealized(bool newFlagIsRealized, string user, string userAgent)
+        {
+
+            if (newFlagIsRealized != IsRealized)
+            {
+                IsRealized = newFlagIsRealized;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
         public void UpdateFromForm(VBRequestDocumentWithPOFormDto form)
         {
             Date = form.Date.GetValueOrDefault();
