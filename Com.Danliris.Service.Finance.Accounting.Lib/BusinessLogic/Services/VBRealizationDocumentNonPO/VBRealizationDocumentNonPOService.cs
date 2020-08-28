@@ -233,6 +233,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                 LastModifiedBy = model.LastModifiedBy,
                 LastModifiedUtc = model.LastModifiedUtc,
                 Type = model.Type,
+                Positon = model.Position,
                 Unit = new UnitViewModel()
                 {
                     Code = model.SuppliantUnitCode,

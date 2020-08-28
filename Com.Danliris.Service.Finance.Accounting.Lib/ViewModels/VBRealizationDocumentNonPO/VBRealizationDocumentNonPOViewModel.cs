@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
 using System;
@@ -27,6 +28,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
         public CurrencyViewModel Currency { get; set; }
 
         public RealizationDocumentType DocumentType { get; set; }
+
+        public VBRealizationPosition Positon { get; set; }
 
         public decimal Amount { get; set; }
 
