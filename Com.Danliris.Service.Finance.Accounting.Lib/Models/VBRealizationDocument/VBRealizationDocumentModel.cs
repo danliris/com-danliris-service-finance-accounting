@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
@@ -271,6 +272,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 VBRequestDocumentAmount = newVBRequestAmount;
                 this.FlagForUpdate(user, userAgent);
             }
+        }
+
+        public void Update(VBRequestDocumentModel vbRequest)
+        {
+            VBRequestDocumentAmount = vbRequest.Amount;
+            VBRequestDocumentCreatedBy = vbRequest.CreatedBy;
+            VBRequestDocumentDate = vbRequest.Date;
+            VBRequestDocumentId = vbRequest.Id;
+            VBRequestDocumentNo = vbRequest.DocumentNo;
+            VBRequestDocumentRealizationEstimationDate = vbRequest.RealizationEstimationDate;
+        }
+
+        public void Update(FormDto form)
+        {
+            Date = form.Date.GetValueOrDefault();
+            //SuppliantDivisionCode = form.SuppliantUnit.Division.Code;
+            //SuppliantDivisionId = form.SuppliantUnit.Division.Id.GetValueOrDefault();
+            //SuppliantDivisionName = form.
+
+            //if (form.VBRequestDocument!= null && form.VBRequestDocument.Id.GetValueOrDefault() > 0)
+            //{
+
+            //}
         }
 
         public void SetAmount(decimal newAmount, string user, string userAgent)
