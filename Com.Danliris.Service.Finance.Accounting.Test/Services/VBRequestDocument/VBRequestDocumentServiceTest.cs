@@ -88,11 +88,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentNonPOFormDto newForm = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
-            VBRequestDocumentModel testData =  _dataUtil(service, dbContext).GetTestData_VBRequestDocumentNonPO();
+            VBRequestDocumentNonPOFormDto form = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
+            VBRequestDocumentNonPODto data = await _dataUtil(service, dbContext).GetTestData_VBRequestDocumentNonPO();
 
             //Act
-            int result = await service.CreateNonPO(newForm);
+            int result = await service.CreateNonPO(form);
 
             //Assert
             Assert.NotEqual(0, result);
@@ -105,11 +105,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentNonPOFormDto newForm = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
-            newForm.Items = null;
+            VBRequestDocumentNonPOFormDto form = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
+            form.Items = null;
 
             //Assert
-            await Assert.ThrowsAsync<System.ArgumentNullException>(()=>service.CreateNonPO(newForm));
+            await Assert.ThrowsAsync<System.ArgumentNullException>(()=>service.CreateNonPO(form));
         }
 
 
@@ -121,7 +121,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
             VBRequestDocumentWithPOFormDto newForm = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentWithPOFormDto();
-            VBRequestDocumentModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentNonPO();
+            VBRequestDocumentWithPODto data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
 
             //Act
             int result =  service.CreateWithPO(newForm);
@@ -137,10 +137,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
-
+            VBRequestDocumentNonPODto data = await _dataUtil(service, dbContext).GetTestData_VBRequestDocumentNonPO();
+            
             //Act
-            int result = await service.DeleteNonPO(testData.Id);
+            int result = await service.DeleteNonPO(data.Id);
 
             //Assert
             Assert.NotEqual(0, result);
@@ -154,10 +154,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentWithPODto data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
 
             //Act
-            int result =  service.DeleteWithPO(testData.Id);
+            int result =  service.DeleteWithPO(data.Id);
 
             //Assert
             Assert.NotEqual(0, result);
@@ -171,7 +171,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentWithPODto data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
 
             var orderData = new
             {
@@ -188,18 +188,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         }
 
         [Fact]
-        public void GetNonPOById_Return_Success()
+        public async Task GetNonPOById_Return_Success()
         {
             //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentNonPODto testData =await _dataUtil(service, dbContext).GetTestData_VBRequestDocumentNonPO();
 
             //Act
-            var result = service.GetNonPOById(testData.Id);
+            VBRequestDocumentNonPODto result = await service.GetNonPOById(testData.Id);
 
             //Assert
+            Assert.NotEqual(0, result.Id);
             Assert.NotNull(result);
         }
 
@@ -210,7 +211,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentNonPODto testData = await _dataUtil(service, dbContext).GetTestData_VBRequestDocumentNonPO();
 
             //Act
             var result =await service.GetNonPOById(testData.Id+1);
@@ -226,7 +227,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            var testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
 
             //Act
             var result =  service.GetWithPOById(testData.Id );
@@ -237,17 +238,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         }
 
         [Fact]
-        public async Task UpdateNonPO_Return_Null()
+        public async Task UpdateNonPO_Return_Success()
         {
             //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentNonPOFormDto newForm = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
-            VBRequestDocumentItemModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentItem();
+            VBRequestDocumentNonPOFormDto form = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentNonPOFormDto();
+            VBRequestDocumentNonPODto data = await _dataUtil(service, dbContext).GetTestData_VBRequestDocumentNonPO();
 
             //Act
-            int result = await service.UpdateNonPO(testData.Id, newForm);
+            int result = await service.UpdateNonPO(data.Id, form);
 
             //Assert
             Assert.NotEqual(0,result);
@@ -260,11 +261,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
             
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentEPODetailModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentEPODetail();
-            VBRequestDocumentWithPOFormDto newForm = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentWithPOFormDto();
+            
+            VBRequestDocumentWithPODto data = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
+            VBRequestDocumentWithPOFormDto form = _dataUtil(service, dbContext).GetNewData_VBRequestDocumentWithPOFormDto();
             
             //Act
-            int result =  service.UpdateWithPO(testData.Id, newForm);
+            int result =  service.UpdateWithPO(data.Id, form);
 
             //Assert
             Assert.NotEqual(0, result);
@@ -277,10 +279,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
+            VBRequestDocumentWithPODto testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
 
             //Act
-            var result = service.GetNotApprovedData((int)VBType.WithPO, testData.Id,testData.SuppliantUnitId,DateTime.Now,"{}");
+            var result = service.GetNotApprovedData((int)VBType.WithPO, testData.Id,(int)testData.SuppliantUnit.Id,DateTime.Now,"{}");
 
             //Assert
             Assert.NotNull(result);
@@ -294,7 +296,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
             VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            VBRequestDocumentModel testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
+            VBRequestDocumentWithPODto testData = _dataUtil(service, dbContext).GetTestData_VBRequestDocumentWithPO();
 
             ApprovalVBFormDto approvalVBFormDto = new ApprovalVBFormDto()
             {

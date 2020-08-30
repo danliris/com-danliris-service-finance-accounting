@@ -112,25 +112,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                             {
                                 Id=1,
                                 No="1",
-                                Items=new List<UnitPaymentOrderItemDto>()
+                                Amount=1,
+                                Date=DateTimeOffset.Now,
+                                IncomeTax=new IncomeTaxDto()
                                 {
-                                    new UnitPaymentOrderItemDto()
-                                    {
-                                        Amount=1,
-                                        IncomeTaxBy="Supplier",
-                                        Remark="Remark",
-                                        IncomeTax=new IncomeTaxDto()
-                                        {
-                                            Id=1,
-                                            Name="Name",
-                                            Rate=1
-                                        },
-                                        UseIncomeTax=true,
-                                        UseVat=true,
-                                        Date=DateTimeOffset.Now,
-                                        
-                                    }
-                                }
+                                    Name="Name",
+                                    Rate=1
+                                },
+                                IncomeTaxBy="Supplier",
+                                UseIncomeTax=true,
+                                UseVat=true
+                                
                             }
                         }
                     }

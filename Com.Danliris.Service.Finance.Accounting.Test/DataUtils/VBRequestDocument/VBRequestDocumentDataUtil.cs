@@ -19,55 +19,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
         }
 
 
-
-        public VBRequestDocumentModel GetTestData_VBRequestDocumentNonPO()
+        public async Task<VBRequestDocumentNonPODto> GetTestData_VBRequestDocumentNonPO()
         {
 
-            var testData = GetNewData_VBRequestDocumentNonPO();
-            _dbContext.VBRequestDocuments.Add(testData);
-            _dbContext.SaveChanges();
-            return testData;
-        }
-
-        public VBRequestDocumentModel GetNewData_VBRequestDocumentNonPO()
-        {
-            VBRequestDocumentModel TestData = new VBRequestDocumentModel("documentNo", DateTimeOffset.Now, DateTimeOffset.Now, 1, "suppliantUnitCode", "suppliantUnitName", 1, "suppliantDivisionCode", "suppliantDivisionName", 1, "IDR", "Rp", "currencyDescription", 1, "Purpose", 1, true, true, true,VBType.NonPO);
-
-            return TestData;
+            var testData = GetNewData_VBRequestDocumentNonPOFormDto();
+            int id = await _service.CreateNonPO(testData);
+            var data = await _service.GetNonPOById(id);
+            return data;
         }
 
 
-        public VBRequestDocumentModel GetTestData_VBRequestDocumentWithPO()
+        public VBRequestDocumentWithPODto GetTestData_VBRequestDocumentWithPO()
         {
-
-            var testData = GetNewData_VBRequestDocumentWithPO();
-            _dbContext.VBRequestDocuments.Add(testData);
-            _dbContext.SaveChanges();
-            return testData;
+            var form = GetNewData_VBRequestDocumentWithPOFormDto();
+            int id =_service.CreateWithPO(form);
+            var data =_service.GetWithPOById(id);
+            return data;
         }
 
-        public VBRequestDocumentModel GetNewData_VBRequestDocumentWithPO()
-        {
-            VBRequestDocumentModel TestData = new VBRequestDocumentModel("documentNo", DateTimeOffset.Now, DateTimeOffset.Now, 1, "suppliantUnitCode", "suppliantUnitName", 1, "suppliantDivisionCode", "suppliantDivisionName", 1, "IDR", "Rp", "currencyDescription", 1, "Purpose", 1, false, false, false, VBType.WithPO);
-
-            return TestData;
-        }
-
-        public VBRequestDocumentItemModel GetNewData_VBRequestDocumentItemModel()
-        {
-            var vBRequestDocument = GetTestData_VBRequestDocumentNonPO();
-            VBRequestDocumentItemModel TestData = new VBRequestDocumentItemModel(vBRequestDocument.Id, 1, "unitName", "unitCode", 1, "divisionName", "divisionCode", true, 1);
-            return TestData;
-        }
-
-        public VBRequestDocumentItemModel GetTestData_VBRequestDocumentItem()
-        {
-
-            var testData = GetNewData_VBRequestDocumentItemModel();
-            _dbContext.VBRequestDocumentItems.Add(testData);
-            _dbContext.SaveChanges();
-            return testData;
-        }
+       
 
         public VBRequestDocumentNonPOFormDto GetNewData_VBRequestDocumentNonPOFormDto()
         {
@@ -122,7 +92,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
         {
             return new VBRequestDocumentWithPOFormDto()
             {
-
                 Amount = 1,
                 Currency = new CurrencyDto()
                 {
@@ -145,15 +114,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
                     Name = "Meter",
                     VBDocumentLayoutOrder = 1
                 },
-
+                
                 Items = new List<VBRequestDocumentWithPOItemFormDto>()
                 {
                     new VBRequestDocumentWithPOItemFormDto()
                     {
-
+                        
                        PurchaseOrderExternal=new PurchaseOrderExternal()
                        {
-
+                           No="1",
                            Items=new List<PurchaseOrderExternalItem>()
                            {
                                new PurchaseOrderExternalItem()
@@ -179,7 +148,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
                                    DealQuantity=1,
                                    DealUOM=new UnitOfMeasurement()
                                    {
-                                       Unit="meter"
+                                       Unit="meter",
                                    },
                                    DefaultQuantity=1,
                                    Price=1,
@@ -202,33 +171,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
             };
         }
 
-        public VBRequestDocumentEPODetailModel GetNewData_VBRequestDocumentEPODetailModel()
-        {
-            var vBRequestDocumentDataTest = GetTestData_VBRequestDocumentNonPO();
-
-            VBRequestDocumentEPODetailModel newData = new VBRequestDocumentEPODetailModel(vBRequestDocumentDataTest.Id, 1, "epoNo", "remark");
-            
-            return newData;
-        }
-
-        public VBRequestDocumentEPODetailModel GetTestData_VBRequestDocumentEPODetail()
-        {
-            var VBRequestDocumentEPODetailDataTest = GetNewData_VBRequestDocumentEPODetailModel();
-
-            _dbContext.VBRequestDocumentEPODetails.Add(VBRequestDocumentEPODetailDataTest);
-            _dbContext.SaveChanges();
-
-            return VBRequestDocumentEPODetailDataTest;
-        }
-
-
-        //  VBRequestDocumentItems
-
-        //public async Task<VBRequestDocumentModel> GetTestData()
-        //{
-        //    VBRequestDocumentModel model = GetNewData();
-        //    await Service.CreateNonPO()
-        //    return await Service.ReadByIdAsync(model.Id);
-        //}
+        
     }
 }
