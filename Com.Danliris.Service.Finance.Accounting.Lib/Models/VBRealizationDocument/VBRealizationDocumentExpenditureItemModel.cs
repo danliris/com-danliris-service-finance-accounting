@@ -49,6 +49,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             SupplierId = element.UnitPaymentOrder.Supplier.Id.GetValueOrDefault();
             SupplierCode = element.UnitPaymentOrder.Supplier.Code;
             SupplierName = element.UnitPaymentOrder.Supplier.Name;
+            DivisionId = element.UnitPaymentOrder.Division.Id.GetValueOrDefault();
+            DivisionCode = element.UnitPaymentOrder.Division.Code;
+            DivisionName = element.UnitPaymentOrder.Division.Name;
         }
 
         public DateTimeOffset Date { get; private set; }
@@ -62,10 +65,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public double IncomeTaxRate { get; private set; }
         public int SupplierId { get; private set; }
         [MaxLength(64)]
-
         public string SupplierCode { get; private set; }
         [MaxLength(512)]
         public string SupplierName { get; private set; }
+        public int DivisionId { get; private set; }
+        [MaxLength(64)]
+        public string DivisionCode { get; private set; }
+        [MaxLength(512)]
+        public string DivisionName { get; private set; }
         [MaxLength(64)]
         public string IncomeTaxBy { get; private set; }
 
