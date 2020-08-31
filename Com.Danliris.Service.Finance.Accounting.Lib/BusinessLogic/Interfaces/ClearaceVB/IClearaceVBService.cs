@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB
 {
@@ -11,7 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.C
     {
         ReadResponse<ClearaceVBViewModel> Read(int page, int size, string order, List<string> select, string keyword, string filter);
         
-        Task<VbRequestModel> ReadByIdAsync(long id);
+        Task<VBRequestDocumentModel> ReadByIdAsync(long id);
         Task<int> ClearanceVBPost(List<long> listId);
         Task<int> ClearanceVBUnpost(long id);
     }

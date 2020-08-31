@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.ClearaceVB
         public void Should_Success_Instantiate()
         {
             string RqstNo = "RqstNo";
-            string VBCategory = "VBCategory";
+            //string VBCategory = "VBCategory";
+            VBType VBCategory = VBType.WithPO;
             DateTimeOffset RqstDate = DateTimeOffset.Now;
             Unit uvm = new Unit();
             string Appliciant = "Appliciant";
