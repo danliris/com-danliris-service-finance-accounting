@@ -11,11 +11,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
     public class VBRequestDocumentDataUtil
     {
         private readonly VBRequestDocumentService _service;
-        private FinanceDbContext _dbContext;
-        public VBRequestDocumentDataUtil(VBRequestDocumentService service, FinanceDbContext dbContext)
+
+        public VBRequestDocumentDataUtil(VBRequestDocumentService service)
         {
             _service = service;
-            _dbContext = dbContext;
+          
         }
 
 
@@ -42,7 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
         public VBRequestDocumentNonPOFormDto GetNewData_VBRequestDocumentNonPOFormDto()
         {
             VBRequestDocumentNonPOFormDto form = new VBRequestDocumentNonPOFormDto()
-            {
+            {       
                 Amount = 1,
                 Currency = new CurrencyDto()
                 {
@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
                     Division = new DivisionDto()
                     {
                         Code = "Code",
-                        Name = "GARMENT"
+                        Name = "GARMENT",
                     },
                     Name = "Meter",
                     VBDocumentLayoutOrder = 1

@@ -10,7 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
    public class VBRequestDocumentNonPOFormDtoTest
     {
         [Fact]
-        public void ShouldhaveError_Validate_When_Data_Null()
+        public void ShouldHaveError_Validate_When_Data_Null()
         {
             VBRequestDocumentNonPOFormDto dto = new VBRequestDocumentNonPOFormDto()
             {

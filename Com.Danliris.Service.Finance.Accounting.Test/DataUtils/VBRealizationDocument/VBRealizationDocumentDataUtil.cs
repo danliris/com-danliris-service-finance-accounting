@@ -14,12 +14,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
     public class VBRealizationDocumentDataUtil
     {
         private readonly VBRealizationWithPOService _service;
-        private FinanceDbContext _dbContext;
-
-        public VBRealizationDocumentDataUtil(VBRealizationWithPOService service, FinanceDbContext financeDbContext)
+        
+        public VBRealizationDocumentDataUtil(VBRealizationWithPOService service)
         {
             _service = service;
-            _dbContext = financeDbContext;
+           
         }
 
         public FormDto GetNewData_FormDto_Type_DenganNomorVB()
@@ -38,7 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
                 },
                 VBRequestDocument = new VBRequestDocumentDto()
                 {
-                   Id=1
+                    Id = 1
                 },
                 Type = "Dengan Nomor VB",
                 Currency = new CurrencyDto()
@@ -48,10 +47,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
                     Description = "Description",
                     Rate = 1
                 },
+                
                 Items = new List<FormItemDto>()
                 {
                     new FormItemDto()
                     {
+                        
                         UnitPaymentOrder=new UnitPaymentOrderDto()
                         {
                             No="1",
@@ -65,8 +66,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
                             },
                             IncomeTaxBy="Supplier",
                             UseIncomeTax=true,
-                            UseVat=true
-
+                            UseVat=true,
+                            UnitCosts=new List<UnitCostDto>()
+                            {
+                               new UnitCostDto()
+                               {
+                                   Amount=1,
+                                   Unit=new UnitDto()
+                                   {
+                                       Code="Code",
+                                       Division=new DivisionDto()
+                                       {
+                                           Code="Code",
+                                           Name="Name"
+                                       },
+                                       Name="Name",
+                                       VBDocumentLayoutOrder=1
+                                   }
+                               }
+                            },
                         }
                     }
                 }
@@ -79,6 +97,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
         {
             FormDto formDto = new FormDto()
             {
+                
                 Date = DateTimeOffset.Now,
                 SuppliantUnit = new UnitDto()
                 {
@@ -108,7 +127,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
                         UnitPaymentOrder=new UnitPaymentOrderDto()
                         {
                             No="1",
-                            Id=1,
+                            //Id=1,
+                            UnitCosts=new List<UnitCostDto>()
+                            {
+                               new UnitCostDto()
+                               {
+                                   Amount=1,
+                                   Unit=new UnitDto()
+                                   {
+                                       Code="Code",
+                                       Division=new DivisionDto()
+                                       {
+                                           Code="Code",
+                                           Name="Name"
+                                       },
+                                       Name="Name",
+                                       VBDocumentLayoutOrder=1
+                                   }
+                               } 
+                            },
                             Amount=1,
                             Date=DateTimeOffset.Now,
                             IncomeTax=new IncomeTaxDto()

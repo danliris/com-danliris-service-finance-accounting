@@ -63,21 +63,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
         }
 
-        VBRealizationDocumentNonPOViewModel viewModel = new VBRealizationDocumentNonPOViewModel()
+        VBRealizationDocumentNonPOViewModel viewModel
         {
-            Id = 1,
-            Currency = new CurrencyViewModel()
+            get
             {
-                Code = "IDR",
-                Description = "Description",
-                Rate = 1,
-                Symbol = "Rupiah"
-            },
-            DocumentNo = "DocumentNo",
-            Date = DateTimeOffset.Now,
-            IsDeleted = false,
-            Index = 1,
-            Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
+                return new VBRealizationDocumentNonPOViewModel()
+                {
+                    Id = 1,
+                    Currency = new CurrencyViewModel()
+                    {
+                        Code = "IDR",
+                        Description = "Description",
+                        Rate = 1,
+                        Symbol = "Rupiah"
+                    },
+                    DocumentNo = "DocumentNo",
+                    Date = DateTimeOffset.Now,
+                    IsDeleted = false,
+                    Index = 1,
+                    Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
             {
                 new VBRealizationDocumentNonPOExpenditureItemViewModel()
                 {
@@ -95,23 +99,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                     Total=1
                 }
             },
-            Type = Lib.BusinessLogic.VBRequestDocument.VBType.NonPO,
-            Unit = new UnitViewModel()
-            {
-                Code = "Code",
-                Division = new DivisionViewModel()
-                {
-                    Code = "Code",
-                    Name = "Name"
-                },
-                Name = "Name",
-                VBDocumentLayoutOrder=10
-            },
-            UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
+                    Type = Lib.BusinessLogic.VBRequestDocument.VBType.NonPO,
+                    Unit = new UnitViewModel()
+                    {
+                        Code = "Code",
+                        Division = new DivisionViewModel()
+                        {
+                            Code = "Code",
+                            Name = "Name"
+                        },
+                        Name = "Name",
+                        VBDocumentLayoutOrder = 10
+                    },
+                    UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
             {
                 new VBRealizationDocumentNonPOUnitCostViewModel()
                 {
-                    
+
                     Amount=1,
                     IsSelected=true,
                     Unit=new UnitViewModel()
@@ -124,7 +128,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                             Name= "Name"
                         },
                         Name="Name",
-                        
+
                     }
                 },
                 new VBRealizationDocumentNonPOUnitCostViewModel()
@@ -146,20 +150,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                     }
                 }
             },
-            VBNonPOType= "Tanpa Nomor VB",
-            VBDocument=new VBRequestDocumentNonPODto()
-            {
-                Amount=1,
-                Currency=new CurrencyDto()
-                {
-                    Code= "IDR",
-                    Description= "Description",
-                    Rate=1,
-                    Symbol="Rp"
-                },
-               DocumentNo= "DocumentNo",
-               IsApproved=true,
-               Items=new List<VBRequestDocumentNonPOItemDto>()
+                    VBNonPOType = "Tanpa Nomor VB",
+                    VBDocument = new VBRequestDocumentNonPODto()
+                    {
+                        Amount = 1,
+                        Currency = new CurrencyDto()
+                        {
+                            Code = "IDR",
+                            Description = "Description",
+                            Rate = 1,
+                            Symbol = "Rp"
+                        },
+                        DocumentNo = "DocumentNo",
+                        IsApproved = true,
+                        Items = new List<VBRequestDocumentNonPOItemDto>()
                {
                    new VBRequestDocumentNonPOItemDto()
                    {
@@ -173,24 +177,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                                Name ="Name"
                            }
                        },
-                       
-                   }
-               },
-               Purpose= "Purpose",
-               SuppliantUnit=new UnitDto()
-               {
-                   Code = "Code",
-                   Division = new DivisionDto()
-                   {
-                       Code = "Code",
-                       Name = "Name"
-                   }
-               },
-               RealizationEstimationDate=DateTimeOffset.Now
-               
-            }
 
-        };
+                   }
+               },
+                        Purpose = "Purpose",
+                        SuppliantUnit = new UnitDto()
+                        {
+                            Code = "Code",
+                            Division = new DivisionDto()
+                            {
+                                Code = "Code",
+                                Name = "Name"
+                            }
+                        },
+                        RealizationEstimationDate = DateTimeOffset.Now
+
+                    }
+
+                };
+            }
+        }
+
+
 
         protected ServiceValidationException GetServiceValidationException()
         {
@@ -202,7 +210,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
 
 
         [Fact]
-        public void  Get_Return_OK()
+        public void Get_Return_OK()
         {
             //Setup
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
@@ -211,14 +219,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             Dictionary<string, string> order = new Dictionary<string, string>();
             service
                 .Setup(s => s.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(new ReadResponse<VBRealizationDocumentModel>(new List<VBRealizationDocumentModel>(),1, order,new List<string>()));
+                .Returns(new ReadResponse<VBRealizationDocumentModel>(new List<VBRealizationDocumentModel>(), 1, order, new List<string>()));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentNonPOService)))
                .Returns(service.Object);
 
             //Act
-            IActionResult response =  GetController(serviceProviderMock).Get();
+            IActionResult response = GetController(serviceProviderMock).Get();
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -453,7 +461,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).PutNonPO(viewModel.Id+1, viewModel);
+            IActionResult response = await GetController(serviceProviderMock).PutNonPO(viewModel.Id + 1, viewModel);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -476,7 +484,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).PutNonPO(viewModel.Id , viewModel);
+            IActionResult response = await GetController(serviceProviderMock).PutNonPO(viewModel.Id, viewModel);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -561,7 +569,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentNonPOService>();
 
-            service.Setup(s => s.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(()=>null);
+            service.Setup(s => s.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(() => null);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentNonPOService)))

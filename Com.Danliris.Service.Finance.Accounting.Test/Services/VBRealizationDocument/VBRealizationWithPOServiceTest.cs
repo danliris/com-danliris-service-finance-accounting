@@ -38,16 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             return string.Concat(sf.GetMethod().Name, "_", ENTITY);
         }
 
-        protected string GetCurrentAsyncMethod([CallerMemberName] string methodName = "")
-        {
-            var method = new StackTrace()
-                .GetFrames()
-                .Select(frame => frame.GetMethod())
-                .FirstOrDefault(item => item.Name == methodName);
-
-            return method.Name;
-
-        }
+      
         private FinanceDbContext GetDbContext(string testName)
         {
             var serviceProvider = new ServiceCollection()
@@ -80,14 +71,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             return serviceProvider;
         }
 
-        private VBRealizationDocumentDataUtil _dataUtil(VBRealizationWithPOService service, FinanceDbContext financeDbContext)
+        private VBRealizationDocumentDataUtil _dataUtil(VBRealizationWithPOService service)
         {
-            return new VBRealizationDocumentDataUtil(service, financeDbContext);
+            return new VBRealizationDocumentDataUtil(service);
         }
 
-        private VBRequestDocumentDataUtil _dataUtil(VBRequestDocumentService service, FinanceDbContext financeDbContext)
+        private VBRequestDocumentDataUtil _dataUtil(VBRequestDocumentService service)
         {
-            return new VBRequestDocumentDataUtil(service, financeDbContext);
+            return new VBRequestDocumentDataUtil(service);
         }
 
 
@@ -100,7 +91,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationWithPOService service = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
 
-            FormDto formData = _dataUtil(service, _dbContext).GetNewData_FormDto_Type_TanpaNomorVB();
+            FormDto formData = _dataUtil(service).GetNewData_FormDto_Type_TanpaNomorVB();
 
             //Act
             int result = service.Create(formData);
@@ -119,10 +110,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationWithPOService service = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
 
-            FormDto form = _dataUtil(service, _dbContext).GetNewData_FormDto_Type_DenganNomorVB();
+            FormDto form = _dataUtil(service).GetNewData_FormDto_Type_DenganNomorVB();
 
             var vBRequestDocumentService = new VBRequestDocumentService(_dbContext, serviceProviderMock.Object);
-            var vBRequestDocumentData = _dataUtil(vBRequestDocumentService, _dbContext).GetTestData_VBRequestDocumentWithPO();
+            var vBRequestDocumentData = _dataUtil(vBRequestDocumentService).GetTestData_VBRequestDocumentWithPO();
 
             //Act
             int result = service.Create(form);
@@ -140,8 +131,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             VBRealizationWithPOService service = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
 
-            var vBRealizationDocumenData = _dataUtil(service, _dbContext).GetTestData_TanpaNomorVB();
-            var formData = _dataUtil(service, _dbContext).GetNewData_FormDto_Type_TanpaNomorVB();
+            var vBRealizationDocumenData = _dataUtil(service).GetTestData_TanpaNomorVB();
+            var formData = _dataUtil(service).GetNewData_FormDto_Type_TanpaNomorVB();
 
 
             //Act
@@ -160,10 +151,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
 
             var vBRequestDocumentService = new VBRequestDocumentService(_dbContext, serviceProviderMock.Object);
-            var vBRequestDocumentData = _dataUtil(vBRequestDocumentService, _dbContext).GetTestData_VBRequestDocumentWithPO();
+            var vBRequestDocumentData = _dataUtil(vBRequestDocumentService).GetTestData_VBRequestDocumentWithPO();
 
             var vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
-            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService, _dbContext).GetTestData_DenganNomorVB();
+            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService).GetTestData_DenganNomorVB();
 
 
             //Act
@@ -184,7 +175,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
 
             var vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
-            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService, _dbContext).GetTestData_TanpaNomorVB();
+            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
 
             //Act
             ReadResponse<VBRealizationDocumentModel> result = vBRealizationWithPOService.Read(1,1,"{}",new List<string>(),"","{}");
@@ -204,7 +195,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
 
             var vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
-            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService, _dbContext).GetTestData_TanpaNomorVB();
+            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
 
             //Act
             VBRealizationWithPODto result = vBRealizationWithPOService.ReadById(vBRealizationDocumenData.Id);
@@ -221,18 +212,55 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             FinanceDbContext _dbContext = GetDbContext(GetCurrentMethod());
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
 
-            var vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
-            var form = _dataUtil(vBRealizationWithPOService, _dbContext).GetNewData_FormDto_Type_TanpaNomorVB();
-            var data = _dataUtil(vBRealizationWithPOService, _dbContext).GetTestData_TanpaNomorVB();
-
             var vBRequestDocumentService = new VBRequestDocumentService(_dbContext, serviceProviderMock.Object);
-            var vBRequestDocumentData = _dataUtil(vBRequestDocumentService, _dbContext).GetTestData_VBRequestDocumentWithPO();
+            var vBRequestDocumentData = _dataUtil(vBRequestDocumentService).GetTestData_VBRequestDocumentWithPO();
 
+            var vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
+            var form = _dataUtil(vBRealizationWithPOService).GetNewData_FormDto_Type_TanpaNomorVB();
+            var data = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
+
+            
             //Act
             int result = vBRealizationWithPOService.Update(data.Id, form);
 
             //Assert
             Assert.NotEqual(0 ,result);
+
+        }
+
+        [Fact]
+        public void ReadModelById_Return_Success()
+        {
+            //Setup
+            FinanceDbContext _dbContext = GetDbContext(GetCurrentMethod());
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+
+            var vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
+            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
+
+            //Act
+            VBRealizationPdfDto result = vBRealizationWithPOService.ReadModelById(vBRealizationDocumenData.Id);
+
+            //Assert
+            Assert.NotNull(result);
+
+        }
+
+        [Fact]
+        public void ReadModelById_Return_Null()
+        {
+            //Setup
+            FinanceDbContext _dbContext = GetDbContext(GetCurrentMethod());
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+
+            var vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
+            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
+
+            //Act
+            VBRealizationPdfDto result = vBRealizationWithPOService.ReadModelById(vBRealizationDocumenData.Id+1);
+
+            //Assert
+            Assert.Null(result);
 
         }
     }

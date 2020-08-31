@@ -1,9 +1,11 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -125,6 +127,115 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                                 
                             }
                         }
+                    }
+                };
+            }
+        }
+
+        VBRealizationPdfDto vBRealizationPdfDto
+        {
+            get
+            {
+                VBRealizationDocumentNonPOViewModel viewModel = new VBRealizationDocumentNonPOViewModel()
+                {
+                    Currency=new CurrencyViewModel()
+                    {
+                        Code="IDR",
+                        Description= "Description",
+                        Rate=1,
+                        Symbol="Rp"
+                    },
+                    DocumentNo= "DocumentNo",
+                    DocumentType= RealizationDocumentType.WithVB,
+                    Type=VBType.WithPO,
+                    Unit=new UnitViewModel()
+                    {
+                        Code="Code",
+                        Division=new DivisionViewModel()
+                        {
+                            Code="Code",
+                            Name="Name"
+                        },
+                        Name="Name",
+                        VBDocumentLayoutOrder=1
+                    },
+                    VBDocument=new VBRequestDocumentNonPODto()
+                    {
+                        Amount=1,
+                        DocumentNo= "DocumentNo",
+                        Currency=new CurrencyDto()
+                        {
+                            Code="IDR",
+                            Description= "Description",
+                            Rate=1,
+                            Symbol="Rp",
+
+                        },
+                        IsApproved=true,
+                        SuppliantUnit=new UnitDto()
+                        {
+                            Code="Code",
+                            Division=new DivisionDto()
+                            {
+                                Code="Code",
+                                Name="Name"
+                            }
+                        }
+                    },
+                    VBNonPOType="",
+                    
+                    UnitCosts=new List<VBRealizationDocumentNonPOUnitCostViewModel>()
+                    {
+                        new VBRealizationDocumentNonPOUnitCostViewModel()
+                        {
+                            Amount=1,
+                            Unit=new UnitViewModel()
+                            {
+                                Code="Code",
+                                Division=new DivisionViewModel()
+                                {
+                                    Code="Code",
+                                    Name="Name",
+                                },
+                                Name="Name",
+                                VBDocumentLayoutOrder=12
+                            }
+                        }
+                    },
+                    Active=true,
+                    Positon=new VBRealizationPosition(),
+                    Amount=1,
+                    Items=new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
+                    {
+                        new VBRealizationDocumentNonPOExpenditureItemViewModel()
+                        {
+                            Amount=1,
+                            IncomeTax=new IncomeTaxViewModel()
+                            {
+                                Name="Name",
+                                Rate=1
+                            },
+                            DateDetail=DateTimeOffset.Now,
+                            IncomeTaxBy="supplier",
+                            IsGetPPh=true,
+                            IsGetPPn=true,
+                            Remark="Remark",
+                            Total=1
+                        }
+                    }
+
+                };
+                return new VBRealizationPdfDto()
+                {
+                    Header=new VBRealizationDocumentModel(viewModel),
+                    
+                    UnitCosts=new List<VBRealizationDocumentUnitCostsItemModel>()
+                    {
+                        new VBRealizationDocumentUnitCostsItemModel()
+                    },
+                    Items=new List<VBRealizationDocumentExpenditureItemModel>()
+                    {
+                        new VBRealizationDocumentExpenditureItemModel()
                     }
                 };
             }
@@ -447,6 +558,77 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
 
             //Act
             IActionResult response = GetController(serviceProviderMock).Put(formDto.Id, formDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void GetPDFPO_Return_Success()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationWithPOService>();
+
+            service
+                .Setup(s => s.ReadModelById(It.IsAny<int>()))
+                .Returns(vBRealizationPdfDto);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationWithPOService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetPDFPO(1);
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+            Assert.Equal("Realisasi VB Dengan PO - DocumentNo.pdf", response.GetType().GetProperty("FileDownloadName").GetValue(response, null));
+            
+        }
+
+        [Fact]
+        public void GetPDFPO_Return_NotFound()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationWithPOService>();
+
+            service
+                .Setup(s => s.ReadModelById(It.IsAny<int>()))
+                .Returns(()=>null);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationWithPOService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetPDFPO(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+        [Fact]
+        public void GetPDFPO_Throws_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationWithPOService>();
+
+            service
+                .Setup(s => s.ReadModelById(It.IsAny<int>()))
+                .Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationWithPOService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetPDFPO(1);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
