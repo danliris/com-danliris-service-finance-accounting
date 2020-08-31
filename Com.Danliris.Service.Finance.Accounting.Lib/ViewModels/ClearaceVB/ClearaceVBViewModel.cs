@@ -9,6 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB
     public class ClearaceVBViewModel
     {
         public long Id { get; set; }
+        public int VBRealizationDocumentId { get; set; }
         public string RqstNo { get; set; }
         public VBType VBCategory { get; set; }
         public DateTimeOffset RqstDate { get; set; }
