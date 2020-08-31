@@ -253,7 +253,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                     Amount = model.VBRequestDocumentAmount,
                     RealizationEstimationDate = model.VBRequestDocumentRealizationEstimationDate,
                     CreatedBy = model.VBRequestDocumentCreatedBy,
-                    Date = model.VBRequestDocumentDate
+                    Date = model.VBRequestDocumentDate,
+                    Purpose = model.VBRequestDocumentPurpose
                 },
                 VBNonPOType = model.VBNonPoType,
                 Items = items.Select(s => new VBRealizationDocumentNonPOExpenditureItemViewModel()
@@ -358,7 +359,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
 
                     data.SetDivision(model.Unit.Division.Id, model.Unit.Division.Code, model.Unit.Division.Name, _identityService.Username, UserAgent);
                 }
-                data.SetVBRequest(model.VBDocument.Id, model.VBDocument.DocumentNo, model.VBDocument.Date, model.VBDocument.RealizationEstimationDate, model.VBDocument.CreatedBy, model.VBDocument.Amount.GetValueOrDefault(), _identityService.Username, UserAgent);
+                data.SetVBRequest(model.VBDocument.Id, model.VBDocument.DocumentNo, model.VBDocument.Date, model.VBDocument.RealizationEstimationDate, model.VBDocument.CreatedBy, model.VBDocument.Amount.GetValueOrDefault(), model.VBDocument.Purpose, _identityService.Username, UserAgent);
             }
 
 
