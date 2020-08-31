@@ -89,8 +89,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             AddItems(model.Id, form.Items);
 
+            AddUnitCosts(model.Id, form.Items.SelectMany(element => element.UnitPaymentOrder.UnitCosts).ToList());
+
             _dbContext.SaveChanges();
             return model.Id;
+        }
+
+        private void AddUnitCosts(int id, List<UnitCostDto> unitCosts)
+        {
+            var models = unitCosts.Select(element =>
+            {
+                var result = new VBRealizationDocumentUnitCostsItemModel(id, element);
+                EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
+
+                return result;
+            }).ToList();
+
+            _dbContext.VBRealizationDocumentUnitCostsItems.AddRange(models);
+            _dbContext.SaveChanges();
         }
 
         private void AddItems(int id, List<FormItemDto> items)
@@ -262,9 +278,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 return element;
             }).ToList();
             _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);
+
+            var details = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => entity.VBRealizationDocumentId == id).ToList();
+            details = details.Select(element =>
+            {
+                EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                return element;
+            }).ToList();
+            _dbContext.VBRealizationDocumentUnitCostsItems.UpdateRange(details);
+
             AddItems(id, form.Items);
+            AddUnitCosts(model.Id, form.Items.SelectMany(element => element.UnitPaymentOrder.UnitCosts).ToList());
 
             return id;
+        }
+
+        public VBRealizationPdfDto ReadModelById(int id)
+        {
+            var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
+
+            if (model == null)
+                return null;
+
+            var items = _dbContext.VBRealizationDocumentExpenditureItems.Where(s => s.VBRealizationDocumentId == id);
+
+            var unitCosts = _dbContext.VBRealizationDocumentUnitCostsItems.Where(s => s.VBRealizationDocumentId == id);
+
+            return new VBRealizationPdfDto()
+            {
+                Header = model,
+                Items = items,
+                UnitCosts = unitCosts
+            };
         }
     }
 }
