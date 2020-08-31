@@ -1,5 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
@@ -11,9 +12,9 @@ using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 {
-    public class VBRealizationDocumentNonPOPDFTemplate
+    public class VBRealizationDocumentPOPDFTemplate
     {
-        public MemoryStream GeneratePdfTemplate(VBRealizationDocumentNonPOViewModel viewModel, int timeoffsset)
+        public MemoryStream GeneratePdfTemplate(VBRealizationPdfDto viewModel, int timeoffsset)
         {
             const int MARGIN = 20;
             const int MARGIN_VERTICAL = 10;
@@ -115,16 +116,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             cellHeaderBody3.Colspan = 4;
             cellHeaderBody3.HorizontalAlignment = Element.ALIGN_RIGHT;
-            cellHeaderBody3.Phrase = new Phrase($"{viewModel.DocumentNo}", bold_font);
+            cellHeaderBody3.Phrase = new Phrase($"{viewModel.Header.DocumentNo}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
             cellHeaderBody3.Colspan = 4;
             cellHeaderBody3.HorizontalAlignment = Element.ALIGN_LEFT;
-            cellHeaderBody3.Phrase = new Phrase($"Realisasi VB Bagian: {viewModel.Unit.Name}", bold_font);
+            cellHeaderBody3.Phrase = new Phrase($"Realisasi VB Bagian: {viewModel.Header.SuppliantUnitName}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
             cellHeaderBody3.Colspan = 5;
-            cellHeaderBody3.Phrase = new Phrase($"Tanggal: {viewModel.Date?.AddHours(timeoffsset).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}", bold_font);
+            cellHeaderBody3.Phrase = new Phrase($"Tanggal: {viewModel.Header.Date.AddHours(timeoffsset).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
             cellHeaderBody1.Phrase = new Phrase("No", normal_font);
@@ -162,8 +163,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             //    }
             //}
 
-            var currencyCode = viewModel.Currency.Code;
-            var currencydescription = viewModel.Currency.Description;
+            var currencyCode = viewModel.Header.CurrencyCode;
+            var currencydescription = viewModel.Header.CurrencyDescription;
 
             foreach (var itm in viewModel.Items)
             {
@@ -171,13 +172,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody1);
                 index++;
 
-                cellHeaderBody1.Phrase = new Phrase(itm.DateDetail?.AddHours(timeoffsset).ToString("dd/MM/yyyy"), normal_font);
+                cellHeaderBody1.Phrase = new Phrase(itm.Date.AddHours(timeoffsset).ToString("dd/MM/yyyy"), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
 
                 cellHeaderBody1.Phrase = new Phrase(itm.Remark, normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
 
-                if (itm.IsGetPPn)
+                if (itm.UseVat)
                 {
                     var temp = itm.Amount * 0.1m;
                     total_all = itm.Amount + temp;
@@ -241,27 +242,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody6.Colspan = 2;
             //cellHeaderBody6.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody6);
-            var vbDate = viewModel.VBDocument?.Date?.AddHours(timeoffsset).ToString("dd-MMMM-yy", new CultureInfo("id-ID"));
-            if (viewModel.VBNonPOType == "Tanpa Nomor VB")
-                if (viewModel.VBDocument != null && !string.IsNullOrWhiteSpace(viewModel.VBDocument?.DocumentNo))
-                    vbDate = viewModel.VBDocument?.Date?.AddHours(timeoffsset).ToString("dd-MMMM-yy", new CultureInfo("id-ID"));
+            var vbDate = viewModel.Header.VBRequestDocumentDate?.AddHours(timeoffsset).ToString("dd-MMMM-yy", new CultureInfo("id-ID"));
+            if (viewModel.Header.DocumentType == RealizationDocumentType.NonVB)
+                if (!string.IsNullOrWhiteSpace(viewModel.Header.VBRequestDocumentNo))
+                    vbDate = viewModel.Header.VBRequestDocumentDate?.AddHours(timeoffsset).ToString("dd-MMMM-yy", new CultureInfo("id-ID"));
                 else
                     vbDate = "";
 
             cellHeaderBody6.Phrase = new Phrase($"Tanggal VB : {vbDate}", normal_font);
             headerTable3.AddCell(cellHeaderBody6);
             //
-            cellHeaderBody1.Phrase = new Phrase($"No.VB: {viewModel.VBDocument?.DocumentNo}", normal_font);
+            cellHeaderBody1.Phrase = new Phrase($"No.VB: {viewModel.Header.VBRequestDocumentNo}", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
 
-            if (viewModel.VBDocument == null)
+            if (viewModel.Header.VBRequestDocumentId == 0)
             {
                 cellHeaderBody1.Phrase = new Phrase($"{currencyCode}        " + 0.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
             }
             else
             {
-                cellHeaderBody1.Phrase = new Phrase($"{currencyCode}        " + viewModel.VBDocument?.Amount.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody1.Phrase = new Phrase($"{currencyCode}        " + viewModel.Header.VBRequestDocumentAmount.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
             }
 
@@ -269,7 +270,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             var priceterbilang = count_price;
 
-            var res = (count_price - GetPPhValue(viewModel)) - (viewModel.VBDocument == null ? 0 : viewModel.VBDocument.Amount.GetValueOrDefault());
+            var res = (count_price - GetPPhValue(viewModel)) - (viewModel.Header.VBRequestDocumentId == 0 ? 0 : viewModel.Header.VBRequestDocumentAmount);
 
             cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody5);
@@ -339,27 +340,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             #region NewCheckbox
 
-            var layoutOrderOther = viewModel.UnitCosts.ToList().FirstOrDefault(s => s.Unit.VBDocumentLayoutOrder == 10);
-
-            var unitCost12 = viewModel.UnitCosts.ToList().FirstOrDefault(s => s.Unit.VBDocumentLayoutOrder == 12);
-
-            if (unitCost12 != null)
-                unitCost12.Unit.VBDocumentLayoutOrder = 10;
-
-            if (layoutOrderOther != null)
-                layoutOrderOther.Unit.VBDocumentLayoutOrder = 12;
+            var unitCosts = viewModel.UnitCosts.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
 
             List<PdfFormField> annotations = new List<PdfFormField>();
-            foreach (var item in viewModel.UnitCosts.OrderBy(s => s.Unit.VBDocumentLayoutOrder).ToList())
+            foreach (var item in unitCosts)
             {
 
-                if (string.IsNullOrEmpty(item.Unit.Name))
+                if (item.Key == 0)
                 {
                     cellHeaderBody.Phrase = new Phrase("......", normal_font_8);
                 }
                 else
                 {
-                    cellHeaderBody.Phrase = new Phrase(item.Unit.Name, normal_font_8);
+                    cellHeaderBody.Phrase = new Phrase(item.First().UnitName, normal_font_8);
                 }
 
                 headerTable3a.AddCell(cellHeaderBody);
@@ -383,8 +376,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 _radioG.BorderColor = BaseColor.Black;
                 _radioG.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
-                _radioG.Checked = item.IsSelected;
-                bool flag = item.IsSelected;
+                _radioG.Checked = true;
+                bool flag = true;
 
 
                 _radioG.Rotation = 0;
@@ -402,7 +395,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 }
                 else
                 {
-                    var nom = item.Amount.ToString("#,##0.00", new CultureInfo("id-ID"));
+                    var nom = item.Sum(s => s.Amount).ToString("#,##0.00", new CultureInfo("id-ID"));
 
                     cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8); //total
                     headerTable3a.AddCell(cellHeaderBody);
@@ -411,7 +404,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 annotations.Add(_checkGroup);
             }
 
-            for (var i = 0; i < 9 - (3 * (viewModel.UnitCosts.Count() % 3)); i++)
+            for (var i = 0; i < 9 - (3 * (unitCosts.Count() % 3)); i++)
             {
                 cellHeaderBody.Phrase = new Phrase(" ", normal_font);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -428,7 +421,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             #endregion
 
-            
+
             #region Footer
 
             PdfPTable table = new PdfPTable(4)
@@ -490,7 +483,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             table.AddCell(cell);
             cell.Phrase = new Phrase($"..................", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase(viewModel.Unit.Name, normal_font);
+            cell.Phrase = new Phrase(viewModel.Header.SuppliantUnitName, normal_font);
             table.AddCell(cell);
 
             document.Add(table);
@@ -524,15 +517,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
         }
 
 
-        private decimal GetPPhValue(VBRealizationDocumentNonPOViewModel viewModel)
+        private decimal GetPPhValue(VBRealizationPdfDto viewModel)
         {
             decimal val = 0;
 
             foreach (var itm in viewModel.Items)
             {
-                if (itm.IsGetPPh == true && itm.IncomeTaxBy == "Supplier")
+                if (itm.UseIncomeTax == true && itm.IncomeTaxBy == "Supplier")
                 {
-                    val += itm.Amount * ((decimal)itm.IncomeTax.Rate.GetValueOrDefault() / 100);
+                    val += itm.Amount * ((decimal)itm.IncomeTaxRate / 100);
                 }
             }
 

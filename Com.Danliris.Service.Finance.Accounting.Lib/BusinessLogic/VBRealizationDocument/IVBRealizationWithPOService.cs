@@ -13,5 +13,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         int Delete(int id);
         ReadResponse<VBRealizationDocumentModel> Read(int page, int size, string order, List<string> select, string keyword, string filter);
         VBRealizationWithPODto ReadById(int id);
+        VBRealizationPdfDto ReadModelById(int id);
     }
 }

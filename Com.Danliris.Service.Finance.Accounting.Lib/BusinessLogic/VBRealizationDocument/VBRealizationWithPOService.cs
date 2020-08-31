@@ -292,5 +292,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             return id;
         }
+
+        public VBRealizationPdfDto ReadModelById(int id)
+        {
+            var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
+
+            if (model == null)
+                return null;
+
+            var items = _dbContext.VBRealizationDocumentExpenditureItems.Where(s => s.VBRealizationDocumentId == id);
+
+            var unitCosts = _dbContext.VBRealizationDocumentUnitCostsItems.Where(s => s.VBRealizationDocumentId == id);
+
+            return new VBRealizationPdfDto()
+            {
+                Header = model,
+                Items = items,
+                UnitCosts = unitCosts
+            };
+        }
     }
 }
