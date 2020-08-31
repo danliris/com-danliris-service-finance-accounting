@@ -175,7 +175,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 cellHeaderBody1.Phrase = new Phrase(itm.Date.AddHours(timeoffsset).ToString("dd/MM/yyyy"), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
 
-                cellHeaderBody1.Phrase = new Phrase(itm.UnitPaymentOrderNo, normal_font);
+                cellHeaderBody1.Phrase = new Phrase(itm.UnitPaymentOrderNo + " " + $"({itm.SupplierName})", normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
 
                 if (itm.UseVat)
