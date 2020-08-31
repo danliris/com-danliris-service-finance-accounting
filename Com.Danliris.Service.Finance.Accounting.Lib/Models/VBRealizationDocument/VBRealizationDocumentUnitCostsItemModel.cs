@@ -54,6 +54,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             IncomeTaxBy = element.IncomeTaxBy;
         }
 
+        public VBRealizationDocumentUnitCostsItemModel(int id, UnitCostDto element)
+        {
+            VBRealizationDocumentId = id;
+            UnitCode = element.Unit.Code;
+            UnitId = element.Unit.Id.GetValueOrDefault();
+            UnitName = element.Unit.Name;
+            DivisionCode = element.Unit.Division.Code;
+            DivisionId = element.Unit.Division.Id.GetValueOrDefault();
+            DivisionName = element.Unit.Division.Name;
+
+            Amount = (decimal)element.Amount.GetValueOrDefault();
+        }
+
         public int UnitId { get; private set; }
         [MaxLength(256)]
         public string UnitName { get; private set; }

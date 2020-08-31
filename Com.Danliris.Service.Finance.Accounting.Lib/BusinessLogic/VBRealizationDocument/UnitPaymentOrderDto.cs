@@ -7,13 +7,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 {
     public class UnitPaymentOrderDto
     {
-        public int? Id { get;  set; }
-        public string No { get;  set; }
-        public DateTimeOffset? Date { get;  set; }
-        public decimal? Amount { get;  set; }
-        public bool? UseVat { get;  set; }
-        public bool? UseIncomeTax { get;  set; }
-        public IncomeTaxDto IncomeTax { get;  set; }
-        public string IncomeTaxBy { get;  set; }
+        public int? Id { get; set; }
+        public string No { get; set; }
+        public DateTimeOffset? Date { get; set; }
+        public decimal? Amount { get; set; }
+        public bool? UseVat { get; set; }
+        public bool? UseIncomeTax { get; set; }
+        public IncomeTaxDto IncomeTax { get; set; }
+        public string IncomeTaxBy { get; set; }
+
+        public List<UnitCostDto> UnitCosts { get; set; }
     }
 }
