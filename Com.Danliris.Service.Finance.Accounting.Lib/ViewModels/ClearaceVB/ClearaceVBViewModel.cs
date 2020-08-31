@@ -1,4 +1,5 @@
-﻿using Com.Moonlay.Models;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Moonlay.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB
     {
         public long Id { get; set; }
         public string RqstNo { get; set; }
-        public string VBCategory { get; set; }
+        public VBType VBCategory { get; set; }
         public DateTimeOffset RqstDate { get; set; }
         //public string RqstDate { get; set; }
         public Unit Unit { get; set; }

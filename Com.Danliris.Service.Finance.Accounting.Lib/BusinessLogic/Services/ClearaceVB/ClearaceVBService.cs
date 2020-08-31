@@ -14,14 +14,17 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Clear
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB;
 using System.Linq.Dynamic.Core;
 using System.Globalization;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB
 {
     public class ClearaceVBService : IClearaceVBService
     {
         private const string _UserAgent = "finance-service";
-        protected DbSet<VbRequestModel> _RequestDbSet;
-        protected DbSet<RealizationVbModel> _RealizationDbSet;
+        protected DbSet<VBRequestDocumentModel> _RequestDbSet;
+        protected DbSet<VBRealizationDocumentModel> _RealizationDbSet;
         private readonly IServiceProvider _serviceProvider;
         protected IIdentityService _IdentityService;
         public FinanceDbContext _DbContext;
@@ -29,8 +32,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
         public ClearaceVBService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
             _DbContext = dbContext;
-            _RequestDbSet = dbContext.Set<VbRequestModel>();
-            _RealizationDbSet = dbContext.Set<RealizationVbModel>();
+            _RequestDbSet = dbContext.Set<VBRequestDocumentModel>();
+            _RealizationDbSet = dbContext.Set<VBRealizationDocumentModel>();
             _serviceProvider = serviceProvider;
             _IdentityService = serviceProvider.GetService<IIdentityService>();
         }
@@ -103,24 +106,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             return query;
         }
 
-        public Task<int> CreateAsync(VbRequestModel model)
+        public Task<int> CreateAsync(VBRequestDocumentModel model)
         {
             EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
 
-            _DbContext.VbRequests.Add(model);
+            _DbContext.VBRequestDocuments.Add(model);
 
             return _DbContext.SaveChangesAsync();
         }
 
-        public virtual void UpdateAsync(long id, VbRequestModel model)
+        public virtual void UpdateAsync(long id, VBRequestDocumentModel model)
         {
-            EntityExtension.FlagForUpdate(model, _IdentityService.Username, "sales-service");
+            EntityExtension.FlagForUpdate(model, _IdentityService.Username, _UserAgent);
             _RequestDbSet.Update(model);
         }
 
-        public Task<VbRequestModel> ReadByIdAsync(long id)
+        public Task<VBRequestDocumentModel> ReadByIdAsync(long id)
         {
-            return _DbContext.VbRequests.Where(entity => entity.Id == id).FirstOrDefaultAsync();
+            return _DbContext.VBRequestDocuments.Where(entity => entity.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<int> ClearanceVBPost(List<long> listId)
@@ -128,8 +131,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             foreach (var id in listId)
             {
                 var model = await ReadByIdAsync(id);
-                model.Complete_Status = true;
-                model.CompleteDate = DateTimeOffset.Now;
+                model.SetIsCompleted(true, _IdentityService.Username, _UserAgent);
+                model.SetCompletedDate(DateTimeOffset.UtcNow, _IdentityService.Username, _UserAgent);
+                model.SetCompletedBy(_IdentityService.Username, _IdentityService.Username, _UserAgent);
+                
                 UpdateAsync(id, model);
             }
             return await _DbContext.SaveChangesAsync();
@@ -138,8 +143,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
         public async Task<int> ClearanceVBUnpost(long id)
         {
             var model = await ReadByIdAsync(id);
-            model.Complete_Status = false;
-            model.CompleteDate = DateTimeOffset.Now;
+            model.SetIsCompleted(false, _IdentityService.Username, _UserAgent);
             UpdateAsync(id, model);
             return await _DbContext.SaveChangesAsync();
         }
@@ -147,42 +151,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
         public ReadResponse<ClearaceVBViewModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _RequestDbSet.AsQueryable();
-            var realizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.isVerified == true);
+            var realizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.IsVerified && s.Position == VBRealizationPosition.Cashier);
 
             List<string> SearchAttributes = new List<string>()
             {
-                "RqstNo","VBCategory","Appliciant","RealNo","Status","DiffStatus"
+                "RqstNo","Appliciant","RealNo","Status","DiffStatus"
             };
 
-            int offSet = 7;
             var data = query
                .Join(realizationQuery,
-               (rqst) => rqst.VBNo,
-               (real) => real.VBNo,
+               (rqst) => rqst.Id,
+               (real) => real.VBRequestDocumentId,
                (rqst, real) => new ClearaceVBViewModel()
                {
                    Id = rqst.Id,
-                   RqstNo = rqst.VBNo,
-                   VBCategory = rqst.VBRequestCategory,
+                   RqstNo = rqst.DocumentNo,
+                   VBCategory = rqst.Type,
                    RqstDate = rqst.Date,
                    //RqstDate = rqst.Date.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                    Unit = new Unit()
                    {
-                       Id = rqst.Id,
-                       Name = rqst.UnitName,
+                       Id = rqst.SuppliantUnitId,
+                       Name = rqst.SuppliantUnitName,
                    },
                    Appliciant = rqst.CreatedBy,
-                   RealNo = real.VBNoRealize,
+                   RealNo = real.DocumentNo,
                    RealDate = real.Date,
                    //RealDate = rqst.Realization_Status == true ? real.Date.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
-                   VerDate = real.VerifiedDate,
+                   VerDate = real.VerificationDate,
                    //VerDate = real.isVerified == true ? real.VerifiedDate.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
-                   DiffStatus = real.StatusReqReal,
-                   DiffAmount = real.DifferenceReqReal,
-                   ClearanceDate = rqst.CompleteDate,
+                   //DiffStatus = real.StatusReqReal,
+                   DiffAmount = rqst.Amount - real.Amount,
+                   ClearanceDate = rqst.CompletedDate,
+                   DiffStatus = rqst.Amount - real.Amount < 0 ? "Kurang" : rqst.Amount - real.Amount > 0 ? "Sisa" : "Sesuai",
                    //ClearanceDate = rqst.Complete_Status == true ? rqst.CompleteDate.ToString() : "",
-                   IsPosted = rqst.Complete_Status,
-                   Status = rqst.Complete_Status ? "Completed" : "Uncompleted",
+                   IsPosted = rqst.IsCompleted,
+                   Status = rqst.IsCompleted ? "Completed" : "Uncompleted",
                    LastModifiedUtc = real.LastModifiedUtc,
                })
                .OrderByDescending(s => s.LastModifiedUtc).AsQueryable();

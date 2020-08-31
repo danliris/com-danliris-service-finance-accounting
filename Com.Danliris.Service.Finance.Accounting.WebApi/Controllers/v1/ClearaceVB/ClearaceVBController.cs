@@ -50,12 +50,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Clearace
             {
                 ValidateUser();
                 ReadResponse<ClearaceVBViewModel> read = Service.Read(page, size, order, select, keyword, filter);
-
-                List<ClearaceVBViewModel> dataVM = Mapper.Map<List<ClearaceVBViewModel>>(read.Data);
-
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
-                    .Ok(Mapper, dataVM, page, size, read.Count, dataVM.Count, read.Order, read.Selected);
+                    .Ok(Mapper, read.Data, page, size, read.Count, read.Data.Count, read.Order, read.Selected);
                 return Ok(Result);
             }
             catch (Exception e)
@@ -72,7 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Clearace
         {
             try
             {
-                VbRequestModel model = await Service.ReadByIdAsync(id);
+                var model = await Service.ReadByIdAsync(id);
 
                 if (model == null)
                 {

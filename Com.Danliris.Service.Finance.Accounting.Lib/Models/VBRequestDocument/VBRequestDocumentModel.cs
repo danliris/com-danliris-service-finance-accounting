@@ -210,6 +210,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             }
         }
 
+        public void SetIsCompleted(bool newFlagIsCompleted, string user, string userAgent)
+        {
+            if (newFlagIsCompleted != IsCompleted)
+            {
+                IsCompleted = newFlagIsCompleted;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetCompletedDate(DateTimeOffset newCompletedDate, string user, string userAgent)
+        {
+            if (newCompletedDate != CompletedDate)
+            {
+                CompletedDate = newCompletedDate;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetCompletedBy(string newCompletedBy, string user, string userAgent)
+        {
+            if (newCompletedBy != CompletedBy)
+            {
+                CompletedBy = newCompletedBy;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
         public void SetIsRealized(bool newFlagIsRealized, string user, string userAgent)
         {
 
