@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -34,9 +35,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
         //    _RealizationDbSet = dbContext2.Set<RealizationVbModel>();
         //}
 
-        protected VbRequestModel Model
+        protected VBRequestDocumentModel Model
         {
-            get { return new VbRequestModel(); }
+            get { return new VBRequestDocumentModel(); }
         }
         protected List<ClearaceVBViewModel> ViewModels2
         {
@@ -49,7 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
                 {
                     Id = 1,
                     RqstNo = "VBNo",
-                    VBCategory = "VBRequestCategory",
+                    VBCategory = Lib.BusinessLogic.VBRequestDocument.VBType.WithPO,
                     RqstDate = DateTimeOffset.Now,
                     Unit = new Unit()
                     {
@@ -109,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
                 {
                     Id = 1,
                     RqstNo = "VBNo",
-                    VBCategory = "VBRequestCategory",
+                    VBCategory = Lib.BusinessLogic.VBRequestDocument.VBType.WithPO,
                     RqstDate = DateTimeOffset.Now,
                     Unit = new Unit()
                     {
@@ -206,7 +207,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
         {
             var mocks = GetMocks();
             mocks.Mapper.Setup(f => f.Map<ClearaceVBViewModel>(It.IsAny<VbRequestModel>())).Returns(ViewModel);
-            mocks.Service.Setup(f => f.ReadByIdAsync(1)).ReturnsAsync((VbRequestModel)null);
+            mocks.Service.Setup(f => f.ReadByIdAsync(1)).ReturnsAsync((VBRequestDocumentModel)null);
 
             int statusCode = await GetStatusCodeGetById(mocks);
             Assert.Equal((int)HttpStatusCode.NotFound, statusCode);

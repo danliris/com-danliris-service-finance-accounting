@@ -69,57 +69,57 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.ClearaceVB
             return serviceProvider;
         }
 
-        [Fact]
-        public async Task Should_Success_Read_Data()
-        {
-            var dbContext = _dbContext(GetCurrentMethod());
-            var serviceProvider = GetServiceProvider().Object;
-            var service = new ClearaceVBService(serviceProvider, dbContext);
-            var dataUtil = new ClearaceVBDataUtil(service);
-            var data = await dataUtil.GetTestData();
-            var dataRealisation = new RealizationVbModel()
-            {
-                VBNo = "VBNo",
-                VBNoRealize = "VBNoRealize",
-                Date = DateTimeOffset.Now,
-                DifferenceReqReal = 100,
-                LastModifiedUtc = DateTime.Now,
-                Position = 5,
-                isVerified = true,
-            };
-            service._DbContext.RealizationVbs.Add(dataRealisation);
-            service._DbContext.SaveChanges();
+        //[Fact]
+        //public async Task Should_Success_Read_Data()
+        //{
+        //    var dbContext = _dbContext(GetCurrentMethod());
+        //    var serviceProvider = GetServiceProvider().Object;
+        //    var service = new ClearaceVBService(serviceProvider, dbContext);
+        //    var dataUtil = new ClearaceVBDataUtil(service);
+        //    var data = await dataUtil.GetTestData();
+        //    var dataRealisation = new RealizationVbModel()
+        //    {
+        //        VBNo = "VBNo",
+        //        VBNoRealize = "VBNoRealize",
+        //        Date = DateTimeOffset.Now,
+        //        DifferenceReqReal = 100,
+        //        LastModifiedUtc = DateTime.Now,
+        //        Position = 5,
+        //        isVerified = true,
+        //    };
+        //    service._DbContext.RealizationVbs.Add(dataRealisation);
+        //    service._DbContext.SaveChanges();
 
-            var result = service.Read(1, 10, "{LastModifiedUtc: 'desc'}", new List<string>(), "VB", "{'Status':'Completed'}");
+        //    var result = service.Read(1, 10, "{LastModifiedUtc: 'desc'}", new List<string>(), "VB", "{'Status':'Completed'}");
 
-            Assert.NotEmpty(result.Data);
-        }
+        //    Assert.NotEmpty(result.Data);
+        //}
 
-        [Fact]
-        public async Task Should_Success_Read_Data_2()
-        {
-            var dbContext = _dbContext(GetCurrentMethod());
-            var serviceProvider = GetServiceProvider().Object;
-            var service = new ClearaceVBService(serviceProvider, dbContext);
-            var dataUtil = new ClearaceVBDataUtil(service);
-            var data = await dataUtil.GetTestData();
-            var dataRealisation = new RealizationVbModel()
-            {
-                VBNo = "VBNo",
-                VBNoRealize = "VBNoRealize",
-                Date = DateTimeOffset.Now,
-                DifferenceReqReal = 100,
-                LastModifiedUtc = DateTime.Now,
-                Position = 6,
-                isVerified = true,
-            };
-            service._DbContext.RealizationVbs.Add(dataRealisation);
-            service._DbContext.SaveChanges();
+        //[Fact]
+        //public async Task Should_Success_Read_Data_2()
+        //{
+        //    var dbContext = _dbContext(GetCurrentMethod());
+        //    var serviceProvider = GetServiceProvider().Object;
+        //    var service = new ClearaceVBService(serviceProvider, dbContext);
+        //    var dataUtil = new ClearaceVBDataUtil(service);
+        //    var data = await dataUtil.GetTestData();
+        //    var dataRealisation = new RealizationVbModel()
+        //    {
+        //        VBNo = "VBNo",
+        //        VBNoRealize = "VBNoRealize",
+        //        Date = DateTimeOffset.Now,
+        //        DifferenceReqReal = 100,
+        //        LastModifiedUtc = DateTime.Now,
+        //        Position = 6,
+        //        isVerified = true,
+        //    };
+        //    service._DbContext.RealizationVbs.Add(dataRealisation);
+        //    service._DbContext.SaveChanges();
 
-            var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
+        //    var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
 
-            Assert.NotEmpty(result.Data);
-        }
+        //    Assert.NotEmpty(result.Data);
+        //}
 
         [Fact]
         public async void PreSalesPost_Success()

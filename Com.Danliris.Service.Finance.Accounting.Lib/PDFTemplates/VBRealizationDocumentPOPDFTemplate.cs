@@ -102,7 +102,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody6.HorizontalAlignment = Element.ALIGN_LEFT;
 
             cellHeaderBody2.Colspan = 5;
-            cellHeaderBody2.Phrase = new Phrase("REALISASI VB TANPA PO", bold_font);
+            cellHeaderBody2.Phrase = new Phrase("REALISASI VB DENGAN PO", bold_font);
             headerTable3.AddCell(cellHeaderBody2);
 
             cellHeaderBody.Phrase = new Phrase(" ", normal_font);
@@ -175,7 +175,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 cellHeaderBody1.Phrase = new Phrase(itm.Date.AddHours(timeoffsset).ToString("dd/MM/yyyy"), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
 
-                cellHeaderBody1.Phrase = new Phrase(itm.Remark, normal_font);
+                cellHeaderBody1.Phrase = new Phrase(itm.UnitPaymentOrderNo, normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
 
                 if (itm.UseVat)
