@@ -151,7 +151,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
         public ReadResponse<ClearaceVBViewModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _RequestDbSet.AsQueryable();
-            var realizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.IsVerified && s.Position == VBRealizationPosition.Cashier);
+            var realizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.Position == VBRealizationPosition.Cashier);
 
             List<string> SearchAttributes = new List<string>()
             {
@@ -165,6 +165,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                (rqst, real) => new ClearaceVBViewModel()
                {
                    Id = rqst.Id,
+                   VBRealizationDocumentId = real.Id,
                    RqstNo = rqst.DocumentNo,
                    VBCategory = rqst.Type,
                    RqstDate = rqst.Date,
