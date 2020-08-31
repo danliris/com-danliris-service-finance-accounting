@@ -155,7 +155,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
 
             List<string> SearchAttributes = new List<string>()
             {
-                "RqstNo","VBCategory","Appliciant","RealNo","Status","DiffStatus"
+                "RqstNo","Appliciant","RealNo","Status","DiffStatus"
             };
 
             var data = query
