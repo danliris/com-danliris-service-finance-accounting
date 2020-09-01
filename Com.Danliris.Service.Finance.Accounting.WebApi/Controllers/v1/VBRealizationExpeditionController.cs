@@ -248,23 +248,23 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("reports")]
-        public async Task<IActionResult> GetReport([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] string vbRequestName, [FromQuery] int unitId, [FromQuery] int divisionId, [FromQuery] DateTimeOffset? dateStart, [FromQuery] DateTimeOffset? dateEnd, [FromQuery] int page = 1, [FromQuery] int size = 25)
+        public async Task<IActionResult> GetReport([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] string vbRequestName, [FromQuery] int unitId, [FromQuery] int divisionId, [FromQuery] DateTime? dateStart, [FromQuery] DateTime? dateEnd, [FromQuery] string status, [FromQuery] int page = 1, [FromQuery] int size = 25)
         {
             try
             {
                 VerifyUser();
 
                 if (dateEnd == null)
-                    dateEnd = DateTimeOffset.MaxValue;
+                    dateEnd = DateTime.MaxValue;
                 else
                     dateEnd = dateEnd.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
 
                 if (dateStart == null)
-                    dateStart = DateTimeOffset.MinValue;
+                    dateStart = DateTime.MinValue;
                 else
                     dateStart = dateStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
 
-                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault(), page, size);
+                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault().ToUniversalTime(), dateEnd.GetValueOrDefault().ToUniversalTime(), status, page, size);
 
                 return Ok(new
                 {
@@ -290,7 +290,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("reports/xls")]
-        public async Task<IActionResult> GetReportXls([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] string vbRequestName, [FromQuery] int unitId, [FromQuery] int divisionId, [FromQuery] DateTimeOffset? dateStart, [FromQuery] DateTimeOffset? dateEnd)
+        public async Task<IActionResult> GetReportXls([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] string vbRequestName, [FromQuery] int unitId, [FromQuery] int divisionId, [FromQuery] DateTimeOffset? dateStart, [FromQuery] DateTimeOffset? dateEnd, string status)
         {
             try
             {
@@ -302,7 +302,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 if (dateStart == null)
                     dateStart = dateEnd.GetValueOrDefault().AddMonths(-1);
 
-                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault(), 1, int.MaxValue);
+                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault(), status, 1, int.MaxValue);
                 var stream = GenerateExcel(reportResult.Data);
 
                 var xls = stream.ToArray();
