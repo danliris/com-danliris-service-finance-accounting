@@ -221,7 +221,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
             //headerTable3.AddCell(cellHeaderBody1b);
             cellHeaderBody1a1.Colspan = 2;
-            cellHeaderBody1a1.Phrase = new Phrase("PPh", normal_font);
+            cellHeaderBody1a1.Phrase = new Phrase("PPh ditanggung Dan Liris", normal_font);
+            headerTable3.AddCell(cellHeaderBody1a1);
+            cellHeaderBody1b1.Phrase = new Phrase($"{currencyCode}       " + (GetPPhValueDanLiris(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            headerTable3.AddCell(cellHeaderBody1b1);
+
+            cellHeaderBody1b1.Phrase = new Phrase(" ", normal_font);
+            headerTable3.AddCell(cellHeaderBody1b1);
+            //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
+            //headerTable3.AddCell(cellHeaderBody1b);
+            cellHeaderBody1a1.Colspan = 2;
+            cellHeaderBody1a1.Phrase = new Phrase("PPh ditanggung Supplier", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
             cellHeaderBody1b1.Phrase = new Phrase($"{currencyCode}       " + (GetPPhValue(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             headerTable3.AddCell(cellHeaderBody1b1);
@@ -531,6 +541,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             foreach (var itm in viewModel.Items)
             {
                 if (itm.IsGetPPh == true && itm.IncomeTaxBy == "Supplier")
+                {
+                    val += itm.Amount * ((decimal)itm.IncomeTax.Rate.GetValueOrDefault() / 100);
+                }
+            }
+
+            return val;
+        }
+
+        private decimal GetPPhValueDanLiris(VBRealizationDocumentNonPOViewModel viewModel)
+        {
+            decimal val = 0;
+
+            foreach (var itm in viewModel.Items)
+            {
+                if (itm.IsGetPPh == true && itm.IncomeTaxBy != "Supplier")
                 {
                     val += itm.Amount * ((decimal)itm.IncomeTax.Rate.GetValueOrDefault() / 100);
                 }
