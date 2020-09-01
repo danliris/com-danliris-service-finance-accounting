@@ -28,5 +28,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB
         public bool IsPosted { get; set; }
         public string Status { get; set; }
         public DateTime LastModifiedUtc { get; set; }
+        public string CurrencyCode { get; set; }
     }
 }
