@@ -135,7 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                 _dbContext.VBRealizationDocumentExpenditureItems.Add(model);
                 _dbContext.SaveChanges();
-                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/spb/{item.UnitPaymentOrder.Id.GetValueOrDefault()}?division={suppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
+                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}vb-request-po-external/spb/{item.UnitPaymentOrder.Id.GetValueOrDefault()}?division={suppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
             }
 
         }
@@ -163,7 +163,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             items = items.Select(element =>
             {
                 element.FlagForDelete(_identityService.Username, UserAgent);
-                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/spb/{element.UnitPaymentOrderId}?division={model.SuppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
+                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}vb-request-po-external/spb/{element.UnitPaymentOrderId}?division={model.SuppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
                 return element;
             }).ToList();
             _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);
@@ -291,7 +291,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             items = items.Select(element =>
             {
                 EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
-                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/spb/{element.UnitPaymentOrderId}?division={model.SuppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
+                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}vb-request-po-external/spb/{element.UnitPaymentOrderId}?division={model.SuppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
                 return element;
             }).ToList();
             _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);

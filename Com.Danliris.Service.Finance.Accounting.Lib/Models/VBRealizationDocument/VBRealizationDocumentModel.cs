@@ -63,6 +63,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Position = VBRealizationPosition.Purchasing;
         }
 
+        public void UpdateVerified(VBRealizationPosition position, string reason, string username, string userAgent)
+        {
+            Position = position;
+            VerificationDate = DateTimeOffset.Now;
+            VerifiedBy = username;
+            IsVerified = true;
+            NotVerifiedReason = reason;
+            this.FlagForUpdate(username, userAgent);
+        }
+
         public VBRealizationDocumentModel(CurrencyDto currency, DateTimeOffset? date, UnitDto suppliantUnit, Tuple<string, int> documentNo, decimal amount)
         {
             CurrencyCode = currency.Code;
@@ -159,6 +169,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public decimal Amount { get; private set; }
 
         public bool IsVerified { get; private set; }
+        public string NotVerifiedReason { get; private set; }
         public DateTimeOffset? VerificationDate { get; private set; }
         [MaxLength(256)]
         public string VerifiedBy { get; private set; }

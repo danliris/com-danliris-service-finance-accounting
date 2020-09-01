@@ -130,12 +130,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
         {
             foreach (var id in listId)
             {
-                var model = await ReadByIdAsync(id);
-                model.SetIsCompleted(true, _IdentityService.Username, _UserAgent);
-                model.SetCompletedDate(DateTimeOffset.UtcNow, _IdentityService.Username, _UserAgent);
-                model.SetCompletedBy(_IdentityService.Username, _IdentityService.Username, _UserAgent);
-                
-                UpdateAsync(id, model);
+                if (id > 0)
+                {
+                    var model = await ReadByIdAsync(id);
+                    model.SetIsCompleted(true, _IdentityService.Username, _UserAgent);
+                    model.SetCompletedDate(DateTimeOffset.UtcNow, _IdentityService.Username, _UserAgent);
+                    model.SetCompletedBy(_IdentityService.Username, _IdentityService.Username, _UserAgent);
+
+                    UpdateAsync(id, model);
+                }
             }
             return await _DbContext.SaveChangesAsync();
         }
@@ -158,52 +161,90 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                 "RqstNo","Appliciant","RealNo","Status","DiffStatus"
             };
 
-            var data = query
-               .Join(realizationQuery,
-               (rqst) => rqst.Id,
-               (real) => real.VBRequestDocumentId,
-               (rqst, real) => new ClearaceVBViewModel()
-               {
-                   Id = rqst.Id,
-                   VBRealizationDocumentId = real.Id,
-                   RqstNo = rqst.DocumentNo,
-                   VBCategory = rqst.Type,
-                   RqstDate = rqst.Date,
-                   //RqstDate = rqst.Date.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                   Unit = new Unit()
-                   {
-                       Id = rqst.SuppliantUnitId,
-                       Name = rqst.SuppliantUnitName,
-                   },
-                   Appliciant = rqst.CreatedBy,
-                   RealNo = real.DocumentNo,
-                   RealDate = real.Date,
-                   //RealDate = rqst.Realization_Status == true ? real.Date.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
-                   VerDate = real.VerificationDate,
-                   //VerDate = real.isVerified == true ? real.VerifiedDate.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
-                   //DiffStatus = real.StatusReqReal,
-                   DiffAmount = rqst.Amount - real.Amount,
-                   ClearanceDate = rqst.CompletedDate,
-                   DiffStatus = rqst.Amount - real.Amount < 0 ? "Kurang" : rqst.Amount - real.Amount > 0 ? "Sisa" : "Sesuai",
-                   //ClearanceDate = rqst.Complete_Status == true ? rqst.CompleteDate.ToString() : "",
-                   IsPosted = rqst.IsCompleted,
-                   Status = rqst.IsCompleted ? "Completed" : "Uncompleted",
-                   LastModifiedUtc = real.LastModifiedUtc,
-               })
-               .OrderByDescending(s => s.LastModifiedUtc).AsQueryable();
+            var vbRequestQuery = _RequestDbSet.AsQueryable();
+            var vbRealizationQuery = _RealizationDbSet.AsQueryable();
 
-            data = Search(data, SearchAttributes, keyword);
+            var newQuery = from realization in vbRealizationQuery
+                           join request in vbRequestQuery on realization.VBRequestDocumentId equals request.Id into vbRequestRealizations
+
+                           from vbRequestRealization in vbRequestRealizations.DefaultIfEmpty()
+                           select new ClearaceVBViewModel()
+                           {
+                               Id = realization.VBRequestDocumentId,
+                               VBRealizationDocumentId = realization.Id,
+                               RqstNo = realization.VBRequestDocumentNo,
+                               VBCategory = realization.Type,
+                               RqstDate = realization.VBRequestDocumentDate,
+                               //RqstDate = rqst.Date.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                               Unit = new Unit()
+                               {
+                                   Id = realization.SuppliantUnitId,
+                                   Name = realization.SuppliantUnitName,
+                               },
+                               Appliciant = realization.VBRequestDocumentCreatedBy,
+                               RealNo = realization.DocumentNo,
+                               RealDate = realization.Date,
+                               //RealDate = rqst.Realization_Status == true ? real.Date.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
+                               VerDate = realization.VerificationDate,
+                               //VerDate = real.isVerified == true ? real.VerifiedDate.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
+                               //DiffStatus = real.StatusReqReal,
+                               DiffAmount = realization.VBRequestDocumentAmount - realization.Amount,
+                               ClearanceDate = vbRequestRealization == null ? null : vbRequestRealization.CompletedDate,
+                               DiffStatus = realization.VBRequestDocumentAmount - realization.Amount < 0 ? "Kurang" : realization.VBRequestDocumentAmount - realization.Amount > 0 ? "Sisa" : "Sesuai",
+                               //ClearanceDate = rqst.Complete_Status == true ? rqst.CompleteDate.ToString() : "",
+                               IsPosted = vbRequestRealization != null && vbRequestRealization.IsCompleted,
+                               Status = vbRequestRealization != null ? vbRequestRealization.IsCompleted ? "Completed" : "Uncompleted" : "",
+                               LastModifiedUtc = realization.LastModifiedUtc,
+                               CurrencyCode = realization.CurrencyCode
+                           };
+
+            //var data = query
+            //   .Join(realizationQuery,
+            //   (rqst) => rqst.Id,
+            //   (real) => real.VBRequestDocumentId,
+            //   (rqst, real) => new ClearaceVBViewModel()
+            //   {
+            //       Id = rqst.Id,
+            //       VBRealizationDocumentId = real.Id,
+            //       RqstNo = rqst.DocumentNo,
+            //       VBCategory = rqst.Type,
+            //       RqstDate = rqst.Date,
+            //       //RqstDate = rqst.Date.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+            //       Unit = new Unit()
+            //       {
+            //           Id = rqst.SuppliantUnitId,
+            //           Name = rqst.SuppliantUnitName,
+            //       },
+            //       Appliciant = rqst.CreatedBy,
+            //       RealNo = real.DocumentNo,
+            //       RealDate = real.Date,
+            //       //RealDate = rqst.Realization_Status == true ? real.Date.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
+            //       VerDate = real.VerificationDate,
+            //       //VerDate = real.isVerified == true ? real.VerifiedDate.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
+            //       //DiffStatus = real.StatusReqReal,
+            //       DiffAmount = rqst.Amount - real.Amount,
+            //       ClearanceDate = rqst.CompletedDate,
+            //       DiffStatus = rqst.Amount - real.Amount < 0 ? "Kurang" : rqst.Amount - real.Amount > 0 ? "Sisa" : "Sesuai",
+            //       //ClearanceDate = rqst.Complete_Status == true ? rqst.CompleteDate.ToString() : "",
+            //       IsPosted = rqst.IsCompleted,
+            //       Status = rqst.IsCompleted ? "Completed" : "Uncompleted",
+            //       LastModifiedUtc = real.LastModifiedUtc,
+            //   })
+            //   .OrderByDescending(s => s.LastModifiedUtc).AsQueryable();
+
+            newQuery = newQuery.OrderByDescending(entity => entity.LastModifiedUtc);
+            newQuery = Search(newQuery, SearchAttributes, keyword);
 
             var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
-            data = Filter(data, filterDictionary);
+            newQuery = Filter(newQuery, filterDictionary);
 
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
-            data = Order(data, orderDictionary);
+            newQuery = Order(newQuery, orderDictionary);
 
-            var pageable = new Pageable<ClearaceVBViewModel>(data, page - 1, size);
+            var pageable = new Pageable<ClearaceVBViewModel>(newQuery, page - 1, size);
 
             int totalData = pageable.TotalCount;
-            return new ReadResponse<ClearaceVBViewModel>(data.ToList(), totalData, orderDictionary, new List<string>());
+            return new ReadResponse<ClearaceVBViewModel>(newQuery.ToList(), totalData, orderDictionary, new List<string>());
         }
     }
 }

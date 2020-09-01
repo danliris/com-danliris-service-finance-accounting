@@ -60,6 +60,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -215,6 +216,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                         Enumerable.Empty<string>()
                     }
                 });
+                c.OperationFilter<ResponseHeaderFilter>();
                 c.CustomSchemaIds(i => i.FullName);
             });
             #endregion
@@ -241,6 +243,24 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             app.UseAuthentication();
             app.UseCors(FINANCE_POLICY);
             app.UseMvc();
+        }
+    }
+
+    public class ResponseHeaderFilter : IOperationFilter
+    {
+        public void Apply(Operation operation, OperationFilterContext context)
+        {
+            // Get all response header declarations for a given operation
+            if (operation.Parameters == null)
+                operation.Parameters = new List<IParameter>();
+
+            operation.Parameters.Add(new NonBodyParameter
+            {
+                Name = "x-timezone-offset",
+                In = "header",
+                Type = "string",
+                Required = true
+            });
         }
     }
 }

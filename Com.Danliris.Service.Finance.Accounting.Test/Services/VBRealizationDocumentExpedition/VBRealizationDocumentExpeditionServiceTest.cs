@@ -137,13 +137,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             RealizationVbModel vb = _dataUtil(service, dbContext).GetTestData_RealizationVbs();
             VBRealizationDocumentExpeditionModel vbRealization = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-
-            var result = await service.GetReports(vb.Id, vbRealization.VBRealizationId, vb.RequestVbName, vb.UnitId, vb.DivisionId, DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now.AddDays(1), 1, 25);
-            Assert.True(0 < result.Data.Count());
-            Assert.True(1 == result.Page);
-            Assert.True(25 == result.Size);
-
-
+            Assert.ThrowsAnyAsync<NotImplementedException>(() => service.GetReports(vb.Id, vbRealization.VBRealizationId, vb.RequestVbName, vb.UnitId, vb.DivisionId, vb.Date, vb.Date, null, 1, 25));
         }
 
 
