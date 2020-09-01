@@ -63,8 +63,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-
-
         [HttpPost]
         public IActionResult Post([FromBody] FormDto form)
         {

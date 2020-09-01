@@ -1,5 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
@@ -10,6 +12,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument
@@ -20,11 +23,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public readonly FinanceDbContext _dbContext;
 
         private readonly IIdentityService _identityService;
+        private readonly IHttpClientService _httpClientService;
+
+        
 
         public VBRealizationWithPOService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
         {
             _dbContext = dbContext;
             _identityService = serviceProvider.GetService<IIdentityService>();
+            _httpClientService = serviceProvider.GetService<IHttpClientService>();
         }
 
         private Tuple<string, int> GetDocumentNo(FormDto form, VBRealizationDocumentModel existingData)
@@ -87,7 +94,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             _dbContext.VBRealizationDocuments.Add(model);
             _dbContext.SaveChanges();
 
-            AddItems(model.Id, form.Items);
+            AddItems(model.Id, form.Items, model.SuppliantDivisionName);
 
             AddUnitCosts(model.Id, form.Items.SelectMany(element => element.UnitPaymentOrder.UnitCosts).ToList());
 
@@ -109,7 +116,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             _dbContext.SaveChanges();
         }
 
-        private void AddItems(int id, List<FormItemDto> items)
+        private void AddItems(int id, List<FormItemDto> items, string suppliantDivisionName)
         {
             //var models = items.Select(element =>
             //{
@@ -124,6 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                 _dbContext.VBRealizationDocumentExpenditureItems.Add(model);
                 _dbContext.SaveChanges();
+                _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/{item.UnitPaymentOrder.Id.GetValueOrDefault()}?division={suppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType));
             }
 
         }
@@ -151,6 +159,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             items = items.Select(element =>
             {
                 element.FlagForDelete(_identityService.Username, UserAgent);
+                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/{element.UnitPaymentOrderId}?division={model.SuppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
                 return element;
             }).ToList();
             _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);
@@ -275,6 +284,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             items = items.Select(element =>
             {
                 EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/{element.UnitPaymentOrderId}?division={model.SuppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
                 return element;
             }).ToList();
             _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);
@@ -287,7 +297,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             }).ToList();
             _dbContext.VBRealizationDocumentUnitCostsItems.UpdateRange(details);
 
-            AddItems(id, form.Items);
+            AddItems(id, form.Items, form.SuppliantUnit.Division.Name);
             AddUnitCosts(model.Id, form.Items.SelectMany(element => element.UnitPaymentOrder.UnitCosts).ToList());
 
             return id;

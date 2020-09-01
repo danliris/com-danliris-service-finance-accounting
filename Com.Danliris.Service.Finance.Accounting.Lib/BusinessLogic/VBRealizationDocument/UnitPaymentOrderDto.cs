@@ -15,6 +15,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public bool? UseIncomeTax { get; set; }
         public IncomeTaxDto IncomeTax { get; set; }
         public string IncomeTaxBy { get; set; }
+        public SupplierDto Supplier { get; set; }
+        public DivisionDto Division { get; set; }
 
         public List<UnitCostDto> UnitCosts { get; set; }
     }

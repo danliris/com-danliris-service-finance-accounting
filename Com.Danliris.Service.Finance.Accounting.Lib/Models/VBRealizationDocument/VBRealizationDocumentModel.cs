@@ -34,6 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 VBRequestDocumentRealizationEstimationDate = viewModel.VBDocument.RealizationEstimationDate;
                 VBRequestDocumentCreatedBy = viewModel.VBDocument.CreatedBy;
                 VBRequestDocumentAmount = viewModel.VBDocument.Amount.GetValueOrDefault();
+                VBRequestDocumentPurpose = viewModel.VBDocument.Purpose;
             }
 
             if (viewModel.Unit != null)
@@ -81,6 +82,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             DocumentNo = documentNo.Item1;
             Index = documentNo.Item2;
             Position = VBRealizationPosition.Purchasing;
+            Amount = amount;
         }
 
         public VBRealizationDocumentModel(DateTimeOffset? date, VBRequestDocumentModel vbRequest, Tuple<string, int> documentNo, decimal amount)
@@ -110,6 +112,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             VBRequestDocumentId = vbRequest.Id;
             VBRequestDocumentNo = vbRequest.DocumentNo;
             VBRequestDocumentRealizationEstimationDate = vbRequest.RealizationEstimationDate;
+            VBRequestDocumentPurpose = vbRequest.Purpose;
 
             Position = VBRealizationPosition.Purchasing;
         }
@@ -132,6 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public DateTimeOffset? VBRequestDocumentRealizationEstimationDate { get; private set; }
         [MaxLength(256)]
         public string VBRequestDocumentCreatedBy { get; private set; }
+        public string VBRequestDocumentPurpose { get; private set; }
         public int SuppliantUnitId { get; private set; }
         [MaxLength(64)]
         public string SuppliantUnitCode { get; private set; }
@@ -235,7 +239,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         }
 
         public void SetVBRequest(int newVBRequestId, string newVBRequestNo, DateTimeOffset? newVBRequestDate, DateTimeOffset? newVBRequestVBRequestDocumentRealizationEstimationDate,
-            string newVBRequestCreatedBy, decimal newVBRequestAmount, string user, string userAgent)
+            string newVBRequestCreatedBy, decimal newVBRequestAmount, string newPurpose, string user, string userAgent)
         {
             if (newVBRequestId != VBRequestDocumentId)
             {
@@ -272,6 +276,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 VBRequestDocumentAmount = newVBRequestAmount;
                 this.FlagForUpdate(user, userAgent);
             }
+
+            if(newPurpose != VBRequestDocumentPurpose)
+            {
+                VBRequestDocumentPurpose = newPurpose;
+                this.FlagForUpdate(user, userAgent);
+            }
         }
 
         public void Update(VBRequestDocumentModel vbRequest)
@@ -282,6 +292,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             VBRequestDocumentId = vbRequest.Id;
             VBRequestDocumentNo = vbRequest.DocumentNo;
             VBRequestDocumentRealizationEstimationDate = vbRequest.RealizationEstimationDate;
+            VBRequestDocumentPurpose = vbRequest.Purpose;
         }
 
         public void Update(FormDto form)
