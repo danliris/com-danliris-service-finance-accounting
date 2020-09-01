@@ -67,6 +67,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
                             IncomeTaxBy="Supplier",
                             UseIncomeTax=true,
                             UseVat=true,
+                            Division=new DivisionDto()
+                            {
+                                Code="Code",
+                                Name="Name"
+                            },
+                            Supplier=new SupplierDto()
+                            {
+                                Code="Code",
+                                Name="Name"
+                            },
                             UnitCosts=new List<UnitCostDto>()
                             {
                                new UnitCostDto()
@@ -120,14 +130,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
                     Description = "Description",
                     Rate = 1
                 },
+                
                 Items = new List<FormItemDto>()
                 {
                     new FormItemDto()
                     {
+                        
                         UnitPaymentOrder=new UnitPaymentOrderDto()
                         {
                             No="1",
                             //Id=1,
+                            Division=new DivisionDto()
+                            {
+                                Code="Code",
+                                Name="Name"
+                            },
+                            Supplier=new SupplierDto()
+                            {
+                                Code="Code",
+                                Name="Name"
+                            },
                             UnitCosts=new List<UnitCostDto>()
                             {
                                new UnitCostDto()
