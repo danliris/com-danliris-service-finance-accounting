@@ -12,7 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB
         public int VBRealizationDocumentId { get; set; }
         public string RqstNo { get; set; }
         public VBType VBCategory { get; set; }
-        public DateTimeOffset RqstDate { get; set; }
+        public DateTimeOffset? RqstDate { get; set; }
         //public string RqstDate { get; set; }
         public Unit Unit { get; set; }
         public string Appliciant { get; set; }
