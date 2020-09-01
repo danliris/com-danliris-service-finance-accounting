@@ -25,7 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         private readonly IIdentityService _identityService;
         private readonly IHttpClientService _httpClientService;
 
-        
+
 
         public VBRealizationWithPOService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
         {
@@ -84,8 +84,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             else
             {
                 var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
-                vbRequest.SetIsRealized(true, _identityService.Username, UserAgent);
-                _dbContext.VBRequestDocuments.Update(vbRequest);
+
+                if (vbRequest != null)
+                {
+                    vbRequest.SetIsRealized(true, _identityService.Username, UserAgent);
+                    _dbContext.VBRequestDocuments.Update(vbRequest);
+                }
 
                 model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, (decimal)amount);
             }
@@ -165,8 +169,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);
 
             var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == model.VBRequestDocumentId);
-            vbRequest.SetIsRealized(false, _identityService.Username, UserAgent);
-            _dbContext.VBRequestDocuments.Update(vbRequest);
+            if (vbRequest != null)
+            {
+                vbRequest.SetIsRealized(false, _identityService.Username, UserAgent);
+                _dbContext.VBRequestDocuments.Update(vbRequest);
+            }
 
             _dbContext.SaveChanges();
             return id;
