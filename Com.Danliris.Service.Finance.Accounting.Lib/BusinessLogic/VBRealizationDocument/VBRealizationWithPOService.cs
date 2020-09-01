@@ -25,7 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         private readonly IIdentityService _identityService;
         private readonly IHttpClientService _httpClientService;
 
-        
+
 
         public VBRealizationWithPOService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
         {
@@ -84,8 +84,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             else
             {
                 var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
-                vbRequest.SetIsRealized(true, _identityService.Username, UserAgent);
-                _dbContext.VBRequestDocuments.Update(vbRequest);
+
+                if (vbRequest != null)
+                {
+                    vbRequest.SetIsRealized(true, _identityService.Username, UserAgent);
+                    _dbContext.VBRequestDocuments.Update(vbRequest);
+                }
 
                 model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, (decimal)amount);
             }
@@ -131,7 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                 _dbContext.VBRealizationDocumentExpenditureItems.Add(model);
                 _dbContext.SaveChanges();
-                _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/{item.UnitPaymentOrder.Id.GetValueOrDefault()}?division={suppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType));
+                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/spb/{item.UnitPaymentOrder.Id.GetValueOrDefault()}?division={suppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
             }
 
         }
@@ -159,14 +163,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             items = items.Select(element =>
             {
                 element.FlagForDelete(_identityService.Username, UserAgent);
-                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/{element.UnitPaymentOrderId}?division={model.SuppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
+                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/spb/{element.UnitPaymentOrderId}?division={model.SuppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
                 return element;
             }).ToList();
             _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);
 
             var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == model.VBRequestDocumentId);
-            vbRequest.SetIsRealized(false, _identityService.Username, UserAgent);
-            _dbContext.VBRequestDocuments.Update(vbRequest);
+            if (vbRequest != null)
+            {
+                vbRequest.SetIsRealized(false, _identityService.Username, UserAgent);
+                _dbContext.VBRequestDocuments.Update(vbRequest);
+            }
 
             _dbContext.SaveChanges();
             return id;
@@ -284,7 +291,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             items = items.Select(element =>
             {
                 EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
-                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/{element.UnitPaymentOrderId}?division={model.SuppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
+                var result = _httpClientService.PutAsync($"{APIEndpoint.Purchasing}/vb-request-po-external/spb/{element.UnitPaymentOrderId}?division={model.SuppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
                 return element;
             }).ToList();
             _dbContext.VBRealizationDocumentExpenditureItems.UpdateRange(items);
