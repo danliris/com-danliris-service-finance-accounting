@@ -255,10 +255,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 VerifyUser();
 
                 if (dateEnd == null)
-                    dateEnd = DateTimeOffset.Now;
+                    dateEnd = DateTimeOffset.MaxValue;
+                else
+                    dateEnd = dateEnd.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
 
                 if (dateStart == null)
-                    dateStart = dateEnd.GetValueOrDefault().AddMonths(-1);
+                    dateStart = DateTimeOffset.MinValue;
+                else
+                    dateStart = dateStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
 
                 var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault(), page, size);
 

@@ -189,11 +189,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                                //VerDate = real.isVerified == true ? real.VerifiedDate.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
                                //DiffStatus = real.StatusReqReal,
                                DiffAmount = realization.VBRequestDocumentAmount - realization.Amount,
-                               ClearanceDate = vbRequestRealization == null ? vbRequestRealization.CompletedDate : null,
+                               ClearanceDate = vbRequestRealization != null ? vbRequestRealization.CompletedDate : null,
                                DiffStatus = realization.VBRequestDocumentAmount - realization.Amount < 0 ? "Kurang" : realization.VBRequestDocumentAmount - realization.Amount > 0 ? "Sisa" : "Sesuai",
                                //ClearanceDate = rqst.Complete_Status == true ? rqst.CompleteDate.ToString() : "",
-                               IsPosted = vbRequestRealization == null ? vbRequestRealization.IsCompleted : false,
-                               Status = vbRequestRealization == null ? vbRequestRealization.IsCompleted ? "Completed" : "Uncompleted" : "",
+                               IsPosted = vbRequestRealization != null ? vbRequestRealization.IsCompleted : false,
+                               Status = vbRequestRealization != null ? vbRequestRealization.IsCompleted ? "Completed" : "Uncompleted" : "",
                                LastModifiedUtc = realization.LastModifiedUtc,
                            };
 
