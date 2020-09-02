@@ -138,6 +138,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public DateTimeOffset Date { get; private set; }
         [MaxLength(32)]
         public string VBNonPoType { get; private set; }
+
+        public void SetIsCompleted(DateTimeOffset? completedDate, string username, string userAgent)
+        {
+            IsCompleted = true;
+            CompletedDate = completedDate;
+            CompletedBy = username;
+            this.FlagForUpdate(username, userAgent);
+        }
+
         public int VBRequestDocumentId { get; private set; }
         [MaxLength(64)]
         public string VBRequestDocumentNo { get; private set; }
@@ -173,6 +182,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public DateTimeOffset? VerificationDate { get; private set; }
         [MaxLength(256)]
         public string VerifiedBy { get; private set; }
+        public bool IsCompleted { get; private set; }
+        public DateTimeOffset? CompletedDate { get; private set; }
+        public string CompletedBy { get; private set; }
 
         public void SetCurrency(int newCurrencyId, string newCurrencyCode, string newCurrencySymbol, double newCurrencyRate, string newCurrencyDescription, string user, string userAgent)
         {

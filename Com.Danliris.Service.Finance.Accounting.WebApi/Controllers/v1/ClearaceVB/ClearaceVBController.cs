@@ -97,7 +97,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Clearace
         }
 
         [HttpPut("post")]
-        public async Task<IActionResult> ClearanceVBPost([FromBody] List<long> listId)
+        public async Task<IActionResult> ClearanceVBPost([FromBody] List<ClearencePostId> listId)
         {
             try
             {
