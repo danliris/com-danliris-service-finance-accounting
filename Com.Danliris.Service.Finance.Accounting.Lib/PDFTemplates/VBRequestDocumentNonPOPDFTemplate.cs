@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
@@ -117,7 +118,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             document.Add(Title);
 
-            
+
             cellHeaderBody3.Phrase = new Phrase(" ", normal_font);
             IdentityTable.AddCell(cellHeaderBody3);
 
@@ -136,7 +137,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody.Phrase = new Phrase($" : {data.DocumentNo}", normal_font);
             IdentityTable.AddCell(cellHeaderBody);
 
-            
+
             cellHeaderBody3.Phrase = new Phrase(" ", normal_font);
             IdentityTable.AddCell(cellHeaderBody3);
 
@@ -213,7 +214,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             #region NewCheckbox
             List<PdfFormField> annotations = new List<PdfFormField>();
-            foreach (var item in data.Items)
+
+            var items = data.Items.Where(element => element.IsSelected).OrderBy(element => element.Unit.VBDocumentLayoutOrder).ToList();
+
+            foreach (var item in items)
             {
                 cellHeaderBody.Phrase = new Phrase("", normal_font);
 
@@ -260,7 +264,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
             //headerTable3a.AddCell(cellHeaderBody);
 
-            for (var i = 0; i < 10 - (2 * (data.Items.Count % 5)); i++)
+            for (var i = 0; i < 10 - (2 * (items.Count % 5)); i++)
             {
                 cellHeaderBody.Phrase = new Phrase(" ", normal_font);
                 headerTable3a.AddCell(cellHeaderBody);
@@ -270,11 +274,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable_C.AddCell(cellHeader3a);
             document.Add(headerTable_C);
 
-            foreach(var annotation in annotations)
+            foreach (var annotation in annotations)
             {
                 writer.AddAnnotation(annotation);
             }
-            
+
             #endregion
 
             #region Footer
