@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -129,7 +130,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.ClearaceVB
             ClearaceVBService service = new ClearaceVBService(serviceProvider, dbContext);
 
             var data = await _dataUtil(service).GetTestData();
-            List<long> listData = new List<long> { data.Id };
+            var listData = new List<ClearencePostId> { new ClearencePostId() { VBRequestId = data.Id } };
             var Response = await service.ClearanceVBPost(listData);
             Assert.NotEqual(0, Response);
         }
