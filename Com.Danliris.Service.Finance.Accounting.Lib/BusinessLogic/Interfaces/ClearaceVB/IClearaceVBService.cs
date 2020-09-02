@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.C
         ReadResponse<ClearaceVBViewModel> Read(int page, int size, string order, List<string> select, string keyword, string filter);
         
         Task<VBRequestDocumentModel> ReadByIdAsync(long id);
-        Task<int> ClearanceVBPost(List<long> listId);
+        Task<int> ClearanceVBPost(List<ClearencePostId> listId);
         Task<int> ClearanceVBUnpost(long id);
     }
 }

@@ -45,7 +45,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
         }
         protected List<ClearaceVBViewModel> ViewModels
         {
-            get { return new List<ClearaceVBViewModel>() {
+            get
+            {
+                return new List<ClearaceVBViewModel>() {
                 new ClearaceVBViewModel()
                 {
                     Id = 1,
@@ -68,7 +70,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
                     Status = "Completed",
                     LastModifiedUtc = DateTime.Now,
                 }
-            }; }
+            };
+            }
         }
 
         public (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IClearaceVBService> Service, Mock<IMapper> Mapper) GetMocks()
@@ -164,11 +167,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
 
             mocks.Service
                 .Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(new ReadResponse<ClearaceVBViewModel>(new List<ClearaceVBViewModel>() { new ClearaceVBViewModel()}, 0, new Dictionary<string, string>(), new List<string>()));
-           
+                .Returns(new ReadResponse<ClearaceVBViewModel>(new List<ClearaceVBViewModel>() { new ClearaceVBViewModel() }, 0, new Dictionary<string, string>(), new List<string>()));
+
             mocks.Mapper
                 .Setup(f => f.Map<List<ClearaceVBViewModel>>(It.IsAny<List<ClearaceVBViewModel>>()))
-                .Returns(new List<ClearaceVBViewModel>() {new ClearaceVBViewModel() });
+                .Returns(new List<ClearaceVBViewModel>() { new ClearaceVBViewModel() });
 
             int statusCode = GetStatusCodeGet(mocks);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
@@ -234,8 +237,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
                 Id = id
             };
             mocks.Mapper.Setup(m => m.Map<ClearaceVBViewModel>(It.IsAny<VbRequestModel>())).Returns(viewModel);
-            mocks.Service.Setup(f => f.ClearanceVBPost(It.IsAny<List<long>>())).ReturnsAsync(1);
-            List<long> listId = new List<long> { viewModel.Id };
+            mocks.Service.Setup(f => f.ClearanceVBPost(It.IsAny<List<ClearencePostId>>())).ReturnsAsync(1);
+            var listId = new List<ClearencePostId> { new ClearencePostId() { VBRequestId = (int)viewModel.Id } };
 
             var controller = GetController(mocks);
             var response = await controller.ClearanceVBPost(listId);
@@ -253,8 +256,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
                 Id = id
             };
             mocks.Mapper.Setup(m => m.Map<ClearaceVBViewModel>(It.IsAny<VbRequestModel>())).Returns(viewModel);
-            mocks.Service.Setup(f => f.ClearanceVBPost(It.IsAny<List<long>>())).ThrowsAsync(new Exception());
-            List<long> listId = new List<long> { viewModel.Id };
+            mocks.Service.Setup(f => f.ClearanceVBPost(It.IsAny<List<ClearencePostId>>())).ThrowsAsync(new Exception());
+            var listId = new List<ClearencePostId> { new ClearencePostId() { VBRequestId = (int)viewModel.Id } };
 
             var controller = GetController(mocks);
             var response = await controller.ClearanceVBPost(listId);
