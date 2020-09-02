@@ -743,11 +743,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             #region Footer
 
-            PdfPTable table = new PdfPTable(4)
+            PdfPTable table = new PdfPTable(5)
             {
                 WidthPercentage = 100
             };
-            float[] widths = new float[] { 1f, 1f, 1f, 1f };
+            float[] widths = new float[] { 1f, 1f, 1f, 1f, 1f };
             table.SetWidths(widths);
             PdfPCell cell = new PdfPCell()
             {
@@ -779,19 +779,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             table.AddCell(cell);
             cell.Phrase = new Phrase("", normal_font);
             table.AddCell(cell);
-
-            cell.Phrase = new Phrase("Menyetujui,", normal_font);
-            table.AddCell(cell);
             cell.Phrase = new Phrase("", normal_font);
+            table.AddCell(cell);
+
+            cell.Colspan = 2;
+            cell.Phrase = new Phrase("Menyetujui,", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase("Mengetahui,", normal_font);
             table.AddCell(cell);
+            cell.Colspan = 1;
             cell.Phrase = new Phrase("Diminta Oleh,", normal_font);
             table.AddCell(cell);
 
             for (var i = 0; i < 11; i++)
             {
 
+                cell.Phrase = new Phrase("", normal_font);
+                table.AddCell(cell);
                 cell.Phrase = new Phrase("", normal_font);
                 table.AddCell(cell);
                 cell.Phrase = new Phrase("", normal_font);
@@ -811,6 +815,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             //cell.Phrase = new Phrase($"({data.CreatedBy})", normal_font);
             //table.AddCell(cell);
 
+            cell.Phrase = new Phrase("(..................)", normal_font);
+            table.AddCell(cell);
             cell.Phrase = new Phrase("(..................)", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase("(..................)", normal_font);
