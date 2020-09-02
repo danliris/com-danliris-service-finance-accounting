@@ -359,8 +359,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             if (layoutOrderOther != null)
                 layoutOrderOther.Unit.VBDocumentLayoutOrder = 12;
 
+            var items = viewModel.UnitCosts.Where(element => element.IsSelected).OrderBy(s => s.Unit.VBDocumentLayoutOrder).ToList();
             List<PdfFormField> annotations = new List<PdfFormField>();
-            foreach (var item in viewModel.UnitCosts.OrderBy(s => s.Unit.VBDocumentLayoutOrder).ToList())
+            foreach (var item in items)
             {
 
                 if (string.IsNullOrEmpty(item.Unit.Name))
@@ -438,14 +439,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             #endregion
 
-            
+
             #region Footer
 
-            PdfPTable table = new PdfPTable(4)
+            PdfPTable table = new PdfPTable(5)
             {
                 WidthPercentage = 100
             };
-            float[] widths = new float[] { 1f, 1f, 1f, 1f };
+            float[] widths = new float[] { 1f, 1f, 1f, 1f, 1f };
             table.SetWidths(widths);
             PdfPCell cell = new PdfPCell()
             {
@@ -462,19 +463,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             table.AddCell(cell);
             cell.Phrase = new Phrase("", normal_font);
             table.AddCell(cell);
+            cell.Phrase = new Phrase("", normal_font);
+            table.AddCell(cell);
 
             cell.Phrase = new Phrase("Menyetujui,", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase("Diperiksa,", normal_font);
             table.AddCell(cell);
+            cell.Colspan = 2;
             cell.Phrase = new Phrase("Mengetahui,", normal_font);
             table.AddCell(cell);
+            cell.Colspan = 1;
             cell.Phrase = new Phrase("Pembuat laporan,", normal_font);
             table.AddCell(cell);
 
             for (var i = 0; i < 11; i++)
             {
 
+                cell.Phrase = new Phrase("", normal_font);
+                table.AddCell(cell);
                 cell.Phrase = new Phrase("", normal_font);
                 table.AddCell(cell);
                 cell.Phrase = new Phrase("", normal_font);
@@ -493,15 +500,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             table.AddCell(cell);
             cell.Phrase = new Phrase($"(..................)", normal_font);
             table.AddCell(cell);
+            cell.Phrase = new Phrase($"(..................)", normal_font);
+            table.AddCell(cell);
 
-            cell.Phrase = new Phrase("Kasir", normal_font);
-            table.AddCell(cell);
-            cell.Phrase = new Phrase("Verifikasi", normal_font);
-            table.AddCell(cell);
-            cell.Phrase = new Phrase($"..................", normal_font);
-            table.AddCell(cell);
-            cell.Phrase = new Phrase(viewModel.Unit.Name, normal_font);
-            table.AddCell(cell);
+            //cell.Phrase = new Phrase("Kasir", normal_font);
+            //table.AddCell(cell);
+            //cell.Phrase = new Phrase("Verifikasi", normal_font);
+            //table.AddCell(cell);
+            //cell.Phrase = new Phrase($"..................", normal_font);
+            //table.AddCell(cell);
+            //cell.Phrase = new Phrase(viewModel.Unit.Name, normal_font);
+            //table.AddCell(cell);
 
             document.Add(table);
             #endregion Footer
