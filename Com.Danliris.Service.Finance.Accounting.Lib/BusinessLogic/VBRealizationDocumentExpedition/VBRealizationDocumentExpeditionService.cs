@@ -333,5 +333,67 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             _dbContext.VBRealizationDocumentExpeditions.Update(model);
             return _dbContext.SaveChangesAsync();
         }
+
+        public ReadResponse<VBRealizationDocumentExpeditionModel> ReadVerification(int page, int size, string order, string keyword, VBRealizationPosition position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
+        {
+            var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
+
+            query = query.Where(entity => entity.Position > VBRealizationPosition.Verification);
+
+            if (vbId > 0)
+                query = query.Where(entity => entity.VBId == vbId);
+
+            if (vbRealizationId > 0)
+                query = query.Where(entity => entity.VBRealizationId == vbRealizationId);
+
+            if (realizationDate.HasValue)
+            {
+                var date = realizationDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset * -1);
+                query = query.Where(entity => entity.VBRealizationDate.Date == date.Date);
+            }
+
+            if (!string.IsNullOrWhiteSpace(vbRealizationRequestPerson))
+                query = query.Where(entity => entity.VBRequestName == vbRealizationRequestPerson);
+
+            if (unitId > 0)
+                query = query.Where(entity => entity.UnitId == unitId);
+
+            //query = query
+            //    .Select(entity => new VBRealizationDocumentExpeditionIndexDto
+            //    {
+            //        Id = entity.Id,
+            //        LastModifiedUtc = entity.LastModifiedUtc,
+            //        VBNo = entity.VBNo,
+            //        VBRealizationNo = entity.VBRealizationNo,
+            //        VBRealizationDate = entity.VBRealizationDate,
+            //        VBName = entity.VBRequestName,
+            //        UnitId = entity.UnitId,
+            //        UnitName = entity.UnitName,
+            //        DivisionId = entity.DivisionId,
+            //        DivisionName = entity.DivisionName,
+            //        Currency
+
+            //    });
+
+            List<string> searchAttributes = new List<string>()
+            {
+                "VBRealizationNo", "VBRequestName", "UnitName"
+            };
+
+            query = QueryHelper<VBRealizationDocumentExpeditionModel>.Search(query, searchAttributes, keyword);
+
+            //var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            //Query = QueryHelper<JournalTransactionModel>.Filter(Query, FilterDictionary);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<VBRealizationDocumentExpeditionModel>.Order(query, orderDictionary);
+
+            var pageable = new Pageable<VBRealizationDocumentExpeditionModel>(query, page - 1, size);
+            var data = pageable.Data.ToList();
+
+            var totalData = pageable.TotalCount;
+
+            return new ReadResponse<VBRealizationDocumentExpeditionModel>(data, totalData, orderDictionary, new List<string>());
+        }
     }
 }

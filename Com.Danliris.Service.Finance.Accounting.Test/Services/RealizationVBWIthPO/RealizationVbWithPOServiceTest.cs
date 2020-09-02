@@ -298,6 +298,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
                 throw new NotImplementedException();
             }
 
+            public ReadResponse<VBRealizationDocumentExpeditionModel> ReadVerification(int page, int size, string order, string keyword, VBRealizationPosition position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
+            {
+                throw new NotImplementedException();
+            }
+
             public Task<int> Reject(int vbRealizationId, string reason)
             {
                 throw new NotImplementedException();
