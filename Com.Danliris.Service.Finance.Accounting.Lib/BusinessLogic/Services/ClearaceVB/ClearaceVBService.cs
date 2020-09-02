@@ -126,9 +126,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             return _DbContext.VBRequestDocuments.Where(entity => entity.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<int> ClearanceVBPost(List<long> listId)
+        public async Task<int> ClearanceVBPost(List<ClearencePostId> listId)
         {
-            foreach (var id in listId)
+            var vbRequestIds = listId.Select(element => element.VBRequestId).ToList();
+            var vbRealizationIds = listId.Select(element => element.VBRealizationId).ToList();
+
+            foreach (var id in vbRequestIds)
             {
                 if (id > 0)
                 {
@@ -140,6 +143,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                     UpdateAsync(id, model);
                 }
             }
+
+            foreach (var id in vbRealizationIds)
+            {
+                if (id > 0)
+                {
+                    var model = _DbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
+                    model.SetIsCompleted(DateTimeOffset.UtcNow, _IdentityService.Username, _UserAgent);
+                    _DbContext.VBRealizationDocuments.Update(model);
+                }
+            }
+
             return await _DbContext.SaveChangesAsync();
         }
 
@@ -189,10 +203,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                                //VerDate = real.isVerified == true ? real.VerifiedDate.AddHours(7).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "",
                                //DiffStatus = real.StatusReqReal,
                                DiffAmount = realization.VBRequestDocumentAmount - realization.Amount,
-                               ClearanceDate = vbRequestRealization == null ? null : vbRequestRealization.CompletedDate,
+                               ClearanceDate = vbRequestRealization != null ? vbRequestRealization.CompletedDate : realization.CompletedDate,
                                DiffStatus = realization.VBRequestDocumentAmount - realization.Amount < 0 ? "Kurang" : realization.VBRequestDocumentAmount - realization.Amount > 0 ? "Sisa" : "Sesuai",
                                //ClearanceDate = rqst.Complete_Status == true ? rqst.CompleteDate.ToString() : "",
-                               IsPosted = vbRequestRealization != null && vbRequestRealization.IsCompleted,
+                               IsPosted = vbRequestRealization != null ? vbRequestRealization.IsCompleted : realization.IsCompleted,
                                Status = vbRequestRealization != null ? vbRequestRealization.IsCompleted ? "Completed" : "Uncompleted" : "",
                                LastModifiedUtc = realization.LastModifiedUtc,
                                CurrencyCode = realization.CurrencyCode
