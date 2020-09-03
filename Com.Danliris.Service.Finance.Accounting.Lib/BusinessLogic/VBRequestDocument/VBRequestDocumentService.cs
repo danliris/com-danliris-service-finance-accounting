@@ -1,4 +1,7 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
@@ -10,6 +13,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,11 +25,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public readonly FinanceDbContext _dbContext;
 
         private readonly IIdentityService _identityService;
+        private readonly IJournalTransactionService _journalTransactionService;
+        private readonly IServiceProvider _serviceProvider;
 
         public VBRequestDocumentService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
         {
             _dbContext = dbContext;
             _identityService = serviceProvider.GetService<IIdentityService>();
+            _journalTransactionService = serviceProvider.GetService<IJournalTransactionService>();
+            _serviceProvider = serviceProvider;
         }
 
         private Tuple<string, int> GetDocumentNo(VBRequestDocumentNonPOFormDto form, VBRequestDocumentModel existingData)
@@ -683,6 +691,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     item.SetApprovedBy(_identityService.Username, _identityService.Username, UserAgent);
                     item.SetApprovedDate(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                }
+
+                if (item.Type == VBType.WithPO)
+                {
+                    var epoIds = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == item.Id).Select(entity => (long)entity.EPOId).ToList();
+                    var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+
+                    var body = new VBAutoJournalFormDto()
+                    {
+                        Date = DateTimeOffset.UtcNow,
+                        DocumentNo = item.DocumentNo,
+                        EPOIds = epoIds
+                    };
+
+                    var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                    var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
                 }
             }
 
