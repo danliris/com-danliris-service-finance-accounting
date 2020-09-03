@@ -422,7 +422,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 annotations.Add(_checkGroup);
             }
 
-            for (var i = 0; i < 9 - (3 * (viewModel.UnitCosts.Count() % 3)); i++)
+            for (var i = 0; i < 9 - (3 * (items.Count() % 3)); i++)
             {
                 cellHeaderBody.Phrase = new Phrase(" ", normal_font);
                 headerTable3a.AddCell(cellHeaderBody);
