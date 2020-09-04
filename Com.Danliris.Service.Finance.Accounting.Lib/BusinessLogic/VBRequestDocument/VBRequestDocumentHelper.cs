@@ -7,7 +7,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 {
     public enum VBType
     {
+        [Display(Name = "Dengan PO")]
         WithPO = 1,
+        [Display(Name = "Tanpa PO")]
         NonPO
     }
 

@@ -69,7 +69,44 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public async Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, int divisionId, DateTimeOffset dateStart, DateTimeOffset dateEnd, string status, int page = 1, int size = 25)
         {
-            var query = _dbContext.VBRealizationDocumentExpeditions.AsQueryable();
+            var vbRealizationQuery = _dbContext.VBRealizationDocuments.AsQueryable();
+            var expeditionQuery = _dbContext.VBRealizationDocumentExpeditions.AsQueryable();
+
+            var query = from realization in vbRealizationQuery
+                         join expedition in expeditionQuery on realization.Id equals expedition.VBRealizationId into realizationExpeditions
+
+                         from realizationExpedition in realizationExpeditions.DefaultIfEmpty()
+
+                         select new ReportDto()
+                         {
+                             CashierReceiptBy = realizationExpedition != null ? realizationExpedition.CashierReceiptBy : null,
+                             CashierReceiptDate = realizationExpedition != null ? realizationExpedition.CashierReceiptDate : null,
+                             CurrencyCode = realization.CurrencyCode,
+                             CurrencyRate = realization.CurrencyRate,
+                             DivisionId = realization.SuppliantDivisionId,
+                             DivisionName = realization.SuppliantDivisionName,
+                             NotVerifiedBy = realizationExpedition != null ? realizationExpedition.NotVerifiedBy : null,
+                             NotVerifiedDate = realizationExpedition != null ? realizationExpedition.NotVerifiedDate : null,
+                             NotVerifiedReason = realizationExpedition != null ? realizationExpedition.NotVerifiedReason : null,
+                             Position = realization.Position,
+                             SendToVerificationBy = realizationExpedition != null ? realizationExpedition.SendToVerificationBy : null,
+                             SendToVerificationDate = realizationExpedition != null ? realizationExpedition.SendToVerificationDate : null,
+                             UnitId = realization.SuppliantUnitId,
+                             UnitName = realization.SuppliantUnitName,
+                             VBAmount = realization.VBRequestDocumentAmount,
+                             VBId = realization.VBRequestDocumentId,
+                             VBNo = realization.VBRequestDocumentNo,
+                             VBRealizationAmount = realization.Amount,
+                             VBRealizationDate = realization.Date,
+                             VBRealizationId = realization.Id,
+                             VBRealizationNo = realization.DocumentNo,
+                             VBRequestName = realization.VBRequestDocumentCreatedBy,
+                             VBType = realization.Type,
+                             VerificationReceiptBy = realizationExpedition != null ? realizationExpedition.VerificationReceiptBy : null,
+                             VerificationReceiptDate = realizationExpedition != null ? realizationExpedition.VerificationReceiptDate: null,
+                             VerifiedToCashierBy = realizationExpedition != null ? realizationExpedition.VerifiedToCashierBy : null,
+                             VerifiedToCashierDate = realizationExpedition != null ? realizationExpedition.VerifiedToCashierDate : null
+                         };
             query = query.Where(entity => entity.VBRealizationDate >= dateStart && entity.VBRealizationDate <= dateEnd);
 
             if (vbId > 0)
@@ -85,7 +122,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 query = query.Where(entity => entity.UnitId == unitId);
 
             if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "UNIT")
-                query = query.Where(entity => entity.Position == VBRealizationPosition.PurchasingToVerification);
+                query = query.Where(entity => entity.Position <= VBRealizationPosition.PurchasingToVerification);
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "VERIFIKASI")
                 query = query.Where(entity => entity.Position >= VBRealizationPosition.Verification);
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "KASIR")
