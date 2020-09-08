@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBStatusReport;
 using Com.Moonlay.Models;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBStatusReport
 {
@@ -35,7 +36,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
 
         private List<VBStatusReportViewModel> NewGetReportQuery(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
-            var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.IsApproved);
+            var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus == ApprovalStatus.Approved);
 
             var realizationQuery = _DbContext.VBRealizationDocuments.AsNoTracking();
 
@@ -101,14 +102,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                   RealizationNo = real.DocumentNo,
                                   RealizationDate = real.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                                   Usage = rqst.Purpose,
-                                  Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
-                                        : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
+                                  Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
+                                        : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
                                   Amount = rqst.Amount,
                                   RealizationAmount = real != null ? real.Amount : 0,
                                   Difference = real != null ? rqst.Amount - real.Amount : 0,
                                   Status = rqst.IsCompleted ? "Clearance" : "Outstanding",
                                   LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                                  ApprovalDate = rqst.ApprovedDate.HasValue ? rqst.ApprovedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
+                                  ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                     : "-",
                                   ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                     : "-"
@@ -149,14 +150,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                               RealizationNo = real.DocumentNo,
                               RealizationDate = real.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                               Usage = rqst.Purpose,
-                              Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
-                                    : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
+                              Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
+                                    : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
                               Amount = rqst.Amount,
                               RealizationAmount = real != null ? real.Amount : 0,
                               Difference = real != null ? rqst.Amount - real.Amount : 0,
                               Status = rqst.IsCompleted ? "Clearance" : "Outstanding",
                               LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                              ApprovalDate = rqst.ApprovedDate.HasValue ? rqst.ApprovedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
+                              ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                 : "-",
                               ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                 : "-"

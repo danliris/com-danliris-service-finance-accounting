@@ -18,4 +18,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         WithVB = 1,
         NonVB
     }
+
+    public enum ApprovalStatus
+    {
+        Draft = 1,
+        Approved,
+        Canceled
+    }
 }

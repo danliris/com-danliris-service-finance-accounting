@@ -17,5 +17,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public List<VBRequestDocumentWithPOItemDto> Items { get; set; }
         public string CreatedBy { get; set; }
+        public string ApprovalStatus { get; set; }
     }
 }

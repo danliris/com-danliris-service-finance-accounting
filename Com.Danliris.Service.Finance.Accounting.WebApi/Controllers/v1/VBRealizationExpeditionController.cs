@@ -408,7 +408,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                         $"{verificationReceiptDate}",
                         $"{verifiedBy}",
                         $"{verifiedDate}",
-                        $"{datum.Position}",
+                        $"{datum.Position.GetDisplayName()}",
                         $"{datum.NotVerifiedReason}",
                         $"{cashierReceiptDate}"
                         );

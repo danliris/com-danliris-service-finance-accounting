@@ -130,7 +130,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     form.Amount.GetValueOrDefault(),
                     false,
                     false,
-                    false,
                     VBType.NonPO,
                     documentNo.Item2
                     );
@@ -203,7 +202,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 form.Currency.Rate.GetValueOrDefault(),
                 form.Purpose,
                 form.Amount.GetValueOrDefault(),
-                false,
                 false,
                 false,
                 VBType.WithPO,
@@ -357,7 +355,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 Active = model.Active,
                 Amount = model.Amount,
                 DocumentNo = model.DocumentNo,
-                IsApproved = model.IsApproved,
+                IsApproved = model.ApprovalStatus == ApprovalStatus.Approved,
+                ApprovalStatus = model.ApprovalStatus.ToString(),
                 CreatedAgent = model.CreatedAgent,
                 Items = items.Select(s => new VBRequestDocumentNonPOItemDto()
                 {
@@ -464,9 +463,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 },
                 DocumentNo = model.DocumentNo,
                 Id = model.Id,
-                IsApproved = model.IsApproved,
+                IsApproved = model.ApprovalStatus == ApprovalStatus.Approved,
                 Purpose = model.Purpose,
                 CreatedBy = model.CreatedBy,
+                ApprovalStatus = model.ApprovalStatus.ToString(),
                 Items = epoDetails.Select(epoDetail =>
                 {
                     var details = _dbContext.VBRequestDocumentItems.Where(entity => entity.VBRequestDocumentEPODetailId == epoDetail.Id).ToList();
@@ -657,7 +657,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         {
             var enumType = (VBType)type;
             var offset = _identityService.TimezoneOffset;
-            var query = _dbContext.VBRequestDocuments.Where(s => !s.IsApproved && s.Type == enumType);
+            var query = _dbContext.VBRequestDocuments.Where(s => s.ApprovalStatus == ApprovalStatus.Draft && s.Type == enumType);
 
             if (vbId != 0)
             {
@@ -686,7 +686,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             foreach (var item in vbDocuments)
             {
-                item.SetIsApproved(data.IsApproved, _identityService.Username, UserAgent);
+                item.SetIsApproved(_identityService.Username, UserAgent);
                 if (data.IsApproved)
                 {
                     item.SetApprovedBy(_identityService.Username, _identityService.Username, UserAgent);
@@ -708,6 +708,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     var httpClient = _serviceProvider.GetService<IHttpClientService>();
                     var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
                 }
+            }
+
+            return _dbContext.SaveChangesAsync();
+        }
+
+        public Task<int> CancellationDocuments(CancellationFormDto form)
+        {
+            var vbDocuments = _dbContext.VBRequestDocuments.Where(s => form.Ids.Contains(s.Id));
+
+            foreach (var item in vbDocuments)
+            {
+                item.SetCancellation(_identityService.Username, UserAgent);
+
+                //if (item.Type == VBType.WithPO)
+                //{
+                //    var epoIds = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == item.Id).Select(entity => (long)entity.EPOId).ToList();
+                //    var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+
+                //    var body = new VBAutoJournalFormDto()
+                //    {
+                //        Date = DateTimeOffset.UtcNow,
+                //        DocumentNo = item.DocumentNo,
+                //        EPOIds = epoIds
+                //    };
+
+                //    var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                //    var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                //}
             }
 
             return _dbContext.SaveChangesAsync();

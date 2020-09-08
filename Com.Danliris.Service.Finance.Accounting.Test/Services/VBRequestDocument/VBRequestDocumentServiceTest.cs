@@ -309,5 +309,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             //Assert
             Assert.True(0 < result);
         }
+
+        [Fact]
+        public async Task CancelDocument_Return_Succes()
+        {
+            //Setup
+            var dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            var service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
+            var data = _dataUtil(service).GetTestData_VBRequestDocumentWithPO();
+
+            var form = new CancellationFormDto()
+            {
+                Ids = new List<int>() { data.Id }
+            };
+            //Act
+            int result = await service.CancellationDocuments(form);
+
+            //Assert
+            Assert.True(0 < result);
+        }
     }
 }
