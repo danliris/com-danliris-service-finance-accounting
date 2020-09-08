@@ -1099,7 +1099,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).PostNonPO(new VBRequestDocumentNonPOFormDto());
+            IActionResult response = await GetController(serviceProviderMock).CanccellationDocuments(new CancellationFormDto());
 
             //Assert
             int statusCode = this.GetStatusCode(response);
