@@ -44,6 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         {
             try
             {
+                VerifyUser();
                 ReadResponse<VBRealizationDocumentModel> read = _service.Read(page, size, order, select, keyword, filter);
 
                 //List<TViewModel> dataVM = Mapper.Map<List<TViewModel>>(read.Data);
@@ -67,6 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         {
             try
             {
+                VerifyUser();
                 var model = await _service.ReadByIdAsync(id);
 
                 if (model == null)
