@@ -1038,7 +1038,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
 
-
         [Fact]
         public async Task GetApprovedData_Return_InternalServerError()
         {
@@ -1056,6 +1055,51 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
 
             //Act
             IActionResult response = await GetController(serviceProviderMock).ApprovalData(approvalVBFormDto);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public async Task PostCancellation_Succes_Return_Created()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service.Setup(s => s.CancellationDocuments(It.IsAny<CancellationFormDto>())).ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).PostNonPO(new VBRequestDocumentNonPOFormDto());
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        }
+
+
+        [Fact]
+        public async Task PostCancellation_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRequestDocumentService>();
+
+            service
+                .Setup(s => s.CancellationDocuments(It.IsAny<CancellationFormDto>()))
+                .ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRequestDocumentService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).CanccellationDocuments(new CancellationFormDto());
 
             //Assert
             int statusCode = this.GetStatusCode(response);
