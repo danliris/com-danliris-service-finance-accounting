@@ -412,5 +412,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
+
+        [HttpPost("cancellation")]
+        public async Task<IActionResult> CanccellationDocuments([FromBody] CancellationFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+
+                var result = await _service.CancellationDocuments(form);
+
+
+                var response = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok(null, result);
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
     }
 }

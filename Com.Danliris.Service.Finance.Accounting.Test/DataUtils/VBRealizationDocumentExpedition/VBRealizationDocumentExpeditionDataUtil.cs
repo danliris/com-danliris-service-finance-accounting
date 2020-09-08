@@ -34,6 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
         {
             var data = new RealizationVbModel()
             {
+                DivisionId=1,
                 DivisionName = "DivisionName",
                 CurrencyCode = "IDR",
                 CurrencyRate = 1,

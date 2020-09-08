@@ -2436,10 +2436,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTimeOffset?>("ApprovalDate");
+
+                    b.Property<int>("ApprovalStatus");
+
                     b.Property<string>("ApprovedBy")
                         .HasMaxLength(256);
 
-                    b.Property<DateTimeOffset?>("ApprovedDate");
+                    b.Property<string>("CanceledBy")
+                        .HasMaxLength(256);
+
+                    b.Property<DateTimeOffset?>("CancellationDate");
 
                     b.Property<string>("CompletedBy")
                         .HasMaxLength(256);
@@ -2485,8 +2492,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(64);
 
                     b.Property<int>("Index");
-
-                    b.Property<bool>("IsApproved");
 
                     b.Property<bool>("IsCompleted");
 
