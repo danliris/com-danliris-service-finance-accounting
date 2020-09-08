@@ -719,7 +719,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             foreach (var item in vbDocuments)
             {
-                item.SetCancellation(_identityService.Username, UserAgent);
+                item.SetCancellation(form.Reason, _identityService.Username, UserAgent);
 
                 //if (item.Type == VBType.WithPO)
                 //{
