@@ -379,7 +379,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", 0, "", 0, "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", 0, "", 0, "", "", "", "", "", "", "");
             }
             else
             {
@@ -391,27 +391,27 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     var cashierReceiptDate = datum.CashierReceiptDate.HasValue ? datum.CashierReceiptDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
                     //var vbRealizationDate = datum.VBRealizationDate.AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
                     var verifiedBy = !string.IsNullOrWhiteSpace(datum.VerifiedToCashierBy) ? datum.VerifiedToCashierBy : !string.IsNullOrWhiteSpace(datum.NotVerifiedBy) ? datum.NotVerifiedBy : "";
+
                     dt.Rows.Add(
-                        $"{datum.VBNo}",
-                        $"{datum.VBRealizationNo}",
-                        $"{datum.VBType}",
-                        $"{datum.VBRequestName}",
-                        $"{datum.UnitName}",
-                        $"{datum.DivisionName}",
-                        $"{sendToVerificationDate}",
-                        $"",
-                        $"{datum.CurrencyCode}",
+                        datum.VBNo,
+                        datum.VBRealizationNo,
+                        datum.VBType.GetDisplayName(),
+                        datum.VBRequestName,
+                        datum.UnitName,
+                        datum.DivisionName,
+                        sendToVerificationDate,
+                        "",
+                        datum.CurrencyCode,
                         datum.VBAmount,
-                        $"{datum.CurrencyCode}",
+                        datum.CurrencyCode,
                         datum.VBRealizationAmount,
-                        $"{datum.VBRealizationDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)}",
-                        $"{verificationReceiptDate}",
-                        $"{verifiedBy}",
-                        $"{verifiedDate}",
-                        $"{datum.Position.GetDisplayName()}",
-                        $"{datum.NotVerifiedReason}",
-                        $"{cashierReceiptDate}"
-                        );
+                        datum.VBRealizationDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
+                        verificationReceiptDate,
+                        verifiedBy, 
+                        verifiedDate, 
+                        datum.Position.GetDisplayName(), 
+                        datum.NotVerifiedReason, 
+                        cashierReceiptDate);
                 }
             }
 

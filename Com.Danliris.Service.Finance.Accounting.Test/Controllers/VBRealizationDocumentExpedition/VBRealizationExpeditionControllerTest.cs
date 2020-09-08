@@ -103,7 +103,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         {
             get
             {
-                return new ReportDto();
+                return new ReportDto()
+                {
+                    CashierReceiptBy = "Cashier",
+                    CashierReceiptDate = DateTime.Now.ToUniversalTime(),
+                    CurrencyCode = "Code",
+                    CurrencyRate = 1,
+                    DivisionId = 1,
+                    DivisionName = "Name",
+                    NotVerifiedBy = "Not Verified By",
+                    NotVerifiedDate = DateTime.Now.ToUniversalTime(),
+                    NotVerifiedReason = "reason",
+                    Position = VBRealizationPosition.Purchasing,
+                    SendToVerificationBy = "Verification By",
+                    SendToVerificationDate = DateTime.Now.ToUniversalTime(),
+                    UnitId = 1,
+                    UnitName = "Nam",
+                    VBAmount = 1,
+                    VBId = 1,
+                    VBNo = " no",
+                    VBRealizationAmount = 1,
+                    VBRealizationDate = DateTime.Now.ToUniversalTime(),
+                    VBRealizationId = 1,
+                    VBRealizationNo = "No",
+                    VBRequestName = "name",
+                    VBType = VBType.NonPO,
+                    VerificationReceiptBy = "ReceiptBy",
+                    VerificationReceiptDate = DateTime.Now.ToUniversalTime(),
+                    VerifiedToCashierBy = "CashierBy",
+                    VerifiedToCashierDate = DateTime.Now.ToUniversalTime()
+                };
                
             }
         }
@@ -633,7 +662,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
 
             service
                 .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<ReportDto>() { new ReportDto()}, 1, 1, 25));
+                .ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<ReportDto>() { }, 1, 1, 25));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
