@@ -104,6 +104,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
 
 
         public ApprovalStatus ApprovalStatus { get; private set; }
+        public string CancellationReason { get; private set; }
         public DateTimeOffset? ApprovalDate { get; private set; }
         [MaxLength(256)]
         public string ApprovedBy { get; private set; }
@@ -266,9 +267,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             SuppliantDivisionName = form.SuppliantUnit.Division.Name;
         }
 
-        public void SetCancellation(string username, string userAgent)
+        public void SetCancellation(string reason, string username, string userAgent)
         {
             ApprovalStatus = ApprovalStatus.Canceled;
+            CancellationReason = reason;
             CanceledBy = username;
             CancellationDate = DateTimeOffset.UtcNow;
             this.FlagForUpdate(username, userAgent);
