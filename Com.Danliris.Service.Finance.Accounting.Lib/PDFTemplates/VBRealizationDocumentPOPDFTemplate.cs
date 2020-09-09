@@ -34,21 +34,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             document.Open();
 
             #region Header
-
             PdfPTable headerTable_A = new PdfPTable(2);
             PdfPTable headerTable_B = new PdfPTable(1);
             PdfPTable headerTable_C = new PdfPTable(1);
             PdfPTable headerTable1 = new PdfPTable(1);
             PdfPTable headerTable2 = new PdfPTable(1);
-            PdfPTable headerTable3 = new PdfPTable(5);
-            PdfPTable headerTable3a = new PdfPTable(9);
+            PdfPTable headerTable3 = new PdfPTable(6);
+            PdfPTable headerTable3a = new PdfPTable(5);
             PdfPTable headerTable4 = new PdfPTable(2);
+
             headerTable_A.SetWidths(new float[] { 10f, 10f });
             headerTable_A.WidthPercentage = 100;
-            headerTable3.SetWidths(new float[] { 10f, 20f, 40f, 20f, 20f });
+            headerTable3.SetWidths(new float[] { 5f, 15f, 30f, 15f, 15f, 20f });
             headerTable3.WidthPercentage = 110;
-            headerTable3a.SetWidths(new float[] { 20f, 3f, 20f, 20f, 3f, 20f, 20f, 3f, 20f });
-            headerTable3a.WidthPercentage = 120;
+            headerTable3a.SetWidths(new float[] { 3f, 15f, 5f, 15f, 62f });
+            headerTable3a.WidthPercentage = 110;
             headerTable4.SetWidths(new float[] { 10f, 40f });
             headerTable4.WidthPercentage = 100;
 
@@ -77,10 +77,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             cellHeader1.AddElement(headerTable1);
             headerTable_A.AddCell(cellHeader1);
-
             cellHeader2.AddElement(headerTable2);
             headerTable_A.AddCell(cellHeader2);
-
             document.Add(headerTable_A);
 
             cellHeaderBody.HorizontalAlignment = Element.ALIGN_LEFT;
@@ -101,33 +99,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_CENTER;
             cellHeaderBody6.HorizontalAlignment = Element.ALIGN_LEFT;
 
-            cellHeaderBody2.Colspan = 5;
+            // Document title
+            cellHeaderBody2.Colspan = 6;
             cellHeaderBody2.Phrase = new Phrase("REALISASI VB DENGAN PO", bold_font);
             headerTable3.AddCell(cellHeaderBody2);
 
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody);
-
-            cellHeaderBody3.Colspan = 5;
+            // Document number
+            cellHeaderBody3.Colspan = 6;
             cellHeaderBody3.HorizontalAlignment = Element.ALIGN_RIGHT;
             cellHeaderBody3.Phrase = new Phrase($"{viewModel.Header.DocumentNo}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
-            cellHeaderBody3.Colspan = 5;
+            // Realisasi VB Bagian
+            cellHeaderBody3.Colspan = 6;
             cellHeaderBody3.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody3.Phrase = new Phrase($"Realisasi VB Bagian: {viewModel.Header.SuppliantUnitName}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
-            cellHeaderBody3.Colspan = 5;
+            // Tanggal
+            cellHeaderBody3.Colspan = 6;
             cellHeaderBody3.Phrase = new Phrase($"Tanggal: {viewModel.Header.Date.AddHours(timeoffsset).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
+            // New line
+            cellHeaderBody3.Phrase = new Phrase(" ", normal_font);
+            headerTable3.AddCell(cellHeaderBody3);
+
+            // Table header
             cellHeaderBody1.Phrase = new Phrase("No", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
             cellHeaderBody1.Phrase = new Phrase("Tanggal", normal_font);
@@ -136,127 +134,140 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1);
             cellHeaderBody1.Phrase = new Phrase("Divisi", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
-            //cellHeaderBody1.Phrase = new Phrase("Unit", normal_font);
-            //headerTable3.AddCell(cellHeaderBody1);
+            cellHeaderBody1.Phrase = new Phrase("Mata Uang", normal_font);
+            headerTable3.AddCell(cellHeaderBody1);
             cellHeaderBody1.Phrase = new Phrase("Jumlah", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
 
             int index = 1;
             decimal count_price = 0;
             decimal total_realization = 0;
-
-            //var items = viewModel.numberVB.UnitLoad.Split(",");
-
-            //string lastitem = items[items.Length - 1];
-
-            //lastitem = lastitem.Trim();
-
             decimal total_all = 0;
-            //foreach (var item in viewModel.Items)
-            //{
-            //    if (item.IsGetPPn)
-            //    {
-            //        var temp = item.Amount * 0.1m;
-            //        total_all += item.Amount + temp;
-            //    }
-            //    else
-            //    {
-            //        total_all += item.Amount;
-            //    }
-            //}
 
             var currencyCode = viewModel.Header.CurrencyCode;
             var currencydescription = viewModel.Header.CurrencyDescription;
 
             foreach (var itm in viewModel.Items)
             {
+                // No
                 cellHeaderBody1.Phrase = new Phrase(index.ToString(), normal_font);
+                cellHeaderBody1.HorizontalAlignment = Element.ALIGN_CENTER;
                 headerTable3.AddCell(cellHeaderBody1);
                 index++;
 
+                // Tanggal
                 cellHeaderBody1.Phrase = new Phrase(itm.Date.AddHours(timeoffsset).ToString("dd/MM/yyyy"), normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
 
+                // Keterangan
                 cellHeaderBody1.Phrase = new Phrase(itm.UnitPaymentOrderNo + " " + $"({itm.SupplierName})", normal_font);
+                cellHeaderBody1.HorizontalAlignment = Element.ALIGN_LEFT;
                 headerTable3.AddCell(cellHeaderBody1);
 
+                // Divisi
                 cellHeaderBody1.Phrase = new Phrase(itm.DivisionName, normal_font);
+                cellHeaderBody1.HorizontalAlignment = Element.ALIGN_CENTER;
                 headerTable3.AddCell(cellHeaderBody1);
 
                 if (itm.UseVat)
                 {
                     var temp = itm.Amount * 0.1m;
                     total_all = itm.Amount + temp;
-
                 }
                 else
                 {
                     total_all = itm.Amount;
                 }
 
-                cellHeaderBody1.Phrase = new Phrase($"{currencyCode}        " + itm.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                // Mata Uang
+                cellHeaderBody1.Phrase = new Phrase(currencyCode, normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
+                
+                // Jumlah
+                cellHeaderBody1.Phrase = new Phrase(itm.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody1.HorizontalAlignment = Element.ALIGN_RIGHT;
+                headerTable3.AddCell(cellHeaderBody1);
+
                 count_price += total_all;
                 total_realization += itm.Amount;
             }
 
-            cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody1b);
-            //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
-            //headerTable3.AddCell(cellHeaderBody1b);
-            cellHeaderBody1a.Colspan = 3;
+            // Jumlah Realisasi
+            cellHeaderBody1a.Colspan = 4;
+            cellHeaderBody1a.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a.Phrase = new Phrase("Jumlah Realisasi", normal_font);
             headerTable3.AddCell(cellHeaderBody1a);
-            cellHeaderBody1b.Phrase = new Phrase($"{currencyCode}       " + total_realization.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            
+            // Mata Uang
+            cellHeaderBody1b.Phrase = new Phrase(currencyCode, normal_font);
             headerTable3.AddCell(cellHeaderBody1b);
 
+            // Jumlah
+            cellHeaderBody1a.Phrase = new Phrase(total_realization.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1a.HorizontalAlignment = Element.ALIGN_RIGHT;
+            headerTable3.AddCell(cellHeaderBody1a);
 
-
-            cellHeaderBody1b1.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody1b1);
-            //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
-            //headerTable3.AddCell(cellHeaderBody1b);
-            cellHeaderBody1a1.Colspan = 3;
-            cellHeaderBody1a1.Phrase = new Phrase("PPn", normal_font);
+            // PPn
+            cellHeaderBody1a1.Colspan = 4;
+            cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_LEFT;
+            cellHeaderBody1a1.Phrase = new Phrase("PPN", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
-            cellHeaderBody1b1.Phrase = new Phrase($"{currencyCode}       " + (count_price - total_realization).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            
+            // Mata Uang
+            cellHeaderBody1b1.Phrase = new Phrase(currencyCode, normal_font);
             headerTable3.AddCell(cellHeaderBody1b1);
 
-            cellHeaderBody1b1.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody1b1);
-            //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
-            //headerTable3.AddCell(cellHeaderBody1b);
-            cellHeaderBody1a1.Colspan = 3;
+            // Jumlah
+            cellHeaderBody1a1.Phrase = new Phrase((count_price - total_realization).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_RIGHT;
+            headerTable3.AddCell(cellHeaderBody1a1);
+
+            // PPh ditanggung Dan Liris
+            cellHeaderBody1a1.Colspan = 4;
+            cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a1.Phrase = new Phrase("PPh ditanggung Supplier", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
-            cellHeaderBody1b1.Phrase = new Phrase($"{currencyCode}       " + (GetPPhValue(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            
+            // Mata Uang
+            cellHeaderBody1b1.Phrase = new Phrase(currencyCode, normal_font);
             headerTable3.AddCell(cellHeaderBody1b1);
 
-            cellHeaderBody1b1.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody1b1);
-            //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
-            //headerTable3.AddCell(cellHeaderBody1b);
-            cellHeaderBody1a1.Colspan = 3;
+            // Jumlah
+            cellHeaderBody1a1.Phrase = new Phrase((GetPPhValue(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_RIGHT;
+            headerTable3.AddCell(cellHeaderBody1a1);
+
+            // PPh ditanggung Supplier
+            cellHeaderBody1a1.Colspan = 4;
+            cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a1.Phrase = new Phrase("PPh ditanggung Dan Liris", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
-            cellHeaderBody1b1.Phrase = new Phrase($"{currencyCode}       " + (GetPPhValueDanliris(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            
+            // Mata Uang
+            cellHeaderBody1b1.Phrase = new Phrase(currencyCode, normal_font);
             headerTable3.AddCell(cellHeaderBody1b1);
 
-            cellHeaderBody1b2.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody1b2);
-            //cellHeaderBody1b.Phrase = new Phrase(" ", normal_font);
-            //headerTable3.AddCell(cellHeaderBody1b);
-            cellHeaderBody1a2.Colspan = 3;
-            cellHeaderBody1a2.Phrase = new Phrase("Total Keseluruhan", normal_font);
-            var grandTotal = count_price - GetPPhValue(viewModel);
+            // Jumlah
+            cellHeaderBody1a1.Phrase = new Phrase((GetPPhValueDanliris(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_RIGHT;
+            headerTable3.AddCell(cellHeaderBody1a1);
+
+            // Total Keseluruhan
+            cellHeaderBody1a2.Colspan = 4;
+            cellHeaderBody1a2.HorizontalAlignment = Element.ALIGN_LEFT;
+            cellHeaderBody1a2.Phrase = new Phrase("Total", normal_font);
             headerTable3.AddCell(cellHeaderBody1a2);
-            cellHeaderBody1b2.Phrase = new Phrase($"{currencyCode}       " + grandTotal.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+
+            // Mata Uang
+            cellHeaderBody1b2.Phrase = new Phrase(currencyCode, normal_font);
             headerTable3.AddCell(cellHeaderBody1b2);
 
-            //cellHeaderBody1.Colspan = 2;
-            cellHeaderBody6.Colspan = 2;
-            //cellHeaderBody6.Phrase = new Phrase(" ", normal_font);
-            //headerTable3.AddCell(cellHeaderBody6);
+            // Jumlah
+            var grandTotal = count_price - GetPPhValue(viewModel);
+            cellHeaderBody1a2.Phrase = new Phrase(grandTotal.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1a2.HorizontalAlignment = Element.ALIGN_RIGHT;
+            headerTable3.AddCell(cellHeaderBody1a2);
+
             var vbDate = viewModel.Header.VBRequestDocumentDate?.AddHours(timeoffsset).ToString("dd-MMMM-yy", new CultureInfo("id-ID"));
             if (viewModel.Header.DocumentType == RealizationDocumentType.NonVB)
                 if (!string.IsNullOrWhiteSpace(viewModel.Header.VBRequestDocumentNo))
@@ -264,130 +275,122 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 else
                     vbDate = "";
 
+            // Tanggal VB
+            cellHeaderBody6.Colspan = 2;
             cellHeaderBody6.Phrase = new Phrase($"Tanggal VB : {vbDate}", normal_font);
             headerTable3.AddCell(cellHeaderBody6);
-            //
+            
+            // No VB
             cellHeaderBody1.Colspan = 2;
             cellHeaderBody1.Phrase = new Phrase($"No.VB: {viewModel.Header.VBRequestDocumentNo}", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
 
             if (viewModel.Header.VBRequestDocumentId == 0)
             {
-                cellHeaderBody1.Phrase = new Phrase($"{currencyCode}        " + 0.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                // Mata Uang
+                cellHeaderBody1.Colspan = 1;
+                cellHeaderBody1.Phrase = new Phrase(currencyCode, normal_font);
+                cellHeaderBody1.HorizontalAlignment = Element.ALIGN_CENTER;
+                headerTable3.AddCell(cellHeaderBody1);
+
+                // Jumlah
+                cellHeaderBody1.Colspan = 1;
+                cellHeaderBody1.Phrase = new Phrase(0.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody1.HorizontalAlignment = Element.ALIGN_RIGHT;
                 headerTable3.AddCell(cellHeaderBody1);
             }
             else
             {
-                cellHeaderBody1.Phrase = new Phrase($"{currencyCode}        " + viewModel.Header.VBRequestDocumentAmount.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                // Mata Uang
+                cellHeaderBody1.Colspan = 1;
+                cellHeaderBody1.Phrase = new Phrase(currencyCode, normal_font);
+                cellHeaderBody1.HorizontalAlignment = Element.ALIGN_CENTER;
+                headerTable3.AddCell(cellHeaderBody1);
+
+                // Jumlah
+                cellHeaderBody1.Colspan = 1;
+                cellHeaderBody1.Phrase = new Phrase(viewModel.Header.VBRequestDocumentAmount.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody1.HorizontalAlignment = Element.ALIGN_RIGHT;
                 headerTable3.AddCell(cellHeaderBody1);
             }
 
-
-
             var priceterbilang = count_price;
-
             var res = (count_price - GetPPhValue(viewModel)) - (viewModel.Header.VBRequestDocumentId == 0 ? 0 : viewModel.Header.VBRequestDocumentAmount);
-
-            cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody5);
-            cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody5);
-            cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody5);
-            //cellHeaderBody5.Phrase = new Phrase(" ", normal_font);
-            //headerTable3.AddCell(cellHeaderBody5);
-
 
             if (res > 0)
             {
+                // Kurang
+                cellHeaderBody5.Colspan = 4;
                 cellHeaderBody5.Phrase = new Phrase("Kurang", bold_font);
                 headerTable3.AddCell(cellHeaderBody5);
 
-                cellHeaderBody5a.Phrase = new Phrase($"({currencyCode}      " + res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
+                // Mata Uang
+                cellHeaderBody5a.Phrase = new Phrase(currencyCode, normal_font);
+                headerTable3.AddCell(cellHeaderBody5a);
+
+                // Jumlah
+                cellHeaderBody5a.Phrase = new Phrase(res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
+                cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody5a);
             }
             else
             {
+                // Sisa
+                cellHeaderBody5.Colspan = 4;
                 cellHeaderBody5.Phrase = new Phrase("Sisa", bold_font);
                 headerTable3.AddCell(cellHeaderBody5);
 
-                cellHeaderBody5a.Phrase = new Phrase($"{currencyCode}       " + (res * -1).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                // Mata Uang
+                cellHeaderBody5a.Phrase = new Phrase(currencyCode, normal_font);
+                headerTable3.AddCell(cellHeaderBody5a);
+
+                // Jumlah
+                cellHeaderBody5a.Phrase = new Phrase((res * -1).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody5a);
             }
 
-            //count_price /= items.Length;
             string total = count_price.ToString("#,##0.00", new CultureInfo("id-ID"));
 
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4);
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4);
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4);
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4);
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4);
-
+            // New Line
+            cellHeaderBody4a.Colspan = 6;
             cellHeaderBody4a.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4a);
-            cellHeaderBody4a.Phrase = new Phrase("Terbilang : ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4a);
-            cellHeaderBody4b.Colspan = 3;
-            cellHeaderBody4b.Phrase = new Phrase(Nom(grandTotal, currencyCode, currencydescription), normal_font);
-            headerTable3.AddCell(cellHeaderBody4b);
-            //cellHeaderBody4b.Phrase = new Phrase(" ", normal_font);
-            //headerTable3.AddCell(cellHeaderBody4b);
 
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4);
+            // Terbilang
+            cellHeaderBody4a.Colspan = 6;
+            cellHeaderBody4a.HorizontalAlignment = Element.ALIGN_LEFT;
+            cellHeaderBody4a.Phrase = new Phrase("Terbilang: " + Nom(grandTotal, currencyCode, currencydescription), normal_font);
+            headerTable3.AddCell(cellHeaderBody4a);
+
+            // New Line
+            cellHeaderBody4a.Colspan = 6;
+            cellHeaderBody4a.Phrase = new Phrase(" ", normal_font);
+            headerTable3.AddCell(cellHeaderBody4a);
+
+            // Beban Unit
+            cellHeaderBody4.Colspan = 6;
+            cellHeaderBody4.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody4.Phrase = new Phrase("Beban Unit :", bold_font);
-            headerTable3.AddCell(cellHeaderBody4);
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4);
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
-            headerTable3.AddCell(cellHeaderBody4);
-            cellHeaderBody4.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4);
 
             cellHeader3.AddElement(headerTable3);
             headerTable_B.AddCell(cellHeader3);
-
             cellHeader4.AddElement(headerTable4);
             headerTable_B.AddCell(cellHeader4);
-
             document.Add(headerTable_B);
-
             #endregion Header
 
             #region NewCheckbox
-
             var unitCosts = viewModel.UnitCosts.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
 
             List<PdfFormField> annotations = new List<PdfFormField>();
             foreach (var item in unitCosts)
             {
-
-                if (item.Key == 0)
-                {
-                    cellHeaderBody.Phrase = new Phrase("......", normal_font_8);
-                }
-                else
-                {
-                    cellHeaderBody.Phrase = new Phrase(item.First().UnitName, normal_font_8);
-                }
-
-                headerTable3a.AddCell(cellHeaderBody);
-
-                cellHeaderBody.Phrase = new Phrase("", normal_font_8);
-
-                //Create_Box(writer,headerTable3a);
-
-
                 PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
                 cellform.FixedHeight = 5f;
-                //initiate form checkbox 
 
+                //initiate form checkbox
                 PdfFormField _checkGroup = PdfFormField.CreateEmpty(writer);
                 RadioCheckField _radioG;
                 PdfFormField _radioField1;
@@ -410,6 +413,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                      = new BebanUnitEvent(_checkGroup, _radioField1, 1);
                 headerTable3a.AddCell(cellform);
 
+                // Beban Unit Item
+                if (item.Key == 0)
+                {
+                    cellHeaderBody.Phrase = new Phrase("......", normal_font_8);
+                }
+                else
+                {
+                    cellHeaderBody.Phrase = new Phrase(item.First().UnitName, normal_font_8);
+                }
+                cellHeaderBody.HorizontalAlignment = Element.ALIGN_LEFT;
+                headerTable3a.AddCell(cellHeaderBody);
+
+                cellHeaderBody.Phrase = new Phrase("", normal_font_8);
+
                 if (!flag)
                 {
                     cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
@@ -419,9 +436,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 {
                     var nom = item.Sum(s => s.Amount).ToString("#,##0.00", new CultureInfo("id-ID"));
 
-                    cellHeaderBody.Phrase = new Phrase($"{currencyCode}   {nom}", normal_font_8); //total
+                    // Beban Unit Item Mata Uang
+                    cellHeaderBody.Phrase = new Phrase(currencyCode, normal_font_8);
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    headerTable3a.AddCell(cellHeaderBody);
+
+                    // Beban Unit Item Nominal
+                    cellHeaderBody.Phrase = new Phrase(nom, normal_font_8);
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_RIGHT;
                     headerTable3a.AddCell(cellHeaderBody);
                 }
+
+                // Empty space
+                cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                headerTable3a.AddCell(cellHeaderBody);
 
                 annotations.Add(_checkGroup);
             }
@@ -440,15 +468,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             {
                 writer.AddAnnotation(annotation);
             }
-
             #endregion
 
 
             #region Footer
-
             PdfPTable table = new PdfPTable(5)
             {
-                WidthPercentage = 100
+                WidthPercentage = 97
             };
             float[] widths = new float[] { 1f, 1f, 1f, 1f, 1f };
             table.SetWidths(widths);
@@ -459,7 +485,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 VerticalAlignment = Element.ALIGN_MIDDLE,
             };
 
-            cell.Phrase = new Phrase("", normal_font);
+            cell.Phrase = new Phrase(" ", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase("", normal_font);
             table.AddCell(cell);
