@@ -19,9 +19,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         // New Ctor With Index
         public VBRequestDocumentModel(string documentNo, DateTimeOffset date, DateTimeOffset realizationEstimationDate, int suppliantUnitId, string suppliantUnitCode, string suppliantUnitName,
                 int suppliantDivisionId, string suppliantDivisionCode, string suppliantDivisionName, int currencyId, string currencyCode, string currencySymbol, string currencyDescription,
-                double currencyRate, string purpose, decimal amount, bool isPosted, bool isApproved, bool isCompleted, VBType type, int index)
+                double currencyRate, string purpose, decimal amount, bool isPosted, bool isCompleted, VBType type, int index)
             : this(documentNo, date, realizationEstimationDate, suppliantUnitId, suppliantUnitCode, suppliantUnitName, suppliantDivisionId, suppliantDivisionCode, suppliantDivisionName,
-                currencyId, currencyCode, currencySymbol, currencyDescription, currencyRate, purpose, amount, isPosted, isApproved, isCompleted, type)
+                currencyId, currencyCode, currencySymbol, currencyDescription, currencyRate, purpose, amount, isPosted, isCompleted, type)
         {
             Index = index;
         }
@@ -44,7 +44,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             string purpose,
             decimal amount,
             bool isPosted,
-            bool isApproved,
             bool isCompleted,
             VBType type
             )
@@ -60,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             Purpose = purpose;
             Amount = amount;
             IsPosted = isPosted;
-            IsApproved = isApproved;
+            ApprovalStatus = ApprovalStatus.Draft;
             IsCompleted = isCompleted;
             Type = type;
 
@@ -104,10 +103,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public bool IsRealized { get; private set; }
 
 
-        public bool IsApproved { get; private set; }
-        public DateTimeOffset? ApprovedDate { get; private set; }
+        public ApprovalStatus ApprovalStatus { get; private set; }
+        public string CancellationReason { get; private set; }
+        public DateTimeOffset? ApprovalDate { get; private set; }
         [MaxLength(256)]
         public string ApprovedBy { get; private set; }
+
+        public DateTimeOffset? CancellationDate { get; private set; }
+        [MaxLength(256)]
+        public string CanceledBy { get; private set; }
 
         public bool IsCompleted { get; private set; }
         public DateTimeOffset? CompletedDate { get; private set; }
@@ -183,20 +187,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             }
         }
 
-        public void SetIsApproved(bool newFlagIsApproved, string user, string userAgent)
+        public void SetIsApproved(string user, string userAgent)
         {
-            if (newFlagIsApproved != IsApproved)
-            {
-                IsApproved = newFlagIsApproved;
-                this.FlagForUpdate(user, userAgent);
-            }
+            ApprovalStatus = ApprovalStatus.Approved;
+            this.FlagForUpdate(user, userAgent);
         }
 
         public void SetApprovedDate(DateTimeOffset newApprovedDate, string user, string userAgent)
         {
-            if (newApprovedDate != ApprovedDate)
+            if (newApprovedDate != ApprovalDate)
             {
-                ApprovedDate = newApprovedDate;
+                ApprovalDate = newApprovedDate;
                 this.FlagForUpdate(user, userAgent);
             }
         }
@@ -264,6 +265,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             SuppliantDivisionId = form.SuppliantUnit.Division.Id.GetValueOrDefault();
             SuppliantDivisionCode = form.SuppliantUnit.Division.Code;
             SuppliantDivisionName = form.SuppliantUnit.Division.Name;
+        }
+
+        public void SetCancellation(string reason, string username, string userAgent)
+        {
+            ApprovalStatus = ApprovalStatus.Canceled;
+            CancellationReason = reason;
+            CanceledBy = username;
+            CancellationDate = DateTimeOffset.UtcNow;
+            this.FlagForUpdate(username, userAgent);
         }
     }
 }

@@ -7,7 +7,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 {
     public enum VBType
     {
+        [Display(Name = "Dengan PO")]
         WithPO = 1,
+        [Display(Name = "Tanpa PO")]
         NonPO
     }
 
@@ -15,5 +17,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
     {
         WithVB = 1,
         NonVB
+    }
+
+    public enum ApprovalStatus
+    {
+        Draft = 1,
+        Approved,
+        Canceled
     }
 }

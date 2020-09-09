@@ -29,7 +29,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.PurchasingDisp
                 currency = new CurrencyViewModel(),
                 dispositionNo = "dispositionNo",
                 incomeTax = 1,
-                division = new DivisionViewModel()
+                division = new DivisionViewModel(),
+                paymentDueDate =DateTimeOffset.Now,
+                proformaNo = "proformaNo",
+                notVerifiedReason = "notVerifiedReason",
+                position = 1,
+                sendToCashierDivisionBy = "sendToCashierDivisionBy",
+                sendToCashierDivisionDate = DateTimeOffset.Now,
+                sendToPurchasingDivisionBy = "sendToPurchasingDivisionBy",
+                sendToPurchasingDivisionDate =DateTimeOffset.Now,
+                supplier =new SupplierViewModel(),
+                totalPaid =1,
+                dispositionId = "dispositionId",
+                verificationDivisionBy = "verificationDivisionBy",
+                verificationDivisionDate =DateTimeOffset.Now,
+                verifyDate =DateTimeOffset.Now,
+                useIncomeTax =true,
+                isPaid =true,
+                isPaidPPH =true,
+                useVat =true,
+                vat =1,
+                paymentMethod = "paymentMethod",
+                dpp =1,
+                vatValue =1,
+                incomeTaxValue =1,
+                payToSupplier =1,
+                items =new List<PurchasingDispositionExpeditionItemViewModel>()
             };
 
             Assert.True(DateTimeOffset.MinValue < viewModel.bankExpenditureNoteDate);

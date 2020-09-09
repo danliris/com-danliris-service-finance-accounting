@@ -7,7 +7,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 {
     public class VBRealizationDocumentExpeditionReportDto
     {
-        public VBRealizationDocumentExpeditionReportDto(List<VBRealizationDocumentExpeditionModel> data, int total, int size, int page)
+        public VBRealizationDocumentExpeditionReportDto(List<ReportDto> data, int total, int size, int page)
         {
             Data = data;
             Total = total;
@@ -15,7 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             Page = page;
         }
 
-        public IList<VBRealizationDocumentExpeditionModel> Data { get; private set; }
+        public IList<ReportDto> Data { get; private set; }
         public int Total { get; private set; }
         public int Size { get; private set; }
         public int Page { get; private set; }
