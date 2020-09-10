@@ -131,13 +131,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
         [Fact]
         public async Task GetReports_Return_Success()
         {
+            //Setup
             FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProvider();
 
-            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, serviceProviderMock.Object);
 
-            RealizationVbModel vb = _dataUtil(service, dbContext).GetTestData_RealizationVbs();
+            VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(dbContext, serviceProviderMock.Object);
+            var vBRealizationWithPODto = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
+
             VBRealizationDocumentExpeditionModel vbRealization = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-            Assert.ThrowsAnyAsync<NotImplementedException>(() => service.GetReports(vb.Id, vbRealization.VBRealizationId, vb.RequestVbName, vb.UnitId, vb.DivisionId, vb.Date, vb.Date, null, 1, 25));
+           
+            //Act
+             var  result = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId,DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2),"UNIT", 1, 25);
+
+            //Assert
+            Assert.NotNull(result);
+        
         }
 
 
@@ -279,6 +289,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             int result = await service.UpdateExpeditionByRealizationId(model.VBRealizationId);
 
             Assert.NotEqual(0, result);
+
+        }
+
+        [Fact]
+        public void ReadVerification_Return_Success()
+        {
+            FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+            VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
+            var result =  service.ReadVerification(1,1,"{}","",model.Position,model.VBId,model.VBRealizationId,model.VBRealizationDate,model.VBRequestName,model.UnitId);
+           
+            Assert.NotNull( result);
 
         }
 

@@ -126,32 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
             Assert.NotEqual(0, result);
         }
 
-        //[Fact]
-        //public async Task Should_Success_Create_Model_Failed_Purchasing()
-        //{
-        //    var dbContext = GetDbContext(GetCurrentMethod());
-        //    var serviceProvider = new Mock<IServiceProvider>();
-
-        //    Mock<IHttpClientService> httpMock = new Mock<IHttpClientService>();
-        //    var response = new HttpResponseMessage(HttpStatusCode.NotFound) { Content = new StringContent("Your message here") };
-
-        //    httpMock.Setup(s => s.PutAsync(It.IsAny<string>(), It.IsAny<HttpContent>())).Returns(Task.Run(() => response));
-
-        //    serviceProvider
-        //        .Setup(x => x.GetService(typeof(IHttpClientService)))
-        //        .Returns(httpMock.Object);
-        //    serviceProvider
-        //        .Setup(x => x.GetService(typeof(IIdentityService)))
-        //        .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
-
-        //    var service = new VbWithPORequestService(dbContext, serviceProvider.Object);
-        //    var dataUtil = new VbWithPORequestDataUtil(service);
-        //    var modelToCreate = dataUtil.GetVbRequestModelToCreateFailed();
-        //    var viewmodelToCreate = dataUtil.GetViewModel();
-
-        //    await Assert.ThrowsAsync<Exception>(() => service.CreateAsync(modelToCreate, viewmodelToCreate));
-        //}
-
+       
         [Fact]
         public async Task Should_Success_Create_Same_()
         {
@@ -228,22 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbWithPORequest
             Assert.NotEqual(0, result);
         }
 
-        //[Fact]
-        //public async Task Should_Success_Update_Model2()
-        //{
-        //    var dbContext = GetDbContext(GetCurrentMethod());
-        //    var serviceProviderMock = GetServiceProviderMock();
-        //    var service = new VbWithPORequestService(dbContext, serviceProviderMock.Object);
-        //    var dataUtil = new VbWithPORequestDataUtil(service);
-        //    var modelToUpdate = await dataUtil.GetCreatedData();
-        //    var viewmodelToCreate = dataUtil.GetViewModel();
-        //    await service.MappingData(viewmodelToCreate);
-
-        //    var result = await service.UpdateAsync(modelToUpdate.Id, viewmodelToCreate);
-
-        //    Assert.NotEqual(0, result);
-        //}
-
+       
         [Fact]
         public async Task Should_Success_Update_Model_Remove_Items()
         {
