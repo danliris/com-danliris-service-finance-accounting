@@ -321,7 +321,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public ReadResponse<VBRealizationDocumentModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
         {
             var query = _dbContext.Set<VBRealizationDocumentModel>().AsQueryable();
-            query = query.Where(entity => entity.Position == VBRealizationPosition.Purchasing);
+            query = query.Where(entity => entity.Position == VBRealizationPosition.Purchasing || entity.Position == VBRealizationPosition.NotVerified);
 
             if (vbId > 0)
                 query = query.Where(entity => entity.VBRequestDocumentId == vbId);
