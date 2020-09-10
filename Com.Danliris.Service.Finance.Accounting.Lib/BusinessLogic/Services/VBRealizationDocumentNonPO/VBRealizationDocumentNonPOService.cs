@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBRealizationDocumentNonPO;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -367,7 +368,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
             EditUnitCosts(id, model.UnitCosts);
 
 
-
+            data.UpdatePosition(VBRealizationPosition.Purchasing, _identityService.Username, UserAgent);
             data.FlagForUpdate(_identityService.Username, UserAgent);
             return _dbContext.SaveChangesAsync();
         }
