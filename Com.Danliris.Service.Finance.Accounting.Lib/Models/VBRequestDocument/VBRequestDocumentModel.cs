@@ -269,7 +269,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
 
         public void SetCancellation(string reason, string username, string userAgent)
         {
-            ApprovalStatus = ApprovalStatus.Canceled;
+            ApprovalStatus = ApprovalStatus.Cancelled;
             CancellationReason = reason;
             CanceledBy = username;
             CancellationDate = DateTimeOffset.UtcNow;
