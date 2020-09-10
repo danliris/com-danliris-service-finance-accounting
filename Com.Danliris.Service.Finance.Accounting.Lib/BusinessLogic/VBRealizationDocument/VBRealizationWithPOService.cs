@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -280,6 +281,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public int Update(int id, FormDto form)
         {
             var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
+            model.UpdatePosition(VBRealizationPosition.Purchasing, _identityService.Username, UserAgent);
 
             if (form.VBRequestDocument != null && form.VBRequestDocument.Id.GetValueOrDefault() > 0)
             {

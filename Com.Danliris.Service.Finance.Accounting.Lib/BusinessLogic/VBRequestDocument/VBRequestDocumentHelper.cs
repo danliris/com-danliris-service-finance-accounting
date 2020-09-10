@@ -23,6 +23,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
     {
         Draft = 1,
         Approved,
-        Canceled
+        Cancelled
     }
 }
