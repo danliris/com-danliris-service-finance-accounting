@@ -69,12 +69,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             return method.Name;
 
         }
-        private VBRealizationDocumentDataUtil _dataUtil(VBRealizationWithPOService service)
+        private VBRealizationDocumentDataUtil GetDataUtil(VBRealizationWithPOService service)
         {
             return new VBRealizationDocumentDataUtil(service);
         }
 
-        private VBRequestDocumentDataUtil _dataUtil(VBRequestDocumentService service)
+        private VBRequestDocumentDataUtil GetDataUtil(VBRequestDocumentService service)
         {
             return new VBRequestDocumentDataUtil(service);
         }
@@ -89,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             var vBRealizationService = new VBRealizationService(_dbContext, serviceProviderMock.Object);
 
             VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
-            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
+            var vBRealizationDocumenData = GetDataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
 
             //Act
             ReadResponse<VBRealizationDocumentModel> result = vBRealizationService.Read(1, 1, "{}", new List<string>(), "", "{}");
@@ -104,12 +104,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
         public async Task ReadByIdAsync_Return_Null()
         {
             //Setup
-            FinanceDbContext _dbContext = GetDbContext(GetCurrentAsyncMethod());
+            FinanceDbContext dbContext = GetDbContext(GetCurrentAsyncMethod());
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
 
-            var vBRealizationService = new VBRealizationService(_dbContext, serviceProviderMock.Object);
+            var vBRealizationService = new VBRealizationService(dbContext, serviceProviderMock.Object);
 
-            VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
+            VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(dbContext, serviceProviderMock.Object);
             
             //Act
             var result = await vBRealizationService.ReadByIdAsync(1);
@@ -123,16 +123,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
         public async Task ReadByIdAsync_NonPO_Return_Success()
         {
             //Setup
-            FinanceDbContext _dbContext = GetDbContext(GetCurrentAsyncMethod());
+            FinanceDbContext dbContext = GetDbContext(GetCurrentAsyncMethod());
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
 
-            var vBRealizationService = new VBRealizationService(_dbContext, serviceProviderMock.Object);
+            var vBRealizationService = new VBRealizationService(dbContext, serviceProviderMock.Object);
            
-            var vBRequestDocumentService = new VBRequestDocumentService(_dbContext, serviceProviderMock.Object);
-            var vBRequestDocumentData = _dataUtil(vBRequestDocumentService).GetTestData_VBRequestDocumentNonPO();
+            var vBRequestDocumentService = new VBRequestDocumentService(dbContext, serviceProviderMock.Object);
+            var vBRequestDocumentData = GetDataUtil(vBRequestDocumentService).GetTestData_VBRequestDocumentNonPO();
 
-            VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
-            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
+            VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(dbContext, serviceProviderMock.Object);
+            var vBRealizationDocumenData = GetDataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
 
             //Act
             var result = await vBRealizationService.ReadByIdAsync(vBRealizationDocumenData.Id);
@@ -147,16 +147,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
         public async Task ReadByIdAsync_withPO_Return_Success()
         {
             //Setup
-            FinanceDbContext _dbContext = GetDbContext(GetCurrentAsyncMethod());
+            FinanceDbContext dbContext = GetDbContext(GetCurrentAsyncMethod());
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
 
-            var vBRequestDocumentService = new VBRequestDocumentService(_dbContext, serviceProviderMock.Object);
-            var vBRequestDocumentData = _dataUtil(vBRequestDocumentService).GetTestData_VBRequestDocumentWithPO();
+            var vBRequestDocumentService = new VBRequestDocumentService(dbContext, serviceProviderMock.Object);
+            var vBRequestDocumentData = GetDataUtil(vBRequestDocumentService).GetTestData_VBRequestDocumentWithPO();
 
-            var vBRealizationService = new VBRealizationService(_dbContext, serviceProviderMock.Object);
+            var vBRealizationService = new VBRealizationService(dbContext, serviceProviderMock.Object);
 
-            VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(_dbContext, serviceProviderMock.Object);
-            var vBRealizationDocumenData = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
+            VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(dbContext, serviceProviderMock.Object);
+            var vBRealizationDocumenData = GetDataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
 
             //Act
             var result =await vBRealizationService.ReadByIdAsync(vBRealizationDocumenData.Id);

@@ -36,7 +36,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
 
         private List<VBStatusReportViewModel> NewGetReportQuery(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
-            var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus == ApprovalStatus.Approved);
+            var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus > ApprovalStatus.Draft);
 
             var realizationQuery = _DbContext.VBRealizationDocuments.AsNoTracking();
 
@@ -70,13 +70,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 requestQuery = requestQuery.Where(s => s.Date.AddHours(offSet).Date <= requestDateTo.Value.Date);
             }
 
-            if (clearanceStatus.ToUpper() == "CLEARENCE")
+            if (clearanceStatus.ToUpper() == "CLEARANCE")
             {
                 requestQuery = requestQuery.Where(s => s.IsCompleted);
             }
             else if (clearanceStatus.ToUpper() == "OUTSTANDING")
             {
-                requestQuery = requestQuery.Where(s => !s.IsCompleted);
+                requestQuery = requestQuery.Where(s => !s.IsCompleted && s.ApprovalStatus != ApprovalStatus.Cancelled);
+            }else if (clearanceStatus.ToUpper() == "CANCEL")
+            {
+                requestQuery = requestQuery.Where(s => s.ApprovalStatus == ApprovalStatus.Cancelled);
             }
 
             IQueryable<VBStatusReportViewModel> result;
@@ -107,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                   Amount = rqst.Amount,
                                   RealizationAmount = real != null ? real.Amount : 0,
                                   Difference = real != null ? rqst.Amount - real.Amount : 0,
-                                  Status = rqst.IsCompleted ? "Clearance" : "Outstanding",
+                                  Status = rqst.ApprovalStatus == ApprovalStatus.Cancelled ? "Cancel" : rqst.IsCompleted ? "Clearance" : "Outstanding",
                                   LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                                   ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                     : "-",
@@ -156,7 +159,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                               Amount = rqst.Amount,
                               RealizationAmount = real != null ? real.Amount : 0,
                               Difference = real != null ? rqst.Amount - real.Amount : 0,
-                              Status = rqst.IsCompleted ? "Clearance" : "Outstanding",
+                              Status = rqst.ApprovalStatus == ApprovalStatus.Cancelled ? "Cancel" : rqst.IsCompleted ? "Clearance" : "Outstanding",
                               LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                               ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                 : "-",
@@ -438,7 +441,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah VB", DataType = typeof(double) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Realisasi", DataType = typeof(double) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Sisa (Kurang/Lebih)", DataType = typeof(double) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Clearence", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Clearance", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Status", DataType = typeof(string) });
 
             if (data.Count == 0)
