@@ -74,40 +74,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var expeditionQuery = _dbContext.VBRealizationDocumentExpeditions.AsQueryable();
 
             var query = from realization in vbRealizationQuery
-                         join expedition in expeditionQuery on realization.Id equals expedition.VBRealizationId into realizationExpeditions
+                        join expedition in expeditionQuery on realization.Id equals expedition.VBRealizationId into realizationExpeditions
 
-                         from realizationExpedition in realizationExpeditions.DefaultIfEmpty()
+                        from realizationExpedition in realizationExpeditions.DefaultIfEmpty()
 
-                         select new ReportDto()
-                         {
-                             CashierReceiptBy = realizationExpedition != null ? realizationExpedition.CashierReceiptBy : null,
-                             CashierReceiptDate = realizationExpedition != null ? realizationExpedition.CashierReceiptDate : null,
-                             CurrencyCode = realization.CurrencyCode,
-                             CurrencyRate = realization.CurrencyRate,
-                             DivisionId = realization.SuppliantDivisionId,
-                             DivisionName = realization.SuppliantDivisionName,
-                             NotVerifiedBy = realizationExpedition != null ? realizationExpedition.NotVerifiedBy : null,
-                             NotVerifiedDate = realizationExpedition != null ? realizationExpedition.NotVerifiedDate : null,
-                             NotVerifiedReason = realizationExpedition != null ? realizationExpedition.NotVerifiedReason : null,
-                             Position = realization.Position,
-                             SendToVerificationBy = realizationExpedition != null ? realizationExpedition.SendToVerificationBy : null,
-                             SendToVerificationDate = realizationExpedition != null ? realizationExpedition.SendToVerificationDate : null,
-                             UnitId = realization.SuppliantUnitId,
-                             UnitName = realization.SuppliantUnitName,
-                             VBAmount = realization.VBRequestDocumentAmount,
-                             VBId = realization.VBRequestDocumentId,
-                             VBNo = realization.VBRequestDocumentNo,
-                             VBRealizationAmount = realization.Amount,
-                             VBRealizationDate = realization.Date,
-                             VBRealizationId = realization.Id,
-                             VBRealizationNo = realization.DocumentNo,
-                             VBRequestName = realization.VBRequestDocumentCreatedBy,
-                             VBType = realization.Type,
-                             VerificationReceiptBy = realizationExpedition != null ? realizationExpedition.VerificationReceiptBy : null,
-                             VerificationReceiptDate = realizationExpedition != null ? realizationExpedition.VerificationReceiptDate: null,
-                             VerifiedToCashierBy = realizationExpedition != null ? realizationExpedition.VerifiedToCashierBy : null,
-                             VerifiedToCashierDate = realizationExpedition != null ? realizationExpedition.VerifiedToCashierDate : null
-                         };
+                        select new ReportDto()
+                        {
+                            CashierReceiptBy = realizationExpedition != null ? realizationExpedition.CashierReceiptBy : null,
+                            CashierReceiptDate = realizationExpedition != null ? realizationExpedition.CashierReceiptDate : null,
+                            CurrencyCode = realization.CurrencyCode,
+                            CurrencyRate = realization.CurrencyRate,
+                            DivisionId = realization.SuppliantDivisionId,
+                            DivisionName = realization.SuppliantDivisionName,
+                            NotVerifiedBy = realizationExpedition != null ? realizationExpedition.NotVerifiedBy : null,
+                            NotVerifiedDate = realizationExpedition != null ? realizationExpedition.NotVerifiedDate : null,
+                            NotVerifiedReason = realizationExpedition != null ? realizationExpedition.NotVerifiedReason : null,
+                            Position = realization.Position,
+                            SendToVerificationBy = realizationExpedition != null ? realizationExpedition.SendToVerificationBy : null,
+                            SendToVerificationDate = realizationExpedition != null ? realizationExpedition.SendToVerificationDate : null,
+                            UnitId = realization.SuppliantUnitId,
+                            UnitName = realization.SuppliantUnitName,
+                            VBAmount = realization.VBRequestDocumentAmount,
+                            VBId = realization.VBRequestDocumentId,
+                            VBNo = realization.VBRequestDocumentNo,
+                            VBRealizationAmount = realization.Amount,
+                            VBRealizationDate = realization.Date,
+                            VBRealizationId = realization.Id,
+                            VBRealizationNo = realization.DocumentNo,
+                            VBRequestName = realization.VBRequestDocumentCreatedBy,
+                            VBType = realization.Type,
+                            VerificationReceiptBy = realizationExpedition != null ? realizationExpedition.VerificationReceiptBy : null,
+                            VerificationReceiptDate = realizationExpedition != null ? realizationExpedition.VerificationReceiptDate : null,
+                            VerifiedToCashierBy = realizationExpedition != null ? realizationExpedition.VerifiedToCashierBy : null,
+                            VerifiedToCashierDate = realizationExpedition != null ? realizationExpedition.VerifiedToCashierDate : null,
+                            Purpose = realization.VBRequestDocumentPurpose
+                        };
             query = query.Where(entity => entity.VBRealizationDate >= dateStart && entity.VBRealizationDate <= dateEnd);
 
             if (vbId > 0)
