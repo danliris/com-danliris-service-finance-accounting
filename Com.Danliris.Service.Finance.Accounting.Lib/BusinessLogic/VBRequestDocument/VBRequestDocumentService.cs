@@ -687,11 +687,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             foreach (var item in vbDocuments)
             {
                 item.SetIsApproved(_identityService.Username, UserAgent);
-                if (data.IsApproved)
-                {
-                    item.SetApprovedBy(_identityService.Username, _identityService.Username, UserAgent);
-                    item.SetApprovedDate(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
-                }
+                //if (data.IsApproved)
+                //{
+                //    item.SetApprovedBy(_identityService.Username, _identityService.Username, UserAgent);
+                //    item.SetApprovedDate(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                //}
 
                 if (item.Type == VBType.WithPO)
                 {

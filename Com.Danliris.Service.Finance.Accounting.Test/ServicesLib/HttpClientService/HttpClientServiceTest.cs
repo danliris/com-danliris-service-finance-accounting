@@ -17,11 +17,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ServicesLib.ValidateServi
         [Fact]
         public async Task should_success_GetAsync()
         {
+            //Setup
             Mock<IIdentityService> identity = new Mock<IIdentityService>();
             identity.Setup(s => s.Username).Returns("usernameTest");
             HttpClientService httpClient = new HttpClientService(identity.Object);
 
+            //Act
             var result = await httpClient.GetAsync("https://stackoverflow.com/");
+
+            //Assert
             Assert.NotNull(result);
         }
 
@@ -30,6 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ServicesLib.ValidateServi
         [Fact]
         public async Task should_success_PostAsync()
         {
+            //Setup
             Mock<IIdentityService> identity = new Mock<IIdentityService>();
             identity.Setup(s => s.Username).Returns("usernameTest");
             HttpClientService httpClient = new HttpClientService(identity.Object);
@@ -40,14 +45,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ServicesLib.ValidateServi
                 Interest =2
             };
 
+            //Act
             var stringContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
             var result = await httpClient.PostAsync("https://stackoverflow.com/", stringContent);
+
+            //Assert
             Assert.NotNull(result);
         }
 
         [Fact]
         public async Task should_success_PutAsync()
         {
+            //Setup
             Mock<IIdentityService> identity = new Mock<IIdentityService>();
             identity.Setup(s => s.Username).Returns("usernameTest");
             HttpClientService httpClient = new HttpClientService(identity.Object);
@@ -59,7 +68,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ServicesLib.ValidateServi
             };
 
             var stringContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+
+            //Act
             var result = await httpClient.PutAsync("https://stackoverflow.com/", stringContent);
+
+            //Assert
             Assert.NotNull(result);
         }
 

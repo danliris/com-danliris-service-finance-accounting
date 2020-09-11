@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -29,7 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> CashierReceipt(List<int> vbRealizationIds)
         {
-            var models = _dbContext.VBRealizationDocumentExpeditions.Where(entity => vbRealizationIds.Contains(entity.VBRealizationId)).ToList();
+            var models = _dbContext.VBRealizationDocumentExpeditions.Where(entity => vbRealizationIds.Contains(entity.VBRealizationId) && entity.Position == VBRealizationPosition.VerifiedToCashier).ToList();
 
             models.ForEach(model =>
             {
@@ -233,7 +234,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> Reject(int vbRealizationId, string reason)
         {
-            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId);
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && entity.Position == VBRealizationPosition.Verification);
 
             vbRealizationExpedition.VerificationRejected(_identityService.Username, reason);
             EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
@@ -246,7 +247,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> SubmitToVerification(List<int> vbRealizationIds)
         {
-            var vbRealizationDocuments = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id)).ToList();
+            var vbRealizationDocuments = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) && (entity.Position == VBRealizationPosition.PurchasingToVerification || entity.Position == VBRealizationPosition.NotVerified)).ToList();
 
             var models = vbRealizationDocuments.Select(element =>
             {
@@ -265,6 +266,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                    element.Amount,
                    element.CurrencyCode,
                    element.CurrencyRate,
+                   element.VBRequestDocumentPurpose,
                    element.Type);
                 result.SubmitToVerification(_identityService.Username);
                 EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
@@ -288,7 +290,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> VerifiedToCashier(List<int> vbRealizationIds)
         {
-            var models = _dbContext.VBRealizationDocumentExpeditions.Where(entity => vbRealizationIds.Contains(entity.VBRealizationId)).ToList();
+            var models = _dbContext.VBRealizationDocumentExpeditions.Where(entity => vbRealizationIds.Contains(entity.VBRealizationId) || entity.Position == VBRealizationPosition.Verification).ToList();
 
             models.ForEach(model =>
             {
@@ -304,7 +306,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> VerificationDocumentReceipt(List<int> vbRealizationIds)
         {
-            var models = _dbContext.VBRealizationDocumentExpeditions.Where(entity => vbRealizationIds.Contains(entity.VBRealizationId)).ToList();
+            var models = _dbContext.VBRealizationDocumentExpeditions.Where(entity => vbRealizationIds.Contains(entity.VBRealizationId) && entity.Position == VBRealizationPosition.PurchasingToVerification).ToList();
 
             models.ForEach(model =>
             {
@@ -321,7 +323,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public ReadResponse<VBRealizationDocumentModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
         {
             var query = _dbContext.Set<VBRealizationDocumentModel>().AsQueryable();
-            query = query.Where(entity => entity.Position == VBRealizationPosition.Purchasing);
+            query = query.Where(entity => entity.Position == VBRealizationPosition.Purchasing || entity.Position == VBRealizationPosition.NotVerified);
 
             if (vbId > 0)
                 query = query.Where(entity => entity.VBRequestDocumentId == vbId);
@@ -347,7 +349,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> VerifiedToCashier(int vbRealizationId)
         {
-            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId);
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && entity.Position == VBRealizationPosition.Verification);
 
             vbRealizationExpedition.SendToCashier(_identityService.Username);
             EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);

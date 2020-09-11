@@ -12,11 +12,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
     {
         Task<int> InitializeExpedition(int vbRealizationId);
         Task<int> UpdateExpeditionByRealizationId(int vbRealizationId);
+        // Done Enhancement
         Task<int> SubmitToVerification(List<int> vbRealizationIds);
+        // Done Enhancement
         Task<int> VerificationDocumentReceipt(List<int> vbRealizationIds);
+        // Done Enhancement
         Task<int> VerifiedToCashier(List<int> vbRealizationIds);
+        // Done Enhancement
         Task<int> VerifiedToCashier(int vbRealizationId);
+        // Done Enhancement
         Task<int> CashierReceipt(List<int> vbRealizationIds);
+        // Done Enhancement
         Task<int> Reject(int vbRealizationId, string reason);
         ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, VBRealizationPosition position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId);
         ReadResponse<VBRealizationDocumentModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId);
