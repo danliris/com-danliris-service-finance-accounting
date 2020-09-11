@@ -84,7 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                     }
                     else
                     {
-                        if (item.DateDetail.Value > Date)
+                        if (item.DateDetail.Value >= Date)
                         {
                             CountItemsError++;
                             ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Tanggal Realisasi!', ";
