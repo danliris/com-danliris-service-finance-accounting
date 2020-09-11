@@ -29,7 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
 
         public RealizationDocumentType DocumentType { get; set; }
 
-        public VBRealizationPosition Positon { get; set; }
+        public VBRealizationPosition Position { get; set; }
 
         public decimal Amount { get; set; }
 
