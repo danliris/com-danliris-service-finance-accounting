@@ -42,5 +42,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBStatusReport
         public string ApprovalDate { get; set; }
         public string ClearenceDate { get; set; }
         public virtual ICollection<RealizationVbDetailModel> Details { get; set; }
+        public string CurrencyCode { get; set; }
     }
 }
