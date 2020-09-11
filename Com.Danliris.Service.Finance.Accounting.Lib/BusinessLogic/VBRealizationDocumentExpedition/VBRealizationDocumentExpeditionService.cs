@@ -379,12 +379,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         {
             var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
 
-            var ids = query
-                .Where(entity => entity.Position > VBRealizationPosition.Verification)
-                .OrderByDescending(entity => entity.Id)
-                .GroupBy(entity => entity.VBRealizationId)
-                .Select(entity => entity.Last().Id)
-                .ToList();
+            var idQuery = query.Where(entity => entity.Position > VBRealizationPosition.Verification);
+            var selectData = idQuery.GroupBy(entity => entity.VBRealizationId).Select(entity => entity.Last()).ToList();
+            var ids = selectData.Select(element => element.Id).ToList();
 
             query = query.Where(entity => ids.Contains(entity.Id) && entity.Position > VBRealizationPosition.Verification);
 
