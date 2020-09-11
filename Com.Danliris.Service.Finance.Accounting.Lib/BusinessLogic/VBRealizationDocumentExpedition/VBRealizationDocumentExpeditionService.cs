@@ -266,6 +266,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                    element.Amount,
                    element.CurrencyCode,
                    element.CurrencyRate,
+                   element.VBRequestDocumentPurpose,
                    element.Type);
                 result.SubmitToVerification(_identityService.Username);
                 EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
