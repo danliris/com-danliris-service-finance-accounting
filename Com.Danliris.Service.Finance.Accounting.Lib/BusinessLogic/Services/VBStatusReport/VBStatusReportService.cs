@@ -454,6 +454,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Clearance", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Status", DataType = typeof(string) });
 
+            var dtCurrency = new DataTable();
+            dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
+            dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(double) });
+
             if (data.Count == 0)
             {
                 dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", 0, 0, 0, "", "");
@@ -462,23 +466,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             {
                 data = data.OrderByDescending(s => s.LastModifiedUtc).ToList();
 
-                currencyGroup = currencyGroup.OrderBy(element => element.CurrencyCode).ToList();
-
                 foreach (var item in data)
                 {
                     dt.Rows.Add(item.VBNo, item.Date, item.DateEstimate, item.Unit.Name, item.CreateBy, item.ApprovalDate, item.RealizationNo, item.RealizationDate, item.Usage, item.Aging, item.CurrencyCode,
                         item.Amount, item.RealizationAmount, item.Difference, item.ClearenceDate, item.Status);
                 }
-
-                foreach (var item in currencyGroup)
-                {
-                    dt.Rows.Add("", "", "", "", "", "", "", "", "", "", item.CurrencyCode, item.Total, 0, 0, "", "");
-                }
-
-
             }
 
-            return Excel.CreateExcelVBStatusReport(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Status VB") }, requestDateFrom.GetValueOrDefault(), requestDateTo.GetValueOrDefault(), true);
+            if (currencyGroup.Count == 0)
+            {
+                dtCurrency.Rows.Add("", 0);
+            }
+            else
+            {
+                currencyGroup = currencyGroup.OrderBy(element => element.CurrencyCode).ToList();
+                foreach (var item in currencyGroup)
+                {
+                    dtCurrency.Rows.Add(item.CurrencyCode, item.Total);
+                }
+            }
+
+            return Excel.CreateExcelVBStatusReport(new KeyValuePair<DataTable, string>(dt, "Status VB"), new KeyValuePair<DataTable, string>(dtCurrency, "MataUang"), requestDateFrom.GetValueOrDefault(), requestDateTo.GetValueOrDefault(), true);
         }
 
         public Task<int> CreateAsync(VbRequestModel model)
