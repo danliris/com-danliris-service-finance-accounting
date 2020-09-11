@@ -176,7 +176,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             };
 
             var vbRequestQuery = _RequestDbSet.AsQueryable();
-            var vbRealizationQuery = _RealizationDbSet.AsQueryable();
+            var vbRealizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.Position == VBRealizationPosition.Cashier);
 
             var newQuery = from realization in vbRealizationQuery
                            join request in vbRequestQuery on realization.VBRequestDocumentId equals request.Id into vbRequestRealizations

@@ -12,6 +12,7 @@ using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition
@@ -378,7 +379,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         {
             var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
 
-            query = query.Where(entity => entity.Position > VBRealizationPosition.Verification);
+            var ids = query
+                .Where(entity => entity.Position > VBRealizationPosition.Verification)
+                .OrderByDescending(entity => entity.Id)
+                .GroupBy(entity => entity.VBRealizationId)
+                .Select(entity => entity.Last().Id)
+                .ToList();
+
+            query = query.Where(entity => ids.Contains(entity.Id) && entity.Position > VBRealizationPosition.Verification);
 
             if (vbId > 0)
                 query = query.Where(entity => entity.VBId == vbId);
