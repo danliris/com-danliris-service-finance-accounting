@@ -32,5 +32,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public DateTimeOffset? NotVerifiedDate { get;  set; }
         public VBRealizationPosition Position { get;  set; }
         public VBType VBType { get; set; }
+        public string Purpose { get; set; }
     }
 }
