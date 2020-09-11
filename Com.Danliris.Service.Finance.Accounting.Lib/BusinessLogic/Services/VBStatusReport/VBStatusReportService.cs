@@ -112,7 +112,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                   ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                     : "-",
                                   ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
-                                    : "-"
+                                    : "-",
+                                  CurrencyCode = rqst.CurrencyCode
 
                               })
                               .OrderByDescending(s => s.LastModifiedUtc);
@@ -475,6 +476,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
         {
             var data = await _DbContext.VbRequests.Where(entity => entity.CreatedBy == applicantName).ToListAsync();
             return data;
+        }
+
+        public ReportViewModel GetReportWithCurrency(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
+        {
+            var data = NewGetReportQuery(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offSet);
+
+            var currencyGroup = data
+                .GroupBy(element => element.CurrencyCode)
+                .Select(group => new VBStatusByCurrencyReportViewModel()
+                {
+                    CurrencyCode = group.Key,
+                    Total = group.Sum(element => element.Amount)
+                }).ToList();
+            return new ReportViewModel()
+            {
+                VBStatusByCurrencyReport = currencyGroup,
+                VBStatusReport = data
+            };
         }
     }
 }
