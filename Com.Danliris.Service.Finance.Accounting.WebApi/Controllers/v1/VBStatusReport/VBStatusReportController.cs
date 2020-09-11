@@ -74,7 +74,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
             try
             {
                 ValidateUser();
-                var data = Service.GetReport(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, IdentityService.TimezoneOffset);
+                var data = Service.GetReportWithCurrency(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, IdentityService.TimezoneOffset);
 
                 return Ok(new
                 {
