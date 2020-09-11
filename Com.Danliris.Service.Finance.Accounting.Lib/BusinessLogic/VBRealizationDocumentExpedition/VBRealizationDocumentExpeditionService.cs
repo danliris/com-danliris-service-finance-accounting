@@ -107,7 +107,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             VerificationReceiptDate = realizationExpedition != null ? realizationExpedition.VerificationReceiptDate : null,
                             VerifiedToCashierBy = realizationExpedition != null ? realizationExpedition.VerifiedToCashierBy : null,
                             VerifiedToCashierDate = realizationExpedition != null ? realizationExpedition.VerifiedToCashierDate : null,
-                            Purpose = realizationExpedition != null ? realizationExpedition.Purpose : null
+                            Purpose = realization.VBRequestDocumentPurpose
                         };
             query = query.Where(entity => entity.VBRealizationDate >= dateStart && entity.VBRealizationDate <= dateEnd);
 
