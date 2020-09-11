@@ -248,7 +248,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> SubmitToVerification(List<int> vbRealizationIds)
         {
-            var vbRealizationDocuments = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) && (entity.Position == VBRealizationPosition.PurchasingToVerification || entity.Position == VBRealizationPosition.NotVerified)).ToList();
+            var vbRealizationDocuments = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) && (entity.Position == VBRealizationPosition.Purchasing || entity.Position == VBRealizationPosition.NotVerified)).ToList();
 
             var models = vbRealizationDocuments.Select(element =>
             {
