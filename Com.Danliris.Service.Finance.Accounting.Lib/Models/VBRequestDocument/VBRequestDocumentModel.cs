@@ -190,6 +190,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public void SetIsApproved(string user, string userAgent)
         {
             ApprovalStatus = ApprovalStatus.Approved;
+            ApprovalDate = DateTimeOffset.UtcNow;
+            ApprovedBy = user;
             this.FlagForUpdate(user, userAgent);
         }
 
