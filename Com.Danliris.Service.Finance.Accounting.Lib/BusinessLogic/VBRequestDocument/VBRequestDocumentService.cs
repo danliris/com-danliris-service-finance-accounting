@@ -131,7 +131,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     false,
                     false,
                     VBType.NonPO,
-                    documentNo.Item2
+                    documentNo.Item2,
+                    form.IsInklaring
                     );
 
                 model.FlagForCreate(_identityService.Username, UserAgent);
@@ -205,7 +206,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 false,
                 false,
                 VBType.WithPO,
-                documentNo.Item2
+                documentNo.Item2,
+                form.IsInklaring
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -413,7 +415,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                         Code = model.SuppliantDivisionCode,
                         Id = model.SuppliantDivisionId
                     }
-                }
+                },
+                IsInklaring = model.IsInklaring
             };
         }
 
@@ -466,6 +469,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 IsApproved = model.ApprovalStatus == ApprovalStatus.Approved,
                 Purpose = model.Purpose,
                 CreatedBy = model.CreatedBy,
+                IsInklaring = model.IsInklaring,
                 ApprovalStatus = model.ApprovalStatus.ToString(),
                 Items = epoDetails.Select(epoDetail =>
                 {
@@ -687,26 +691,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             foreach (var item in vbDocuments)
             {
                 item.SetIsApproved(_identityService.Username, UserAgent);
-                if (data.IsApproved)
-                {
-                    item.SetApprovedBy(_identityService.Username, _identityService.Username, UserAgent);
-                    item.SetApprovedDate(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
-                }
+                //if (data.IsApproved)
+                //{
+                //    item.SetApprovedBy(_identityService.Username, _identityService.Username, UserAgent);
+                //    item.SetApprovedDate(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                //}
 
                 if (item.Type == VBType.WithPO)
                 {
-                    var epoIds = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == item.Id).Select(entity => (long)entity.EPOId).ToList();
-                    var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+                    //var epoIds = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == item.Id).Select(entity => (long)entity.EPOId).ToList();
+                    //var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                    var body = new VBAutoJournalFormDto()
-                    {
-                        Date = DateTimeOffset.UtcNow,
-                        DocumentNo = item.DocumentNo,
-                        EPOIds = epoIds
-                    };
+                    //var body = new VBAutoJournalFormDto()
+                    //{
+                    //    Date = DateTimeOffset.UtcNow,
+                    //    DocumentNo = item.DocumentNo,
+                    //    EPOIds = epoIds
+                    //};
 
-                    var httpClient = _serviceProvider.GetService<IHttpClientService>();
-                    var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                    //var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                    //var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
                 }
             }
 

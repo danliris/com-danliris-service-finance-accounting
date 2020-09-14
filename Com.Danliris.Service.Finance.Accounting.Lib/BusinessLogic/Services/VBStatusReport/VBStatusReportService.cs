@@ -36,7 +36,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
 
         private List<VBStatusReportViewModel> NewGetReportQuery(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
-            var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus == ApprovalStatus.Approved);
+            var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus > ApprovalStatus.Draft);
 
             var realizationQuery = _DbContext.VBRealizationDocuments.AsNoTracking();
 
@@ -70,51 +70,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 requestQuery = requestQuery.Where(s => s.Date.AddHours(offSet).Date <= requestDateTo.Value.Date);
             }
 
-            if (clearanceStatus.ToUpper() == "CLEARENCE")
+            if (clearanceStatus.ToUpper() == "CLEARANCE")
             {
                 requestQuery = requestQuery.Where(s => s.IsCompleted);
             }
             else if (clearanceStatus.ToUpper() == "OUTSTANDING")
             {
-                requestQuery = requestQuery.Where(s => !s.IsCompleted);
+                requestQuery = requestQuery.Where(s => !s.IsCompleted && s.ApprovalStatus != ApprovalStatus.Cancelled);
+            }
+            else if (clearanceStatus.ToUpper() == "CANCEL")
+            {
+                requestQuery = requestQuery.Where(s => s.ApprovalStatus == ApprovalStatus.Cancelled);
             }
 
             IQueryable<VBStatusReportViewModel> result;
 
-            if(!realizeDateFrom.HasValue && !realizeDateTo.HasValue)
+            if (!realizeDateFrom.HasValue && !realizeDateTo.HasValue)
             {
                 result = (from rqst in requestQuery
-                              join real in realizationQuery
-                              on rqst.Id equals real.VBRequestDocumentId into data
-                              from real in data.DefaultIfEmpty()
-                              select new VBStatusReportViewModel()
+                          join real in realizationQuery
+                          on rqst.Id equals real.VBRequestDocumentId into data
+                          from real in data.DefaultIfEmpty()
+                          select new VBStatusReportViewModel()
+                          {
+                              Id = rqst.Id,
+                              VBNo = rqst.DocumentNo,
+                              Date = rqst.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                              DateEstimate = rqst.RealizationEstimationDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                              Unit = new Unit()
                               {
-                                  Id = rqst.Id,
-                                  VBNo = rqst.DocumentNo,
-                                  Date = rqst.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                                  DateEstimate = rqst.RealizationEstimationDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                                  Unit = new Unit()
-                                  {
-                                      Id = rqst.SuppliantUnitId,
-                                      Name = rqst.SuppliantUnitName
-                                  },
-                                  CreateBy = rqst.CreatedBy,
-                                  RealizationNo = real.DocumentNo,
-                                  RealizationDate = real.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                                  Usage = rqst.Purpose,
-                                  Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
-                                        : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
-                                  Amount = rqst.Amount,
-                                  RealizationAmount = real != null ? real.Amount : 0,
-                                  Difference = real != null ? rqst.Amount - real.Amount : 0,
-                                  Status = rqst.IsCompleted ? "Clearance" : "Outstanding",
-                                  LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                                  ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
-                                    : "-",
-                                  ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
-                                    : "-"
+                                  Id = rqst.SuppliantUnitId,
+                                  Name = rqst.SuppliantUnitName
+                              },
+                              CreateBy = rqst.CreatedBy,
+                              RealizationNo = real.DocumentNo,
+                              RealizationDate = real.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                              Usage = rqst.Purpose,
+                              Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
+                                    : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
+                              Amount = rqst.Amount,
+                              RealizationAmount = real != null ? real.Amount : 0,
+                              Difference = real != null ? rqst.Amount - real.Amount : 0,
+                              Status = rqst.ApprovalStatus == ApprovalStatus.Cancelled ? "Cancel" : rqst.IsCompleted ? "Clearance" : "Outstanding",
+                              LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                              ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
+                                : "-",
+                              ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
+                                : "-",
+                              CurrencyCode = rqst.CurrencyCode
 
-                              })
+                          })
                               .OrderByDescending(s => s.LastModifiedUtc);
             }
             else
@@ -155,7 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                               Amount = rqst.Amount,
                               RealizationAmount = real != null ? real.Amount : 0,
                               Difference = real != null ? rqst.Amount - real.Amount : 0,
-                              Status = rqst.IsCompleted ? "Clearance" : "Outstanding",
+                              Status = rqst.ApprovalStatus == ApprovalStatus.Cancelled ? "Cancel" : rqst.IsCompleted ? "Clearance" : "Outstanding",
                               LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                               ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                 : "-",
@@ -423,7 +428,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
         {
             var data = NewGetReportQuery(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offSet);
 
-            DataTable dt = new DataTable();
+            var currencyGroup = data
+                .GroupBy(element => element.CurrencyCode)
+                .Select(group => new VBStatusByCurrencyReportViewModel()
+                {
+                    CurrencyCode = group.Key,
+                    Total = group.Sum(element => element.Amount)
+                }).ToList();
+
+            var dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Estimasi Tgl Realisasi", DataType = typeof(string) });
@@ -434,27 +447,46 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Realisasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Keperluan VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Aging (Hari)", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah VB", DataType = typeof(double) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Realisasi", DataType = typeof(double) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Sisa (Kurang/Lebih)", DataType = typeof(double) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Clearence", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Clearance", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Status", DataType = typeof(string) });
+
+            var dtCurrency = new DataTable();
+            dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
+            dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(double) });
 
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", 0, 0, 0, "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", 0, 0, 0, "", "");
             }
             else
             {
                 data = data.OrderByDescending(s => s.LastModifiedUtc).ToList();
+
                 foreach (var item in data)
                 {
-                    dt.Rows.Add(item.VBNo, item.Date, item.DateEstimate, item.Unit.Name, item.CreateBy, item.ApprovalDate, item.RealizationNo, item.RealizationDate, item.Usage, item.Aging,
+                    dt.Rows.Add(item.VBNo, item.Date, item.DateEstimate, item.Unit.Name, item.CreateBy, item.ApprovalDate, item.RealizationNo, item.RealizationDate, item.Usage, item.Aging, item.CurrencyCode,
                         item.Amount, item.RealizationAmount, item.Difference, item.ClearenceDate, item.Status);
                 }
             }
 
-            return Excel.CreateExcelVBStatusReport(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Status VB") }, requestDateFrom.GetValueOrDefault(), requestDateTo.GetValueOrDefault(), true);
+            if (currencyGroup.Count == 0)
+            {
+                dtCurrency.Rows.Add("", 0);
+            }
+            else
+            {
+                currencyGroup = currencyGroup.OrderBy(element => element.CurrencyCode).ToList();
+                foreach (var item in currencyGroup)
+                {
+                    dtCurrency.Rows.Add(item.CurrencyCode, item.Total);
+                }
+            }
+
+            return Excel.CreateExcelVBStatusReport(new KeyValuePair<DataTable, string>(dt, "Status VB"), new KeyValuePair<DataTable, string>(dtCurrency, "MataUang"), requestDateFrom.GetValueOrDefault(), requestDateTo.GetValueOrDefault(), true);
         }
 
         public Task<int> CreateAsync(VbRequestModel model)
@@ -475,6 +507,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
         {
             var data = await _DbContext.VbRequests.Where(entity => entity.CreatedBy == applicantName).ToListAsync();
             return data;
+        }
+
+        public ReportViewModel GetReportWithCurrency(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
+        {
+            var data = NewGetReportQuery(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offSet);
+
+            var currencyGroup = data
+                .GroupBy(element => element.CurrencyCode)
+                .Select(group => new VBStatusByCurrencyReportViewModel()
+                {
+                    CurrencyCode = group.Key,
+                    Total = group.Sum(element => element.Amount)
+                }).ToList();
+
+            return new ReportViewModel()
+            {
+                VBStatusByCurrencyReport = currencyGroup,
+                VBStatusReport = data
+            };
         }
     }
 }

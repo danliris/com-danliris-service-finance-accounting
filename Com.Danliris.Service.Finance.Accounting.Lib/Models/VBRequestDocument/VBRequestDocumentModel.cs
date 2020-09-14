@@ -19,9 +19,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         // New Ctor With Index
         public VBRequestDocumentModel(string documentNo, DateTimeOffset date, DateTimeOffset realizationEstimationDate, int suppliantUnitId, string suppliantUnitCode, string suppliantUnitName,
                 int suppliantDivisionId, string suppliantDivisionCode, string suppliantDivisionName, int currencyId, string currencyCode, string currencySymbol, string currencyDescription,
-                double currencyRate, string purpose, decimal amount, bool isPosted, bool isCompleted, VBType type, int index)
+                double currencyRate, string purpose, decimal amount, bool isPosted, bool isCompleted, VBType type, int index, bool isInklaring)
             : this(documentNo, date, realizationEstimationDate, suppliantUnitId, suppliantUnitCode, suppliantUnitName, suppliantDivisionId, suppliantDivisionCode, suppliantDivisionName,
-                currencyId, currencyCode, currencySymbol, currencyDescription, currencyRate, purpose, amount, isPosted, isCompleted, type)
+                currencyId, currencyCode, currencySymbol, currencyDescription, currencyRate, purpose, amount, isPosted, isCompleted, type, isInklaring)
         {
             Index = index;
         }
@@ -45,7 +45,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             decimal amount,
             bool isPosted,
             bool isCompleted,
-            VBType type
+            VBType type,
+            bool isInklaring
             )
         {
             DocumentNo = documentNo;
@@ -117,6 +118,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public DateTimeOffset? CompletedDate { get; private set; }
         [MaxLength(256)]
         public string CompletedBy { get; private set; }
+        public bool IsInklaring { get; private set; }
 
         public void SetDate(DateTimeOffset newDate, string user, string userAgent)
         {
@@ -190,6 +192,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public void SetIsApproved(string user, string userAgent)
         {
             ApprovalStatus = ApprovalStatus.Approved;
+            ApprovalDate = DateTimeOffset.UtcNow;
+            ApprovedBy = user;
             this.FlagForUpdate(user, userAgent);
         }
 
@@ -269,7 +273,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
 
         public void SetCancellation(string reason, string username, string userAgent)
         {
-            ApprovalStatus = ApprovalStatus.Canceled;
+            ApprovalStatus = ApprovalStatus.Cancelled;
             CancellationReason = reason;
             CanceledBy = username;
             CancellationDate = DateTimeOffset.UtcNow;

@@ -400,7 +400,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                         datum.UnitName,
                         datum.DivisionName,
                         sendToVerificationDate,
-                        "",
+                        datum.Purpose,
                         datum.CurrencyCode,
                         datum.VBAmount,
                         datum.CurrencyCode,

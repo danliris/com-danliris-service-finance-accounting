@@ -1062,7 +1062,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
         }
 
         [Fact]
-        public async Task PostCancellation_Succes_Return_Created()
+        public async Task PostCancellation_Succes_Return_OK()
         {
             //Setup
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
@@ -1075,11 +1075,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRequestDocu
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).PostNonPO(new VBRequestDocumentNonPOFormDto());
+            IActionResult response = await GetController(serviceProviderMock).CanccellationDocuments(new CancellationFormDto());
 
             //Assert
             int statusCode = this.GetStatusCode(response);
-            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
 
 

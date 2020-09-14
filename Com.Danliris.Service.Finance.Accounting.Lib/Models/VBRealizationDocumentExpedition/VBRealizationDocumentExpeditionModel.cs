@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocumen
 using Com.Moonlay.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition
 {
@@ -28,6 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             decimal vbRealizationAmount,
             string currencyCode,
             double currencyRate,
+            string purpose,
             VBType vbType
             )
         {
@@ -46,6 +48,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             CurrencyCode = currencyCode;
             CurrencyRate = currencyRate;
             VBType = vbType;
+            Purpose = purpose;
 
             Position = VBRealizationPosition.PurchasingToVerification;
         }
@@ -88,6 +91,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public VBRealizationPosition Position { get; private set; }
         [MaxLength(64)]
         public VBType VBType { get; set; }
+        public string Purpose { get; private set; }
 
         public void SubmitToVerification(string name)
         {

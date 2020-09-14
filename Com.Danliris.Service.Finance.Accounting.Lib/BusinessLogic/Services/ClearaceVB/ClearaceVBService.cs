@@ -17,6 +17,10 @@ using System.Globalization;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+using System.Net.Http;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB
 {
@@ -131,6 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             var vbRequestIds = listId.Select(element => element.VBRequestId).ToList();
             var vbRealizationIds = listId.Select(element => element.VBRealizationId).ToList();
 
+            var postedVB = new List<int>();
             foreach (var id in vbRequestIds)
             {
                 if (id > 0)
@@ -141,6 +146,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                     model.SetCompletedBy(_IdentityService.Username, _IdentityService.Username, _UserAgent);
 
                     UpdateAsync(id, model);
+
+                    if (model.Type == VBType.WithPO)
+                    {
+                        var epoIds = _DbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == id).Select(entity => (long)entity.EPOId).ToList();
+                        var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+
+                        var body = new VBAutoJournalFormDto()
+                        {
+                            Date = DateTimeOffset.UtcNow,
+                            DocumentNo = model.DocumentNo,
+                            EPOIds = epoIds
+                        };
+                        postedVB.Add(model.Id);
+
+                        var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                        var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                    }
                 }
             }
 
@@ -151,6 +173,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                     var model = _DbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
                     model.SetIsCompleted(DateTimeOffset.UtcNow, _IdentityService.Username, _UserAgent);
                     _DbContext.VBRealizationDocuments.Update(model);
+
+                    if (model.VBRequestDocumentId > 0 && !postedVB.Contains(model.VBRequestDocumentId))
+                    {
+                        var vbRequest = await ReadByIdAsync(id);
+                        var epoIds = _DbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == vbRequest.Id).Select(entity => (long)entity.EPOId).ToList();
+                        var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+
+                        var body = new VBAutoJournalFormDto()
+                        {
+                            Date = DateTimeOffset.UtcNow,
+                            DocumentNo = model.DocumentNo,
+                            EPOIds = epoIds
+                        };
+
+                        var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                        var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                    }
                 }
             }
 
@@ -176,7 +215,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             };
 
             var vbRequestQuery = _RequestDbSet.AsQueryable();
-            var vbRealizationQuery = _RealizationDbSet.AsQueryable();
+            var vbRealizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.Position == VBRealizationPosition.Cashier);
 
             var newQuery = from realization in vbRealizationQuery
                            join request in vbRequestQuery on realization.VBRequestDocumentId equals request.Id into vbRequestRealizations

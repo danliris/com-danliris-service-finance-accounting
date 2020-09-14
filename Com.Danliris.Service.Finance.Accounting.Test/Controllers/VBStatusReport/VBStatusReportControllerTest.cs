@@ -59,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
                 .Returns(new List<VBStatusReportViewModel>());
 
             var controller = GetController(mocks);
-            var response = controller.GetReportAll(1, 1, "CreatedBy", "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
+            var response = controller.GetReportAll(1, 1, "CreatedBy", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "ALL");
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
@@ -69,11 +69,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
         public void GetReportAll_WithException_InternalServerError()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>()))
+            mocks.Service.Setup(f => f.GetReportWithCurrency(It.IsAny<int>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>()))
                 .Throws(new Exception());
 
             var controller = GetController(mocks);
-            var response = controller.GetReportAll(1, 1, "CreatedBy", "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
+            var response = controller.GetReportAll(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>());
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
@@ -87,7 +87,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
                 .Returns(new System.IO.MemoryStream());
 
             var controller = GetController(mocks);
-            var response = controller.GetXlsAll(1, 1, "CreatedBy", "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
+            var response = controller.GetXlsAll(1, 1, "CreatedBy", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "ALL");
             Assert.NotNull(response);
         }
 
@@ -99,7 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBStatusRepor
                .Throws(new Exception());
 
             var controller = GetController(mocks);
-            var response = controller.GetXlsAll(1, 1, "CreatedBy", "ALL", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "7");
+            var response = controller.GetXlsAll(1, 1, "CreatedBy", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, "ALL");
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
