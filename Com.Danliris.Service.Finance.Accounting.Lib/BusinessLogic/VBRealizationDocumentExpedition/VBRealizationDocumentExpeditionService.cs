@@ -388,7 +388,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var selectData = idQuery.GroupBy(entity => entity.VBRealizationId).Select(entity => entity.Last()).ToList();
             var ids = selectData.Select(element => element.Id).ToList();
 
-            query = query.Where(entity => ids.Contains(entity.Id) && entity.Position == VBRealizationPosition.VerifiedToCashier && entity.Position == VBRealizationPosition.NotVerified);
+            query = query.Where(entity => ids.Contains(entity.Id) && (entity.Position == VBRealizationPosition.VerifiedToCashier || entity.Position == VBRealizationPosition.NotVerified));
 
             if (vbId > 0)
                 query = query.Where(entity => entity.VBId == vbId);
