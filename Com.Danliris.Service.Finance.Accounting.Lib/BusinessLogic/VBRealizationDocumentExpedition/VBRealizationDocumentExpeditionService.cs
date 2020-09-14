@@ -173,7 +173,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, VBRealizationPosition position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
         {
-            var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
+            var query = _dbContext.VBRealizationDocumentExpeditions.AsQueryable();
+
+            var vbRequestCompletedIds = _dbContext.VBRequestDocuments.Where(entity => !entity.IsCompleted).Select(entity => entity.Id).ToList();
+            var vbRealizationCompletedIds = _dbContext.VBRealizationDocuments.Where(entity =>  !vbRequestCompletedIds.Contains(entity.VBRequestDocumentId) && !entity.IsCompleted).Select(entity => entity.Id).ToList();
+
+            query = query.Where(entity => !vbRealizationCompletedIds.Contains(entity.VBRealizationId));
 
             if (position > 0)
                 query = query.Where(entity => entity.Position == position);
@@ -383,7 +388,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var selectData = idQuery.GroupBy(entity => entity.VBRealizationId).Select(entity => entity.Last()).ToList();
             var ids = selectData.Select(element => element.Id).ToList();
 
-            query = query.Where(entity => ids.Contains(entity.Id) && entity.Position > VBRealizationPosition.Verification);
+            query = query.Where(entity => ids.Contains(entity.Id) && entity.Position == VBRealizationPosition.VerifiedToCashier && entity.Position == VBRealizationPosition.NotVerified);
 
             if (vbId > 0)
                 query = query.Where(entity => entity.VBId == vbId);
