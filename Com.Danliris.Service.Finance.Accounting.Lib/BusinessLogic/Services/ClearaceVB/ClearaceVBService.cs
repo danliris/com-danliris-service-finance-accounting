@@ -17,6 +17,10 @@ using System.Globalization;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+using System.Net.Http;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB
 {
@@ -141,6 +145,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                     model.SetCompletedBy(_IdentityService.Username, _IdentityService.Username, _UserAgent);
 
                     UpdateAsync(id, model);
+
+                    if (model.Type == VBType.WithPO)
+                    {
+                        var epoIds = _DbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == id).Select(entity => (long)entity.EPOId).ToList();
+                        var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+
+                        var body = new VBAutoJournalFormDto()
+                        {
+                            Date = DateTimeOffset.UtcNow,
+                            DocumentNo = model.DocumentNo,
+                            EPOIds = epoIds
+                        };
+
+                        var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                        var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                    }
                 }
             }
 
