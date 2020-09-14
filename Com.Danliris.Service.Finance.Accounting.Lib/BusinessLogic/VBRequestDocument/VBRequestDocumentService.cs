@@ -131,7 +131,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     false,
                     false,
                     VBType.NonPO,
-                    documentNo.Item2
+                    documentNo.Item2,
+                    form.IsInklaring
                     );
 
                 model.FlagForCreate(_identityService.Username, UserAgent);
@@ -205,7 +206,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 false,
                 false,
                 VBType.WithPO,
-                documentNo.Item2
+                documentNo.Item2,
+                form.IsInklaring
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -413,7 +415,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                         Code = model.SuppliantDivisionCode,
                         Id = model.SuppliantDivisionId
                     }
-                }
+                },
+                IsInklaring = model.IsInklaring
             };
         }
 
@@ -466,6 +469,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 IsApproved = model.ApprovalStatus == ApprovalStatus.Approved,
                 Purpose = model.Purpose,
                 CreatedBy = model.CreatedBy,
+                IsInklaring = model.IsInklaring,
                 ApprovalStatus = model.ApprovalStatus.ToString(),
                 Items = epoDetails.Select(epoDetail =>
                 {

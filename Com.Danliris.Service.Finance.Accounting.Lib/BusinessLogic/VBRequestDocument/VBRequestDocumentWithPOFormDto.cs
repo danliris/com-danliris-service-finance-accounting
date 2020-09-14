@@ -15,6 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public string Purpose { get; set; }
 
         public List<VBRequestDocumentWithPOItemFormDto> Items { get; set; }
+        public bool IsInklaring { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
