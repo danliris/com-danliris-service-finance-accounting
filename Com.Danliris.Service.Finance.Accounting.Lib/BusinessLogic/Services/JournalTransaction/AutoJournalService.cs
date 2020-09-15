@@ -79,6 +79,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var dbContext = _serviceProvider.GetService<FinanceDbContext>();
 
             var vbRealizations = dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id)).ToList();
+            var vbRequestIds = vbRealizations.Select(element => element.VBRequestDocumentId).ToList();
+            var vbRequests = dbContext.VBRequestDocuments.Where(entity => vbRequestIds.Contains(entity.Id)).ToList();
 
             foreach (var vbRealization in vbRealizations)
             {
@@ -127,9 +129,93 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     model.Status = "DRAFT";
 
                 await _journalTransactionService.CreateAsync(model);
+
+                if (vbRealization.VBRequestDocumentId > 0)
+                {
+                    var vbRequest = vbRequests.FirstOrDefault(element => element.Id == vbRealization.VBRequestDocumentId);
+                    if (vbRequest.IsInklaring && vbRequest.CurrencyCode == "IDR")
+                    {
+                        var modelInklaring = new JournalTransactionModel()
+                        {
+                            Date = vbRealization.Date,
+                            Description = "Auto Journal Clearance VB Inklaring",
+                            ReferenceNo = vbRealization.DocumentNo,
+                            Status = "POSTED",
+                            Items = new List<JournalTransactionItemModel>()
+                        };
+
+                        modelInklaring.Items.Add(new JournalTransactionItemModel()
+                        {
+                            COA = new COAModel()
+                            {
+                                Code = $"1804.00.0.00"
+                            },
+                            Debit = vbRealization.Amount
+                        });
+
+                        modelInklaring.Items.Add(new JournalTransactionItemModel()
+                        {
+                            COA = new COAModel()
+                            {
+                                Code = $"1503.00.0.00"
+                            },
+                            Credit = vbRealization.Amount
+                        });
+
+                        if (modelInklaring.Items.Any(element => element.COA.Code.Contains("9999")))
+                            modelInklaring.Status = "DRAFT";
+
+                        await _journalTransactionService.CreateAsync(modelInklaring);
+                    }
+                }
             }
 
             return vbRealizations.Count;
+        }
+
+        public async Task<int> AutoJournalVBNonPOApproval(List<int> vbRequestIds)
+        {
+            var dbContext = _serviceProvider.GetService<FinanceDbContext>();
+            var vbRequests = dbContext.VBRequestDocuments.Where(entity => vbRequestIds.Contains(entity.Id)).ToList();
+
+            foreach (var vbRequest in vbRequests)
+            {
+                if (vbRequest.IsInklaring && vbRequest.CurrencyCode == "IDR")
+                {
+                    var modelInklaring = new JournalTransactionModel()
+                    {
+                        Date = vbRequest.Date,
+                        Description = "Auto Journal Approval VB Inklaring",
+                        ReferenceNo = vbRequest.DocumentNo,
+                        Status = "POSTED",
+                        Items = new List<JournalTransactionItemModel>()
+                    };
+
+                    modelInklaring.Items.Add(new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel()
+                        {
+                            Code = $"1503.00.0.00"
+                        },
+                        Debit = vbRequest.Amount
+                    });
+
+                    modelInklaring.Items.Add(new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel()
+                        {
+                            Code = $"9999.00.0.00"
+                        },
+                        Credit = vbRequest.Amount
+                    });
+
+                    if (modelInklaring.Items.Any(element => element.COA.Code.Contains("9999")))
+                        modelInklaring.Status = "DRAFT";
+
+                    await _journalTransactionService.CreateAsync(modelInklaring);
+                }
+            }
+            return vbRequests.Count;
         }
     }
 }

@@ -175,248 +175,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             return result.ToList();
         }
 
-        //private async Task<List<VBStatusReportViewModel>> GetReportQuery(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
-        //{
-        //    var requestQuery = _DbSet.AsQueryable().Where(s => s.IsDeleted == false && s.Apporve_Status == true);
-
-        //    if (unitId != 0)
-        //    {
-        //        requestQuery = requestQuery.Where(s => s.UnitId == unitId);
-        //    }
-
-        //    if (vbRequestId != 0)
-        //    {
-        //        requestQuery = requestQuery.Where(s => s.Id == vbRequestId);
-        //    }
-
-        //    if (!string.IsNullOrEmpty(applicantName))
-        //    {
-        //        requestQuery = requestQuery.Where(s => s.CreatedBy == applicantName);
-        //    }
-
-        //    if (requestDateFrom.HasValue && requestDateTo.HasValue)
-        //    {
-        //        requestQuery = requestQuery.Where(s => requestDateFrom.Value.Date <= s.Date.AddHours(offSet).Date && s.Date.AddHours(offSet).Date <= requestDateTo.Value.Date);
-        //    }
-        //    else if (requestDateFrom.HasValue && !requestDateTo.HasValue)
-        //    {
-        //        requestQuery = requestQuery.Where(s => requestDateFrom.Value.Date <= s.Date.AddHours(offSet).Date);
-        //    }
-        //    else if (!requestDateFrom.HasValue && requestDateTo.HasValue)
-        //    {
-        //        requestQuery = requestQuery.Where(s => s.Date.AddHours(offSet).Date <= requestDateTo.Value.Date);
-        //    }
-
-        //    var realizationQuery = _RealizationDbSet.AsQueryable().Where(s => s.IsDeleted == false);
-
-        //    if (realizeDateFrom.HasValue && realizeDateTo.HasValue)
-        //    {
-        //        realizationQuery = realizationQuery.Where(s => realizeDateFrom.Value.Date <= s.Date.AddHours(offSet).Date && s.Date.AddHours(offSet).Date <= realizeDateTo.Value.Date);
-        //    }
-        //    else if (realizeDateFrom.HasValue && !realizeDateTo.HasValue)
-        //    {
-        //        realizationQuery = realizationQuery.Where(s => realizeDateFrom.Value.Date <= s.Date.AddHours(offSet).Date);
-        //    }
-        //    else if (!realizeDateFrom.HasValue && realizeDateTo.HasValue)
-        //    {
-        //        realizationQuery = realizationQuery.Where(s => s.Date.AddHours(offSet).Date <= realizeDateTo.Value.Date);
-        //    }
-
-        //    var result = new List<VBStatusReportViewModel>();
-
-        //    switch (clearanceStatus.ToUpper())
-        //    {
-        //        case "CLEARANCE":
-        //            result = (from rqst in requestQuery
-        //                      join real in realizationQuery
-        //                      on rqst.VBNo equals real.VBNo into data
-        //                      from real in data.DefaultIfEmpty()
-        //                      select new VBStatusReportViewModel()
-        //                      {
-        //                          Id = rqst.Id,
-        //                          VBNo = rqst.VBNo,
-        //                          Date = rqst.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                          DateEstimate = rqst.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                          Unit = new Unit()
-        //                          {
-        //                              Id = rqst.Id,
-        //                              Name = rqst.UnitName,
-        //                          },
-        //                          CreateBy = rqst.CreatedBy,
-        //                          RealizationNo = real.VBNoRealize,
-        //                          RealizationDate = real.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                          Usage = rqst.Usage,
-        //                          Aging = (int)(real.Date - rqst.Date).TotalDays,
-        //                          Amount = rqst.Amount,
-        //                          RealizationAmount = real.Amount,
-        //                          Difference = rqst.Amount - real.Amount,
-        //                          Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
-        //                          LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                      })
-        //                      .Where(t => t.Status == "Clearance")
-        //                      .OrderByDescending(s => s.LastModifiedUtc)
-        //                      .ToList();
-
-        //            //result = requestQuery
-        //            //.Join(realizationQuery,
-        //            //(rqst) => rqst.VBNo,
-        //            //(real) => real.VBNo,
-        //            //(rqst, real) => new VBStatusReportViewModel()
-        //            //{
-        //            //    Id = rqst.Id,
-        //            //    VBNo = rqst.VBNo,
-        //            //    //Date = rqst.Date,
-        //            //    //DateEstimate = rqst.DateEstimate,
-        //            //    Unit = new Unit()
-        //            //    {
-        //            //        Id = rqst.Id,
-        //            //        Name = rqst.UnitName,
-        //            //    },
-        //            //    CreateBy = rqst.CreatedBy,
-        //            //    RealizationNo = real.VBNoRealize,
-        //            //    //RealizationDate = real.Date,
-        //            //    Usage = rqst.Usage,
-        //            //    Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
-        //            //    Amount = rqst.Amount,
-        //            //    RealizationAmount = real.Amount,
-        //            //    Difference = rqst.Amount - real.Amount,
-        //            //    Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
-        //            //    //LastModifiedUtc = real.LastModifiedUtc,
-        //            //})
-        //            //.Where(t => t.Status == "Clearance")
-        //            ////.OrderByDescending(s => s.LastModifiedUtc)
-        //            //.ToList();
-        //            break;
-
-        //        case "OUTSTANDING":
-        //            result = (from rqst in requestQuery
-        //                      join real in realizationQuery
-        //                      on rqst.VBNo equals real.VBNo into data
-        //                      from real in data.DefaultIfEmpty()
-        //                      select new VBStatusReportViewModel()
-        //                      {
-        //                          Id = rqst.Id,
-        //                          VBNo = rqst.VBNo,
-        //                          Date = rqst.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                          DateEstimate = rqst.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                          Unit = new Unit()
-        //                          {
-        //                              Id = rqst.Id,
-        //                              Name = rqst.UnitName,
-        //                          },
-        //                          CreateBy = rqst.CreatedBy,
-        //                          RealizationNo = real.VBNoRealize == null ? "" : real.VBNoRealize,
-        //                          RealizationDate = real.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                          Usage = rqst.Usage,
-        //                          Aging = (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
-        //                          Amount = rqst.Amount,
-        //                          RealizationAmount = real.Amount != null ? real.Amount : 0,
-        //                          Difference = real.Amount != null ? (rqst.Amount - real.Amount) : 0,
-        //                          Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
-        //                          LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                      })
-        //                      .Where(t => t.Status == "Outstanding")
-        //                      .OrderByDescending(s => s.LastModifiedUtc)
-        //                      .ToList();
-
-        //            //result = requestQuery
-        //            //.Join(realizationQuery,
-        //            //(rqst) => rqst.VBNo,
-        //            //(real) => real.VBNo,
-        //            //(rqst, real) => new VBStatusReportViewModel()
-        //            //{
-        //            //    Id = rqst.Id,
-        //            //    VBNo = rqst.VBNo,
-        //            //    Date = rqst.Date,
-        //            //    DateEstimate = rqst.DateEstimate,
-        //            //    Unit = new Unit()
-        //            //    {
-        //            //        Id = rqst.Id,
-        //            //        Name = rqst.UnitName,
-        //            //    },
-        //            //    CreateBy = rqst.CreatedBy,
-        //            //    RealizationNo = real.VBNoRealize,
-        //            //    RealizationDate = real.Date,
-        //            //    Usage = rqst.Usage,
-        //            //    Aging = (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
-        //            //    Amount = rqst.Amount,
-        //            //    RealizationAmount = real.Amount,
-        //            //    Difference = rqst.Amount - real.Amount,
-        //            //    Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
-        //            //    LastModifiedUtc = real.LastModifiedUtc,
-        //            //})
-        //            //.Where(t => t.Status == "Outstanding")
-        //            //.OrderByDescending(s => s.LastModifiedUtc)
-        //            //.ToList();
-        //            break;
-
-        //        case "ALL":
-        //            result = (from rqst in requestQuery
-        //                      join real in realizationQuery
-        //                      on rqst.VBNo equals real.VBNo into data
-        //                      from real in data.DefaultIfEmpty()
-        //                      select new VBStatusReportViewModel()
-        //                      {
-        //                          Id = rqst.Id,
-        //                          VBNo = rqst.VBNo,
-        //                          Date = rqst.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                          DateEstimate = rqst.DateEstimate.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                          Unit = new Unit()
-        //                          {
-        //                              Id = rqst.Id,
-        //                              Name = rqst.UnitName,
-        //                          },
-        //                          CreateBy = rqst.CreatedBy,
-        //                          RealizationNo = real.VBNoRealize == null ? "" : real.VBNoRealize,
-        //                          RealizationDate = real.Date.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                          Usage = rqst.Usage,
-        //                          Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
-        //                          Amount = rqst.Amount,
-        //                          RealizationAmount = real.Amount != null ? real.Amount : 0,
-        //                          Difference = real.Amount != null ? (rqst.Amount - real.Amount) : 0,
-        //                          Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
-        //                          LastModifiedUtc = real.LastModifiedUtc.AddHours(offSet).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-        //                      })
-        //                      .Where(t => t.Status == "Clearance" || t.Status == "Outstanding")
-        //                      .OrderByDescending(s => s.LastModifiedUtc)
-        //                      .ToList();
-
-        //            //result = requestQuery
-        //            //.Join(realizationQuery,
-        //            //(rqst) => rqst.VBNo,
-        //            //(real) => real.VBNo,
-        //            //(rqst, real) => new VBStatusReportViewModel()
-        //            //{
-        //            //    Id = rqst.Id,
-        //            //    VBNo = rqst.VBNo,
-        //            //    Date = rqst.Date,
-        //            //    DateEstimate = rqst.DateEstimate,
-        //            //    Unit = new Unit()
-        //            //    {
-        //            //        Id = rqst.Id,
-        //            //        Name = rqst.UnitName,
-        //            //    },
-        //            //    CreateBy = rqst.CreatedBy,
-        //            //    RealizationNo = real.VBNoRealize,
-        //            //    RealizationDate = real.Date,
-        //            //    Usage = rqst.Usage,
-        //            //    Aging = rqst.Complete_Status ? (int)(real.Date - rqst.Date).TotalDays : (int)(requestDateTo.GetValueOrDefault() - rqst.Date).TotalDays,
-        //            //    Amount = rqst.Amount,
-        //            //    RealizationAmount = real.Amount,
-        //            //    Difference = rqst.Amount - real.Amount,
-        //            //    Status = rqst.Complete_Status ? "Clearance" : "Outstanding",
-        //            //    LastModifiedUtc = real.LastModifiedUtc,
-        //            //})
-        //            //.Where(t => t.Status == "Clearance" || t.Status == "Outstanding")
-        //            //.OrderByDescending(s => s.LastModifiedUtc)
-        //            //.ToList();
-        //            break;
-
-        //    }
-
-        //    return result.ToList();
-        //}
-
         public List<VBStatusReportViewModel> GetReport(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
             var data = NewGetReportQuery(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, offSet);
@@ -448,19 +206,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             dt.Columns.Add(new DataColumn() { ColumnName = "Keperluan VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Aging (Hari)", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah VB", DataType = typeof(double) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Realisasi", DataType = typeof(double) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Sisa (Kurang/Lebih)", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah VB", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Realisasi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Sisa (Kurang/Lebih)", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Clearance", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Status", DataType = typeof(string) });
 
             var dtCurrency = new DataTable();
             dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
-            dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(double) });
+            dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
 
+            var requestTotal = 0.0;
+            var realizationTotal = 0.0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", 0, 0, 0, "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
             }
             else
             {
@@ -469,24 +229,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 foreach (var item in data)
                 {
                     dt.Rows.Add(item.VBNo, item.Date, item.DateEstimate, item.Unit.Name, item.CreateBy, item.ApprovalDate, item.RealizationNo, item.RealizationDate, item.Usage, item.Aging, item.CurrencyCode,
-                        item.Amount, item.RealizationAmount, item.Difference, item.ClearenceDate, item.Status);
+                        item.Amount.ToString("#,##0.###0"), item.RealizationAmount.ToString("#,##0.###0"), item.Difference.ToString("#,##0.###0"), item.ClearenceDate, item.Status);
                 }
+
+                requestTotal = (double)data.Sum(element => element.Amount);
+                realizationTotal = (double)data.Sum(element => element.RealizationAmount);
             }
 
             if (currencyGroup.Count == 0)
             {
-                dtCurrency.Rows.Add("", 0);
+                dtCurrency.Rows.Add("", "");
             }
             else
             {
                 currencyGroup = currencyGroup.OrderBy(element => element.CurrencyCode).ToList();
                 foreach (var item in currencyGroup)
                 {
-                    dtCurrency.Rows.Add(item.CurrencyCode, item.Total);
+                    dtCurrency.Rows.Add(item.CurrencyCode, item.Total.ToString("#,##0.###0"));
                 }
             }
 
-            return Excel.CreateExcelVBStatusReport(new KeyValuePair<DataTable, string>(dt, "Status VB"), new KeyValuePair<DataTable, string>(dtCurrency, "MataUang"), requestDateFrom.GetValueOrDefault(), requestDateTo.GetValueOrDefault(), true);
+            return Excel.CreateExcelVBStatusReport(new KeyValuePair<DataTable, string>(dt, "Status VB"), new KeyValuePair<DataTable, string>(dtCurrency, "MataUang"), requestDateFrom.GetValueOrDefault(), requestDateTo.GetValueOrDefault(), true, requestTotal, realizationTotal);
         }
 
         public Task<int> CreateAsync(VbRequestModel model)

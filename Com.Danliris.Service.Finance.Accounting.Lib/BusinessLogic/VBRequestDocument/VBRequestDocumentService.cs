@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -25,14 +26,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public readonly FinanceDbContext _dbContext;
 
         private readonly IIdentityService _identityService;
-        private readonly IJournalTransactionService _journalTransactionService;
+        private readonly IAutoJournalService _autoJournalTransactionService;
         private readonly IServiceProvider _serviceProvider;
 
         public VBRequestDocumentService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
         {
             _dbContext = dbContext;
             _identityService = serviceProvider.GetService<IIdentityService>();
-            _journalTransactionService = serviceProvider.GetService<IJournalTransactionService>();
+            _autoJournalTransactionService = serviceProvider.GetService<IAutoJournalService>();
             _serviceProvider = serviceProvider;
         }
 
@@ -684,7 +685,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return query.ToList();
         }
 
-        public Task<int> ApprovalData(ApprovalVBFormDto data)
+        public async Task<int> ApprovalData(ApprovalVBFormDto data)
         {
             var vbDocuments = _dbContext.VBRequestDocuments.Where(s => data.Ids.Contains(s.Id));
 
@@ -714,7 +715,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 }
             }
 
-            return _dbContext.SaveChangesAsync();
+            var result = await _dbContext.SaveChangesAsync();
+
+            await _autoJournalTransactionService.AutoJournalVBNonPOApproval(data.Ids.ToList());
+
+            return result;
         }
 
         public Task<int> CancellationDocuments(CancellationFormDto form)
