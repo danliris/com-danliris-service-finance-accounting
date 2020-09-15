@@ -21,7 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             Font normal_font = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 11);
             Font bold_font = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 11);
             Font note_font = FontFactory.GetFont(BaseFont.HELVETICA_OBLIQUE, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 8);
-            Font beban_unit_font = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 9);
+            Font beban_unit_font = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 8);
             Font bold_italic_font = FontFactory.GetFont(BaseFont.HELVETICA_BOLDOBLIQUE, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 12);
             Font Title_bold_font = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 13);
 
@@ -39,6 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             PdfPTable headerTable2 = new PdfPTable(1);
             PdfPTable headerTable3 = new PdfPTable(3);
             PdfPTable headerTable3a = new PdfPTable(10);
+            PdfPTable headerTable3b = new PdfPTable(4);
             PdfPTable headerTable4 = new PdfPTable(2);
             headerTable_A.SetWidths(new float[] { 10f, 10f });
             headerTable_A.WidthPercentage = 100;
@@ -46,6 +47,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.WidthPercentage = 100;
             headerTable3a.SetWidths(new float[] { 3f, 10f, 3f, 10f, 3f, 10f, 3f, 10f, 3f, 10f });
             headerTable3a.WidthPercentage = 100;
+            headerTable3b.SetWidths(new float[] { 1f, 1f, 1f, 1f });
+            headerTable3b.WidthPercentage = 100;
             headerTable4.SetWidths(new float[] { 10f, 40f });
             headerTable4.WidthPercentage = 100;
 
@@ -681,63 +684,63 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             #endregion
 
             #region NewCheckbox
-            List<PdfFormField> annotations = new List<PdfFormField>();
+            //List<PdfFormField> annotations = new List<PdfFormField>();
 
             var units = data.Items.SelectMany(element => element.PurchaseOrderExternal.Items).Select(element => element.Unit.Name).Distinct().ToList();
 
             foreach (var unit in units)
             {
-                cellHeaderBody.Phrase = new Phrase("", normal_font);
+                //cellHeaderBody.Phrase = new Phrase("", normal_font);
 
-                PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
-                cellform.FixedHeight = 5f;
+                //PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
+                //cellform.FixedHeight = 5f;
 
-                PdfFormField _checkGroup = PdfFormField.CreateEmpty(writer);
-                RadioCheckField _radioG;
-                PdfFormField _radioField1;
-                Rectangle kotak = new Rectangle(100, 100);
-                _radioG = new RadioCheckField(writer, kotak, "abc", "Yes");
-                _radioG.CheckType = RadioCheckField.TYPE_CHECK;
-                _radioG.BorderStyle = PdfBorderDictionary.STYLE_SOLID;
-                _radioG.BorderColor = BaseColor.Black;
-                _radioG.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
+                //PdfFormField _checkGroup = PdfFormField.CreateEmpty(writer);
+                //RadioCheckField _radioG;
+                //PdfFormField _radioField1;
+                //Rectangle kotak = new Rectangle(100, 100);
+                //_radioG = new RadioCheckField(writer, kotak, "abc", "Yes");
+                //_radioG.CheckType = RadioCheckField.TYPE_CHECK;
+                //_radioG.BorderStyle = PdfBorderDictionary.STYLE_SOLID;
+                //_radioG.BorderColor = BaseColor.Black;
+                //_radioG.BorderWidth = BaseField.BORDER_WIDTH_MEDIUM;
 
 
-                _radioG.Checked = true;
+                //_radioG.Checked = true;
 
-                _radioG.Rotation = 90;
-                _radioG.Options = TextField.READ_ONLY;
-                _radioField1 = _radioG.CheckField;
+                //_radioG.Rotation = 90;
+                //_radioG.Options = TextField.READ_ONLY;
+                //_radioField1 = _radioG.CheckField;
 
-                cellform.CellEvent
-                     = new BebanUnitEvent(_checkGroup, _radioField1, 1);
-                headerTable3a.AddCell(cellform);
+                //cellform.CellEvent
+                //     = new BebanUnitEvent(_checkGroup, _radioField1, 1);
+                //headerTable3a.AddCell(cellform);
 
-                cellHeaderBody.Phrase = new Phrase(unit, beban_unit_font);
+                cellHeaderBody.Phrase = new Phrase("- " + unit, beban_unit_font);
 
-                headerTable3a.AddCell(cellHeaderBody);
+                headerTable3b.AddCell(cellHeaderBody);
 
-                annotations.Add(_checkGroup);
+                //annotations.Add(_checkGroup);
             }
 
-            for (var i = 0; i < 10 - (2 * (units.Count % 5)); i++)
+            for (var i = 0; i < 4 - (units.Count % 4); i++)
             {
                 cellHeaderBody.Phrase = new Phrase(" ", normal_font);
-                headerTable3a.AddCell(cellHeaderBody);
+                headerTable3b.AddCell(cellHeaderBody);
             }
 
 
             //cellHeaderBody.Phrase = new Phrase(" ", normal_font);
             //headerTable3a.AddCell(cellHeaderBody);
 
-            cellHeader3a.AddElement(headerTable3a);
+            cellHeader3a.AddElement(headerTable3b);
             headerTable_C.AddCell(cellHeader3a);
             document.Add(headerTable_C);
 
-            foreach (var annotation in annotations)
-            {
-                writer.AddAnnotation(annotation);
-            }
+            //foreach (var annotation in annotations)
+            //{
+            //    writer.AddAnnotation(annotation);
+            //}
 
             #endregion
 
@@ -771,16 +774,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             };
 
 
-            cell.Phrase = new Phrase("", normal_font);
-            table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
-            table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
-            table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
-            table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
-            table.AddCell(cell);
+            for (var i = 0; i <= 5; i++)
+            {
+                cell.Phrase = new Phrase("", normal_font);
+                table.AddCell(cell);
+                cell.Phrase = new Phrase("", normal_font);
+                table.AddCell(cell);
+                cell.Phrase = new Phrase("", normal_font);
+                table.AddCell(cell);
+                cell.Phrase = new Phrase("", normal_font);
+                table.AddCell(cell);
+                cell.Phrase = new Phrase("", normal_font);
+                table.AddCell(cell);
+            }
 
             cell.Colspan = 2;
             cell.Phrase = new Phrase("Menyetujui,", normal_font);
