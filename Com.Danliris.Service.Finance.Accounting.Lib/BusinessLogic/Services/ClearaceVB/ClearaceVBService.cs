@@ -181,7 +181,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                     if (model.VBRequestDocumentId > 0 && !postedVB.Contains(model.VBRequestDocumentId))
                     {
 
-                        var vbRequest = await ReadByIdAsync(id);
+                        var vbRequest = _DbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == model.VBRequestDocumentId);
 
                         if (vbRequest.Type == VBType.WithPO)
                         {
