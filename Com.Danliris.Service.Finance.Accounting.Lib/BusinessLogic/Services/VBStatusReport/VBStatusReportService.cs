@@ -216,6 +216,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
             dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
 
+            var requestTotal = 0.0;
+            var realizationTotal = 0.0;
             if (data.Count == 0)
             {
                 dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
@@ -229,6 +231,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                     dt.Rows.Add(item.VBNo, item.Date, item.DateEstimate, item.Unit.Name, item.CreateBy, item.ApprovalDate, item.RealizationNo, item.RealizationDate, item.Usage, item.Aging, item.CurrencyCode,
                         item.Amount.ToString("#,##0.###0"), item.RealizationAmount.ToString("#,##0.###0"), item.Difference.ToString("#,##0.###0"), item.ClearenceDate, item.Status);
                 }
+
+                requestTotal = (double)data.Sum(element => element.Amount);
+                realizationTotal = (double)data.Sum(element => element.RealizationAmount);
             }
 
             if (currencyGroup.Count == 0)
@@ -244,7 +249,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 }
             }
 
-            return Excel.CreateExcelVBStatusReport(new KeyValuePair<DataTable, string>(dt, "Status VB"), new KeyValuePair<DataTable, string>(dtCurrency, "MataUang"), requestDateFrom.GetValueOrDefault(), requestDateTo.GetValueOrDefault(), true);
+            return Excel.CreateExcelVBStatusReport(new KeyValuePair<DataTable, string>(dt, "Status VB"), new KeyValuePair<DataTable, string>(dtCurrency, "MataUang"), requestDateFrom.GetValueOrDefault(), requestDateTo.GetValueOrDefault(), true, requestTotal, realizationTotal);
         }
 
         public Task<int> CreateAsync(VbRequestModel model)
