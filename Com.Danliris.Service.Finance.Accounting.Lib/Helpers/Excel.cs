@@ -31,7 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
-        public static MemoryStream CreateExcelVBStatusReport(KeyValuePair<DataTable, string> dataSource, KeyValuePair<DataTable, string> currencySource, DateTimeOffset requestDateFrom, DateTimeOffset requestDateTo, bool styling = false)
+        public static MemoryStream CreateExcelVBStatusReport(KeyValuePair<DataTable, string> dataSource, KeyValuePair<DataTable, string> currencySource, DateTimeOffset requestDateFrom, DateTimeOffset requestDateTo, bool styling = false, double requestTotal = 0, double realizationTotal = 0)
         {
             ExcelPackage package = new ExcelPackage();
             //foreach (KeyValuePair<DataTable, string> item in dtSourceList)
@@ -54,13 +54,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             sheet.Cells[totalRow, 2].Value = "TOTAL";
 
             int jumlahVb = dataSource.Key.Columns.IndexOf("Jumlah VB") + 2;
-            sheet.Cells[totalRow, jumlahVb].Value = dataSource.Key.Compute("Sum([Jumlah VB])", string.Empty);
+            sheet.Cells[totalRow, jumlahVb].Value = requestTotal.ToString("#,##0.###0");
 
             int realisasi = dataSource.Key.Columns.IndexOf("Realisasi") + 2;
-            sheet.Cells[totalRow, realisasi].Value = dataSource.Key.Compute("Sum([Realisasi])", string.Empty);
+            sheet.Cells[totalRow, realisasi].Value = realizationTotal.ToString("#,##0.###0");
 
             int sisa = dataSource.Key.Columns.IndexOf("Sisa (Kurang/Lebih)") + 2;
-            sheet.Cells[totalRow, sisa].Value = dataSource.Key.Compute("Sum([Sisa (Kurang/Lebih)])", string.Empty);
+            sheet.Cells[totalRow, sisa].Value = (requestTotal - realizationTotal).ToString("#,##0.###0");
 
             sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
 

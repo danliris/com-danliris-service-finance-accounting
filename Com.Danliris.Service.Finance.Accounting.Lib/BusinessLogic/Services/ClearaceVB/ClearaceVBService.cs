@@ -21,17 +21,19 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocumen
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using System.Net.Http;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB
 {
     public class ClearaceVBService : IClearaceVBService
     {
         private const string _UserAgent = "finance-service";
-        protected DbSet<VBRequestDocumentModel> _RequestDbSet;
-        protected DbSet<VBRealizationDocumentModel> _RealizationDbSet;
+        private readonly DbSet<VBRequestDocumentModel> _RequestDbSet;
+        private readonly DbSet<VBRealizationDocumentModel> _RealizationDbSet;
         private readonly IServiceProvider _serviceProvider;
-        protected IIdentityService _IdentityService;
-        public FinanceDbContext _DbContext;
+        private readonly IIdentityService _IdentityService;
+        private readonly IAutoJournalService _autoJournalService;
+        private readonly FinanceDbContext _DbContext;
 
         public ClearaceVBService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
@@ -40,6 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             _RealizationDbSet = dbContext.Set<VBRealizationDocumentModel>();
             _serviceProvider = serviceProvider;
             _IdentityService = serviceProvider.GetService<IIdentityService>();
+            _autoJournalService = serviceProvider.GetService<IAutoJournalService>();
         }
         public static IQueryable<ClearaceVBViewModel> Filter(IQueryable<ClearaceVBViewModel> query, Dictionary<string, object> filterDictionary)
         {
@@ -166,6 +169,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                 }
             }
 
+            var vbNonPOIdsToBeAccounted = new List<int>();
             foreach (var id in vbRealizationIds)
             {
                 if (id > 0)
@@ -176,24 +180,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
 
                     if (model.VBRequestDocumentId > 0 && !postedVB.Contains(model.VBRequestDocumentId))
                     {
-                        var vbRequest = await ReadByIdAsync(id);
-                        var epoIds = _DbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == vbRequest.Id).Select(entity => (long)entity.EPOId).ToList();
-                        var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                        var body = new VBAutoJournalFormDto()
+                        var vbRequest = _DbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == model.VBRequestDocumentId);
+
+                        if (vbRequest.Type == VBType.WithPO)
                         {
-                            Date = DateTimeOffset.UtcNow,
-                            DocumentNo = model.DocumentNo,
-                            EPOIds = epoIds
-                        };
+                            var epoIds = _DbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == vbRequest.Id).Select(entity => (long)entity.EPOId).ToList();
+                            var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                        var httpClient = _serviceProvider.GetService<IHttpClientService>();
-                        var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                            var body = new VBAutoJournalFormDto()
+                            {
+                                Date = DateTimeOffset.UtcNow,
+                                DocumentNo = model.DocumentNo,
+                                EPOIds = epoIds
+                            };
+
+                            var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                            var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                        }
+
+                        if (vbRequest.Type == VBType.NonPO)
+                        {
+                            vbNonPOIdsToBeAccounted.Add(model.Id);
+                        }
+
                     }
                 }
             }
 
-            return await _DbContext.SaveChangesAsync();
+            var result = await _DbContext.SaveChangesAsync();
+
+            if (vbNonPOIdsToBeAccounted.Count > 0)
+            {
+                await _autoJournalService.AutoJournalVBNonPOClearence(vbNonPOIdsToBeAccounted);
+            }
+
+            return result;
         }
 
         public async Task<int> ClearanceVBUnpost(long id)
