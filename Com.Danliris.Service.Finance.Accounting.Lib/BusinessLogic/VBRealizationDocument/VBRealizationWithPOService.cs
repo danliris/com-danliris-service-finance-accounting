@@ -76,7 +76,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var existingData = _dbContext.VBRealizationDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
             var documentNo = GetDocumentNo(form, existingData);
 
-            var amount = form.Items.Sum(element => element.UnitPaymentOrder.Amount.GetValueOrDefault());
+            var amount = form.Items.Sum(element => 
+            {
+                var nominal = element.UnitPaymentOrder.Amount.GetValueOrDefault();
+                if (element.UnitPaymentOrder.UseVat.GetValueOrDefault())
+                    nominal += element.UnitPaymentOrder.Amount.GetValueOrDefault() * (decimal)0.1;
+
+
+                if (element.UnitPaymentOrder.UseIncomeTax.GetValueOrDefault() && element.UnitPaymentOrder.IncomeTaxBy.ToUpper() == "SUPPLIER")
+                    nominal -= element.UnitPaymentOrder.Amount.GetValueOrDefault() * (decimal)element.UnitPaymentOrder.IncomeTax.Rate.GetValueOrDefault();
+
+
+                return nominal;
+            });
 
             if (form.Type == "Tanpa Nomor VB")
                 model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo, (decimal)amount);
