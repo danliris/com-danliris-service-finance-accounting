@@ -89,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                             CountItemsError++;
                             ItemsError += "'DateDetail': 'Tanggal Nota harus kurang atau sama dengan Tanggal Realisasi!', ";
                         }
-                        else if (VBNonPOType == "Dengan Nomor VB" && item.DateDetail.Value < VBDocument.Date.GetValueOrDefault())
+                        else if (VBNonPOType == "Dengan Nomor VB" && item.DateDetail.Value.Date < VBDocument.Date.GetValueOrDefault().Date)
                         {
                             CountItemsError++;
                             ItemsError += "'DateDetail': 'Tanggal Nota harus lebih atau sama dengan Tanggal Permohonan VB!', ";
