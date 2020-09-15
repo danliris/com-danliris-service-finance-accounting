@@ -1,10 +1,12 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
+using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,6 +66,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         private Mock<IServiceProvider> GetServiceProvider()
         {
             var serviceProvider = new Mock<IServiceProvider>();
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IAutoJournalService)))
+                .Returns(new AutoJournalServiceTestHelper());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))

@@ -11,5 +11,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel, string documentNo);
         Task<int> AutoJournalReverseFromOthersExpenditureProof(string documentNo);
         Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds);
+        Task<int> AutoJournalVBNonPOApproval(List<int> vbRequestIds);
     }
 }
