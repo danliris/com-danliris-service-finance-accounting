@@ -203,7 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                         }
                     },
                     Active=true,
-                    Positon=new VBRealizationPosition(),
+                    Position=new VBRealizationPosition(),
                     Amount=1,
                     Items=new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
                     {

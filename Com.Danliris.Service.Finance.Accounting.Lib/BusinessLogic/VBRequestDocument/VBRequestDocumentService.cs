@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -25,14 +26,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public readonly FinanceDbContext _dbContext;
 
         private readonly IIdentityService _identityService;
-        private readonly IJournalTransactionService _journalTransactionService;
+        private readonly IAutoJournalService _autoJournalTransactionService;
         private readonly IServiceProvider _serviceProvider;
 
         public VBRequestDocumentService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
         {
             _dbContext = dbContext;
             _identityService = serviceProvider.GetService<IIdentityService>();
-            _journalTransactionService = serviceProvider.GetService<IJournalTransactionService>();
+            _autoJournalTransactionService = serviceProvider.GetService<IAutoJournalService>();
             _serviceProvider = serviceProvider;
         }
 
@@ -131,7 +132,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     false,
                     false,
                     VBType.NonPO,
-                    documentNo.Item2
+                    documentNo.Item2,
+                    form.IsInklaring
                     );
 
                 model.FlagForCreate(_identityService.Username, UserAgent);
@@ -205,7 +207,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 false,
                 false,
                 VBType.WithPO,
-                documentNo.Item2
+                documentNo.Item2,
+                form.IsInklaring
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -413,7 +416,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                         Code = model.SuppliantDivisionCode,
                         Id = model.SuppliantDivisionId
                     }
-                }
+                },
+                IsInklaring = model.IsInklaring
             };
         }
 
@@ -466,6 +470,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 IsApproved = model.ApprovalStatus == ApprovalStatus.Approved,
                 Purpose = model.Purpose,
                 CreatedBy = model.CreatedBy,
+                IsInklaring = model.IsInklaring,
                 ApprovalStatus = model.ApprovalStatus.ToString(),
                 Items = epoDetails.Select(epoDetail =>
                 {
@@ -680,7 +685,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return query.ToList();
         }
 
-        public Task<int> ApprovalData(ApprovalVBFormDto data)
+        public async Task<int> ApprovalData(ApprovalVBFormDto data)
         {
             var vbDocuments = _dbContext.VBRequestDocuments.Where(s => data.Ids.Contains(s.Id));
 
@@ -695,22 +700,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
                 if (item.Type == VBType.WithPO)
                 {
-                    var epoIds = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == item.Id).Select(entity => (long)entity.EPOId).ToList();
-                    var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+                    //var epoIds = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == item.Id).Select(entity => (long)entity.EPOId).ToList();
+                    //var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                    var body = new VBAutoJournalFormDto()
-                    {
-                        Date = DateTimeOffset.UtcNow,
-                        DocumentNo = item.DocumentNo,
-                        EPOIds = epoIds
-                    };
+                    //var body = new VBAutoJournalFormDto()
+                    //{
+                    //    Date = DateTimeOffset.UtcNow,
+                    //    DocumentNo = item.DocumentNo,
+                    //    EPOIds = epoIds
+                    //};
 
-                    var httpClient = _serviceProvider.GetService<IHttpClientService>();
-                    var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                    //var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                    //var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
                 }
             }
 
-            return _dbContext.SaveChangesAsync();
+            var result = await _dbContext.SaveChangesAsync();
+
+            await _autoJournalTransactionService.AutoJournalVBNonPOApproval(data.Ids.ToList());
+
+            return result;
         }
 
         public Task<int> CancellationDocuments(CancellationFormDto form)
