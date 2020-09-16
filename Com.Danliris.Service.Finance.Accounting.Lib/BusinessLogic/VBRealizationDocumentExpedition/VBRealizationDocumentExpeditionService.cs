@@ -294,7 +294,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             return _dbContext.SaveChangesAsync();
         }
 
-
         public Task<int> VerifiedToCashier(List<int> vbRealizationIds)
         {
             var models = _dbContext.VBRealizationDocumentExpeditions.Where(entity => vbRealizationIds.Contains(entity.VBRealizationId) || entity.Position == VBRealizationPosition.Verification).ToList();
