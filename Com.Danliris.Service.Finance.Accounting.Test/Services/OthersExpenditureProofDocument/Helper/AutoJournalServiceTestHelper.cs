@@ -19,7 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
             return await Task.FromResult(1);
         }
 
-        public async Task<int> AutoJournalVBNonPOApproval(List<int> vbRequestIds)
+        public async Task<int> AutoJournalInklaring(List<int> vbRequestIds)
         {
             await Task.Delay(1000);
             return await Task.FromResult(1);

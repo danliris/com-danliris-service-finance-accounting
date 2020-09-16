@@ -150,22 +150,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
 
                     UpdateAsync(id, model);
 
-                    if (model.Type == VBType.WithPO)
-                    {
-                        var epoIds = _DbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == id).Select(entity => (long)entity.EPOId).ToList();
-                        var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+                    //if (model.Type == VBType.WithPO)
+                    //{
+                    //    var epoIds = _DbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == id).Select(entity => (long)entity.EPOId).ToList();
+                    //    var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                        var body = new VBAutoJournalFormDto()
-                        {
-                            Date = DateTimeOffset.UtcNow,
-                            DocumentNo = model.DocumentNo,
-                            EPOIds = epoIds
-                        };
-                        postedVB.Add(model.Id);
+                    //    var body = new VBAutoJournalFormDto()
+                    //    {
+                    //        Date = DateTimeOffset.UtcNow,
+                    //        DocumentNo = model.DocumentNo,
+                    //        EPOIds = epoIds
+                    //    };
+                    //    postedVB.Add(model.Id);
 
-                        var httpClient = _serviceProvider.GetService<IHttpClientService>();
-                        var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
-                    }
+                    //    var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                    //    var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                    //}
                 }
             }
 
@@ -186,17 +186,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                         if (vbRequest.Type == VBType.WithPO)
                         {
                             var epoIds = _DbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == vbRequest.Id).Select(entity => (long)entity.EPOId).ToList();
-                            var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
-
-                            var body = new VBAutoJournalFormDto()
+                            if (epoIds.Count > 0)
                             {
-                                Date = DateTimeOffset.UtcNow,
-                                DocumentNo = model.DocumentNo,
-                                EPOIds = epoIds
-                            };
+                                var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                            var httpClient = _serviceProvider.GetService<IHttpClientService>();
-                            var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                                var body = new VBAutoJournalFormDto()
+                                {
+                                    Date = DateTimeOffset.UtcNow,
+                                    DocumentNo = model.DocumentNo,
+                                    EPOIds = epoIds
+                                };
+
+                                var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                                var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                            }
                         }
 
                         if (vbRequest.Type == VBType.NonPO)
@@ -317,9 +320,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             newQuery = Order(newQuery, orderDictionary);
 
             var pageable = new Pageable<ClearaceVBViewModel>(newQuery, page - 1, size);
+            var data = pageable.Data.ToList();
 
             int totalData = pageable.TotalCount;
-            return new ReadResponse<ClearaceVBViewModel>(newQuery.ToList(), totalData, orderDictionary, new List<string>());
+            return new ReadResponse<ClearaceVBViewModel>(data, totalData, orderDictionary, new List<string>());
         }
     }
 }
