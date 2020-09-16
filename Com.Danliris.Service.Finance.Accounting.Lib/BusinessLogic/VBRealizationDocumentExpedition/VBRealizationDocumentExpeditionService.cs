@@ -90,7 +90,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             NotVerifiedBy = realizationExpedition != null ? realizationExpedition.NotVerifiedBy : null,
                             NotVerifiedDate = realizationExpedition != null ? realizationExpedition.NotVerifiedDate : null,
                             NotVerifiedReason = realizationExpedition != null ? realizationExpedition.NotVerifiedReason : null,
-                            Position = realization.Position,
+                            Position = realizationExpedition != null ? realizationExpedition.Position : VBRealizationPosition.Purchasing,
                             SendToVerificationBy = realizationExpedition != null ? realizationExpedition.SendToVerificationBy : null,
                             SendToVerificationDate = realizationExpedition != null ? realizationExpedition.SendToVerificationDate : null,
                             UnitId = realization.SuppliantUnitId,
