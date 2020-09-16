@@ -39,13 +39,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             PdfPTable headerTable_C = new PdfPTable(1);
             PdfPTable headerTable1 = new PdfPTable(1);
             PdfPTable headerTable2 = new PdfPTable(1);
-            PdfPTable headerTable3 = new PdfPTable(6);
+            PdfPTable headerTable3 = new PdfPTable(7);
             PdfPTable headerTable3a = new PdfPTable(5);
             PdfPTable headerTable4 = new PdfPTable(2);
 
             headerTable_A.SetWidths(new float[] { 10f, 10f });
             headerTable_A.WidthPercentage = 100;
-            headerTable3.SetWidths(new float[] { 5f, 15f, 30f, 15f, 15f, 20f });
+            headerTable3.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f, 20f });
             headerTable3.WidthPercentage = 110;
             headerTable3a.SetWidths(new float[] { 3f, 15f, 5f, 15f, 62f });
             headerTable3a.WidthPercentage = 110;
@@ -100,24 +100,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody6.HorizontalAlignment = Element.ALIGN_LEFT;
 
             // Document title
-            cellHeaderBody2.Colspan = 6;
+            cellHeaderBody2.Colspan = 7;
             cellHeaderBody2.Phrase = new Phrase("REALISASI VB DENGAN PO", bold_font);
             headerTable3.AddCell(cellHeaderBody2);
 
             // Document number
-            cellHeaderBody3.Colspan = 6;
+            cellHeaderBody3.Colspan = 7;
             cellHeaderBody3.HorizontalAlignment = Element.ALIGN_RIGHT;
             cellHeaderBody3.Phrase = new Phrase($"{viewModel.Header.DocumentNo}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
             // Realisasi VB Bagian
-            cellHeaderBody3.Colspan = 6;
+            cellHeaderBody3.Colspan = 7;
             cellHeaderBody3.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody3.Phrase = new Phrase($"Realisasi VB Bagian: {viewModel.Header.SuppliantUnitName}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
             // Tanggal
-            cellHeaderBody3.Colspan = 6;
+            cellHeaderBody3.Colspan = 7;
             cellHeaderBody3.Phrase = new Phrase($"Tanggal: {viewModel.Header.Date.AddHours(timeoffsset).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}", bold_font);
             headerTable3.AddCell(cellHeaderBody3);
 
@@ -130,8 +130,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1);
             cellHeaderBody1.Phrase = new Phrase("Tanggal", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
+            cellHeaderBody1.Colspan = 2;
             cellHeaderBody1.Phrase = new Phrase("Keterangan", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
+            cellHeaderBody1.Colspan = 1;
             cellHeaderBody1.Phrase = new Phrase("Divisi", normal_font);
             headerTable3.AddCell(cellHeaderBody1);
             cellHeaderBody1.Phrase = new Phrase("Mata Uang", normal_font);
@@ -160,11 +162,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody1);
 
                 // Keterangan
-                cellHeaderBody1.Phrase = new Phrase(itm.UnitPaymentOrderNo + " " + $"({itm.SupplierName})", normal_font);
+                cellHeaderBody1.Colspan = 2;
+                cellHeaderBody1.Phrase = new Phrase(itm.UnitPaymentOrderNo + Environment.NewLine + itm.SupplierName, normal_font);
                 cellHeaderBody1.HorizontalAlignment = Element.ALIGN_LEFT;
                 headerTable3.AddCell(cellHeaderBody1);
 
                 // Divisi
+                cellHeaderBody1.Colspan = 1;
                 cellHeaderBody1.Phrase = new Phrase(itm.DivisionName, normal_font);
                 cellHeaderBody1.HorizontalAlignment = Element.ALIGN_CENTER;
                 headerTable3.AddCell(cellHeaderBody1);
@@ -193,7 +197,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             }
 
             // Jumlah Realisasi
-            cellHeaderBody1a.Colspan = 4;
+            cellHeaderBody1a.Colspan = 5;
             cellHeaderBody1a.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a.Phrase = new Phrase("Jumlah Realisasi", normal_font);
             headerTable3.AddCell(cellHeaderBody1a);
@@ -208,7 +212,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1a);
 
             // PPn
-            cellHeaderBody1a1.Colspan = 4;
+            cellHeaderBody1a1.Colspan = 5;
             cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a1.Phrase = new Phrase("PPN", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
@@ -223,7 +227,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1a1);
 
             // PPh ditanggung Dan Liris
-            cellHeaderBody1a1.Colspan = 4;
+            cellHeaderBody1a1.Colspan = 5;
             cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a1.Phrase = new Phrase("PPh ditanggung Supplier", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
@@ -238,7 +242,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1a1);
 
             // PPh ditanggung Supplier
-            cellHeaderBody1a1.Colspan = 4;
+            cellHeaderBody1a1.Colspan = 5;
             cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a1.Phrase = new Phrase("PPh ditanggung Dan Liris", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
@@ -253,7 +257,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1a1);
 
             // Total Keseluruhan
-            cellHeaderBody1a2.Colspan = 4;
+            cellHeaderBody1a2.Colspan = 5;
             cellHeaderBody1a2.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a2.Phrase = new Phrase("Total", normal_font);
             headerTable3.AddCell(cellHeaderBody1a2);
@@ -276,8 +280,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                     vbDate = "";
 
             // Tanggal VB
-            cellHeaderBody6.Colspan = 2;
-            cellHeaderBody6.Phrase = new Phrase($"Tanggal VB : {vbDate}", normal_font);
+            cellHeaderBody6.Colspan = 3;
+            cellHeaderBody6.Phrase = new Phrase($"Tanggal VB: {vbDate}", normal_font);
             headerTable3.AddCell(cellHeaderBody6);
             
             // No VB
@@ -320,7 +324,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             if (res > 0)
             {
                 // Kurang
-                cellHeaderBody5.Colspan = 4;
+                cellHeaderBody5.Colspan = 5;
                 cellHeaderBody5.Phrase = new Phrase("Kurang", bold_font);
                 headerTable3.AddCell(cellHeaderBody5);
 
@@ -336,7 +340,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             else
             {
                 // Sisa
-                cellHeaderBody5.Colspan = 4;
+                cellHeaderBody5.Colspan = 5;
                 cellHeaderBody5.Phrase = new Phrase("Sisa", bold_font);
                 headerTable3.AddCell(cellHeaderBody5);
 
@@ -353,23 +357,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             string total = count_price.ToString("#,##0.00", new CultureInfo("id-ID"));
 
             // New Line
-            cellHeaderBody4a.Colspan = 6;
+            cellHeaderBody4a.Colspan = 7;
             cellHeaderBody4a.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4a);
 
             // Terbilang
-            cellHeaderBody4a.Colspan = 6;
+            cellHeaderBody4a.Colspan = 7;
             cellHeaderBody4a.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody4a.Phrase = new Phrase("Terbilang: " + Nom(grandTotal, currencyCode, currencydescription), normal_font);
             headerTable3.AddCell(cellHeaderBody4a);
 
             // New Line
-            cellHeaderBody4a.Colspan = 6;
+            cellHeaderBody4a.Colspan = 7;
             cellHeaderBody4a.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4a);
 
             // Beban Unit
-            cellHeaderBody4.Colspan = 6;
+            cellHeaderBody4.Colspan = 7;
             cellHeaderBody4.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody4.Phrase = new Phrase("Beban Unit :", bold_font);
             headerTable3.AddCell(cellHeaderBody4);
