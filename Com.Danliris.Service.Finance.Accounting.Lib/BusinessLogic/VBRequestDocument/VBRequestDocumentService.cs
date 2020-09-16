@@ -27,6 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         private readonly IIdentityService _identityService;
         private readonly IAutoJournalService _autoJournalTransactionService;
+        private readonly IJournalTransactionService _journalTransactionService;
         private readonly IServiceProvider _serviceProvider;
 
         public VBRequestDocumentService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
@@ -34,6 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             _dbContext = dbContext;
             _identityService = serviceProvider.GetService<IIdentityService>();
             _autoJournalTransactionService = serviceProvider.GetService<IAutoJournalService>();
+            _journalTransactionService = serviceProvider.GetService<IJournalTransactionService>();
             _serviceProvider = serviceProvider;
         }
 
@@ -689,6 +691,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         {
             var vbDocuments = _dbContext.VBRequestDocuments.Where(s => data.Ids.Contains(s.Id));
 
+            var vbRequestIdJournals = new List<int>();
             foreach (var item in vbDocuments)
             {
                 item.SetIsApproved(_identityService.Username, UserAgent);
@@ -700,6 +703,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
                 if (item.Type == VBType.WithPO)
                 {
+                    if (item.IsInklaring)
+                        vbRequestIdJournals.Add(item.Id);
                     //var epoIds = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == item.Id).Select(entity => (long)entity.EPOId).ToList();
                     //var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
@@ -717,7 +722,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             var result = await _dbContext.SaveChangesAsync();
 
-            await _autoJournalTransactionService.AutoJournalVBNonPOApproval(data.Ids.ToList());
+            await _autoJournalTransactionService.AutoJournalInklaring(vbRequestIdJournals);
 
             return result;
         }
@@ -745,6 +750,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 //    var httpClient = _serviceProvider.GetService<IHttpClientService>();
                 //    var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
                 //}
+                if (item.IsInklaring)
+                    _journalTransactionService.ReverseJournalTransactionByReferenceNo(item.DocumentNo);
             }
 
             return _dbContext.SaveChangesAsync();
