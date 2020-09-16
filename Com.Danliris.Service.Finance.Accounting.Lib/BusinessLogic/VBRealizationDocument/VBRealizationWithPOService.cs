@@ -82,8 +82,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 if (element.UnitPaymentOrder.UseVat.GetValueOrDefault())
                     nominal += element.UnitPaymentOrder.Amount.GetValueOrDefault() * (decimal)0.1;
 
+
                 if (element.UnitPaymentOrder.UseIncomeTax.GetValueOrDefault() && element.UnitPaymentOrder.IncomeTaxBy.ToUpper() == "SUPPLIER")
                     nominal -= element.UnitPaymentOrder.Amount.GetValueOrDefault() * (decimal)element.UnitPaymentOrder.IncomeTax.Rate.GetValueOrDefault();
+
 
                 return nominal;
             });

@@ -320,9 +320,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             newQuery = Order(newQuery, orderDictionary);
 
             var pageable = new Pageable<ClearaceVBViewModel>(newQuery, page - 1, size);
+            var data = pageable.Data.ToList();
 
             int totalData = pageable.TotalCount;
-            return new ReadResponse<ClearaceVBViewModel>(newQuery.ToList(), totalData, orderDictionary, new List<string>());
+            return new ReadResponse<ClearaceVBViewModel>(data, totalData, orderDictionary, new List<string>());
         }
     }
 }
