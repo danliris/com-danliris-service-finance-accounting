@@ -241,7 +241,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> Reject(int vbRealizationId, string reason)
         {
-            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && entity.Position == VBRealizationPosition.Verification);
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && (entity.Position == VBRealizationPosition.Verification || entity.Position == VBRealizationPosition.VerifiedToCashier));
 
             vbRealizationExpedition.VerificationRejected(_identityService.Username, reason);
             EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
@@ -355,7 +355,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> VerifiedToCashier(int vbRealizationId)
         {
-            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && entity.Position == VBRealizationPosition.Verification);
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && (entity.Position == VBRealizationPosition.Verification || entity.Position == VBRealizationPosition.NotVerified));
 
             vbRealizationExpedition.SendToCashier(_identityService.Username);
             EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
