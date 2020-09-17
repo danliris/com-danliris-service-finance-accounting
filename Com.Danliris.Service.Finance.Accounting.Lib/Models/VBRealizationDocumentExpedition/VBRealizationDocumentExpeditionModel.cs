@@ -131,7 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             NotVerifiedReason = reason;
             VerifiedToCashierBy = null;
             VerifiedToCashierDate = null;
-            Position = VBRealizationPosition.NotVerified   ;
+            Position = VBRealizationPosition.NotVerified;
         }
 
         public void UpdateVBRealizationInfo(RealizationVbModel realizationVB)
