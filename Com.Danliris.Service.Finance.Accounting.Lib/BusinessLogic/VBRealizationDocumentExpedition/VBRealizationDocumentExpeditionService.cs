@@ -384,7 +384,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         {
             var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
 
-            var idQuery = query.Where(entity => entity.Position > VBRealizationPosition.Verification);
+            var idQuery = query;
             var selectData = idQuery.GroupBy(entity => entity.VBRealizationId).Select(entity => entity.Last()).ToList();
             var ids = selectData.Select(element => element.Id).ToList();
 
