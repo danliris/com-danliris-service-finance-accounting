@@ -70,6 +70,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             SuppliantDivisionId = suppliantDivisionId;
             SuppliantDivisionCode = suppliantDivisionCode;
             SuppliantDivisionName = suppliantDivisionName;
+            IsInklaring = isInklaring;
         }
 
         [MaxLength(64)]
