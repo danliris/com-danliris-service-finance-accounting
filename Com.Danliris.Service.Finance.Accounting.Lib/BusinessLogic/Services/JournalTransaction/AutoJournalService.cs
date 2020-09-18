@@ -125,7 +125,55 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
                             await _journalTransactionService.CreateAsync(modelInklaring);
                         }
-                    } 
+                    }
+                    else
+                    {
+                        var model = new JournalTransactionModel()
+                        {
+                            Date = vbRealization.Date,
+                            Description = "Clearance VB",
+                            ReferenceNo = vbRealization.DocumentNo,
+                            Status = "DRAFT",
+                            Items = new List<JournalTransactionItemModel>()
+                        };
+
+                        //model.Items.Add(new JournalTransactionItemModel()
+                        //{
+                        //    COA = new COAModel()
+                        //    {
+                        //        Code = $"9999.00.0.00"
+                        //    },
+                        //    Debit = vbRealization.Amount
+                        //});
+
+                        if (vbRealization.CurrencyCode == "IDR")
+                        {
+                            model.Items.Add(new JournalTransactionItemModel()
+                            {
+                                COA = new COAModel()
+                                {
+                                    Code = $"1011.00.0.00"
+                                },
+                                Credit = vbRealization.Amount
+                            });
+                        }
+                        else
+                        {
+                            model.Items.Add(new JournalTransactionItemModel()
+                            {
+                                COA = new COAModel()
+                                {
+                                    Code = $"1012.00.0.00"
+                                },
+                                Credit = vbRealization.Amount
+                            });
+                        }
+
+                        //if (model.Items.Any(element => element.COA.Code.Contains("9999")))
+                        //    model.Status = "DRAFT";
+
+                        await _journalTransactionService.CreateAsync(model);
+                    }
                 } 
                 else
                 {
