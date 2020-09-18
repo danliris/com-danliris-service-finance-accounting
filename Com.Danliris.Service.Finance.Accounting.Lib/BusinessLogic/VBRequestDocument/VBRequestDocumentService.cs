@@ -701,23 +701,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 //    item.SetApprovedDate(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
                 //}
 
-                if (item.Type == VBType.WithPO)
-                {
-                    if (item.IsInklaring)
-                        vbRequestIdJournals.Add(item.Id);
-                    //var epoIds = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == item.Id).Select(entity => (long)entity.EPOId).ToList();
-                    //var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+                if (item.IsInklaring)
+                    vbRequestIdJournals.Add(item.Id);
 
-                    //var body = new VBAutoJournalFormDto()
-                    //{
-                    //    Date = DateTimeOffset.UtcNow,
-                    //    DocumentNo = item.DocumentNo,
-                    //    EPOIds = epoIds
-                    //};
+                //if (item.Type == VBType.WithPO)
+                //{
+                    
+                //    //var epoIds = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == item.Id).Select(entity => (long)entity.EPOId).ToList();
+                //    //var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                    //var httpClient = _serviceProvider.GetService<IHttpClientService>();
-                    //var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
-                }
+                //    //var body = new VBAutoJournalFormDto()
+                //    //{
+                //    //    Date = DateTimeOffset.UtcNow,
+                //    //    DocumentNo = item.DocumentNo,
+                //    //    EPOIds = epoIds
+                //    //};
+
+                //    //var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                //    //var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                //}
             }
 
             var result = await _dbContext.SaveChangesAsync();
