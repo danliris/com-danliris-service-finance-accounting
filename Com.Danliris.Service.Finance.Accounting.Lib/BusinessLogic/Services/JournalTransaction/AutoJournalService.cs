@@ -84,7 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             foreach (var vbRealization in vbRealizations)
             {
-                
+
 
                 if (vbRealization.VBRequestDocumentId > 0)
                 {
@@ -174,7 +174,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
                         await _journalTransactionService.CreateAsync(model);
                     }
-                } 
+                }
                 else
                 {
                     var model = new JournalTransactionModel()
@@ -265,7 +265,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     //});
 
                     //if (modelInklaring.Items.Any(element => element.COA.Code.Contains("9999")))
-                        //modelInklaring.Status = "DRAFT";
+                    //modelInklaring.Status = "DRAFT";
 
                     await _journalTransactionService.CreateAsync(modelInklaring);
                 }
