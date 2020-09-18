@@ -134,18 +134,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         Date = vbRealization.Date,
                         Description = "Clearance VB",
                         ReferenceNo = vbRealization.DocumentNo,
-                        Status = "POSTED",
+                        Status = "DRAFT",
                         Items = new List<JournalTransactionItemModel>()
                     };
 
-                    model.Items.Add(new JournalTransactionItemModel()
-                    {
-                        COA = new COAModel()
-                        {
-                            Code = $"9999.00.0.00"
-                        },
-                        Debit = vbRealization.Amount
-                    });
+                    //model.Items.Add(new JournalTransactionItemModel()
+                    //{
+                    //    COA = new COAModel()
+                    //    {
+                    //        Code = $"9999.00.0.00"
+                    //    },
+                    //    Debit = vbRealization.Amount
+                    //});
 
                     if (vbRealization.CurrencyCode == "IDR")
                     {
@@ -170,8 +170,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         });
                     }
 
-                    if (model.Items.Any(element => element.COA.Code.Contains("9999")))
-                        model.Status = "DRAFT";
+                    //if (model.Items.Any(element => element.COA.Code.Contains("9999")))
+                    //    model.Status = "DRAFT";
 
                     await _journalTransactionService.CreateAsync(model);
                 }
@@ -194,7 +194,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         Date = vbRequest.Date,
                         Description = "Approval VB Inklaring",
                         ReferenceNo = vbRequest.DocumentNo,
-                        Status = "POSTED",
+                        Status = "DRAFT",
                         Items = new List<JournalTransactionItemModel>()
                     };
 
@@ -207,17 +207,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         Debit = vbRequest.Amount
                     });
 
-                    modelInklaring.Items.Add(new JournalTransactionItemModel()
-                    {
-                        COA = new COAModel()
-                        {
-                            Code = $"9999.00.0.00"
-                        },
-                        Credit = vbRequest.Amount
-                    });
+                    //modelInklaring.Items.Add(new JournalTransactionItemModel()
+                    //{
+                    //    COA = new COAModel()
+                    //    {
+                    //        Code = $"9999.00.0.00"
+                    //    },
+                    //    Credit = vbRequest.Amount
+                    //});
 
-                    if (modelInklaring.Items.Any(element => element.COA.Code.Contains("9999")))
-                        modelInklaring.Status = "DRAFT";
+                    //if (modelInklaring.Items.Any(element => element.COA.Code.Contains("9999")))
+                        //modelInklaring.Status = "DRAFT";
 
                     await _journalTransactionService.CreateAsync(modelInklaring);
                 }
