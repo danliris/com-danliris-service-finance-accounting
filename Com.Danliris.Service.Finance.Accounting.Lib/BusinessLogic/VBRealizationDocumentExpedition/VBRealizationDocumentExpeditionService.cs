@@ -241,7 +241,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> Reject(int vbRealizationId, string reason)
         {
-            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && (entity.Position == VBRealizationPosition.Verification || entity.Position == VBRealizationPosition.VerifiedToCashier));
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.OrderByDescending(x => x.Id).FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && (entity.Position == VBRealizationPosition.Verification || entity.Position == VBRealizationPosition.VerifiedToCashier));
 
             vbRealizationExpedition.VerificationRejected(_identityService.Username, reason);
             EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
@@ -385,7 +385,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
 
             var idQuery = query;
-            var selectData = idQuery.GroupBy(entity => entity.VBRealizationId).Select(entity => entity.Last()).ToList();
+            var selectData = idQuery.GroupBy(entity => entity.VBRealizationId)
+                .Select(e => e.OrderByDescending(x => x.Id)
+                .FirstOrDefault()).ToList();
             var ids = selectData.Select(element => element.Id).ToList();
 
             query = query.Where(entity => ids.Contains(entity.Id) && (entity.Position == VBRealizationPosition.VerifiedToCashier || entity.Position == VBRealizationPosition.NotVerified));
