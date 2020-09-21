@@ -129,7 +129,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "VERIFIKASI")
                 query = query.Where(entity => entity.Position == VBRealizationPosition.Verification);
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "KASIR")
-                query = query.Where(entity => entity.Position == VBRealizationPosition.VerifiedToCashier);
+                query = query.Where(entity => entity.Position == VBRealizationPosition.Cashier);
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "RETUR")
                 query = query.Where(entity => entity.Position == VBRealizationPosition.NotVerified);
 
