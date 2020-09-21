@@ -110,6 +110,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public void SendToCashier(string name)
         {
             VerifiedToCashierBy = name;
+            NotVerifiedBy = null;
+            NotVerifiedDate = null;
+            NotVerifiedReason = null;
             VerifiedToCashierDate = DateTimeOffset.Now;
             Position = VBRealizationPosition.VerifiedToCashier;
         }
@@ -126,7 +129,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             NotVerifiedBy = name;
             NotVerifiedDate = DateTimeOffset.Now;
             NotVerifiedReason = reason;
-            Position = VBRealizationPosition.NotVerified   ;
+            VerifiedToCashierBy = null;
+            VerifiedToCashierDate = null;
+            Position = VBRealizationPosition.NotVerified;
         }
 
         public void UpdateVBRealizationInfo(RealizationVbModel realizationVB)
