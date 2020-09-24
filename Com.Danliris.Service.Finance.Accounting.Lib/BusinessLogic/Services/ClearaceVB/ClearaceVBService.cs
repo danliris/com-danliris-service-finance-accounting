@@ -22,6 +22,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using System.Net.Http;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Migrations;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB
 {
@@ -186,6 +187,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                     if (model.Type == VBType.WithPO)
                     {
                         var epoIds = _DbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == model.Id).Select(entity => (long)entity.UnitPaymentOrderId).ToList();
+                        var upoIds = _DbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == model.Id).Select(entity => new UPOAndAmountDto() { UPOId = entity.UnitPaymentOrderId, Amount = (double)entity.Amount}).ToList();
                         if (epoIds.Count > 0)
                         {
                             var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
@@ -194,7 +196,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                             {
                                 Date = DateTimeOffset.UtcNow,
                                 DocumentNo = model.DocumentNo,
-                                EPOIds = epoIds
+                                EPOIds = epoIds,
+                                UPOIds = upoIds
                             };
 
                             var httpClient = _serviceProvider.GetService<IHttpClientService>();
@@ -226,7 +229,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                         //    }
                         //}
 
-                        
+
 
                     }
                 }
