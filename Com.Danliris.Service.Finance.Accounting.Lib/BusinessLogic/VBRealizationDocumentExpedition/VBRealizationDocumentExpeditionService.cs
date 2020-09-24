@@ -45,6 +45,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             return _dbContext.SaveChangesAsync();
         }
 
+        private void CashierUpdateVBRealizationPosition(int vbRealizationId, VBRealizationPosition position)
+        {
+            var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == vbRealizationId);
+            model.UpdatePosition(position, _identityService.Username, UserAgent);
+
+            if (position == VBRealizationPosition.Cashier)
+                model.UpdatePosition(position, _identityService.Username, UserAgent);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.VBRealizationDocuments.Update(model);
+        }
+
         private void UpdateVBRealizationPosition(int vbRealizationId, VBRealizationPosition position, string reason)
         {
             var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == vbRealizationId);
@@ -248,6 +259,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             _dbContext.VBRealizationDocumentExpeditions.Update(vbRealizationExpedition);
             UpdateVBRealizationPosition(vbRealizationId, VBRealizationPosition.NotVerified, reason);
+
+            return _dbContext.SaveChangesAsync();
+        }
+
+        public Task<int> CashierDelete(int vbRealizationId)
+        {
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.OrderByDescending(x => x.Id).FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && entity.Position == VBRealizationPosition.Cashier);
+
+            vbRealizationExpedition.CashierDelete();
+            EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
+
+            _dbContext.VBRealizationDocumentExpeditions.Update(vbRealizationExpedition);
+            CashierUpdateVBRealizationPosition(vbRealizationId, VBRealizationPosition.Verification);
 
             return _dbContext.SaveChangesAsync();
         }
