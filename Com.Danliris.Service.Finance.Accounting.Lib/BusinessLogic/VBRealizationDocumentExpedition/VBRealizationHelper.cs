@@ -9,7 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
     {
         [Display(Name = "Pembelian")]
         Purchasing = 1,
-        [Display(Name = "Kirim ke Verifikasi")]
+        [Display(Name = "Penyerahan Ke Verifikasi")]
         PurchasingToVerification,
         [Display(Name = "Verifikasi")]
         Verification,
@@ -17,7 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         VerifiedToCashier,
         [Display(Name = "Kasir")]
         Cashier,
-        [Display(Name = "Ditolak")]
+        [Display(Name = "Retur")]
         NotVerified
     }
 
