@@ -245,6 +245,29 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpPut("vb-cashier-delete/{id}")]
+        public async Task<IActionResult> CashierDelete([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.CashierDelete(id);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok();
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpPut("vb-reject/{id}")]
         public async Task<IActionResult> reject([FromRoute] int id, [FromBody] VBRealizationExpeditionRejectDto viewModel)
         {
