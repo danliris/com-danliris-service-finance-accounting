@@ -22,6 +22,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public List<VBRequestDocumentNonPOItemFormDto> Items { get; set; }
         public bool IsInklaring { get; set; }
+        public string NoBL { get; set; }
+        public string NoPO { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -39,6 +41,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             if(Amount.GetValueOrDefault() <= 0)
                 yield return new ValidationResult("Jumlah Uang harus diisi", new List<string> { "Amount" });
+
+            if (IsInklaring && string.IsNullOrEmpty(NoBL))
+                yield return new ValidationResult("No. BL harus diisi", new List<string> { "NoBL" });
 
             if(string.IsNullOrEmpty(Purpose))
                 yield return new ValidationResult("Kegunaan harus diisi", new List<string> { "Purpose" });
