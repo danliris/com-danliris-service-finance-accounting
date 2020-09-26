@@ -135,7 +135,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     false,
                     VBType.NonPO,
                     documentNo.Item2,
-                    form.IsInklaring
+                    form.IsInklaring,
+                    form.NoBL,
+                    form.NoPO
                     );
 
                 model.FlagForCreate(_identityService.Username, UserAgent);
@@ -210,7 +212,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 false,
                 VBType.WithPO,
                 documentNo.Item2,
-                form.IsInklaring
+                false, // IsInklaring
+                null, // NoBL
+                null // NoPO
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -419,7 +423,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                         Id = model.SuppliantDivisionId
                     }
                 },
-                IsInklaring = model.IsInklaring
+                IsInklaring = model.IsInklaring,
+                NoBL = model.NoBL,
+                NoPO = model.NoPO
             };
         }
 
@@ -547,6 +553,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             data.SetCurrency(form.Currency.Id.GetValueOrDefault(), form.Currency.Code, form.Currency.Symbol, form.Currency.Rate.GetValueOrDefault(), form.Currency.Description, _identityService.Username, UserAgent);
             data.SetAmount(form.Amount.GetValueOrDefault(), _identityService.Username, UserAgent);
             data.SetPurpose(form.Purpose, _identityService.Username, UserAgent);
+            if(data.IsInklaring) data.SetInklaring(form.NoBL, form.NoPO);
 
             EditNonPOItems(id, form.Items);
             data.FlagForUpdate(_identityService.Username, UserAgent);

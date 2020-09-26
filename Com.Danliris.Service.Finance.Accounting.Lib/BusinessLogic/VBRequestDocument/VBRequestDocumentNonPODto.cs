@@ -24,5 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public List<VBRequestDocumentNonPOItemDto> Items { get; set; }
         public string ApprovalStatus { get; set; }
         public bool IsInklaring { get; set; }
+        public string NoBL { get; set; }
+        public string NoPO { get; set; }
     }
 }
