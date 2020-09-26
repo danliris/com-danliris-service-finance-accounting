@@ -26,6 +26,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Date = viewModel.Date.GetValueOrDefault();
             VBNonPoType = viewModel.VBNonPOType;
             Amount = viewModel.Amount;
+            BLAWBNumber = viewModel.BLAWBNumber;
+            ContractPONumber = viewModel.ContractPONumber;
             if (viewModel.VBDocument != null)
             {
                 VBRequestDocumentId = viewModel.VBDocument.Id;
@@ -185,6 +187,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public bool IsCompleted { get; private set; }
         public DateTimeOffset? CompletedDate { get; private set; }
         public string CompletedBy { get; private set; }
+        [MaxLength(256)]
+        public string BLAWBNumber { get; private set; }
+        [MaxLength(256)]
+        public string ContractPONumber { get; private set; }
 
         public void SetCurrency(int newCurrencyId, string newCurrencyCode, string newCurrencySymbol, double newCurrencyRate, string newCurrencyDescription, string user, string userAgent)
         {
