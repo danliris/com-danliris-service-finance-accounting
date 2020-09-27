@@ -37,6 +37,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
 
         public string ContractPONumber { get; set; }
 
+        public bool IsInklaring { get; set; }
+
         public IEnumerable<VBRealizationDocumentNonPOExpenditureItemViewModel> Items { get; set; }
         public IEnumerable<VBRealizationDocumentNonPOUnitCostViewModel> UnitCosts { get; set; }
 
@@ -108,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                         ItemsError += "'Remark': 'Keterangan harus diisi!', ";
                     }
 
-                    if(VBDocument.IsInklaring)
+                    if(IsInklaring)
                     {
                         if (string.IsNullOrWhiteSpace(item.BLAWBNumber))
                         {
@@ -125,14 +127,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                             }
                         }
 
-                        if (item.IsGetPPh)
-                        {
-                            if (item.PPhAmount <= 0)
-                            {
-                                CountItemsError++;
-                                ItemsError += "'PPhAmount': 'Jumlah harus lebih besar dari 0!', ";
-                            }
-                        }
+                            
                     }
 
                     if (item.Amount <= 0)
@@ -143,12 +138,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
 
                     if (item.IsGetPPh)
                     {
-                        if (!VBDocument.IsInklaring)
+                        if (!IsInklaring)
                         {
                             if (item.IncomeTax == null || item.IncomeTax.Id == 0)
                             {
                                 CountItemsError++;
                                 ItemsError += "'IncomeTax': 'Nomor PPh Harus Diisi!', ";
+                            }
+                        } else
+                        {
+                            if (item.PPhAmount <= 0)
+                            {
+                                CountItemsError++;
+                                ItemsError += "'PPhAmount': 'Jumlah harus lebih besar dari 0!', ";
                             }
                         }
 
