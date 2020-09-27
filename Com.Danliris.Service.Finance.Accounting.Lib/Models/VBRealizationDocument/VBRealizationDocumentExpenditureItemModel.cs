@@ -23,6 +23,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Amount = viewModel.Amount;
             UseVat = viewModel.IsGetPPn;
             UseIncomeTax = viewModel.IsGetPPh;
+            BLAWBNumber = viewModel.BLAWBNumber;
+            PPnAmount = viewModel.PPnAmount;
+            PPhAmount = viewModel.PPhAmount;
             if(viewModel.IncomeTax != null)
             {
                 IncomeTaxId = viewModel.IncomeTax.Id;
@@ -80,6 +83,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public int UnitPaymentOrderId { get; private set; }
         [MaxLength(64)]
         public string UnitPaymentOrderNo { get; private set; }
+        [MaxLength(256)]
+        public string BLAWBNumber { get; private set; }
+        public decimal PPnAmount { get; private set; }
+        public decimal PPhAmount { get; private set; }
 
         public void SetDate(DateTimeOffset newDate, string user, string userAgent)
         {
