@@ -52,6 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
                 unitCode = "G";
 
+            if (form.IsInklaring) unitCode += "I";
 
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
