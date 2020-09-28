@@ -199,12 +199,24 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 }
                 else
                 {
-                    VBRealizationDocumentNonPOPDFTemplate PdfTemplate = new VBRealizationDocumentNonPOPDFTemplate();
-                    MemoryStream stream = PdfTemplate.GeneratePdfTemplate(data, timeoffsset);
-                    return new FileStreamResult(stream, "application/pdf")
+                    if (data.IsInklaring)
                     {
-                        FileDownloadName = $"Realisasi VB Tanpa PO - {data.DocumentNo}.pdf"
-                    };
+                        VBRealizationDocumentNonPOPDFInklaringTemplate PdfTemplate = new VBRealizationDocumentNonPOPDFInklaringTemplate();
+                        MemoryStream stream = PdfTemplate.GeneratePdfTemplate(data, timeoffsset);
+                        return new FileStreamResult(stream, "application/pdf")
+                        {
+                            FileDownloadName = $"Realisasi VB Inklaring Tanpa PO - {data.DocumentNo}.pdf"
+                        };
+
+                    } else
+                    {
+                        VBRealizationDocumentNonPOPDFTemplate PdfTemplate = new VBRealizationDocumentNonPOPDFTemplate();
+                        MemoryStream stream = PdfTemplate.GeneratePdfTemplate(data, timeoffsset);
+                        return new FileStreamResult(stream, "application/pdf")
+                        {
+                            FileDownloadName = $"Realisasi VB Tanpa PO - {data.DocumentNo}.pdf"
+                        };
+                    }
                 }
             }
             catch (Exception e)

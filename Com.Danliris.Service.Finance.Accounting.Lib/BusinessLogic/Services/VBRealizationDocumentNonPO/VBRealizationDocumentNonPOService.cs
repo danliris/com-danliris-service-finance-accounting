@@ -235,6 +235,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                 LastModifiedUtc = model.LastModifiedUtc,
                 Type = model.Type,
                 Position = model.Position,
+                BLAWBNumber = model.BLAWBNumber,
+                ContractPONumber = model.ContractPONumber,
+                IsInklaring = model.IsInklaring,
                 Unit = new UnitViewModel()
                 {
                     Code = model.SuppliantUnitCode,
@@ -277,6 +280,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                     IsDeleted = s.IsDeleted,
                     IsGetPPh = s.UseIncomeTax,
                     IsGetPPn = s.UseVat,
+                    PPhAmount = s.PPhAmount,
+                    PPnAmount = s.PPnAmount,
+                    BLAWBNumber = s.BLAWBNumber,
                     LastModifiedAgent = s.LastModifiedAgent,
                     LastModifiedBy = s.LastModifiedBy,
                     LastModifiedUtc = s.LastModifiedUtc,
