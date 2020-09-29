@@ -162,5 +162,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 this.FlagForUpdate(user, userAgent);
             }
         }
+
+        public void SetBLAWBNumber(string newBLAWBNumber, string user, string userAgent)
+        {
+            if (newBLAWBNumber != BLAWBNumber)
+            {
+                BLAWBNumber = newBLAWBNumber;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetPPnAmount(decimal newPPnAmount, string user, string userAgent)
+        {
+            if (newPPnAmount != PPnAmount)
+            {
+                PPnAmount = newPPnAmount;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetPPhAmount(decimal newPPhAmount, string user, string userAgent)
+        {
+            if (newPPhAmount != PPhAmount)
+            {
+                PPhAmount = newPPhAmount;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
     }
 }

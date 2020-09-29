@@ -141,9 +141,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1);
 
             int index = 1;
-            decimal count_price = 0;
+            /*decimal count_price = 0;*/
+            /*decimal total_all = 0;*/
             decimal total_realization = 0;
-            decimal total_all = 0;
+
+            decimal ppn_manually = 0;
+            decimal pph_supplier = 0;
+            decimal pph_danliris = 0;
 
             var currencyCode = viewModel.Currency.Code;
             var currencydescription = viewModel.Currency.Description;
@@ -174,12 +178,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 if (itm.IsGetPPn)
                 {
-                    var temp = itm.Amount * 0.1m;
-                    total_all = itm.Amount + temp;
+                    /*var temp = itm.Amount * 0.1m;
+                    total_all = itm.Amount + temp;*/
+
+                    ppn_manually += itm.PPnAmount;
                 }
-                else
+                /*else
                 {
                     total_all = itm.Amount;
+                }*/
+
+                if (itm.IsGetPPh)
+                {
+                    if (itm.IncomeTaxBy == "Supplier")
+                    {
+                        pph_supplier += itm.PPhAmount;
+                    } else
+                    {
+                        pph_danliris += itm.PPhAmount;
+                    }
                 }
 
                 // Mata Uang
@@ -193,7 +210,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 cellHeaderBody1.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody1);
 
-                count_price += total_all;
+                /*count_price += total_all;*/
                 total_realization += itm.Amount;
             }
 
@@ -223,7 +240,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1b1);
 
             // Jumlah
-            cellHeaderBody1a1.Phrase = new Phrase((count_price - total_realization).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1a1.Phrase = new Phrase(ppn_manually.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_RIGHT;
             headerTable3.AddCell(cellHeaderBody1a1);
 
@@ -238,7 +255,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1b1);
 
             // Jumlah
-            cellHeaderBody1a1.Phrase = new Phrase((GetPPhValueDanLiris(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1a1.Phrase = new Phrase(pph_danliris.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_RIGHT;
             headerTable3.AddCell(cellHeaderBody1a1);
 
@@ -253,7 +270,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1b1);
 
             // Jumlah
-            cellHeaderBody1a1.Phrase = new Phrase((GetPPhValue(viewModel)).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+            cellHeaderBody1a1.Phrase = new Phrase(pph_supplier.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_RIGHT;
             headerTable3.AddCell(cellHeaderBody1a1);
 
@@ -268,7 +285,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody1b2);
 
             // Jumlah
-            var grandTotal = count_price - GetPPhValue(viewModel);
+            var grandTotal = total_realization + ppn_manually - pph_supplier;
             cellHeaderBody1a2.Phrase = new Phrase(grandTotal.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
             cellHeaderBody1a2.HorizontalAlignment = Element.ALIGN_RIGHT;
             headerTable3.AddCell(cellHeaderBody1a2);
@@ -318,8 +335,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody1);
             }
 
-            var priceterbilang = count_price;
-            var res = (count_price - GetPPhValue(viewModel)) - (viewModel.VBDocument == null ? 0 : viewModel.VBDocument.Amount.GetValueOrDefault());
+            var priceterbilang = grandTotal;
+            var res = grandTotal - (viewModel.VBDocument == null ? 0 : viewModel.VBDocument.Amount.GetValueOrDefault());
 
             if (res > 0)
             {
@@ -354,7 +371,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody5a);
             }
 
-            string total = count_price.ToString("#,##0.00", new CultureInfo("id-ID"));
+            string total = grandTotal.ToString("#,##0.00", new CultureInfo("id-ID"));
 
             // New Line
             cellHeaderBody4a.Colspan = 7;
