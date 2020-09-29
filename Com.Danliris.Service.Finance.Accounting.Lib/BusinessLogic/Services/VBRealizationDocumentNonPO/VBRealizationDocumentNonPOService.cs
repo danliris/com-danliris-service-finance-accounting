@@ -398,6 +398,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                     item.SetRemark(formItem.Remark, _identityService.Username, UserAgent);
                     item.SetUseIncomeTax(formItem.IsGetPPh, _identityService.Username, UserAgent);
                     item.SetUseVat(formItem.IsGetPPn, _identityService.Username, UserAgent);
+                    item.SetBLAWBNumber(formItem.BLAWBNumber, _identityService.Username, UserAgent);
+                    item.SetPPnAmount(formItem.PPnAmount, _identityService.Username, UserAgent);
+                    item.SetPPhAmount(formItem.PPhAmount, _identityService.Username, UserAgent);
 
                 }
             }
