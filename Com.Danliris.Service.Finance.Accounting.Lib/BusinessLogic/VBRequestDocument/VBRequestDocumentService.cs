@@ -138,7 +138,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     documentNo.Item2,
                     form.IsInklaring,
                     form.NoBL,
-                    form.NoPO
+                    form.NoPO,
+                    null
                     );
 
                 model.FlagForCreate(_identityService.Username, UserAgent);
@@ -215,7 +216,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 documentNo.Item2,
                 false, // IsInklaring
                 null, // NoBL
-                null // NoPO
+                null, // NoPO
+                form.TypePurchasing
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -481,6 +483,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 CreatedBy = model.CreatedBy,
                 IsInklaring = model.IsInklaring,
                 ApprovalStatus = model.ApprovalStatus.ToString(),
+                TypePurchasing = model.TypePurchasing,
                 Items = epoDetails.Select(epoDetail =>
                 {
                     var details = _dbContext.VBRequestDocumentItems.Where(entity => entity.VBRequestDocumentEPODetailId == epoDetail.Id).ToList();
