@@ -191,6 +191,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody.Phrase = new Phrase(data.Purpose, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
+
+            string noBl = (string.IsNullOrEmpty(data.NoBL)) ? "-" : data.NoBL;
+            cellHeaderBody.Phrase = new Phrase("No. BL / AWB", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase(":", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase(noBl, normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+
+
+            string noPo = (string.IsNullOrEmpty(data.NoPO)) ? "-" : data.NoPO;
+            cellHeaderBody.Phrase = new Phrase("No. Kontrak / PO", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase(":", normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+            cellHeaderBody.Phrase = new Phrase(noPo, normal_font);
+            headerTable3.AddCell(cellHeaderBody);
+
             cellHeaderBody.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(" ", normal_font);
