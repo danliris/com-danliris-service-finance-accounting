@@ -5,6 +5,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
 using iTextSharp.text;
@@ -724,7 +725,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             var result = await _dbContext.SaveChangesAsync();
 
-            await _autoJournalTransactionService.AutoJournalInklaring(vbRequestIdJournals);
+            await _autoJournalTransactionService.AutoJournalInklaring(vbRequestIdJournals, data.Bank);
 
             return result;
         }
