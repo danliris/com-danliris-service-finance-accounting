@@ -26,7 +26,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Date = viewModel.Date.GetValueOrDefault();
             VBNonPoType = viewModel.VBNonPOType;
             Amount = viewModel.Amount;
-            if (viewModel.VBDocument != null)
+            BLAWBNumber = viewModel.BLAWBNumber;
+            ContractPONumber = viewModel.ContractPONumber;
+            IsInklaring = viewModel.IsInklaring;
+            if (viewModel.VBDocument != null && viewModel.VBDocument.Id > 0)
             {
                 VBRequestDocumentId = viewModel.VBDocument.Id;
                 VBRequestDocumentNo = viewModel.VBDocument.DocumentNo;
@@ -35,6 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
                 VBRequestDocumentCreatedBy = viewModel.VBDocument.CreatedBy;
                 VBRequestDocumentAmount = viewModel.VBDocument.Amount.GetValueOrDefault();
                 VBRequestDocumentPurpose = viewModel.VBDocument.Purpose;
+                IsInklaring = viewModel.VBDocument.IsInklaring;
             }
 
             if (viewModel.Unit != null)
@@ -185,7 +189,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public bool IsCompleted { get; private set; }
         public DateTimeOffset? CompletedDate { get; private set; }
         public string CompletedBy { get; private set; }
-
+        [MaxLength(256)]
+        public string BLAWBNumber { get; private set; }
+        [MaxLength(256)]
+        public string ContractPONumber { get; private set; }
+        public bool IsInklaring { get; private set; }
         public void SetCurrency(int newCurrencyId, string newCurrencyCode, string newCurrencySymbol, double newCurrencyRate, string newCurrencyDescription, string user, string userAgent)
         {
             if (newCurrencyId != CurrencyId)

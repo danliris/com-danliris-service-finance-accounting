@@ -242,6 +242,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
             {
             }
 
+            public Task<int> CashierDelete(int vbRealizationId)
+            {
+                throw new NotImplementedException();
+            }
+
             public Task<int> CashierReceipt(List<int> vbRealizationIds)
             {
                 throw new NotImplementedException();

@@ -110,6 +110,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public void SendToCashier(string name)
         {
             VerifiedToCashierBy = name;
+            NotVerifiedBy = null;
+            NotVerifiedDate = null;
+            NotVerifiedReason = null;
             VerifiedToCashierDate = DateTimeOffset.Now;
             Position = VBRealizationPosition.VerifiedToCashier;
         }
@@ -121,12 +124,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Position = VBRealizationPosition.Cashier;
         }
 
+        public void CashierDelete()
+        {
+            CashierReceiptBy = null;
+            CashierReceiptDate = null;
+            Position = VBRealizationPosition.VerifiedToCashier;
+        }
+
         public void VerificationRejected(string name, string reason)
         {
             NotVerifiedBy = name;
             NotVerifiedDate = DateTimeOffset.Now;
             NotVerifiedReason = reason;
-            Position = VBRealizationPosition.NotVerified   ;
+            VerifiedToCashierBy = null;
+            VerifiedToCashierDate = null;
+            Position = VBRealizationPosition.NotVerified;
         }
 
         public void UpdateVBRealizationInfo(RealizationVbModel realizationVB)

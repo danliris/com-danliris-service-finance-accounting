@@ -50,7 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == vbRealizationId);
             model.UpdatePosition(position, _identityService.Username, UserAgent);
 
-            if (position == VBRealizationPosition.VerifiedToCashier || position == VBRealizationPosition.NotVerified)
+            if (position == VBRealizationPosition.VerifiedToCashier || position == VBRealizationPosition.NotVerified || position == VBRealizationPosition.Cashier)
                 model.UpdateVerified(position, reason, _identityService.Username, UserAgent);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             _dbContext.VBRealizationDocuments.Update(model);
@@ -127,9 +127,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "UNIT")
                 query = query.Where(entity => entity.Position <= VBRealizationPosition.PurchasingToVerification);
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "VERIFIKASI")
-                query = query.Where(entity => entity.Position >= VBRealizationPosition.Verification);
+                query = query.Where(entity => entity.Position >= VBRealizationPosition.Verification && entity.Position <= VBRealizationPosition.VerifiedToCashier);
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "KASIR")
-                query = query.Where(entity => entity.Position == VBRealizationPosition.VerifiedToCashier);
+                query = query.Where(entity => entity.Position == VBRealizationPosition.Cashier);
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "RETUR")
                 query = query.Where(entity => entity.Position == VBRealizationPosition.NotVerified);
 
@@ -241,13 +241,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> Reject(int vbRealizationId, string reason)
         {
-            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && entity.Position == VBRealizationPosition.Verification);
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.OrderByDescending(x => x.Id).FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && (entity.Position == VBRealizationPosition.Verification || entity.Position == VBRealizationPosition.VerifiedToCashier));
 
             vbRealizationExpedition.VerificationRejected(_identityService.Username, reason);
             EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
 
             _dbContext.VBRealizationDocumentExpeditions.Update(vbRealizationExpedition);
             UpdateVBRealizationPosition(vbRealizationId, VBRealizationPosition.NotVerified, reason);
+
+            return _dbContext.SaveChangesAsync();
+        }
+
+        public Task<int> CashierDelete(int vbRealizationId)
+        {
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.OrderByDescending(x => x.Id).FirstOrDefault(e => e.VBRealizationId == vbRealizationId && e.Position == VBRealizationPosition.Cashier);
+
+            vbRealizationExpedition.CashierDelete();
+            EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
+
+            _dbContext.VBRealizationDocumentExpeditions.Update(vbRealizationExpedition);
+            UpdateVBRealizationPosition(vbRealizationId, VBRealizationPosition.VerifiedToCashier, null);
+
+            var vbRealizationDocuments = _dbContext.VBRealizationDocuments.FirstOrDefault(x => x.Id == vbRealizationId);
+
+            EntityExtension.FlagForUpdate(vbRealizationDocuments, _identityService.Username, UserAgent);
+            vbRealizationDocuments.UpdatePosition(VBRealizationPosition.VerifiedToCashier, _identityService.Username, UserAgent);
 
             return _dbContext.SaveChangesAsync();
         }
@@ -355,7 +373,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public Task<int> VerifiedToCashier(int vbRealizationId)
         {
-            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && entity.Position == VBRealizationPosition.Verification);
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.OrderByDescending(x => x.Id).FirstOrDefault(entity => entity.VBRealizationId == vbRealizationId && (entity.Position == VBRealizationPosition.Verification || entity.Position == VBRealizationPosition.NotVerified));
 
             vbRealizationExpedition.SendToCashier(_identityService.Username);
             EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
@@ -383,8 +401,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         {
             var query = _dbContext.Set<VBRealizationDocumentExpeditionModel>().AsQueryable();
 
-            var idQuery = query.Where(entity => entity.Position > VBRealizationPosition.Verification);
-            var selectData = idQuery.GroupBy(entity => entity.VBRealizationId).Select(entity => entity.Last()).ToList();
+            var idQuery = query;
+            var selectData = idQuery.GroupBy(entity => entity.VBRealizationId)
+                .Select(e => e.OrderByDescending(x => x.Id)
+                .FirstOrDefault()).ToList();
             var ids = selectData.Select(element => element.Id).ToList();
 
             query = query.Where(entity => ids.Contains(entity.Id) && (entity.Position == VBRealizationPosition.VerifiedToCashier || entity.Position == VBRealizationPosition.NotVerified));
