@@ -126,6 +126,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
 
         public void CashierDelete()
         {
+            CashierReceiptBy = null;
+            CashierReceiptDate = null;
             Position = VBRealizationPosition.VerifiedToCashier;
         }
 

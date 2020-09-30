@@ -16,6 +16,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public List<VBRequestDocumentWithPOItemFormDto> Items { get; set; }
         public bool IsInklaring { get; set; }
+        public string TypePurchasing { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -33,6 +34,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             if (Amount.GetValueOrDefault() <= 0)
                 yield return new ValidationResult("Nominal harus diisi", new List<string> { "Amount" });
+
+            if(String.IsNullOrEmpty(TypePurchasing))
+                yield return new ValidationResult("Terjadi Kesalahan pada Jenis Pembelian", new List<string> { "TypePurchasing" });
 
             if (Items == null || Items.Count.Equals(0))
             {
