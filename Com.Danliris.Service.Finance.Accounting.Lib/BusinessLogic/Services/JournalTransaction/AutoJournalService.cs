@@ -159,7 +159,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         {
                             Date = vbRealization.Date,
                             Description = "Clearance VB",
-                            ReferenceNo = vbRealization.DocumentNo,
+                            ReferenceNo = bankDocumentNo,
                             Status = "DRAFT",
                             Items = new List<JournalTransactionItemModel>()
                         };
