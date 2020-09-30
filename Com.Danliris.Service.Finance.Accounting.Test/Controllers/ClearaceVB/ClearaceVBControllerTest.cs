@@ -237,11 +237,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
                 Id = id
             };
             mocks.Mapper.Setup(m => m.Map<ClearaceVBViewModel>(It.IsAny<VbRequestModel>())).Returns(viewModel);
-            mocks.Service.Setup(f => f.ClearanceVBPost(It.IsAny<List<ClearencePostId>>())).ReturnsAsync(1);
+            mocks.Service.Setup(f => f.ClearanceVBPost(It.IsAny<ClearenceFormDto>())).ReturnsAsync(1);
             var listId = new List<ClearencePostId> { new ClearencePostId() { VBRequestId = (int)viewModel.Id } };
 
             var controller = GetController(mocks);
-            var response = await controller.ClearanceVBPost(listId);
+            var response = await controller.ClearanceVBPost(new ClearenceFormDto());
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
@@ -256,11 +256,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.ClearaceVB
                 Id = id
             };
             mocks.Mapper.Setup(m => m.Map<ClearaceVBViewModel>(It.IsAny<VbRequestModel>())).Returns(viewModel);
-            mocks.Service.Setup(f => f.ClearanceVBPost(It.IsAny<List<ClearencePostId>>())).ThrowsAsync(new Exception());
+            mocks.Service.Setup(f => f.ClearanceVBPost(It.IsAny<ClearenceFormDto>())).ThrowsAsync(new Exception());
             var listId = new List<ClearencePostId> { new ClearencePostId() { VBRequestId = (int)viewModel.Id } };
 
             var controller = GetController(mocks);
-            var response = await controller.ClearanceVBPost(listId);
+            var response = await controller.ClearanceVBPost(new ClearenceFormDto() { });
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
