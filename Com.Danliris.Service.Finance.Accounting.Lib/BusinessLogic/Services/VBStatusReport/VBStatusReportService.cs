@@ -130,7 +130,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                 : "-",
                               ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                 : "-",
-                              CurrencyCode = rqst.CurrencyCode
+                              CurrencyCode = rqst.CurrencyCode,
+                              IsInklaring = rqst.IsInklaring,
+                              NoBL = rqst.NoBL
 
                           })
                               .OrderByDescending(s => s.LastModifiedUtc);
@@ -178,7 +180,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                               ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                 : "-",
                               ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
-                                : "-"
+                                : "-",
+                              IsInklaring = rqst.IsInklaring,
+                              NoBL = rqst.NoBL
 
                           })
                           .OrderByDescending(s => s.LastModifiedUtc);
