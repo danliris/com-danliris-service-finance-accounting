@@ -127,20 +127,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         {
             VBRequestDocumentWithPOFormDto dto = new VBRequestDocumentWithPOFormDto()
             {
-                Id=1,
-                Amount=1,
-                Currency=new CurrencyDto()
+                Id = 1,
+                Amount = 1,
+                Currency = new CurrencyDto()
                 {
-                    Id=1,
+                    Id = 1,
                 },
-                Date=DateTimeOffset.Now,
-                Purpose= "Purpose",
-                RealizationEstimationDate=DateTimeOffset.Now,
-                SuppliantUnit=new UnitDto()
+                Date = DateTimeOffset.Now,
+                Purpose = "Purpose",
+                RealizationEstimationDate = DateTimeOffset.Now,
+                SuppliantUnit = new UnitDto()
                 {
-                    Id=1,
-                    Code="Code"
+                    Id = 1,
+                    Code = "Code"
                 },
+                TypePurchasing = "VB",
                 Items = new List<VBRequestDocumentWithPOItemFormDto>()
                 {
                     new VBRequestDocumentWithPOItemFormDto()

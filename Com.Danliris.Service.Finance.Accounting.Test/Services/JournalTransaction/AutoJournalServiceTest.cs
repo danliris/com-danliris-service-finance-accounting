@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
@@ -10,6 +13,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
 using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using Xunit;
 
@@ -17,15 +22,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 {
     public class AutoJournalServiceTest
     {
+        private const string ENTITY = "AutoJournal";
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private string GetCurrentMethod()
+        {
+            var st = new StackTrace();
+            var sf = st.GetFrame(1);
+
+            return string.Concat(sf.GetMethod().Name, "_", ENTITY);
+        }
+
+        private FinanceDbContext GetDbContext(string testName)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<FinanceDbContext>();
+            optionsBuilder
+                .UseInMemoryDatabase(testName)
+                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+
+            var dbContext = new FinanceDbContext(optionsBuilder.Options);
+
+            return dbContext;
+        }
+
         [Fact]
         public async Task Should_Success_Auto_Journal_From_Others_Bank_Expenditure()
         {
+            var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = new Mock<IServiceProvider>();
 
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IJournalTransactionService))).Returns(new JournalTransactionServiceTestHelper());
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
 
-            var service = new AutoJournalService(serviceProviderMock.Object);
+            var service = new AutoJournalService(dbContext, serviceProviderMock.Object);
 
             var viewModel = new OthersExpenditureProofDocumentCreateUpdateViewModel()
             {
@@ -42,11 +70,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         [Fact]
         public async Task Should_Success_Auto_Journal_From_Others_Bank_Expenditure_Reverse()
         {
+            var dbContext = GetDbContext(GetCurrentMethod());
+
             var serviceProviderMock = new Mock<IServiceProvider>();
 
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IJournalTransactionService))).Returns(new JournalTransactionServiceTestHelper());
 
-            var service = new AutoJournalService(serviceProviderMock.Object);
+            var service = new AutoJournalService(dbContext, serviceProviderMock.Object);
 
             var result = await service.AutoJournalReverseFromOthersExpenditureProof("any");
             Assert.NotEqual(0, result);

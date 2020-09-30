@@ -1,4 +1,5 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -26,6 +27,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
         }
 
         public async Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
+        }
+
+        public async Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds, AccountBankViewModel bank)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
+        }
+
+        public async Task<int> AutoJournalInklaring(List<int> vbRequestIds, AccountBankViewModel bank)
         {
             await Task.Delay(1000);
             return await Task.FromResult(1);
