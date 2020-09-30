@@ -116,6 +116,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                             };
 
                             foreach (var vbRealizationItem in selectedVbRealizationItems)
+                            {
+                                var ppn = vbRealizationItem.PPnAmount;
+                                var pph = vbRealizationItem.PPhAmount;
+
+                                modelInklaring.Items.Add(new JournalTransactionItemModel()
+                                {
+                                    COA = new COAModel()
+                                    {
+                                        Code = "1804.00.0.00"
+                                    },
+                                    Debit = vbRealizationItem.Amount + pph
+                                });
+
+                                if (ppn > 0)
+                                    modelInklaring.Items.Add(new JournalTransactionItemModel()
+                                    {
+                                        COA = new COAModel()
+                                        {
+                                            Code = "1509.00.0.00"
+                                        },
+                                        Debit = ppn
+                                    });
+
+                                if (pph > 0)
+                                    modelInklaring.Items.Add(new JournalTransactionItemModel()
+                                    {
+                                        COA = new COAModel()
+                                        {
+                                            Code = "3330.00.0.00"
+                                        },
+                                        Credit = pph
+                                    });
+
+                                modelInklaring.Items.Add(new JournalTransactionItemModel()
+                                {
+                                    COA = new COAModel()
+                                    {
+                                        Code = "1503.00.0.00"
+                                    },
+                                    Credit = vbRealizationItem.Amount + ppn
+                                });
+                            }
 
                             await _journalTransactionService.CreateAsync(modelInklaring);
 
@@ -180,7 +222,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                 var ppn = vbRealizationItem.UseVat ? vbRealizationItem.Amount * (decimal)0.1 : 0;
                                 var pph = vbRealizationItem.UseIncomeTax ? vbRealizationItem.Amount * (decimal)vbRealizationItem.IncomeTaxRate : 0;
 
-                                if (ppn > 0) 
+                                if (ppn > 0)
                                 {
                                     model.Items.Add(new JournalTransactionItemModel()
                                     {
