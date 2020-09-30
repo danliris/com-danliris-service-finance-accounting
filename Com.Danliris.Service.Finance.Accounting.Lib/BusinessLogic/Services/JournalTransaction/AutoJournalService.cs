@@ -366,6 +366,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             model.DocumentNo = result;
             EntityExtension.FlagForCreate(model, _identityService.Username, "finance-accounting-service");
             EntityExtension.FlagForDelete(model, _identityService.Username, "finance-accounting-service");
+            _dbContext.OthersExpenditureProofDocuments.Add(model);
+            _dbContext.SaveChanges();
 
             return result;
         }
