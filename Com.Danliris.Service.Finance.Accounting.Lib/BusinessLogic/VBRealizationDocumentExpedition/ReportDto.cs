@@ -33,5 +33,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public VBRealizationPosition Position { get;  set; }
         public VBType VBType { get; set; }
         public string Purpose { get; set; }
+        public DateTimeOffset? LastModifiedDate { get; set; }
     }
 }
