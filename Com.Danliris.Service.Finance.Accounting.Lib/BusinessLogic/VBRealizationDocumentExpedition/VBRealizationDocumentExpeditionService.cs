@@ -108,7 +108,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             VerificationReceiptDate = realizationExpedition != null ? realizationExpedition.VerificationReceiptDate : null,
                             VerifiedToCashierBy = realizationExpedition != null ? realizationExpedition.VerifiedToCashierBy : null,
                             VerifiedToCashierDate = realizationExpedition != null ? realizationExpedition.VerifiedToCashierDate : null,
-                            Purpose = realization.VBRequestDocumentPurpose
+                            Purpose = realization.VBRequestDocumentPurpose,
+                            LastModifiedDate = realization.LastModifiedUtc
                         };
             query = query.Where(entity => entity.VBRealizationDate >= dateStart && entity.VBRealizationDate <= dateEnd);
 
@@ -135,6 +136,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             if (divisionId > 0)
                 query = query.Where(entity => entity.DivisionId == divisionId);
+
+            query = query.OrderByDescending(e => e.LastModifiedDate);
 
             var result = query.Skip((page - 1) * size).Take(size).ToList();
             var total = await query.CountAsync();
