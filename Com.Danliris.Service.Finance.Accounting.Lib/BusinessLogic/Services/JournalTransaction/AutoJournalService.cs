@@ -25,6 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         private readonly IServiceProvider _serviceProvider;
         private readonly IJournalTransactionService _journalTransactionService;
         private readonly IIdentityService _identityService;
+        private readonly IMasterCOAService _masterCOAService;
 
         public AutoJournalService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
         {
@@ -32,6 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             _serviceProvider = serviceProvider;
             _journalTransactionService = serviceProvider.GetService<IJournalTransactionService>();
             _identityService = serviceProvider.GetService<IIdentityService>();
+            _masterCOAService = serviceProvider.GetService<IMasterCOAService>();
         }
 
         private async Task<string> GetAccountBankCOA(int accountBankId)
@@ -93,10 +95,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var vbRequests = dbContext.VBRequestDocuments.Where(entity => vbRequestIds.Contains(entity.Id)).ToList();
             var vbRealizationItems = dbContext.VBRealizationDocumentExpenditureItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId)).ToList();
 
+            var units = await _masterCOAService.GetCOAUnits();
+            var divisions = await _masterCOAService.GetCOAUnits();
 
             foreach (var vbRealization in vbRealizations)
             {
                 var bankDocumentNo = DocumentNoGenerator(bank);
+
+                var coaUnit = "00";
+                var unit = units.FirstOrDefault(element => vbRealization.SuppliantUnitId == element.Id);
+                if (unit != null)
+                    coaUnit = unit.COACode;
+
+                var coaDivision = "0";
+                var division = divisions.FirstOrDefault(element => vbRealization.SuppliantDivisionId == element.Id);
+                if (division != null)
+                    coaDivision = division.COACode;
 
                 if (vbRealization.VBRequestDocumentId > 0)
                 {
@@ -124,7 +138,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                 {
                                     COA = new COAModel()
                                     {
-                                        Code = "1804.00.0.00"
+                                        Code = $"1804.00.{coaDivision}.{coaUnit}"
                                     },
                                     Debit = vbRealizationItem.Amount + pph
                                 });
@@ -134,7 +148,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                     {
                                         COA = new COAModel()
                                         {
-                                            Code = "1509.00.0.00"
+                                            Code = $"1509.00.{coaDivision}.{coaUnit}"
                                         },
                                         Debit = ppn
                                     });
@@ -144,7 +158,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                     {
                                         COA = new COAModel()
                                         {
-                                            Code = "3330.00.0.00"
+                                            Code = $"3330.00.{coaDivision}.{coaUnit}"
                                         },
                                         Credit = pph
                                     });
@@ -153,7 +167,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                 {
                                     COA = new COAModel()
                                     {
-                                        Code = "1503.00.0.00"
+                                        Code = $"1503.00.{coaDivision}.{coaUnit}"
                                     },
                                     Credit = vbRealizationItem.Amount + ppn
                                 });
@@ -186,7 +200,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                 {
                                     COA = new COAModel()
                                     {
-                                        Code = $"1503.00.0.00"
+                                        Code = $"1503.00.{coaDivision}.{coaUnit}"
                                     },
                                     Credit = difference
                                 });
@@ -228,7 +242,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                     {
                                         COA = new COAModel()
                                         {
-                                            Code = $"1509.00.0.00"
+                                            Code = $"1509.00.{coaDivision}.{coaUnit}"
                                         },
                                         Debit = ppn
                                     });
@@ -240,7 +254,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                     {
                                         COA = new COAModel()
                                         {
-                                            Code = $"3330.00.0.00"
+                                            Code = $"3330.00.{coaDivision}.{coaUnit}"
                                         },
                                         Credit = pph
                                     });
@@ -250,7 +264,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                 {
                                     COA = new COAModel()
                                     {
-                                        Code = $"1011.00.0.00"
+                                        Code = $"1011.00.{coaDivision}.{coaUnit}"
                                     },
                                     Credit = vbRealizationItem.Amount
                                 });
@@ -262,7 +276,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                             {
                                 COA = new COAModel()
                                 {
-                                    Code = $"1012.00.0.00"
+                                    Code = $"1012.00.{coaDivision}.{coaUnit}"
                                 },
                                 Credit = vbRealization.Amount
                             });
@@ -300,7 +314,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         {
                             COA = new COAModel()
                             {
-                                Code = $"1011.00.0.00"
+                                Code = $"1011.00.{coaDivision}.{coaUnit}"
                             },
                             Credit = vbRealization.Amount
                         });
@@ -311,7 +325,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         {
                             COA = new COAModel()
                             {
-                                Code = $"1012.00.0.00"
+                                Code = $"1012.00.{coaDivision}.{coaUnit}"
                             },
                             Credit = vbRealization.Amount
                         });
@@ -332,9 +346,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var dbContext = _serviceProvider.GetService<FinanceDbContext>();
             var vbRequests = dbContext.VBRequestDocuments.Where(entity => vbRequestIds.Contains(entity.Id)).ToList();
 
+            var units = await _masterCOAService.GetCOAUnits();
+            var divisions = await _masterCOAService.GetCOAUnits();
+
             foreach (var vbRequest in vbRequests)
             {
                 var bankDocumentNo = DocumentNoGenerator(bank);
+
+                var coaUnit = "00";
+                var unit = units.FirstOrDefault(element => vbRequest.SuppliantUnitId == element.Id);
+                if (unit != null)
+                    coaUnit = unit.COACode;
+
+                var coaDivision = "0";
+                var division = divisions.FirstOrDefault(element => vbRequest.SuppliantDivisionId == element.Id);
+                if (division != null)
+                    coaDivision = division.COACode;
+
                 if (vbRequest.IsInklaring && vbRequest.CurrencyCode == "IDR")
                 {
                     var modelInklaring = new JournalTransactionModel()
@@ -350,7 +378,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     {
                         COA = new COAModel()
                         {
-                            Code = $"1503.00.0.00"
+                            Code = $"1503.00.{coaDivision}.{coaUnit}"
                         },
                         Debit = vbRequest.Amount
                     });
