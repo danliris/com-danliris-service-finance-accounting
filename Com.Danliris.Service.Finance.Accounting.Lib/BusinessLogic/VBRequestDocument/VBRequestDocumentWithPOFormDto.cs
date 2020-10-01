@@ -35,9 +35,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             if (Amount.GetValueOrDefault() <= 0)
                 yield return new ValidationResult("Nominal harus diisi", new List<string> { "Amount" });
 
-            if(String.IsNullOrEmpty(TypePurchasing))
-                yield return new ValidationResult("Terjadi Kesalahan pada Jenis Pembelian", new List<string> { "TypePurchasing" });
-
             if (Items == null || Items.Count.Equals(0))
             {
                 yield return new ValidationResult("Beban unit harus diisi", new List<string> { "Item" });
