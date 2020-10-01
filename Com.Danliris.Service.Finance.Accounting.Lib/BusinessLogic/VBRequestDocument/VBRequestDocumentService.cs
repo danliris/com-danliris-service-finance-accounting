@@ -49,9 +49,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             //var unit = model.UnitCode.ToString().Split(" - ");
 
-            var unitCode = "T";
-            if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
-                unitCode = "G";
+            var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper());
+
+            //var unitCode = "T";
+            //if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
+            //    unitCode = "G";
 
             if (form.IsInklaring) unitCode += "I";
 
@@ -87,10 +89,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             //var unit = model.UnitCode.ToString().Split(" - ");
 
-            var unitCode = "T";
-            if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
-                unitCode = "G";
+            var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper());
 
+            //var unitCode = "T";
+            //if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
+            //    unitCode = "G";
 
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
@@ -201,7 +204,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public int CreateWithPO(VBRequestDocumentWithPOFormDto form)
         {
-            var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
+            var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper());
+            var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.DocumentNo.StartsWith(unitCode)).OrderByDescending(s => s.Index).FirstOrDefault();
             var documentNo = GetDocumentNo(form, existingData);
 
             var model = new VBRequestDocumentModel(
