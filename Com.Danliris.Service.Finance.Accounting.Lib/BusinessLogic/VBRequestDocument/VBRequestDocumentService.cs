@@ -105,6 +105,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return new Tuple<string, int>(documentNo, index);
         }
 
+        private string GetDocumentUnitCode(string division)
+        {
+            var unitCode = "T";
+            if (division.ToUpper() == "GARMENT")
+                unitCode = "G";
+
+            return $"VB-{unitCode}";
+        }
+
         //public int CreateNonPO(VBRequestDocumentNonPOFormDto form)
         public async Task<int> CreateNonPO(VBRequestDocumentNonPOFormDto form)
         {
@@ -113,7 +122,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             try
             {
-                var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
+                var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper());
+                var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.DocumentNo.StartsWith(unitCode)).OrderByDescending(s => s.Index).FirstOrDefault();
                 var documentNo = GetDocumentNo(form, existingData);
                 var model = new VBRequestDocumentModel(
                     documentNo.Item1,
