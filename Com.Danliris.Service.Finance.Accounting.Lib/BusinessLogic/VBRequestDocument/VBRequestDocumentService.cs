@@ -49,11 +49,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             //var unit = model.UnitCode.ToString().Split(" - ");
 
-            var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper());
-
-            //var unitCode = "T";
-            //if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
-            //    unitCode = "G";
+            var unitCode = "T";
+            if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
+                unitCode = "G";
 
             if (form.IsInklaring) unitCode += "I";
 
@@ -89,11 +87,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             //var unit = model.UnitCode.ToString().Split(" - ");
 
-            var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper());
-
-            //var unitCode = "T";
-            //if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
-            //    unitCode = "G";
+            var unitCode = "T";
+            if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
+                unitCode = "G";
 
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
