@@ -41,6 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
             if (form.Unit.Division.Name.ToUpper() == "GARMENT")
                 unitCode = "G";
 
+            if (form.IsInklaring) unitCode += "I";
 
             var documentNo = $"R-{unitCode}-{month}{year}-";
 
@@ -55,6 +56,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
 
 
             return new Tuple<string, int>(documentNo, index);
+        }
+
+        private string GetDocumentUnitCode(string division, bool isInklaring)
+        {
+            var unitCode = "T";
+            if (division.ToUpper() == "GARMENT")
+                unitCode = "G";
+
+            unitCode += (isInklaring) ? "I" : null;
+
+            return $"R-{unitCode}-";
         }
 
         private List<VBRealizationDocumentExpenditureItemModel> AddItems(int id, IEnumerable<VBRealizationDocumentNonPOExpenditureItemViewModel> items)
@@ -90,7 +102,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
 
             try
             {
-                var existingData = _dbContext.VBRealizationDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == vm.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
+                string unitCode = GetDocumentUnitCode(vm.Unit.Division.Name.ToUpper(), vm.IsInklaring);
+                var existingData = _dbContext.VBRealizationDocuments
+                    .Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == vm.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month
+                    && a.DocumentNo.StartsWith(unitCode))
+                    .OrderByDescending(s => s.Index)
+                    .FirstOrDefault();
                 var documentNo = GetDocumentNo(vm, existingData);
                 vm.DocumentNo = documentNo.Item1;
                 vm.Index = documentNo.Item2;
