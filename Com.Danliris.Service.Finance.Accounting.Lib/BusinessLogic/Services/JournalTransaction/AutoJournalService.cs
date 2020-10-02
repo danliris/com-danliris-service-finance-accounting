@@ -96,7 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var vbRealizationItems = dbContext.VBRealizationDocumentExpenditureItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId)).ToList();
 
             var units = await _masterCOAService.GetCOAUnits();
-            var divisions = await _masterCOAService.GetCOAUnits();
+            var divisions = await _masterCOAService.GetCOADivisions();
 
             foreach (var vbRealization in vbRealizations)
             {
@@ -234,7 +234,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                             foreach (var vbRealizationItem in selectedVbRealizationItems)
                             {
                                 var ppn = vbRealizationItem.UseVat ? vbRealizationItem.Amount * (decimal)0.1 : 0;
-                                var pph = vbRealizationItem.UseIncomeTax ? vbRealizationItem.Amount * (decimal)vbRealizationItem.IncomeTaxRate : 0;
+                                var pph = vbRealizationItem.UseIncomeTax ? vbRealizationItem.Amount * ((decimal)vbRealizationItem.IncomeTaxRate / 100) : 0;
 
                                 if (ppn > 0)
                                 {
