@@ -393,6 +393,50 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
+
+        [Fact]
+        public async Task CashierDelete_Success_Return_NoContent()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.CashierDelete(It.IsAny<int>())).ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).CashierDelete(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+
+        [Fact]
+        public async Task CashierDelete_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service.Setup(s => s.CashierDelete(It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).CashierDelete(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
         [Fact]
         public async Task reject_Return_Created()
         {
