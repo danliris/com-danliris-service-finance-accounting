@@ -94,7 +94,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var vbRequestIds = vbRealizations.Select(element => element.VBRequestDocumentId).ToList();
             var vbRequests = dbContext.VBRequestDocuments.Where(entity => vbRequestIds.Contains(entity.Id)).ToList();
             var vbRealizationItems = dbContext.VBRealizationDocumentExpenditureItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId)).ToList();
-            var vbRealizationUnitCosts = dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId)).ToList();
+            var vbRealizationUnitCosts = dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId) && entity.IsSelected).ToList();
 
             var units = await _masterCOAService.GetCOAUnits();
             var divisions = await _masterCOAService.GetCOADivisions();
@@ -135,12 +135,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         {
                             var costCOADivision = "0";
                             var costDivision = divisions.FirstOrDefault(element => element.Id == vbRealizationUnitCost.DivisionId);
-                            if (costDivision != null)
+                            if (costDivision != null && !string.IsNullOrWhiteSpace(costDivision.COACode))
                                 costCOADivision = costDivision.COACode;
 
                             var costCOAUnit = "00";
                             var costUnit = units.FirstOrDefault(element => element.Id == vbRealizationUnitCost.UnitId);
-                            if (costUnit == null)
+                            if (costUnit != null && !string.IsNullOrWhiteSpace(costUnit.COACode))
                                 costCOAUnit = costUnit.COACode;
 
                             modelInklaring.Items.Add(new JournalTransactionItemModel()
@@ -156,7 +156,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                             {
                                 COA = new COAModel()
                                 {
-                                    Code = $"1503.00.{coaDivision}.{coaUnit}"
+                                    Code = $"1503.00.{costCOADivision}.{costCOAUnit}"
                                 },
                                 Credit = vbRealizationUnitCost.Amount
                             });
@@ -252,19 +252,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         {
                             var costCOADivision = "0";
                             var costDivision = divisions.FirstOrDefault(element => element.Id == vbRealizationUnitCost.DivisionId);
-                            if (costDivision != null)
+                            if (costDivision != null && !string.IsNullOrWhiteSpace(costDivision.COACode))
                                 costCOADivision = costDivision.COACode;
 
                             var costCOAUnit = "00";
                             var costUnit = units.FirstOrDefault(element => element.Id == vbRealizationUnitCost.UnitId);
-                            if (costUnit == null)
+                            if (costUnit != null && !string.IsNullOrWhiteSpace(costUnit.COACode))
                                 costCOAUnit = costUnit.COACode;
 
                             model.Items.Add(new JournalTransactionItemModel()
                             {
                                 COA = new COAModel()
                                 {
-                                    Code = $"1011.00.{coaDivision}.{coaUnit}"
+                                    Code = $"1011.00.{costCOADivision}.{costCOAUnit}"
                                 },
                                 Credit = vbRealizationUnitCost.Amount
                             });
