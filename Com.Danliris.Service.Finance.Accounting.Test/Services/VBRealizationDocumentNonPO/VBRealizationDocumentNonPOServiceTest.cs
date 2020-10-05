@@ -95,7 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             var vm = GetDataUtil(service).GetNewData_VBRealizationDocumentNonPOViewModel();
 
             //Act and Assert
-            await Assert.ThrowsAsync<System.InvalidOperationException>(() => service.CreateAsync(null));
+            await Assert.ThrowsAsync<System.NullReferenceException>(() => service.CreateAsync(null));
            
         }
 
@@ -117,6 +117,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             //Assert
             Assert.NotEqual(0, result);
 
+        }
+
+        [Fact]
+        public async Task Should_Success_Read()
+        {
+            //Setup
+            var serviceProviderMock = GetServiceProviderMock();
+            var dbContext = GetDbContext(GetCurrentMethod());
+            VBRealizationDocumentNonPOService service = new VBRealizationDocumentNonPOService(serviceProviderMock.Object, dbContext);
+            var vm = await GetDataUtil(service).GetTestData();
+
+            //Act
+            var result = service.Read(1, 25, "{}", new List<string> (), "", "{}");
+
+            //Assert
+            Assert.True(0 < result.Data.Count);
+        }
+
+        [Fact]
+        public async Task Should_Success_UpdateAsync()
+        {
+            //Setup
+            var serviceProviderMock = GetServiceProviderMock();
+            var dbContext = GetDbContext(GetCurrentMethod());
+            VBRealizationDocumentNonPOService service = new VBRealizationDocumentNonPOService(serviceProviderMock.Object, dbContext);
+            var data = await GetDataUtil(service).GetTestData();
+            var vm = GetDataUtil(service).GetNewData_VBRealizationDocumentNonPOViewModel();
+
+            //Act
+            var result = await service.UpdateAsync(data.Id, vm);
+
+            //Assert
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_UpdateAsync_When_VB_DocumentId_Exists()
+        {
+            //Setup
+            var serviceProviderMock = GetServiceProviderMock();
+            var dbContext = GetDbContext(GetCurrentMethod());
+            VBRealizationDocumentNonPOService service = new VBRealizationDocumentNonPOService(serviceProviderMock.Object, dbContext);
+            var data = await GetDataUtil(service).GetTestData();
+            var vm = GetDataUtil(service).GetNewData_VBRealizationDocumentNonPOViewModel();
+
+            vm.VBDocument.Id = 2;
+            var result = await service.UpdateAsync(data.Id, vm);
+
+            //Assert
+            Assert.NotEqual(0, result);
         }
     }
 }
