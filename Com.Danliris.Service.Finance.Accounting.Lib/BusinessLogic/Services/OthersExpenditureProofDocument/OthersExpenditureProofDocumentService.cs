@@ -79,7 +79,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                     return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K0001";
                 else
                 {
-                    var numberString = latestDocumentNo.DocumentNo.Split("K").ToList()[1];
+                    var numberString = latestDocumentNo.DocumentNo.Substring(latestDocumentNo.DocumentNo.Length - 4); ;
                     var number = int.Parse(numberString) + 1;
                     return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K{number.ToString().PadLeft(4, '0')}";
                 }
