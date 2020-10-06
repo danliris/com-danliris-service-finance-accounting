@@ -115,6 +115,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IPaymentDispositionNotVerifiedReport, PaymentDispositionNotVerifiedReportService>()
                 .AddTransient<IOthersExpenditureProofDocumentService, OthersExpenditureProofDocumentService>()
                 .AddTransient<IAutoJournalService, AutoJournalService>()
+                .AddTransient<IMasterCOAService, MasterCOAService>()
                 .AddTransient<IAutoDailyBankTransactionService, AutoDailyBankTransactionService>()
                 .AddTransient<IMemoService, MemoService>()
                 .AddTransient<ISalesReceiptService, SalesReceiptService>()

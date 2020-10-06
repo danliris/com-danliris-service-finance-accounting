@@ -97,12 +97,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Clearace
         }
 
         [HttpPut("post")]
-        public async Task<IActionResult> ClearanceVBPost([FromBody] List<ClearencePostId> listId)
+        public async Task<IActionResult> ClearanceVBPost([FromBody] ClearenceFormDto form)
         {
             try
             {
                 ValidateUser();
-                int result = await Service.ClearanceVBPost(listId);
+                int result = await Service.ClearanceVBPost(form);
 
                 return Ok(result);
             }

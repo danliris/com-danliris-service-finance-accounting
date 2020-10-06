@@ -124,6 +124,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Position = VBRealizationPosition.Cashier;
         }
 
+        public void CashierDelete()
+        {
+            CashierReceiptBy = null;
+            CashierReceiptDate = null;
+            Position = VBRealizationPosition.VerifiedToCashier;
+        }
+
         public void VerificationRejected(string name, string reason)
         {
             NotVerifiedBy = name;

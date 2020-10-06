@@ -19,5 +19,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public string CreatedBy { get; set; }
         public string ApprovalStatus { get; set; }
         public bool IsInklaring { get; set; }
+        public string TypePurchasing { get; set; }
     }
 }

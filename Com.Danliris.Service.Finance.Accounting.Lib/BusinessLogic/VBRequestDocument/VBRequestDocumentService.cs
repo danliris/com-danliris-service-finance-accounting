@@ -5,6 +5,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Moonlay.Models;
 using Com.Moonlay.NetCore.Lib;
 using iTextSharp.text;
@@ -52,6 +53,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
                 unitCode = "G";
 
+            if (form.IsInklaring) unitCode += "I";
 
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
@@ -89,7 +91,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             if (form.SuppliantUnit.Division.Name.ToUpper() == "GARMENT")
                 unitCode = "G";
 
-
             var documentNo = $"VB-{unitCode}-{month}{year}-";
 
             var index = 1;
@@ -104,6 +105,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             return new Tuple<string, int>(documentNo, index);
         }
 
+        private string GetDocumentUnitCode(string division, bool isInklaring)
+        {
+            var unitCode = "T";
+            if (division.ToUpper() == "GARMENT")
+                unitCode = "G";
+
+            unitCode += (isInklaring) ? "I" : null;
+
+            return $"VB-{unitCode}-";
+        }
+
         //public int CreateNonPO(VBRequestDocumentNonPOFormDto form)
         public async Task<int> CreateNonPO(VBRequestDocumentNonPOFormDto form)
         {
@@ -112,7 +124,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             try
             {
-                var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
+                var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper(), form.IsInklaring);
+                var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.DocumentNo.StartsWith(unitCode)).OrderByDescending(s => s.Index).FirstOrDefault();
                 var documentNo = GetDocumentNo(form, existingData);
                 var model = new VBRequestDocumentModel(
                     documentNo.Item1,
@@ -135,7 +148,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     false,
                     VBType.NonPO,
                     documentNo.Item2,
-                    form.IsInklaring
+                    form.IsInklaring,
+                    form.NoBL,
+                    form.NoPO,
+                    null
                     );
 
                 model.FlagForCreate(_identityService.Username, UserAgent);
@@ -186,7 +202,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public int CreateWithPO(VBRequestDocumentWithPOFormDto form)
         {
-            var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
+            var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper(), form.IsInklaring);
+            var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.DocumentNo.StartsWith(unitCode)).OrderByDescending(s => s.Index).FirstOrDefault();
             var documentNo = GetDocumentNo(form, existingData);
 
             var model = new VBRequestDocumentModel(
@@ -210,7 +227,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 false,
                 VBType.WithPO,
                 documentNo.Item2,
-                form.IsInklaring
+                false, // IsInklaring
+                null, // NoBL
+                null, // NoPO
+                form.TypePurchasing
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -419,7 +439,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                         Id = model.SuppliantDivisionId
                     }
                 },
-                IsInklaring = model.IsInklaring
+                IsInklaring = model.IsInklaring,
+                NoBL = model.NoBL,
+                NoPO = model.NoPO
             };
         }
 
@@ -474,6 +496,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 CreatedBy = model.CreatedBy,
                 IsInklaring = model.IsInklaring,
                 ApprovalStatus = model.ApprovalStatus.ToString(),
+                TypePurchasing = model.TypePurchasing,
                 Items = epoDetails.Select(epoDetail =>
                 {
                     var details = _dbContext.VBRequestDocumentItems.Where(entity => entity.VBRequestDocumentEPODetailId == epoDetail.Id).ToList();
@@ -547,6 +570,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             data.SetCurrency(form.Currency.Id.GetValueOrDefault(), form.Currency.Code, form.Currency.Symbol, form.Currency.Rate.GetValueOrDefault(), form.Currency.Description, _identityService.Username, UserAgent);
             data.SetAmount(form.Amount.GetValueOrDefault(), _identityService.Username, UserAgent);
             data.SetPurpose(form.Purpose, _identityService.Username, UserAgent);
+            if(data.IsInklaring) data.SetInklaring(form.NoBL, form.NoPO);
 
             EditNonPOItems(id, form.Items);
             data.FlagForUpdate(_identityService.Username, UserAgent);
@@ -724,7 +748,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             var result = await _dbContext.SaveChangesAsync();
 
-            await _autoJournalTransactionService.AutoJournalInklaring(vbRequestIdJournals);
+            await _autoJournalTransactionService.AutoJournalInklaring(vbRequestIdJournals, data.Bank);
 
             return result;
         }

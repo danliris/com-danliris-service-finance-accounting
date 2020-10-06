@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200925063113_AddVBRequestDocument")]
+    partial class AddVBRequestDocument
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1857,9 +1859,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("BLAWBNumber")
-                        .HasMaxLength(256);
-
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
                         .HasMaxLength(255);
@@ -1912,10 +1911,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<decimal>("PPhAmount");
-
-                    b.Property<decimal>("PPnAmount");
-
                     b.Property<string>("Remark");
 
                     b.Property<string>("SupplierCode")
@@ -1953,15 +1948,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("BLAWBNumber")
-                        .HasMaxLength(256);
-
                     b.Property<string>("CompletedBy");
 
                     b.Property<DateTimeOffset?>("CompletedDate");
-
-                    b.Property<string>("ContractPONumber")
-                        .HasMaxLength(256);
 
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
@@ -2008,8 +1997,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<bool>("IsCompleted");
 
                     b.Property<bool>("IsDeleted");
-
-                    b.Property<bool>("IsInklaring");
 
                     b.Property<bool>("IsVerified");
 
@@ -2557,8 +2544,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(256);
 
                     b.Property<int>("Type");
-
-                    b.Property<string>("TypePurchasing");
 
                     b.HasKey("Id");
 

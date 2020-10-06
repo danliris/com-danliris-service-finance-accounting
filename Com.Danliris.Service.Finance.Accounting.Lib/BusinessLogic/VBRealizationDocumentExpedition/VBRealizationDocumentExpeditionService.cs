@@ -50,7 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == vbRealizationId);
             model.UpdatePosition(position, _identityService.Username, UserAgent);
 
-            if (position == VBRealizationPosition.VerifiedToCashier || position == VBRealizationPosition.NotVerified)
+            if (position == VBRealizationPosition.VerifiedToCashier || position == VBRealizationPosition.NotVerified || position == VBRealizationPosition.Cashier)
                 model.UpdateVerified(position, reason, _identityService.Username, UserAgent);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             _dbContext.VBRealizationDocuments.Update(model);
@@ -108,7 +108,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             VerificationReceiptDate = realizationExpedition != null ? realizationExpedition.VerificationReceiptDate : null,
                             VerifiedToCashierBy = realizationExpedition != null ? realizationExpedition.VerifiedToCashierBy : null,
                             VerifiedToCashierDate = realizationExpedition != null ? realizationExpedition.VerifiedToCashierDate : null,
-                            Purpose = realization.VBRequestDocumentPurpose
+                            Purpose = realization.VBRequestDocumentPurpose,
+                            LastModifiedDate = realization.LastModifiedUtc
                         };
             query = query.Where(entity => entity.VBRealizationDate >= dateStart && entity.VBRealizationDate <= dateEnd);
 
@@ -127,14 +128,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "UNIT")
                 query = query.Where(entity => entity.Position <= VBRealizationPosition.PurchasingToVerification);
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "VERIFIKASI")
-                query = query.Where(entity => entity.Position == VBRealizationPosition.Verification);
+                query = query.Where(entity => entity.Position >= VBRealizationPosition.Verification && entity.Position <= VBRealizationPosition.VerifiedToCashier);
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "KASIR")
-                query = query.Where(entity => entity.Position == VBRealizationPosition.VerifiedToCashier);
+                query = query.Where(entity => entity.Position == VBRealizationPosition.Cashier);
             else if (!string.IsNullOrWhiteSpace(status) && status.ToUpper() == "RETUR")
                 query = query.Where(entity => entity.Position == VBRealizationPosition.NotVerified);
 
             if (divisionId > 0)
                 query = query.Where(entity => entity.DivisionId == divisionId);
+
+            query = query.OrderByDescending(e => e.LastModifiedDate);
 
             var result = query.Skip((page - 1) * size).Take(size).ToList();
             var total = await query.CountAsync();
@@ -248,6 +251,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             _dbContext.VBRealizationDocumentExpeditions.Update(vbRealizationExpedition);
             UpdateVBRealizationPosition(vbRealizationId, VBRealizationPosition.NotVerified, reason);
+
+            return _dbContext.SaveChangesAsync();
+        }
+
+        public Task<int> CashierDelete(int vbRealizationId)
+        {
+            var vbRealizationExpedition = _dbContext.VBRealizationDocumentExpeditions.OrderByDescending(x => x.Id).FirstOrDefault(e => e.VBRealizationId == vbRealizationId && e.Position == VBRealizationPosition.Cashier);
+
+            vbRealizationExpedition.CashierDelete();
+            EntityExtension.FlagForUpdate(vbRealizationExpedition, _identityService.Username, UserAgent);
+
+            _dbContext.VBRealizationDocumentExpeditions.Update(vbRealizationExpedition);
+            UpdateVBRealizationPosition(vbRealizationId, VBRealizationPosition.VerifiedToCashier, null);
+
+            var vbRealizationDocuments = _dbContext.VBRealizationDocuments.FirstOrDefault(x => x.Id == vbRealizationId);
+
+            EntityExtension.FlagForUpdate(vbRealizationDocuments, _identityService.Username, UserAgent);
+            vbRealizationDocuments.UpdatePosition(VBRealizationPosition.VerifiedToCashier, _identityService.Username, UserAgent);
 
             return _dbContext.SaveChangesAsync();
         }

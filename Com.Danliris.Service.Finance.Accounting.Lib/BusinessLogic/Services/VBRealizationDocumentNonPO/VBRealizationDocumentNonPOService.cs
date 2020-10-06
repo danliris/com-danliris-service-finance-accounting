@@ -41,6 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
             if (form.Unit.Division.Name.ToUpper() == "GARMENT")
                 unitCode = "G";
 
+            if (form.IsInklaring) unitCode += "I";
 
             var documentNo = $"R-{unitCode}-{month}{year}-";
 
@@ -55,6 +56,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
 
 
             return new Tuple<string, int>(documentNo, index);
+        }
+
+        private string GetDocumentUnitCode(string division, bool isInklaring)
+        {
+            var unitCode = "T";
+            if (division.ToUpper() == "GARMENT")
+                unitCode = "G";
+
+            unitCode += (isInklaring) ? "I" : null;
+
+            return $"R-{unitCode}-";
         }
 
         private List<VBRealizationDocumentExpenditureItemModel> AddItems(int id, IEnumerable<VBRealizationDocumentNonPOExpenditureItemViewModel> items)
@@ -90,7 +102,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
 
             try
             {
-                var existingData = _dbContext.VBRealizationDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == vm.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
+                string unitCode = GetDocumentUnitCode(vm.Unit.Division.Name.ToUpper(), vm.IsInklaring);
+                var existingData = _dbContext.VBRealizationDocuments
+                    .Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == vm.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month
+                    && a.DocumentNo.StartsWith(unitCode))
+                    .OrderByDescending(s => s.Index)
+                    .FirstOrDefault();
                 var documentNo = GetDocumentNo(vm, existingData);
                 vm.DocumentNo = documentNo.Item1;
                 vm.Index = documentNo.Item2;
@@ -235,6 +252,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                 LastModifiedUtc = model.LastModifiedUtc,
                 Type = model.Type,
                 Position = model.Position,
+                BLAWBNumber = model.BLAWBNumber,
+                ContractPONumber = model.ContractPONumber,
+                IsInklaring = model.IsInklaring,
                 Unit = new UnitViewModel()
                 {
                     Code = model.SuppliantUnitCode,
@@ -277,6 +297,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                     IsDeleted = s.IsDeleted,
                     IsGetPPh = s.UseIncomeTax,
                     IsGetPPn = s.UseVat,
+                    PPhAmount = s.PPhAmount,
+                    PPnAmount = s.PPnAmount,
+                    BLAWBNumber = s.BLAWBNumber,
                     LastModifiedAgent = s.LastModifiedAgent,
                     LastModifiedBy = s.LastModifiedBy,
                     LastModifiedUtc = s.LastModifiedUtc,
@@ -392,6 +415,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                     item.SetRemark(formItem.Remark, _identityService.Username, UserAgent);
                     item.SetUseIncomeTax(formItem.IsGetPPh, _identityService.Username, UserAgent);
                     item.SetUseVat(formItem.IsGetPPn, _identityService.Username, UserAgent);
+                    item.SetBLAWBNumber(formItem.BLAWBNumber, _identityService.Username, UserAgent);
+                    item.SetPPnAmount(formItem.PPnAmount, _identityService.Username, UserAgent);
+                    item.SetPPhAmount(formItem.PPhAmount, _identityService.Username, UserAgent);
 
                 }
             }

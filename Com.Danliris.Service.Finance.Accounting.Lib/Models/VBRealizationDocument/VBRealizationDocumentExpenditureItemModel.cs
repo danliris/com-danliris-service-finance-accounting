@@ -23,6 +23,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Amount = viewModel.Amount;
             UseVat = viewModel.IsGetPPn;
             UseIncomeTax = viewModel.IsGetPPh;
+            BLAWBNumber = viewModel.BLAWBNumber;
+            PPnAmount = viewModel.PPnAmount;
+            PPhAmount = viewModel.PPhAmount;
             if(viewModel.IncomeTax != null)
             {
                 IncomeTaxId = viewModel.IncomeTax.Id;
@@ -80,6 +83,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public int UnitPaymentOrderId { get; private set; }
         [MaxLength(64)]
         public string UnitPaymentOrderNo { get; private set; }
+        [MaxLength(256)]
+        public string BLAWBNumber { get; private set; }
+        public decimal PPnAmount { get; private set; }
+        public decimal PPhAmount { get; private set; }
 
         public void SetDate(DateTimeOffset newDate, string user, string userAgent)
         {
@@ -152,6 +159,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             if (newIncomeTaxBy != IncomeTaxBy)
             {
                 IncomeTaxBy = newIncomeTaxBy;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetBLAWBNumber(string newBLAWBNumber, string user, string userAgent)
+        {
+            if (newBLAWBNumber != BLAWBNumber)
+            {
+                BLAWBNumber = newBLAWBNumber;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetPPnAmount(decimal newPPnAmount, string user, string userAgent)
+        {
+            if (newPPnAmount != PPnAmount)
+            {
+                PPnAmount = newPPnAmount;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetPPhAmount(decimal newPPhAmount, string user, string userAgent)
+        {
+            if (newPPhAmount != PPhAmount)
+            {
+                PPhAmount = newPPhAmount;
                 this.FlagForUpdate(user, userAgent);
             }
         }

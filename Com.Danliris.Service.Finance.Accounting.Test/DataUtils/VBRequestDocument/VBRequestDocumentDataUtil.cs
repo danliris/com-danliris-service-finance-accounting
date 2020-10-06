@@ -28,6 +28,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
             return data;
         }
 
+        public async Task<VBRequestDocumentNonPODto> GetTestData_VBRequestDocumentNonPO_NotKlaring()
+        {
+
+            var testData = GetNewData_VBRequestDocumentNonPOFormDto();
+            testData.IsInklaring = false;
+            int id = await _service.CreateNonPO(testData);
+            var data = await _service.GetNonPOById(id);
+            return data;
+        }
+
 
         public VBRequestDocumentWithPODto GetTestData_VBRequestDocumentWithPO()
         {
@@ -43,6 +53,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
         {
             VBRequestDocumentNonPOFormDto form = new VBRequestDocumentNonPOFormDto()
             {       
+                IsInklaring=true,
                 Amount = 1,
                 Currency = new CurrencyDto()
                 {
@@ -56,6 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
                 RealizationEstimationDate = DateTimeOffset.Now,
                 SuppliantUnit = new UnitDto()
                 {
+                    Id=1,
                     Code = "Code",
                     Division = new DivisionDto()
                     {
@@ -63,12 +75,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
                         Name = "GARMENT",
                     },
                     Name = "Meter",
-                    VBDocumentLayoutOrder = 1
+                    VBDocumentLayoutOrder = 1,
                 },
                 Items = new List<VBRequestDocumentNonPOItemFormDto>()
                 {
                     new VBRequestDocumentNonPOItemFormDto()
                     {
+                        Id=1,
                         IsSelected=true,
                         Unit=new UnitDto()
                         {
@@ -77,7 +90,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
                             {
                                 Code = "Code",
                                 Name = "Name",
-
+                                
                             },
                             Name = "Name",
                             VBDocumentLayoutOrder = 1
