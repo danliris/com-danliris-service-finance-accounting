@@ -31,6 +31,51 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
+        public static MemoryStream CreateExcelWithTitle(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string dateFrom, string dateTo, bool styling = false)
+        {
+            ExcelPackage package = new ExcelPackage();
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            {
+                var sheet = package.Workbook.Worksheets.Add(item.Value);
+
+                sheet.Cells["A2"].Value = title;
+                sheet.Cells["A2:D2"].Merge = true;
+
+                sheet.Cells["A3"].Value = $"PERIODE : {dateFrom} sampai dengan {dateTo}";
+                sheet.Cells["A3:D3"].Merge = true;
+
+                sheet.Cells["A5"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+            }
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
+        public static MemoryStream CreateExcelWithTitleNonDateFilter(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string date, bool styling = false)
+        {
+            ExcelPackage package = new ExcelPackage();
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            {
+                var sheet = package.Workbook.Worksheets.Add(item.Value);
+
+                sheet.Cells["A2"].Value = "PT. DANLIRIS";
+                sheet.Cells["A2:D2"].Merge = true;
+
+                sheet.Cells["A3"].Value = title;
+                sheet.Cells["A3:D3"].Merge = true;
+
+                sheet.Cells["A4"].Value = $"Per {date}";
+                sheet.Cells["A4:D4"].Merge = true;
+
+                sheet.Cells["A6"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+            }
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
         public static MemoryStream CreateExcelVBStatusReport(KeyValuePair<DataTable, string> dataSource, KeyValuePair<DataTable, string> currencySource, DateTimeOffset requestDateFrom, DateTimeOffset requestDateTo, bool styling = false, double requestTotal = 0, double realizationTotal = 0)
         {
             ExcelPackage package = new ExcelPackage();

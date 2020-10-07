@@ -339,6 +339,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
         public MemoryStream GenerateExcel(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
             var data = GetReportQuery(dateFrom, dateTo, offSet);
+            string title = "Laporan Kwintansi",
+                dateStart = dateFrom != DateTime.MaxValue ? dateFrom.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "-",
+                dateEnd = dateFrom != DateTime.MaxValue ? dateFrom.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "-";
 
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No Kwitansi", DataType = typeof(string) });
@@ -360,7 +363,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Bukti Pembayaran Faktur") }, true);
+            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Bukti Pembayaran Faktur") }, title, dateStart, dateEnd, true);
         }
     }
 }

@@ -92,7 +92,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
            
-            var Response = service.GenerateExcel(0, 0, 0, 0);
+            var Response = service.GenerateExcel(0, 7, 1001, 0);
             Assert.NotNull(Response);
         }
 

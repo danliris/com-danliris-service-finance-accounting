@@ -153,6 +153,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             var Query = GetQuery(bankId, month, year, clientTimeZoneOffset);
+            string title = "Mutasi Bank Harian",
+                date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
             DataTable result = new DataTable();
 
@@ -181,7 +183,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, true);
+            return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, title, date, true);
         }
 
         private BankTransactionMonthlyBalanceModel GetBalanceMonthAndYear(int bankId, int month, int year, int clientTimeZoneOffset)
@@ -454,6 +456,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         {
             var queryResult = GetDailyBalanceReport(bankId, startDate, endDate);
             var currencyQueryResult = GetDailyBalanceCurrencyReport(bankId, startDate, endDate);
+            string title = "Saldo Bank Harian",
+                dateFrom = startDate == null ? "-" : startDate.ToString("dd MMMM yyyy"),
+                dateTo = endDate == null ? "-" : endDate.ToString("dd MMMM yyyy");
 
             DataTable result = new DataTable();
 
@@ -490,7 +495,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Saldo Harian"), new KeyValuePair<DataTable, string>(currency, "Saldo Harian Mata Uang") }, true);
+            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Saldo Harian"), new KeyValuePair<DataTable, string>(currency, "Saldo Harian Mata Uang") }, title, dateFrom, dateTo, true);
         }
 
         public List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate)
