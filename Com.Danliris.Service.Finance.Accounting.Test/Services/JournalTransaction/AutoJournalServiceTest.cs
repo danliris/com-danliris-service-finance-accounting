@@ -520,6 +520,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             throw new NotImplementedException();
         }
 
+        public ReadResponse<JournalTransactionModel> ReadByDate(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet, int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<JournalTransactionModel> ReadByIdAsync(int id)
         {
             throw new NotImplementedException();
