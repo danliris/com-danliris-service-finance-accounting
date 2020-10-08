@@ -1,6 +1,8 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
@@ -25,6 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         protected DbSet<DailyBankTransactionModel> _DbSet;
         protected DbSet<BankTransactionMonthlyBalanceModel> _DbMonthlyBalanceSet;
         protected IIdentityService _IdentityService;
+        private readonly IServiceProvider _serviceProvider;
         public FinanceDbContext _DbContext;
 
         public DailyBankTransactionService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
@@ -33,6 +36,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             _DbSet = dbContext.Set<DailyBankTransactionModel>();
             _DbMonthlyBalanceSet = dbContext.Set<BankTransactionMonthlyBalanceModel>();
             _IdentityService = serviceProvider.GetService<IIdentityService>();
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<int> CreateAsync(DailyBankTransactionModel model)
@@ -46,10 +50,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             model.Date = model.Date.AddHours(_IdentityService.TimezoneOffset);
             UpdateRemainingBalance(model);
 
+            if (string.IsNullOrWhiteSpace(model.ReferenceNo))
+            {
+                if (model.Status == "OUT")
+                    model.ReferenceNo = await GetDocumentNo("K", model.AccountBankCode, _IdentityService.Username);
+                else if (model.Status == "IN")
+                    model.ReferenceNo = await GetDocumentNo("M", model.AccountBankCode, _IdentityService.Username);
+            }
+
             EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
 
             _DbSet.Add(model);
             return await _DbContext.SaveChangesAsync();
+        }
+
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
         }
 
         private void UpdateRemainingBalance(DailyBankTransactionModel model)
@@ -447,7 +480,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 CurrencyCode = s.FirstOrDefault().AccountBankCurrencyCode
             });
 
-            
+
             return result.ToList();
             //throw new NotImplementedException();
         }
