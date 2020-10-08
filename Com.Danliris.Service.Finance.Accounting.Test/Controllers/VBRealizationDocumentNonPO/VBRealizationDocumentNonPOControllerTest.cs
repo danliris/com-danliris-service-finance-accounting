@@ -69,6 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             {
                 return new VBRealizationDocumentNonPOViewModel()
                 {
+                    IsInklaring = true,
                     Id = 1,
                     Currency = new CurrencyViewModel()
                     {
@@ -558,8 +559,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             //Assert
             Assert.NotNull(response);
             Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+            Assert.Equal("Realisasi VB Inklaring Tanpa PO - DocumentNo.pdf", response.GetType().GetProperty("FileDownloadName").GetValue(response, null));
+        }
+
+        [Fact]
+        public async Task GetPDFNonPO_When_NotInklaring_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentNonPOService>();
+
+            var viewModelTemp = viewModel;
+            viewModelTemp.IsInklaring = false;
+
+            service
+                .Setup(s => s.ReadByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(viewModelTemp);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentNonPOService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GetPDFNonPO(1);
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
             Assert.Equal("Realisasi VB Tanpa PO - DocumentNo.pdf", response.GetType().GetProperty("FileDownloadName").GetValue(response, null));
         }
+
 
 
         [Fact]

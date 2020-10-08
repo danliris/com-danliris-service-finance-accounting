@@ -15,6 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public CurrencyDto Currency { get; set; }
         public List<FormItemDto> Items { get; set; }
         public int Id { get; set; }
+        public bool IsInklaring { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -41,18 +41,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             var division = "";
 
-            if (form.Type == "Tanpa Nomor VB")
-                division = form.SuppliantUnit.Division.Name;
-            else
-            {
-                var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
-                division = vbRequest.SuppliantDivisionName;
-            }
+            division = GetDivision(form);
+
+            //if (form.Type == "Tanpa Nomor VB")
+            //    division = form.SuppliantUnit.Division.Name;
+            //else
+            //{
+            //    var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
+            //    division = vbRequest.SuppliantDivisionName;
+            //}
 
             var unitCode = "T";
             if (division == "GARMENT")
                 unitCode = "G";
 
+            if (form.IsInklaring) unitCode += "I";
 
             var documentNo = $"R-{unitCode}-{month}{year}-";
 
@@ -69,11 +72,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             return new Tuple<string, int>(documentNo, index);
         }
 
+        private string GetDocumentUnitCode(string division, bool isInklaring)
+        {
+            var unitCode = "T";
+            if (division.ToUpper() == "GARMENT")
+                unitCode = "G";
+
+            //unitCode += (isInklaring) ? "I" : null;
+
+            return $"R-{unitCode}-";
+        }
+
+        private string GetDivision(FormDto form)
+        {
+            string division;
+
+            if (form.Type == "Tanpa Nomor VB")
+                division = form.SuppliantUnit.Division.Name;
+            else
+            {
+                var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
+                division = vbRequest.SuppliantDivisionName;
+            }
+
+            return division;
+        }
+
         public int Create(FormDto form)
         {
             var model = new VBRealizationDocumentModel();
 
-            var existingData = _dbContext.VBRealizationDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month).OrderByDescending(s => s.Index).FirstOrDefault();
+            string division = GetDivision(form);
+            var unitCode = GetDocumentUnitCode(division, form.IsInklaring);
+            var existingData = _dbContext.VBRealizationDocuments
+                .Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month
+                 && a.DocumentNo.StartsWith(unitCode))
+                .OrderByDescending(s => s.Index)
+                .FirstOrDefault();
             var documentNo = GetDocumentNo(form, existingData);
 
             var amount = form.Items.Sum(element => 

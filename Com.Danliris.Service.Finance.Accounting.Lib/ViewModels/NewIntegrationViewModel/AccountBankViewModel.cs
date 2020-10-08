@@ -12,6 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationV
         public string AccountName { get; set; }
         public string AccountNumber { get; set; }
         public string BankName { get; set; }
+        public string AccountCOA { get; set; }
 
         public CurrencyViewModel Currency { get; set; }
     }

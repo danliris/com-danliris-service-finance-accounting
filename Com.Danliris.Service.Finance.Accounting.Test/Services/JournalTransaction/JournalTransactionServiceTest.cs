@@ -84,6 +84,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
         }
 
         [Fact]
+        public async Task Should_Success_Get_Data_ByDate()
+        {
+            var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestData();
+            DateTimeOffset date = DateTimeOffset.UtcNow;
+
+            var Response = service.ReadByDate(date.AddDays(-1), date.AddDays(1), 0, 1, 25, "{}", null, data.DocumentNo, "{}");
+            Assert.NotEmpty(Response.Data);
+        }
+
+        //[Fact]
+        //public async Task Should_Error_Get_Data_ByDate()
+        //{
+        //    var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+        //    var data = await _dataUtil(service).GetTestData();
+        //    DateTimeOffset date = DateTimeOffset.UtcNow;
+
+        //    var Response = service.ReadByDate(date, date.AddDays(-1), 0, 1, 25, "{}", null, data.DocumentNo, "{}");
+        //    Assert.Throws<ServiceValidationException>(() => Response);
+        //}
+
+        [Fact]
         public async Task Should_Success_Get_Data_By_Id()
         {
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));

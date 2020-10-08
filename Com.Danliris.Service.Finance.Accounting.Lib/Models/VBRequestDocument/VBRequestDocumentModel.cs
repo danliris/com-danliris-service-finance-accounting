@@ -19,9 +19,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         // New Ctor With Index
         public VBRequestDocumentModel(string documentNo, DateTimeOffset date, DateTimeOffset realizationEstimationDate, int suppliantUnitId, string suppliantUnitCode, string suppliantUnitName,
                 int suppliantDivisionId, string suppliantDivisionCode, string suppliantDivisionName, int currencyId, string currencyCode, string currencySymbol, string currencyDescription,
-                double currencyRate, string purpose, decimal amount, bool isPosted, bool isCompleted, VBType type, int index, bool isInklaring, string noBl, string noPo)
+                double currencyRate, string purpose, decimal amount, bool isPosted, bool isCompleted, VBType type, int index, bool isInklaring, string noBl, string noPo, string typePurchasing)
             : this(documentNo, date, realizationEstimationDate, suppliantUnitId, suppliantUnitCode, suppliantUnitName, suppliantDivisionId, suppliantDivisionCode, suppliantDivisionName,
-                currencyId, currencyCode, currencySymbol, currencyDescription, currencyRate, purpose, amount, isPosted, isCompleted, type, isInklaring, noBl, noPo)
+                currencyId, currencyCode, currencySymbol, currencyDescription, currencyRate, purpose, amount, isPosted, isCompleted, type, isInklaring, noBl, noPo, typePurchasing)
         {
             Index = index;
         }
@@ -48,7 +48,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             VBType type,
             bool isInklaring,
             string noBl,
-            string noPo
+            string noPo,
+            string typePurchasing
             )
         {
             DocumentNo = documentNo;
@@ -75,6 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             IsInklaring = isInklaring;
             NoBL = noBl;
             NoPO = noPo;
+            TypePurchasing = typePurchasing;
         }
 
         [MaxLength(64)]
@@ -126,6 +128,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public bool IsInklaring { get; private set; }
         public string NoBL { get; private set; }
         public string NoPO { get; private set; }
+        public string TypePurchasing { get; private set; }
 
         public void SetDate(DateTimeOffset newDate, string user, string userAgent)
         {
@@ -276,6 +279,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             SuppliantDivisionId = form.SuppliantUnit.Division.Id.GetValueOrDefault();
             SuppliantDivisionCode = form.SuppliantUnit.Division.Code;
             SuppliantDivisionName = form.SuppliantUnit.Division.Name;
+            TypePurchasing = form.TypePurchasing;
         }
 
         public void SetCancellation(string reason, string username, string userAgent)
