@@ -456,6 +456,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
         public async Task<MemoryStream> GenerateExcelAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
             var data = await JoinReportAsync(page, size, order, filter, dateFrom, dateTo, offSet);
+            string title = "Laporan Ekspedisi Disposisi Pembayaran",
+                _dateFrom = dateFrom == null ? "-" : dateFrom.Value.ToString("dd MMMM yyyy"),
+                _dateTo = dateTo == null ? "-" : dateTo.Value.ToString("dd MMMM yyyy");
 
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Disposisi", DataType = typeof(string) });
@@ -532,7 +535,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 
                 }
             }
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Disposisi Pembelian") }, true);
+            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Disposisi Pembelian") }, title, _dateFrom, _dateTo, true);
         }
 
         public async Task<ReadResponse<PurchasingDispositionReportViewModel>> GetReportAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
