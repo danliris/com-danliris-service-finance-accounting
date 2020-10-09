@@ -347,6 +347,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             try
             {
                 VerifyUser();
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
 
                 if (dateEnd == null)
                     dateEnd = DateTime.MaxValue;
@@ -358,8 +359,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 else
                     dateStart = dateStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
 
+                //dateEndXls = (DateTime)dateEnd == DateTime.MaxValue ? "-" : dateEndXls;
+                //dateStartXls = (DateTime)dateStart == DateTime.MinValue ? "-" : dateStartXls;
+
                 var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault().ToUniversalTime(), dateEnd.GetValueOrDefault().ToUniversalTime(), status, 1, int.MaxValue);
-                var stream = GenerateExcel(reportResult.Data);
+                var stream = GenerateExcel(reportResult.Data, dateStart, dateEnd);
 
                 var xls = stream.ToArray();
 
@@ -376,10 +380,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        private MemoryStream GenerateExcel(IList<ReportDto> data)
+        private MemoryStream GenerateExcel(IList<ReportDto> data, DateTime? dateStart, DateTime? dateEnd)
         {
             var timezoneoffset = _identityService.TimezoneOffset;
             DataTable dt = new DataTable();
+            string title = "Laporan Ekspedisi Realisasi VB",
+                dateFrom = dateStart != DateTime.MinValue ? dateStart.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture) : "-",
+                dateTo = dateEnd != DateTime.MaxValue ? dateEnd.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture) : "-";
+
             dt.Columns.Add(new DataColumn() { ColumnName = "No. VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Realisasi VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tipe VB", DataType = typeof(string) });
@@ -438,7 +446,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 }
             }
 
-            return Lib.Helpers.Excel.CreateExcelNoFilters(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Reports") }, true);
+            return Lib.Helpers.Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Reports") }, title, dateFrom, dateTo, true);
         }
     }
 }

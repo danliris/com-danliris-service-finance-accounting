@@ -14,6 +14,8 @@ using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote
 {
@@ -55,10 +57,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public async Task<int> CreateAsync(PaymentDispositionNoteModel model)
         {
-            model.PaymentDispositionNo = await GenerateNo(model, 7);
+            model.PaymentDispositionNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username);
             CreateModel(model);
             await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
+        }
+
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = ServiceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
         }
 
         async Task<string> GenerateNo(PaymentDispositionNoteModel model, int clientTimeZoneOffset)

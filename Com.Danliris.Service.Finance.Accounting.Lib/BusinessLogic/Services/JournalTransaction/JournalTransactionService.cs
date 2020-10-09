@@ -309,8 +309,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     LastModifiedUtc = s.LastModifiedUtc,
                     Status = s.Status
                 })
-                .Where(x => x.Date >= dateFrom)
-                .Where(x => x.Date <= dateTo);
+                .Where(x => x.Date >= dateFrom.GetValueOrDefault())
+                .Where(x => x.Date <= dateTo.GetValueOrDefault().AddHours(24 - offSet));
 
             List<string> searchAttributes = new List<string>()
             {

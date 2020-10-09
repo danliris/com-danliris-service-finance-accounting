@@ -43,17 +43,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 
                 return Task.FromResult(result);
             }
-            throw new System.NotImplementedException();
+            else if (url.Contains("bank-expenditure-notes/bank-document-no"))
+            {
+                var defaultresponse = new APIDefaultResponse<string>()
+                {
+                    data = "Test"
+                };
+
+                var result = new HttpResponseMessage()
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
+                };
+
+                return Task.FromResult(result);
+            }
+
+
+            return Task.FromResult(new HttpResponseMessage());
         }
 
         public Task<HttpResponseMessage> PostAsync(string url, HttpContent content)
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(new HttpResponseMessage());
         }
 
         public Task<HttpResponseMessage> PutAsync(string url, HttpContent content)
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(new HttpResponseMessage());
         }
     }
 }
