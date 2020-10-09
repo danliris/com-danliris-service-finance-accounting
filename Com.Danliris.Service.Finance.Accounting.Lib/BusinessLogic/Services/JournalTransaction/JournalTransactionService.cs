@@ -285,15 +285,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         public ReadResponse<JournalTransactionModel> ReadByDate(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet, int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            if (dateFrom > dateTo) {
-                var errorResult = new List<ValidationResult>()
-                {
-                    new ValidationResult("Tanggal awal tidak dapat lebih besar", new List<string> { "Differences" })
-                };
-                ValidationContext validationContext = new ValidationContext(dateFrom, _serviceProvider, null);
-                throw new ServiceValidationException(validationContext, errorResult);
-            }
-
             IQueryable<JournalTransactionModel> Query = _DbSet;
 
             Query = Query
