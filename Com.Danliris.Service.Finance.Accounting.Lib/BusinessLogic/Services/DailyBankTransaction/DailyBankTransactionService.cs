@@ -196,10 +196,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             result.Columns.Add(new DataColumn() { ColumnName = "Nomor Referensi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Jenis Referensi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Currency", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Before", DataType = typeof(double) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(double) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(double) });
-            result.Columns.Add(new DataColumn() { ColumnName = "After", DataType = typeof(double) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Before", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "After", DataType = typeof(String) });
 
             if (Query.ToArray().Count() == 0)
                 result.Rows.Add("", "", "", "", "", 0, 0, 0, 0); // to allow column name to be generated properly for empty data as template
@@ -211,7 +211,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 foreach (var item in Query)
                 {
                     var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
-                    result.Rows.Add(item.Date.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")), item.Remark, item.ReferenceNo, item.ReferenceType, item.AccountBankCurrencyCode, beforeBalance, item.Status.ToUpper().Equals("IN") ? item.Nominal : 0, item.Status.ToUpper().Equals("OUT") ? item.Nominal : 0, afterBalance);
+                    result.Rows.Add(item.Date.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
+                        item.Remark,
+                        item.ReferenceNo,
+                        item.ReferenceType,
+                        item.AccountBankCurrencyCode,
+                        beforeBalance.ToString("#,##0.#0"),
+                        item.Status.ToUpper().Equals("IN") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0"),
+                        item.Status.ToUpper().Equals("OUT") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0"),
+                        afterBalance.ToString("#,##0.#0"));
                     beforeBalance = afterBalance;
                 }
             }
@@ -498,9 +506,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             result.Columns.Add(new DataColumn() { ColumnName = "Nama Bank", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Nomor Rekening", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(double) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Credit", DataType = typeof(double) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(double) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Credit", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(String) });
 
             if (queryResult.ToArray().Count() == 0)
                 result.Rows.Add("", "", "", 0, 0, 0); // to allow column name to be generated properly for empty data as template
@@ -508,15 +516,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             {
                 foreach (var item in queryResult)
                 {
-                    result.Rows.Add(item.BankName, item.AccountNumber, item.CurrencyCode, item.Debit, item.Credit, item.Balance);
+                    result.Rows.Add(item.BankName, item.AccountNumber, item.CurrencyCode, item.Debit.ToString("#,##0.#0"), item.Credit.ToString("#,##0.#0"), item.Balance.ToString("#,##0.#0"));
                 }
             }
 
             DataTable currency = new DataTable();
             currency.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
-            currency.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(double) });
-            currency.Columns.Add(new DataColumn() { ColumnName = "Credit", DataType = typeof(double) });
-            currency.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(double) });
+            currency.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(string) });
+            currency.Columns.Add(new DataColumn() { ColumnName = "Credit", DataType = typeof(string) });
+            currency.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(string) });
 
             if (currencyQueryResult.ToArray().Count() == 0)
                 currency.Rows.Add("", 0, 0, 0); // to allow column name to be generated properly for empty data as template
@@ -524,7 +532,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             {
                 foreach (var item in currencyQueryResult)
                 {
-                    currency.Rows.Add(item.CurrencyCode, item.Debit, item.Credit, item.Balance);
+                    currency.Rows.Add(item.CurrencyCode, item.Debit.ToString("#,##0.#0"), item.Credit.ToString("#,##0.#0"), item.Balance.ToString("#,##0.#0"));
                 }
             }
 
