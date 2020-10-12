@@ -203,15 +203,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
         public (List<CreditorAccountViewModel>, decimal) GetReport(string suplierName, int month, int year, int offSet)
         {
-            IQueryable<CreditorAccountModel> supplierQuery = DbContext.CreditorAccounts.AsQueryable().Where(x => x.SupplierName == suplierName);
+            var supplierQuery = DbContext.CreditorAccounts.AsQueryable().Where(x => x.SupplierName == suplierName);
+            var result = GetPreviousMonthReport(supplierQuery, month, year, offSet);
 
             var currentQuery = supplierQuery.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
 
-            if (currentQuery.Count() == 0)
-            {
-                return (new List<CreditorAccountViewModel>(), 0);
-            }
-            var result = GetPreviousMonthReport(supplierQuery, month, year, offSet);
+            //if (currentQuery.Count() == 0)
+            //{
+            //    return (new List<CreditorAccountViewModel>(), 0);
+            //}
+
             foreach (var item in currentQuery.OrderBy(x => x.UnitReceiptNoteDate.GetValueOrDefault()).ToList())
             {
                 decimal unitReceiptMutation = 0;
