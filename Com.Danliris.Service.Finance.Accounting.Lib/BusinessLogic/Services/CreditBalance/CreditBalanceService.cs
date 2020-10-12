@@ -131,16 +131,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                     if (isImport)
                     {
-                        dt.Rows.Add(item.SupplierName, item.Currency, item.StartBalance.ToString("#,##0"), item.Purchase.ToString("#,##0"),
-                                item.Payment.ToString("#,##0"), item.FinalBalance.ToString("#,##0"), (item.StartBalance * item.CurrencyRate).ToString("#,##0"),
-                                (item.Purchase * item.CurrencyRate).ToString("#,##0"), (item.Payment * item.CurrencyRate).ToString("#,##0"),
-                                (item.FinalBalance * item.CurrencyRate).ToString("#,##0"));
+                        dt.Rows.Add(item.SupplierName, item.Currency, item.StartBalance.ToString("#,##0.#0"), item.Purchase.ToString("#,##0.#0"),
+                                item.Payment.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"), (item.StartBalance * item.CurrencyRate).ToString("#,##0.#0"),
+                                (item.Purchase * item.CurrencyRate).ToString("#,##0.#0"), (item.Payment * item.CurrencyRate).ToString("#,##0.#0"),
+                                (item.FinalBalance * item.CurrencyRate).ToString("#,##0.#0"));
                     }
                     else
                     {
 
-                        dt.Rows.Add(item.SupplierName, item.Currency, item.StartBalance.ToString("#,##0"), item.Purchase.ToString("#,##0"),
-                                item.Payment.ToString("#,##0"), item.FinalBalance.ToString("#,##0"));
+                        dt.Rows.Add(item.SupplierName, item.Currency, item.StartBalance.ToString("#,##0.#0"), item.Purchase.ToString("#,##0.#0"),
+                                item.Payment.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"));
                     }
                 }
             }
@@ -167,7 +167,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                 var lastDate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
 
-                sheet.Cells["A1:B3"].Style.Font.Size = 14;
+                sheet.Cells["A1:B3"].Style.Font.Size = 12;
                 sheet.Cells["A1:B3"].Style.Font.Bold = true;
                 sheet.Cells["A1:B1"].Merge = true;
                 sheet.Cells["A2:B2"].Merge = true;

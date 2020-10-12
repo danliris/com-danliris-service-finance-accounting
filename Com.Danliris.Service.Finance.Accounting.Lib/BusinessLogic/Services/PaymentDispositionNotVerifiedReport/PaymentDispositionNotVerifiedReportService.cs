@@ -89,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public MemoryStream GenerateExcel(string no, string supplier, string division, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset, string type)
         {
-            string title = "Histori Disposisi Not Verified",
+            string title = type == "history" ? "Histori Disposisi Not Verified" : "Laporan Disposisi Not Verified",
                 _dateFrom = dateFrom == null ? "-" : dateFrom.Value.Date.ToString("dd MMMM yyy"),
                 _dateTo = dateTo == null ? "-" : dateTo.Value.Date.ToString("dd MMMM yyy");
 
@@ -103,7 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             result.Columns.Add(new DataColumn() { ColumnName = "Tanggal Kirim dari Pembelian", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Divisi", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Total Bayar", DataType = typeof(double) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Total Bayar", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Alasan", DataType = typeof(String) });
 
@@ -120,7 +120,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
                     result.Rows.Add(verifyDate, item.DispositionNo, item.DispositionDate.ToOffset(new TimeSpan(offset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
                         item.CreatedUtc.AddHours(offset).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
-                        item.SupplierName, item.DivisionName, item.PayToSupplier, item.Currency, item.NotVerifiedReason);
+                        item.SupplierName, item.DivisionName, item.PayToSupplier.ToString("#,##0.#0"), item.Currency, item.NotVerifiedReason);
                 }
             }
 
