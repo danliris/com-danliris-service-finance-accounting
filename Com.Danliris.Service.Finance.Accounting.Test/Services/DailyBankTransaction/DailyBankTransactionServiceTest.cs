@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -544,6 +545,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             vm.Status = "OUT";
             vm.SourceType = "Pendanaan";
             Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async Task Should_Success_Posting_Transaction()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewData();
+            var response = await service.Posting(new List<int>() { model.Id });
+            Assert.True(response > 0);
         }
 
         [Fact]

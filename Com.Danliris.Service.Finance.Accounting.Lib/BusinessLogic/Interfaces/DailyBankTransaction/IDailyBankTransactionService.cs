@@ -16,6 +16,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.D
         List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate);
         MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset);
         Task<int> DeleteByReferenceNoAsync(string referenceNo);
+        Task<int> Posting(List<int> ids);
         Task<int> CreateInOutTransactionAsync(DailyBankTransactionModel model);
         MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, int clientTimeZoneOffset);
     }

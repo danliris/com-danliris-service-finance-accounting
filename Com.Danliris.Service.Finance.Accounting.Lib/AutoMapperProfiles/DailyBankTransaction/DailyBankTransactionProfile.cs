@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBa
             
             CreateMap<DailyBankTransactionModel, DailyBankTransactionViewModel>()
                 .ForPath(d => d.Date, opt => opt.MapFrom(s => s.Date))
+                .ForPath(d => d.IsPosted, opt => opt.MapFrom(s => s.IsPosted))
                 /* Bank */
                 .ForPath(d => d.Bank.Id, opt => opt.MapFrom(s => s.AccountBankId))
                 .ForPath(d => d.Bank.BankCode, opt => opt.MapFrom(s => s.AccountBankCode))

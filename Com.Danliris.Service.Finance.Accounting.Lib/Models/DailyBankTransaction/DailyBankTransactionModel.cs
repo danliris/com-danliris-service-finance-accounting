@@ -80,6 +80,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
 
         public decimal AfterNominal { get; set; }
         public decimal BeforeNominal { get; set; }
+        public bool IsPosted { get; set; }
         // public decimal NominalOut { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
