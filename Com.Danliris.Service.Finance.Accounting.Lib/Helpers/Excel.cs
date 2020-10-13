@@ -69,7 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
                 sheet.Cells["A3:D3"].Merge = true;
 
                 sheet.Cells["A4"].Value = $"Per {date}";
-                sheet.Cells["A5:D4"].Merge = true;
+                sheet.Cells["A4:D4"].Merge = true;
 
                 sheet.Cells["A6"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
                 sheet.Cells[sheet.Dimension.Address].AutoFitColumns();

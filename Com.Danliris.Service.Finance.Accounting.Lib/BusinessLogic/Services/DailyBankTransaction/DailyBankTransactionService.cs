@@ -189,7 +189,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             string title = "Mutasi Bank Harian",
                 date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
-            AccountBank dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
+            var dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
             string bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
 
             DataTable result = new DataTable();
@@ -567,7 +567,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         {
             var http = _serviceProvider.GetService<IHttpClientService>();
 
-            var response = await http.GetAsync(APIEndpoint.Core + $"master/account-banks/{accountBankId}");
+            string uri = APIEndpoint.Core + $"master/account-banks/{accountBankId}";
+            var response = await http.GetAsync(uri);
 
             var responseString = await response.Content.ReadAsStringAsync();
             var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
