@@ -44,7 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         public async Task<int> CreateAsync(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
         {
             var model = viewModel.MapToModel();
-            model.DocumentNo = DocumentNoGenerator(viewModel);
+            model.DocumentNo = await GetDocumentNo("K", viewModel.AccountBankCode, _identityService.Username);
             EntityExtension.FlagForCreate(model, _identityService.Username, _userAgent);
             _dbSet.Add(model);
             await _dbContext.SaveChangesAsync();
@@ -64,27 +64,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             return _taskDone;
         }
 
-        private string DocumentNoGenerator(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username)
         {
-            var latestDocumentNo = _dbSet.IgnoreQueryFilters().Where(document => document.DocumentNo.Contains(viewModel.AccountBankCode)).OrderByDescending(document => document.Id).Select(document => new { document.DocumentNo, document.CreatedUtc }).FirstOrDefault();
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
 
-            var now = DateTimeOffset.Now;
-            if (latestDocumentNo == null)
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
             {
-                return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K0001";
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
             }
-            else
-            {
-                if (latestDocumentNo.CreatedUtc.Month != now.Month)
-                    return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K0001";
-                else
-                {
-                    var numberString = latestDocumentNo.DocumentNo.Split("K").ToList()[1];
-                    var number = int.Parse(numberString) + 1;
-                    return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K{number.ToString().PadLeft(4, '0')}";
-                }
-            }
+            return result.data;
         }
+
+        //private string DocumentNoGenerator(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
+        //{
+        //    var latestDocumentNo = _dbSet.IgnoreQueryFilters().Where(document => document.DocumentNo.Contains(viewModel.AccountBankCode)).OrderByDescending(document => document.Id).Select(document => new { document.DocumentNo, document.CreatedUtc }).FirstOrDefault();
+
+        //    var now = DateTimeOffset.Now;
+        //    if (latestDocumentNo == null)
+        //    {
+        //        return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K0001";
+        //    }
+        //    else
+        //    {
+        //        if (latestDocumentNo.CreatedUtc.Month != now.Month)
+        //            return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K0001";
+        //        else
+        //        {
+        //            var numberString = latestDocumentNo.DocumentNo.Split("K").ToList()[1];
+        //            var number = int.Parse(numberString) + 1;
+        //            return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K{number.ToString().PadLeft(4, '0')}";
+        //        }
+        //    }
+        //}
 
         public async Task<int> DeleteAsync(int id)
         {
