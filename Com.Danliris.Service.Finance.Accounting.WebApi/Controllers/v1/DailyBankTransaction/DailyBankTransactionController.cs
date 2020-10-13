@@ -128,6 +128,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
             }
         }
 
+
+        [HttpPut("posting")]
+        public async Task<IActionResult> Posting([FromBody] List<int> ids)
+        {
+            VerifyUser();
+
+            await Service.Posting(ids);
+
+            return NoContent();
+        }
+
         [HttpGet("daily-balance/report/accountbank")]
         public IActionResult GetDailyBalanceAccountBankReport(int bankId, DateTime startDate, DateTime endDate)
         {

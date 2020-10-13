@@ -92,6 +92,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         }
 
         [Fact]
+        public async Task Should_Success_Posting()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.Posting(It.IsAny<List<int>>())).ReturnsAsync(1);
+            //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
+
+            var controller = GetController(mocks);
+            IActionResult response = await controller.Posting(It.IsAny<List<int>>());
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
         public void GetReportDailyBankBalanceExcel_Without_Exception()
         {
             var mocks = GetMocks();
