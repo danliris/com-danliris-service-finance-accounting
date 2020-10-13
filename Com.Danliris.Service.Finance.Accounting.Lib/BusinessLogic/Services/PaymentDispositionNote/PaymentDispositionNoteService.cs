@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
         {
             model.PaymentDispositionNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username);
             CreateModel(model);
-            await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+            //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
         }
 
@@ -135,7 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         .ThenInclude(d => d.Details)
                         .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
 
-            await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(existingModel);
+            //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(existingModel);
             await DeleteModel(id);
             return await DbContext.SaveChangesAsync();
         }
@@ -152,8 +152,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         .ThenInclude(d => d.Details)
                         .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
             UpdateModel(id, model);
-            await _autoDailyBankTransactionService.AutoRevertFromPaymentDisposition(existingModel);
-            await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+            //await _autoDailyBankTransactionService.AutoRevertFromPaymentDisposition(existingModel);
+            //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
         }
 
@@ -249,6 +249,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
                 if (model != null)
                     model.SetIsPosted(IdentityService.Username, UserAgent);
+
+                await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             }
 
             var result = await DbContext.SaveChangesAsync();
