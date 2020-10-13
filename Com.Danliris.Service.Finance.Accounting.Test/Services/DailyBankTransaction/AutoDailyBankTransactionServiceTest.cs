@@ -114,7 +114,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         public Task<int> CreateInOutTransactionAsync(DailyBankTransactionModel model)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(1);
         }
 
         public Task<int> DeleteAsync(int id)
@@ -124,7 +124,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         public Task<int> DeleteByReferenceNoAsync(string referenceNo)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(1);
         }
 
         public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)

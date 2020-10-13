@@ -552,6 +552,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = _dataUtil(service).GetNewData();
+            await service.CreateInOutTransactionAsync(model);
             var response = await service.Posting(new List<int>() { model.Id });
             Assert.True(response > 0);
         }
