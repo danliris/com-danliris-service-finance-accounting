@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote
 {
@@ -213,6 +214,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             int TotalData = paymentDispositionNoteDetails.Count;
 
             return new ReadResponse<PaymentDispositionNoteDetailModel>(paymentDispositionNoteDetails, TotalData, OrderDictionary, new List<string>());
+        }
+
+        public async Task<int> Post (PaymentDispositionNotePostDto form)
+        {
+            var listIds = form.ListIds.Select(x => x.Id).ToList();
+
+            foreach (var id in listIds)
+            {
+                PaymentDispositionNoteModel model = await ReadByIdAsync(id);
+
+                if (model != null)
+                    model.SetIsPosted(IdentityService.Username, UserAgent);
+            }
+
+            return await DbContext.SaveChangesAsync();
         }
     }
 }

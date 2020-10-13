@@ -19,10 +19,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
         public string BankAccountCOA { get; set; }
         public string TransactionType { get; set; }
         public List<PaymentDispositionNoteItemViewModel> Items { get; set; }
-
         public string CurrencyCode { get; set; }
         public int CurrencyId { get; set; }
         public double CurrencyRate { get; set; }
+        public bool IsPosted { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

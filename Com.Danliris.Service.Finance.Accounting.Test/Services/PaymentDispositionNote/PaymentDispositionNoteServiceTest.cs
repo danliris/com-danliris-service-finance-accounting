@@ -185,5 +185,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             var Response = service.ReadDetailsByEPOId(detail.EPOId);
             Assert.NotNull(Response);
         }
+
+        [Fact]
+        public async Task Should_Success_Post()
+        {
+            PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            PaymentDispositionNotePostDto dto = _dataUtil(service, GetCurrentMethod()).GetNewPostDto();
+
+            var Response = await service.Post(dto);
+            Assert.NotEqual(0, Response);
+        }
     }
 }
