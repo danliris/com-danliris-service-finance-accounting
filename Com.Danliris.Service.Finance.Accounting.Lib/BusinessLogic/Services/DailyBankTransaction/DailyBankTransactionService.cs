@@ -189,6 +189,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             string title = "Mutasi Bank Harian",
                 date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
+            AccountBank dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
+            string bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
+
             DataTable result = new DataTable();
 
             result.Columns.Add(new DataColumn() { ColumnName = "Tanggal", DataType = typeof(String) });
@@ -224,7 +227,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 }
             }
 
-            return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, title, date, true);
+            return Excel.DailyMutationReportExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, title, bank, date, true);
         }
 
         private BankTransactionMonthlyBalanceModel GetBalanceMonthAndYear(int bankId, int month, int year, int clientTimeZoneOffset)
@@ -497,7 +500,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         {
             var queryResult = GetDailyBalanceReport(bankId, startDate, endDate);
             var currencyQueryResult = GetDailyBalanceCurrencyReport(bankId, startDate, endDate);
-            string title = "Saldo Bank Harian",
+            string title = "Laporan Saldo Bank Harian",
                 dateFrom = startDate == null ? "-" : startDate.ToString("dd MMMM yyyy"),
                 dateTo = endDate == null ? "-" : endDate.ToString("dd MMMM yyyy");
 
@@ -558,6 +561,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
 
             return currencyResult.ToList();
+        }
+
+        private async Task<AccountBank> GetAccountBank(int accountBankId)
+        {
+            var http = _serviceProvider.GetService<IHttpClientService>();
+
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/account-banks/{accountBankId}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<AccountBank>>(responseString, jsonSerializationSetting);
+
+            return result.data;
         }
     }
 }
