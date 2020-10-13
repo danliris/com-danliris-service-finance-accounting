@@ -341,7 +341,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
             var data = GetReportQuery(dateFrom, dateTo, offSet);
             string title = "Laporan Kwitansi",
                 dateStart = dateFrom == null ? "-" : dateFrom.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
-                dateEnd = dateTo == null ? "-" : dateFrom.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"));
+                dateEnd = dateTo == null ? "-" : dateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"));
 
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No Kwitansi", DataType = typeof(string) });

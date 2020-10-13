@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 
@@ -59,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
         {
             model.PaymentDispositionNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username);
             CreateModel(model);
-            await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+            //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
         }
 
@@ -84,29 +85,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return result.data;
         }
 
-        async Task<string> GenerateNo(PaymentDispositionNoteModel model, int clientTimeZoneOffset)
-        {
-            DateTimeOffset Now = model.PaymentDate;
-            string Year = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("yy");
-            string Month = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("MM");
-            string Day = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd");
-            //PD + 2 digit tahun + 2 digit bulan + 2 digit tgl + 3 digit urut
-            string no = $"PD-{Year}-{Month}-{Day}-";
-            int Padding = 3;
+        //async Task<string> GenerateNo(PaymentDispositionNoteModel model, int clientTimeZoneOffset)
+        //{
+        //    DateTimeOffset Now = model.PaymentDate;
+        //    string Year = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("yy");
+        //    string Month = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("MM");
+        //    string Day = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd");
+        //    //PD + 2 digit tahun + 2 digit bulan + 2 digit tgl + 3 digit urut
+        //    string no = $"PD-{Year}-{Month}-{Day}-";
+        //    int Padding = 3;
 
-            var lastNo = await this.DbSet.Where(w => w.PaymentDispositionNo.StartsWith(no) && !w.IsDeleted).OrderByDescending(o => o.PaymentDispositionNo).FirstOrDefaultAsync();
-            no = $"{no}";
+        //    var lastNo = await this.DbSet.Where(w => w.PaymentDispositionNo.StartsWith(no) && !w.IsDeleted).OrderByDescending(o => o.PaymentDispositionNo).FirstOrDefaultAsync();
+        //    no = $"{no}";
 
-            if (lastNo == null)
-            {
-                return no + "1".PadLeft(Padding, '0');
-            }
-            else
-            {
-                int lastNoNumber = int.Parse(lastNo.PaymentDispositionNo.Replace(no, "")) + 1;
-                return no + lastNoNumber.ToString().PadLeft(Padding, '0');
-            }
-        }
+        //    if (lastNo == null)
+        //    {
+        //        return no + "1".PadLeft(Padding, '0');
+        //    }
+        //    else
+        //    {
+        //        int lastNoNumber = int.Parse(lastNo.PaymentDispositionNo.Replace(no, "")) + 1;
+        //        return no + lastNoNumber.ToString().PadLeft(Padding, '0');
+        //    }
+        //}
 
         public async Task DeleteModel(int id)
         {
@@ -134,7 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         .ThenInclude(d => d.Details)
                         .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
 
-            await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(existingModel);
+            //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(existingModel);
             await DeleteModel(id);
             return await DbContext.SaveChangesAsync();
         }
@@ -151,8 +152,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         .ThenInclude(d => d.Details)
                         .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
             UpdateModel(id, model);
-            await _autoDailyBankTransactionService.AutoRevertFromPaymentDisposition(existingModel);
-            await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+            //await _autoDailyBankTransactionService.AutoRevertFromPaymentDisposition(existingModel);
+            //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
         }
 
@@ -236,6 +237,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             int TotalData = paymentDispositionNoteDetails.Count;
 
             return new ReadResponse<PaymentDispositionNoteDetailModel>(paymentDispositionNoteDetails, TotalData, OrderDictionary, new List<string>());
+        }
+
+        public async Task<int> Post (PaymentDispositionNotePostDto form)
+        {
+            List<int> listIds = form.ListIds.Select(x => x.Id).ToList();
+
+            foreach (int id in listIds)
+            {
+                var model = await ReadByIdAsync(id);
+
+                if (model != null)
+                    model.SetIsPosted(IdentityService.Username, UserAgent);
+
+                await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+            }
+
+            var result = await DbContext.SaveChangesAsync();
+
+            return result;
         }
     }
 }
