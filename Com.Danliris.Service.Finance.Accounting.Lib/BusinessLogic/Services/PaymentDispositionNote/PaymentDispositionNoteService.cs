@@ -85,29 +85,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return result.data;
         }
 
-        async Task<string> GenerateNo(PaymentDispositionNoteModel model, int clientTimeZoneOffset)
-        {
-            DateTimeOffset Now = model.PaymentDate;
-            string Year = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("yy");
-            string Month = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("MM");
-            string Day = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd");
-            //PD + 2 digit tahun + 2 digit bulan + 2 digit tgl + 3 digit urut
-            string no = $"PD-{Year}-{Month}-{Day}-";
-            int Padding = 3;
+        //async Task<string> GenerateNo(PaymentDispositionNoteModel model, int clientTimeZoneOffset)
+        //{
+        //    DateTimeOffset Now = model.PaymentDate;
+        //    string Year = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("yy");
+        //    string Month = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("MM");
+        //    string Day = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd");
+        //    //PD + 2 digit tahun + 2 digit bulan + 2 digit tgl + 3 digit urut
+        //    string no = $"PD-{Year}-{Month}-{Day}-";
+        //    int Padding = 3;
 
-            var lastNo = await this.DbSet.Where(w => w.PaymentDispositionNo.StartsWith(no) && !w.IsDeleted).OrderByDescending(o => o.PaymentDispositionNo).FirstOrDefaultAsync();
-            no = $"{no}";
+        //    var lastNo = await this.DbSet.Where(w => w.PaymentDispositionNo.StartsWith(no) && !w.IsDeleted).OrderByDescending(o => o.PaymentDispositionNo).FirstOrDefaultAsync();
+        //    no = $"{no}";
 
-            if (lastNo == null)
-            {
-                return no + "1".PadLeft(Padding, '0');
-            }
-            else
-            {
-                int lastNoNumber = int.Parse(lastNo.PaymentDispositionNo.Replace(no, "")) + 1;
-                return no + lastNoNumber.ToString().PadLeft(Padding, '0');
-            }
-        }
+        //    if (lastNo == null)
+        //    {
+        //        return no + "1".PadLeft(Padding, '0');
+        //    }
+        //    else
+        //    {
+        //        int lastNoNumber = int.Parse(lastNo.PaymentDispositionNo.Replace(no, "")) + 1;
+        //        return no + lastNoNumber.ToString().PadLeft(Padding, '0');
+        //    }
+        //}
 
         public async Task DeleteModel(int id)
         {
