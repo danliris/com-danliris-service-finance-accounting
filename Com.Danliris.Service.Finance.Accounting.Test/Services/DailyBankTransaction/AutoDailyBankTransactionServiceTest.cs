@@ -24,7 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IDailyBankTransactionService))).Returns(new DailyBankTransactionServiceHelper());
             var service = new AutoDailyBankTransactionService(serviceProviderMock.Object);
-            
+
             var dispositionModel = new PaymentDispositionNoteModel()
             {
                 PaymentDate = DateTimeOffset.Now,
@@ -49,7 +49,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IDailyBankTransactionService))).Returns(new DailyBankTransactionServiceHelper());
             var service = new AutoDailyBankTransactionService(serviceProviderMock.Object);
-            
+
             var dispositionModel = new PaymentDispositionNoteModel()
             {
                 PaymentDate = DateTimeOffset.Now,
@@ -74,12 +74,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IDailyBankTransactionService))).Returns(new DailyBankTransactionServiceHelper());
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
-            
+
             var service = new AutoDailyBankTransactionService(serviceProviderMock.Object);
-            
+
             var model = new OthersExpenditureProofDocumentModel();
             var itemModels = new List<OthersExpenditureProofDocumentItemModel>();
-            
+
             var result = await service.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
             Assert.NotEqual(0, result);
         }
@@ -90,12 +90,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IDailyBankTransactionService))).Returns(new DailyBankTransactionServiceHelper());
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
-            
+
             var service = new AutoDailyBankTransactionService(serviceProviderMock.Object);
-            
+
             var model = new OthersExpenditureProofDocumentModel();
             var itemModels = new List<OthersExpenditureProofDocumentItemModel>();
-            
+
             var result = await service.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
             Assert.NotEqual(0, result);
         }
@@ -114,7 +114,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         public Task<int> CreateInOutTransactionAsync(DailyBankTransactionModel model)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(1);
         }
 
         public Task<int> DeleteAsync(int id)
@@ -124,7 +124,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         public Task<int> DeleteByReferenceNoAsync(string referenceNo)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(1);
         }
 
         public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
@@ -150,6 +150,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         public ReadResponse<DailyBankTransactionModel> GetReport(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             throw new NotImplementedException();
+        }
+
+        public Task<int> Posting(List<int> ids)
+        {
+            return Task.FromResult(1);
         }
 
         public ReadResponse<DailyBankTransactionModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
