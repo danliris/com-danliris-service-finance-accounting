@@ -218,17 +218,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public async Task<int> Post (PaymentDispositionNotePostDto form)
         {
-            var listIds = form.ListIds.Select(x => x.Id).ToList();
+            List<int> listIds = form.ListIds.Select(x => x.Id).ToList();
 
-            foreach (var id in listIds)
+            foreach (int id in listIds)
             {
-                PaymentDispositionNoteModel model = await ReadByIdAsync(id);
+                var model = await ReadByIdAsync(id);
 
                 if (model != null)
                     model.SetIsPosted(IdentityService.Username, UserAgent);
             }
 
-            return await DbContext.SaveChangesAsync();
+            var result = await DbContext.SaveChangesAsync();
+
+            return result;
         }
     }
 }

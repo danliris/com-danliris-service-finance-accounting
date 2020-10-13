@@ -234,7 +234,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
             try
             {
                 VerifyUser();
-                int result = await Service.Post(form);
+                var result = await Service.Post(form);
 
                 return Ok(result);
             }
