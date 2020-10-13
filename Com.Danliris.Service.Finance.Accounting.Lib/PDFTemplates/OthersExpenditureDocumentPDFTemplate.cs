@@ -392,8 +392,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             footerTable.SetWidths(widthsFooter);
             footerTable.WidthPercentage = 100;
 
-            /*cellFooter.Phrase = new Phrase("Dikeluarkan dengan cek/BG No. : " + model.BGCheckNumber, normal_font);*/
-            cellFooter.Phrase = new Phrase("Dikeluarkan dengan cek/BG No. : ", normal_font);
+            cellFooter.Phrase = new Phrase("Dikeluarkan dengan cek/BG No. : " + model.CekBgNo, normal_font);
             footerTable.AddCell(cellFooter);
 
             cellFooter.Phrase = new Phrase("", normal_font);

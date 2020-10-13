@@ -23,12 +23,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             Items = items.Select(item => new OthersExpenditureProofDocumentItemPDFViewModel(item, coas)).ToList();
             Bank = accountBank;
             DocumentNo = model.DocumentNo;
+            CekBgNo = model.CekBgNo;
         }
 
         public int Id { get; set; }
         public int AccountBankId { get; set; }
         public DateTimeOffset Date { get; set; }
         public string Type { get; set; }
+        public string CekBgNo { get; set; }
         public string Remark { get; set; }
         public AccountBankViewModel Bank { get; set; }
         public ICollection<OthersExpenditureProofDocumentItemPDFViewModel> Items { get; set; }
