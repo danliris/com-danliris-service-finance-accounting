@@ -114,6 +114,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.OthersExpendi
             }
         }
 
+        
         [Fact]
         public async Task GetById_WithoutException_ReturnOK()
         {
