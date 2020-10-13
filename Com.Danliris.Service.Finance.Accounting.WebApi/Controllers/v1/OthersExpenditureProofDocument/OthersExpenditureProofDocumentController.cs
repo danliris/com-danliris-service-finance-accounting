@@ -4,9 +4,11 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -186,6 +188,44 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.OthersEx
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
+        }
+
+        [HttpGet("pdf/{Id}")]
+        public async Task<IActionResult> GetPDFById([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                int timeoffsset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                var result = await _service.GetPDFByIdAsync(id);
+
+                if (result == null)
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(_apiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                        .Fail();
+                    return NotFound(Result);
+                }
+                else
+                {
+                    OthersExpenditureDocumentPDFTemplate PdfTemplate = new OthersExpenditureDocumentPDFTemplate();
+                    MemoryStream stream = PdfTemplate.GeneratePdfTemplate(result, timeoffsset);
+                    return new FileStreamResult(stream, "application/pdf")
+                    {
+                        FileDownloadName = $"Bukti Pengeluaran Bank (Lain-lain) - {result.DocumentNo}.pdf"
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(_apiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+
         }
     }
 }
