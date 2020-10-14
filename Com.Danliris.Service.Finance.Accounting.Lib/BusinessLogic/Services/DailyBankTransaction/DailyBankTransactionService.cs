@@ -186,7 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             var Query = GetQuery(bankId, month, year, clientTimeZoneOffset);
-            string title = "Mutasi Bank Harian",
+            string title = "Laporan Mutasi Bank Harian",
                 date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
             var dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
