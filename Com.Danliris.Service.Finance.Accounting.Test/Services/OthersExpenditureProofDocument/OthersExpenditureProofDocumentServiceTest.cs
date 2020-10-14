@@ -63,6 +63,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                         Remark = "Remark"
                     }
                 },
+                CekBgNo = "CekBgNo",
                 Remark = "Remark",
                 Type = "Operasional"
             };
@@ -127,6 +128,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 
             var createdModel = dbContext.OthersExpenditureProofDocuments.FirstOrDefault();
             var response = await service.GetSingleByIdAsync(createdModel.Id);
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_PDF_Data_By_Id()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoJournalService))).Returns(new AutoJournalServiceTestHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoDailyBankTransactionService))).Returns(new AutoDailyBankTransactionServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(new IdentityService() { Username = "Username", Token = "token", TimezoneOffset = 1 });
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+
+            var service = new OthersExpenditureProofDocumentService(dbContext, serviceProviderMock.Object);
+
+            var model = GetCreateDataUtil();
+            await service.CreateAsync(model);
+
+            var createdModel = dbContext.OthersExpenditureProofDocuments.FirstOrDefault();
+            var response = await service.GetPDFByIdAsync(createdModel.Id);
 
             Assert.NotNull(response);
         }
@@ -199,6 +222,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                         Remark = "Remark"
                     }
                 },
+                CekBgNo = createdModel.CekBgNo,
                 Remark = createdModel.Remark,
                 Type = createdModel.Type
             };
