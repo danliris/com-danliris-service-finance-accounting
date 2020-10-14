@@ -176,11 +176,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                 if (isImport)
                 {
-                    sheet.Cells["A2"].Value = "SALDO HUTANG IMPOR";
+                    sheet.Cells["A2"].Value = "LAPORAN SALDO HUTANG IMPOR";
                 }
                 else
                 {
-                    sheet.Cells["A2"].Value = "SALDO HUTANG LOKAL";
+                    sheet.Cells["A2"].Value = "LAPORAN SALDO HUTANG LOKAL";
                 }
                 sheet.Cells["A3"].Value = "PER " + lastDate.ToString("dd MMMM yyyy").ToUpper();
                 sheet.Cells["A4"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);

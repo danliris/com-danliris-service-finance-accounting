@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(new HttpClientTestService());
+                .Returns(new DailyBankTransactionIHttpService());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
