@@ -466,11 +466,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Jatuh Tempo", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Proforma", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Kurs", DataType = typeof(double) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(double) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(double) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "PPh", DataType = typeof(double) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Kurs", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PPh", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tempo", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Kategori", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Unit", DataType = typeof(string) });
@@ -484,7 +484,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Terima Kasir", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Bayar Kasir", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No Bukti Pengeluaran Bank", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal yang dibayar", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal yang dibayar", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "PO Eksternal", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal SPB", DataType = typeof(string) });
@@ -507,11 +507,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         item.PaymentDueDate == null ? "-" : item.PaymentDueDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
                         item.InvoiceNo,
                         item.SupplierName,
-                        item.CurrencyRate,
-                        item.DPP,
-                        item.VAT,
-                        item.IncomeTax,
-                        item.Total,
+                        item.CurrencyRate.ToString("#,##0.#0"),
+                        item.DPP.ToString("#,##0.#0"),
+                        item.VAT.ToString("#,##0.#0"),
+                        item.IncomeTax.ToString("#,##0.#0"),
+                        item.Total.ToString("#,##0.#0"),
                         item.DueDateDays,
                         item.Category,
                         item.Unit,
@@ -526,7 +526,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         item.BankExpenditureNoteDate == null ? "-" : item.BankExpenditureNoteDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
                         string.IsNullOrEmpty(item.BankExpenditureNoteNo) ? "-" : item.BankExpenditureNoteNo,
                         //item.BankExpenditureNotePPHDate == null ? "-" : item.BankExpenditureNotePPHDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.BankExpenditureNotePPHNo) ? "-" : item.BankExpenditureNotePPHNo,
-                        item.PayToSupplier,
+                        item.PayToSupplier.ToString("#,##0.#0"),
                         item.Currency,
                         item.ExternalPurchaseOrderNo,
                         item.UnitPaymentOrderDate,

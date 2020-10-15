@@ -227,7 +227,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 false,
                 VBType.WithPO,
                 documentNo.Item2,
-                false, // IsInklaring
+                form.IsInklaring,
                 null, // NoBL
                 null, // NoPO
                 form.TypePurchasing

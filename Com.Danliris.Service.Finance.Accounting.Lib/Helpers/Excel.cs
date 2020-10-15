@@ -38,6 +38,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             {
                 var sheet = package.Workbook.Worksheets.Add(item.Value);
 
+                sheet.Cells["A1"].Value = "PT.Dan Liris";
+                sheet.Cells["A1:D1"].Merge = true;
+
                 sheet.Cells["A2"].Value = title;
                 sheet.Cells["A2:D2"].Merge = true;
 
@@ -76,6 +79,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
+        public static MemoryStream DailyMutationReportExcel(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string bankAccount, string date, bool styling = false)
+        {
+            ExcelPackage package = new ExcelPackage();
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            {
+                var sheet = package.Workbook.Worksheets.Add(item.Value);
+
+                sheet.Cells["A2"].Value = "PT. DANLIRIS";
+                sheet.Cells["A2:D2"].Merge = true;
+
+                sheet.Cells["A3"].Value = title;
+                sheet.Cells["A3:D3"].Merge = true;
+
+                sheet.Cells["A4"].Value = bankAccount;
+                sheet.Cells["A4:D4"].Merge = true;
+
+                sheet.Cells["A5"].Value = $"Per {date}";
+                sheet.Cells["A5:D5"].Merge = true;
+
+                sheet.Cells["A7"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+            }
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
         public static MemoryStream CreateExcelVBStatusReport(KeyValuePair<DataTable, string> dataSource, KeyValuePair<DataTable, string> currencySource, DateTimeOffset requestDateFrom, DateTimeOffset requestDateTo, bool styling = false, double requestTotal = 0, double realizationTotal = 0)
         {
             ExcelPackage package = new ExcelPackage();
@@ -91,6 +121,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             sheet.Cells[period, from, period, to].Merge = true;
 
             sheet.Cells["L2"].Value = DateTimeOffset.Now.ToString("dd MMMM yyyy", new CultureInfo("id-ID"));
+            sheet.Cells["B1"].Value = "PT.DAN LIRIS";
             sheet.Cells["B2"].Value = "LAPORAN STATUS VB";
             sheet.Cells["B6"].LoadFromDataTable(dataSource.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
 

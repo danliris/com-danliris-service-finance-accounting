@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote
@@ -43,10 +44,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionN
         [MaxLength(64)]
         public string TransactionType { get; set; }
         public virtual ICollection<PaymentDispositionNoteItemModel> Items { get; set; }
+        [DefaultValue(false)]
+        public bool IsPosted { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             throw new NotImplementedException();
+        }
+
+        public void SetIsPosted(string username, string userAgent)
+        {
+            IsPosted = true;
+            this.FlagForUpdate(username, userAgent);
         }
     }
 }

@@ -397,9 +397,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Unit Kirim", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Keperluan", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang VB", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal VB", DataType = typeof(decimal) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang Realisasi", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal Realisasi", DataType = typeof(decimal) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal Realisasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Realisasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Verif Terima", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nama Verifikator", DataType = typeof(string) });
@@ -433,9 +433,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                         sendToVerificationDate,
                         datum.Purpose,
                         datum.CurrencyCode,
-                        datum.VBAmount,
+                        datum.VBAmount.ToString("#,##0.#0"),
                         datum.CurrencyCode,
-                        datum.VBRealizationAmount,
+                        datum.VBRealizationAmount.ToString("#,##0.#0"),
                         datum.VBRealizationDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
                         verificationReceiptDate,
                         verifiedBy, 

@@ -1,6 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -126,6 +127,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PaymentDisposit
                     }
                 }
             };
+        }
+        
+        public PaymentDispositionNotePostDto GetNewPostDto()
+        {
+                return new PaymentDispositionNotePostDto
+                {
+                    ListIds = new List<PaymentDispositionNotePostIdDto>
+                    {
+                        new PaymentDispositionNotePostIdDto{ Id = 1 }
+                    }
+                };            
         }
 
         public async Task<PaymentDispositionNoteModel> GetTestData()

@@ -2,6 +2,7 @@
 using Com.Moonlay.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -125,6 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public DateTimeOffset? CompletedDate { get; private set; }
         [MaxLength(256)]
         public string CompletedBy { get; private set; }
+        [DefaultValue(false)]
         public bool IsInklaring { get; private set; }
         public string NoBL { get; private set; }
         public string NoPO { get; private set; }

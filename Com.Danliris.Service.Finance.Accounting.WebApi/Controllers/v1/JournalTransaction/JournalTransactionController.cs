@@ -34,16 +34,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                 VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                ReadResponse<JournalTransactionModel> read = (datefrom != null && dateto != null) ? 
-                    Service.ReadByDate(datefrom, dateto, offSet, page, size, order, select, keyword, filter) :
-                    Service.Read(page, size, order, select, keyword, filter);
-                //ReadResponse<JournalTransactionModel> read = Service.Read(page, size, order, select, keyword, filter);
 
-                List<JournalTransactionModel> dataVM = Mapper.Map<List<JournalTransactionModel>>(read.Data);
+                ReadResponse<JournalTransactionModel> read = Service.ReadByDate(datefrom, dateto, offSet, page, size, order, select, keyword, filter);
 
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
-                    .Ok(Mapper, dataVM, page, size, read.Count, dataVM.Count, read.Order, read.Selected);
+                    .Ok(null, read.Data, page, size, read.Count, read.Data.Count, read.Order, read.Selected);
                 return Ok(Result);
             }
             catch (Exception e)

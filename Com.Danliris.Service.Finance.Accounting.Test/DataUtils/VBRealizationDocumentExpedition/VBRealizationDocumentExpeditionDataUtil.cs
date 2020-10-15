@@ -30,6 +30,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
             return data;
         }
 
+        public VBRealizationDocumentExpeditionModel GetTestDataReject_VBRealizationDocumentExpedition()
+        {
+            var vbRealization = GetTestData_RealizationVbs();
+            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO);
+            data.CashierDelete();
+            dbContext.VBRealizationDocumentExpeditions.Add(data);
+            dbContext.SaveChanges();
+            return data;
+        }
+
+        public VBRealizationDocumentExpeditionModel GetTestDataCashierDelete_VBRealizationDocumentExpedition()
+        {
+            var vbRealization = GetTestData_RealizationVbs();
+            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO);
+            data.CashierVerification("Test");
+            dbContext.VBRealizationDocumentExpeditions.Add(data);
+            dbContext.SaveChanges();
+            return data;
+        }
+
+        public VBRealizationDocumentExpeditionModel GetTestDataVerifiedToCashier_VBRealizationDocumentExpedition()
+        {
+            var vbRealization = GetTestData_RealizationVbs();
+            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO);
+            data.VerificationRejected("Test", "Test");
+            dbContext.VBRealizationDocumentExpeditions.Add(data);
+            dbContext.SaveChanges();
+            return data;
+        }
+
         public RealizationVbModel GetTestData_RealizationVbs()
         {
             var data = new RealizationVbModel()

@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -59,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(new HttpClientTestService());
+                .Returns(new DailyBankTransactionIHttpService());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -396,7 +397,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         public async Task Should_Success_Delete_Data()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataIn();
+            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataOut();
             var newModel = await service.ReadByIdAsync(model.Id);
 
             var Response = await service.DeleteAsync(newModel.Id);
@@ -488,6 +489,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = _dataUtil(service).GetNewData();
             model.Status = null;
+            model.IsPosted = true;
             model.SourceType = "Pendanaan";
             //var Response = await service.CreateInOutTransactionAsync(model);
             await Assert.ThrowsAnyAsync<Exception>(() => service.CreateInOutTransactionAsync(model));
@@ -544,6 +546,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             vm.Status = "OUT";
             vm.SourceType = "Pendanaan";
             Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async Task Should_Success_Posting_Transaction()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewData();
+            await service.CreateInOutTransactionAsync(model);
+            var response = await service.Posting(new List<int>() { model.Id });
+            Assert.True(response > 0);
         }
 
         [Fact]
