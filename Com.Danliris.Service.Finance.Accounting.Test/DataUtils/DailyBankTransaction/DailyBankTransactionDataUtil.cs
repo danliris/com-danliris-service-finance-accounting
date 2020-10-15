@@ -125,6 +125,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
         public async Task<DailyBankTransactionModel> GetTestDataIn()
         {
             DailyBankTransactionModel model = GetNewData();
+            model.IsPosted = true;
             await Service.CreateAsync(model);
             return await Service.ReadByIdAsync(model.Id);
         }
