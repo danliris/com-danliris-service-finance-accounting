@@ -44,11 +44,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             PdfPCell cellHeaderBody = new PdfPCell() { Border = Rectangle.NO_BORDER };
 
             PdfPCell cellHeaderCS2 = new PdfPCell() { Border = Rectangle.NO_BORDER, Colspan = 2 };
+            PdfPCell cellHeaderCS3 = new PdfPCell() { Border = Rectangle.NO_BORDER };
 
 
             cellHeaderCS2.Phrase = new Phrase("BUKTI PENGELUARAN BANK (LAIN-LAIN)", bold_font);
             cellHeaderCS2.HorizontalAlignment = Element.ALIGN_CENTER;
             headerTable.AddCell(cellHeaderCS2);
+
+            cellHeaderCS3.Phrase = new Phrase("", bold_font);
+            headerTable.AddCell(cellHeaderCS3);
+            cellHeaderCS3.Phrase = new Phrase("No. " + model.DocumentNo, bold_font);
+            cellHeaderCS3.HorizontalAlignment = Element.ALIGN_CENTER;
+            headerTable.AddCell(cellHeaderCS3);
 
             cellHeaderBody.Phrase = new Phrase("PT. DANLIRIS", normal_font);
             headerTable1.AddCell(cellHeaderBody);
@@ -63,14 +70,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderCS2.Phrase = new Phrase("", bold_font);
             headerTable2.AddCell(cellHeaderCS2);
 
+            /*cellHeaderBody.Phrase = new Phrase("No. " + model.DocumentNo, bold_font);
+            cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+            headerTable2.AddCell(cellHeaderBody);*/
+
+            /*cellHeaderBody.Colspan = 2;
+            cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+            cellHeaderBody.Phrase = new Phrase("No. " + model.DocumentNo, bold_font);
+            headerTable2.AddCell(cellHeaderBody);
+
+            cellHeaderBody.Colspan = 1;
+            cellHeaderBody.HorizontalAlignment = Element.ALIGN_LEFT;*/
             cellHeaderBody.Phrase = new Phrase("Tanggal", normal_font);
             headerTable2.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(": " + model.Date.AddHours(clientTimeZoneOffset).ToString("dd MMMM yyyy"), normal_font);
-            headerTable2.AddCell(cellHeaderBody);
-
-            cellHeaderBody.Phrase = new Phrase("Nomor", normal_font);
-            headerTable2.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(": " + model.DocumentNo, normal_font);
             headerTable2.AddCell(cellHeaderBody);
 
             /*List<string> supplier = model.Details.Select(m => m.SupplierName).Distinct().ToList();
