@@ -611,7 +611,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return result.data;
         }
 
-        public Task<int> Posting(List<int> ids)
+        public async Task<int> Posting(List<int> ids)
         {
             var models = _DbContext.DailyBankTransactions.Where(entity => ids.Contains(entity.Id)).ToList();
 
