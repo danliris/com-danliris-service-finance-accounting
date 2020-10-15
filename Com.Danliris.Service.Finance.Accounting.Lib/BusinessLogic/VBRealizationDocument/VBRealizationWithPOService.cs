@@ -188,18 +188,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         }
 
-        private void AddDetails(int itemId, List<UnitPaymentOrderItemDto> items)
-        {
-            var models = items.Select(element =>
-            {
-                var result = new VBRealizationDocumentUnitCostsItemModel(itemId, element);
-                EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
-                return result;
-            }).ToList();
+        //private void AddDetails(int itemId, List<UnitPaymentOrderItemDto> items)
+        //{
+        //    var models = items.Select(element =>
+        //    {
+        //        var result = new VBRealizationDocumentUnitCostsItemModel(itemId, element);
+        //        EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
+        //        return result;
+        //    }).ToList();
 
-            _dbContext.VBRealizationDocumentUnitCostsItems.AddRange(models);
-            _dbContext.SaveChanges();
-        }
+        //    _dbContext.VBRealizationDocumentUnitCostsItems.AddRange(models);
+        //    _dbContext.SaveChanges();
+        //}
 
         public int Delete(int id)
         {
