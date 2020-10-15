@@ -729,12 +729,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            //Act
             IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null,null);
-
-            //Assert
             Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
-            
+
+            IActionResult response2 = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, null);
+            Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response2.GetType().GetProperty("ContentType").GetValue(response, null));
+
         }
 
         [Fact]
