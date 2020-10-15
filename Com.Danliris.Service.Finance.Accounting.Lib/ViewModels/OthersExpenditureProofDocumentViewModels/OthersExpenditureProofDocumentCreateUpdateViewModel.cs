@@ -12,6 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
         public string AccountBankCode { get; set; }
         public DateTimeOffset? Date { get; set; }
         public string Type { get; set; }
+        public string CekBgNo { get; set; }
         public string Remark { get; set; }
 
         public ICollection<OthersExpenditureProofDocumentCreateUpdateItemViewModel> Items { get; set; }
@@ -68,6 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
                 AccountBankId = AccountBankId.GetValueOrDefault(),
                 Date = Date.GetValueOrDefault(),
                 Type = Type,
+                CekBgNo = CekBgNo,
                 Remark = Remark
             };
         }

@@ -194,6 +194,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             var Query = GetQuery(bankId, month, year, clientTimeZoneOffset);
+            string title = "Laporan Mutasi Bank Harian",
+                date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
+
+            var dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
+            string bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
 
             DataTable result = new DataTable();
 
@@ -202,10 +207,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             result.Columns.Add(new DataColumn() { ColumnName = "Nomor Referensi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Jenis Referensi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Currency", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Before", DataType = typeof(double) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(double) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(double) });
-            result.Columns.Add(new DataColumn() { ColumnName = "After", DataType = typeof(double) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Before", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "After", DataType = typeof(String) });
 
             if (Query.ToArray().Count() == 0)
                 result.Rows.Add("", "", "", "", "", 0, 0, 0, 0); // to allow column name to be generated properly for empty data as template
@@ -217,12 +222,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 foreach (var item in Query)
                 {
                     var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
-                    result.Rows.Add(item.Date.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")), item.Remark, item.ReferenceNo, item.ReferenceType, item.AccountBankCurrencyCode, beforeBalance, item.Status.ToUpper().Equals("IN") ? item.Nominal : 0, item.Status.ToUpper().Equals("OUT") ? item.Nominal : 0, afterBalance);
+                    result.Rows.Add(item.Date.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
+                        item.Remark,
+                        item.ReferenceNo,
+                        item.ReferenceType,
+                        item.AccountBankCurrencyCode,
+                        beforeBalance.ToString("#,##0.#0"),
+                        item.Status.ToUpper().Equals("IN") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0"),
+                        item.Status.ToUpper().Equals("OUT") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0"),
+                        afterBalance.ToString("#,##0.#0"));
                     beforeBalance = afterBalance;
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, true);
+            return Excel.DailyMutationReportExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, title, bank, date, true);
         }
 
         private BankTransactionMonthlyBalanceModel GetBalanceMonthAndYear(int bankId, int month, int year, int clientTimeZoneOffset)
@@ -520,15 +533,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         {
             var queryResult = GetDailyBalanceReport(bankId, startDate, endDate);
             var currencyQueryResult = GetDailyBalanceCurrencyReport(bankId, startDate, endDate);
+            string title = "Laporan Saldo Bank Harian",
+                dateFrom = startDate == null ? "-" : startDate.ToString("dd MMMM yyyy"),
+                dateTo = endDate == null ? "-" : endDate.ToString("dd MMMM yyyy");
 
             DataTable result = new DataTable();
 
             result.Columns.Add(new DataColumn() { ColumnName = "Nama Bank", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Nomor Rekening", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(double) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Credit", DataType = typeof(double) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(double) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Credit", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(String) });
 
             if (queryResult.ToArray().Count() == 0)
                 result.Rows.Add("", "", "", 0, 0, 0); // to allow column name to be generated properly for empty data as template
@@ -536,15 +552,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             {
                 foreach (var item in queryResult)
                 {
-                    result.Rows.Add(item.BankName, item.AccountNumber, item.CurrencyCode, item.Debit, item.Credit, item.Balance);
+                    result.Rows.Add(item.BankName, item.AccountNumber, item.CurrencyCode, item.Debit.ToString("#,##0.#0"), item.Credit.ToString("#,##0.#0"), item.Balance.ToString("#,##0.#0"));
                 }
             }
 
             DataTable currency = new DataTable();
             currency.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
-            currency.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(double) });
-            currency.Columns.Add(new DataColumn() { ColumnName = "Credit", DataType = typeof(double) });
-            currency.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(double) });
+            currency.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(string) });
+            currency.Columns.Add(new DataColumn() { ColumnName = "Credit", DataType = typeof(string) });
+            currency.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(string) });
 
             if (currencyQueryResult.ToArray().Count() == 0)
                 currency.Rows.Add("", 0, 0, 0); // to allow column name to be generated properly for empty data as template
@@ -552,11 +568,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             {
                 foreach (var item in currencyQueryResult)
                 {
-                    currency.Rows.Add(item.CurrencyCode, item.Debit, item.Credit, item.Balance);
+                    currency.Rows.Add(item.CurrencyCode, item.Debit.ToString("#,##0.#0"), item.Credit.ToString("#,##0.#0"), item.Balance.ToString("#,##0.#0"));
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Saldo Harian"), new KeyValuePair<DataTable, string>(currency, "Saldo Harian Mata Uang") }, true);
+            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Saldo Harian"), new KeyValuePair<DataTable, string>(currency, "Saldo Harian Mata Uang") }, title, dateFrom, dateTo, true);
         }
 
         public List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate)
@@ -580,7 +596,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return currencyResult.ToList();
         }
 
-        public async Task<int> Posting(List<int> ids)
+        private async Task<AccountBank> GetAccountBank(int accountBankId)
+        {
+            var http = _serviceProvider.GetService<IHttpClientService>();
+
+            string uri = APIEndpoint.Core + $"master/account-banks/{accountBankId}";
+            var response = await http.GetAsync(uri);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<AccountBank>>(responseString, jsonSerializationSetting);
+
+            return result.data;
+        }
+
+        public Task<int> Posting(List<int> ids)
         {
             var models = _DbContext.DailyBankTransactions.Where(entity => ids.Contains(entity.Id)).ToList();
 

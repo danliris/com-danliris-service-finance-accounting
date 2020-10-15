@@ -17,6 +17,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
     public class JournalTransactionControllerTest : BaseControllerTest<JournalTransactionController, JournalTransactionModel, JournalTransactionViewModel, IJournalTransactionService>
     {
         [Fact]
+        public void GetTransaction_ReturnOK()
+        {
+            var mocks = GetMocks();
+
+            Dictionary<string, string> order = new Dictionary<string, string>();
+
+            mocks.Service
+                .Setup(f => f.ReadByDate(It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new ReadResponse<JournalTransactionModel>(new List<JournalTransactionModel>(), 1, order, new List<string>()));
+
+            var response = GetController(mocks).GetTransaction(DateTimeOffset.UtcNow.AddDays(-7), DateTimeOffset.UtcNow, 1, 25, "{}", null, null, "{}");
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetTransaction_ReturnInternalServerEror()
+        {
+            var mocks = GetMocks();
+
+            mocks.Service
+                .Setup(f => f.ReadByDate(It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception());
+
+            var response = GetController(mocks).GetTransaction(DateTimeOffset.UtcNow.AddDays(-7), DateTimeOffset.UtcNow, 1, 25, "{}", null, null, "{}");
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public void GetReport_ReturnOK()
         {
             var mocks = GetMocks();

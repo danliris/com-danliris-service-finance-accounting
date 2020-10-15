@@ -89,6 +89,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public MemoryStream GenerateExcel(string no, string supplier, string division, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset, string type)
         {
+            string title = type == "history" ? "Histori Disposisi Not Verified" : "Laporan Disposisi Not Verified",
+                _dateFrom = dateFrom == null ? "-" : dateFrom.Value.Date.ToString("dd MMMM yyy"),
+                _dateTo = dateTo == null ? "-" : dateTo.Value.Date.ToString("dd MMMM yyy");
+
+
             var Query = GetReportQuery(no, supplier, division, dateFrom, dateTo, offset, type);
             Query = Query.OrderByDescending(b => b.DispositionNo).ThenByDescending(b => b.LastModifiedUtc);
             DataTable result = new DataTable();
@@ -98,7 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             result.Columns.Add(new DataColumn() { ColumnName = "Tanggal Kirim dari Pembelian", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Divisi", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Total Bayar", DataType = typeof(double) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Total Bayar", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Alasan", DataType = typeof(String) });
 
@@ -115,11 +120,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
                     result.Rows.Add(verifyDate, item.DispositionNo, item.DispositionDate.ToOffset(new TimeSpan(offset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
                         item.CreatedUtc.AddHours(offset).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
-                        item.SupplierName, item.DivisionName, item.PayToSupplier, item.Currency, item.NotVerifiedReason);
+                        item.SupplierName, item.DivisionName, item.PayToSupplier.ToString("#,##0.#0"), item.Currency, item.NotVerifiedReason);
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Territory") }, true);
+            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Territory") }, title, _dateFrom, _dateTo, true);
         }
     }
 }

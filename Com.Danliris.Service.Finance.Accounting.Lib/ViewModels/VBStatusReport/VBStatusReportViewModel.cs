@@ -43,5 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBStatusReport
         public string ClearenceDate { get; set; }
         public virtual ICollection<RealizationVbDetailModel> Details { get; set; }
         public string CurrencyCode { get; set; }
+        public bool IsInklaring { get; internal set; }
+        public string NoBL { get; internal set; }
     }
 }

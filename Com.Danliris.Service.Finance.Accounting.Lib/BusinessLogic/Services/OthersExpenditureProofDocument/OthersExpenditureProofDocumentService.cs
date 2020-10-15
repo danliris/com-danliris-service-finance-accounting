@@ -8,6 +8,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofD
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
 using Com.Moonlay.Models;
 using Microsoft.EntityFrameworkCore;
@@ -242,6 +243,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             var items = _itemDbSet.AsNoTracking().Where(item => item.OthersExpenditureProofDocumentId == id).ToList();
 
             return new OthersExpenditureProofDocumentViewModel(model, items);
+        }
+
+        public async Task<OthersExpenditureProofDocumentPDFViewModel> GetPDFByIdAsync(int id)
+        {
+            var model = await _dbSet.AsNoTracking().FirstOrDefaultAsync(document => document.Id == id);
+            var items = _itemDbSet.AsNoTracking().Where(item => item.OthersExpenditureProofDocumentId == id).ToList();
+            var coaIds = items.Select(element => element.COAId).ToList();
+            var coas = _dbContext.ChartsOfAccounts.Where(element => coaIds.Contains(element.Id)).ToList();
+
+            var accountBank = await GetAccountBank(model.AccountBankId);
+
+            return new OthersExpenditureProofDocumentPDFViewModel(model, items, accountBank, coas);
+        }
+
+        private async Task<AccountBankViewModel> GetAccountBank(int bankId)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Core + $"master/account-banks/{bankId}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<AccountBankViewModel>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<AccountBankViewModel>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
         }
     }
 }

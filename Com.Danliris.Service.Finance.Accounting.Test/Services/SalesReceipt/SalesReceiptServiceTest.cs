@@ -442,5 +442,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.SalesReceipt
             Response = service.GenerateExcel(data.SalesReceiptDate.AddDays(-2), data.SalesReceiptDate.AddDays(-1), 7);
             Assert.NotNull(Response);
         }
+
+        [Fact]
+        public async Task Should_Success_GenerateExcel_WithDateisNull()
+        {
+            SalesReceiptService service = new SalesReceiptService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataById();
+            var Response = service.GenerateExcel(null, null, 7);
+            Assert.NotNull(Response);
+
+            Response = service.GenerateExcel(data.SalesReceiptDate.AddDays(-2), data.SalesReceiptDate.AddDays(-1), 7);
+            Assert.NotNull(Response);
+        }
     }
 }

@@ -28,6 +28,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
                 Date = DateTimeOffset.Now,
                 SuppliantUnit = new UnitDto()
                 {
+                    Name="Name",
+                    Id=1,
+                    VBDocumentLayoutOrder=1,
                     Code = "Code",
                     Division = new DivisionDto()
                     {
@@ -37,6 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
                 },
                 VBRequestDocument = new VBRequestDocumentDto()
                 {
+                    
                     Id = 1
                 },
                 Type = "Dengan Nomor VB",
@@ -55,6 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
                         
                         UnitPaymentOrder=new UnitPaymentOrderDto()
                         {
+                            
                             No="1",
                             Id=1,
                             Amount=1,
@@ -178,7 +183,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
                             IncomeTaxBy="Supplier",
                             UseIncomeTax=true,
                             UseVat=true
-
+                            
                         }
                     }
                 }
