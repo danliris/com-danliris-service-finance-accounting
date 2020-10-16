@@ -95,6 +95,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public async Task<int> AutoCreateFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels)
         {
             var accountBank = await GetAccountBank(model.AccountBankId);
+
+            var total = itemModels.Sum(element => element.Debit);
+
             var dailyBankTransactionModel = new DailyBankTransactionModel()
             {
                 AccountBankAccountName = accountBank.AccountName,
@@ -108,7 +111,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Date = model.Date,
                 Nominal = itemModels.Sum(item => item.Debit),
                 ReferenceNo = model.DocumentNo,
-                Remark = "Pembayaran Lain - lain",
+                Remark = $"Pembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", total)}",
                 SourceType = model.Type,
                 Status = "OUT"
             };

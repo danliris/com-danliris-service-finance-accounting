@@ -20,5 +20,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
         public decimal Total { get; set; }
         public DateTimeOffset Date { get; set; }
         public string Type { get; set; }
+        public bool IsPosted { get; internal set; }
     }
 }

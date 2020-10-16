@@ -688,5 +688,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             }
             return vbRequests.Count;
         }
+
+        public async Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> items)
+        {
+            var journalTransactionModel = new JournalTransactionModel()
+            {
+                Date = model.Date,
+                Description = "Auto Journal Bukti Pengeluaran Bank Lain - Lain",
+                ReferenceNo = model.DocumentNo,
+                Status = "POSTED",
+                Items = new List<JournalTransactionItemModel>()
+            };
+
+            journalTransactionModel.Items = items.Select(item => new JournalTransactionItemModel()
+            {
+                COA = new COAModel()
+                {
+                    Id = item.COAId,
+                },
+                Debit = item.Debit
+            }).ToList();
+
+            var accountBankCOA = await GetAccountBankCOA(model.AccountBankId);
+            var creditItem = new JournalTransactionItemModel()
+            {
+                COA = new COAModel() { Code = accountBankCOA },
+                Credit = items.Sum(item => item.Debit)
+            };
+            journalTransactionModel.Items.Add(creditItem);
+
+            return await _journalTransactionService.CreateAsync(journalTransactionModel);
+        }
     }
 }

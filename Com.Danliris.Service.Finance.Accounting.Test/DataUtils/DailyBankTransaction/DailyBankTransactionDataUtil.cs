@@ -50,8 +50,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 DestinationBankCurrencyId = 1,
                 DestinationBankCurrencySymbol = "CurrencySymbol",
                 DestinationBankId = 1,
-                DestinationBankName = "BankName"
-            };
+                DestinationBankName = "BankName",
+                IsPosted = true            };
 
             return TestData;
         }
@@ -133,6 +133,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
         public async Task<DailyBankTransactionModel> GetTestDataOut()
         {
             DailyBankTransactionModel model = GetNewData();
+            model.IsPosted = true;
+            model.Status = "OUT";
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<DailyBankTransactionModel> GetTestDataNotPosted()
+        {
+            DailyBankTransactionModel model = GetNewData();
+            model.IsPosted = false;
             model.Status = "OUT";
             await Service.CreateAsync(model);
             return await Service.ReadByIdAsync(model.Id);
