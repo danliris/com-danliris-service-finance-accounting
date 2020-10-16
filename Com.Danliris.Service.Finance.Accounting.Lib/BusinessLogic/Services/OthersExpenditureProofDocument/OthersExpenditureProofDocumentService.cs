@@ -167,7 +167,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 DocumentNo = document.DocumentNo,
                 Type = document.Type,
                 Id = document.Id,
-                Date = document.Date
+                Date = document.Date,
+                IsPosted = document.IsPosted
             }).ToList();
 
             data = data.Select(element =>
