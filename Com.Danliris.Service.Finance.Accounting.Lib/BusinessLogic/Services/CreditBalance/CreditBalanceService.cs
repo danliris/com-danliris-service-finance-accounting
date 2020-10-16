@@ -44,8 +44,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 previousYear = year - 1;
             }
 
+            var firstDayOfMonth = new DateTime(year, month, 1);
+
             if (isForeignCurrency)
                 query = query.Where(entity => entity.CurrencyCode != "IDR");
+            //else
+
+            if (!isImport && !isForeignCurrency)
+                query = query.Where(entity => entity.CurrencyCode == "IDR");
 
             query = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
             if (!string.IsNullOrEmpty(suplierName))
@@ -57,12 +63,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             {
                 var productsUnion = string.Join("\n", item.Select(x => x.Products).ToList());
                 var uniqueProducts = string.Join("\n", productsUnion.Split("\n").Distinct());
+                //var now = DateTimeOffset.Now;
 
                 var creditBalance = new CreditBalanceViewModel()
                 {
-                    StartBalance = DbSet.AsQueryable().Where(x => x.SupplierCode == item.Key
-                                    && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == previousMonth
-                                    && x.UnitReceiptNoteDate.Value.Year == previousYear).ToList().Sum(x => x.FinalBalance),
+                    StartBalance = DbSet
+                    .AsQueryable()
+                    .Where(x => x.SupplierCode == item.Key && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
+                    .ToList().Sum(x => x.FinalBalance),
                     Products = uniqueProducts,
                     Purchase = item.Sum(x => x.UnitReceiptMutation),
                     Payment = item.Sum(x => x.BankExpenditureNoteMutation),

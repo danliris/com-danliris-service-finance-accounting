@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
     public interface IAutoJournalService
     {
         Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel, string documentNo);
+        Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> items);
         Task<int> AutoJournalReverseFromOthersExpenditureProof(string documentNo);
         Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds);
         Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds, AccountBankViewModel bank);

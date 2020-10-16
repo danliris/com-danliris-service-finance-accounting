@@ -19,6 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
             Type = model.Type;
             CekBgNo = model.CekBgNo;
             Remark = model.Remark;
+            IsPosted = model.IsPosted;
             Items = items.Select(item => new OthersExpenditureProofDocumentItemViewModel(item)).ToList();
         }
 
@@ -28,6 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
         public string Type { get; set; }
         public string CekBgNo { get; set; }
         public string Remark { get; set; }
+        public bool IsPosted { get; set; }
 
         public ICollection<OthersExpenditureProofDocumentItemViewModel> Items { get; set; }
     }
