@@ -350,9 +350,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Buyer", DataType = typeof(string) });
 
+            int index = 0;
             if (data.Count() == 0)
             {
-                dt.Rows.Add("", "", "", "", "");
+                dt.Rows.Add("", "", 0.ToString("#,##0.#0"), "", "");
+                index++;
             }
             else
             {
@@ -360,10 +362,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
                 {
                     dt.Rows.Add(item.SalesReceiptNo, item.SalesReceiptDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.TotalPaid.ToString("#,##0.#0"), item.CurrencyCode, item.Buyer);
+                    index++;
                 }
             }
 
-            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Bukti Pembayaran Faktur") }, title, dateStart, dateEnd, true);
+            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Bukti Pembayaran Faktur") },
+                new List<KeyValuePair<string, int>>() { new KeyValuePair<string, int>("Bukti Pembayaran Faktur", index) }, title, dateStart, dateEnd, true);
         }
     }
 }

@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using OfficeOpenXml;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+using OfficeOpenXml.Style;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance
 {
@@ -108,15 +109,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 dt.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir (IDR)", DataType = typeof(string) });
             }
 
+            int index = 0;
             if (data.Count == 0)
             {
                 if (isImport)
                 {
                     dt.Rows.Add("", "", "", "", "", "", "", "", "", "");
+                    index++;
                 }
                 else
                 {
                     dt.Rows.Add("", "", "", "", "", "");
+                    index++;
                 }
             }
             else
@@ -135,12 +139,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                                 item.Payment.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"), (item.StartBalance * item.CurrencyRate).ToString("#,##0.#0"),
                                 (item.Purchase * item.CurrencyRate).ToString("#,##0.#0"), (item.Payment * item.CurrencyRate).ToString("#,##0.#0"),
                                 (item.FinalBalance * item.CurrencyRate).ToString("#,##0.#0"));
+                        index++;
                     }
                     else
                     {
-
                         dt.Rows.Add(item.SupplierName, item.Currency, item.StartBalance.ToString("#,##0.#0"), item.Purchase.ToString("#,##0.#0"),
                                 item.Payment.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"));
+                        index++;
                     }
                 }
             }
@@ -158,7 +163,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             return new ReadResponse<CreditBalanceViewModel>(queries, pageable.TotalCount, new Dictionary<string, string>(), new List<string>());
         }
 
-        private MemoryStream CreateExcel(bool isImport, int month, int year, List<KeyValuePair<DataTable, string>> dtSourceList, bool styling = false)
+        private MemoryStream CreateExcel(bool isImport, int month, int year, List<KeyValuePair<DataTable, string>> dtSourceList, bool styling = false, int index = 0)
         {
             ExcelPackage package = new ExcelPackage();
             foreach (KeyValuePair<DataTable, string> item in dtSourceList)
@@ -174,17 +179,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 sheet.Cells["A3:B3"].Merge = true;
                 sheet.Cells["A1"].Value = "PT DANLIRIS";
 
+                sheet.Cells["A3"].Value = "PER " + lastDate.ToString("dd MMMM yyyy").ToUpper();
+                sheet.Cells["A4"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                int cells = 5;
                 if (isImport)
                 {
                     sheet.Cells["A2"].Value = "LAPORAN SALDO HUTANG IMPOR";
+                    sheet.Cells[$"C{cells}:J{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 }
                 else
                 {
                     sheet.Cells["A2"].Value = "LAPORAN SALDO HUTANG LOKAL";
+                    sheet.Cells[$"C{cells}:F{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 }
-                sheet.Cells["A3"].Value = "PER " + lastDate.ToString("dd MMMM yyyy").ToUpper();
-                sheet.Cells["A4"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
-                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
             }
             MemoryStream stream = new MemoryStream();
             package.SaveAs(stream);

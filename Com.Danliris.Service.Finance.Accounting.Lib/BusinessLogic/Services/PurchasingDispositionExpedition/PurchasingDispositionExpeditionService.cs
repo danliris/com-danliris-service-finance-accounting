@@ -493,9 +493,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             //dt.Columns.Add(new DataColumn() { ColumnName = "No Kuitansi PPHKasir", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Staf", DataType = typeof(string) });
 
+            int index = 0;
             if (data.data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", "", "","","", 0, "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", 0.ToString("#,##0.#0"), 0.ToString("#,##0.#0"), 0.ToString("#,##0.#0"), 0.ToString("#,##0.#0"), 0.ToString("#,##0.#0"), "", "", "", "", "", "", "", "", "", "", "","","", 0.ToString("#,##0.#0"), "", "", "", "", "");
+                index++;
             }
             else
             {
@@ -532,10 +534,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         item.UnitPaymentOrderDate,
                         item.UnitPaymentOrderNo,
                         item.Staff);
-
+                    index++;
                 }
             }
-            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Disposisi Pembelian") }, title, _dateFrom, _dateTo, true);
+            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Disposisi Pembelian") },
+                new List<KeyValuePair<string, int>>() { new KeyValuePair<string, int>("Disposisi Pembelian", index) }, title, _dateFrom, _dateTo, true);
         }
 
         public async Task<ReadResponse<PurchasingDispositionReportViewModel>> GetReportAsync(int page, int size, string order, string filter, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
