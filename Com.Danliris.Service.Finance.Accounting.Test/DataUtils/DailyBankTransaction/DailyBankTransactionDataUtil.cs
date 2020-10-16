@@ -138,5 +138,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
             await Service.CreateAsync(model);
             return await Service.ReadByIdAsync(model.Id);
         }
+
+        public async Task<DailyBankTransactionModel> GetTestDataNotPosted()
+        {
+            DailyBankTransactionModel model = GetNewData();
+            model.IsPosted = false;
+            model.Status = "OUT";
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
     }
 }
