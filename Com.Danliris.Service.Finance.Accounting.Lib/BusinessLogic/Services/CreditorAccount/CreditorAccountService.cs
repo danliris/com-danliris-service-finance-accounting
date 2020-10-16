@@ -95,9 +95,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             dt.Columns.Add(new DataColumn() { ColumnName = "Mutasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(string) });
 
+            int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", "0");
+                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", 0.ToString("#,##0.#0"));
+                index++;
             }
             else
             {
@@ -107,11 +109,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     totalBalance += item.FinalBalance.GetValueOrDefault();
                     dt.Rows.Add(item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null, item.UnitReceiptNoteNo, item.BankExpenditureNoteNo, item.MemoNo, item.InvoiceNo, item.PaymentDuration, item.DPP.GetValueOrDefault().ToString("#,##0.#0"), item.DPPCurrency.GetValueOrDefault().ToString("#,##0.#0"),
                         item.PPN.GetValueOrDefault().ToString("#,##0.#0"), item.Total.GetValueOrDefault().ToString("#,##0.#0"), item.Mutation.GetValueOrDefault().ToString("#,##0.#0"), item.FinalBalance.GetValueOrDefault().ToString("#,##0.#0"));
+                    index++;
                 }
 
                 dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0.#0"));
+                index++;
             }
-            return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, title, date, true);
+            return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, title, date, true, index);
         }
 
         public (ReadResponse<CreditorAccountViewModel>, decimal) GetReport(int page, int size, string suplierName, int month, int year, int offSet)

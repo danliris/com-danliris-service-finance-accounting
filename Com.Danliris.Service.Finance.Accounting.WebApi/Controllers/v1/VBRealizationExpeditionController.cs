@@ -408,9 +408,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan Retur", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Kasir Terima", DataType = typeof(string) });
 
+            int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", 0, "", 0, "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", 0.ToString("#,##0.#0"), "", 0.ToString("#,##0.#0"), "", "", "", "", "", "", "");
+                index++;
             }
             else
             {
@@ -444,9 +446,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                         datum.NotVerifiedReason, 
                         cashierReceiptDate);
                 }
+                index++;
             }
 
-            return Lib.Helpers.Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Reports") }, title, dateFrom, dateTo, true);
+            return Lib.Helpers.Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Reports") },
+                new List<KeyValuePair<string, int>>() { new KeyValuePair<string, int>("Reports", index) }, title, dateFrom, dateTo, true);
         }
     }
 }
