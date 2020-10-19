@@ -227,5 +227,24 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.OthersEx
             }
 
         }
+
+        [HttpPut("posting")]
+        public async Task<IActionResult> Posting([FromBody] List<int> ids)
+        {
+            try
+            {
+                VerifyUser();
+                var result = await _service.Posting(ids);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(_apiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }

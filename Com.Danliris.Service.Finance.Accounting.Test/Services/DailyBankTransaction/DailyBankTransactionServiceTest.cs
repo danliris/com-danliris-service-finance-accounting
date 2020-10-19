@@ -387,7 +387,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         public async Task Should_Success_Update_Data()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataOut();
+            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataNotPosted();
             var newModel = await service.ReadByIdAsync(model.Id);
             var Response = await service.UpdateAsync(newModel.Id, newModel);
             Assert.NotEqual(0, Response);
@@ -397,7 +397,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         public async Task Should_Success_Delete_Data()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataIn();
+            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataNotPosted();
             var newModel = await service.ReadByIdAsync(model.Id);
 
             var Response = await service.DeleteAsync(newModel.Id);
@@ -489,6 +489,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = _dataUtil(service).GetNewData();
             model.Status = null;
+            model.IsPosted = true;
             model.SourceType = "Pendanaan";
             //var Response = await service.CreateInOutTransactionAsync(model);
             await Assert.ThrowsAnyAsync<Exception>(() => service.CreateInOutTransactionAsync(model));

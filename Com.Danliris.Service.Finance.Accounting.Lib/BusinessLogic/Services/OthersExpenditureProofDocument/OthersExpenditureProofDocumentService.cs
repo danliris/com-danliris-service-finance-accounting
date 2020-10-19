@@ -59,8 +59,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             _itemDbSet.UpdateRange(itemModels);
             await _dbContext.SaveChangesAsync();
 
-            await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
-            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
+            //await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
+            //await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
 
             return _taskDone;
         }
@@ -123,8 +123,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             _itemDbSet.UpdateRange(itemModels);
 
             await _dbContext.SaveChangesAsync();
-            await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
-            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
+            //await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
+            //await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
 
             return _taskDone;
         }
@@ -167,7 +167,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 DocumentNo = document.DocumentNo,
                 Type = document.Type,
                 Id = document.Id,
-                Date = document.Date
+                Date = document.Date,
+                IsPosted = document.IsPosted
             }).ToList();
 
             data = data.Select(element =>
@@ -227,12 +228,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             _itemDbSet.UpdateRange(itemModelsToDelete);
 
             await _dbContext.SaveChangesAsync();
-            await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
-            await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
-            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
+            //await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
+            //await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
+            //await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
 
-            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
-            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
+            //await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
+            //await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
 
             return _taskDone;
         }
@@ -276,6 +277,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 result = JsonConvert.DeserializeObject<BaseResponse<AccountBankViewModel>>(responseContent, jsonSerializerSettings);
             }
             return result.data;
+        }
+
+        public async Task<int> Posting(List<int> ids)
+        {
+            var models = _dbContext.OthersExpenditureProofDocuments.Where(entity => ids.Contains(entity.Id)).ToList();
+            var itemModels = _dbContext.OthersExpenditureProofDocumentItems.Where(entity => ids.Contains(entity.OthersExpenditureProofDocumentId)).ToList();
+
+            foreach (var model in models)
+            {
+                var items = itemModels.Where(element => element.OthersExpenditureProofDocumentId == model.Id).ToList();
+                model.IsPosted = true;
+                EntityExtension.FlagForUpdate(model, _identityService.Username, _userAgent);
+
+                await _autoJournalService.AutoJournalFromOthersExpenditureProof(model, items);
+                await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, items);
+            }
+
+            var result = await _dbContext.SaveChangesAsync();
+
+            return result;
         }
     }
 }
