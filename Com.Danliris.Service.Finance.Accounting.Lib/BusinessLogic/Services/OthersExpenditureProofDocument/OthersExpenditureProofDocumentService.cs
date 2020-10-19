@@ -190,9 +190,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         public async Task<int> UpdateAsync(int id, OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
         {
             var itemIds = viewModel.Items.Select(item => item.Id.GetValueOrDefault()).ToList();
-
             var itemModels = await _itemDbSet.Where(item => itemIds.Contains(item.Id)).ToListAsync();
+
             var model = await _dbSet.AsNoTracking().FirstOrDefaultAsync(document => document.Id == id);
+            model.Update(viewModel);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, _userAgent);
+            _dbSet.Update(model);
+
             await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
 
             var itemModelsToUpdate = viewModel.MapItemToModel();
