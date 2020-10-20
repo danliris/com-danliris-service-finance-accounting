@@ -261,6 +261,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         }
 
         [Fact]
+        public async Task UpdateNonPO_Return_Success__WithNullItemsId()
+        {
+            //Setup
+            FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
+            VBRequestDocumentNonPOFormDto form = GetdataUtil(service).GetNewData_VBRequestDocumentNonPOFormDto_WithNullItemsId();
+            VBRequestDocumentNonPODto data = await GetdataUtil(service).GetTestData_VBRequestDocumentNonPO();
+
+            //Act
+            int result = await service.UpdateNonPO(data.Id, form);
+
+            //Assert
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task UpdateNonPO_Return_Success__WithNullDivision()
+        {
+            //Setup
+            FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
+            VBRequestDocumentNonPOFormDto form = GetdataUtil(service).GetNewData_VBRequestDocumentNonPOFormDto__WithNullDivision();
+            VBRequestDocumentNonPODto data = await GetdataUtil(service).GetTestData_VBRequestDocumentNonPO();
+
+            //Act
+            int result = await service.UpdateNonPO(data.Id, form);
+
+            //Assert
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
         public void UpdateWithPO_Return_Succes()
         {
             //Setup
@@ -273,6 +307,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             
             //Act
             int result =  service.UpdateWithPO(data.Id, form);
+
+            //Assert
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public void UpdateWithPO_Return_Succes_WithItemsId()
+        {
+            //Setup
+            FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+
+            VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
+
+            VBRequestDocumentWithPODto data = GetdataUtil(service).GetTestData_VBRequestDocumentWithPO();
+            VBRequestDocumentWithPOFormDto form = GetdataUtil(service).GetNewData_VBRequestDocumentWithPOFormDto_WithItemsId();
+
+            //Act
+            int result = service.UpdateWithPO(data.Id, form);
 
             //Assert
             Assert.NotEqual(0, result);
@@ -323,7 +375,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             var dbContext = _dbContext(GetCurrentAsyncMethod());
 
             var service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
-            var data = GetdataUtil(service).GetTestData_VBRequestDocumentWithPO();
+            var data = GetdataUtil(service).GetTestData_VBRequestDocumentWithPO_Cancellation();
 
             var form = new CancellationFormDto()
             {

@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using OfficeOpenXml;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+using OfficeOpenXml.Style;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditBalance
 {
@@ -44,8 +45,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 previousYear = year - 1;
             }
 
+            var firstDayOfMonth = new DateTime(year, month, 1);
+
             if (isForeignCurrency)
                 query = query.Where(entity => entity.CurrencyCode != "IDR");
+            //else
+
+            if (!isImport && !isForeignCurrency)
+                query = query.Where(entity => entity.CurrencyCode == "IDR");
 
             query = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
             if (!string.IsNullOrEmpty(suplierName))
@@ -57,12 +64,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             {
                 var productsUnion = string.Join("\n", item.Select(x => x.Products).ToList());
                 var uniqueProducts = string.Join("\n", productsUnion.Split("\n").Distinct());
+                //var now = DateTimeOffset.Now;
 
                 var creditBalance = new CreditBalanceViewModel()
                 {
-                    StartBalance = DbSet.AsQueryable().Where(x => x.SupplierCode == item.Key
-                                    && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == previousMonth
-                                    && x.UnitReceiptNoteDate.Value.Year == previousYear).ToList().Sum(x => x.FinalBalance),
+                    StartBalance = DbSet
+                    .AsQueryable()
+                    .Where(x => x.SupplierCode == item.Key && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
+                    .ToList().Sum(x => x.FinalBalance),
                     Products = uniqueProducts,
                     Purchase = item.Sum(x => x.UnitReceiptMutation),
                     Payment = item.Sum(x => x.BankExpenditureNoteMutation),
@@ -108,15 +117,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 dt.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir (IDR)", DataType = typeof(string) });
             }
 
+            int index = 0;
             if (data.Count == 0)
             {
                 if (isImport)
                 {
                     dt.Rows.Add("", "", "", "", "", "", "", "", "", "");
+                    index++;
                 }
                 else
                 {
                     dt.Rows.Add("", "", "", "", "", "");
+                    index++;
                 }
             }
             else
@@ -131,16 +143,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                     if (isImport)
                     {
-                        dt.Rows.Add(item.SupplierName, item.Currency, item.StartBalance.ToString("#,##0"), item.Purchase.ToString("#,##0"),
-                                item.Payment.ToString("#,##0"), item.FinalBalance.ToString("#,##0"), (item.StartBalance * item.CurrencyRate).ToString("#,##0"),
-                                (item.Purchase * item.CurrencyRate).ToString("#,##0"), (item.Payment * item.CurrencyRate).ToString("#,##0"),
-                                (item.FinalBalance * item.CurrencyRate).ToString("#,##0"));
+                        dt.Rows.Add(item.SupplierName, item.Currency, item.StartBalance.ToString("#,##0.#0"), item.Purchase.ToString("#,##0.#0"),
+                                item.Payment.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"), (item.StartBalance * item.CurrencyRate).ToString("#,##0.#0"),
+                                (item.Purchase * item.CurrencyRate).ToString("#,##0.#0"), (item.Payment * item.CurrencyRate).ToString("#,##0.#0"),
+                                (item.FinalBalance * item.CurrencyRate).ToString("#,##0.#0"));
+                        index++;
                     }
                     else
                     {
-
-                        dt.Rows.Add(item.SupplierName, item.Currency, item.StartBalance.ToString("#,##0"), item.Purchase.ToString("#,##0"),
-                                item.Payment.ToString("#,##0"), item.FinalBalance.ToString("#,##0"));
+                        dt.Rows.Add(item.SupplierName, item.Currency, item.StartBalance.ToString("#,##0.#0"), item.Purchase.ToString("#,##0.#0"),
+                                item.Payment.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"));
+                        index++;
                     }
                 }
             }
@@ -158,7 +171,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             return new ReadResponse<CreditBalanceViewModel>(queries, pageable.TotalCount, new Dictionary<string, string>(), new List<string>());
         }
 
-        private MemoryStream CreateExcel(bool isImport, int month, int year, List<KeyValuePair<DataTable, string>> dtSourceList, bool styling = false)
+        private MemoryStream CreateExcel(bool isImport, int month, int year, List<KeyValuePair<DataTable, string>> dtSourceList, bool styling = false, int index = 0)
         {
             ExcelPackage package = new ExcelPackage();
             foreach (KeyValuePair<DataTable, string> item in dtSourceList)
@@ -167,24 +180,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                 var lastDate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
 
-                sheet.Cells["A1:B3"].Style.Font.Size = 14;
+                sheet.Cells["A1:B3"].Style.Font.Size = 12;
                 sheet.Cells["A1:B3"].Style.Font.Bold = true;
                 sheet.Cells["A1:B1"].Merge = true;
                 sheet.Cells["A2:B2"].Merge = true;
                 sheet.Cells["A3:B3"].Merge = true;
                 sheet.Cells["A1"].Value = "PT DANLIRIS";
 
-                if (isImport)
-                {
-                    sheet.Cells["A2"].Value = "SALDO HUTANG IMPOR";
-                }
-                else
-                {
-                    sheet.Cells["A2"].Value = "SALDO HUTANG LOKAL";
-                }
                 sheet.Cells["A3"].Value = "PER " + lastDate.ToString("dd MMMM yyyy").ToUpper();
                 sheet.Cells["A4"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
                 sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                int cells = 5;
+                if (isImport)
+                {
+                    sheet.Cells["A2"].Value = "LAPORAN SALDO HUTANG IMPOR";
+                    sheet.Cells[$"C{cells}:J{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                }
+                else
+                {
+                    sheet.Cells["A2"].Value = "LAPORAN SALDO HUTANG LOKAL";
+                    sheet.Cells[$"C{cells}:F{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                }
             }
             MemoryStream stream = new MemoryStream();
             package.SaveAs(stream);

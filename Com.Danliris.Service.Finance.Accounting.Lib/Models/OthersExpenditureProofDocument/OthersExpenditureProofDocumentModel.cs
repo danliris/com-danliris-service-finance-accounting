@@ -11,10 +11,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditurePr
         public DateTimeOffset Date { get; set; }
         [MaxLength(64)]
         public string Type { get; set; }
+        public string CekBgNo { get; set; }
         public string Remark { get; set; }
         [NotMapped]
         public bool IsUpdated { get; set; }
         [MaxLength(32)]
         public string DocumentNo { get; set; }
+        public bool IsPosted { get; set; }
     }
 }

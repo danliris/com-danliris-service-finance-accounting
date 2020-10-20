@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -31,6 +32,114 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
+        public static MemoryStream CreateExcelWithTitle(List<KeyValuePair<DataTable, string>> dtSourceList, List<KeyValuePair<string, int>> sheetIndex, string title, string dateFrom, string dateTo, bool styling = false)
+        {
+            ExcelPackage package = new ExcelPackage();
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            {
+                var sheet = package.Workbook.Worksheets.Add(item.Value);
+
+                sheet.Cells["A1"].Value = "PT.Dan Liris";
+                sheet.Cells["A1:D1"].Merge = true;
+
+                sheet.Cells["A2"].Value = title;
+                sheet.Cells["A2:D2"].Merge = true;
+
+                sheet.Cells["A3"].Value = $"PERIODE : {dateFrom} sampai dengan {dateTo}";
+                sheet.Cells["A3:D3"].Merge = true;
+
+                sheet.Cells["A5"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                int index = sheetIndex.Find(x => x.Key == item.Value).Value;
+                if (index > 0)
+                {
+                    int cells = 6;
+                    if (title == "Laporan Ekspedisi Disposisi Pembayaran")
+                    {
+                        sheet.Cells[$"F{cells}:J{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        sheet.Cells[$"X{cells}:X{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+                    else if (title == "Histori Disposisi Not Verified" || title == "Laporan Disposisi Not Verified")
+                        sheet.Cells[$"G{cells}:G{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    else if(title == "Laporan Saldo Bank Harian")
+                    {
+                        if (item.Value == "Saldo Harian")
+                            sheet.Cells[$"D{cells}:F{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        else if (item.Value == "Saldo Harian Mata Uang")
+                            sheet.Cells[$"B{cells}:D{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+                    else if(title == "Laporan Kwitansi")
+                        sheet.Cells[$"C{cells}:C{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    else if (title == "Laporan Ekspedisi Realisasi VB")
+                    {
+                        sheet.Cells[$"J{cells}:J{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        sheet.Cells[$"L{cells}:L{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+                }
+            }
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
+        public static MemoryStream CreateExcelWithTitleNonDateFilter(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string date, bool styling = false, int index = 0)
+        {
+            ExcelPackage package = new ExcelPackage();
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            {
+                var sheet = package.Workbook.Worksheets.Add(item.Value);
+
+                sheet.Cells["A2"].Value = "PT. DANLIRIS";
+                sheet.Cells["A2:D2"].Merge = true;
+
+                sheet.Cells["A3"].Value = title;
+                sheet.Cells["A3:D3"].Merge = true;
+
+                sheet.Cells["A4"].Value = $"Per {date}";
+                sheet.Cells["A4:D4"].Merge = true;
+
+                sheet.Cells["A6"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                int cells = 7;
+                sheet.Cells[$"G{cells}:L{(cells + index) - 1}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            }
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
+        public static MemoryStream DailyMutationReportExcel(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string bankAccount, string date, bool styling = false, int index = 0)
+        {
+            ExcelPackage package = new ExcelPackage();
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            {
+                var sheet = package.Workbook.Worksheets.Add(item.Value);
+
+                sheet.Cells["A2"].Value = "PT. DANLIRIS";
+                sheet.Cells["A2:D2"].Merge = true;
+
+                sheet.Cells["A3"].Value = title;
+                sheet.Cells["A3:D3"].Merge = true;
+
+                sheet.Cells["A4"].Value = bankAccount;
+                sheet.Cells["A4:D4"].Merge = true;
+
+                sheet.Cells["A5"].Value = $"Per {date}";
+                sheet.Cells["A5:D5"].Merge = true;
+
+                sheet.Cells["A7"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                int cells = 8;
+                sheet.Cells[$"F{cells}:I{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            }
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
         public static MemoryStream CreateExcelVBStatusReport(KeyValuePair<DataTable, string> dataSource, KeyValuePair<DataTable, string> currencySource, DateTimeOffset requestDateFrom, DateTimeOffset requestDateTo, bool styling = false, double requestTotal = 0, double realizationTotal = 0)
         {
             ExcelPackage package = new ExcelPackage();
@@ -46,6 +155,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             sheet.Cells[period, from, period, to].Merge = true;
 
             sheet.Cells["L2"].Value = DateTimeOffset.Now.ToString("dd MMMM yyyy", new CultureInfo("id-ID"));
+            sheet.Cells["B1"].Value = "PT.DAN LIRIS";
             sheet.Cells["B2"].Value = "LAPORAN STATUS VB";
             sheet.Cells["B6"].LoadFromDataTable(dataSource.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
 

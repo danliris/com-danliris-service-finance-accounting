@@ -53,29 +53,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public Task<int> AutoRevertFromPaymentDisposition(PaymentDispositionNoteModel model)
         {
-            var nominal = model.Items.Sum(item => (decimal)item.TotalPaid * (decimal)model.CurrencyRate);
-            var dailyBankTransactionModel = new DailyBankTransactionModel()
-            {
-                AccountBankAccountName = model.BankAccountName,
-                AccountBankAccountNumber = model.BankAccountNumber,
-                AccountBankCode = model.BankCode,
-                AccountBankCurrencyCode = model.BankCurrencyCode,
-                AccountBankCurrencyId = model.BankCurrencyId,
-                AccountBankCurrencySymbol = model.BankCurrencyCode,
-                AccountBankId = model.BankId,
-                AccountBankName = model.BankName,
-                Date = model.PaymentDate,
-                Nominal = nominal,
-                ReferenceNo = model.PaymentDispositionNo,
-                ReferenceType = "Pembayaran Disposisi",
-                Remark = model.CurrencyCode != "IDR" ? $"Pembayaran atas {model.BankCurrencyCode} dengan nominal {string.Format("{0:n}", nominal)} dan kurs {model.CurrencyCode}" : "",
-                SourceType = model.TransactionType,
-                SupplierCode = model.SupplierCode,
-                SupplierId = model.SupplierId,
-                SupplierName = model.SupplierName,
-                Status = "IN"
-            };
-            return _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
+            //var nominal = model.Items.Sum(item => (decimal)item.TotalPaid * (decimal)model.CurrencyRate);
+            //var dailyBankTransactionModel = new DailyBankTransactionModel()
+            //{
+            //    AccountBankAccountName = model.BankAccountName,
+            //    AccountBankAccountNumber = model.BankAccountNumber,
+            //    AccountBankCode = model.BankCode,
+            //    AccountBankCurrencyCode = model.BankCurrencyCode,
+            //    AccountBankCurrencyId = model.BankCurrencyId,
+            //    AccountBankCurrencySymbol = model.BankCurrencyCode,
+            //    AccountBankId = model.BankId,
+            //    AccountBankName = model.BankName,
+            //    Date = model.PaymentDate,
+            //    Nominal = nominal,
+            //    ReferenceNo = model.PaymentDispositionNo,
+            //    ReferenceType = "Pembayaran Disposisi",
+            //    Remark = model.CurrencyCode != "IDR" ? $"Pembayaran atas {model.BankCurrencyCode} dengan nominal {string.Format("{0:n}", nominal)} dan kurs {model.CurrencyCode}" : "",
+            //    SourceType = model.TransactionType,
+            //    SupplierCode = model.SupplierCode,
+            //    SupplierId = model.SupplierId,
+            //    SupplierName = model.SupplierName,
+            //    Status = "IN"
+            //};
+            return _dailyBankTransactionService.DeleteByReferenceNoAsync(model.PaymentDispositionNo);
         }
 
         private async Task<AccountBank> GetAccountBank(int accountBankId)
@@ -95,6 +95,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public async Task<int> AutoCreateFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels)
         {
             var accountBank = await GetAccountBank(model.AccountBankId);
+
+            var total = itemModels.Sum(element => element.Debit);
+
             var dailyBankTransactionModel = new DailyBankTransactionModel()
             {
                 AccountBankAccountName = accountBank.AccountName,
@@ -108,7 +111,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Date = model.Date,
                 Nominal = itemModels.Sum(item => item.Debit),
                 ReferenceNo = model.DocumentNo,
-                Remark = "Pembayaran Lain - lain",
+                Remark = $"{model.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", total)}",
                 SourceType = model.Type,
                 Status = "OUT"
             };

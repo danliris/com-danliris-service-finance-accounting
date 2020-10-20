@@ -8,6 +8,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofD
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
 using Com.Moonlay.Models;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         public async Task<int> CreateAsync(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
         {
             var model = viewModel.MapToModel();
-            model.DocumentNo = DocumentNoGenerator(viewModel);
+            model.DocumentNo = await GetDocumentNo("K", viewModel.AccountBankCode, _identityService.Username);
             EntityExtension.FlagForCreate(model, _identityService.Username, _userAgent);
             _dbSet.Add(model);
             await _dbContext.SaveChangesAsync();
@@ -58,33 +59,54 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             _itemDbSet.UpdateRange(itemModels);
             await _dbContext.SaveChangesAsync();
 
-            await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
-            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
+            //await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
+            //await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
 
             return _taskDone;
         }
 
-        private string DocumentNoGenerator(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username)
         {
-            var latestDocumentNo = _dbSet.IgnoreQueryFilters().Where(document => document.DocumentNo.Contains(viewModel.AccountBankCode)).OrderByDescending(document => document.Id).Select(document => new { document.DocumentNo, document.CreatedUtc }).FirstOrDefault();
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
 
-            var now = DateTimeOffset.Now;
-            if (latestDocumentNo == null)
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
             {
-                return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K0001";
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
             }
-            else
-            {
-                if (latestDocumentNo.CreatedUtc.Month != now.Month)
-                    return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K0001";
-                else
-                {
-                    var numberString = latestDocumentNo.DocumentNo.Substring(latestDocumentNo.DocumentNo.Length - 4); ;
-                    var number = int.Parse(numberString) + 1;
-                    return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K{number.ToString().PadLeft(4, '0')}";
-                }
-            }
+            return result.data;
         }
+
+        //private string DocumentNoGenerator(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
+        //{
+        //    var latestDocumentNo = _dbSet.IgnoreQueryFilters().Where(document => document.DocumentNo.Contains(viewModel.AccountBankCode)).OrderByDescending(document => document.Id).Select(document => new { document.DocumentNo, document.CreatedUtc }).FirstOrDefault();
+
+        //    var now = DateTimeOffset.Now;
+        //    if (latestDocumentNo == null)
+        //    {
+        //        return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K0001";
+        //    }
+        //    else
+        //    {
+        //        if (latestDocumentNo.CreatedUtc.Month != now.Month)
+        //            return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K0001";
+        //        else
+        //        {
+        //            var numberString = latestDocumentNo.DocumentNo.Split("K").ToList()[1];
+        //            var number = int.Parse(numberString) + 1;
+        //            return $"{now.ToString("yy")}{now.ToString("MM")}{viewModel.AccountBankCode}K{number.ToString().PadLeft(4, '0')}";
+        //        }
+        //    }
+        //}
 
         public async Task<int> DeleteAsync(int id)
         {
@@ -101,8 +123,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             _itemDbSet.UpdateRange(itemModels);
 
             await _dbContext.SaveChangesAsync();
-            await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
-            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
+            //await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
+            //await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
 
             return _taskDone;
         }
@@ -145,7 +167,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 DocumentNo = document.DocumentNo,
                 Type = document.Type,
                 Id = document.Id,
-                Date = document.Date
+                Date = document.Date,
+                IsPosted = document.IsPosted
             }).ToList();
 
             data = data.Select(element =>
@@ -205,12 +228,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             _itemDbSet.UpdateRange(itemModelsToDelete);
 
             await _dbContext.SaveChangesAsync();
-            await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
-            await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
-            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
+            //await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
+            //await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
+            //await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
 
-            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
-            await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
+            //await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
+            //await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
 
             return _taskDone;
         }
@@ -221,6 +244,59 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             var items = _itemDbSet.AsNoTracking().Where(item => item.OthersExpenditureProofDocumentId == id).ToList();
 
             return new OthersExpenditureProofDocumentViewModel(model, items);
+        }
+
+        public async Task<OthersExpenditureProofDocumentPDFViewModel> GetPDFByIdAsync(int id)
+        {
+            var model = await _dbSet.AsNoTracking().FirstOrDefaultAsync(document => document.Id == id);
+            var items = _itemDbSet.AsNoTracking().Where(item => item.OthersExpenditureProofDocumentId == id).ToList();
+            var coaIds = items.Select(element => element.COAId).ToList();
+            var coas = _dbContext.ChartsOfAccounts.Where(element => coaIds.Contains(element.Id)).ToList();
+
+            var accountBank = await GetAccountBank(model.AccountBankId);
+
+            return new OthersExpenditureProofDocumentPDFViewModel(model, items, accountBank, coas);
+        }
+
+        private async Task<AccountBankViewModel> GetAccountBank(int bankId)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Core + $"master/account-banks/{bankId}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<AccountBankViewModel>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<AccountBankViewModel>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
+        }
+
+        public async Task<int> Posting(List<int> ids)
+        {
+            var models = _dbContext.OthersExpenditureProofDocuments.Where(entity => ids.Contains(entity.Id)).ToList();
+            var itemModels = _dbContext.OthersExpenditureProofDocumentItems.Where(entity => ids.Contains(entity.OthersExpenditureProofDocumentId)).ToList();
+
+            foreach (var model in models)
+            {
+                var items = itemModels.Where(element => element.OthersExpenditureProofDocumentId == model.Id).ToList();
+                model.IsPosted = true;
+                EntityExtension.FlagForUpdate(model, _identityService.Username, _userAgent);
+
+                await _autoJournalService.AutoJournalFromOthersExpenditureProof(model, items);
+                await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, items);
+            }
+
+            var result = await _dbContext.SaveChangesAsync();
+
+            return result;
         }
     }
 }

@@ -17,7 +17,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
             AccountBankId = model.AccountBankId;
             Date = model.Date;
             Type = model.Type;
+            CekBgNo = model.CekBgNo;
             Remark = model.Remark;
+            IsPosted = model.IsPosted;
             Items = items.Select(item => new OthersExpenditureProofDocumentItemViewModel(item)).ToList();
         }
 
@@ -25,7 +27,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditu
         public int AccountBankId { get; set; }
         public DateTimeOffset Date { get; set; }
         public string Type { get; set; }
+        public string CekBgNo { get; set; }
         public string Remark { get; set; }
+        public bool IsPosted { get; set; }
 
         public ICollection<OthersExpenditureProofDocumentItemViewModel> Items { get; set; }
     }

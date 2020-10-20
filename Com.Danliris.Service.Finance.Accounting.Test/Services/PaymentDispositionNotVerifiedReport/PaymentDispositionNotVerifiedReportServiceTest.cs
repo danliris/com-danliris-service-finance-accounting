@@ -168,6 +168,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         }
 
         [Fact]
+        public async Task Should_Success_GenerateExcel_WithDateIsNull()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
+
+            PurchasingDispositionVerificationViewModel data = new PurchasingDispositionVerificationViewModel()
+            {
+                DispositionNo = model.DispositionNo,
+                Id = 0,
+                Reason = "Reason",
+                SubmitPosition = ExpeditionPosition.SEND_TO_PURCHASING_DIVISION,
+                VerifyDate = DateTimeOffset.UtcNow
+            };
+            await service.PurchasingDispositionVerification(data);
+
+            PaymentDispositionNotVerifiedReportService report = new PaymentDispositionNotVerifiedReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var reportResponse = report.GenerateExcel("", "", "", null, null, 7, "history");
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
         public void Should_Success_GenerateExcel_When_DataNoExist()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));

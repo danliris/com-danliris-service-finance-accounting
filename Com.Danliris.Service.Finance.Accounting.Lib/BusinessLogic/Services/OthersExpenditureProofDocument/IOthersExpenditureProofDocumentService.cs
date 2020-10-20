@@ -11,5 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         Task<int> DeleteAsync(int id);
         Task<OthersExpenditureProofPagedListViewModel> GetPagedListAsync(int page, int size, string order, string keyword, string filter);
         Task<OthersExpenditureProofDocumentViewModel> GetSingleByIdAsync(int id);
+        Task<OthersExpenditureProofDocumentPDFViewModel> GetPDFByIdAsync(int id);
+        Task<int> Posting(List<int> ids);
     }
 }

@@ -77,6 +77,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         public MemoryStream GenerateExcel(string suplierName, int month, int year, int offSet)
         {
             var data = GetReport(suplierName, month, year, offSet).Item1;
+            string title = "Kartu Hutang",
+                date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
             DataTable dt = new DataTable();
 
@@ -93,9 +95,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             dt.Columns.Add(new DataColumn() { ColumnName = "Mutasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(string) });
 
+            int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", "0");
+                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", 0.ToString("#,##0.#0"));
+                index++;
             }
             else
             {
@@ -103,13 +107,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 foreach (var item in data)
                 {
                     totalBalance += item.FinalBalance.GetValueOrDefault();
-                    dt.Rows.Add(item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null, item.UnitReceiptNoteNo, item.BankExpenditureNoteNo, item.MemoNo, item.InvoiceNo, item.PaymentDuration, item.DPP.GetValueOrDefault().ToString("#,##0"), item.DPPCurrency.GetValueOrDefault().ToString("#,##0"),
-                        item.PPN.GetValueOrDefault().ToString("#,##0"), item.Total.GetValueOrDefault().ToString("#,##0"), item.Mutation.GetValueOrDefault().ToString("#,##0"), item.FinalBalance);
+                    dt.Rows.Add(item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null, item.UnitReceiptNoteNo, item.BankExpenditureNoteNo, item.MemoNo, item.InvoiceNo, item.PaymentDuration, item.DPP.GetValueOrDefault().ToString("#,##0.#0"), item.DPPCurrency.GetValueOrDefault().ToString("#,##0.#0"),
+                        item.PPN.GetValueOrDefault().ToString("#,##0.#0"), item.Total.GetValueOrDefault().ToString("#,##0.#0"), item.Mutation.GetValueOrDefault().ToString("#,##0.#0"), item.FinalBalance.GetValueOrDefault().ToString("#,##0.#0"));
+                    index++;
                 }
 
-                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0"));
+                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0.#0"));
+                index++;
             }
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, true);
+            return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, title, date, true, index);
         }
 
         public (ReadResponse<CreditorAccountViewModel>, decimal) GetReport(int page, int size, string suplierName, int month, int year, int offSet)
@@ -203,15 +209,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
         public (List<CreditorAccountViewModel>, decimal) GetReport(string suplierName, int month, int year, int offSet)
         {
-            IQueryable<CreditorAccountModel> supplierQuery = DbContext.CreditorAccounts.AsQueryable().Where(x => x.SupplierName == suplierName);
+            var supplierQuery = DbContext.CreditorAccounts.AsQueryable().Where(x => x.SupplierName == suplierName);
+            var result = GetPreviousMonthReport(supplierQuery, month, year, offSet);
 
             var currentQuery = supplierQuery.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
 
-            if (currentQuery.Count() == 0)
-            {
-                return (new List<CreditorAccountViewModel>(), 0);
-            }
-            var result = GetPreviousMonthReport(supplierQuery, month, year, offSet);
+            //if (currentQuery.Count() == 0)
+            //{
+            //    return (new List<CreditorAccountViewModel>(), 0);
+            //}
+
             foreach (var item in currentQuery.OrderBy(x => x.UnitReceiptNoteDate.GetValueOrDefault()).ToList())
             {
                 decimal unitReceiptMutation = 0;

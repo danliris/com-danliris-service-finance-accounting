@@ -11,6 +11,7 @@ using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PaymentDispositionN
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
@@ -66,6 +67,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             serviceProvider
                 .Setup(x => x.GetService(typeof(IAutoDailyBankTransactionService)))
                 .Returns(new AutoDailyBankTransactionServiceHelper());
+
+            serviceProvider.Setup(sp => sp.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+
 
             return serviceProvider;
         }
@@ -184,6 +188,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             var epoId = detail.EPOId;
             var Response = service.ReadDetailsByEPOId(detail.EPOId);
             Assert.NotNull(Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Post()
+        {
+            PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            PaymentDispositionNotePostDto dto = _dataUtil(service, GetCurrentMethod()).GetNewPostDto();
+
+            var Response = await service.Post(dto);
+            Assert.NotEqual(0, Response);
         }
     }
 }

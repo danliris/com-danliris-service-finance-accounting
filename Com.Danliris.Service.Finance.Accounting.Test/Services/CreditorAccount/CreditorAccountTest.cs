@@ -429,7 +429,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
-            var reportResponse = service.GenerateExcel(null, 0, 0, 7);
+            var reportResponse = service.GenerateExcel(null, 7, 1001, 7);
             Assert.NotNull(reportResponse);
         }
 

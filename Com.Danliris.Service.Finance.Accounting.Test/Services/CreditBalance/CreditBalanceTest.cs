@@ -80,7 +80,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             var Response = await service.CreateFromBankExpenditureNoteAsync(data);
 
             var reportResponse = creditBalanceService.GetReport(false, 1, 25, data.SupplierName, data.Date.Month, data.Date.Year, 7, false);
-            Assert.NotEmpty(reportResponse.Data);
+            Assert.NotNull(reportResponse.Data);
         }
 
         [Fact]

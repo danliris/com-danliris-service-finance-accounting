@@ -142,12 +142,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
             VBRealizationDocumentExpeditionModel vbRealization = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
            
-            //Act
-             var  result = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId,DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2),"UNIT", 1, 25);
 
-            //Assert
-            Assert.NotNull(result);
-        
+             var  result1 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId,DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2),"UNIT", 1, 25);
+            Assert.NotNull(result1);
+
+            var result2 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId, DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "VERIFIKASI", 1, 25);
+            Assert.NotNull(result2);
+
+            var result3 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId, DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "KASIR", 1, 25);
+            Assert.NotNull(result3);
+
+            var result4 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId, DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "RETUR", 1, 25);
+            Assert.NotNull(result4);
+
         }
 
 
@@ -177,21 +184,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             Assert.NotNull(result);
         }
 
-        //[Fact]
-        //public async Task Reject_Return_Success()
-        //{
-        //    FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
-        //    Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+        [Fact]
+        public async Task Reject_Return_Success()
+        {
+            FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
 
-        //    VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(dbContext, serviceProviderMock.Object);
-        //    var vBRealizationWithPODto = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
+            VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(dbContext, serviceProviderMock.Object);
+            var vBRealizationWithPODto = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
 
-        //    VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, serviceProviderMock.Object);
-        //    VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
-           
-        //    int result = await service.Reject(model.VBRealizationId, null);
-        //    Assert.NotEqual(0, result);
-        //}
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, serviceProviderMock.Object);
+            VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestDataReject_VBRealizationDocumentExpedition();
+
+            int result = await service.Reject(model.VBRealizationId, null);
+            Assert.NotEqual(0, result);
+        }
 
 
 
@@ -305,6 +312,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
 
         }
 
+        [Fact]
+        public async Task CashierDelete_Return_Success()
+        {
+            FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
 
+            VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(dbContext, serviceProviderMock.Object);
+            var vBRealizationWithPODto = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
+
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, serviceProviderMock.Object);
+            VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestDataCashierDelete_VBRealizationDocumentExpedition();
+
+            int result = await service.CashierDelete(model.VBRealizationId);
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task VerifiedToCashier_Return_Success()
+        {
+            FinanceDbContext dbContext = _dbContext(GetCurrentMethod());
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+
+            VBRealizationWithPOService vBRealizationWithPOService = new VBRealizationWithPOService(dbContext, serviceProviderMock.Object);
+            var vBRealizationWithPODto = _dataUtil(vBRealizationWithPOService).GetTestData_TanpaNomorVB();
+
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, serviceProviderMock.Object);
+            VBRealizationDocumentExpeditionModel model = _dataUtil(service, dbContext).GetTestDataVerifiedToCashier_VBRealizationDocumentExpedition();
+
+            int result = await service.VerifiedToCashier(model.VBRealizationId);
+            Assert.NotEqual(0, result);
+        }
     }
 }

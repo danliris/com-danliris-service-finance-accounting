@@ -33,6 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.OthersExpendi
                     Remark = "Remark"
                 }
             },
+            CekBgNo = "CekBgNo",
             Remark = "Remark",
             Type = "Type"
         };
@@ -74,6 +75,46 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.OthersExpendi
             return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
         }
 
+        OthersExpenditureProofDocumentPDFViewModel othersExpenditureProofDocumentPDFViewModel
+        {
+            get
+            {
+                return new OthersExpenditureProofDocumentPDFViewModel()
+                {
+                    AccountBankId = 1,
+                    Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel()
+                    {
+                        AccountCOA = "AccountCOA",
+                        AccountName = "AccountName",
+                        AccountNumber = "AccountNumber",
+                        BankCode = "BankCode",
+                        BankName = "BankName",
+                        Code = "Code",
+                        Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel()
+                        {
+                            Code = "IDR",
+                            Description = "Description",
+                            Id = 1,
+                            Rate = 1,
+                            Symbol = "Rp"
+                        },
+                        Id = 1
+                    },
+                    CekBgNo = "CekBgNo",
+                    Date = DateTimeOffset.Now,
+                    DocumentNo = "DocumentNo",
+                    Id = 1,
+                    Items = new List<OthersExpenditureProofDocumentItemPDFViewModel>()
+                    {
+
+                    },
+                    Remark = "Remark",
+                    Type = "Type"
+                };
+            }
+        }
+
+        
         [Fact]
         public async Task GetById_WithoutException_ReturnOK()
         {
@@ -114,6 +155,50 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.OthersExpendi
 
             var controller = GetController(identityServiceMock.Object, validateServiceMock.Object, serviceMock.Object);
             var response = await controller.GetById(It.IsAny<int>());
+
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public async Task GetPDFById_WithoutException_ReturnOK()
+        {
+            var identityServiceMock = new Mock<IIdentityService>();
+            var validateServiceMock = new Mock<IValidateService>();
+            var serviceMock = new Mock<IOthersExpenditureProofDocumentService>();
+            serviceMock.Setup(service => service.GetPDFByIdAsync(It.IsAny<int>())).ReturnsAsync(othersExpenditureProofDocumentPDFViewModel);
+
+            var controller = GetController(identityServiceMock.Object, validateServiceMock.Object, serviceMock.Object);
+            var response = await controller.GetPDFById(It.IsAny<int>());
+
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task GetPDFById_NotFound_ReturnNotFound()
+        {
+            var identityServiceMock = new Mock<IIdentityService>();
+            var validateServiceMock = new Mock<IValidateService>();
+            var serviceMock = new Mock<IOthersExpenditureProofDocumentService>();
+            serviceMock.Setup(service => service.GetPDFByIdAsync(It.IsAny<int>())).ReturnsAsync(() => null);
+
+            var controller = GetController(identityServiceMock.Object, validateServiceMock.Object, serviceMock.Object);
+            var response = await controller.GetPDFById(It.IsAny<int>());
+
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+        [Fact]
+        public async Task GetPDFById_WithException_ReturnInternalServerError()
+        {
+            var identityServiceMock = new Mock<IIdentityService>();
+            var validateServiceMock = new Mock<IValidateService>();
+            var serviceMock = new Mock<IOthersExpenditureProofDocumentService>();
+            serviceMock.Setup(service => service.GetPDFByIdAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            var controller = GetController(identityServiceMock.Object, validateServiceMock.Object, serviceMock.Object);
+            var response = await controller.GetPDFById(It.IsAny<int>());
 
             int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);

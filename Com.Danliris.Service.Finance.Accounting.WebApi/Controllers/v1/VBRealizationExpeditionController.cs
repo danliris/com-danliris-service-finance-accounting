@@ -347,6 +347,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             try
             {
                 VerifyUser();
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
 
                 if (dateEnd == null)
                     dateEnd = DateTime.MaxValue;
@@ -358,8 +359,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 else
                     dateStart = dateStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
 
+                //dateEndXls = (DateTime)dateEnd == DateTime.MaxValue ? "-" : dateEndXls;
+                //dateStartXls = (DateTime)dateStart == DateTime.MinValue ? "-" : dateStartXls;
+
                 var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault().ToUniversalTime(), dateEnd.GetValueOrDefault().ToUniversalTime(), status, 1, int.MaxValue);
-                var stream = GenerateExcel(reportResult.Data);
+                var stream = GenerateExcel(reportResult.Data, dateStart, dateEnd);
 
                 var xls = stream.ToArray();
 
@@ -376,10 +380,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        private MemoryStream GenerateExcel(IList<ReportDto> data)
+        private MemoryStream GenerateExcel(IList<ReportDto> data, DateTime? dateStart, DateTime? dateEnd)
         {
             var timezoneoffset = _identityService.TimezoneOffset;
             DataTable dt = new DataTable();
+            string title = "Laporan Ekspedisi Realisasi VB",
+                dateFrom = dateStart != DateTime.MinValue ? dateStart.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture) : "-",
+                dateTo = dateEnd != DateTime.MaxValue ? dateEnd.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd MMMM yyyy", CultureInfo.InvariantCulture) : "-";
+
             dt.Columns.Add(new DataColumn() { ColumnName = "No. VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Realisasi VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tipe VB", DataType = typeof(string) });
@@ -389,9 +397,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Unit Kirim", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Keperluan", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang VB", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal VB", DataType = typeof(decimal) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang Realisasi", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal Realisasi", DataType = typeof(decimal) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal Realisasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Realisasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Verif Terima", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nama Verifikator", DataType = typeof(string) });
@@ -400,9 +408,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan Retur", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Kasir Terima", DataType = typeof(string) });
 
+            int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", 0, "", 0, "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", 0.ToString("#,##0.#0"), "", 0.ToString("#,##0.#0"), "", "", "", "", "", "", "");
+                index++;
             }
             else
             {
@@ -425,9 +435,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                         sendToVerificationDate,
                         datum.Purpose,
                         datum.CurrencyCode,
-                        datum.VBAmount,
+                        datum.VBAmount.ToString("#,##0.#0"),
                         datum.CurrencyCode,
-                        datum.VBRealizationAmount,
+                        datum.VBRealizationAmount.ToString("#,##0.#0"),
                         datum.VBRealizationDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
                         verificationReceiptDate,
                         verifiedBy, 
@@ -436,9 +446,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                         datum.NotVerifiedReason, 
                         cashierReceiptDate);
                 }
+                index++;
             }
 
-            return Lib.Helpers.Excel.CreateExcelNoFilters(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Reports") }, true);
+            return Lib.Helpers.Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Reports") },
+                new List<KeyValuePair<string, int>>() { new KeyValuePair<string, int>("Reports", index) }, title, dateFrom, dateTo, true);
         }
     }
 }

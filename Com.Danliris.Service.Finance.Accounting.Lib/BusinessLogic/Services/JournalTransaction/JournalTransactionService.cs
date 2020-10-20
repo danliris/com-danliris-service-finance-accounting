@@ -283,6 +283,63 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return result;
         }
 
+        public ReadResponse<JournalTransactionModel> ReadByDate(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet, int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            IQueryable<JournalTransactionModel> Query = _DbSet;
+
+            Query = Query
+                .Select(s => new JournalTransactionModel
+                {
+                    Id = s.Id,
+                    CreatedUtc = s.CreatedUtc,
+                    CreatedBy = s.CreatedBy,
+                    DocumentNo = s.DocumentNo,
+                    Date = s.Date,
+                    Description = s.Description,
+                    ReferenceNo = s.ReferenceNo,
+                    LastModifiedUtc = s.LastModifiedUtc,
+                    Status = s.Status
+                })
+                .Where(x => x.Date >= dateFrom.GetValueOrDefault().AddHours(-1 * offSet))
+                .Where(x => x.Date <= dateTo.GetValueOrDefault().AddHours(24 - offSet));
+
+            List<string> searchAttributes = new List<string>()
+            {
+                "DocumentNo", "ReferenceNo", "Description", "Status"
+            };
+
+            Query = QueryHelper<JournalTransactionModel>.Search(Query, searchAttributes, keyword);
+
+            Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            Query = QueryHelper<JournalTransactionModel>.Filter(Query, FilterDictionary);
+
+            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            Query = QueryHelper<JournalTransactionModel>.Order(Query, OrderDictionary);
+
+            Pageable<JournalTransactionModel> pageable = new Pageable<JournalTransactionModel>(Query, page - 1, size);
+            List<JournalTransactionModel> Data = pageable.Data.ToList();
+
+            List<JournalTransactionModel> list = new List<JournalTransactionModel>();
+            list.AddRange(
+               Data.Select(s => new JournalTransactionModel
+               {
+                   Id = s.Id,
+                   CreatedUtc = s.CreatedUtc,
+                   CreatedBy = s.CreatedBy,
+                   DocumentNo = s.DocumentNo,
+                   Date = s.Date,
+                   Description = s.Description,
+                   ReferenceNo = s.ReferenceNo,
+                   LastModifiedUtc = s.LastModifiedUtc,
+                   Status = s.Status
+               }).ToList()
+            );
+
+            int TotalData = pageable.TotalCount;
+
+            return new ReadResponse<JournalTransactionModel>(list, TotalData, OrderDictionary, new List<string>());
+        }
+
         public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year)
         {
             var result = _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.Status.Equals("DRAFT")).ToList();

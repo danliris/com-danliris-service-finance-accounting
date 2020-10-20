@@ -92,7 +92,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
         public void GetReportExcel_ReturnFile()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), "notHistory")).Returns(new MemoryStream());
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), "notHistory"))
+                .Returns(new MemoryStream());
 
             var response = GetController(mocks).GetXls(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), null, null);
             Assert.NotNull(response);

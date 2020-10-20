@@ -339,6 +339,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
         public MemoryStream GenerateExcel(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet)
         {
             var data = GetReportQuery(dateFrom, dateTo, offSet);
+            string title = "Laporan Kwitansi",
+                dateStart = dateFrom == null ? "-" : dateFrom.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
+                dateEnd = dateTo == null ? "-" : dateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"));
 
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No Kwitansi", DataType = typeof(string) });
@@ -347,20 +350,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Sal
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Buyer", DataType = typeof(string) });
 
+            int index = 0;
             if (data.Count() == 0)
             {
-                dt.Rows.Add("", "", "", "", "");
+                dt.Rows.Add("", "", 0.ToString("#,##0.#0"), "", "");
+                index++;
             }
             else
             {
                 foreach (var item in data)
                 {
-                    dt.Rows.Add(item.SalesReceiptNo, item.SalesReceiptDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")), item.TotalPaid,
-                        item.CurrencyCode, item.Buyer);
+                    dt.Rows.Add(item.SalesReceiptNo, item.SalesReceiptDate.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        item.TotalPaid.ToString("#,##0.#0"), item.CurrencyCode, item.Buyer);
+                    index++;
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Bukti Pembayaran Faktur") }, true);
+            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Bukti Pembayaran Faktur") },
+                new List<KeyValuePair<string, int>>() { new KeyValuePair<string, int>("Bukti Pembayaran Faktur", index) }, title, dateStart, dateEnd, true);
         }
     }
 }
