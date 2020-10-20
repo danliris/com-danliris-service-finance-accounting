@@ -192,10 +192,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             var itemIds = viewModel.Items.Select(item => item.Id.GetValueOrDefault()).ToList();
             var itemModels = await _itemDbSet.Where(item => itemIds.Contains(item.Id)).ToListAsync();
 
-            var model = await _dbSet.AsNoTracking().FirstOrDefaultAsync(document => document.Id == id);
+            var model = await _dbSet.FirstOrDefaultAsync(document => document.Id == id);
             model.Update(viewModel);
-            EntityExtension.FlagForUpdate(model, _identityService.Username, _userAgent);
-            _dbSet.Update(model);
 
             await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
 
@@ -230,6 +228,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 return item;
             }).ToList();
             _itemDbSet.UpdateRange(itemModelsToDelete);
+
+            EntityExtension.FlagForUpdate(model, _identityService.Username, _userAgent);
+            _dbSet.Update(model);
 
             await _dbContext.SaveChangesAsync();
             //await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
