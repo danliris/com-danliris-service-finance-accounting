@@ -214,18 +214,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                         Debit = 6,
                         Id = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Id,
                         Remark = "New remark"
-                    },
-                    new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
-                    {
-                        COAId = 2,
-                        Debit = 2,
-                        Remark = "Remark"
                     }
                 },
                 CekBgNo = createdModel.CekBgNo,
                 Remark = createdModel.Remark,
                 Type = createdModel.Type
             };
+
             var response = await service.UpdateAsync(createdModel.Id, modelToUpdate);
             Assert.NotNull(response);
         }
