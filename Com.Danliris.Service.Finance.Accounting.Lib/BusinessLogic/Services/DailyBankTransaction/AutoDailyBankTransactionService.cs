@@ -63,8 +63,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
         {
-            string date = DateTimeOffset.UtcNow.AddHours(7).ToString("dd/MM/yyyy HH:mm:ss");
-            string queryString = $"code={codeCurrency}&date={date}";
+            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={date}";
 
             var http = _serviceProvider.GetService<IHttpClientService>();
             var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");

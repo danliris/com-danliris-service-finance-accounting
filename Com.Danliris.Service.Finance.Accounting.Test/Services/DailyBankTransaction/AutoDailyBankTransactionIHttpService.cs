@@ -19,7 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         public Task<HttpResponseMessage> GetAsync(string url)
         {
-            if (url.Contains("garment-currencies/single-by-code-date"))
+            if (url.Contains("master/garment-currencies/single-by-code-date"))
             {
                 var defaultresponse = new APIDefaultResponse<GarmentCurrency>()
                 {
