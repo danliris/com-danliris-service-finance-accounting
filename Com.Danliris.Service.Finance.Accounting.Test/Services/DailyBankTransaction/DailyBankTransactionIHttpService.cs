@@ -19,6 +19,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         public Task<HttpResponseMessage> GetAsync(string url)
         {
+            if (url.Contains("master/account-banks/division"))
+            {
+                var defaultresponse = new APIDefaultResponse<List<AccountBank>>()
+                {
+                    data = new List<AccountBank>()
+                };
+                var result = new HttpResponseMessage()
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
+                };
+
+                return Task.FromResult(result);
+            }
+
             if (url.Contains("master/account-banks/"))
             {
                 var defaultresponse = new APIDefaultResponse<AccountBank>()
