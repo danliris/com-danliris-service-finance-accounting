@@ -526,7 +526,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             
-            var result = service.GenerateExcelDailyBalance(1, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), "", 0);
+            var result = service.GenerateExcelDailyBalance(1, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), "G", 0);
             Assert.NotNull(result);
         }
 
