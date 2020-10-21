@@ -17,6 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService
         public string AccountNumber { get; set; }
         public string BankCode { get; set; }
         public string BankName { get; set; }
+        public string DivisionName { get; set; }
     }
 
     public class Currency

@@ -140,9 +140,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("daily-balance/report/accountbank")]
-        public IActionResult GetDailyBalanceAccountBankReport(int bankId, DateTime startDate, DateTime endDate)
+        public IActionResult GetDailyBalanceAccountBankReport(int bankId, DateTime startDate, DateTime endDate, string divisionName)
         {
-            var Result = Service.GetDailyBalanceReport(bankId, startDate, endDate);
+            var Result = Service.GetDailyBalanceReport(bankId, startDate, endDate, divisionName);
 
             return Ok(new
             {
@@ -154,9 +154,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("daily-balance/report/currency")]
-        public IActionResult GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate)
+        public IActionResult GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate, string divisionName)
         {
-            var Result = Service.GetDailyBalanceCurrencyReport(bankId, startDate, endDate);
+            var Result = Service.GetDailyBalanceCurrencyReport(bankId, startDate, endDate, divisionName);
 
             return Ok(new
             {
@@ -168,14 +168,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("daily-balance/report/download")]
-        public IActionResult GetDailyBalanceReportXls(int bankId, DateTime startDate, DateTime endDate)
+        public IActionResult GetDailyBalanceReportXls(int bankId, DateTime startDate, DateTime endDate, string divisionName)
         {
             try
             {
                 byte[] xlsInBytes;
                 int clientTimeZoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
 
-                var xls = Service.GenerateExcelDailyBalance(bankId, startDate, endDate, clientTimeZoneOffset);
+                var xls = Service.GenerateExcelDailyBalance(bankId, startDate, endDate, divisionName, clientTimeZoneOffset);
 
                 string filename = String.Format("Saldo Bank Harian - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
 
