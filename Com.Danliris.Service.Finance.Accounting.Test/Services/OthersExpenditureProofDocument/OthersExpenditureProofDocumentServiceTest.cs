@@ -61,6 +61,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                         COAId = 1,
                         Debit = 1,
                         Remark = "Remark"
+                    },
+                    new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
+                    {
+                        COAId = 2,
+                        Debit = 2,
+                        Remark = "Remark"
                     }
                 },
                 CekBgNo = "CekBgNo",
@@ -213,6 +219,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                         COAId = 10,
                         Debit = 6,
                         Id = dbContext.OthersExpenditureProofDocumentItems.FirstOrDefault(item => item.OthersExpenditureProofDocumentId == createdModel.Id).Id,
+                        Remark = "New remark"
+                    },
+                    new OthersExpenditureProofDocumentCreateUpdateItemViewModel()
+                    {
+                        COAId = 5,
+                        Debit = 2,
                         Remark = "New remark"
                     }
                 },
