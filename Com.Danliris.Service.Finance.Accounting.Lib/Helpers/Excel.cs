@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -31,7 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
-        public static MemoryStream CreateExcelWithTitle(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string dateFrom, string dateTo, bool styling = false)
+        public static MemoryStream CreateExcelWithTitle(List<KeyValuePair<DataTable, string>> dtSourceList, List<KeyValuePair<string, int>> sheetIndex, string title, string dateFrom, string dateTo, bool styling = false)
         {
             ExcelPackage package = new ExcelPackage();
             foreach (KeyValuePair<DataTable, string> item in dtSourceList)
@@ -49,13 +50,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
 
                 sheet.Cells["A5"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
                 sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                int index = sheetIndex.Find(x => x.Key == item.Value).Value;
+                if (index > 0)
+                {
+                    int cells = 6;
+                    if (title == "Laporan Ekspedisi Disposisi Pembayaran")
+                    {
+                        sheet.Cells[$"F{cells}:J{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        sheet.Cells[$"X{cells}:X{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+                    else if (title == "Histori Disposisi Not Verified" || title == "Laporan Disposisi Not Verified")
+                        sheet.Cells[$"G{cells}:G{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    else if(title == "Laporan Saldo Bank Harian")
+                    {
+                        if (item.Value == "Saldo Harian")
+                            sheet.Cells[$"D{cells}:F{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        else if (item.Value == "Saldo Harian Mata Uang")
+                            sheet.Cells[$"B{cells}:D{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+                    else if(title == "Laporan Kwitansi")
+                        sheet.Cells[$"C{cells}:C{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    else if (title == "Laporan Ekspedisi Realisasi VB")
+                    {
+                        sheet.Cells[$"J{cells}:J{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        sheet.Cells[$"L{cells}:L{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+                }
             }
             MemoryStream stream = new MemoryStream();
             package.SaveAs(stream);
             return stream;
         }
 
-        public static MemoryStream CreateExcelWithTitleNonDateFilter(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string date, bool styling = false)
+        public static MemoryStream CreateExcelWithTitleNonDateFilter(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string date, bool styling = false, int index = 0)
         {
             ExcelPackage package = new ExcelPackage();
             foreach (KeyValuePair<DataTable, string> item in dtSourceList)
@@ -73,13 +101,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
 
                 sheet.Cells["A6"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
                 sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                int cells = 7;
+                sheet.Cells[$"G{cells}:L{(cells + index) - 1}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
             }
             MemoryStream stream = new MemoryStream();
             package.SaveAs(stream);
             return stream;
         }
 
-        public static MemoryStream DailyMutationReportExcel(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string bankAccount, string date, bool styling = false)
+        public static MemoryStream DailyMutationReportExcel(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string bankAccount, string date, bool styling = false, int index = 0)
         {
             ExcelPackage package = new ExcelPackage();
             foreach (KeyValuePair<DataTable, string> item in dtSourceList)
@@ -100,6 +131,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
 
                 sheet.Cells["A7"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
                 sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                int cells = 8;
+                sheet.Cells[$"F{cells}:I{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
             }
             MemoryStream stream = new MemoryStream();
             package.SaveAs(stream);

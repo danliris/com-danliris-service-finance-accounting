@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransaction
 {
-    public class DailyBankTransactionIHttpService : IHttpClientService
+    class AutoDailyBankTransactionIHttpService : IHttpClientService
     {
         public static string Token;
 
@@ -19,26 +19,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         public Task<HttpResponseMessage> GetAsync(string url)
         {
-            if (url.Contains("master/account-banks/"))
+            if (url.Contains("garment-currencies/single-by-code-date"))
             {
-                var defaultresponse = new APIDefaultResponse<AccountBank>()
+                var defaultresponse = new APIDefaultResponse<GarmentCurrency>()
                 {
-                    data = new AccountBank()
+                    data = new GarmentCurrency()
                     {
-                        Id = 1,
-                        AccountCOA = "AccountCOA",
-                        AccountName = "AccountName",
-                        Currency = new Currency()
-                        {
-                            Id = 1,
-                            Code = "Code",
-                            Symbol = "Symbol"
-                        },
-                        AccountNumber = "AccountNumber",
-                        BankCode = "BankCode",
-                        BankName = "BankName"
+                        Code = "USD",
+                        Rate = 15500.00
                     }
                 };
+
                 var result = new HttpResponseMessage()
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))

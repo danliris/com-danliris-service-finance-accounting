@@ -23,6 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IDailyBankTransactionService))).Returns(new DailyBankTransactionServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new AutoDailyBankTransactionIHttpService());
             var service = new AutoDailyBankTransactionService(serviceProviderMock.Object);
 
             var dispositionModel = new PaymentDispositionNoteModel()
@@ -41,6 +42,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             };
             var result = await service.AutoCreateFromPaymentDisposition(dispositionModel);
             Assert.NotEqual(0, result);
+
+            dispositionModel.CurrencyCode = "IDR";
+
+            var result2 = await service.AutoCreateFromPaymentDisposition(dispositionModel);
+            Assert.NotEqual(0, result2);
         }
 
         [Fact]

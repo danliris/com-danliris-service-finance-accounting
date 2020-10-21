@@ -1,4 +1,5 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
 using System.Collections.Generic;
@@ -39,6 +40,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
         }
 
         public async Task<int> AutoJournalInklaring(List<int> vbRequestIds, AccountBankViewModel bank)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
+        }
+
+        public async Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> items)
         {
             await Task.Delay(1000);
             return await Task.FromResult(1);

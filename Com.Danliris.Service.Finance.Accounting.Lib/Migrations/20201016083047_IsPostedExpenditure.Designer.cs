@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201016083047_IsPostedExpenditure")]
+    partial class IsPostedExpenditure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -292,11 +294,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("AfterNominal");
 
-                    b.Property<decimal>("AfterNominalValas");
-
                     b.Property<decimal>("BeforeNominal");
-
-                    b.Property<decimal>("BeforeNominalValas");
 
                     b.Property<string>("BuyerCode")
                         .HasMaxLength(25);
@@ -369,8 +367,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<DateTime>("LastModifiedUtc");
 
                     b.Property<decimal>("Nominal");
-
-                    b.Property<decimal>("NominalValas");
 
                     b.Property<string>("Receiver");
 
