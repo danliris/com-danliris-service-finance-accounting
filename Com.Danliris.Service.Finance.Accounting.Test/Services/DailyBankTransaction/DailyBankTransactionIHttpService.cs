@@ -47,6 +47,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                 return Task.FromResult(result);
             }
 
+            else if(url.Contains("master/garment-currencies/single-by-code-date"))
+            {
+                var defaultresponse = new APIDefaultResponse<GarmentCurrency>()
+                {
+                    data = new GarmentCurrency()
+                    {
+                        Code = "USD",
+                        Rate = 15500.00
+                    }
+                };
+
+                var result = new HttpResponseMessage()
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
+                };
+
+                return Task.FromResult(result);
+            }
+
             return Task.Run(() => new HttpResponseMessage());
         }
 
