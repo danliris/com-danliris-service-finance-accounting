@@ -11,6 +11,8 @@ using Com.Moonlay.NetCore.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -198,6 +200,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
             var dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
+            var garmentCurrency = GetGarmentCurrency(dataAccountBank.Currency.Code).GetAwaiter().GetResult();
             string bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
 
             DataTable result = new DataTable();
@@ -209,8 +212,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             result.Columns.Add(new DataColumn() { ColumnName = "Currency", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Before", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Debit2", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Kredit2", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "After", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "After2", DataType = typeof(String) });
 
             int index = 0;
             if (Query.ToArray().Count() == 0)
@@ -219,30 +225,114 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             {
                 var BalanceByMonthAndYear = GetBalanceMonthAndYear(bankId, month, year, clientTimeZoneOffset);
                 var beforeBalance = BalanceByMonthAndYear.InitialBalance;
+                var beforeBalanceValas = beforeBalance / garmentCurrency.Rate;
                 //var previous = new DailyBankTransactionModel();
                 foreach (var item in Query)
                 {
-                    var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
+                    var debit = item.Status.ToUpper().Equals("IN") ? item.AccountBankCurrencyCode == "IDR" ? item.Nominal.ToString("#,##0.#0") : item.NominalValas.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
+                    var kredit = item.Status.ToUpper().Equals("OUT") ? item.AccountBankCurrencyCode == "IDR" ? item.Nominal.ToString("#,##0.#0") : item.NominalValas.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
+                    var afterBalance = beforeBalance + (item.Status.Equals("IN") ? 
+                        item.AccountBankCurrencyCode == "IDR" ? (double) item.Nominal : (double) item.NominalValas :
+                        item.AccountBankCurrencyCode == "IDR" ? (double) item.Nominal * -1 : (double) item.NominalValas * -1);
+                    var debitValas = item.Status.ToUpper().Equals("IN") && item.AccountBankCurrencyCode != "IDR" ? item.NominalValas.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
+                    var kreditValas = item.Status.ToUpper().Equals("OUT") && item.AccountBankCurrencyCode != "IDR" ? item.NominalValas.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
+                    var afterBalanceValas = beforeBalanceValas + (item.Status.Equals("IN") ? (double) item.NominalValas : (double) item.NominalValas *  -1);
+
                     result.Rows.Add(item.Date.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
                         item.Remark,
                         item.ReferenceNo,
                         item.ReferenceType,
                         item.AccountBankCurrencyCode,
                         beforeBalance.ToString("#,##0.#0"),
-                        item.Status.ToUpper().Equals("IN") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0"),
-                        item.Status.ToUpper().Equals("OUT") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0"),
-                        afterBalance.ToString("#,##0.#0"));
+                        debit,
+                        item.AccountBankCurrencyCode == "IDR" ? debitValas : 0.ToString("#,##0.#0"),
+                        kredit,
+                        item.AccountBankCurrencyCode == "IDR" ? kreditValas : 0.ToString("#,##0.#0"),
+                        afterBalance,
+                        item.AccountBankCurrencyCode == "IDR" ? afterBalanceValas.GetValueOrDefault().ToString("#,##0.#0") : 0.ToString("#,##0.#0"));
                     beforeBalance = afterBalance;
                     index++;
                 }
             }
 
-            return Excel.DailyMutationReportExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, title, bank, date, true, index);
+            var headers = new List<string> { "Tanggal", "Keterangan", "Nomor Referensi", "Jenis Referensi", "Currency", "Before", "DEBIT", "Debit2", "KREDIT", "Kredit2", "SALDO AKHIR", "After2" };
+            var subHeaders = new List<string> { "Original Amount", "Equivalent", "Original Amount", "Equivalent", "Original Amount", "Equivalent" };
+
+            ExcelPackage package = new ExcelPackage();
+            var sheet = package.Workbook.Worksheets.Add("Mutasi");
+
+            sheet.Cells["A2"].Value = "PT. DANLIRIS";
+            sheet.Cells["A2:D2"].Merge = true;
+
+            sheet.Cells["A3"].Value = title;
+            sheet.Cells["A3:D3"].Merge = true;
+
+            sheet.Cells["A4"].Value = bank;
+            sheet.Cells["A4:D4"].Merge = true;
+
+            sheet.Cells["A5"].Value = $"Per {date}";
+            sheet.Cells["A5:D5"].Merge = true;
+
+            sheet.Cells["J6"].Value = "Kurs : Rp.";
+            sheet.Cells["J6"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            sheet.Cells["K6"].Value = $" {garmentCurrency.Rate.GetValueOrDefault().ToString("#,##0.#0")}";
+
+            sheet.Cells["G7"].Value = headers[6];
+            sheet.Cells["G7:H7"].Merge = true;
+            sheet.Cells["I7"].Value = headers[8];
+            sheet.Cells["I7:J7"].Merge = true;
+            sheet.Cells["K7"].Value = headers[10];
+            sheet.Cells["K7:L7"].Merge = true;
+
+            foreach (var i in Enumerable.Range(0, 6))
+            {
+                var col = (char)('A' + i);
+                sheet.Cells[$"{col}7"].Value = headers[i];
+                sheet.Cells[$"{col}7:{col}8"].Merge = true;
+            }
+
+            foreach (var i in Enumerable.Range(0, 6))
+            {
+                var col = (char)('G' + i);
+                sheet.Cells[$"{col}8"].Value = subHeaders[i];
+            }
+
+            sheet.Cells["A7:L8"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            sheet.Cells["A7:L8"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            sheet.Cells["A7:L8"].Style.Font.Bold = true;
+
+            sheet.Cells["A9"].LoadFromDataTable(result, false, OfficeOpenXml.Table.TableStyles.Light16);
+            sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+            int cells = 9;
+            sheet.Cells[$"F{cells}:L{cells + index}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+
+            //return Excel.DailyMutationReportExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, title, bank, date, true, index);
         }
 
         private BankTransactionMonthlyBalanceModel GetBalanceMonthAndYear(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             return _DbMonthlyBalanceSet.Where(w => w.AccountBankId.Equals(bankId) && w.Month.Equals(month) && w.Year.Equals(year)).FirstOrDefault();
+        }
+
+        private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        {
+            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={date}";
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+            return result.data;
         }
 
         private IQueryable<DailyBankTransactionModel> GetQuery(int bankId, int month, int year, int clientTimeZoneOffset)
