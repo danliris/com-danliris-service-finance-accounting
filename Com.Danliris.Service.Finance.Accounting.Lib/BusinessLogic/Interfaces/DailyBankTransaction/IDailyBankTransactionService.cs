@@ -12,12 +12,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.D
     public interface IDailyBankTransactionService : IBaseService<DailyBankTransactionModel>
     {
         ReadResponse<DailyBankTransactionModel> GetReport(int bankId, int month, int year, int clientTimeZoneOffset);
-        List<DailyBalanceReportViewModel> GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate);
-        List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate);
+        List<DailyBalanceReportViewModel> GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate, string divisionName);
+        List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate, string divisionName);
         MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset);
         Task<int> DeleteByReferenceNoAsync(string referenceNo);
         Task<int> Posting(List<int> ids);
         Task<int> CreateInOutTransactionAsync(DailyBankTransactionModel model);
-        MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, int clientTimeZoneOffset);
+        MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, string divisionName, int clientTimeZoneOffset);
     }
 }
