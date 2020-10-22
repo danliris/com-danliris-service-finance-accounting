@@ -596,14 +596,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return !string.IsNullOrWhiteSpace(model.Remark) ? $"{model.Remark}\n\nPendanaan untuk {model.DestinationBankAccountName} - {model.DestinationBankName} - {model.DestinationBankAccountNumber} - {model.DestinationBankCurrencyCode}\nSenilai {string.Format("{0:0,0.0}", model.TransactionNominal)} {model.DestinationBankCurrencyCode}" : $"Pendanaan untuk {model.DestinationBankAccountName} - {model.DestinationBankName} - {model.DestinationBankAccountNumber} - {model.DestinationBankCurrencyCode}\nSenilai {string.Format("{0:0,0.0}", model.TransactionNominal)} {model.DestinationBankCurrencyCode}";
         }
 
-        public List<DailyBalanceReportViewModel> GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate)
+        private async Task<List<AccountBank>> GetAccountBankByDivision(string divisionName)
         {
+            var http = _serviceProvider.GetService<IHttpClientService>();
+
+            string uri = APIEndpoint.Core + $"master/account-banks/division/{divisionName}";
+            var response = await http.GetAsync(uri);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<List<AccountBank>>>(responseString, jsonSerializationSetting);
+
+            return result.data;
+        }
+
+        public List<DailyBalanceReportViewModel> GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate, string divisionName)
+        {
+
             //var result = _DbSet.Where(w => w.AccountBankId.Equals(bankId))
             var query = _DbSet.Where(w => w.Date >= startDate && w.Date <= endDate);
 
             if (bankId > 0)
             {
                 query = query.Where(w => w.AccountBankId.Equals(bankId));
+            }
+            
+            if (!string.IsNullOrWhiteSpace(divisionName))
+            {
+                var listOfBanks = GetAccountBankByDivision(divisionName).Result;
+                var bankIds = listOfBanks.Select(bank => bank.Id).ToList();
+                query = query.Where(w => bankIds.Contains(w.AccountBankId));
             }
 
             var result = query.GroupBy(g => g.AccountBankId).Select(s => new DailyBalanceReportViewModel()
@@ -621,10 +644,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             //throw new NotImplementedException();
         }
 
-        public MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, int clientTimeZoneOffset)
+        public MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, string divisionName, int clientTimeZoneOffset)
         {
-            var queryResult = GetDailyBalanceReport(bankId, startDate, endDate);
-            var currencyQueryResult = GetDailyBalanceCurrencyReport(bankId, startDate, endDate);
+            var queryResult = GetDailyBalanceReport(bankId, startDate, endDate, divisionName);
+            var currencyQueryResult = GetDailyBalanceCurrencyReport(bankId, startDate, endDate, divisionName);
             string title = "Laporan Saldo Bank Harian",
                 dateFrom = startDate == null ? "-" : startDate.ToString("dd MMMM yyyy"),
                 dateTo = endDate == null ? "-" : endDate.ToString("dd MMMM yyyy");
@@ -679,13 +702,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 title, dateFrom, dateTo, true);
         }
 
-        public List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate)
+        public List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate, string divisionName)
         {
             var query = _DbSet.Where(w => w.Date >= startDate && w.Date <= endDate);
 
             if (bankId > 0)
             {
                 query = query.Where(w => w.AccountBankId.Equals(bankId));
+            }
+            
+            if (!string.IsNullOrWhiteSpace(divisionName))
+            {
+                var listOfBanks = GetAccountBankByDivision(divisionName).Result;
+                var bankIds = listOfBanks.Select(bank => bank.Id).ToList();
+                query = query.Where(w => bankIds.Contains(w.AccountBankId));
             }
 
             var currencyResult = query.GroupBy(g => g.AccountBankCurrencyId).Select(s => new DailyBalanceCurrencyReportViewModel()
