@@ -245,11 +245,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         item.AccountBankCurrencyCode,
                         beforeBalance.ToString("#,##0.#0"),
                         debit,
-                        item.AccountBankCurrencyCode == "IDR" ? debitValas : 0.ToString("#,##0.#0"),
+                        item.AccountBankCurrencyCode != "IDR" ? debitValas : 0.ToString("#,##0.#0"),
                         kredit,
-                        item.AccountBankCurrencyCode == "IDR" ? kreditValas : 0.ToString("#,##0.#0"),
+                        item.AccountBankCurrencyCode != "IDR" ? kreditValas : 0.ToString("#,##0.#0"),
                         afterBalance,
-                        item.AccountBankCurrencyCode == "IDR" ? afterBalanceValas.GetValueOrDefault().ToString("#,##0.#0") : 0.ToString("#,##0.#0"));
+                        item.AccountBankCurrencyCode != "IDR" ? afterBalanceValas.GetValueOrDefault().ToString("#,##0.#0") : 0.ToString("#,##0.#0"));
                     beforeBalance = afterBalance;
                     index++;
                 }
