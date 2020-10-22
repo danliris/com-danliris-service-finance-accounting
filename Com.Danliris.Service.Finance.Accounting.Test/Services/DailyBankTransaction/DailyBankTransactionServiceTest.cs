@@ -506,7 +506,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             model.SourceType = "Pendanaan";
             await service.CreateInOutTransactionAsync(model);
 
-            var data = service.GetDailyBalanceReport(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now, "");
+            var data = service.GetDailyBalanceReport(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now, "G");
             Assert.NotNull(data);
         }
 
@@ -519,7 +519,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             model.SourceType = "Pendanaan";
             await service.CreateInOutTransactionAsync(model);
 
-            var data = service.GenerateExcelDailyBalance(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), "", 0);
+            var data = service.GenerateExcelDailyBalance(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), "G", 0);
             Assert.NotNull(data);
         }
 

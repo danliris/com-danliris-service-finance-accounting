@@ -89,6 +89,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
         }
 
         [Fact]
+        public async Task Should_Success_Posting_Data()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoJournalService))).Returns(new AutoJournalServiceTestHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IAutoDailyBankTransactionService))).Returns(new AutoDailyBankTransactionServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IIdentityService))).Returns(new IdentityService() { Username = "Username", Token = "token", TimezoneOffset = 1 });
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+
+            var service = new OthersExpenditureProofDocumentService(dbContext, serviceProviderMock.Object);
+            var model = GetCreateDataUtil();
+
+            await service.CreateAsync(model);
+
+
+            var response = await service.Posting(dbContext.OthersExpenditureProofDocuments.Select(entity => entity.Id).ToList());
+
+            Assert.NotEqual(0, response);
+        }
+
+        [Fact]
         public async Task Should_Success_Delete_Data()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
