@@ -196,7 +196,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
             var itemFormIds = viewModel.Items.Select(item => item.Id.GetValueOrDefault()).ToList();
             var itemModels = await _itemDbSet.Where(item => itemFormIds.Contains(item.Id)).ToListAsync();
-            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
+            //await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
 
             List<int> itemIds = await _itemDbSet.Where(w => w.OthersExpenditureProofDocumentId.Equals(id) && !w.IsDeleted).Select(s => s.Id).ToListAsync();
             var itemModelsToUpdate = viewModel.MapItemToModel();
