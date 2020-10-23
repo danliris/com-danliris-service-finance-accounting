@@ -218,10 +218,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             result.Columns.Add(new DataColumn() { ColumnName = "Nomor Referensi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Jenis Referensi", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Currency", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Before", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "After", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(String) });
 
             int index = 0;
             if (Query.ToArray().Count() == 0)
@@ -242,10 +241,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         item.ReferenceNo,
                         item.ReferenceType,
                         item.AccountBankCurrencyCode,
-                        beforeBalance.ToString("#,##0.#0"),
                         debit,
                         kredit,
-                        afterBalance
+                        afterBalance.ToString("#,##0.#0")
                         );
                     beforeBalance = afterBalance;
                     index++;
