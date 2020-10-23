@@ -84,7 +84,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var service = new AutoDailyBankTransactionService(serviceProviderMock.Object);
 
             var model = new OthersExpenditureProofDocumentModel();
-            var itemModels = new List<OthersExpenditureProofDocumentItemModel>();
+            var itemModels = new List<OthersExpenditureProofDocumentItemModel>() {
+                new OthersExpenditureProofDocumentItemModel()
+                {
+                    Debit = 1000
+                }
+            };
 
             var result = await service.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
             Assert.NotEqual(0, result);
