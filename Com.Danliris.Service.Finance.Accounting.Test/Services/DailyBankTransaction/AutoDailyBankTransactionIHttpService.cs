@@ -19,7 +19,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         public Task<HttpResponseMessage> GetAsync(string url)
         {
-            if (url.Contains("master/garment-currencies/single-by-code-date"))
+            if(url.Contains("master/account-banks/"))
+            {
+                string id = url.Substring(url.LastIndexOf('/') + 1);
+
+                var defaultresponse = new APIDefaultResponse<AccountBank>()
+                {
+                    data = new AccountBank()
+                    {
+                        Currency = new Currency()
+                    }
+                };
+
+                if (id == "2")
+                    defaultresponse.data.Currency.Code = "IDR";
+
+                var result = new HttpResponseMessage()
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
+                };
+
+                return Task.FromResult(result);
+            }
+
+            else if (url.Contains("master/garment-currencies/single-by-code-date"))
             {
                 var defaultresponse = new APIDefaultResponse<GarmentCurrency>()
                 {

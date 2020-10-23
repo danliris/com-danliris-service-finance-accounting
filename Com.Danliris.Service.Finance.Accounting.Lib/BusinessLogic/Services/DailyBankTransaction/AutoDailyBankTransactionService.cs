@@ -50,7 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             };
 
             if (model.CurrencyCode == "IDR")
-                dailyBankTransactionModel.NominalValas = nominal * (decimal) model.CurrencyRate;
+                dailyBankTransactionModel.NominalValas = 0;
             else
             {
                 var dateCurrency = GetGarmentCurrency(model.BankCurrencyCode).GetAwaiter().GetResult();
@@ -141,6 +141,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 SourceType = model.Type,
                 Status = "OUT"
             };
+
+            if (accountBank.Currency.Code == "IDR")
+                dailyBankTransactionModel.NominalValas = 0;
+            else
+            {
+                var dateCurrency = GetGarmentCurrency(accountBank.Currency.Code).GetAwaiter().GetResult();
+
+                dailyBankTransactionModel.NominalValas = itemModels.Sum(item => item.Debit) * (decimal)dateCurrency.Rate.GetValueOrDefault();
+            }
+
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
 
