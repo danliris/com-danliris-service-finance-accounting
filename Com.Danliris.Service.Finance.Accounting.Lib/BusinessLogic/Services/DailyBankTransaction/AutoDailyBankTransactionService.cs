@@ -53,7 +53,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 dailyBankTransactionModel.NominalValas = nominal * (decimal) model.CurrencyRate;
             else
             {
-                var dateCurrency = GetGarmentCurrency(model.CurrencyCode).GetAwaiter().GetResult();
+                var dateCurrency = GetGarmentCurrency(model.BankCurrencyCode).GetAwaiter().GetResult();
 
                 dailyBankTransactionModel.NominalValas = nominal * (decimal) dateCurrency.Rate.GetValueOrDefault();
             }
