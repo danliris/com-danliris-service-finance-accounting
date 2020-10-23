@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -98,6 +100,35 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
                 var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
                 return file;
 
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, Utilities.General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(Utilities.General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("mutation/report/pdf")]
+        public IActionResult GetReportPdf(int bankId, int month, int year)
+        {
+            try
+            {
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                int clientTimeZoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+                var data = Service.GeneratePdf(bankId, month, year, clientTimeZoneOffset);
+                var beforeBalance = Service.GetBeforeBalance(bankId, month, year, clientTimeZoneOffset);
+                var dataAccountBank = Service.GetDataAccountBank(bankId);
+
+                // DailyBankTransactionPDFTemplate PdfTemplate = new DailyBankTransactionPDFTemplate();
+                // MemoryStream stream = PdfTemplate.GeneratePdfTemplate(data, clientTimeZoneOffset);
+                MemoryStream stream = DailyBankTransactionPDFTemplate.GeneratePdfTemplate(data, month, year, beforeBalance, dataAccountBank, clientTimeZoneOffset);
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = $"Mutasi Bank Harian - {month}{year}.pdf"
+                };
             }
             catch (Exception e)
             {

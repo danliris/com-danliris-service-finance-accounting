@@ -210,7 +210,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             result.Columns.Add(new DataColumn() { ColumnName = "Before", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "After", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(String) });
 
             int index = 0;
             if (Query.ToArray().Count() == 0)
@@ -672,5 +672,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             return models.Count;
         }
+
+        public List<DailyBankTransactionModel> GeneratePdf(int bankId, int month, int year, int clientTimeZoneOffset)
+        {
+            var Data = GetQuery(bankId, month, year, clientTimeZoneOffset).ToList();
+
+            return Data;
+        }
+
+        public double GetBeforeBalance(int bankId, int month, int year, int clientTimeZoneOffset)
+        {
+            var BalanceByMonthAndYear = GetBalanceMonthAndYear(bankId, month, year, clientTimeZoneOffset);
+            var beforeBalance = BalanceByMonthAndYear.InitialBalance;
+
+            return beforeBalance;
+        }
+
+        public string GetDataAccountBank(int bankId)
+        {
+           var dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
+           string bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
+
+            return bank;
+        }
+
     }
 }
