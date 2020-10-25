@@ -622,6 +622,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             inputModel.DestinationBankId = 0;
             inputModel.DestinationBankName = "";
             inputModel.Nominal = model.TransactionNominal;
+            inputModel.NominalValas = model.NominalValas;
 
             model.Remark = FormatOutRemark(model);
             inputModel.Remark = FormatInRemark(inputModel, model);
