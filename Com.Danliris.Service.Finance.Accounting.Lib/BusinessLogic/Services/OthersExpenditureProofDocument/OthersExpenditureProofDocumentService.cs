@@ -46,6 +46,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         {
             var model = viewModel.MapToModel();
             model.DocumentNo = await GetDocumentNo("K", viewModel.AccountBankCode, _identityService.Username);
+
+            var accountBank = await GetAccountBank(viewModel.AccountBankId.GetValueOrDefault());
+            if (accountBank.Currency.Code != "IDR")
+            {
+                var rate = await GetGarmentCurrency(accountBank.Currency.Code);
+                model.CurrencyRate = rate.Rate.GetValueOrDefault();
+            }
+
             EntityExtension.FlagForCreate(model, _identityService.Username, _userAgent);
             _dbSet.Add(model);
             await _dbContext.SaveChangesAsync();
@@ -83,6 +91,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 var responseContent = await response.Content.ReadAsStringAsync();
                 result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
             }
+            return result.data;
+        }
+
+        private async Task<AccountBank> GetAccountBank(int? accountBankId)
+        {
+            var http = _serviceProvider.GetService<IHttpClientService>();
+
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/account-banks/{accountBankId}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<AccountBank>>(responseString, jsonSerializationSetting);
+
+            return result.data;
+        }
+
+        private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        {
+            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={date}";
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
             return result.data;
         }
 

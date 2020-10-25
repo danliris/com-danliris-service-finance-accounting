@@ -17,6 +17,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                 var defaultresponse = new APIDefaultResponse<List<AccountBank>>()
                 {
                     data = new List<AccountBank>()
+                    {
+                        new AccountBank() {
+                            Id = 1
+                        }
+                    }
                 };
 
                 var result = new HttpResponseMessage()
@@ -32,7 +37,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                 {
                     data = new AccountBank()
                     {
+                        Id = 1,
                         Currency = new Currency()
+                        {
+                            Code = "USD"
+                        }
                     }
                 };
 
@@ -48,6 +57,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
                 var defaultresponse = new APIDefaultResponse<string>()
                 {
                     data = "Test"
+                };
+
+                var result = new HttpResponseMessage()
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
+                };
+
+                return Task.FromResult(result);
+            }
+            else if (url.Contains("master/garment-currencies/single-by-code-date"))
+            {
+                var defaultresponse = new APIDefaultResponse<GarmentCurrency>()
+                {
+                    data = new GarmentCurrency()
+                    {
+                        Code = "USD",
+                        Rate = 15500.00
+                    }
                 };
 
                 var result = new HttpResponseMessage()
