@@ -49,32 +49,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Status = "OUT"
             };
 
-            if (model.CurrencyCode == "IDR")
-                dailyBankTransactionModel.NominalValas = nominal * (decimal) model.CurrencyRate;
-            else
-            {
-                var dateCurrency = GetGarmentCurrency(model.BankCurrencyCode).GetAwaiter().GetResult();
-
-                dailyBankTransactionModel.NominalValas = nominal * (decimal) dateCurrency.Rate.GetValueOrDefault();
-            }
+            if (model.CurrencyCode != "IDR")
+                dailyBankTransactionModel.NominalValas = nominal * (decimal)  model.CurrencyRate;
 
             return _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
-        }
-
-        private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
-        {
-            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
-            string queryString = $"code={codeCurrency}&stringDate={date}";
-
-            var http = _serviceProvider.GetService<IHttpClientService>();
-            var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
-
-            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
-
-            return result.data;
         }
 
         public Task<int> AutoRevertFromPaymentDisposition(PaymentDispositionNoteModel model)
@@ -141,6 +119,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 SourceType = model.Type,
                 Status = "OUT"
             };
+
+            if (accountBank.Currency.Code != "IDR")
+                dailyBankTransactionModel.NominalValas = itemModels.Sum(item => item.Debit) * (decimal) model.CurrencyRate;
+
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
 
