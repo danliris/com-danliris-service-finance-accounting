@@ -52,7 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             {
                 Border = Rectangle.NO_BORDER,
                 HorizontalAlignment = Element.ALIGN_LEFT,
-                VerticalAlignment = Element.ALIGN_CENTER
+                VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
             cell.Phrase = new Phrase("PT. DAN LIRIS", _normalBoldFont);
@@ -75,25 +75,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             var cell = new PdfPCell()
             {
                 HorizontalAlignment = Element.ALIGN_CENTER,
-                VerticalAlignment = Element.ALIGN_CENTER
+                VerticalAlignment = Element.ALIGN_MIDDLE,
             };
 
-            cell.Phrase = new Phrase("NO.", _smallBoldFont);
+            cell.Rowspan = 2;
+            cell.Phrase = new Phrase("NO.", _normalBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("SUPPLIER", _smallBoldFont);
+            cell.Phrase = new Phrase("SUPPLIER", _normalBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("SALDO AWAL (IDR)", _smallBoldFont);
+            cell.Rowspan = 1;
+            cell.Phrase = new Phrase("SALDO AWAL", _normalBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("PEMBELIAN (IDR)", _smallBoldFont);
+            cell.Phrase = new Phrase("PEMBELIAN", _normalBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("PEMBAYARAN (IDR)", _smallBoldFont);
+            cell.Phrase = new Phrase("PEMBAYARAN", _normalBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("SALDO AKHIR (IDR)", _smallBoldFont);
+            cell.Phrase = new Phrase("SALDO AKHIR", _normalBoldFont);
+            table.AddCell(cell);
+
+            cell.Phrase = new Phrase("IDR", _normalBoldFont);
+            table.AddCell(cell);
+
+            cell.Phrase = new Phrase("IDR", _normalBoldFont);
+            table.AddCell(cell);
+
+            cell.Phrase = new Phrase("IDR", _normalBoldFont);
+            table.AddCell(cell);
+
+            cell.Phrase = new Phrase("IDR", _normalBoldFont);
             table.AddCell(cell);
         }
 
@@ -103,11 +117,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             {
                 WidthPercentage = 100
             };
+            table.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f });
 
+            /*
             var widths = new List<int>();
             for (var i = 0; i < 6; i++)
                 widths.Add(1);
             table.SetWidths(widths.ToArray());
+            */
 
             SetReportTableHeader(table);
 
@@ -117,38 +134,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 var cell = new PdfPCell()
                 {
                     HorizontalAlignment = Element.ALIGN_CENTER,
-                    VerticalAlignment = Element.ALIGN_CENTER
+                    VerticalAlignment = Element.ALIGN_MIDDLE
                 };
 
                 var cellAlignLeft = new PdfPCell()
                 {
                     HorizontalAlignment = Element.ALIGN_LEFT,
-                    VerticalAlignment = Element.ALIGN_CENTER
+                    VerticalAlignment = Element.ALIGN_MIDDLE
                 };
 
                 var cellAlignRight = new PdfPCell()
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
-                    VerticalAlignment = Element.ALIGN_CENTER
+                    VerticalAlignment = Element.ALIGN_MIDDLE
                 };
 
-                cell.Phrase = new Phrase(index.ToString(), _smallerFont);
+                cell.Phrase = new Phrase(index.ToString(), _normalFont);
                 table.AddCell(cell);
                 index++;
 
                 cellAlignLeft.Phrase = new Phrase(item.SupplierName, _smallerFont);
                 table.AddCell(cellAlignLeft);
 
-                cellAlignRight.Phrase = new Phrase(item.StartBalance.ToString("#,##0.#0"), _smallerFont);
+                cellAlignRight.Phrase = new Phrase(item.StartBalance.ToString("#,##0.#0"), _normalFont);
                 table.AddCell(cellAlignRight);
 
-                cellAlignRight.Phrase = new Phrase(item.Purchase.ToString("#,##0.#0"), _smallerFont);
+                cellAlignRight.Phrase = new Phrase(item.Purchase.ToString("#,##0.#0"), _normalFont);
                 table.AddCell(cellAlignRight);
 
-                cellAlignRight.Phrase = new Phrase(item.Payment.ToString("#,##0.#0"), _smallerFont);
+                cellAlignRight.Phrase = new Phrase(item.Payment.ToString("#,##0.#0"), _normalFont);
                 table.AddCell(cellAlignRight);
 
-                cellAlignRight.Phrase = new Phrase(item.FinalBalance.ToString("#,##0.#0"), _smallerFont);
+                cellAlignRight.Phrase = new Phrase(item.FinalBalance.ToString("#,##0.#0"), _normalFont);
                 table.AddCell(cellAlignRight);
             }
 
@@ -157,22 +174,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
         private static void SetFooter(Document document, List<CreditBalanceViewModel> data)
         {
-
             var table = new PdfPTable(6)
             {
                 WidthPercentage = 100
             };
+            table.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f });
 
             var cell = new PdfPCell()
             {
                 HorizontalAlignment = Element.ALIGN_CENTER,
-                VerticalAlignment = Element.ALIGN_CENTER
+                VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
             var cellAlignRight = new PdfPCell()
             {
                 HorizontalAlignment = Element.ALIGN_RIGHT,
-                VerticalAlignment = Element.ALIGN_CENTER
+                VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
             decimal totalStartBalance = 0;
