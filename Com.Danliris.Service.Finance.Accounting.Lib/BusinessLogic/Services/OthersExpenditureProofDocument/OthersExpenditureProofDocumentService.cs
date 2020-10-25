@@ -94,20 +94,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             return result.data;
         }
 
-        private async Task<AccountBank> GetAccountBank(int? accountBankId)
-        {
-            var http = _serviceProvider.GetService<IHttpClientService>();
-
-            var response = await http.GetAsync(APIEndpoint.Core + $"master/account-banks/{accountBankId}");
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
-
-            var result = JsonConvert.DeserializeObject<APIDefaultResponse<AccountBank>>(responseString, jsonSerializationSetting);
-
-            return result.data;
-        }
-
         private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
         {
             string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
