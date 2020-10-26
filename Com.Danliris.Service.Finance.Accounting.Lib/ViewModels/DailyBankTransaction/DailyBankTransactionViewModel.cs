@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
         public NewBuyerViewModel Buyer { get; set; }
         public DateTimeOffset? Date { get; set; }
         public decimal? Nominal { get; set; }
+        public decimal? NominalValas { get; set; }
         public decimal? TransactionNominal { get; set; }
         public string ReferenceNo { get; set; }
         public string ReferenceType { get; set; }

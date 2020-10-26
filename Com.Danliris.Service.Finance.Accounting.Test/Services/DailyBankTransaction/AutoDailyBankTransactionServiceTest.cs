@@ -142,10 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             return Task.FromResult(1);
         }
 
-        public MemoryStream GetExcel(int bankId, int month, int year, int clientTimeZoneOffset)
-        {
-            throw new NotImplementedException();
-        }
+        
         public List<DailyBankTransactionModel> GeneratePdf(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             throw new NotImplementedException();
@@ -197,6 +194,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         public Task<int> UpdateAsync(int id, DailyBankTransactionModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MemoryStream GetExcel(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             throw new NotImplementedException();
         }
