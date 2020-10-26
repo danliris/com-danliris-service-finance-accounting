@@ -19,6 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditurePr
         [MaxLength(32)]
         public string DocumentNo { get; set; }
         public bool IsPosted { get; set; }
+        public double CurrencyRate { get; set; }
 
         public void Update(OthersExpenditureProofDocumentCreateUpdateViewModel data)
         {

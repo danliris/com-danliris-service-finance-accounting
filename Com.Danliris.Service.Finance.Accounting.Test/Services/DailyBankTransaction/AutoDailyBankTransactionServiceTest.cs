@@ -79,15 +79,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IDailyBankTransactionService))).Returns(new DailyBankTransactionServiceHelper());
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new AutoDailyBankTransactionIHttpService());
 
             var service = new AutoDailyBankTransactionService(serviceProviderMock.Object);
 
             var model = new OthersExpenditureProofDocumentModel();
-            var itemModels = new List<OthersExpenditureProofDocumentItemModel>();
+            var itemModels = new List<OthersExpenditureProofDocumentItemModel>() {
+                new OthersExpenditureProofDocumentItemModel()
+                {
+                    Debit = 1000
+                }
+            };
 
             var result = await service.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
             Assert.NotEqual(0, result);
+
+            model.AccountBankId = 2;
+            var result2 = await service.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
+            Assert.NotEqual(0, result2);
         }
 
         [Fact]
@@ -133,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             return Task.FromResult(1);
         }
 
-        public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
+        public MemoryStream GetExcel(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             throw new NotImplementedException();
         }
