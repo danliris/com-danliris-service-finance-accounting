@@ -99,11 +99,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             if (ActualBalanceByMonth == null)
             {
-                SetNewActualBalanceByMonth(Month, Year, model, Nominal);
+                SetNewActualBalanceByMonth(Month, Year, model, Nominal, model.Date);
             }
             else
             {
-                var NextMonthBalance = GetNextMonthBalance(Month, Year);
+                var NextMonthBalance = GetNextMonthBalance(Month, Year, model.AccountBankId);
                 var SumInByMonth = GetSumInByMonth(Month, Year, BankId);
                 var SumOutByMonth = GetSumOutByMonth(Month, Year, BankId);
 
@@ -121,10 +121,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             }
         }
 
-        private void SetNewActualBalanceByMonth(int month, int year, DailyBankTransactionModel model, decimal nominal)
+        private void SetNewActualBalanceByMonth(int month, int year, DailyBankTransactionModel model, decimal nominal, DateTimeOffset date)
         {
-            var PreviousMonthBalance = GetPreviousMonthBalance(month, year);
-            var NextMonthBalance = GetNextMonthBalance(month, year);
+            var PreviousMonthBalance = GetPreviousMonthBalance(month, year, model.AccountBankId, date);
+            var NextMonthBalance = GetNextMonthBalance(month, year, model.AccountBankId);
             var NewMonthBalance = new BankTransactionMonthlyBalanceModel
             {
                 Month = month,
@@ -156,7 +156,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.AccountBankId.Equals(bankId) && w.Status.Equals("IN")).Sum(s => s.Nominal);
         }
 
-        private BankTransactionMonthlyBalanceModel GetNextMonthBalance(int month, int year)
+        private BankTransactionMonthlyBalanceModel GetNextMonthBalance(int month, int year, int accountBankId)
         {
             if (month == 12)
             {
@@ -168,16 +168,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             }
         }
 
-        private BankTransactionMonthlyBalanceModel GetPreviousMonthBalance(int month, int year)
+        private BankTransactionMonthlyBalanceModel GetPreviousMonthBalance(int month, int year, int bankId, DateTimeOffset date)
         {
-            if (month == 1)
-            {
-                return _DbMonthlyBalanceSet.Where(w => w.Month.Equals(12) && w.Year.Equals(year - 1)).FirstOrDefault();
-            }
+            var query = _DbMonthlyBalanceSet.Where(entity => entity.AccountBankId == bankId);
+
+            var sameYearQuery = query.Where(entity => entity.Year == date.Year);
+            if (sameYearQuery.Count() > 0)
+                return sameYearQuery.Where(entity => entity.Month < month).OrderByDescending(entity => entity.Month).FirstOrDefault();
             else
-            {
-                return _DbMonthlyBalanceSet.Where(w => w.Month.Equals(month - 1) && w.Year.Equals(year)).FirstOrDefault();
-            }
+                return query.Where(entity => entity.Year < year).OrderByDescending(entity => entity.Year).ThenByDescending(entity => entity.Month).FirstOrDefault();
+
+            //if (month == 1)
+            //{
+            //    return _DbMonthlyBalanceSet.Where(w => w.Month.Equals(12) && w.Year.Equals(year - 1)).FirstOrDefault();
+            //}
+            //else
+            //{
+            //    return _DbMonthlyBalanceSet.Where(w => w.Month.Equals(month - 1) && w.Year.Equals(year)).FirstOrDefault();
+            //}
+
+            //return _DbMonthlyBalanceSet.Where(entity => entity.AccountBankId == bankId && entity.Year <= date.Year && entity.Month < date.Month).OrderByDescending(entity => entity.Year).ThenByDescending(entity => entity.Month).FirstOrDefault();
+
+            //try
+            //{
+            //    var result = _DbMonthlyBalanceSet.Where(entity => entity.AccountBankId == bankId).OrderByDescending(entity => entity.Year).ThenByDescending(entity => entity.Month).FirstOrDefault();
+            //    return result;
+            //}
+            //catch (Exception e)
+            //{
+            //    throw e;
+            //}
         }
 
         public async Task<int> DeleteAsync(int id)
@@ -565,7 +585,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 _DbSet.Update(bankTransaction);
 
                 var monthlyBalance = _DbMonthlyBalanceSet.Where(w => w.Month.Equals(bankTransaction.Date.Month) && w.Year.Equals(bankTransaction.Date.Year) && w.AccountBankId.Equals(bankTransaction.AccountBankId)).FirstOrDefault();
-                var nextMonthBalance = GetNextMonthBalance(bankTransaction.Date.Month, bankTransaction.Date.Year);
+                var nextMonthBalance = GetNextMonthBalance(bankTransaction.Date.Month, bankTransaction.Date.Year, bankTransaction.AccountBankId);
 
                 if (monthlyBalance != null)
                 {
