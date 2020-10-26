@@ -84,7 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestDataIn();
-            var Response = service.GenerateExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+            var Response = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
             Assert.NotNull(Response);
         }
 
@@ -93,7 +93,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
            
-            var Response = service.GenerateExcel(0, 7, 1001, 0);
+            var Response = service.GetExcel(0, 7, 1001, 0);
             Assert.NotNull(Response);
         }
 

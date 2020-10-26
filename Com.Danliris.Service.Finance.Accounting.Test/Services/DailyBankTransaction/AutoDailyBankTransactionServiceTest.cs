@@ -133,7 +133,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             return Task.FromResult(1);
         }
 
-        public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
+        public MemoryStream GetExcel(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             throw new NotImplementedException();
         }
