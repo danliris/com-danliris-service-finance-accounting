@@ -202,5 +202,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             throw new NotImplementedException();
         }
+
+        public MemoryStream GetExcel(int bankId, int month, int year, int clientTimeZoneOffset)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
