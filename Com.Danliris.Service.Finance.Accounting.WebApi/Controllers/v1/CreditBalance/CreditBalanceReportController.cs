@@ -112,10 +112,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
 
                 // DailyBankTransactionPDFTemplate PdfTemplate = new DailyBankTransactionPDFTemplate();
                 // MemoryStream stream = PdfTemplate.GeneratePdfTemplate(data, clientTimeZoneOffset);
-                MemoryStream stream = LocalCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year);
+                MemoryStream stream;
+                string fileName = "";
+                if (isImport)
+                {
+                    stream = ImportCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year);
+                    fileName = string.Format("Saldo Hutang Impor Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                } else if (isForeignCurrency)
+                {
+                    stream = LocalValasCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year);
+                    fileName = string.Format("Saldo Hutang Lokal Valas Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                } else
+                {
+                    stream = LocalCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year);
+                    fileName = string.Format("Saldo Hutang Lokal Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                }
+
                 return new FileStreamResult(stream, "application/pdf")
                 {
-                    FileDownloadName = string.Format("Saldo Hutang Lokal Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year)
+                    FileDownloadName = string.Format(fileName)
                 };
             }
             catch (Exception e)
