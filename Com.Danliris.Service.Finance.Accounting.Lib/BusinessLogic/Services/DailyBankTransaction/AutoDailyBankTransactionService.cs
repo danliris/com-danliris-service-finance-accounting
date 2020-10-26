@@ -46,7 +46,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 SupplierCode = model.SupplierCode,
                 SupplierId = model.SupplierId,
                 SupplierName = model.SupplierName,
-                Status = "OUT"
+                Status = "OUT",
+                IsPosted = true
             };
 
             if (model.CurrencyCode != "IDR")
@@ -117,7 +118,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 ReferenceNo = model.DocumentNo,
                 Remark = $"{model.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", total)}",
                 SourceType = model.Type,
-                Status = "OUT"
+                Status = "OUT",
+                IsPosted = true
             };
 
             if (accountBank.Currency.Code != "IDR")
