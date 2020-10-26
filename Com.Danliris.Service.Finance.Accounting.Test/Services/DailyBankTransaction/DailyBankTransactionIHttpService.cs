@@ -49,6 +49,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             if (url.Contains("master/account-banks/"))
             {
+                string id = url.Substring(url.LastIndexOf('/') + 1);
+
                 var defaultresponse = new APIDefaultResponse<AccountBank>()
                 {
                     data = new AccountBank()
@@ -67,6 +69,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                         BankName = "BankName"
                     }
                 };
+
+                if (id == "2")
+                    defaultresponse.data.Currency.Code = "IDR";
+
+                var result = new HttpResponseMessage()
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
+                };
+
+                return Task.FromResult(result);
+            }
+
+            else if (url.Contains("master/garment-currencies/single-by-code-date"))
+            {
+                var defaultresponse = new APIDefaultResponse<GarmentCurrency>()
+                {
+                    data = new GarmentCurrency()
+                    {
+                        Code = "USD",
+                        Rate = 15500.00
+                    }
+                };
+
                 var result = new HttpResponseMessage()
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))

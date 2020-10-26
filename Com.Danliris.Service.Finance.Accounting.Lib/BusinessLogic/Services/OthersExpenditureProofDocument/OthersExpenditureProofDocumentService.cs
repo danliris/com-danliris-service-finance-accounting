@@ -46,6 +46,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         {
             var model = viewModel.MapToModel();
             model.DocumentNo = await GetDocumentNo("K", viewModel.AccountBankCode, _identityService.Username);
+
+            var accountBank = await GetAccountBank(viewModel.AccountBankId.GetValueOrDefault());
+            if (accountBank.Currency.Code != "IDR")
+            {
+                var rate = await GetGarmentCurrency(accountBank.Currency.Code);
+                model.CurrencyRate = rate.Rate.GetValueOrDefault();
+            }
+
             EntityExtension.FlagForCreate(model, _identityService.Username, _userAgent);
             _dbSet.Add(model);
             await _dbContext.SaveChangesAsync();
@@ -83,6 +91,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 var responseContent = await response.Content.ReadAsStringAsync();
                 result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
             }
+            return result.data;
+        }
+
+        private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        {
+            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={date}";
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
             return result.data;
         }
 
@@ -189,58 +213,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
         public async Task<int> UpdateAsync(int id, OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
         {
-            var itemIds = viewModel.Items.Select(item => item.Id.GetValueOrDefault()).ToList();
-            var itemModels = await _itemDbSet.Where(item => itemIds.Contains(item.Id)).ToListAsync();
-
-            var model = await _dbSet.FirstOrDefaultAsync(document => document.Id == id);
+            var model = await _dbSet.FirstOrDefaultAsync(x => x.Id == id);
             model.Update(viewModel);
-
-            await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
-
-            var itemModelsToUpdate = viewModel.MapItemToModel();
-
-            foreach (var itemModelToUpdate in itemModelsToUpdate)
-            {
-                if (itemModelToUpdate.Id != 0)
-                {
-                    var existedItem = itemModels.FirstOrDefault(item => item.Id == itemModelToUpdate.Id);
-                    existedItem.UpdateCOAId(itemModelToUpdate.COAId);
-                    existedItem.UpdateDebit(itemModelToUpdate.Debit);
-                    existedItem.UpdateRemark(itemModelToUpdate.Remark);
-
-                    if (existedItem.IsUpdated)
-                    {
-                        EntityExtension.FlagForUpdate(existedItem, _identityService.Username, _userAgent);
-                        _itemDbSet.Update(existedItem);
-                    }
-                }
-                else
-                {
-                    EntityExtension.FlagForCreate(itemModelToUpdate, _identityService.Username, _userAgent);
-                    _itemDbSet.Add(itemModelToUpdate);
-                }
-            }
-
-            var itemModelsToDelete = await _itemDbSet.Where(item => !itemIds.Contains(item.Id)).ToListAsync();
-            itemModelsToDelete = itemModelsToDelete.Select(item =>
-            {
-                EntityExtension.FlagForDelete(item, _identityService.Username, _userAgent);
-                return item;
-            }).ToList();
-            _itemDbSet.UpdateRange(itemModelsToDelete);
-
             EntityExtension.FlagForUpdate(model, _identityService.Username, _userAgent);
             _dbSet.Update(model);
 
-            await _dbContext.SaveChangesAsync();
-            //await _autoJournalService.AutoJournalReverseFromOthersExpenditureProof(model.DocumentNo);
-            //await _autoJournalService.AutoJournalFromOthersExpenditureProof(viewModel, model.DocumentNo);
-            //await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
-
+            var itemFormIds = viewModel.Items.Select(item => item.Id.GetValueOrDefault()).ToList();
+            var itemModels = await _itemDbSet.Where(item => itemFormIds.Contains(item.Id)).ToListAsync();
             //await _autoDailyBankTransactionService.AutoRevertFromOthersExpenditureProofDocument(model, itemModels);
-            //await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, itemModelsToUpdate);
 
-            return _taskDone;
+            List<int> itemIds = await _itemDbSet.Where(w => w.OthersExpenditureProofDocumentId.Equals(id) && !w.IsDeleted).Select(s => s.Id).ToListAsync();
+            var itemModelsToUpdate = viewModel.MapItemToModel();
+
+            foreach (var itemId in itemIds)
+            {
+                var item = itemModels.FirstOrDefault(f => f.Id.Equals(itemId));
+                if (item == null)
+                {
+                    var itemToDelete = await _itemDbSet.FirstOrDefaultAsync(f => f.Id.Equals(itemId));
+                    EntityExtension.FlagForDelete(itemToDelete, _identityService.Username, _userAgent);
+                    _itemDbSet.Update(itemToDelete);
+                }
+                else
+                {
+                    var itemModelToUpdate = itemModelsToUpdate.FirstOrDefault(f => f.Id == itemId);
+                    item.UpdateCOAId(itemModelToUpdate.COAId);
+                    item.UpdateDebit(itemModelToUpdate.Debit);
+                    item.UpdateRemark(itemModelToUpdate.Remark);
+                    EntityExtension.FlagForUpdate(item, _identityService.Username, _userAgent);
+                    _itemDbSet.Update(item);
+                }
+            }
+
+            foreach (var item in itemModelsToUpdate)
+            {
+                if (item.Id <= 0)
+                {
+                    EntityExtension.FlagForCreate(item, _identityService.Username, _userAgent);
+                    _itemDbSet.Add(item);
+                }
+            }
+
+            return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<OthersExpenditureProofDocumentViewModel> GetSingleByIdAsync(int id)

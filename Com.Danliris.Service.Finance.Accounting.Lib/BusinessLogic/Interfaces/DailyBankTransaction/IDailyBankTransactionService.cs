@@ -1,4 +1,4 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseInterface;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
