@@ -191,7 +191,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return await _DbContext.SaveChangesAsync();
         }
 
-        public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
+        public MemoryStream GetExcel(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             var Query = GetQuery(bankId, month, year, clientTimeZoneOffset);
             string title = "Laporan Mutasi Bank Harian",
