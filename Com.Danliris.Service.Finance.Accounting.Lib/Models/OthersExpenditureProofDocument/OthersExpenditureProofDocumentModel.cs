@@ -1,3 +1,4 @@
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
 using Com.Moonlay.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -17,5 +18,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditurePr
         public bool IsUpdated { get; set; }
         [MaxLength(32)]
         public string DocumentNo { get; set; }
+        public bool IsPosted { get; set; }
+
+        public void Update(OthersExpenditureProofDocumentCreateUpdateViewModel data)
+        {
+            AccountBankId = data.AccountBankId.GetValueOrDefault();
+            Date = data.Date.GetValueOrDefault();
+            Type = data.Type;
+            CekBgNo = data.CekBgNo;
+            Remark = data.Remark;
+            IsUpdated = true;
+        }
     }
 }

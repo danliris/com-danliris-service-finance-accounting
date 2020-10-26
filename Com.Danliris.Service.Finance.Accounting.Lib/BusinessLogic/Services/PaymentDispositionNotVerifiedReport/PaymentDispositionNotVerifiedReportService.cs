@@ -107,11 +107,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             result.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Alasan", DataType = typeof(String) });
 
+            int index = 0;
             if (Query.ToArray().Count() == 0)
-                result.Rows.Add("", "", "", "", "", "", 0, "", ""); // to allow column name to be generated properly for empty data as template
+            {
+                result.Rows.Add("", "", "", "", "", "", 0.ToString("#,##0.#0"), "", ""); // to allow column name to be generated properly for empty data as template
+                index++;
+            }
             else
             {
-                int index = 0;
                 foreach (var item in Query)
                 {
                     index++;
@@ -124,7 +127,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                 }
             }
 
-            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Territory") }, title, _dateFrom, _dateTo, true);
+            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Territory") },
+                new List<KeyValuePair<string, int>>() { new KeyValuePair<string, int>("Territory", index) }, title, _dateFrom, _dateTo, true);
         }
     }
 }

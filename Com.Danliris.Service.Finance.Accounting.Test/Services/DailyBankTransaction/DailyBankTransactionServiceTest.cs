@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(new HttpClientTestService());
+                .Returns(new DailyBankTransactionIHttpService());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -387,7 +387,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         public async Task Should_Success_Update_Data()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataOut();
+            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataNotPosted();
             var newModel = await service.ReadByIdAsync(model.Id);
             var Response = await service.UpdateAsync(newModel.Id, newModel);
             Assert.NotEqual(0, Response);
@@ -397,7 +397,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         public async Task Should_Success_Delete_Data()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataIn();
+            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataNotPosted();
             var newModel = await service.ReadByIdAsync(model.Id);
 
             var Response = await service.DeleteAsync(newModel.Id);
@@ -489,12 +489,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = _dataUtil(service).GetNewData();
             model.Status = null;
+            model.IsPosted = true;
             model.SourceType = "Pendanaan";
             //var Response = await service.CreateInOutTransactionAsync(model);
             await Assert.ThrowsAnyAsync<Exception>(() => service.CreateInOutTransactionAsync(model));
         }
-        
-        
 
         [Fact]
         public async Task Should_Success_ReportDailyBalance_Data()
@@ -505,7 +504,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             model.SourceType = "Pendanaan";
             await service.CreateInOutTransactionAsync(model);
 
-            var data = service.GetDailyBalanceReport(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now);
+            var data = service.GetDailyBalanceReport(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now, "G");
             Assert.NotNull(data);
         }
 
@@ -518,7 +517,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             model.SourceType = "Pendanaan";
             await service.CreateInOutTransactionAsync(model);
 
-            var data = service.GenerateExcelDailyBalance(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), 0);
+            var data = service.GenerateExcelDailyBalance(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), "G", 1);
             Assert.NotNull(data);
         }
 
@@ -527,7 +526,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             
-            var result = service.GenerateExcelDailyBalance(1, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), 0);
+            var result = service.GenerateExcelDailyBalance(1, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), "G", 1);
             Assert.NotNull(result);
         }
 
