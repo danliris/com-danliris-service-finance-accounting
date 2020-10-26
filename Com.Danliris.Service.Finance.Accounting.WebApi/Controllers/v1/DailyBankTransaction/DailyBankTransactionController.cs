@@ -93,7 +93,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
                 byte[] xlsInBytes;
                 int clientTimeZoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
 
-                var xls = Service.GetExcel(bankId, month, year, clientTimeZoneOffset);
+                var xls = Service.GenerateExcel(bankId, month, year, clientTimeZoneOffset);
 
                 string filename = String.Format("Mutasi Bank Harian - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
 
