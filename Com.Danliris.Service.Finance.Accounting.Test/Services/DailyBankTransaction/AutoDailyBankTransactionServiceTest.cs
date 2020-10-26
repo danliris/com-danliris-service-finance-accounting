@@ -137,6 +137,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             throw new NotImplementedException();
         }
+        public List<DailyBankTransactionModel> GeneratePdf(int bankId, int month, int year, int clientTimeZoneOffset)
+        {
+            throw new NotImplementedException();
+        }
+
+        public double GetBeforeBalance(int bankId, int month, int year, int clientTimeZoneOffset)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetDataAccountBank(int bankId)
+        {
+            throw new NotImplementedException();
+        }
 
         public MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, string divisionName, int clientTimeZoneOffset)
         {
