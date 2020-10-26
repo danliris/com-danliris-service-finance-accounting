@@ -31,10 +31,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             SetReportTable(document, data, beforeBalance, clientTimeZoneOffset);
 
-            //SetCategoryTable(document, data, clientTimeZoneOffset);
-
-            //SetCurrencyTable(document, data, clientTimeZoneOffset);
-
             //SetFooter(document);
 
             document.Close();
@@ -56,7 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             {
                 Border = Rectangle.NO_BORDER,
                 HorizontalAlignment = Element.ALIGN_LEFT,
-                VerticalAlignment = Element.ALIGN_CENTER
+                VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
             cell.Phrase = new Phrase("PT. DAN LIRIS", _normalBoldFont);
@@ -82,7 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             var cell = new PdfPCell()
             {
                 HorizontalAlignment = Element.ALIGN_CENTER,
-                VerticalAlignment = Element.ALIGN_CENTER
+                VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
             cell.Phrase = new Phrase("Tanggal", _smallBoldFont);
@@ -119,11 +115,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             {
                 WidthPercentage = 100
             };
+            table.SetWidths(new float[] { 10f, 15f, 10f, 10f, 6f, 15f, 15f, 15f, 15f });
 
+            /*
             var widths = new List<int>();
             for (var i = 0; i < 9; i++)
                 widths.Add(1);
             table.SetWidths(widths.ToArray());
+            */
 
             SetReportTableHeader(table);
 
@@ -180,19 +179,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             document.Add(table);
         }
 
-        private static void SetCategoryTable(Document document, List<DailyBankTransactionModel> data, int clientTimeZoneOffset)
-        {
-
-        }
-
-        private static void SetCurrencyTable(Document document, List<DailyBankTransactionModel> data, int clientTimeZoneOffset)
-        {
-
-        }
-
+        /*
         private static void SetFooter(Document document)
         {
 
         }
+        */
     }
 }

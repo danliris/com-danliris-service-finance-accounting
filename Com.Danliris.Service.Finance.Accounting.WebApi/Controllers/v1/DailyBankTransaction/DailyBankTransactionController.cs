@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -125,9 +126,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
                 // DailyBankTransactionPDFTemplate PdfTemplate = new DailyBankTransactionPDFTemplate();
                 // MemoryStream stream = PdfTemplate.GeneratePdfTemplate(data, clientTimeZoneOffset);
                 MemoryStream stream = DailyBankTransactionPDFTemplate.GeneratePdfTemplate(data, month, year, beforeBalance, dataAccountBank, clientTimeZoneOffset);
+                string filename = string.Format("Mutasi Bank Harian - {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
                 return new FileStreamResult(stream, "application/pdf")
                 {
-                    FileDownloadName = $"Mutasi Bank Harian - {month}{year}.pdf"
+                    FileDownloadName = string.Format(filename)
                 };
             }
             catch (Exception e)
