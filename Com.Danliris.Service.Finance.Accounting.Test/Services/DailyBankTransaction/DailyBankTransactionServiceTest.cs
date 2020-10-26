@@ -571,5 +571,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             vm.SourceType = "Pendanaan";
             Assert.True(vm.Validate(null).Count() > 0);
         }
+
+        [Fact]
+        public async Task Should_Success_GeneratePdf()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var response = service.GeneratePdf(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+            Assert.NotEmpty(response);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetBeforeBalance()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var response = service.GetBeforeBalance(data.AccountBankId, data.Date.Month, data.Date.Year, 7);
+         
+            //Assert.NotEqual(0,response);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetDataAccountBank()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var response = service.GetDataAccountBank(data.AccountBankId);
+            Assert.NotEmpty( response);
+        }
     }
 }
