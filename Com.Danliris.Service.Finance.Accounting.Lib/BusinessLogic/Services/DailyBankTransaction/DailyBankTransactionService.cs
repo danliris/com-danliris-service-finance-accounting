@@ -190,16 +190,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             //}
         }
 
-        private BankTransactionMonthlyBalanceModel GetPreviousMonthBalance(int month, int year)
+        private BankTransactionMonthlyBalanceModel GetPreviousMonthBalance(int month, int year, int bankId, DateTimeOffset date)
         {
-            if (month == 1)
-            {
-                return _DbMonthlyBalanceSet.Where(w => w.Month.Equals(12) && w.Year.Equals(year - 1)).FirstOrDefault();
-            }
+            var query = _DbMonthlyBalanceSet.Where(entity => entity.AccountBankId == bankId);
+
+            var sameYearQuery = query.Where(entity => entity.Year == date.Year);
+            if (sameYearQuery.Count() > 0)
+                return sameYearQuery.Where(entity => entity.Month < month).OrderByDescending(entity => entity.Month).FirstOrDefault();
             else
-            {
-                return _DbMonthlyBalanceSet.Where(w => w.Month.Equals(month - 1) && w.Year.Equals(year)).FirstOrDefault();
-            }
+                return query.Where(entity => entity.Year < year).OrderByDescending(entity => entity.Year).ThenByDescending(entity => entity.Month).FirstOrDefault();
+
+            //if (month == 1)
+            //{
+            //    return _DbMonthlyBalanceSet.Where(w => w.Month.Equals(12) && w.Year.Equals(year - 1)).FirstOrDefault();
+            //}
+            //else
+            //{
+            //    return _DbMonthlyBalanceSet.Where(w => w.Month.Equals(month - 1) && w.Year.Equals(year)).FirstOrDefault();
+            //}
+
+            //return _DbMonthlyBalanceSet.Where(entity => entity.AccountBankId == bankId && entity.Year <= date.Year && entity.Month < date.Month).OrderByDescending(entity => entity.Year).ThenByDescending(entity => entity.Month).FirstOrDefault();
+
+            //try
+            //{
+            //    var result = _DbMonthlyBalanceSet.Where(entity => entity.AccountBankId == bankId).OrderByDescending(entity => entity.Year).ThenByDescending(entity => entity.Month).FirstOrDefault();
+            //    return result;
+            //}
+            //catch (Exception e)
+            //{
+            //    throw e;
+            //}
         }
 
         public async Task<int> DeleteAsync(int id)
@@ -246,6 +266,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 //var previous = new DailyBankTransactionModel();
                 foreach (var item in Query)
                 {
+                    var debit = item.Status.ToUpper().Equals("IN") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
+                    var kredit = item.Status.ToUpper().Equals("OUT") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
                     var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
 
                     result.Rows.Add(item.Date.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
@@ -328,6 +350,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         private BankTransactionMonthlyBalanceModel GetBalanceMonthAndYear(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             return _DbMonthlyBalanceSet.Where(w => w.AccountBankId.Equals(bankId) && w.Month.Equals(month) && w.Year.Equals(year)).FirstOrDefault();
+        }
+        
+        private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        {
+            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={date}";
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+            return result.data;
         }
 
         private IQueryable<DailyBankTransactionModel> GetQuery(int bankId, int month, int year, int clientTimeZoneOffset)
