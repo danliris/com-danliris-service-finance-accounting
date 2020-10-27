@@ -461,6 +461,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                              BeforeNominal = transaction.BeforeNominal,
                              AfterNominal = transaction.AfterNominal,
                              Nominal = transaction.Nominal,
+                             BeforeNominalValas = transaction.BeforeNominalValas,
+                             AfterNominalValas = transaction.AfterNominalValas,
+                             NominalValas = transaction.NominalValas,
                              Status = transaction.Status,
                          });
 
