@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
@@ -9,7 +9,6 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransactio
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
-using Com.Moonlay.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
@@ -87,10 +86,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var data = await _dataUtil(service).GetTestDataIn();
             var Response = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
             Assert.NotNull(Response);
-
-            data.AccountBankId = 2;
-            var Response2 = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
-            Assert.NotNull(Response2);
         }
 
         [Fact]
@@ -578,87 +573,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async Task Should_Success_IsPosted_Transaction()
+        public async Task Should_Success_GeneratePdf()
         {
-            var dbContext = _dbContext(GetCurrentMethod());
-            var service = new DailyBankTransactionService(GetServiceProvider().Object, dbContext);
-            var model = _dataUtil(service).GetNewData();
-
-            var monthlyBalance = new List<BankTransactionMonthlyBalanceModel>()
-            {
-                new BankTransactionMonthlyBalanceModel()
-                {
-                    Month = 10,
-                    Year = 2019,
-                    AccountBankId = model.AccountBankId
-                },
-                new BankTransactionMonthlyBalanceModel()
-                {
-                    Month = 8,
-                    Year = 2019,
-                    AccountBankId = model.AccountBankId
-                },
-                new BankTransactionMonthlyBalanceModel()
-                {
-                    Month = 12,
-                    Year = 2019,
-                    AccountBankId = model.AccountBankId
-                }
-            };
-
-            foreach (var datum in monthlyBalance)
-            {
-                EntityExtension.FlagForCreate(datum, "Test", "Test");
-            }
-
-            dbContext.BankTransactionMonthlyBalances.AddRange(monthlyBalance);
-            dbContext.SaveChanges();
-
-            model.IsPosted = true;
-            var response = await service.CreateAsync(model);
-            Assert.NotEqual(0, response);
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var response = service.GeneratePdf(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+            Assert.NotEmpty(response);
         }
 
         [Fact]
-        public async Task Should_Success_IsPosted_Transaction_SameYear()
+        public async Task Should_Success_GetBeforeBalance()
         {
-            var dbContext = _dbContext(GetCurrentMethod());
-            var service = new DailyBankTransactionService(GetServiceProvider().Object, dbContext);
-            var model = _dataUtil(service).GetNewData();
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var response = service.GetBeforeBalance(data.AccountBankId, data.Date.Month, data.Date.Year, 7);
+         
+            //Assert.NotEqual(0,response);
+        }
 
-            var monthlyBalance = new List<BankTransactionMonthlyBalanceModel>()
-            {
-                new BankTransactionMonthlyBalanceModel()
-                {
-                    Month = 10,
-                    Year = 2019,
-                    AccountBankId = model.AccountBankId
-                },
-                new BankTransactionMonthlyBalanceModel()
-                {
-                    Month = 8,
-                    Year = 2020,
-                    AccountBankId = model.AccountBankId
-                },
-                new BankTransactionMonthlyBalanceModel()
-                {
-                    Month = 12,
-                    Year = 2020,
-                    AccountBankId = model.AccountBankId
-                }
-            };
-
-            foreach (var datum in monthlyBalance)
-            {
-                EntityExtension.FlagForCreate(datum, "Test", "Test");
-            }
-
-            dbContext.BankTransactionMonthlyBalances.AddRange(monthlyBalance);
-            dbContext.SaveChanges();
-
-            model.IsPosted = true;
-            var response = await service.CreateAsync(model);
-            Assert.NotEqual(0, response);
+        [Fact]
+        public async Task Should_Success_GetDataAccountBank()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var response = service.GetDataAccountBank(data.AccountBankId);
+            Assert.NotEmpty( response);
         }
     }
 }
