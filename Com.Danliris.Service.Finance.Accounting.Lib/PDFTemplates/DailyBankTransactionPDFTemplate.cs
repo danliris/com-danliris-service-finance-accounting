@@ -96,9 +96,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cell.Phrase = new Phrase("Currency", _smallBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("Before", _smallBoldFont);
-            table.AddCell(cell);
-
             cell.Phrase = new Phrase("Debit", _smallBoldFont);
             table.AddCell(cell);
 
@@ -111,11 +108,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
         private static void SetReportTable(Document document, List<DailyBankTransactionModel> data, double beforeBalance, int clientTimeZoneOffset)
         {
-            var table = new PdfPTable(9)
+            var table = new PdfPTable(8)
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 10f, 15f, 10f, 10f, 6f, 15f, 15f, 15f, 15f });
+            table.SetWidths(new float[] { 10f, 15f, 10f, 10f, 6f, 15f, 15f, 15f });
 
             /*
             var widths = new List<int>();
@@ -162,9 +159,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 cell.Phrase = new Phrase(item.AccountBankCurrencyCode, _smallerFont);
                 table.AddCell(cell);
-
-                cellAlignRight.Phrase = new Phrase(beforeBalance.ToString("#,##0.#0"), _smallerFont);
-                table.AddCell(cellAlignRight);
 
                 cellAlignRight.Phrase = new Phrase(item.Status.ToUpper().Equals("IN") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0"), _smallerFont);
                 table.AddCell(cellAlignRight);
