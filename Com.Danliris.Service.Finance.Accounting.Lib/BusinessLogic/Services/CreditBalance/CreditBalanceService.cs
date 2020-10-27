@@ -45,6 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 previousYear = year - 1;
             }
 
+            var lastDayOfMonth = new DateTime(year, month, DateTime.DaysInMonth(year, month), 23, 59, 59);
             var firstDayOfMonth = new DateTime(year, month, 1);
 
             if (isForeignCurrency)
@@ -54,7 +55,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             if (!isImport && !isForeignCurrency)
                 query = query.Where(entity => entity.CurrencyCode == "IDR");
 
-            query = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
+            query = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset) <= lastDayOfMonth);
             if (!string.IsNullOrEmpty(suplierName))
                 query = query.Where(x => x.SupplierName == suplierName);
 
