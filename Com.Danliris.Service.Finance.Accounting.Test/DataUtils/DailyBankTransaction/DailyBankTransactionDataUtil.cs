@@ -51,7 +51,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 DestinationBankCurrencySymbol = "CurrencySymbol",
                 DestinationBankId = 1,
                 DestinationBankName = "BankName",
-                IsPosted = true            };
+                IsPosted = true ,
+                AfterNominalValas=1,
+                BeforeNominalValas=1,
+                TransactionNominal=1,
+                NominalValas=1,
+                Receiver= "Receiver",
+                
+
+            };
 
             return TestData;
         }

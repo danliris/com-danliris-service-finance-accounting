@@ -161,6 +161,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             return CreateExcel(isImport, month, year, new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Saldo Hutang Lokal") }, true);
         }
 
+
+        public List<CreditBalanceViewModel> GeneratePdf(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency)
+        {
+            var data = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency).ToList();
+
+            return data;
+        }
+
         public ReadResponse<CreditBalanceViewModel> GetReport(bool isImport, int page, int size, string suplierName, int month, int year, int offSet, bool isForeignCurrency)
         {
             var queries = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency);
