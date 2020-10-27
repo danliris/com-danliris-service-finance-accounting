@@ -104,7 +104,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             else
             {
                 var NextMonthBalance = GetNextMonthBalance(Month, Year, model.AccountBankId, model.Date);
-
                 var SumInByMonth = GetSumInByMonth(Month, Year, BankId);
                 var SumOutByMonth = GetSumOutByMonth(Month, Year, BankId);
                 var SumInByMonthValas = GetSumInByMonth(Month, Year, BankId, isValas);
@@ -130,7 +129,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         {
             var PreviousMonthBalance = GetPreviousMonthBalance(month, year, model.AccountBankId, date);
             var NextMonthBalance = GetNextMonthBalance(month, year, model.AccountBankId, date);
-
             var NewMonthBalance = new BankTransactionMonthlyBalanceModel
             {
                 Month = month,
@@ -172,8 +170,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 return _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.AccountBankId.Equals(bankId) && w.Status.Equals("IN")).Sum(s => s.Nominal);
         }
 
-        private BankTransactionMonthlyBalanceModel GetNextMonthBalance(int month, int year, int accountBankId, DateTimeOffset date)
-        
+        private BankTransactionMonthlyBalanceModel GetNextMonthBalance(int month, int year, int accountBankId, DateTimeOffset date)        
         {
             var query = _DbMonthlyBalanceSet.Where(entity => entity.AccountBankId == accountBankId);
 
