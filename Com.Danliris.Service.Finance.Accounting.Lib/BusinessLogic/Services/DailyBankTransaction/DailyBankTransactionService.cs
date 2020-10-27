@@ -286,6 +286,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         item.ReferenceNo,
                         item.ReferenceType,
                         item.AccountBankCurrencyCode,
+                        beforeBalance.ToString("#,##0.#0"),
                         debit,
                         kredit,
                         afterBalance.ToString("#,##0.#0")
