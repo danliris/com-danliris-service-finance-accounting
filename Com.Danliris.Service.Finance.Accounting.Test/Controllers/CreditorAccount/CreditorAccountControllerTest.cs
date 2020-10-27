@@ -591,6 +591,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
 
             mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(CreditorAccountViewModels);
+            mocks.Service.Setup(f => f.GetFinalBalance(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(0);
 
             var response =  GetController(mocks).GetPdf("",1,2020);
             Assert.NotNull(response);
@@ -603,6 +604,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
 
             mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GetFinalBalance(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
 
             var response = GetController(mocks).GetPdf("", 1, 2020);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));

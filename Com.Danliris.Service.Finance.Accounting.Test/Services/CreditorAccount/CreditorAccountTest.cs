@@ -447,6 +447,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
+        public async Task Should_Success_GetFinalBalance()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
+            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+
+            data.SupplierCode = unitData.SupplierCode;
+            data.SupplierName = unitData.SupplierName;
+            data.InvoiceNo = unitData.InvoiceNo;
+            data.Mutation = unitData.DPP + unitData.PPN;
+
+            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
+            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+
+
+            var reportResponse = service.GetFinalBalance(data.SupplierName, data.Date.Month, data.Date.Year, 7);
+
+            Assert.True(0 == reportResponse);
+        }
+
+        [Fact]
         public void Should_Success_Get_Excel_Empty()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
