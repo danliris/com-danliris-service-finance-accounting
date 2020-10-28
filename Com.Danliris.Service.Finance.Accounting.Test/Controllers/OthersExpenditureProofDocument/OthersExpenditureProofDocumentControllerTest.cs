@@ -357,5 +357,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.OthersExpendi
             int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
+
+        [Fact]
+        public async Task Posting_Without_Exception()
+        {
+            var identityServiceMock = new Mock<IIdentityService>();
+            var validateServiceMock = new Mock<IValidateService>();
+            validateServiceMock.Setup(validateService => validateService.Validate(It.IsAny<OthersExpenditureProofDocumentCreateUpdateViewModel>())).Verifiable();
+            var serviceMock = new Mock<IOthersExpenditureProofDocumentService>();
+            serviceMock.Setup(service => service.Posting(It.IsAny<List<int>>())).ReturnsAsync(1);
+
+            var controller = GetController(identityServiceMock.Object, validateServiceMock.Object, serviceMock.Object);
+            var response = await controller.Posting(It.IsAny<List<int>>());
+
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+        [Fact]
+        public async Task Posting_WithException_ReturnInternalServerError()
+        {
+            var identityServiceMock = new Mock<IIdentityService>();
+            var validateServiceMock = new Mock<IValidateService>();
+            validateServiceMock.Setup(validateService => validateService.Validate(It.IsAny<OthersExpenditureProofDocumentCreateUpdateViewModel>())).Verifiable();
+            var serviceMock = new Mock<IOthersExpenditureProofDocumentService>();
+            serviceMock.Setup(service => service.Posting(It.IsAny<List<int>>())).ThrowsAsync(new Exception());
+
+            var controller = GetController(identityServiceMock.Object, validateServiceMock.Object, serviceMock.Object);
+            var response = await controller.Posting(It.IsAny<List<int>>());
+
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
     }
 }
