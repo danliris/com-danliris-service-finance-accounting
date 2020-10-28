@@ -13,7 +13,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xunit;
@@ -423,27 +422,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
 
             var reportResponse = service.GenerateExcel(data.SupplierName, data.Date.Month, data.Date.Year, 7);
             Assert.NotNull(reportResponse);
-        }
-
-        [Fact]
-        public async Task Should_Success_GeneratePdf()
-        {
-            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
-            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
-
-            data.SupplierCode = unitData.SupplierCode;
-            data.SupplierName = unitData.SupplierName;
-            data.InvoiceNo = unitData.InvoiceNo;
-            data.Mutation = unitData.DPP + unitData.PPN;
-
-            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
-            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
-
-
-            var reportResponse = service.GeneratePdf(data.SupplierName, data.Date.Month, data.Date.Year, 7);
-          
-            Assert.True(0 < reportResponse.Count());
         }
 
         [Fact]

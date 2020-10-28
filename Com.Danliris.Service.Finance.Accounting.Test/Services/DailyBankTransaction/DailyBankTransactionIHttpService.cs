@@ -19,38 +19,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         public Task<HttpResponseMessage> GetAsync(string url)
         {
-            if (url.Contains("bank-expenditure-notes/bank-document-no"))
-            {
-                var defaultresponse = new APIDefaultResponse<string>()
-                {
-                    data = "Test"
-                };
-                var result = new HttpResponseMessage()
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
-                };
-
-                return Task.FromResult(result);
-            }
-
-            if (url.Contains("master/account-banks/division"))
-            {
-                var defaultresponse = new APIDefaultResponse<List<AccountBank>>()
-                {
-                    data = new List<AccountBank>()
-                };
-                var result = new HttpResponseMessage()
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
-                };
-
-                return Task.FromResult(result);
-            }
-
             if (url.Contains("master/account-banks/"))
             {
-                string id = url.Substring(url.LastIndexOf('/') + 1);
-
                 var defaultresponse = new APIDefaultResponse<AccountBank>()
                 {
                     data = new AccountBank()
@@ -69,10 +39,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                         BankName = "BankName"
                     }
                 };
-
-                if (id == "2")
-                    defaultresponse.data.Currency.Code = "IDR";
-
                 var result = new HttpResponseMessage()
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
@@ -80,27 +46,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
                 return Task.FromResult(result);
             }
-
-            else if (url.Contains("master/garment-currencies/single-by-code-date"))
+            else
             {
-                var defaultresponse = new APIDefaultResponse<GarmentCurrency>()
-                {
-                    data = new GarmentCurrency()
-                    {
-                        Code = "USD",
-                        Rate = 15500.00
-                    }
-                };
-
-                var result = new HttpResponseMessage()
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
-                };
-
-                return Task.FromResult(result);
+                return Task.Run(() => new HttpResponseMessage());
             }
-
-            return Task.Run(() => new HttpResponseMessage());
         }
 
         public Task<HttpResponseMessage> PostAsync(string url, HttpContent content)

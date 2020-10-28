@@ -46,13 +46,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 SupplierCode = model.SupplierCode,
                 SupplierId = model.SupplierId,
                 SupplierName = model.SupplierName,
-                Status = "OUT",
-                IsPosted = true
+                Status = "OUT"
             };
-
-            if (model.CurrencyCode != "IDR")
-                dailyBankTransactionModel.NominalValas = nominal * (decimal)  model.CurrencyRate;
-
             return _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
 
@@ -118,13 +113,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 ReferenceNo = model.DocumentNo,
                 Remark = $"{model.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", total)}",
                 SourceType = model.Type,
-                Status = "OUT",
-                IsPosted = true
+                Status = "OUT"
             };
-
-            if (accountBank.Currency.Code != "IDR")
-                dailyBankTransactionModel.NominalValas = itemModels.Sum(item => item.Debit) * (decimal) model.CurrencyRate;
-
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
 

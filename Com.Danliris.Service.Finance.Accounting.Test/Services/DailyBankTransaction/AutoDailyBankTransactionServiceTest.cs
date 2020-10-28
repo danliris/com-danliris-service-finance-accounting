@@ -23,7 +23,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IDailyBankTransactionService))).Returns(new DailyBankTransactionServiceHelper());
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new AutoDailyBankTransactionIHttpService());
             var service = new AutoDailyBankTransactionService(serviceProviderMock.Object);
 
             var dispositionModel = new PaymentDispositionNoteModel()
@@ -42,11 +41,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             };
             var result = await service.AutoCreateFromPaymentDisposition(dispositionModel);
             Assert.NotEqual(0, result);
-
-            dispositionModel.CurrencyCode = "IDR";
-
-            var result2 = await service.AutoCreateFromPaymentDisposition(dispositionModel);
-            Assert.NotEqual(0, result2);
         }
 
         [Fact]
@@ -79,24 +73,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IDailyBankTransactionService))).Returns(new DailyBankTransactionServiceHelper());
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new AutoDailyBankTransactionIHttpService());
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
 
             var service = new AutoDailyBankTransactionService(serviceProviderMock.Object);
 
             var model = new OthersExpenditureProofDocumentModel();
-            var itemModels = new List<OthersExpenditureProofDocumentItemModel>() {
-                new OthersExpenditureProofDocumentItemModel()
-                {
-                    Debit = 1000
-                }
-            };
+            var itemModels = new List<OthersExpenditureProofDocumentItemModel>();
 
             var result = await service.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
             Assert.NotEqual(0, result);
-
-            model.AccountBankId = 2;
-            var result2 = await service.AutoCreateFromOthersExpenditureProofDocument(model, itemModels);
-            Assert.NotEqual(0, result2);
         }
 
         [Fact]
@@ -142,33 +127,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             return Task.FromResult(1);
         }
 
-        
-        public List<DailyBankTransactionModel> GeneratePdf(int bankId, int month, int year, int clientTimeZoneOffset)
+        public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             throw new NotImplementedException();
         }
 
-        public double GetBeforeBalance(int bankId, int month, int year, int clientTimeZoneOffset)
+        public MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, int clientTimeZoneOffset)
         {
             throw new NotImplementedException();
         }
 
-        public string GetDataAccountBank(int bankId)
+        public List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();
         }
 
-        public MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, string divisionName, int clientTimeZoneOffset)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<DailyBalanceCurrencyReportViewModel> GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate, string divisionName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<DailyBalanceReportViewModel> GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate, string divisionName)
+        public List<DailyBalanceReportViewModel> GetDailyBalanceReport(int bankId, DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();
         }
@@ -194,16 +168,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         public Task<int> UpdateAsync(int id, DailyBankTransactionModel model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public MemoryStream GenerateExcel(int bankId, int month, int year, int clientTimeZoneOffset)
-        {
-            throw new NotImplementedException();
-        }
-
-        public MemoryStream GetExcel(int bankId, int month, int year, int clientTimeZoneOffset)
         {
             throw new NotImplementedException();
         }

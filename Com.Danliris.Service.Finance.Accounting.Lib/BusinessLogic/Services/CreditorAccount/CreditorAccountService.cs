@@ -73,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
             DbSet.Update(model);
         }
-        
+
         public MemoryStream GenerateExcel(string suplierName, int month, int year, int offSet)
         {
             var data = GetReport(suplierName, month, year, offSet).Item1;
@@ -116,13 +116,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 index++;
             }
             return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, title, date, true, index);
-        }
-
-        public List<CreditorAccountViewModel> GeneratePdf(string suplierName, int month, int year, int offSet)
-        {
-            var data = GetReport(suplierName, month, year, offSet).Item1.ToList();
-
-            return data;
         }
 
         public (ReadResponse<CreditorAccountViewModel>, decimal) GetReport(int page, int size, string suplierName, int month, int year, int offSet)

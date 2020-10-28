@@ -47,7 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 SupplierCode = "SupplierCode",
                 SupplierName = "SupplierName",
                 Products = "- Product 1\n- Product 2",
-                Currency = "IDR",
+                Currency = "Currency",
                 CurrencyRate = 1,
                 SupplierIsImport = true,
                 DPPCurrency = 1,
@@ -71,15 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 Mutation = 5500,
                 InvoiceNo = "InvoiceNo",
                 SupplierCode = "SupplierCode",
-                SupplierName = "SupplierName",
-                CurrencyRate=1,
-                DPPCurrency=1,
-                MemoDPP=1,
-                MemoMutation=1,
-                MemoPPN=1,
-                PaymentDuration= "PaymentDuration",
-                
-
+                SupplierName = "SupplierName"
             };
         }
 

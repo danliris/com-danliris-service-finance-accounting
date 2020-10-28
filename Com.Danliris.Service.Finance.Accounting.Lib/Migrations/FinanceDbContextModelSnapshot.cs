@@ -236,8 +236,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<double>("InitialBalance");
 
-                    b.Property<double>("InitialBalanceValas");
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LastModifiedAgent")
@@ -253,8 +251,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<int>("Month");
 
                     b.Property<double>("RemainingBalance");
-
-                    b.Property<double>("RemainingBalanceValas");
 
                     b.Property<int>("Year");
 
@@ -296,11 +292,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("AfterNominal");
 
-                    b.Property<decimal>("AfterNominalValas");
-
                     b.Property<decimal>("BeforeNominal");
-
-                    b.Property<decimal>("BeforeNominalValas");
 
                     b.Property<string>("BuyerCode")
                         .HasMaxLength(25);
@@ -373,8 +365,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<DateTime>("LastModifiedUtc");
 
                     b.Property<decimal>("Nominal");
-
-                    b.Property<decimal>("NominalValas");
 
                     b.Property<string>("Receiver");
 
@@ -1045,8 +1035,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(255);
 
                     b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<double>("CurrencyRate");
 
                     b.Property<DateTimeOffset>("Date");
 

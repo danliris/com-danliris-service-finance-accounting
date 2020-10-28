@@ -555,57 +555,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             var response = await GetController(mocks).BankExpenditureNoteDeleteList("code");
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
-
-        List<CreditorAccountViewModel> CreditorAccountViewModels
-        {
-            get
-            {
-                return new List<CreditorAccountViewModel>()
-                {
-                    new CreditorAccountViewModel()
-                    {
-                        BankExpenditureNoteNo="BankExpenditureNoteNo",
-                        Currency="Currency",
-                        CurrencyRate=1,
-                        Date=DateTimeOffset.Now,
-                        DPP=1,
-                        DPPCurrency=1,
-                        FinalBalance=1,
-                        InvoiceNo="InvoiceNo",
-                        MemoNo="MemoNo",
-                        Mutation=1,
-                        PaymentDuration="PaymentDuration",
-                        PPN=1,
-                        Products="Products",
-                        Total=1,
-                        UnitReceiptNoteNo="UnitReceiptNoteNo"
-                    }
-                };
-            }
-        }
-
-        [Fact]
-        public void GetPdf_Return_Success()
-        {
-            var mocks = GetMocks();
-            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
-
-            mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(CreditorAccountViewModels);
-
-            var response =  GetController(mocks).GetPdf("",1,2020);
-            Assert.NotNull(response);
-        }
-
-        [Fact]
-        public void GetPdf_Return_InternalServerError()
-        {
-            var mocks = GetMocks();
-            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
-
-            mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
-
-            var response = GetController(mocks).GetPdf("", 1, 2020);
-            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
-        }
     }
 }

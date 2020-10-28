@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditBalance;
-using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
@@ -8,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBalance
 {
@@ -99,48 +96,5 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
-
-        [HttpGet("reports/downloads/pdf")]
-        public IActionResult GetPdf([FromQuery] bool isImport, [FromQuery] int month, [FromQuery] int year, [FromQuery] string supplierName = null, bool isForeignCurrency = false)
-        {
-            try
-            {
-                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
-                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
-
-                var data = Service.GeneratePdf(isImport, supplierName, month, year, offSet, isForeignCurrency);
-
-                // DailyBankTransactionPDFTemplate PdfTemplate = new DailyBankTransactionPDFTemplate();
-                // MemoryStream stream = PdfTemplate.GeneratePdfTemplate(data, clientTimeZoneOffset);
-                MemoryStream stream;
-                string fileName = "";
-                if (isImport)
-                {
-                    stream = ImportCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year);
-                    fileName = string.Format("Saldo Hutang Impor Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
-                } else if (isForeignCurrency)
-                {
-                    stream = LocalValasCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year);
-                    fileName = string.Format("Saldo Hutang Lokal Valas Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
-                } else
-                {
-                    stream = LocalCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year);
-                    fileName = string.Format("Saldo Hutang Lokal Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
-                }
-
-                return new FileStreamResult(stream, "application/pdf")
-                {
-                    FileDownloadName = string.Format(fileName)
-                };
-            }
-            catch (Exception e)
-            {
-                Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, Utilities.General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(Utilities.General.INTERNAL_ERROR_STATUS_CODE, Result);
-            }
-        }
-
     }
 }

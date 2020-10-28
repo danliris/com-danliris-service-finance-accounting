@@ -55,7 +55,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         public string BuyerName { get; set; }
         public DateTimeOffset Date { get; set; }
         public decimal Nominal { get; set; }
-        public decimal NominalValas { get; set; }
         [NotMapped]
         public decimal TransactionNominal { get; set; }
         [MaxLength(50)]
@@ -80,9 +79,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         public string Receiver { get; set; }
 
         public decimal AfterNominal { get; set; }
-        public decimal AfterNominalValas { get; set; }
         public decimal BeforeNominal { get; set; }
-        public decimal BeforeNominalValas { get; set; }
         public bool IsPosted { get; set; }
         // public decimal NominalOut { get; set; }
 

@@ -63,7 +63,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReportDailyBankBalance_Without_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetDailyBalanceReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>())).Returns(
+            mocks.Service.Setup(f => f.GetDailyBalanceReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(
                  new List<DailyBalanceReportViewModel>() { new DailyBalanceReportViewModel() { AccountNumber = "", Balance = 0, BankName = "", Credit = 0, CurrencyCode = "", Debit = 0 }
 
                     }
@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
 
             var controller = GetController(mocks);
-            IActionResult response = controller.GetDailyBalanceAccountBankReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>());
+            IActionResult response = controller.GetDailyBalanceAccountBankReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>());
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
@@ -79,7 +79,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReportDailyBankBalanceCurrency_Without_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetDailyBalanceCurrencyReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>())).Returns(
+            mocks.Service.Setup(f => f.GetDailyBalanceCurrencyReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(
                  new List<DailyBalanceCurrencyReportViewModel>() { new DailyBalanceCurrencyReportViewModel() {  Balance = 0, Credit = 0, CurrencyCode = "", Debit = 0 }
 
                     }
@@ -87,7 +87,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
 
             var controller = GetController(mocks);
-            IActionResult response = controller.GetDailyBalanceCurrencyReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>());
+            IActionResult response = controller.GetDailyBalanceCurrencyReport(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>());
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
@@ -107,11 +107,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReportDailyBankBalanceExcel_Without_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new MemoryStream());
+            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).Returns(new MemoryStream());
             //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
 
             var controller = GetController(mocks);
-            IActionResult response = controller.GetDailyBalanceReportXls(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>());
+            IActionResult response = controller.GetDailyBalanceReportXls(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>());
             Assert.NotNull(response);
         }
 
@@ -119,11 +119,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReportDailyBankBalanceExcel_With_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).Throws(new Exception());
             //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
 
             var controller = GetController(mocks);
-            IActionResult response = controller.GetDailyBalanceReportXls(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>());
+            IActionResult response = controller.GetDailyBalanceReportXls(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
@@ -131,7 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReportXls_Without_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new MemoryStream());
+            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).Returns(new MemoryStream());
             //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
 
             var controller = GetController(mocks);
@@ -143,7 +143,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReportXls_With_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).Throws(new Exception());
             //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
 
             var controller = GetController(mocks);
@@ -193,7 +193,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReportExcel_ReturnFile()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new MemoryStream());
+            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).Returns(new MemoryStream());
 
             var response = GetController(mocks).GetReportXls(1, 1, 2018);
             Assert.NotNull(response);
@@ -203,7 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReportExcel_ThrowException()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new MemoryStream());
+            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).Returns(new MemoryStream());
 
             var response = GetController(mocks).GetReportXls(1, 1, 2018);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
@@ -213,92 +213,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         public void GetReportExcelNull_ThrowException()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new MemoryStream());
+            mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).Returns(new MemoryStream());
 
             var response = GetController(mocks).GetReportXls(1, 8, 2030);
-            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
-        }
-
-        List<DailyBankTransactionModel> DailyBankTransactionModels
-        {
-            get
-            {
-                return new List<DailyBankTransactionModel>()
-                {
-                    new DailyBankTransactionModel()
-                    {
-                        AccountBankAccountName="AccountBankAccountName",
-                        AccountBankAccountNumber="AccountBankAccountNumber",
-                        AccountBankCode="AccountBankCode",
-                        AccountBankCurrencyCode="AccountBankCurrencyCode",
-                        AccountBankCurrencyId=1,
-                        AccountBankCurrencySymbol="AccountBankCurrencySymbol",
-                        AccountBankId=1,
-                        AccountBankName="AccountBankName",
-                        AfterNominal=1,
-                        AfterNominalValas=1,
-                        BeforeNominal=1,
-                        BeforeNominalValas=1,
-                        BuyerCode="BuyerCode",
-                        BuyerId=1,
-                        BuyerName="BuyerName",
-                        Code="Code",
-                        Date=DateTimeOffset.Now,
-                        DestinationBankAccountName="DestinationBankAccountName",
-                        DestinationBankAccountNumber="DestinationBankAccountNumber",
-                        DestinationBankCode="DestinationBankCode",
-                        DestinationBankCurrencyCode="DestinationBankCurrencyCode",
-                        DestinationBankCurrencyId=1,
-                        DestinationBankCurrencySymbol="DestinationBankCurrencySymbol",
-                        DestinationBankId=1,
-                        DestinationBankName="DestinationBankName",
-                        IsPosted=true,
-                        Nominal=1,
-                        NominalValas=1,
-                        Receiver="Receiver",
-                        ReferenceNo="ReferenceNo",
-                        ReferenceType="ReferenceType",
-                        Remark="Remark",
-                        SourceType="SourceType",
-                        Status="Status",
-                        SupplierCode="SupplierCode",
-                        SupplierId=1,
-                        SupplierName="SupplierName",
-                        TransactionNominal=1
-,                    }
-                };
-            }
-        }
-
-        [Fact]
-        public void GetReportPdf_Return_File()
-        {
-            //Arrange
-            var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(DailyBankTransactionModels);
-            mocks.Service.Setup(f => f.GetBeforeBalance(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(1);
-            mocks.Service.Setup(f => f.GetDataAccountBank(It.IsAny<int>())).Returns("any");
-
-            //Act
-            var response = GetController(mocks).GetReportPdf(1, 1, 2018);
-
-            //Assert
-            Assert.NotNull(response);
-        }
-
-        [Fact]
-        public void GetReportPdf_Return_()
-        {
-            //Arrange
-            var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(DailyBankTransactionModels);
-            mocks.Service.Setup(f => f.GetBeforeBalance(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(1);
-            mocks.Service.Setup(f => f.GetDataAccountBank(It.IsAny<int>())).Throws(new Exception());
-
-            //Act
-            var response = GetController(mocks).GetReportPdf(1, 1, 2018);
-
-            //Assert
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }

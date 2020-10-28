@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
-using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -10,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -90,32 +88,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
 
                 var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                 return file;
-            }
-            catch (Exception e)
-            {
-                Dictionary<string, object> Result =
-                  new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                  .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
-            }
-        }
-       
-        [HttpGet("reports/downloads/pdf")]
-        public IActionResult GetPdf([FromQuery] string supplierName, [FromQuery] int month, [FromQuery] int year)
-        {
-            try
-            {
-                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
-                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
-                var data = Service.GeneratePdf(supplierName, month, year, offSet);
-
-                MemoryStream stream = CreditorAccountPDFTemplate.GeneratePdfTemplate(data, supplierName, month, year, offSet);
-                string fileName = string.Format("Kartu Hutang Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
-
-                return new FileStreamResult(stream, "application/pdf")
-                {
-                    FileDownloadName = string.Format(fileName)
-                };
             }
             catch (Exception e)
             {

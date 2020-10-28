@@ -11,6 +11,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.C
     {
         ReadResponse<CreditBalanceViewModel> GetReport(bool isImport, int page, int size, string suplierName, int month, int year, int offSet, bool isForeignCurrency);
         MemoryStream GenerateExcel(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency);
-        List<CreditBalanceViewModel> GeneratePdf(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency);
     }
 }

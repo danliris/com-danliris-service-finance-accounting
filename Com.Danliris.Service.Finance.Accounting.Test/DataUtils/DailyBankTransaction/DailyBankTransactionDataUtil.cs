@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 BuyerName = "BuyerName",
                 Date = DateTimeOffset.UtcNow,
                 Nominal = 1000,
-                ReferenceNo = "",
+                ReferenceNo = "ReferenceNo",
                 ReferenceType = "ReferenceType",
                 Remark = "Remark",
                 SourceType = "Operasional",
@@ -51,15 +51,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 DestinationBankCurrencySymbol = "CurrencySymbol",
                 DestinationBankId = 1,
                 DestinationBankName = "BankName",
-                IsPosted = true ,
-                AfterNominalValas=1,
-                BeforeNominalValas=1,
-                TransactionNominal=1,
-                NominalValas=1,
-                Receiver= "Receiver",
-                
-
-            };
+                IsPosted = true            };
 
             return TestData;
         }
@@ -96,7 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 Code = "Code",
                 Date = DateTimeOffset.UtcNow,
                 Nominal = 1000,
-                ReferenceNo = "",
+                ReferenceNo = "ReferenceNo",
                 ReferenceType = "ReferenceType",
                 Remark = "Remark",
                 SourceType = "Operasional",
