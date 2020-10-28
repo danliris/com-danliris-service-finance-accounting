@@ -135,12 +135,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 if (isImport)
                 {
                     dt.Rows.Add("", "", "", "", "", "", "", "", "", "");
-                    index++;
                 }
                 else
                 {
                     dt.Rows.Add("", "", "", "", "", "");
-                    index++;
                 }
             }
             else
@@ -170,7 +168,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 }
             }
 
-            return CreateExcel(isImport, month, year, new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Saldo Hutang Lokal") }, true);
+            return CreateExcel(isImport, month, year, new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Saldo Hutang") }, true);
         }
 
 

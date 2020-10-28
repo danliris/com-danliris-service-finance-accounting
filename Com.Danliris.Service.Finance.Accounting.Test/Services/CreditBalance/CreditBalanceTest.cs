@@ -193,6 +193,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             Assert.NotNull(reportResponse);
         }
 
+        [Fact]
+        public void Should_Success_Get_Excel_Empty_Local()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var reportResponse = creditBalanceService.GenerateExcel(false, "", 1, 2020, 7, false);
+            Assert.NotNull(reportResponse);
+        }
+
 
         [Fact]
         public async Task Should_Success_GeneratePdf()
