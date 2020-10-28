@@ -26,7 +26,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public Task<int> AutoCreateFromPaymentDisposition(PaymentDispositionNoteModel model)
         {
-            var nominal = model.Items.Sum(x => (decimal) x.TotalPaid);
+            var nominal = model.Items.Sum(item => (decimal)item.TotalPaid * (decimal)model.CurrencyRate);
             var dailyBankTransactionModel = new DailyBankTransactionModel()
             {
                 AccountBankAccountName = model.BankAccountName,
@@ -50,8 +50,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 IsPosted = true
             };
 
-            if (model.CurrencyCode != "IDR")
-                dailyBankTransactionModel.NominalValas = nominal * (decimal)  model.CurrencyRate;
+            if (model.BankCurrencyCode != "IDR")
+            {
+                dailyBankTransactionModel.Nominal = model.Items.Sum(item => (decimal)item.TotalPaid);
+                dailyBankTransactionModel.NominalValas = nominal;
+            }
 
             return _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
