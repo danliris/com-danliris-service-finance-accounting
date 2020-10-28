@@ -34,7 +34,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
         public List<CreditBalanceViewModel> GetReport(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency)
         {
+            var firstDayOfMonth = new DateTime(year, month, 1);
+
             IQueryable<CreditorAccountModel> query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport).AsQueryable();
+            
+
             List<CreditBalanceViewModel> result = new List<CreditBalanceViewModel>();
             int previousMonth = month - 1;
             int previousYear = year;
@@ -45,7 +49,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 previousYear = year - 1;
             }
 
-            var firstDayOfMonth = new DateTime(year, month, 1);
 
             if (isForeignCurrency)
                 query = query.Where(entity => entity.CurrencyCode != "IDR");
@@ -54,15 +57,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             if (!isImport && !isForeignCurrency)
                 query = query.Where(entity => entity.CurrencyCode == "IDR");
 
-            query = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
+            var queryRemainingBalance = query;
             if (!string.IsNullOrEmpty(suplierName))
                 query = query.Where(x => x.SupplierName == suplierName);
+            else
+                queryRemainingBalance = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth);
 
+            query = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
+            
 
+            var data = query.ToList();
+            if (string.IsNullOrEmpty(suplierName))
+                data.AddRange(queryRemainingBalance.ToList());
 
-            foreach (var item in query.GroupBy(x => x.SupplierCode).ToList())
+            var grouppedData = data.GroupBy(x => new { x.SupplierCode, x.CurrencyCode }).ToList();
+            foreach (var item in grouppedData)
             {
-                var productsUnion = string.Join("\n", item.Select(x => x.Products).ToList());
+                var productsUnion = string.Join("\n", item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Select(x => x.Products).ToList());
                 var uniqueProducts = string.Join("\n", productsUnion.Split("\n").Distinct());
                 //var now = DateTimeOffset.Now;
 
@@ -70,16 +81,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     StartBalance = DbSet
                     .AsQueryable()
-                    .Where(x => x.SupplierCode == item.Key && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
-                    .ToList().Sum(x => x.FinalBalance),
+                    .Where(x => x.SupplierCode == item.Key.SupplierCode && x.CurrencyCode == item.Key.CurrencyCode && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
+                    .ToList().Sum(x => x.UnitReceiptMutation - x.BankExpenditureNoteMutation),
                     Products = uniqueProducts,
-                    Purchase = item.Sum(x => x.UnitReceiptMutation),
-                    Payment = item.Sum(x => x.BankExpenditureNoteMutation),
+                    Purchase = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.UnitReceiptMutation),
+                    Payment = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.BankExpenditureNoteMutation),
                     FinalBalance = item.Sum(x => x.FinalBalance),
                     SupplierName = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().SupplierName ?? "",
                     Currency = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().CurrencyCode ?? "",
                     CurrencyRate = item.FirstOrDefault() == null ? 1 : item.FirstOrDefault().CurrencyRate
                 };
+
                 creditBalance.FinalBalance = creditBalance.StartBalance + creditBalance.Purchase - creditBalance.Payment;
                 result.Add(creditBalance);
             }
@@ -123,12 +135,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 if (isImport)
                 {
                     dt.Rows.Add("", "", "", "", "", "", "", "", "", "");
-                    index++;
                 }
                 else
                 {
                     dt.Rows.Add("", "", "", "", "", "");
-                    index++;
                 }
             }
             else
@@ -158,7 +168,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 }
             }
 
-            return CreateExcel(isImport, month, year, new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Saldo Hutang Lokal") }, true);
+            return CreateExcel(isImport, month, year, new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Saldo Hutang") }, true);
+        }
+
+
+        public List<CreditBalanceViewModel> GeneratePdf(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency)
+        {
+            var data = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency).ToList();
+
+            return data;
         }
 
         public ReadResponse<CreditBalanceViewModel> GetReport(bool isImport, int page, int size, string suplierName, int month, int year, int offSet, bool isForeignCurrency)

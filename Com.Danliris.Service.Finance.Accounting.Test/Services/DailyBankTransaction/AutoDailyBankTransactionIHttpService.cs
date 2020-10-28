@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransaction
 {
-    public class DailyBankTransactionIHttpService : IHttpClientService
+    class AutoDailyBankTransactionIHttpService : IHttpClientService
     {
         public static string Token;
 
@@ -19,35 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
         public Task<HttpResponseMessage> GetAsync(string url)
         {
-            if (url.Contains("bank-expenditure-notes/bank-document-no"))
-            {
-                var defaultresponse = new APIDefaultResponse<string>()
-                {
-                    data = "Test"
-                };
-                var result = new HttpResponseMessage()
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
-                };
-
-                return Task.FromResult(result);
-            }
-
-            if (url.Contains("master/account-banks/division"))
-            {
-                var defaultresponse = new APIDefaultResponse<List<AccountBank>>()
-                {
-                    data = new List<AccountBank>()
-                };
-                var result = new HttpResponseMessage()
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
-                };
-
-                return Task.FromResult(result);
-            }
-
-            if (url.Contains("master/account-banks/"))
+            if(url.Contains("master/account-banks/"))
             {
                 string id = url.Substring(url.LastIndexOf('/') + 1);
 
@@ -55,18 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
                 {
                     data = new AccountBank()
                     {
-                        Id = 1,
-                        AccountCOA = "AccountCOA",
-                        AccountName = "AccountName",
                         Currency = new Currency()
-                        {
-                            Id = 1,
-                            Code = "Code",
-                            Symbol = "Symbol"
-                        },
-                        AccountNumber = "AccountNumber",
-                        BankCode = "BankCode",
-                        BankName = "BankName"
                     }
                 };
 

@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -12,6 +13,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -90,7 +93,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
                 byte[] xlsInBytes;
                 int clientTimeZoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
 
-                var xls = Service.GenerateExcel(bankId, month, year, clientTimeZoneOffset);
+                var xls = Service.GetExcel(bankId, month, year, clientTimeZoneOffset);
 
                 string filename = String.Format("Mutasi Bank Harian - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
 
@@ -98,6 +101,36 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
                 var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
                 return file;
 
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, Utilities.General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(Utilities.General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("mutation/report/pdf")]
+        public IActionResult GetReportPdf(int bankId, int month, int year)
+        {
+            try
+            {
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                int clientTimeZoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+                var data = Service.GeneratePdf(bankId, month, year, clientTimeZoneOffset);
+                var beforeBalance = Service.GetBeforeBalance(bankId, month, year, clientTimeZoneOffset);
+                var dataAccountBank = Service.GetDataAccountBank(bankId);
+
+                // DailyBankTransactionPDFTemplate PdfTemplate = new DailyBankTransactionPDFTemplate();
+                // MemoryStream stream = PdfTemplate.GeneratePdfTemplate(data, clientTimeZoneOffset);
+                MemoryStream stream = DailyBankTransactionPDFTemplate.GeneratePdfTemplate(data, month, year, beforeBalance, dataAccountBank, clientTimeZoneOffset);
+                string filename = string.Format("Mutasi Bank Harian - {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = string.Format(filename)
+                };
             }
             catch (Exception e)
             {
@@ -140,9 +173,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("daily-balance/report/accountbank")]
-        public IActionResult GetDailyBalanceAccountBankReport(int bankId, DateTime startDate, DateTime endDate)
+        public IActionResult GetDailyBalanceAccountBankReport(int bankId, DateTime startDate, DateTime endDate, string divisionName)
         {
-            var Result = Service.GetDailyBalanceReport(bankId, startDate, endDate);
+            var Result = Service.GetDailyBalanceReport(bankId, startDate, endDate, divisionName);
 
             return Ok(new
             {
@@ -154,9 +187,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("daily-balance/report/currency")]
-        public IActionResult GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate)
+        public IActionResult GetDailyBalanceCurrencyReport(int bankId, DateTime startDate, DateTime endDate, string divisionName)
         {
-            var Result = Service.GetDailyBalanceCurrencyReport(bankId, startDate, endDate);
+            var Result = Service.GetDailyBalanceCurrencyReport(bankId, startDate, endDate, divisionName);
 
             return Ok(new
             {
@@ -168,14 +201,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("daily-balance/report/download")]
-        public IActionResult GetDailyBalanceReportXls(int bankId, DateTime startDate, DateTime endDate)
+        public IActionResult GetDailyBalanceReportXls(int bankId, DateTime startDate, DateTime endDate, string divisionName)
         {
             try
             {
                 byte[] xlsInBytes;
                 int clientTimeZoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
 
-                var xls = Service.GenerateExcelDailyBalance(bankId, startDate, endDate, clientTimeZoneOffset);
+                var xls = Service.GenerateExcelDailyBalance(bankId, startDate, endDate, divisionName, clientTimeZoneOffset);
 
                 string filename = String.Format("Saldo Bank Harian - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
 

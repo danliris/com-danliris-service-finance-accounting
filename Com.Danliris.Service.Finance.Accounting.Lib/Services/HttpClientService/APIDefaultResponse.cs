@@ -1,3 +1,5 @@
+using System;
+
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService
 {
     public class APIDefaultResponse<T>
@@ -17,6 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService
         public string AccountNumber { get; set; }
         public string BankCode { get; set; }
         public string BankName { get; set; }
+        public string DivisionName { get; set; }
     }
 
     public class Currency
@@ -24,5 +27,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService
         public int Id { get; set; }
         public string Code { get; set; }
         public string Symbol { get; set; }
+    }
+
+    public class GarmentCurrency
+    {
+        public string UId { get; set; }
+        public string Code { get; set; }
+        public DateTime Date { get; set; }
+        public double? Rate { get; set; }
     }
 }
