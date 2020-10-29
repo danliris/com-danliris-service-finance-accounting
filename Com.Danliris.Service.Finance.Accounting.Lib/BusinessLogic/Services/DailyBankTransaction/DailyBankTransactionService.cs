@@ -136,11 +136,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Month = month,
                 Year = year,
                 InitialBalance = PreviousMonthBalance != null ? PreviousMonthBalance.RemainingBalance : 0,
-                InitialBalanceValas = PreviousMonthBalance != null ? PreviousMonthBalance.RemainingBalanceValas : 0,
                 RemainingBalance = PreviousMonthBalance != null ? PreviousMonthBalance.RemainingBalance + (double)nominal : (double)nominal,
-                RemainingBalanceValas = PreviousMonthBalance != null ? PreviousMonthBalance.RemainingBalanceValas + (double)nominalValas : (double)nominalValas,
                 AccountBankId = model.AccountBankId
             };
+
+            NewMonthBalance.InitialBalanceValas = NewMonthBalance.InitialBalance * (double)model.CurrencyRate;
+            NewMonthBalance.RemainingBalanceValas = NewMonthBalance.RemainingBalance * (double)model.CurrencyRate;
 
             EntityExtension.FlagForCreate(NewMonthBalance, _IdentityService.Username, _UserAgent);
             _DbMonthlyBalanceSet.Add(NewMonthBalance);
@@ -677,6 +678,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             inputModel.DestinationBankName = "";
             inputModel.Nominal = model.TransactionNominal;
             inputModel.NominalValas = model.NominalValas;
+            inputModel.CurrencyRate = model.CurrencyRate;
 
             model.Remark = FormatOutRemark(model);
             inputModel.Remark = FormatInRemark(inputModel, model);
