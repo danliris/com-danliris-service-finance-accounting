@@ -47,11 +47,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             var model = viewModel.MapToModel();
             model.DocumentNo = await GetDocumentNo("K", viewModel.AccountBankCode, _identityService.Username);
 
+            model.CurrencyRate = 1;
             var accountBank = await GetAccountBank(viewModel.AccountBankId.GetValueOrDefault());
             if (accountBank.Currency.Code != "IDR")
             {
-                var rate = await GetGarmentCurrency(accountBank.Currency.Code);
-                model.CurrencyRate = rate.Rate.GetValueOrDefault();
+                var garmentCurrency = await GetGarmentCurrency(accountBank.Currency.Code);
+                model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
             }
 
             EntityExtension.FlagForCreate(model, _identityService.Username, _userAgent);
