@@ -91,7 +91,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         private void UpdateRemainingBalance(DailyBankTransactionModel model)
         {
-            bool isValas = (model.AccountBankCurrencyCode != "IDR");
             var Month = model.Date.Month;
             var Year = model.Date.Year;
             var BankId = model.AccountBankId;
@@ -108,11 +107,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 var NextMonthBalance = GetNextMonthBalance(Month, Year, model.AccountBankId, model.Date);
                 var SumInByMonth = GetSumInByMonth(Month, Year, BankId);
                 var SumOutByMonth = GetSumOutByMonth(Month, Year, BankId);
-                var SumInByMonthValas = GetSumInByMonth(Month, Year, BankId, isValas);
-                var SumOutByMonthValas = GetSumOutByMonth(Month, Year, BankId, isValas);
 
                 ActualBalanceByMonth.RemainingBalance = ActualBalanceByMonth.InitialBalance + ((double)SumInByMonth + (double)Nominal - (double)SumOutByMonth);
-                ActualBalanceByMonth.RemainingBalanceValas = ActualBalanceByMonth.InitialBalanceValas + ((double)SumInByMonthValas + (double)NominalValas - (double)SumOutByMonthValas);
+                ActualBalanceByMonth.RemainingBalanceValas = ActualBalanceByMonth.RemainingBalance * (double)model.CurrencyRate;
 
                 if (NextMonthBalance != null)
                 {
@@ -151,7 +148,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 NextMonthBalance.InitialBalance = NewMonthBalance.RemainingBalance;
                 NextMonthBalance.InitialBalanceValas = NewMonthBalance.RemainingBalanceValas;
                 NextMonthBalance.RemainingBalance += (double)nominal;
-                NextMonthBalance.RemainingBalanceValas += (double)nominalValas;
+                NextMonthBalance.RemainingBalanceValas += NextMonthBalance.RemainingBalance * (double)model.CurrencyRate;
                 EntityExtension.FlagForUpdate(NextMonthBalance, _IdentityService.Username, _UserAgent);
                 _DbMonthlyBalanceSet.Update(NextMonthBalance);
             }
@@ -159,21 +156,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         private decimal GetSumOutByMonth(int month, int year, int bankId, bool isValas = false)
         {
-            if (isValas)
-                return _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.AccountBankId.Equals(bankId) && w.Status.Equals("OUT")).Sum(s => s.NominalValas);
-            else
-                return _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.AccountBankId.Equals(bankId) && w.Status.Equals("OUT")).Sum(s => s.Nominal);
+            return _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.AccountBankId.Equals(bankId) && w.Status.Equals("OUT")).Sum(s => s.Nominal);
         }
 
         private decimal GetSumInByMonth(int month, int year, int bankId, bool isValas = false)
         {
-            if (isValas)
-                return _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.AccountBankId.Equals(bankId) && w.Status.Equals("IN")).Sum(s => s.NominalValas);
-            else
-                return _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.AccountBankId.Equals(bankId) && w.Status.Equals("IN")).Sum(s => s.Nominal);
+            return _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.AccountBankId.Equals(bankId) && w.Status.Equals("IN")).Sum(s => s.Nominal);
         }
 
-        private BankTransactionMonthlyBalanceModel GetNextMonthBalance(int month, int year, int accountBankId, DateTimeOffset date)        
+        private BankTransactionMonthlyBalanceModel GetNextMonthBalance(int month, int year, int accountBankId, DateTimeOffset date)
         {
             var query = _DbMonthlyBalanceSet.Where(entity => entity.AccountBankId == accountBankId);
 
@@ -423,7 +414,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         {
             return _DbMonthlyBalanceSet.Where(w => w.AccountBankId.Equals(bankId) && w.Month.Equals(month) && w.Year.Equals(year)).FirstOrDefault();
         }
-        
+
         private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
         {
             string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
@@ -463,10 +454,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                              BeforeNominal = transaction.BeforeNominal,
                              AfterNominal = transaction.AfterNominal,
                              Nominal = transaction.Nominal,
-                             BeforeNominalValas = transaction.BeforeNominalValas,
-                             AfterNominalValas = transaction.AfterNominalValas,
+                             BeforeNominalValas = transaction.BeforeNominal * transaction.CurrencyRate,
+                             AfterNominalValas = transaction.AfterNominal * transaction.CurrencyRate,
                              NominalValas = transaction.NominalValas,
                              Status = transaction.Status,
+                             CurrencyRate = transaction.CurrencyRate
                          });
 
             return Query;
@@ -482,18 +474,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             {
                 var BalanceByMonthAndYear = GetBalanceMonthAndYear(bankId, month, year, clientTimeZoneOffset);
                 var beforeBalance = BalanceByMonthAndYear.InitialBalance;
-                var beforeBalanceValas = BalanceByMonthAndYear.InitialBalanceValas;
 
                 foreach (var item in Result)
                 {
                     var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
-                    var afterBalanceValas = beforeBalanceValas + (item.Status.Equals("IN") ? (double)item.NominalValas : (double)item.NominalValas * -1);
                     item.BeforeNominal = (decimal)beforeBalance;
-                    item.BeforeNominalValas = (decimal)beforeBalanceValas;
+                    item.BeforeNominalValas = (decimal)beforeBalance * item.CurrencyRate;
                     item.AfterNominal = (decimal)afterBalance;
-                    item.AfterNominalValas = (decimal)afterBalanceValas;
+                    item.AfterNominalValas = (decimal)afterBalance * item.CurrencyRate;
                     beforeBalance = afterBalance;
-                    beforeBalanceValas = afterBalanceValas;
                 }
             }
 
@@ -895,8 +884,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public string GetDataAccountBank(int bankId)
         {
-           var dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
-           string bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
+            var dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
+            string bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
 
             return bank;
         }
