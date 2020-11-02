@@ -20,18 +20,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
         private static readonly Font _smallBoldFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 8);
         private static readonly Font _smallerBoldFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 7);
 
-        public static MemoryStream GeneratePdfTemplate(List<CreditorAccountViewModel> data, string suplierName, int month, int year, int offSet)
+        public static MemoryStream GeneratePdfTemplate(List<CreditorAccountViewModel> data, string suplierName, int month, int year, int offSet, decimal? finalBalance)
         {
             var document = new Document(PageSize.A4.Rotate(), 25, 25, 25, 25);
             var stream = new MemoryStream();
             PdfWriter.GetInstance(document, stream);
             document.Open();
 
-            SetHeader(document, suplierName, month, year, offSet);
+            SetHeader(document, suplierName, month, year);
 
-            SetReportTable(document, data, suplierName, month, year, offSet);
+            SetReportTable(document, data, suplierName, month, year, offSet, finalBalance);
 
-            /*SetFooter(document, data);*/
+            SetFooter(document, data, suplierName, month, year, offSet, finalBalance);
 
             document.Close();
             byte[] byteInfo = stream.ToArray();
@@ -41,7 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             return stream;
         }
 
-        private static void SetHeader(Document document, string suplierName,  int month, int year, int offSet)
+        private static void SetHeader(Document document, string suplierName,  int month, int year)
         {
             var table = new PdfPTable(1)
             {
@@ -82,131 +82,50 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             };
 
             cell.Rowspan = 2;
-            cell.Phrase = new Phrase("TANGGAL", _normalBoldFont);
+            cell.Phrase = new Phrase("TANGGAL", _smallerBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("NAMA BARANG", _normalBoldFont);
+            cell.Phrase = new Phrase("NAMA BARANG", _smallerBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("NO. BON PENERIMAAN", _normalBoldFont);
+            cell.Phrase = new Phrase("NO. BON PENERIMAAN", _smallerBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("NO. INVOICE", _normalBoldFont);
+            cell.Phrase = new Phrase("NO. INVOICE", _smallerBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("NO. NI/SPB", _normalBoldFont);
+            cell.Phrase = new Phrase("NO. NI/SPB", _smallerBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("NO. VOUCHER", _normalBoldFont);
+            cell.Phrase = new Phrase("NO. VOUCHER", _smallerBoldFont);
             table.AddCell(cell);
 
             cell.Rowspan = 1;
             cell.Colspan = 3;
-            cell.Phrase = new Phrase("MUTASI", _normalBoldFont);
+            cell.Phrase = new Phrase("MUTASI", _smallerBoldFont);
             table.AddCell(cell);
 
             cell.Colspan = 1;
-            cell.Phrase = new Phrase("PEMBELIAN", _normalBoldFont);
+            cell.Phrase = new Phrase("PEMBELIAN", _smallerBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("PEMBAYARAN", _normalBoldFont);
+            cell.Phrase = new Phrase("PEMBAYARAN", _smallerBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("SALDO", _normalBoldFont);
+            cell.Phrase = new Phrase("SALDO", _smallerBoldFont);
             table.AddCell(cell);
 
         }
 
-        private static void SetReportTable(Document document, List<CreditorAccountViewModel> data, string suplierName, int month, int year, int offSet)
+        private static void SetReportTable(Document document, List<CreditorAccountViewModel> data, string suplierName, int month, int year, int offSet, decimal? finalBalance)
         {
             var table = new PdfPTable(9)
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
+            table.SetWidths(new float[] { 10f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
 
             SetReportTableHeader(table);
-
-            foreach (var item in data)
-            {
-                var cell = new PdfPCell()
-                {
-                    HorizontalAlignment = Element.ALIGN_CENTER,
-                    VerticalAlignment = Element.ALIGN_MIDDLE
-                };
-
-                var cellAlignLeft = new PdfPCell()
-                {
-                    HorizontalAlignment = Element.ALIGN_LEFT,
-                    VerticalAlignment = Element.ALIGN_MIDDLE
-                };
-
-                var cellAlignRight = new PdfPCell()
-                {
-                    HorizontalAlignment = Element.ALIGN_RIGHT,
-                    VerticalAlignment = Element.ALIGN_MIDDLE
-                };
-
-                cell.Phrase = new Phrase(item.Date.ToString(), _normalFont);
-                table.AddCell(cell);
-
-                cell.Phrase = new Phrase(item.Products, _smallerFont);
-                table.AddCell(cell);
-
-                cell.Phrase = new Phrase(item.UnitReceiptNoteNo, _smallerFont);
-                table.AddCell(cell);
-
-                cell.Phrase = new Phrase(item.InvoiceNo, _normalFont);
-                table.AddCell(cell);
-
-                cell.Phrase = new Phrase(item.MemoNo, _normalFont);
-                table.AddCell(cell);
-
-                cell.Phrase = new Phrase(item.BankExpenditureNoteNo, _normalFont);
-                table.AddCell(cell);
-
-                decimal? purchase = 0;
-                decimal? payment = 0;
-                if (item.Mutation > 0)
-                {
-                    purchase += item.Mutation;
-                }
-                else
-                {
-                    payment += item.Mutation;
-                    
-                }
-
-                cellAlignRight.Phrase = new Phrase(purchase.ToString(), _normalFont);
-                table.AddCell(cellAlignRight);
-
-                cellAlignRight.Phrase = new Phrase(payment.ToString(), _normalFont);
-                table.AddCell(cellAlignRight);
-
-                cellAlignRight.Phrase = new Phrase(item.FinalBalance.ToString(), _normalFont);
-                table.AddCell(cellAlignRight);
-            }
-
-            document.Add(table);
-        }
-
-        /*private static void SetFooter(Document document, List<CreditorAccountViewModel> data)
-        {
-            var table = new PdfPTable(9)
-            {
-                WidthPercentage = 100
-            };
-            table.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
-
-            var groupedByCurrency = data.GroupBy(item => item.Currency).Select(element => new
-            {
-                currency = element.Key,
-                currencyRate = element.First().CurrencyRate,
-                totalStartBalance = element.Sum(curr => curr.StartBalance),
-                totalPurchase = element.Sum(curr => curr.Purchase),
-                totalPayment = element.Sum(curr => curr.Payment),
-                totalFinalBalance = element.Sum(curr => curr.FinalBalance)
-            });
 
             var cell = new PdfPCell()
             {
@@ -220,47 +139,125 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
-            var length = groupedByCurrency.Count();
-
-            cell.Colspan = 2;
-            cell.Rowspan = length;
-            cell.Phrase = new Phrase("SUB TOTAL", _normalBoldFont);
+            cell.Colspan = 8;
+            cell.Phrase = new Phrase("SALDO AWAL", _smallerFont);
             table.AddCell(cell);
 
-            foreach (var item in groupedByCurrency)
+            cellAlignRight.Phrase = new Phrase(finalBalance.GetValueOrDefault().ToString("#,##0.#0"), _smallerFont);
+            table.AddCell(cellAlignRight);
+
+            decimal eachBalance = 0;
+            decimal tempBalance = finalBalance.GetValueOrDefault();
+            foreach (var item in data)
             {
+                decimal purchase = 0;
+                decimal payment = 0;
+
+                if (item.BankExpenditureNoteNo != null)
+                {
+                    purchase = item.Mutation.GetValueOrDefault();
+                    payment = item.Mutation.GetValueOrDefault();
+                } else
+                {
+                    purchase = item.Mutation.GetValueOrDefault();
+                }
+
+                eachBalance = purchase - payment;
+                tempBalance += eachBalance;
+
                 cell.Colspan = 1;
-                cell.Rowspan = 1;
-                cell.Phrase = new Phrase(item.currency, _normalBoldFont);
+                cell.Phrase = new Phrase(item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null, _smallerFont);
                 table.AddCell(cell);
 
-                cellAlignRight.Phrase = new Phrase(item.totalStartBalance.ToString("#,##0.#0"), _normalBoldFont);
+                cell.Phrase = new Phrase(item.Products, _smallerFont);
+                table.AddCell(cell);
+
+                cell.Phrase = new Phrase(item.UnitReceiptNoteNo, _smallerFont);
+                table.AddCell(cell);
+
+                cell.Phrase = new Phrase(item.InvoiceNo, _smallerFont);
+                table.AddCell(cell);
+
+                cell.Phrase = new Phrase(item.MemoNo, _smallerFont);
+                table.AddCell(cell);
+
+                cell.Phrase = new Phrase(item.BankExpenditureNoteNo, _smallerFont);
+                table.AddCell(cell);
+
+                cellAlignRight.Phrase = new Phrase(purchase.ToString("#,##0.#0"), _smallerFont);
                 table.AddCell(cellAlignRight);
 
-                cellAlignRight.Phrase = new Phrase(item.totalPurchase.ToString("#,##0.#0"), _normalBoldFont);
+                cellAlignRight.Phrase = new Phrase(payment.ToString("#,##0.#0"), _smallerFont);
                 table.AddCell(cellAlignRight);
 
-                cellAlignRight.Phrase = new Phrase(item.totalPayment.ToString("#,##0.#0"), _normalBoldFont);
-                table.AddCell(cellAlignRight);
-
-                cellAlignRight.Phrase = new Phrase(item.totalFinalBalance.ToString("#,##0.#0"), _normalBoldFont);
-                table.AddCell(cellAlignRight);
-
-                cellAlignRight.Phrase = new Phrase((item.totalStartBalance * item.currencyRate).ToString("#,##0.#0"), _normalBoldFont);
-                table.AddCell(cellAlignRight);
-
-                cellAlignRight.Phrase = new Phrase((item.totalPurchase * item.currencyRate).ToString("#,##0.#0"), _normalBoldFont);
-                table.AddCell(cellAlignRight);
-
-                cellAlignRight.Phrase = new Phrase((item.totalPayment * item.currencyRate).ToString("#,##0.#0"), _normalBoldFont);
-                table.AddCell(cellAlignRight);
-
-                cellAlignRight.Phrase = new Phrase((item.totalFinalBalance * item.currencyRate).ToString("#,##0.#0"), _normalBoldFont);
+                cellAlignRight.Phrase = new Phrase(tempBalance.ToString("#,##0.#0"), _smallerFont);
                 table.AddCell(cellAlignRight);
             }
 
             document.Add(table);
         }
-    */
+
+        private static void SetFooter(Document document, List<CreditorAccountViewModel> data, string suplierName, int month, int year, int offSet, decimal? finalBalance)
+        {
+            var table = new PdfPTable(9)
+            {
+                WidthPercentage = 100
+            };
+            table.SetWidths(new float[] { 10f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
+
+            var cell = new PdfPCell()
+            {
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE
+            };
+
+            var cellAlignRight = new PdfPCell()
+            {
+                HorizontalAlignment = Element.ALIGN_RIGHT,
+                VerticalAlignment = Element.ALIGN_MIDDLE
+            };
+
+            cell.Colspan = 6;
+            cell.Phrase = new Phrase("TOTAL", _normalBoldFont);
+            table.AddCell(cell);
+
+            decimal totalPurchase = 0;
+            decimal totalPayment = 0;
+            decimal totalEachBalance = 0;
+            foreach (var item in data)
+            {
+                decimal purchase = 0;
+                decimal payment = 0;
+                decimal eachBalance = 0;
+                if (item.BankExpenditureNoteNo != null)
+                {
+                    purchase = item.Mutation.GetValueOrDefault();
+                    payment = item.Mutation.GetValueOrDefault();
+                }
+                else
+                {
+                    purchase = item.Mutation.GetValueOrDefault();
+                }
+                eachBalance = purchase - payment;
+
+                totalPurchase += purchase;
+                totalPayment += payment;
+                totalEachBalance += eachBalance;
+            }
+
+            totalEachBalance = finalBalance.GetValueOrDefault() + totalEachBalance;
+
+            cellAlignRight.Colspan = 1;
+            cellAlignRight.Phrase = new Phrase(totalPurchase.ToString("#,##0.#0"), _normalBoldFont);
+            table.AddCell(cellAlignRight);
+
+            cellAlignRight.Phrase = new Phrase(totalPayment.ToString("#,##0.#0"), _normalBoldFont);
+            table.AddCell(cellAlignRight);
+
+            cellAlignRight.Phrase = new Phrase(totalEachBalance.ToString("#,##0.#0"), _normalBoldFont);
+            table.AddCell(cellAlignRight);
+
+            document.Add(table);
+        }
     }
 }

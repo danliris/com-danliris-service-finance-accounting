@@ -80,7 +80,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
             var Response = await service.CreateFromBankExpenditureNoteAsync(data);
 
-            var reportResponse = creditBalanceService.GetReport(false, 1, 25, data.SupplierName, data.Date.Month, data.Date.Year, 7, false);
+            var reportResponse = creditBalanceService.GetReport(false, 1, 25, "", data.Date.Month, data.Date.Year, 7, false);
             Assert.NotNull(reportResponse.Data);
         }
 
@@ -190,6 +190,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             var Response = await service.CreateFromBankExpenditureNoteAsync(data);
 
             var reportResponse = creditBalanceService.GenerateExcel(true, "", data.Date.Month, data.Date.Year, 7, false);
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
+        public void Should_Success_Get_Excel_Empty_Local()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var reportResponse = creditBalanceService.GenerateExcel(false, "", 1, 2020, 7, false);
             Assert.NotNull(reportResponse);
         }
 

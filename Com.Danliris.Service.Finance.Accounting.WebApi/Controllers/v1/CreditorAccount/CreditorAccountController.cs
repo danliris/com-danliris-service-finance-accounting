@@ -108,8 +108,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
                 var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 var data = Service.GeneratePdf(supplierName, month, year, offSet);
+                var finalBalance = Service.GetFinalBalance(supplierName, month, year, offSet);
 
-                MemoryStream stream = CreditorAccountPDFTemplate.GeneratePdfTemplate(data, supplierName, month, year, offSet);
+                MemoryStream stream = CreditorAccountPDFTemplate.GeneratePdfTemplate(data, supplierName, month, year, offSet, finalBalance);
                 string fileName = string.Format("Kartu Hutang Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
 
                 return new FileStreamResult(stream, "application/pdf")

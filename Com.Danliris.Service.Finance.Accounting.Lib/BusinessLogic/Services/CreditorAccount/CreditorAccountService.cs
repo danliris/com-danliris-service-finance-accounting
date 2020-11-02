@@ -125,6 +125,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             return data;
         }
 
+        public decimal? GetFinalBalance(string suplierName, int month, int year, int offSet)
+        {
+            var data = GetReport(suplierName, month, year, offSet).Item2;
+
+            return data;
+        }
+
         public (ReadResponse<CreditorAccountViewModel>, decimal) GetReport(int page, int size, string suplierName, int month, int year, int offSet)
         {
             var queries = GetReport(suplierName, month, year, offSet);
