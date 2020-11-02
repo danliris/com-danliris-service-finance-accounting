@@ -39,6 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 AccountBankName = model.BankName,
                 Date = model.PaymentDate,
                 Nominal = nominal,
+                CurrencyRate = (decimal)model.CurrencyRate,
                 ReferenceNo = model.PaymentDispositionNo,
                 ReferenceType = "Pembayaran Disposisi",
                 Remark = model.CurrencyCode != "IDR" ? $"Pembayaran atas {model.BankCurrencyCode} dengan nominal {string.Format("{0:n}", nominal)} dan kurs {model.CurrencyCode}" : "",
@@ -50,8 +51,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 IsPosted = true
             };
 
-            if (model.CurrencyCode != "IDR")
-                dailyBankTransactionModel.NominalValas = nominal * (decimal)  model.CurrencyRate;
+            if (model.BankCurrencyCode != "IDR")
+            {
+                dailyBankTransactionModel.Nominal = model.Items.Sum(item => (decimal)item.TotalPaid);
+                dailyBankTransactionModel.NominalValas = nominal;
+            }
 
             return _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
@@ -115,6 +119,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 AccountBankName = accountBank.BankName,
                 Date = model.Date,
                 Nominal = itemModels.Sum(item => item.Debit),
+                CurrencyRate = (decimal)model.CurrencyRate,
                 ReferenceNo = model.DocumentNo,
                 Remark = $"{model.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", total)}",
                 SourceType = model.Type,
@@ -123,7 +128,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             };
 
             if (accountBank.Currency.Code != "IDR")
-                dailyBankTransactionModel.NominalValas = itemModels.Sum(item => item.Debit) * (decimal) model.CurrencyRate;
+                dailyBankTransactionModel.NominalValas = itemModels.Sum(item => item.Debit) * (decimal)model.CurrencyRate;
 
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
