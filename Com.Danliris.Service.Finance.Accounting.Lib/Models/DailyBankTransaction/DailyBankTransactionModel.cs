@@ -83,6 +83,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         public decimal AfterNominalValas { get; set; }
         public decimal BeforeNominal { get; set; }
         public decimal BeforeNominalValas { get; set; }
+        public decimal CurrencyRate { get; set; }
         public bool IsPosted { get; set; }
         // public decimal NominalOut { get; set; }
 
