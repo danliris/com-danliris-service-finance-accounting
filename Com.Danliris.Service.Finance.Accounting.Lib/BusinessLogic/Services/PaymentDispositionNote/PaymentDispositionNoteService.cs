@@ -59,6 +59,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
         public async Task<int> CreateAsync(PaymentDispositionNoteModel model)
         {
             model.PaymentDispositionNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username);
+
+            if (model.BankCurrencyCode != "IDR")
+            {
+                var garmentCurrency = await GetGarmentCurrency(model.BankCurrencyCode);
+                model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
+            }
+
             CreateModel(model);
             //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
@@ -82,6 +89,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                 var responseContent = await response.Content.ReadAsStringAsync();
                 result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
             }
+            return result.data;
+        }
+
+        private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        {
+            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={date}";
+
+            var http = ServiceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
             return result.data;
         }
 
@@ -230,7 +253,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public ReadResponse<PaymentDispositionNoteItemModel> ReadDetailsByEPOId(string epoId)
         {
-            List<PaymentDispositionNoteItemModel> paymentDispositionNoteDetails = DbContext.PaymentDispositionNoteItems.Where(a => a.Details.Any(b=>b.EPOId==epoId)).Distinct().ToList();
+            List<PaymentDispositionNoteItemModel> paymentDispositionNoteDetails = DbContext.PaymentDispositionNoteItems.Where(a => a.Details.Any(b => b.EPOId == epoId)).Distinct().ToList();
 
             Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>("{ }");
 
@@ -239,7 +262,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return new ReadResponse<PaymentDispositionNoteItemModel>(paymentDispositionNoteDetails, TotalData, OrderDictionary, new List<string>());
         }
 
-        public async Task<int> Post (PaymentDispositionNotePostDto form)
+        public async Task<int> Post(PaymentDispositionNotePostDto form)
         {
             List<int> listIds = form.ListIds.Select(x => x.Id).ToList();
 
