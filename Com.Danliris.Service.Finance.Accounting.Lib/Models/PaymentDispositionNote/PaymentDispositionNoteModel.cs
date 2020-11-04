@@ -57,5 +57,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionN
             IsPosted = true;
             this.FlagForUpdate(username, userAgent);
         }
+
+        public void FixFailAutoMapper(string bankCode)
+        {
+            BankCode = bankCode;
+        }
     }
 }

@@ -77,6 +77,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
                 
                 ValidateService.Validate(viewModel);
                 PaymentDispositionNoteModel model = Mapper.Map<PaymentDispositionNoteModel>(viewModel);
+                model.FixFailAutoMapper(viewModel.AccountBank.BankCode);
                 await Service.CreateAsync(model);
 
                 Dictionary<string, object> Result =
