@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test Com.Danliris.Service.Finance.Accounting.Test/Com.Danliris.Service.Finance.Accounting.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=lcov --no-restore --verbosity normal
