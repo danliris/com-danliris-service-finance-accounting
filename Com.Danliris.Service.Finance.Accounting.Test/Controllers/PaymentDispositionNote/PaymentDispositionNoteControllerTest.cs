@@ -124,6 +124,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                     },
                     AccountBank = new AccountBankViewModel
                     {
+                        BankCode = "MDTR",
                         Currency = new CurrencyViewModel
                         {
                             Code = "IDR"
@@ -291,7 +292,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
         private async Task<int> GetStatusCodePost((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPaymentDispositionNoteService> Service, Mock<IMapper> Mapper) mocks)
         {
             PaymentDispositionNoteController controller = GetController(mocks);
-            IActionResult response = await controller.Post(ViewModel);
+            IActionResult response = await controller.Post(ViewModel1);
 
             return GetStatusCode(response);
         }
@@ -302,6 +303,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             var mocks = GetMocks();
             mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Verifiable();
             mocks.Service.Setup(s => s.CreateAsync(It.IsAny<PaymentDispositionNoteModel>())).ReturnsAsync(1);
+            mocks.Mapper.Setup(s => s.Map<PaymentDispositionNoteModel>(It.IsAny<PaymentDispositionNoteViewModel>())).Returns(new PaymentDispositionNoteModel());
 
             int statusCode = await GetStatusCodePost(mocks);
             Assert.Equal((int)HttpStatusCode.Created, statusCode);
