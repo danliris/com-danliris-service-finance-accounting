@@ -1,0 +1,29 @@
+name: Unit Test Dev
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2.103
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test Com.Danliris.Service.Finance.Accounting.Test/Com.Danliris.Service.Finance.Accounting.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=lcov --no-restore --verbosity normal
+    - name: Upload Coverage
+      uses: codecov/codecov-action@v1
+      with:
+       file: ./Com.Danliris.Service.Finance.Accounting.Test/coverage.info
