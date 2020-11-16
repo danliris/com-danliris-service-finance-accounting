@@ -1,6 +1,6 @@
 # com-danliris-service-finance-accounting
 
-[![codecov](https://codecov.io/gh/danliris/com-danliris-service-finance-accounting/branch/dev/graph/badge.svg)](https://codecov.io/gh/danliris/com-danliris-service-finance-accounting) [![Build Status](https://travis-ci.com/danliris/com-danliris-service-finance-accounting.svg?branch=dev)](https://travis-ci.com/danliris/com-danliris-service-finance-accounting) [![Maintainability](https://api.codeclimate.com/v1/badges/937e40c506282348a416/maintainability)](https://codeclimate.com/github/danliris/com-danliris-service-finance-accounting/maintainability)
+[![codecov](https://codecov.io/gh/danliris/com-danliris-service-finance-accounting/branch/dev/graph/badge.svg)](https://codecov.io/gh/danliris/com-danliris-service-finance-accounting) [![Build Status](https://travis-ci.com/danliris/com-danliris-service-finance-accounting.svg?branch=dev)](https://travis-ci.com/danliris/com-danliris-service-finance-accounting) [![Maintainability](https://api.codeclimate.com/v1/badges/937e40c506282348a416/maintainability)](https://codeclimate.com/github/danliris/com-danliris-service-finance-accounting/maintainability) ![Unit Test Dev](https://github.com/danliris/com-danliris-service-finance-accounting/workflows/Unit%20Test%20Dev/badge.svg?branch=dev)
 
 
 DanLiris Application is a enterprise project that aims to manage the business processes of a textile factory, PT. DanLiris.
