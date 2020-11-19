@@ -73,16 +73,24 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         [HttpGet("mutation/report")]
         public IActionResult GetReport(int bankId, int month, int year)
         {
-            int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
-            ReadResponse<DailyBankTransactionModel> Result = Service.GetReport(bankId, month, year, clientTimeZoneOffset);
-
-            return Ok(new
+            try
             {
-                apiVersion = "1.0.0",
-                data = Result.Data,
-                message = Utilities.General.OK_MESSAGE,
-                statusCode = Utilities.General.OK_STATUS_CODE
-            });
+                int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
+                ReadResponse<DailyBankTransactionModel> Result = Service.GetReport(bankId, month, year, clientTimeZoneOffset);
+
+                return Ok(new
+                {
+                    apiVersion = "1.0.0",
+                    data = Result.Data,
+                    message = Utilities.General.OK_MESSAGE,
+                    statusCode = Utilities.General.OK_STATUS_CODE
+                });
+            }
+            catch(Exception e)
+            {
+                var result = new ResultFormatter(ApiVersion, Utilities.General.INTERNAL_ERROR_STATUS_CODE, e.Message + "\n" + e.StackTrace);
+                return StatusCode(Utilities.General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
         }
 
         [HttpGet("mutation/report/download")]
