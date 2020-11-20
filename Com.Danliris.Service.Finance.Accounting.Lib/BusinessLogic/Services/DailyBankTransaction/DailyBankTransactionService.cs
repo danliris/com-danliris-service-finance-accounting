@@ -473,6 +473,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (Query.ToArray().Count() > 0)
             {
                 var BalanceByMonthAndYear = GetBalanceMonthAndYear(bankId, month, year, clientTimeZoneOffset);
+                if (BalanceByMonthAndYear == null)
+                    BalanceByMonthAndYear = new BankTransactionMonthlyBalanceModel();
                 var beforeBalance = BalanceByMonthAndYear.InitialBalance;
 
                 foreach (var item in Result)
