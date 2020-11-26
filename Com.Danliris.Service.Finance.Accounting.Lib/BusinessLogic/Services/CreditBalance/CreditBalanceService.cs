@@ -71,6 +71,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 data.AddRange(queryRemainingBalance.ToList());
 
             var grouppedData = data.GroupBy(x => new { x.SupplierCode, x.CurrencyCode }).ToList();
+            var startBalances = DbSet
+                    .AsQueryable()
+                    .Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
+                    .ToList();
             foreach (var item in grouppedData)
             {
                 var productsUnion = string.Join("\n", item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Select(x => x.Products).ToList());
@@ -79,8 +83,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                 var creditBalance = new CreditBalanceViewModel()
                 {
-                    StartBalance = DbSet
-                    .AsQueryable()
+                    StartBalance = startBalances
                     .Where(x => x.SupplierCode == item.Key.SupplierCode && x.CurrencyCode == item.Key.CurrencyCode && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
                     .ToList().Sum(x => x.UnitReceiptMutation - x.BankExpenditureNoteMutation),
                     Products = uniqueProducts,

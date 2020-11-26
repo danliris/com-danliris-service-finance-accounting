@@ -8,8 +8,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
     public class CreditorAccountModel : StandardEntity, IValidatableObject
     {
         #region Supplier
+        [MaxLength(512)]
         public string SupplierName { get; set; }
-
+        [MaxLength(128)]
         public string SupplierCode { get; set; }
 
         public bool SupplierIsImport { get; set; }
@@ -17,6 +18,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
 
 
         #region UnitReceiptNote
+        [MaxLength(128)]
         public string UnitReceiptNoteNo { get; set; }
 
         public string Products { get; set; }
@@ -32,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
 
         #region BankExpenditureNote
         public int BankExpenditureNoteId { get; set; }
-
+        [MaxLength(128)]
         public string BankExpenditureNoteNo { get; set; }
 
         public DateTimeOffset? BankExpenditureNoteDate { get; set; }
@@ -45,6 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         #endregion
 
         #region Memo has been changed to SPBNo or NI No
+        [MaxLength(128)]
         public string MemoNo { get; set; }
 
         public DateTimeOffset? MemoDate { get; set; }
@@ -54,13 +57,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         public decimal MemoPPN { get; set; }
 
         public decimal MemoMutation { get; set; }
+        [MaxLength(512)]
         public string PaymentDuration { get; set; }
         #endregion
-
+        [MaxLength(128)]
         public string InvoiceNo { get; set; }
 
         public decimal FinalBalance { get; set; }
-
+        [MaxLength(64)]
         public string CurrencyCode { get; set; }
 
         public decimal DPPCurrency { get; set; }
