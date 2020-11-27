@@ -17,6 +17,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBa
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using System.Net.Http;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote
 {
@@ -262,6 +264,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return new ReadResponse<PaymentDispositionNoteItemModel>(paymentDispositionNoteDetails, TotalData, OrderDictionary, new List<string>());
         }
 
+        private async Task SetTrueDisposition(string dispositionNo)
+        {
+            var http = ServiceProvider.GetService<IHttpClientService>();
+            await http.PutAsync(APIEndpoint.Purchasing + $"purchasing-dispositions/update/is-paid-true/{dispositionNo}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType) );
+        }
+
         public async Task<int> Post(PaymentDispositionNotePostDto form)
         {
             List<int> listIds = form.ListIds.Select(x => x.Id).ToList();
@@ -269,6 +277,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             foreach (int id in listIds)
             {
                 var model = await ReadByIdAsync(id);
+
+                await SetTrueDisposition(model.PaymentDispositionNo);
 
                 if (model != null)
                     model.SetIsPosted(IdentityService.Username, UserAgent);
