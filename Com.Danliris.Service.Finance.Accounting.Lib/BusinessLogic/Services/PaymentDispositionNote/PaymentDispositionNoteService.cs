@@ -278,12 +278,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             {
                 var model = await ReadByIdAsync(id);
 
-                await SetTrueDisposition(model.PaymentDispositionNo);
-
                 if (model != null)
+                {
                     model.SetIsPosted(IdentityService.Username, UserAgent);
 
-                await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+                    foreach (var item in model.Items)
+                    {
+                        await SetTrueDisposition(item.DispositionNo);
+                    }
+
+                    await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+                }
             }
 
             var result = await DbContext.SaveChangesAsync();
