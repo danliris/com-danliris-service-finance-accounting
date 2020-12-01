@@ -15,6 +15,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         public bool SupplierIsImport { get; set; }
         #endregion
 
+        #region Division
+        public int DivisionId { get; set; }
+
+        public string DivisionCode { get; set; }
+
+        public string DivisionName { get; set; }
+        #endregion
+
+        #region Unit
+        public int UnitId { get; set; }
+
+        public string UnitCode { get; set; }
+
+        public string UnitName { get; set; }
+        #endregion
+
 
         #region UnitReceiptNote
         public string UnitReceiptNoteNo { get; set; }
