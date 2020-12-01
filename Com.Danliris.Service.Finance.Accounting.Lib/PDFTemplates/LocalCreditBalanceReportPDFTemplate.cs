@@ -20,14 +20,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
         private static readonly Font _smallBoldFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 8);
         private static readonly Font _smallerBoldFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 7);
 
-        public static MemoryStream GeneratePdfTemplate(List<CreditBalanceViewModel> data, int month, int year)
+        public static MemoryStream GeneratePdfTemplate(List<CreditBalanceViewModel> data, int month, int year, int divisionId)
         {
             var document = new Document(PageSize.A4, 25, 25, 25, 25);
             var stream = new MemoryStream();
             PdfWriter.GetInstance(document, stream);
             document.Open();
 
-            SetHeader(document, month, year);
+            var divisionName = "SEMUA DIVISI";
+
+            if (divisionId > 0)
+            {
+                var summary = data.FirstOrDefault();
+                if (summary != null)
+                {
+                    divisionName = $"DIVISI {summary.DivisionName}";
+                }
+            }
+
+            SetHeader(document, month, year, divisionName);
 
             SetReportTable(document, data);
 
@@ -41,7 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             return stream;
         }
 
-        private static void SetHeader(Document document, int month, int year)
+        private static void SetHeader(Document document, int month, int year, string divisionName)
         {
             var table = new PdfPTable(1)
             {
@@ -58,10 +69,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cell.Phrase = new Phrase("PT. DAN LIRIS", _normalBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("Ledger Hutang Lokal", _normalBoldFont);
+            cell.Phrase = new Phrase("LEDGER HUTANG LOKAL", _normalBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("Per " + new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy"), _normalBoldFont);
+            cell.Phrase = new Phrase("PER " + new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy").ToUpper(), _normalBoldFont);
+            table.AddCell(cell);
+
+            cell.Phrase = new Phrase(divisionName, _normalBoldFont);
             table.AddCell(cell);
 
             cell.Phrase = new Phrase("", _normalBoldFont);
@@ -83,6 +97,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             table.AddCell(cell);
 
             cell.Phrase = new Phrase("SUPPLIER", _normalBoldFont);
+            table.AddCell(cell);
+
+            cell.Phrase = new Phrase("DIVISI", _normalBoldFont);
             table.AddCell(cell);
 
             cell.Rowspan = 1;
@@ -113,11 +130,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
         private static void SetReportTable(Document document, List<CreditBalanceViewModel> data)
         {
-            var table = new PdfPTable(6)
+            var table = new PdfPTable(7)
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f });
+            table.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f, 15f });
 
             /*
             var widths = new List<int>();
@@ -156,6 +173,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 cellAlignLeft.Phrase = new Phrase(item.SupplierName, _smallerFont);
                 table.AddCell(cellAlignLeft);
 
+                cellAlignLeft.Phrase = new Phrase(item.DivisionName, _smallerFont);
+                table.AddCell(cellAlignLeft);
+
                 cellAlignRight.Phrase = new Phrase(item.StartBalance.ToString("#,##0.#0"), _normalFont);
                 table.AddCell(cellAlignRight);
 
@@ -174,11 +194,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
         private static void SetFooter(Document document, List<CreditBalanceViewModel> data)
         {
-            var table = new PdfPTable(6)
+            var table = new PdfPTable(7)
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f });
+            table.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f, 15f });
 
             var cell = new PdfPCell()
             {
@@ -204,7 +224,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 totalFinalBalance += item.FinalBalance;
             }
 
-            cell.Colspan = 2;
+            cell.Colspan = 3;
             cell.Phrase = new Phrase("TOTAL RUPIAH", _normalBoldFont);
             table.AddCell(cell);
 

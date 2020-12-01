@@ -116,15 +116,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
                 string fileName = "";
                 if (isImport)
                 {
-                    stream = ImportCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year);
+                    stream = ImportCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year, divisionId);
                     fileName = string.Format("Saldo Hutang Impor Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
                 } else if (isForeignCurrency)
                 {
-                    stream = LocalValasCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year);
+                    stream = LocalValasCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year, divisionId);
                     fileName = string.Format("Saldo Hutang Lokal Valas Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
                 } else
                 {
-                    stream = LocalCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year);
+                    stream = LocalCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year, divisionId);
                     fileName = string.Format("Saldo Hutang Lokal Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
                 }
 
