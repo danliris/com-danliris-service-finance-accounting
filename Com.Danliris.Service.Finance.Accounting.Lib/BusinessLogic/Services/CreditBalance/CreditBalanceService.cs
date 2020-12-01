@@ -32,7 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
-        public List<CreditBalanceViewModel> GetReport(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency)
+        public List<CreditBalanceViewModel> GetReport(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
         {
             var firstDayOfMonth = new DateTime(year, month, 1);
 
@@ -99,9 +99,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             return result.OrderBy(x => x.Currency).ThenBy(x => x.Products).ThenBy(x => x.SupplierName).ToList();
         }
 
-        public MemoryStream GenerateExcel(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency)
+        public MemoryStream GenerateExcel(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
         {
-            var data = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency);
+            var data = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency, divisionId);
 
             DataTable dt = new DataTable();
 
@@ -172,16 +172,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         }
 
 
-        public List<CreditBalanceViewModel> GeneratePdf(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency)
+        public List<CreditBalanceViewModel> GeneratePdf(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
         {
-            var data = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency).ToList();
+            var data = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency, divisionId).ToList();
 
             return data;
         }
 
-        public ReadResponse<CreditBalanceViewModel> GetReport(bool isImport, int page, int size, string suplierName, int month, int year, int offSet, bool isForeignCurrency)
+        public ReadResponse<CreditBalanceViewModel> GetReport(bool isImport, int page, int size, string suplierName, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
         {
-            var queries = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency);
+            var queries = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency, divisionId);
 
             Pageable<CreditBalanceViewModel> pageable = new Pageable<CreditBalanceViewModel>(queries, page - 1, size);
             List<CreditBalanceViewModel> data = pageable.Data.ToList();
