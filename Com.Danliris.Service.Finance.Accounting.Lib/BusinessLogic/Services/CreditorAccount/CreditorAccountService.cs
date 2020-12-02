@@ -328,6 +328,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             data.UnitReceiptNoteDate = viewModel.Date;
             data.UnitReceiptMutation = viewModel.DPP + (viewModel.UseIncomeTax ? (decimal)0.1 * viewModel.DPP : 0);
             data.FinalBalance = data.UnitReceiptMutation + data.BankExpenditureNoteMutation;
+            data.DivisionId = viewModel.DivisionId;
+            data.DivisionCode = viewModel.DivisionCode;
+            data.DivisionName = viewModel.DivisionName;
+            data.UnitId = viewModel.UnitId;
+            data.UnitCode = viewModel.UnitCode;
+            data.UnitName = viewModel.UnitName;
 
 
             UpdateModel(data.Id, data);
@@ -455,7 +461,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 DPPCurrency = viewModel.DPPCurrency,
                 CurrencyRate = viewModel.CurrencyRate,
                 PaymentDuration = viewModel.PaymentDuration,
-                Products = viewModel.Products
+                Products = viewModel.Products,
+                DivisionId = viewModel.DivisionId,
+                DivisionCode = viewModel.DivisionCode,
+                DivisionName = viewModel.DivisionName,
+                UnitId = viewModel.UnitId,
+                UnitCode = viewModel.UnitCode,
+                UnitName = viewModel.UnitName
             };
 
             return await CreateAsync(model);

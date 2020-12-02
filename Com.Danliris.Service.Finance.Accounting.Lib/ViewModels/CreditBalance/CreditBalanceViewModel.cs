@@ -17,5 +17,7 @@
         public decimal FinalBalance { get; set; }
 
         public decimal CurrencyRate { get; set; }
+
+        public string DivisionName { get; set; }
     }
 }
