@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201201092428_Add_Division_and_Unit_in_CreditorAccountModel")]
+    partial class Add_Division_and_Unit_in_CreditorAccountModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,8 +124,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("BankExpenditureNoteMutation");
 
-                    b.Property<string>("BankExpenditureNoteNo")
-                        .HasMaxLength(128);
+                    b.Property<string>("BankExpenditureNoteNo");
 
                     b.Property<decimal>("BankExpenditureNotePPN");
 
@@ -137,8 +138,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("CreatedUtc");
 
-                    b.Property<string>("CurrencyCode")
-                        .HasMaxLength(64);
+                    b.Property<string>("CurrencyCode");
 
                     b.Property<decimal>("CurrencyRate");
 
@@ -162,8 +162,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("FinalBalance");
 
-                    b.Property<string>("InvoiceNo")
-                        .HasMaxLength(128);
+                    b.Property<string>("InvoiceNo");
 
                     b.Property<bool>("IsDeleted");
 
@@ -183,23 +182,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("MemoMutation");
 
-                    b.Property<string>("MemoNo")
-                        .HasMaxLength(128);
+                    b.Property<string>("MemoNo");
 
                     b.Property<decimal>("MemoPPN");
 
-                    b.Property<string>("PaymentDuration")
-                        .HasMaxLength(512);
+                    b.Property<string>("PaymentDuration");
 
                     b.Property<string>("Products");
 
-                    b.Property<string>("SupplierCode")
-                        .HasMaxLength(128);
+                    b.Property<string>("SupplierCode");
 
                     b.Property<bool>("SupplierIsImport");
 
-                    b.Property<string>("SupplierName")
-                        .HasMaxLength(512);
+                    b.Property<string>("SupplierName");
 
                     b.Property<string>("UnitCode");
 
@@ -213,8 +208,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTimeOffset?>("UnitReceiptNoteDate");
 
-                    b.Property<string>("UnitReceiptNoteNo")
-                        .HasMaxLength(128);
+                    b.Property<string>("UnitReceiptNoteNo");
 
                     b.Property<decimal>("UnitReceiptNotePPN");
 
