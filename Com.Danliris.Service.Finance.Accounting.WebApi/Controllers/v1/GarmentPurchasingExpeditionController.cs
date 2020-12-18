@@ -15,7 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("v{version:apiVersion}/vb-realization-documents")]
+    [Route("v{version:apiVersion}/garment-purchasing-expeditions")]
     [Authorize]
 
     public class GarmentPurchasingExpeditionController : Controller
