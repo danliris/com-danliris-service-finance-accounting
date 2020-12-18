@@ -27,6 +27,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition
         FINANCE_DIVISION = 8
     }
 
+    public enum PurchasingGarmentExpeditionPosition
+    {
+        Invalid = 0,
+        [Description("Pembelian")]
+        Purchasing = 1,
+        [Description("Kirim ke Verifikasi")]
+        SendToVerification = 2,
+        [Description("Verifikasi (Diterima)")]
+        VerificationAccepted = 3,
+        [Description("Kirim ke Kasir")]
+        SendToCashier = 4,
+        [Description("Kasir (Diterima)")]
+        CashierAccepted = 5,
+        [Description("Kirim ke Pembelian (Not Verified)")]
+        SendToPurchasing = 6,
+        [Description("Kirim ke Accounting")]
+        SendToAccounting = 7,
+        [Description("Accounting (Diterima)")]
+        AccountingAccepted = 8
+    }
+
     // Display Friendly Name for enum
     // source : https://www.codingame.com/playgrounds/2487/c---how-to-display-friendly-names-for-enumerations
     public static class ExpeditionPositionExtensions
