@@ -86,7 +86,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var updateInternalNotePositionData = new
             {
                 Ids = new List<int>() { model.InternalNoteId },
-                Position = PurchasingGarmentExpeditionPosition.SendToPurchasing
+                Position = PurchasingGarmentExpeditionPosition.Purchasing
             };
 
             await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
