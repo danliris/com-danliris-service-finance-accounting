@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                 Position = PurchasingGarmentExpeditionPosition.SendToAccounting
             };
 
-            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
             return _dbContext.SaveChanges();
         }
 
@@ -89,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                 Position = PurchasingGarmentExpeditionPosition.SendToPurchasing
             };
 
-            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
 
             return _dbContext.SaveChanges();
         }
@@ -114,7 +114,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                 Position = PurchasingGarmentExpeditionPosition.SendToVerification
             };
 
-            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
             return _dbContext.SaveChanges();
         }
     }
