@@ -67,4 +67,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition
             return me.ToString();
         }
     }
+
+    public static class PurchasingGarmentExpeditionPositionEnumExtensions
+    {
+        public static string ToDescriptionString(this PurchasingGarmentExpeditionPosition me)
+        {
+            var enumType = me.GetType();
+            var memberInfo = enumType.GetMember(me.ToString());
+            if (memberInfo != null && memberInfo.Length > 0)
+            {
+                var _attr = memberInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+                if (_attr != null && _attr.Count() > 0)
+                {
+                    return ((DescriptionAttribute)_attr.ElementAt(0)).Description;
+                }
+            }
+            return me.ToString();
+        }
+    }
 }

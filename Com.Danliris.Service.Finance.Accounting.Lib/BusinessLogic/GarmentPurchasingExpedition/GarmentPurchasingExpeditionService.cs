@@ -30,9 +30,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             _serviceProvider = serviceProvider;
         }
 
-        public ReadResponse<IndexDto> GetSendToVerification(string keyword, int page, int size, string order)
+        public ReadResponse<IndexDto> GetSendToVerificationOrAccounting(string keyword, int page, int size, string order)
         {
-            var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == PurchasingGarmentExpeditionPosition.SendToVerification);
+            var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == PurchasingGarmentExpeditionPosition.SendToVerification || entity.Position == PurchasingGarmentExpeditionPosition.SendToAccounting);
 
             if (!string.IsNullOrWhiteSpace(keyword))
                 query = query.Where(entity => entity.InternalNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
@@ -45,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .Select(entity => new IndexDto(entity.Id, entity.InternalNoteNo, entity.InternalNoteDate, entity.InternalNoteDueDate, entity.SupplierName, entity.TotalPaid, entity.CurrencyCode, entity.Remark))
+                .Select(entity => new IndexDto(entity.Id, entity.InternalNoteNo, entity.InternalNoteDate, entity.InternalNoteDueDate, entity.SupplierName, entity.TotalPaid, entity.CurrencyCode, entity.Remark, entity.Position))
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());

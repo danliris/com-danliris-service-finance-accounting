@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +7,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 {
     public class IndexDto
     {
-        public IndexDto(int id, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, string supplierName, double amount, string currencyCode, string remark)
+        public IndexDto(int id, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, string supplierName, double amount, string currencyCode, string remark, PurchasingGarmentExpeditionPosition position)
         {
             Id = id;
             InternalNoteNo = internalNoteNo;
@@ -16,6 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             Amount = amount;
             CurrencyCode = currencyCode;
             Remark = remark;
+            Status = position.ToDescriptionString();
         }
 
         public int Id { get; private set; }
@@ -26,5 +28,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         public double Amount { get; private set; }
         public string CurrencyCode { get; private set; }
         public string Remark { get; private set; }
+        public string Status { get; private set; }
     }
 }

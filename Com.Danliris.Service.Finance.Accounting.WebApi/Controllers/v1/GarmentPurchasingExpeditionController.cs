@@ -96,12 +96,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpGet("send-to-verification")]
-        public IActionResult GetSendToVerification(string keyword, string order, int page = 1, int size = 10)
+        [HttpGet("send-to-verification-or-accounting")]
+        public IActionResult GetSendToVerificationOrAccounting(string keyword, string order, int page = 1, int size = 10)
         {
             try
             {
-                var result = _service.GetSendToVerification(keyword, page, size, order);
+                var result = _service.GetSendToVerificationOrAccounting(keyword, page, size, order);
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
