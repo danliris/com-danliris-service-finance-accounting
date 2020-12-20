@@ -82,11 +82,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
             Position = PurchasingGarmentExpeditionPosition.SendToVerification;
         }
 
+        public void SendToAccounting(string username)
+        {
+            SendToAccountingBy = username;
+            SendToAccountingDate = DateTimeOffset.Now;
+            Position = PurchasingGarmentExpeditionPosition.SendToAccounting;
+        }
+
         public void SendToPurchasing(string username)
         {
             SendToPurchasingBy = username;
             SendToPurchasingDate = DateTimeOffset.Now;
             Position = PurchasingGarmentExpeditionPosition.SendToPurchasing;
+            SendToAccountingBy = null;
+            SendToAccountingDate = null;
+            SendToVerificationBy = null;
+            SendToVerificationDate = null;
         }
     }
 }

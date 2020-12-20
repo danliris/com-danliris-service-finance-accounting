@@ -8,7 +8,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 {
     public interface IGarmentPurchasingExpeditionService
     {
-        Task<int> SendToVerification(SendToVerificationForm form);
+        Task<int> SendToVerification(SendToVerificationAccountingForm form);
+        Task<int> SendToAccounting(SendToVerificationAccountingForm form);
         ReadResponse<IndexDto> GetSendToVerification(string keyword, int page, int size, string order);
         Task<int> SendToPurchasing(int id);
     }

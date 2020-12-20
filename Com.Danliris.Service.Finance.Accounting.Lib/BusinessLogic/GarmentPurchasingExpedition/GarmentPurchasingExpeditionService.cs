@@ -51,6 +51,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
         }
 
+        public async Task<int> SendToAccounting(SendToVerificationAccountingForm form)
+        {
+            var models = new List<GarmentPurchasingExpeditionModel>();
+            foreach (var item in form.Items)
+            {
+                var model = new GarmentPurchasingExpeditionModel(item.InternalNote.Id, item.InternalNote.DocumentNo, item.InternalNote.Date, item.InternalNote.DueDate, item.InternalNote.SupplierId, item.InternalNote.SupplierName, item.InternalNote.VAT, item.InternalNote.IncomeTax, item.InternalNote.TotalPaid, item.InternalNote.CurrencyId, item.InternalNote.CurrencyCode, item.Remark);
+                model.SendToAccounting(_identityService.Username);
+
+                EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                models.Add(model);
+            }
+            _dbContext.GarmentPurchasingExpeditions.UpdateRange(models);
+
+            var httpClient = _serviceProvider.GetService<IHttpClientService>();
+            var updateInternalNotePositionData = new
+            {
+                Ids = models.Select(element => element.InternalNoteId).ToList(),
+                Position = PurchasingGarmentExpeditionPosition.SendToAccounting
+            };
+
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
+            return _dbContext.SaveChanges();
+        }
+
         public async Task<int> SendToPurchasing(int id)
         {
             var model = _dbContext.GarmentPurchasingExpeditions.FirstOrDefault(entity => entity.Id == id);
@@ -70,7 +94,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             return _dbContext.SaveChanges();
         }
 
-        public async Task<int> SendToVerification(SendToVerificationForm form)
+        public async Task<int> SendToVerification(SendToVerificationAccountingForm form)
         {
             var models = new List<GarmentPurchasingExpeditionModel>();
             foreach (var item in form.Items)
