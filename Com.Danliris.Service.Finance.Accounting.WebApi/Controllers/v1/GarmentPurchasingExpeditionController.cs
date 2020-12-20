@@ -123,8 +123,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpPut("send-to-internal-note")]
-        public async Task<IActionResult> PostNonPO(int id)
+        [HttpPut("send-to-internal-note/{id}")]
+        public async Task<IActionResult> PostNonPO([FromRoute] int id)
         {
             try
             {
