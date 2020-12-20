@@ -107,7 +107,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     apiVersion = ApiVersion,
                     statusCode = General.OK_STATUS_CODE,
                     message = General.OK_MESSAGE,
-                    data = result
+                    data = result.Data,
+                    info = new
+                    {
+                        total = result.Count,
+                        page,
+                        size,
+                        count = result.Data.Count
+                    }
                 });
             }
             catch (Exception e)
