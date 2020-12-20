@@ -9,6 +9,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
 {
     public class GarmentPurchasingExpeditionModel : StandardEntity
     {
+        public GarmentPurchasingExpeditionModel()
+        {
+
+        }
+
         public GarmentPurchasingExpeditionModel(int internalNoteId, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, int supplierId, string supplierName, double vat, double incomeTax, double totalPaid, int currencyId, string currencyCode, string remark)
         {
             InternalNoteId = internalNoteId;
