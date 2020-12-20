@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition
 {
-    public class SendToVerificationForm : IValidatableObject
+    public class SendToVerificationAccountingForm : IValidatableObject
     {
-        public SendToVerificationForm()
+        public SendToVerificationAccountingForm()
         {
             Items = new List<FormItemDto>();
         }

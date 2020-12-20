@@ -39,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPost("send-to-verification")]
-        public async Task<IActionResult> SendToVerification([FromBody] SendToVerificationForm form)
+        public async Task<IActionResult> SendToVerification([FromBody] SendToVerificationAccountingForm form)
         {
             try
             {
@@ -47,6 +47,35 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 _validateService.Validate(form);
 
                 var id = await _service.SendToVerification(form);
+
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return Created(string.Concat(Request.Path, "/", id), result);
+            }
+            catch (ServiceValidationException e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
+                return BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPost("send-to-accounting")]
+        public async Task<IActionResult> SendToAccounting([FromBody] SendToVerificationAccountingForm form)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(form);
+
+                var id = await _service.SendToAccounting(form);
 
 
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
