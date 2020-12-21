@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         Task<int> SendToVerification(SendToVerificationAccountingForm form);
         Task<int> SendToAccounting(SendToVerificationAccountingForm form);
         ReadResponse<IndexDto> GetSendToVerificationOrAccounting(string keyword, int page, int size, string order);
+        ReadResponse<IndexDto> GetByPosition(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int internalNoteId, int supplierId);
+        Task<int> VerificationAccepted(List<int> ids);
+        Task<int> CashierAccepted(List<int> ids);
+        Task<int> AccountingAccepted(List<int> ids);
+        Task<int> VoidVerificationAccepted(int id);
+        Task<int> VoidCashierAccepted(int id);
+        Task<int> VoidAccountingAccepted(int id);
         Task<int> SendToPurchasing(int id);
     }
 }

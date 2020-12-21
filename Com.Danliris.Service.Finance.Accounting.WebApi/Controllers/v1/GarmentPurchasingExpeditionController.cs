@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -97,7 +98,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("send-to-verification-or-accounting")]
-        public IActionResult GetSendToVerificationOrAccounting(string keyword, string order, int page = 1, int size = 10)
+        public IActionResult GetSendToVerificationOrAccounting([FromQuery] string keyword, [FromQuery] string order, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             try
             {
@@ -120,6 +121,152 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             catch (Exception e)
             {
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Get([FromQuery] string keyword, [FromQuery] string order, [FromQuery] int internalNoteId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] int page = 1, [FromQuery] int size = 10)
+        {
+            try
+            {
+                var result = _service.GetByPosition(keyword, page, size, order, position, internalNoteId, supplierId);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result.Data,
+                    info = new
+                    {
+                        total = result.Count,
+                        page,
+                        size
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
+        [HttpPut("verification-accepted")]
+        public async Task<IActionResult> VerificationAccepted([FromBody] List<int> ids)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.VerificationAccepted(ids);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("cashier-accepted")]
+        public async Task<IActionResult> CashierAccepted([FromBody] List<int> ids)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.CashierAccepted(ids);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("accounting-accepted")]
+        public async Task<IActionResult> AccountingAccepted([FromBody] List<int> ids)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.AccountingAccepted(ids);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("void-verification-accepted/{id}")]
+        public async Task<IActionResult> VoidVerificationAccepted([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.VoidVerificationAccepted(id);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("void-cashier-accepted/{id}")]
+        public async Task<IActionResult> VoidCashierAccepted([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.VoidCashierAccepted(id);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("void-accounting-accepted/{id}")]
+        public async Task<IActionResult> VoidAccountingAccepted([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.VoidAccountingAccepted(id);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
 

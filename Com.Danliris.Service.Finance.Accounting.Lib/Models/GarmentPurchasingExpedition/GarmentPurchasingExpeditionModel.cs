@@ -45,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
         [MaxLength(16)]
         public string CurrencyCode { get; private set; }
         public string Remark { get; private set; }
-        public PurchasingGarmentExpeditionPosition Position { get; private set; }
+        public GarmentPurchasingExpeditionPosition Position { get; private set; }
 
         public DateTimeOffset? SendToVerificationDate { get; private set; }
         [MaxLength(64)]
@@ -79,25 +79,89 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
         {
             SendToVerificationBy = username;
             SendToVerificationDate = DateTimeOffset.Now;
-            Position = PurchasingGarmentExpeditionPosition.SendToVerification;
+            Position = GarmentPurchasingExpeditionPosition.SendToVerification;
         }
 
         public void SendToAccounting(string username)
         {
             SendToAccountingBy = username;
             SendToAccountingDate = DateTimeOffset.Now;
-            Position = PurchasingGarmentExpeditionPosition.SendToAccounting;
+            Position = GarmentPurchasingExpeditionPosition.SendToAccounting;
         }
 
         public void SendToPurchasing(string username)
         {
             SendToPurchasingBy = username;
             SendToPurchasingDate = DateTimeOffset.Now;
-            Position = PurchasingGarmentExpeditionPosition.SendToPurchasing;
+            Position = GarmentPurchasingExpeditionPosition.SendToPurchasing;
             SendToAccountingBy = null;
             SendToAccountingDate = null;
             SendToVerificationBy = null;
             SendToVerificationDate = null;
+        }
+
+        public void VerificationAccepted(string username)
+        {
+            VerificationAcceptedBy = username;
+            VerificationAcceptedDate = DateTimeOffset.Now;
+            Position = GarmentPurchasingExpeditionPosition.VerificationAccepted;
+        }
+
+        public void CashierAccepted(string username)
+        {
+            CashierAcceptedBy = username;
+            CashierAcceptedDate = DateTimeOffset.Now;
+            Position = GarmentPurchasingExpeditionPosition.CashierAccepted;
+        }
+
+        public void AccountingAccepted(string username)
+        {
+            AccountingAcceptedBy = username;
+            AccountingAcceptedDate = DateTimeOffset.Now;
+            Position = GarmentPurchasingExpeditionPosition.AccountingAccepted;
+        }
+
+        public void VoidVerification(string username)
+        {
+            VerificationAcceptedBy = null;
+            VerificationAcceptedDate = null;
+            Position = GarmentPurchasingExpeditionPosition.SendToVerification;
+        }
+
+        public void VoidCashier(string username)
+        {
+            SendToCashierBy = null;
+            SendToCashierDate = null;
+            CashierAcceptedBy = null;
+            CashierAcceptedDate = null;
+            Position = GarmentPurchasingExpeditionPosition.VerificationAccepted;
+        }
+
+        public void VoidAccounting(string username)
+        {
+            var now = DateTimeOffset.Now;
+            if (SendToVerificationBy == null || SendToVerificationDate == null)
+            {
+                SendToVerificationBy = username;
+                SendToVerificationDate = now;
+                Position = GarmentPurchasingExpeditionPosition.SendToVerification;
+                SendToAccountingBy = null;
+                SendToVerificationDate = null;
+                AccountingAcceptedBy = null;
+                AccountingAcceptedDate = null;
+            }
+            else
+            {
+                Position = GarmentPurchasingExpeditionPosition.VerificationAccepted;
+                SendToCashierBy = null;
+                SendToCashierDate = null;
+                CashierAcceptedBy = null;
+                CashierAcceptedDate = null;
+                SendToAccountingBy = null;
+                SendToAccountingDate = null;
+                AccountingAcceptedBy = null;
+                AccountingAcceptedDate = null;
+            }
         }
     }
 }
