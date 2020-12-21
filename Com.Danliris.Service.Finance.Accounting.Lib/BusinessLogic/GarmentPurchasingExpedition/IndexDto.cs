@@ -44,20 +44,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             InternalNoteNo = entity.InternalNoteNo;
             InternalNoteDate = entity.InternalNoteDate;
             InternalNoteDueDate = entity.InternalNoteDueDate;
+            InternalNoteId = entity.InternalNoteId;
             SupplierName = entity.SupplierName;
             Amount = entity.TotalPaid;
             CurrencyCode = entity.CurrencyCode;
             VerificationAcceptedDate = entity.VerificationAcceptedDate;
             SendToPurchasingRemark = entity.SendToPurchasingRemark;
+            Remark = entity.Remark;
             Status = entity.Position.ToDescriptionString();
-            Date = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierDate : entity.SendToPurchasingDate;
-            VerifiedBy = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierBy : entity.SendToPurchasingBy;
+            Date = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing ? entity.SendToPurchasingDate : entity.VerificationAcceptedDate;
+            VerifiedBy = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing ? entity.SendToPurchasingBy : entity.VerificationAcceptedBy;
         }
 
         public int Id { get; private set; }
         public string InternalNoteNo { get; private set; }
         public DateTimeOffset InternalNoteDate { get; private set; }
         public DateTimeOffset InternalNoteDueDate { get; private set; }
+        public int InternalNoteId { get; private set; }
         public string SupplierName { get; private set; }
         public double Amount { get; private set; }
         public string CurrencyCode { get; private set; }
