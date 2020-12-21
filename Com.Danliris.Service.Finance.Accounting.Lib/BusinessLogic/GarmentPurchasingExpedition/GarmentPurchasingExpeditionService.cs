@@ -51,7 +51,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .Select(entity => new IndexDto(entity.Id, entity.InternalNoteNo, entity.InternalNoteDate, entity.InternalNoteDueDate, entity.SupplierName, entity.TotalPaid, entity.CurrencyCode, entity.Remark, entity.Position))
+                .Select(entity => new IndexDto(entity.Id, entity.VerificationAcceptedDate, entity.InternalNoteNo, entity.InternalNoteDate, entity.InternalNoteDueDate, entity.SupplierName, entity.TotalPaid, entity.CurrencyCode))
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());

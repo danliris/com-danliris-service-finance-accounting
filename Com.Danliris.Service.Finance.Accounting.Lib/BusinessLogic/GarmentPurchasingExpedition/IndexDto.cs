@@ -20,6 +20,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             Status = position.ToDescriptionString();
         }
 
+        public IndexDto(int id, DateTimeOffset? verificationAcceptedDate, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, string supplierName, double amount, string currencyCode)
+        {
+            Id = id;
+            InternalNoteNo = internalNoteNo;
+            InternalNoteDate = internalNoteDate;
+            InternalNoteDueDate = internalNoteDueDate;
+            SupplierName = supplierName;
+            Amount = amount;
+            CurrencyCode = currencyCode;
+            VerificationAcceptedDate = verificationAcceptedDate;
+        }
+
         public int Id { get; private set; }
         public string InternalNoteNo { get; private set; }
         public DateTimeOffset InternalNoteDate { get; private set; }
@@ -27,6 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         public string SupplierName { get; private set; }
         public double Amount { get; private set; }
         public string CurrencyCode { get; private set; }
+        public DateTimeOffset? VerificationAcceptedDate { get; private set; }
         public string Remark { get; private set; }
         public string Status { get; private set; }
     }

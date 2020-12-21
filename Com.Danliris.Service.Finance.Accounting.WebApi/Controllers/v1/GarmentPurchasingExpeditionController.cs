@@ -98,7 +98,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("send-to-verification-or-accounting")]
-        public IActionResult GetSendToVerificationOrAccounting([FromQuery] string keyword, [FromQuery] string order, [FromQuery] int page = 1, [FromQuery] int size = 10)
+        public IActionResult GetSendToVerificationOrAccounting([FromQuery] string keyword, [FromQuery] string order = "{}", [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] string keyword, [FromQuery] string order, [FromQuery] int internalNoteId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] int page = 1, [FromQuery] int size = 10)
+        public IActionResult Get([FromQuery] string keyword, [FromQuery] int internalNoteId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string order = "{}", [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
             try
             {
