@@ -40,6 +40,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
         public IndexDto(GarmentPurchasingExpeditionModel entity)
         {
+            Id = entity.Id;
+            InternalNoteNo = entity.InternalNoteNo;
+            InternalNoteDate = entity.InternalNoteDate;
+            InternalNoteDueDate = entity.InternalNoteDueDate;
+            SupplierName = entity.SupplierName;
+            Amount = entity.TotalPaid;
+            CurrencyCode = entity.CurrencyCode;
+            VerificationAcceptedDate = entity.VerificationAcceptedDate;
+            SendToPurchasingRemark = entity.SendToPurchasingRemark;
             Date = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierDate : entity.SendToPurchasingDate;
             VerifiedBy = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierBy : entity.SendToPurchasingBy;
         }
