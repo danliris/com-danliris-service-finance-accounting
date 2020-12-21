@@ -27,7 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition
         FINANCE_DIVISION = 8
     }
 
-    public enum PurchasingGarmentExpeditionPosition
+    public enum GarmentPurchasingExpeditionPosition
     {
         Invalid = 0,
         [Description("Pembelian")]
@@ -70,7 +70,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition
 
     public static class PurchasingGarmentExpeditionPositionEnumExtensions
     {
-        public static string ToDescriptionString(this PurchasingGarmentExpeditionPosition me)
+        public static string ToDescriptionString(this GarmentPurchasingExpeditionPosition me)
         {
             var enumType = me.GetType();
             var memberInfo = enumType.GetMember(me.ToString());

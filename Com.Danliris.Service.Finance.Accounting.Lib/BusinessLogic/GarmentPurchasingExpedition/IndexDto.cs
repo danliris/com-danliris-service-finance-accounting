@@ -7,7 +7,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 {
     public class IndexDto
     {
-        public IndexDto(int id, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, string supplierName, double amount, string currencyCode, string remark, PurchasingGarmentExpeditionPosition position)
+        public IndexDto(int id, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, string supplierName, double amount, string currencyCode, string remark, GarmentPurchasingExpeditionPosition position)
         {
             Id = id;
             InternalNoteNo = internalNoteNo;

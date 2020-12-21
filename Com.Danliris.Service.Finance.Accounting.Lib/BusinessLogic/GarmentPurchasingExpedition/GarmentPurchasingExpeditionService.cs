@@ -30,9 +30,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             _serviceProvider = serviceProvider;
         }
 
+        public ReadResponse<IndexDto> GetByPosition(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int internalNoteId, int supplierId)
+        {
+            var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == position);
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(entity => entity.InternalNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
+
+            if (internalNoteId > 0)
+                query = query.Where(entity => entity.InternalNoteId == internalNoteId);
+
+            if (supplierId > 0)
+                query = query.Where(entity => entity.SupplierId == supplierId);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<GarmentPurchasingExpeditionModel>.Order(query, orderDictionary);
+
+            var count = query.Count();
+
+            var data = query
+                .Skip((page - 1) * size)
+                .Take(size)
+                .Select(entity => new IndexDto(entity.Id, entity.InternalNoteNo, entity.InternalNoteDate, entity.InternalNoteDueDate, entity.SupplierName, entity.TotalPaid, entity.CurrencyCode, entity.Remark, entity.Position))
+                .ToList();
+
+            return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
+        }
+
         public ReadResponse<IndexDto> GetSendToVerificationOrAccounting(string keyword, int page, int size, string order)
         {
-            var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == PurchasingGarmentExpeditionPosition.SendToVerification || entity.Position == PurchasingGarmentExpeditionPosition.SendToAccounting);
+            var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.SendToVerification || entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting);
 
             if (!string.IsNullOrWhiteSpace(keyword))
                 query = query.Where(entity => entity.InternalNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
@@ -68,7 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var updateInternalNotePositionData = new
             {
                 Ids = models.Select(element => element.InternalNoteId).ToList(),
-                Position = PurchasingGarmentExpeditionPosition.SendToAccounting
+                Position = GarmentPurchasingExpeditionPosition.SendToAccounting
             };
 
             await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
@@ -86,7 +113,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var updateInternalNotePositionData = new
             {
                 Ids = new List<int>() { model.InternalNoteId },
-                Position = PurchasingGarmentExpeditionPosition.Purchasing
+                Position = GarmentPurchasingExpeditionPosition.Purchasing
+            };
+
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
+
+            return _dbContext.SaveChanges();
+        }
+
+        private async Task<int> UpdateInternalNotePosition(List<int> internalNoteIds, GarmentPurchasingExpeditionPosition position)
+        {
+            var httpClient = _serviceProvider.GetService<IHttpClientService>();
+            var updateInternalNotePositionData = new
+            {
+                Ids = internalNoteIds,
+                Position = position
             };
 
             await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
@@ -111,10 +152,132 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var updateInternalNotePositionData = new
             {
                 Ids = models.Select(element => element.InternalNoteId).ToList(),
-                Position = PurchasingGarmentExpeditionPosition.SendToVerification
+                Position = GarmentPurchasingExpeditionPosition.SendToVerification
             };
 
             await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
+            return _dbContext.SaveChanges();
+        }
+
+        public async Task<int> VerificationAccepted(List<int> ids)
+        {
+            var models = _dbContext.GarmentPurchasingExpeditions.Where(entity => ids.Contains(entity.Id)).ToList();
+
+            models = models.Select(model =>
+            {
+                model.VerificationAccepted(_identityService.Username);
+
+                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+                return model;
+            }).ToList();
+
+
+            _dbContext.GarmentPurchasingExpeditions.UpdateRange(models);
+            var result = await _dbContext.SaveChangesAsync();
+
+            var internalNoteIds = models.Select(model => model.InternalNoteId).ToList();
+            await UpdateInternalNotePosition(internalNoteIds, GarmentPurchasingExpeditionPosition.VerificationAccepted);
+
+            return result;
+        }
+
+        public async Task<int> CashierAccepted(List<int> ids)
+        {
+            var models = _dbContext.GarmentPurchasingExpeditions.Where(entity => ids.Contains(entity.Id)).ToList();
+
+            models = models.Select(model =>
+            {
+                model.CashierAccepted(_identityService.Username);
+
+                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+                return model;
+            }).ToList();
+
+
+            _dbContext.GarmentPurchasingExpeditions.UpdateRange(models);
+            var result = await _dbContext.SaveChangesAsync();
+
+            var internalNoteIds = models.Select(model => model.InternalNoteId).ToList();
+            await UpdateInternalNotePosition(internalNoteIds, GarmentPurchasingExpeditionPosition.CashierAccepted);
+
+            return result;
+        }
+
+        public async Task<int> AccountingAccepted(List<int> ids)
+        {
+            var models = _dbContext.GarmentPurchasingExpeditions.Where(entity => ids.Contains(entity.Id)).ToList();
+
+            models = models.Select(model =>
+            {
+                model.AccountingAccepted(_identityService.Username);
+
+                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+                return model;
+            }).ToList();
+
+            _dbContext.GarmentPurchasingExpeditions.UpdateRange(models);
+            var result = await _dbContext.SaveChangesAsync();
+
+            var internalNoteIds = models.Select(model => model.InternalNoteId).ToList();
+            await UpdateInternalNotePosition(internalNoteIds, GarmentPurchasingExpeditionPosition.AccountingAccepted);
+
+            return result;
+        }
+
+        public async Task<int> VoidVerificationAccepted(int id)
+        {
+            var model = _dbContext.GarmentPurchasingExpeditions.FirstOrDefault(entity => entity.Id == id);
+            model.VoidVerification(_identityService.Username);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.GarmentPurchasingExpeditions.Update(model);
+
+            var httpClient = _serviceProvider.GetService<IHttpClientService>();
+            var updateInternalNotePositionData = new
+            {
+                Ids = new List<int>() { model.InternalNoteId },
+                Position = GarmentPurchasingExpeditionPosition.SendToVerification
+            };
+
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
+
+            return _dbContext.SaveChanges();
+        }
+
+        public async Task<int> VoidCashierAccepted(int id)
+        {
+            var model = _dbContext.GarmentPurchasingExpeditions.FirstOrDefault(entity => entity.Id == id);
+            model.VoidCashier(_identityService.Username);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.GarmentPurchasingExpeditions.Update(model);
+
+            var httpClient = _serviceProvider.GetService<IHttpClientService>();
+            var updateInternalNotePositionData = new
+            {
+                Ids = new List<int>() { model.InternalNoteId },
+                Position = GarmentPurchasingExpeditionPosition.VerificationAccepted
+            };
+
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
+
+            return _dbContext.SaveChanges();
+        }
+
+        public async Task<int> VoidAccountingAccepted(int id)
+        {
+            var model = _dbContext.GarmentPurchasingExpeditions.FirstOrDefault(entity => entity.Id == id);
+            model.VoidAccounting(_identityService.Username);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.GarmentPurchasingExpeditions.Update(model);
+
+            var httpClient = _serviceProvider.GetService<IHttpClientService>();
+            var updateInternalNotePositionData = new
+            {
+                Ids = new List<int>() { model.InternalNoteId },
+                model.Position
+            };
+
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
+
             return _dbContext.SaveChanges();
         }
     }
