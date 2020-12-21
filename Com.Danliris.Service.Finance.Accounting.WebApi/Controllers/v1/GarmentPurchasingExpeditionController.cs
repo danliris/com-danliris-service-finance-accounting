@@ -271,13 +271,106 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPut("send-to-internal-note/{id}")]
-        public async Task<IActionResult> PostNonPO([FromRoute] int id)
+        public async Task<IActionResult> SendToInternalNote([FromRoute] int id)
         {
             try
             {
                 VerifyUser();
 
                 await _service.SendToPurchasing(id);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("verified")]
+        public IActionResult GetVerified([FromQuery] string keyword, [FromQuery] string order = "{}", [FromQuery] int page = 1, [FromQuery] int size = 10)
+        {
+            try
+            {
+                var result = _service.GetVerified(keyword, page, size, order);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result.Data,
+                    info = new
+                    {
+                        total = result.Count,
+                        page,
+                        size,
+                        count = result.Data.Count
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
+        [HttpPut("send-to-accounting/{id}")]
+        public async Task<IActionResult> SendToAccounting([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.SendToAccounting(id);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("send-to-cashier/{id}")]
+        public async Task<IActionResult> SendToCashier([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.SendToCashier(id);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("send-to-purchasing-rejected/{id}")]
+        public async Task<IActionResult> SendToPurchasingRejected([FromRoute] int id, [FromBody] string remark)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.SendToPurchasingRejected(id, remark);
 
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
 

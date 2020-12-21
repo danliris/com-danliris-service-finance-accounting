@@ -66,6 +66,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
         public DateTimeOffset? SendToPurchasingDate { get; private set; }
         [MaxLength(64)]
         public string SendToPurchasingBy { get; private set; }
+        public string SendToPurchasingRemark { get; private set; }
 
         public DateTimeOffset? SendToAccountingDate { get; private set; }
         [MaxLength(64)]
@@ -89,11 +90,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
             Position = GarmentPurchasingExpeditionPosition.SendToAccounting;
         }
 
+        public void SendToCashier(string username)
+        {
+            Position = GarmentPurchasingExpeditionPosition.SendToCashier;
+            SendToCashierBy = username;
+            SendToCashierDate = DateTimeOffset.Now;
+        }
+
         public void SendToPurchasing(string username)
         {
-            SendToPurchasingBy = username;
-            SendToPurchasingDate = DateTimeOffset.Now;
-            Position = GarmentPurchasingExpeditionPosition.SendToPurchasing;
+            Position = GarmentPurchasingExpeditionPosition.Purchasing;
             SendToAccountingBy = null;
             SendToAccountingDate = null;
             SendToVerificationBy = null;
@@ -162,6 +168,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
                 AccountingAcceptedBy = null;
                 AccountingAcceptedDate = null;
             }
+        }
+
+        public void SendToPurchasingRejected(string username, string remark)
+        {
+            Position = GarmentPurchasingExpeditionPosition.SendToPurchasing;
+            SendToPurchasingBy = username;
+            SendToPurchasingDate = DateTimeOffset.Now;
+            SendToPurchasingRemark = remark;
         }
     }
 }
