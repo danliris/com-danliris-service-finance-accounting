@@ -49,6 +49,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             CurrencyCode = entity.CurrencyCode;
             VerificationAcceptedDate = entity.VerificationAcceptedDate;
             SendToPurchasingRemark = entity.SendToPurchasingRemark;
+            Status = entity.Position.ToDescriptionString();
             Date = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierDate : entity.SendToPurchasingDate;
             VerifiedBy = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierBy : entity.SendToPurchasingBy;
         }
