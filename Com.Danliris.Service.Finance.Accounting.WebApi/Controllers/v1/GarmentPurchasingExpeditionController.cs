@@ -319,6 +319,26 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpGet("verified/{id}")]
+        public IActionResult GetVerifiedById([FromRoute] int id)
+        {
+            try
+            {
+                var result = _service.GetById(id);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
         [HttpPut("send-to-accounting/{id}")]
         public async Task<IActionResult> SendToAccounting([FromRoute] int id)
         {
