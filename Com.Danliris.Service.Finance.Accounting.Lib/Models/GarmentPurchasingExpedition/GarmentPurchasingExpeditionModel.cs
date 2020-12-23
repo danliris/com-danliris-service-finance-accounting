@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
 
         }
 
-        public GarmentPurchasingExpeditionModel(int internalNoteId, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, int supplierId, string supplierName, double vat, double incomeTax, double totalPaid, int currencyId, string currencyCode, string remark)
+        public GarmentPurchasingExpeditionModel(int internalNoteId, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, int supplierId, string supplierName, double vat, double incomeTax, double totalPaid, int currencyId, string currencyCode, string remark, double dpp)
         {
             InternalNoteId = internalNoteId;
             InternalNoteNo = internalNoteNo;
@@ -22,6 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
             InternalNoteDueDate = internalNoteDueDate;
             SupplierId = supplierId;
             SupplierName = supplierName;
+            DPP = dpp;
             VAT = vat;
             IncomeTax = incomeTax;
             TotalPaid = totalPaid;
@@ -38,6 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
         public int SupplierId { get; private set; }
         [MaxLength(512)]
         public string SupplierName { get; private set; }
+        public double DPP { get; private set; }
         public double VAT { get; private set; }
         public double IncomeTax { get; private set; }
         public double TotalPaid { get; private set; }
