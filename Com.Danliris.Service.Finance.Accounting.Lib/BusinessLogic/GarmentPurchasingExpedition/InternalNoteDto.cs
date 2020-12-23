@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         public DateTimeOffset DueDate { get;  set; }
         public int SupplierId { get;  set; }
         public string SupplierName { get;  set; }
+        public double AmountDPP { get;  set; }
         public double VAT { get;  set; }
         public double IncomeTax { get;  set; }
         public double TotalPaid { get;  set; }
