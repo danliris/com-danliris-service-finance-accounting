@@ -42,6 +42,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
 
             var realizationExpenditureQuery = _DbContext.VBRealizationDocumentExpenditureItems.AsNoTracking();
 
+            var expeditionQuery = _DbContext.VBRealizationDocumentExpeditions.AsNoTracking().Where(entity => entity.Position == VBRealizationDocumentExpedition.VBRealizationPosition.Cashier);
+
             if (unitId != 0)
             {
                 requestQuery = requestQuery.Where(s => s.SuppliantUnitId == unitId);
@@ -101,9 +103,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             if (!realizeDateFrom.HasValue && !realizeDateTo.HasValue)
             {
                 result = (from rqst in requestQuery
+
                           join real in realizationQuery
                           on rqst.Id equals real.VBRequestDocumentId into data
                           from real in data.DefaultIfEmpty()
+                          join expedition in expeditionQuery
+                          on real.Id equals expedition.VBRealizationId into expdata
+                          from expedition in expdata.DefaultIfEmpty()
                           select new VBStatusReportViewModel()
                           {
                               Id = rqst.Id,
@@ -119,7 +125,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                               RealizationNo = real.DocumentNo,
                               RealizationDate = real.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                               Usage = rqst.Purpose,
-                              Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
+                              //Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
+                              //      : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
+                              Aging = expedition != null && expedition.CashierReceiptDate != null && rqst.IsCompleted ? (int)(expedition.CashierReceiptDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
                                     : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
                               Amount = rqst.Amount,
                               RealizationAmount = real != null ? real.Amount : 0,
@@ -155,6 +163,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 result = (from rqst in requestQuery
                           join real in realizationQuery
                           on rqst.Id equals real.VBRequestDocumentId
+                          join expedition in expeditionQuery
+                          on real.Id equals expedition.VBRealizationId
                           select new VBStatusReportViewModel()
                           {
                               Id = rqst.Id,
@@ -170,7 +180,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                               RealizationNo = real.DocumentNo,
                               RealizationDate = real.Date.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")),
                               Usage = rqst.Purpose,
-                              Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
+                              //Aging = rqst.IsCompleted ? (int)(rqst.CompletedDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
+                              //      : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
+                              Aging = expedition != null && expedition.CashierReceiptDate != null && rqst.IsCompleted ? (int)(expedition.CashierReceiptDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays
                                     : (int)(requestDateTo.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
                               Amount = rqst.Amount,
                               RealizationAmount = real != null ? real.Amount : 0,
