@@ -202,6 +202,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
         {
             var query = _dbContext.VBRealizationDocuments.Where(entity => entity.Type == VBType.NonPO).AsQueryable();
 
+            query = query.Where(entity => entity.CreatedBy == _identityService.Username);
+
             var searchAttributes = new List<string>()
             {
                 "DocumentNo",

@@ -231,7 +231,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public ReadResponse<VBRealizationDocumentModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.Set<VBRealizationDocumentModel>().AsQueryable(); ;
+            var query = _dbContext.Set<VBRealizationDocumentModel>().AsQueryable();
+
+            query = query.Where(entity => entity.CreatedBy == _identityService.Username);
 
             List<string> searchAttributes = new List<string>()
             {
