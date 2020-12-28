@@ -19,5 +19,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         public string PaymentType { get; set; }
         public string PaymentMethod { get; set; }
         public int PaymentDueDays { get; set; }
+        public string InvoicesNo { get; set; }
     }
 }
