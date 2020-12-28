@@ -384,13 +384,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPut("send-to-purchasing-rejected/{id}")]
-        public async Task<IActionResult> SendToPurchasingRejected([FromRoute] int id, [FromBody] string remark)
+        public async Task<IActionResult> SendToPurchasingRejected([FromRoute] int id, [FromBody] RejectionForm form)
         {
             try
             {
                 VerifyUser();
 
-                await _service.SendToPurchasingRejected(id, remark);
+                await _service.SendToPurchasingRejected(id, form.Remark);
 
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
 
@@ -404,5 +404,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
+    }
+
+    public class RejectionForm
+    {
+        public string Remark { get; set; }
     }
 }
