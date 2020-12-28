@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
 
         }
 
-        public GarmentPurchasingExpeditionModel(int internalNoteId, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, int supplierId, string supplierName, double vat, double incomeTax, double totalPaid, int currencyId, string currencyCode, string remark, double dpp, string paymentMethod, string paymentType, int paymentDueDays)
+        public GarmentPurchasingExpeditionModel(int internalNoteId, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, int supplierId, string supplierName, double vat, double incomeTax, double totalPaid, int currencyId, string currencyCode, string remark, double dpp, string paymentMethod, string paymentType, int paymentDueDays, string invoicesNo)
         {
             InternalNoteId = internalNoteId;
             InternalNoteNo = internalNoteNo;
@@ -32,6 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
             PaymentMethod = paymentMethod;
             PaymentDueDays = paymentDueDays;
             PaymentType = paymentType;
+            InvoicesNo = invoicesNo;
         }
 
         public int InternalNoteId { get; private set; }
@@ -50,10 +51,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
         [MaxLength(16)]
         public string CurrencyCode { get; private set; }
         [MaxLength(512)]
-        public string PaymentType { get; set; }
+        public string PaymentType { get; private set; }
+        public string InvoicesNo { get; private set; }
         [MaxLength(512)]
-        public string PaymentMethod { get; set; }
-        public int PaymentDueDays { get; set; }
+        public string PaymentMethod { get; private set; }
+        public int PaymentDueDays { get; private set; }
         public string Remark { get; private set; }
         public GarmentPurchasingExpeditionPosition Position { get; private set; }
 
