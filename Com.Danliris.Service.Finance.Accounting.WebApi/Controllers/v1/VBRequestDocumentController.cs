@@ -75,6 +75,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         {
             try
             {
+                VerifyUser();
                 ReadResponse<VBRequestDocumentModel> read = _service.Get(page, size, order, select, keyword, filter);
 
                 //List<TViewModel> dataVM = Mapper.Map<List<TViewModel>>(read.Data);

@@ -350,7 +350,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public ReadResponse<VBRequestDocumentModel> Get(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.Set<VBRequestDocumentModel>().AsQueryable(); ;
+            var query = _dbContext.Set<VBRequestDocumentModel>().AsQueryable();
+
+            query = query.Where(entity => entity.CreatedBy == _identityService.Username);
 
             List<string> searchAttributes = new List<string>()
             {
