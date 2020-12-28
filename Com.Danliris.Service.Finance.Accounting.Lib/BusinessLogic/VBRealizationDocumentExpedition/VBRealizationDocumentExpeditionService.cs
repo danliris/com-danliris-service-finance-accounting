@@ -285,7 +285,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                    element.VBRequestDocumentNo,
                    element.DocumentNo,
                    element.Date,
-                   element.VBRequestDocumentCreatedBy,
+                   !string.IsNullOrWhiteSpace(element.VBRequestDocumentCreatedBy) ? element.VBRequestDocumentCreatedBy : element.CreatedBy,
                    element.SuppliantUnitId,
                    element.SuppliantUnitName,
                    element.SuppliantDivisionId,
