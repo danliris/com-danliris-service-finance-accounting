@@ -103,7 +103,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             if (!realizeDateFrom.HasValue && !realizeDateTo.HasValue)
             {
                 result = (from rqst in requestQuery
-
                           join real in realizationQuery
                           on rqst.Id equals real.VBRequestDocumentId into data
                           from real in data.DefaultIfEmpty()
