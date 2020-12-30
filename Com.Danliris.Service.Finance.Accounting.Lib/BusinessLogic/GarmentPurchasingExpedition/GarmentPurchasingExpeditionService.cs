@@ -43,6 +43,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             if (supplierId > 0)
                 query = query.Where(entity => entity.SupplierId == supplierId);
 
+            if (position == GarmentPurchasingExpeditionPosition.Purchasing)
+                query = query.Where(entity => !string.IsNullOrWhiteSpace(entity.SendToPurchasingRemark));
+
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
             query = QueryHelper<GarmentPurchasingExpeditionModel>.Order(query, orderDictionary);
 
@@ -220,6 +223,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
             var internalNoteIds = models.Select(model => model.InternalNoteId).ToList();
             await UpdateInternalNotePosition(internalNoteIds, GarmentPurchasingExpeditionPosition.AccountingAccepted);
+
+            return result;
+        }
+
+        public async Task<int> PurchasingAccepted(List<int> ids)
+        {
+            var models = _dbContext.GarmentPurchasingExpeditions.Where(entity => ids.Contains(entity.Id)).ToList();
+
+            models = models.Select(model =>
+            {
+                model.PurchasingAccepted(_identityService.Username);
+
+                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+                return model;
+            }).ToList();
+
+            _dbContext.GarmentPurchasingExpeditions.UpdateRange(models);
+            var result = await _dbContext.SaveChangesAsync();
+
+            var internalNoteIds = models.Select(model => model.InternalNoteId).ToList();
+            await UpdateInternalNotePosition(internalNoteIds, GarmentPurchasingExpeditionPosition.Purchasing);
 
             return result;
         }
