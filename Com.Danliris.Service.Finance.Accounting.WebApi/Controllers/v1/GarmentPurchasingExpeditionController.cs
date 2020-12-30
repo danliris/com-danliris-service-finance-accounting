@@ -213,6 +213,26 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpPut("purchasing-accepted")]
+        public async Task<IActionResult> PurchasingAccepted([FromBody] List<int> ids)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.PurchasingAccepted(ids);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
         [HttpPut("void-verification-accepted/{id}")]
         public async Task<IActionResult> VoidVerificationAccepted([FromRoute] int id)
         {
