@@ -35,6 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             dt.Columns.Add(new DataColumn() { ColumnName = "No. NI", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. NI", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Jatuh Tempo", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Invoice", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(double) });
             dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(double) });
             dt.Columns.Add(new DataColumn() { ColumnName = "PPh", DataType = typeof(double) });
@@ -65,6 +66,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                         item.InternalNoteNo,
                         item.InternalNoteDate.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.InternalNoteDueDate.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        item.InvoicesNo,
                         item.DPP,
                         item.VAT,
                         item.IncomeTax,
@@ -106,6 +108,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
             if (position > 0)
                 result = result.Where(entity => entity.Position == position);
+
+            if (position == GarmentPurchasingExpeditionPosition.Purchasing)
+                result = result.Where(entity => !string.IsNullOrWhiteSpace(entity.SendToPurchasingRemark));
 
             if (internalNoteId > 0)
                 result = result.Where(entity => entity.InternalNoteId == internalNoteId);
