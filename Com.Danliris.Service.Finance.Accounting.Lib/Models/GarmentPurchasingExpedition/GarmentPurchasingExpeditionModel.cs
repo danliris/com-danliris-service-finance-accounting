@@ -189,5 +189,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingEx
             SendToPurchasingDate = DateTimeOffset.Now;
             SendToPurchasingRemark = remark;
         }
+
+        public void PurchasingAccepted(string username)
+        {
+            Position = GarmentPurchasingExpeditionPosition.Purchasing;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition.Reports;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
@@ -23,12 +24,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
     {
         private readonly IIdentityService _identityService;
         private readonly IGarmentPurchasingExpeditionService _service;
+        private readonly IGarmentPurchasingExpeditionReportService _reportService;
         private readonly IValidateService _validateService;
         private const string ApiVersion = "1.0";
         public GarmentPurchasingExpeditionController(IServiceProvider serviceProvider)
         {
             _identityService = serviceProvider.GetService<IIdentityService>();
             _service = serviceProvider.GetService<IGarmentPurchasingExpeditionService>();
+            _reportService = serviceProvider.GetService<IGarmentPurchasingExpeditionReportService>();
             _validateService = serviceProvider.GetService<IValidateService>();
         }
 
@@ -402,6 +405,50 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("report")]
+        public IActionResult GetReport(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset? startDate, DateTimeOffset? endDate)
+        {
+            try
+            {
+                endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate;
+                startDate = !startDate.HasValue ? endDate.Value.AddMonths(-1) : startDate;
+
+                var result = _reportService.GetReport(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
+        [HttpGet("report/xls")]
+        public IActionResult GetReportXls(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset? startDate, DateTimeOffset? endDate)
+        {
+            try
+            {
+                endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate;
+                startDate = !startDate.HasValue ? endDate.Value.AddMonths(-1) : startDate;
+
+                var stream = _reportService.GenerateExcel(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+
+                var bytes = stream.ToArray();
+                var filename = "Laporan Ekspedisi Garment.xlsx";
+                var file = File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
             }
         }
     }
