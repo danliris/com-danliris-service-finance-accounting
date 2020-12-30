@@ -109,6 +109,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             if (position > 0)
                 result = result.Where(entity => entity.Position == position);
 
+            if (position == GarmentPurchasingExpeditionPosition.Purchasing)
+                result = result.Where(entity => !string.IsNullOrWhiteSpace(entity.SendToPurchasingRemark));
+
             if (internalNoteId > 0)
                 result = result.Where(entity => entity.InternalNoteId == internalNoteId);
 
