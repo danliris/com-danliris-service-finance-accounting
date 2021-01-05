@@ -34,6 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No. NI", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. NI", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Jatuh Tempo", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Invoice", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(double) });
@@ -47,15 +48,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Pembelian Kirim", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Admin", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Verif Terima", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Verif Cek", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Verif Kirim", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Verifikator", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Terima Kasir", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Bukti Pengeluaran Bank", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Terima Pembelian", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Admin Pembelian", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Alasan", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Terima Accounting", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Admin Accounting", DataType = typeof(string) });
 
             if (query.Count() == 0)
             {
-                dt.Rows.Add("", "", "", 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
             }
             else
             {
@@ -65,6 +70,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     dt.Rows.Add(
                         item.InternalNoteNo,
                         item.InternalNoteDate.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        item.SupplierName,
                         item.InternalNoteDueDate.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.InvoicesNo,
                         item.DPP,
@@ -75,14 +81,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                         item.PaymentMethod,
                         item.PaymentDueDays.ToString(),
                         item.Position.ToDescriptionString(),
+                        item.SendToVerificationDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        item.SendToVerificationBy,
+                        item.VerificationAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        item.SendToVerificationDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        item.VerificationAcceptedBy,
+                        item.CashierAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        null,
                         item.SendToPurchasingDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.SendToPurchasingBy,
-                        item.VerificationAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                        null,
-                        item.SendToCashierDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                        item.SendToCashierBy,
-                        item.CashierAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                        null
+                        item.SendToPurchasingRemark,
+                        item.AccountingAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        item.AccountingAcceptedBy
                         );
                 }
             }
