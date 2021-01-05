@@ -55,6 +55,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.OthersEx
                     data = result.Data,
                     info = new
                     {
+                        total = result.Total,
                         count = result.Count,
                         page = result.Page,
                         size = result.Size,

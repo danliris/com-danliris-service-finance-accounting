@@ -21,6 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         Task<int> VerificationAccepted(List<int> ids);
         Task<int> CashierAccepted(List<int> ids);
         Task<int> AccountingAccepted(List<int> ids);
+        Task<int> PurchasingAccepted(List<int> ids);
         Task<int> VoidVerificationAccepted(int id);
         Task<int> VoidCashierAccepted(int id);
         Task<int> VoidAccountingAccepted(int id);

@@ -12,6 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.V
     public interface IVBRealizationDocumentNonPOService
     {
         ReadResponse<VBRealizationDocumentModel> Read(int page, int size, string order, List<string> select, string keyword, string filter);
+        ReadResponse<VBRealizationDocumentModel> ReadByUser(int page, int size, string order, List<string> select, string keyword, string filter);
         Task<int> CreateAsync(VBRealizationDocumentNonPOViewModel model);
         Task<VBRealizationDocumentNonPOViewModel> ReadByIdAsync(int id);
         Task<int> UpdateAsync(int id, VBRealizationDocumentNonPOViewModel model);

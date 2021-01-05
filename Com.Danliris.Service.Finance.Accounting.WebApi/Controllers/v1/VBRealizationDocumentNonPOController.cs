@@ -66,6 +66,30 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpGet("by-user")]
+        public virtual IActionResult GetByUser(int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        {
+            try
+            {
+                VerifyUser();
+                ReadResponse<VBRealizationDocumentModel> read = _service.ReadByUser(page, size, order, select, keyword, filter);
+
+                //List<TViewModel> dataVM = Mapper.Map<List<TViewModel>>(read.Data);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(null, read.Data, page, size, read.Count, read.Data.Count, read.Order, read.Selected);
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> PostNonPO([FromBody] VBRealizationDocumentNonPOViewModel form)
         {
