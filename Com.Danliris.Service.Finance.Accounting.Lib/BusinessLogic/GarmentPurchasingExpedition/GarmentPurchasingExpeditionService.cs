@@ -44,7 +44,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                 query = query.Where(entity => entity.SupplierId == supplierId);
 
             if (position == GarmentPurchasingExpeditionPosition.Purchasing)
-                query = query.Where(entity => !string.IsNullOrWhiteSpace(entity.SendToPurchasingRemark));
+            {
+                var notPurchasingInternalNoteIds = _dbContext.GarmentPurchasingExpeditions
+                    .GroupBy(entity => new { entity.InternalNoteId, entity.Position })
+                    .Select(groupped => new { groupped.Key.InternalNoteId, groupped.Key.Position })
+                    .Where(entity => entity.Position > GarmentPurchasingExpeditionPosition.Purchasing)
+                    .Select(entity => entity.InternalNoteId)
+                    .ToList();
+
+                var firstInternalNoteIds = _dbContext.GarmentPurchasingExpeditions
+                    .Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.Purchasing)
+                    .GroupBy(entity => new { entity.InternalNoteId, entity.Position })
+                    .Select(groupped => new { groupped.OrderByDescending(entity => entity.CreatedUtc).FirstOrDefault().InternalNoteId })
+                    .Select(entity => entity.InternalNoteId)
+                    .ToList();
+                query = query.Where(entity => firstInternalNoteIds.Contains(entity.InternalNoteId) && !notPurchasingInternalNoteIds.Contains(entity.InternalNoteId));
+            }
 
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
             query = QueryHelper<GarmentPurchasingExpeditionModel>.Order(query, orderDictionary);
