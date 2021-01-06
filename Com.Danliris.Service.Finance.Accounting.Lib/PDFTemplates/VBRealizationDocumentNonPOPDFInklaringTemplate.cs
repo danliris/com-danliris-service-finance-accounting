@@ -563,7 +563,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             table.AddCell(cell);
             cell.Phrase = new Phrase($"(..................)", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase($"(..................)", normal_font);
+            cell.Phrase = new Phrase($"({viewModel.CreatedBy})", normal_font);
             table.AddCell(cell);
             document.Add(table);
             #endregion Footer

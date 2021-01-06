@@ -1,6 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePayment;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
@@ -76,6 +77,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<VBRealizationDocumentModel> VBRealizationDocuments { get; set; }
         public DbSet<VBRealizationDocumentExpenditureItemModel> VBRealizationDocumentExpenditureItems { get; set; }
         public DbSet<VBRealizationDocumentUnitCostsItemModel> VBRealizationDocumentUnitCostsItems { get; set; }
+
+        public DbSet<GarmentPurchasingExpeditionModel> GarmentPurchasingExpeditions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

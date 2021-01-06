@@ -16,5 +16,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
 
         public bool UseIncomeTax { get; set; }
 
+        public int DivisionId { get; set; }
+
+        public string DivisionCode { get; set; }
+
+        public string DivisionName { get; set; }
+
+        public int UnitId { get; set; }
+
+        public string UnitCode { get; set; }
+
+        public string UnitName { get; set; }
+
     }
 }

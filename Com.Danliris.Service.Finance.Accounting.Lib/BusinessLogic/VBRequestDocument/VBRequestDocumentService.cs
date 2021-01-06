@@ -350,7 +350,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
         public ReadResponse<VBRequestDocumentModel> Get(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.Set<VBRequestDocumentModel>().AsQueryable(); ;
+            var query = _dbContext.Set<VBRequestDocumentModel>().AsQueryable();
+
+            List<string> searchAttributes = new List<string>()
+            {
+                "DocumentNo", "SuppliantUnitName"
+            };
+
+            query = QueryHelper<VBRequestDocumentModel>.Search(query, searchAttributes, keyword);
+
+            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            query = QueryHelper<VBRequestDocumentModel>.Filter(query, filterDictionary);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<VBRequestDocumentModel>.Order(query, orderDictionary);
+
+            var pageable = new Pageable<VBRequestDocumentModel>(query, page - 1, size);
+            var data = pageable.Data.ToList();
+
+            int TotalData = pageable.TotalCount;
+
+            return new ReadResponse<VBRequestDocumentModel>(data, TotalData, orderDictionary, new List<string>());
+        }
+        
+        public ReadResponse<VBRequestDocumentModel> GetByUser(int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            var query = _dbContext.Set<VBRequestDocumentModel>().AsQueryable();
+
+            query = query.Where(entity => entity.CreatedBy == _identityService.Username);
 
             List<string> searchAttributes = new List<string>()
             {
