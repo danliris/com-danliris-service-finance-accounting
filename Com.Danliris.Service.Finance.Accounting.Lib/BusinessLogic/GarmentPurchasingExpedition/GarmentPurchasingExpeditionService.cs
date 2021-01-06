@@ -53,12 +53,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     .ToList();
 
                 var firstInternalNoteIds = _dbContext.GarmentPurchasingExpeditions
-                    .Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.Purchasing)
+                    .Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.Purchasing && !string.IsNullOrEmpty(entity.SendToPurchasingRemark))
                     .GroupBy(entity => new { entity.InternalNoteId, entity.Position })
-                    .Select(groupped => new { groupped.OrderByDescending(entity => entity.CreatedUtc).FirstOrDefault().InternalNoteId })
-                    .Select(entity => entity.InternalNoteId)
+                    .Select(groupped => new { groupped.OrderByDescending(entity => entity.CreatedUtc).FirstOrDefault().Id })
+                    .Select(entity => entity.Id)
                     .ToList();
-                query = query.Where(entity => firstInternalNoteIds.Contains(entity.InternalNoteId) && !notPurchasingInternalNoteIds.Contains(entity.InternalNoteId));
+                query = query.Where(entity => firstInternalNoteIds.Contains(entity.Id) && !notPurchasingInternalNoteIds.Contains(entity.InternalNoteId));
             }
 
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
