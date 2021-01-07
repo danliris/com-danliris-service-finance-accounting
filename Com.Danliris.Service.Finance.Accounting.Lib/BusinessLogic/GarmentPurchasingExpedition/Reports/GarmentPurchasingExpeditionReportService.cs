@@ -108,16 +108,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
         private IQueryable<GarmentPurchasingExpeditionModel> GetQuery(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset startDate, DateTimeOffset endDate)
         {
-            var result = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.InternalNoteDate >= startDate && entity.InternalNoteDate <= endDate);
+            var result = _dbContext.GarmentPurchasingExpeditions.AsQueryable();
+
+            if (position > 0)
+                result = result.Where(entity => entity.Position == position);
+
+            switch (position)
+            {
+                case GarmentPurchasingExpeditionPosition.Purchasing:
+                    result = result.Where(entity => entity.SendToPurchasingDate.GetValueOrDefault() >= startDate && entity.SendToPurchasingDate.GetValueOrDefault() <= endDate);
+                    break;
+                case GarmentPurchasingExpeditionPosition.SendToVerification:
+                    result = result.Where(entity => entity.SendToVerificationDate.GetValueOrDefault() >= startDate && entity.SendToVerificationDate.GetValueOrDefault() <= endDate);
+                    break;
+                case GarmentPurchasingExpeditionPosition.VerificationAccepted:
+                    result = result.Where(entity => entity.VerificationAcceptedDate.GetValueOrDefault() >= startDate && entity.VerificationAcceptedDate.GetValueOrDefault() <= endDate);
+                    break;
+                case GarmentPurchasingExpeditionPosition.SendToCashier:
+                    result = result.Where(entity => entity.SendToCashierDate.GetValueOrDefault() >= startDate && entity.SendToCashierDate.GetValueOrDefault() <= endDate);
+                    break;
+                case GarmentPurchasingExpeditionPosition.CashierAccepted:
+                    result = result.Where(entity => entity.CashierAcceptedDate.GetValueOrDefault() >= startDate && entity.CashierAcceptedDate.GetValueOrDefault() <= endDate);
+                    break;
+                case GarmentPurchasingExpeditionPosition.AccountingAccepted:
+                    result = result.Where(entity => entity.AccountingAcceptedDate.GetValueOrDefault() >= startDate && entity.AccountingAcceptedDate.GetValueOrDefault() <= endDate);
+                    break;
+                default:
+                    result = result.Where(entity => entity.SendToVerificationDate.GetValueOrDefault() >= startDate && entity.SendToVerificationDate.GetValueOrDefault() <= endDate);
+                    break;
+            }
 
             if (internalNoteId > 0)
                 result = result.Where(entity => entity.InternalNoteId == internalNoteId);
 
             if (supplierId > 0)
                 result = result.Where(entity => entity.SupplierId == supplierId);
-
-            if (position > 0)
-                result = result.Where(entity => entity.Position == position);
 
             if (position == GarmentPurchasingExpeditionPosition.Purchasing)
                 result = result.Where(entity => !string.IsNullOrWhiteSpace(entity.SendToPurchasingRemark));
