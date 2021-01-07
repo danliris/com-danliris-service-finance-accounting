@@ -434,7 +434,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             try
             {
                 endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate;
-                startDate = !startDate.HasValue ? endDate.Value.AddMonths(-1) : startDate;
+                startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
 
                 var result = _reportService.GetReport(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
                 return Ok(new
@@ -457,7 +457,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             try
             {
                 endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate;
-                startDate = !startDate.HasValue ? endDate.Value.AddMonths(-1) : startDate;
+                startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
 
                 var stream = _reportService.GenerateExcel(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
 
