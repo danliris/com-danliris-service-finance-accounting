@@ -116,25 +116,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             switch (position)
             {
                 case GarmentPurchasingExpeditionPosition.Purchasing:
-                    result = result.Where(entity => entity.SendToPurchasingDate.GetValueOrDefault() >= startDate && entity.SendToPurchasingDate.GetValueOrDefault() <= endDate);
+                    result = result.Where(entity => entity.SendToPurchasingDate.GetValueOrDefault().Date >= startDate.Date && entity.SendToPurchasingDate.GetValueOrDefault().Date <= endDate.Date);
                     break;
                 case GarmentPurchasingExpeditionPosition.SendToVerification:
-                    result = result.Where(entity => entity.SendToVerificationDate.GetValueOrDefault() >= startDate && entity.SendToVerificationDate.GetValueOrDefault() <= endDate);
+                    result = result.Where(entity => entity.SendToVerificationDate.GetValueOrDefault().Date >= startDate.Date && entity.SendToVerificationDate.GetValueOrDefault().Date <= endDate.Date);
                     break;
                 case GarmentPurchasingExpeditionPosition.VerificationAccepted:
-                    result = result.Where(entity => entity.VerificationAcceptedDate.GetValueOrDefault() >= startDate && entity.VerificationAcceptedDate.GetValueOrDefault() <= endDate);
+                    result = result.Where(entity => entity.VerificationAcceptedDate.GetValueOrDefault().Date >= startDate.Date && entity.VerificationAcceptedDate.GetValueOrDefault().Date <= endDate.Date);
                     break;
                 case GarmentPurchasingExpeditionPosition.SendToCashier:
-                    result = result.Where(entity => entity.SendToCashierDate.GetValueOrDefault() >= startDate && entity.SendToCashierDate.GetValueOrDefault() <= endDate);
+                    result = result.Where(entity => entity.SendToCashierDate.GetValueOrDefault().Date >= startDate.Date && entity.SendToCashierDate.GetValueOrDefault().Date <= endDate.Date);
                     break;
                 case GarmentPurchasingExpeditionPosition.CashierAccepted:
-                    result = result.Where(entity => entity.CashierAcceptedDate.GetValueOrDefault() >= startDate && entity.CashierAcceptedDate.GetValueOrDefault() <= endDate);
+                    result = result.Where(entity => entity.CashierAcceptedDate.GetValueOrDefault().Date >= startDate.Date && entity.CashierAcceptedDate.GetValueOrDefault().Date <= endDate.Date);
                     break;
                 case GarmentPurchasingExpeditionPosition.AccountingAccepted:
-                    result = result.Where(entity => entity.AccountingAcceptedDate.GetValueOrDefault() >= startDate && entity.AccountingAcceptedDate.GetValueOrDefault() <= endDate);
+                    result = result.Where(entity => entity.AccountingAcceptedDate.GetValueOrDefault().Date >= startDate.Date && entity.AccountingAcceptedDate.GetValueOrDefault().Date <= endDate.Date);
                     break;
                 default:
-                    result = result.Where(entity => entity.SendToVerificationDate.GetValueOrDefault() >= startDate && entity.SendToVerificationDate.GetValueOrDefault() <= endDate);
+                    result = result.Where(entity => entity.SendToVerificationDate.GetValueOrDefault().Date >= startDate.Date && entity.SendToVerificationDate.GetValueOrDefault().Date <= endDate.Date);
                     break;
             }
 
