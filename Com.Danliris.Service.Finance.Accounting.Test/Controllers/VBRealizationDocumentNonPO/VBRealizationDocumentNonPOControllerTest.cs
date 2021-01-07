@@ -258,6 +258,54 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
         }
 
 
+        [Fact]
+        public void GetByUser_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentNonPOService>();
+
+            Dictionary<string, string> order = new Dictionary<string, string>();
+            service
+                .Setup(s => s.ReadByUser(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new ReadResponse<VBRealizationDocumentModel>(new List<VBRealizationDocumentModel>(), 1, order, new List<string>()));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentNonPOService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetByUser();
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public void GetByUser_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentNonPOService>();
+
+            Dictionary<string, string> order = new Dictionary<string, string>();
+            service
+                .Setup(s => s.ReadByUser(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentNonPOService)))
+               .Returns(service.Object);
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetByUser();
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
 
         [Fact]
         public async Task PostNonPO_Succes_Return_Created()
