@@ -433,7 +433,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         {
             try
             {
-                endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate;
+                VerifyUser();
+                endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
                 startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
 
                 var result = _reportService.GetReport(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
@@ -456,7 +457,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         {
             try
             {
-                endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate;
+                VerifyUser();
+                endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
                 startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
 
                 var stream = _reportService.GenerateExcel(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
