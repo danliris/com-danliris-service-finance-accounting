@@ -5,7 +5,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 {
     public class BudgetCashflowUnitDto
     {
-        public BudgetCashflowUnitDto(int cashflowTypeId, string cashflowTypeName, int cashflowCategoryId, string cashflowCategoryName, int cashflowSubCategoryId, string cashflowSubCategoryName)
+        public BudgetCashflowUnitDto(int cashflowTypeId, string cashflowTypeName, int cashflowCategoryId, string cashflowCategoryName, int cashflowSubCategoryId, string cashflowSubCategoryName, bool cashflowSubCategoryReadOnly)
         {
             CashflowTypeId = cashflowTypeId;
             CashflowTypeName = cashflowTypeName;
@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             CashflowCategoryName = cashflowCategoryName;
             CashflowSubCategoryId = cashflowSubCategoryId;
             CashflowSubCategoryName = cashflowSubCategoryName;
+            IsReadOnly = cashflowSubCategoryReadOnly;
         }
 
         public int CashflowTypeId { get; private set; }
@@ -21,6 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public string CashflowCategoryName { get; private set; }
         public int CashflowSubCategoryId { get; private set; }
         public string CashflowSubCategoryName { get; private set; }
+        public bool IsReadOnly { get; private set; }
         public bool IsUseSection { get; private set; }
         public bool IsUseGroup { get; private set; }
         public bool IsLabelOnly { get; private set; }
