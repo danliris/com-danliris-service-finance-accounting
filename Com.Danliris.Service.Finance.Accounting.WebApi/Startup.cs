@@ -141,7 +141,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRealizationWithPOService, VBRealizationWithPOService>()
                 .AddTransient<IVBRealizationService, VBRealizationService>()
                 .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>()
-                .AddTransient<IBudgetCashflowMasterService, BudgetCashflowMasterService>();
+                .AddTransient<IBudgetCashflowService, BudgetCashflowService>();
         }
 
 
@@ -192,6 +192,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             }));
 
             #endregion
+
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetValue<string>("RedisConnection") ?? Configuration["RedisConnection"];
+                options.InstanceName = Configuration.GetValue<string>("RedisConnectionName") ?? Configuration["RedisConnectionName"];
+            });
 
             #region API
 

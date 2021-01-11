@@ -20,14 +20,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
     public class BudgetCashflowMasterController : Controller
     {
         private readonly IIdentityService _identityService;
-        private readonly IBudgetCashflowMasterService _service;
+        private readonly IBudgetCashflowService _service;
         private readonly IValidateService _validateService;
         private const string ApiVersion = "1.0";
 
         public BudgetCashflowMasterController(IServiceProvider serviceProvider)
         {
             _identityService = serviceProvider.GetService<IIdentityService>();
-            _service = serviceProvider.GetService<IBudgetCashflowMasterService>();
+            _service = serviceProvider.GetService<IBudgetCashflowService>();
             _validateService = serviceProvider.GetService<IValidateService>();
         }
 

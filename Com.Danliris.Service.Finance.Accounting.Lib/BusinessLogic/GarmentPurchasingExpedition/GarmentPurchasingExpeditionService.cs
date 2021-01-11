@@ -58,7 +58,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     .Select(groupped => new { groupped.OrderByDescending(entity => entity.CreatedUtc).FirstOrDefault().Id })
                     .Select(entity => entity.Id)
                     .ToList();
-                query = query.Where(entity => firstInternalNoteIds.Contains(entity.Id) && !notPurchasingInternalNoteIds.Contains(entity.InternalNoteId));
+                query = query.Where(entity => !notPurchasingInternalNoteIds.Contains(entity.InternalNoteId));
+                query = query.Where(entity => firstInternalNoteIds.Contains(entity.Id));
             }
 
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
