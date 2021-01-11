@@ -224,7 +224,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         cashflowItem.SetNominal(currency, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.Total);
                         result.Add(cashflowItem);
                     }
-                else if (item.CashflowSubCategoryId > 0)
+                else if (item.CashflowSubCategoryId > 0 && item.CashflowCategoryId == previousCashflowCategoryId)
                     result.Add(cashflowItem);
             }
 
