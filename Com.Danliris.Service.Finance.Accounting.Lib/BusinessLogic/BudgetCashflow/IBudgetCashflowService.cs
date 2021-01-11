@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow
 {
-    public interface IBudgetCashflowMasterService
+    public interface IBudgetCashflowService
     {
         ReadResponse<BudgetCashflowTypeModel> GetBudgetCashflowTypes(string keyword, int page, int size);
         ReadResponse<BudgetCashflowCategoryModel> GetBudgetCashflowCategories(string keyword, int categoryTypeId, int page, int size);
@@ -18,5 +18,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         int CreateBudgetCashflowType(CashflowTypeFormDto form);
         int CreateBudgetCashflowCategory(CashflowCategoryFormDto form);
         int CreateBudgetCashflowSubCategory(CashflowSubCategoryFormDto form);
+        int CreateBudgetCashflowUnit(CashflowUnitFormDto form);
+        int EditBudgetCashflowUnit(CashflowUnitFormDto form);
+        List<BudgetCashflowUnitDto> GetBudgetCashflowUnit(int unitId, DateTimeOffset date);
     }
 }

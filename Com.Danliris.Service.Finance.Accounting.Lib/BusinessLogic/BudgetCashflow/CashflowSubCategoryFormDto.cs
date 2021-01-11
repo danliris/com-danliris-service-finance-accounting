@@ -22,6 +22,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             {
                 yield return new ValidationResult("Kategori Cashflow harus diisi", new List<string> { "CashflowCategoryId" });
             }
+
+            if (IsReadOnly)
+            {
+                if (PurchasingCategoryIds == null || PurchasingCategoryIds.Count == 0)
+                    yield return new ValidationResult("Kategori Pembelian harus diisi", new List<string> { "PurchasingCategoryId" });
+
+            }
         }
     }
 }
