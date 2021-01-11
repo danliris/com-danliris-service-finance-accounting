@@ -195,7 +195,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             foreach (var item in query.ToList())
             {
                 var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == item.CashflowSubCategoryId).ToList();
-                var cashflowItem = new BudgetCashflowUnitDto(item.CashflowTypeId, item.CashflowTypeName, item.CashflowCategoryId, item.CashflowCategoryName, item.CashflowSubCategoryId, item.CashflowSubCategoryName, item.CashflowSubCategoryReadOnly);
+                var cashflowItem = new BudgetCashflowUnitDto(item.CashflowTypeId, item.CashflowTypeName, item.CashflowCategoryId, item.CashflowCategoryName, item.CashflowSubCategoryId, item.CashflowSubCategoryName, item.CashflowSubCategoryReadOnly, item.CashflowCashType);
 
                 if (item.CashflowTypeId != previousCashflowTypeId)
                 {
@@ -212,19 +212,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 if (item.CashflowCategoryId != previousCashflowCategoryId)
                 {
                     previousCashflowCategoryId = item.CashflowCategoryId;
-                    cashflowItem.UseSection();
-                    cashflowItem.UseGroup();
                     cashflowItem.LabelOnly();
                     result.Add(cashflowItem);
                     cashflowItem = new BudgetCashflowUnitDto(cashflowItem);
                 }
 
-                foreach (var cashflowUnit in selectedCashflowUnits)
-                {
-                    var currency = _currencies.FirstOrDefault(element => element.Id.GetValueOrDefault() == cashflowUnit.CurrencyId);
-                    cashflowItem.SetNominal(currency, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.Total);
+                if (selectedCashflowUnits.Count > 0)
+                    foreach (var cashflowUnit in selectedCashflowUnits)
+                    {
+                        var currency = _currencies.FirstOrDefault(element => element.Id.GetValueOrDefault() == cashflowUnit.CurrencyId);
+                        cashflowItem.SetNominal(currency, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.Total);
+                        result.Add(cashflowItem);
+                    }
+                else if (item.CashflowSubCategoryId > 0)
                     result.Add(cashflowItem);
-                }
+            }
+
+            var cashflowTypeIds = result.Select(element => element.CashflowTypeId).Distinct().ToList();
+            foreach (var cashflowTypeId in cashflowTypeIds)
+            {
+                var item = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId);
+                item.SetCashflowTypeRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId));
             }
 
             return result;
