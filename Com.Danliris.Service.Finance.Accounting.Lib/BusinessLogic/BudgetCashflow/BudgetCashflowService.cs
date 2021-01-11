@@ -212,20 +212,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 if (item.CashflowCategoryId != previousCashflowCategoryId)
                 {
                     previousCashflowCategoryId = item.CashflowCategoryId;
+                    cashflowItem.UseSection();
+                    cashflowItem.UseGroup();
                     cashflowItem.LabelOnly();
                     result.Add(cashflowItem);
-                    cashflowItem.NotLabelOnly();
+                    cashflowItem = new BudgetCashflowUnitDto(cashflowItem);
                 }
 
-                if (selectedCashflowUnits.Count > 0)
-                    foreach (var cashflowUnit in selectedCashflowUnits)
-                    {
-                        var currency = _currencies.FirstOrDefault(element => element.Id.GetValueOrDefault() == cashflowUnit.CurrencyId);
-                        cashflowItem.SetNominal(currency, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.Total);
-                        result.Add(cashflowItem);
-                    }
-                else
+                foreach (var cashflowUnit in selectedCashflowUnits)
+                {
+                    var currency = _currencies.FirstOrDefault(element => element.Id.GetValueOrDefault() == cashflowUnit.CurrencyId);
+                    cashflowItem.SetNominal(currency, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.Total);
                     result.Add(cashflowItem);
+                }
             }
 
             return result;

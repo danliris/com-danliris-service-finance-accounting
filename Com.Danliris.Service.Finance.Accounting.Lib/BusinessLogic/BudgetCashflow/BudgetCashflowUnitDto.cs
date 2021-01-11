@@ -16,6 +16,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             IsReadOnly = cashflowSubCategoryReadOnly;
         }
 
+        public BudgetCashflowUnitDto(BudgetCashflowUnitDto cashflowItem)
+        {
+            CashflowTypeId = cashflowItem.CashflowTypeId;
+            CashflowTypeName = cashflowItem.CashflowTypeName;
+            CashflowCategoryId = cashflowItem.CashflowCategoryId;
+            CashflowCategoryName = cashflowItem.CashflowCategoryName;
+            CashflowSubCategoryId = cashflowItem.CashflowSubCategoryId;
+            CashflowSubCategoryName = cashflowItem.CashflowSubCategoryName;
+            IsReadOnly = cashflowItem.IsReadOnly;
+        }
+
         public int CashflowTypeId { get; private set; }
         public string CashflowTypeName { get; private set; }
         public int CashflowCategoryId { get; private set; }
