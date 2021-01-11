@@ -169,15 +169,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         {
                             CashflowTypeId = cashflowType.Id,
                             CashflowTypeName = cashflowType.Name,
-                            CashflowCashType = cashflowTypeCategory.Type,
                             CashflowTypeLayoutOrder = cashflowType.LayoutOrder,
-                            CashflowCategoryId = cashflowTypeCategory.Id,
-                            CashflowCategoryName = cashflowTypeCategory.Name,
-                            CashflowCategoryLayoutOrder = cashflowTypeCategory.LayoutOrder,
-                            CashflowSubCategoryId = cashflowCategorySubCategory.Id,
-                            CashflowSubCategoryName = cashflowCategorySubCategory.Name,
-                            CashflowSubCategoryLayoutOrder = cashflowCategorySubCategory.LayoutOrder,
-                            CashflowSubCategoryReadOnly = cashflowCategorySubCategory.IsReadOnly
+                            CashflowCashType = cashflowTypeCategory != null ? cashflowTypeCategory.Type : 0,
+                            CashflowCategoryId = cashflowTypeCategory != null ? cashflowTypeCategory.Id : 0,
+                            CashflowCategoryName = cashflowTypeCategory != null ? cashflowTypeCategory.Name : "",
+                            CashflowCategoryLayoutOrder = cashflowTypeCategory != null ? cashflowTypeCategory.LayoutOrder : 0,
+                            CashflowSubCategoryId = cashflowCategorySubCategory != null ? cashflowCategorySubCategory.Id : 0,
+                            CashflowSubCategoryName = cashflowCategorySubCategory != null ? cashflowCategorySubCategory.Name : "",
+                            CashflowSubCategoryLayoutOrder = cashflowCategorySubCategory != null ? cashflowCategorySubCategory.LayoutOrder : 0,
+                            CashflowSubCategoryReadOnly = cashflowCategorySubCategory != null && cashflowCategorySubCategory.IsReadOnly
                         };
 
             query = query.OrderBy(entity => entity.CashflowTypeLayoutOrder).ThenBy(entity => entity.CashflowCashType).ThenBy(entity => entity.CashflowCategoryLayoutOrder).ThenBy(entity => entity.CashflowSubCategoryLayoutOrder);
@@ -217,12 +217,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     cashflowItem.NotLabelOnly();
                 }
 
-                foreach (var cashflowUnit in selectedCashflowUnits)
-                {
-                    var currency = _currencies.FirstOrDefault(element => element.Id.GetValueOrDefault() == cashflowUnit.CurrencyId);
-                    cashflowItem.SetNominal(currency, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.Total);
+                if (selectedCashflowUnits.Count > 0)
+                    foreach (var cashflowUnit in selectedCashflowUnits)
+                    {
+                        var currency = _currencies.FirstOrDefault(element => element.Id.GetValueOrDefault() == cashflowUnit.CurrencyId);
+                        cashflowItem.SetNominal(currency, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.Total);
+                        result.Add(cashflowItem);
+                    }
+                else
                     result.Add(cashflowItem);
-                }
             }
 
             return result;
@@ -245,7 +248,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 models.Add(model);
             }
             _dbContext.BudgetCashflowUnits.AddRange(models);
-            
+
             return _dbContext.SaveChanges();
         }
     }

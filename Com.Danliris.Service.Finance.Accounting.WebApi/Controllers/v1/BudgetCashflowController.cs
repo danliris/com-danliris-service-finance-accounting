@@ -95,15 +95,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         [HttpGet]
         public IActionResult Get([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
         {
+
             try
             {
-                VerifyUser();
-
-                var id = _service.GetBudgetCashflowUnit(unitId, date);
-
-                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
-
-                return NoContent();
+                var result = _service.GetBudgetCashflowUnit(unitId, date);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
             }
             catch (Exception e)
             {
