@@ -186,7 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             var cashflowSubCategoryIds = query.Select(entity => entity.CashflowSubCategoryId).ToList();
             var cashflowUnits = _dbContext.BudgetCashflowUnits
-                .Where(entity => cashflowSubCategoryIds.Contains(entity.BudgetCashflowSubCategoryId) && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year)
+                .Where(entity => entity.UnitId == unitId && cashflowSubCategoryIds.Contains(entity.BudgetCashflowSubCategoryId) && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year)
                 .ToList();
 
             var previousCashflowTypeId = 0;
@@ -195,7 +195,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             foreach (var item in query.ToList())
             {
                 var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == item.CashflowSubCategoryId).ToList();
-                var cashflowItem = new BudgetCashflowUnitDto(item.CashflowTypeId, item.CashflowTypeName, item.CashflowCategoryId, item.CashflowCategoryName, item.CashflowSubCategoryId, item.CashflowSubCategoryName);
+                var cashflowItem = new BudgetCashflowUnitDto(item.CashflowTypeId, item.CashflowTypeName, item.CashflowCategoryId, item.CashflowCategoryName, item.CashflowSubCategoryId, item.CashflowSubCategoryName, item.CashflowSubCategoryReadOnly);
 
                 if (item.CashflowTypeId != previousCashflowTypeId)
                 {

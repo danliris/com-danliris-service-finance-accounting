@@ -7,15 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("v{version:apiVersion}/master/budget-cashflows")]
+    [Route("v{version:apiVersion}/budget-cashflows")]
     [Authorize]
     public class BudgetCashflowController : Controller
     {
