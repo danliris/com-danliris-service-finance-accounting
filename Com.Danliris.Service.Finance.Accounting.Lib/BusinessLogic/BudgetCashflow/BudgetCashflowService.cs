@@ -212,7 +212,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 if (item.CashflowCategoryId != previousCashflowCategoryId)
                 {
                     previousCashflowCategoryId = item.CashflowCategoryId;
-                    cashflowItem.LabelOnly();
                     result.Add(cashflowItem);
                     cashflowItem = new BudgetCashflowUnitDto(cashflowItem);
                 }
@@ -224,7 +223,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         cashflowItem.SetNominal(currency, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.Total);
                         result.Add(cashflowItem);
                     }
-                else if (item.CashflowSubCategoryId > 0 && item.CashflowCategoryId == previousCashflowCategoryId)
+                else if (item.CashflowSubCategoryId > 0)
                     result.Add(cashflowItem);
             }
 

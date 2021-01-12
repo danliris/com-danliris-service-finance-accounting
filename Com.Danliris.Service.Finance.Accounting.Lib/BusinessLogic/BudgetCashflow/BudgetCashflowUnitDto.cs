@@ -78,6 +78,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public void SetCashflowTypeRowspan(int cashflowTypeRowspan)
         {
             CashflowTypeRowspan = cashflowTypeRowspan;
+            IsLabelOnly = true;
+            IsReadOnly = true;
         }
 
         public void SetGroupRowspan(int rowspan)
