@@ -234,11 +234,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 var item = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId);
                 item.SetCashflowTypeRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId));
 
-                var cashIn = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId && element.CashflowTypeName == CashType.In.ToDescriptionString());
-                cashIn.SetGroupRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId && element.CashflowTypeName == CashType.In.ToDescriptionString()));
+                var cashIn = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.In.ToDescriptionString());
+                if (cashIn != null)
+                    cashIn.SetGroupRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.In.ToDescriptionString()));
 
-                var cashOut = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId && element.CashflowTypeName == CashType.Out.ToDescriptionString());
-                cashIn.SetGroupRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId && element.CashflowTypeName == CashType.Out.ToDescriptionString()));
+                var cashOut = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.Out.ToDescriptionString());
+                if (cashOut != null)
+                    cashIn.SetGroupRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.Out.ToDescriptionString()));
             }
 
             return result;
