@@ -233,6 +233,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             {
                 var item = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId);
                 item.SetCashflowTypeRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId));
+
+                var cashIn = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId && element.CashflowTypeName == CashType.In.ToDescriptionString());
+                cashIn.SetGroupRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId && element.CashflowTypeName == CashType.In.ToDescriptionString()));
+
+                var cashOut = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId && element.CashflowTypeName == CashType.Out.ToDescriptionString());
+                cashIn.SetGroupRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId && element.CashflowTypeName == CashType.Out.ToDescriptionString()));
             }
 
             return result;

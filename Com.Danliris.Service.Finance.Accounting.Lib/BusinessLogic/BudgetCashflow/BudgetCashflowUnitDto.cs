@@ -37,6 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public bool IsReadOnly { get; private set; }
         public string TypeName { get; private set; }
         public bool IsUseSection { get; private set; }
+        public int GroupRowspan { get; private set; }
         public bool IsUseGroup { get; private set; }
         public bool IsLabelOnly { get; private set; }
         public CurrencyDto Currency { get; private set; }
@@ -76,6 +77,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public void SetCashflowTypeRowspan(int cashflowTypeRowspan)
         {
             CashflowTypeRowspan = cashflowTypeRowspan;
+        }
+
+        public void SetGroupRowspan(int rowspan)
+        {
+            GroupRowspan = rowspan;
+            IsUseGroup = true;
         }
     }
 }
