@@ -25,6 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             CashflowCategoryName = cashflowItem.CashflowCategoryName;
             CashflowSubCategoryId = cashflowItem.CashflowSubCategoryId;
             CashflowSubCategoryName = cashflowItem.CashflowSubCategoryName;
+            TypeName = cashflowItem.TypeName;
             IsReadOnly = cashflowItem.IsReadOnly;
         }
 
