@@ -192,6 +192,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var previousCashflowTypeId = 0;
             var previousCashflowCategoryId = 0;
             var previousCashInCashOut = (CashType)0;
+            var previousSubCategoryId = 0;
             foreach (var item in query.ToList())
             {
                 var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == item.CashflowSubCategoryId).ToList();
@@ -216,12 +217,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     cashflowItem = new BudgetCashflowUnitDto(cashflowItem);
                 }
 
+                var isFirst = false;
                 if (selectedCashflowUnits.Count > 0)
                     foreach (var cashflowUnit in selectedCashflowUnits)
                     {
+                        cashflowItem = new BudgetCashflowUnitDto(cashflowItem, isFirst);
                         var currency = _currencies.FirstOrDefault(element => element.Id.GetValueOrDefault() == cashflowUnit.CurrencyId);
                         cashflowItem.SetNominal(currency, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.Total);
                         result.Add(cashflowItem);
+                        isFirst = false;
                     }
                 else if (item.CashflowSubCategoryId > 0)
                     result.Add(cashflowItem);
@@ -243,6 +247,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             }
 
             return result;
+        }
+
+        public List<BudgetCashflowUnitItemDto> GetBudgetCashflowUnit(int unitId, int subCategoryId, DateTimeOffset date)
+        {
+            return _dbContext.BudgetCashflowUnits
+                .Where(entity => entity.UnitId == unitId && subCategoryId == entity.BudgetCashflowSubCategoryId && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year)
+                .ToList()
+                .Select(entity => 
+                {
+                    return new BudgetCashflowUnitItemDto(entity, _currencies);
+                })
+                .ToList();
         }
 
         public int EditBudgetCashflowUnit(CashflowUnitFormDto form)
