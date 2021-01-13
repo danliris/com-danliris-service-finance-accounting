@@ -115,5 +115,29 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
+
+        [HttpGet("items")]
+        public IActionResult GetItems([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
+        {
+
+            try
+            {
+                var result = _service.GetBudgetCashflowUnit(unitId, date);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
     }
 }

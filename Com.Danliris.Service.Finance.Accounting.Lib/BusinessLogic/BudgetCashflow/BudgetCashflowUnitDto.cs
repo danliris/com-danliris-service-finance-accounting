@@ -29,6 +29,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             IsReadOnly = cashflowItem.IsReadOnly;
         }
 
+        public BudgetCashflowUnitDto(BudgetCashflowUnitDto cashflowItem, bool isFirst) : this(cashflowItem)
+        {
+            IsShowLabel = isFirst;
+        }
+
         public int CashflowTypeId { get; private set; }
         public string CashflowTypeName { get; private set; }
         public int CashflowCategoryId { get; private set; }
@@ -45,7 +50,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public double CurrencyNominal { get; private set; }
         public double Nominal { get; private set; }
         public double Total { get; private set; }
+        public bool IsecondLevel { get; private set; }
         public int CashflowTypeRowspan { get; private set; }
+        public bool IsShowLabel { get; }
 
         public void UseSection()
         {
@@ -73,6 +80,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             CurrencyNominal = currencyNominal;
             Nominal = nominal;
             Total = total;
+            IsecondLevel = true;
         }
 
         public void SetCashflowTypeRowspan(int cashflowTypeRowspan)
