@@ -213,7 +213,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 {
                     previousCashflowCategoryId = item.CashflowCategoryId;
                     result.Add(cashflowItem);
-                    cashflowItem = new BudgetCashflowUnitDto(cashflowItem);
+                    cashflowItem = new BudgetCashflowUnitDto(cashflowItem, true);
                 }
 
                 var isFirst = true;
@@ -232,10 +232,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             var cashflowTypeIds = query.Select(element => element.CashflowTypeId).Distinct().ToList();
             var counter = 0;
+
+            //foreach (var cashflowTypeId in cashflowTypeIds)
+            //{
+            //    var cashInSummary = result.Where(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.In.ToDescriptionString());
+            //    var cashInCurrencies = cashInSummary.Where(element => element.Currency != null && element.Currency.Id > 0).Select(element => element.Currency.Id).Distinct().ToList();
+
+            //    foreach (var currency in cashInCurrencies)
+            //    {
+
+            //    }
+            //}
+
             foreach (var cashflowTypeId in cashflowTypeIds)
             {
                 var item = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId);
                 item.SetCashflowTypeRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId));
+
+                var cashOutSummary = result.Where(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.Out.ToDescriptionString());
 
                 var cashIn = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.In.ToDescriptionString());
                 if (cashIn != null)
@@ -245,7 +259,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 if (cashOut != null)
                     cashOut.SetGroupRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.Out.ToDescriptionString()));
 
-                //var cashInSummary = result.Where(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.In.ToDescriptionString());
+                
             }
 
             return result;
@@ -265,7 +279,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
         public int EditBudgetCashflowUnit(CashflowUnitFormDto form)
         {
-            var existingModels = _dbContext.BudgetCashflowUnits.Where(entity => entity.UnitId == form.UnitId && entity.DivisionId == form.DivisionId && entity.Month == form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+            var existingModels = _dbContext.BudgetCashflowUnits.Where(entity => entity.BudgetCashflowSubCategoryId == form.CashflowSubCategoryId && entity.UnitId == form.UnitId && entity.DivisionId == form.DivisionId && entity.Month == form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
             foreach (var existingModel in existingModels)
             {
                 EntityExtension.FlagForDelete(existingModel, _identityService.Username, UserAgent);
