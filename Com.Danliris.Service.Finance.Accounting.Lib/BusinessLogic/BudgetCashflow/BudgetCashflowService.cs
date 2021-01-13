@@ -228,7 +228,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     }
                 else if (item.CashflowSubCategoryId > 0)
                 {
-                    cashflowItem.LabelOnly();
+                    cashflowItem.ShowLabel();
                     result.Add(cashflowItem);
                 }
             }

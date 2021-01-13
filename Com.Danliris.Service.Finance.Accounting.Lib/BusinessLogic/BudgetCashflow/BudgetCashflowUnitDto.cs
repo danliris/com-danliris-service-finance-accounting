@@ -52,7 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public double Total { get; private set; }
         public bool IsecondLevel { get; private set; }
         public int CashflowTypeRowspan { get; private set; }
-        public bool IsShowLabel { get; }
+        public bool IsShowLabel { get; private set; }
 
         public void UseSection()
         {
@@ -94,6 +94,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         {
             GroupRowspan = rowspan;
             IsUseGroup = true;
+        }
+
+        public void ShowLabel()
+        {
+            IsShowLabel = true;
         }
     }
 }
