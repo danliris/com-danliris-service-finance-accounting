@@ -213,7 +213,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 {
                     previousCashflowCategoryId = item.CashflowCategoryId;
                     result.Add(cashflowItem);
-                    cashflowItem = new BudgetCashflowUnitDto(cashflowItem, true);
+                    cashflowItem = new BudgetCashflowUnitDto(cashflowItem);
                 }
 
                 var isFirst = true;
@@ -227,7 +227,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         isFirst = false;
                     }
                 else if (item.CashflowSubCategoryId > 0)
+                {
+                    cashflowItem.LabelOnly();
                     result.Add(cashflowItem);
+                }
             }
 
             var cashflowTypeIds = query.Select(element => element.CashflowTypeId).Distinct().ToList();
