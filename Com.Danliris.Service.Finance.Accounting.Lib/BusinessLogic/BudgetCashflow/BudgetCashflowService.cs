@@ -231,6 +231,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             }
 
             var cashflowTypeIds = query.Select(element => element.CashflowTypeId).Distinct().ToList();
+            var counter = 0;
             foreach (var cashflowTypeId in cashflowTypeIds)
             {
                 var item = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId);
@@ -242,7 +243,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                 var cashOut = result.FirstOrDefault(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.Out.ToDescriptionString());
                 if (cashOut != null)
-                    cashIn.SetGroupRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.Out.ToDescriptionString()));
+                    cashOut.SetGroupRowspan(result.Count(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.Out.ToDescriptionString()));
+
+                //var cashInSummary = result.Where(element => element.CashflowTypeId == cashflowTypeId && element.TypeName == CashType.In.ToDescriptionString());
             }
 
             return result;
