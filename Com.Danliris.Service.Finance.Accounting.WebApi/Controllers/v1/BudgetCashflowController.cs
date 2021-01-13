@@ -117,12 +117,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("items")]
-        public IActionResult GetItems([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
+        public IActionResult GetItems([FromQuery] int unitId, [FromQuery] int subCategoryId, [FromQuery] DateTimeOffset date)
         {
 
             try
             {
-                var result = _service.GetBudgetCashflowUnit(unitId, date);
+                var result = _service.GetBudgetCashflowUnit(unitId, subCategoryId, date);
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
