@@ -192,7 +192,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var previousCashflowTypeId = 0;
             var previousCashflowCategoryId = 0;
             var previousCashInCashOut = (CashType)0;
-            var previousSubCategoryId = 0;
             foreach (var item in query.ToList())
             {
                 var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == item.CashflowSubCategoryId).ToList();
@@ -217,7 +216,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     cashflowItem = new BudgetCashflowUnitDto(cashflowItem);
                 }
 
-                var isFirst = false;
+                var isFirst = true;
                 if (selectedCashflowUnits.Count > 0)
                     foreach (var cashflowUnit in selectedCashflowUnits)
                     {
