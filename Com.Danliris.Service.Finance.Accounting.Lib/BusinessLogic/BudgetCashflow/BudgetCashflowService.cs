@@ -345,9 +345,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         .GroupBy(element => element.CashflowUnit.CurrencyId)
                         .Select(element =>
                         {
-                            var nominal = element.Sum(sum => sum.Nominal);
-                            var currencyNominal = element.Sum(sum => sum.CurrencyNominal);
-                            var total = element.Sum(sum => sum.Total);
+                            var nominal = element.Sum(sum => sum.CashflowUnit.Nominal);
+                            var currencyNominal = element.Sum(sum => sum.CashflowUnit.CurrencyNominal);
+                            var total = element.Sum(sum => sum.CashflowUnit.Total);
 
                             return new TotalCashType(cashflowTypeId, cashType, element.Key, nominal, currencyNominal, total);
                         })
@@ -398,7 +398,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         foreach (var item in items)
                         {
                             if (item.CashflowSubCategory.Id != previousSubCategoryId)
+                            {
                                 isShowSubCategoryLabel = true;
+                                previousSubCategoryId = item.CashflowSubCategory.Id;
+                            }
+
                             result.Add(new BudgetCashflowItemDto(isShowSubCategoryLabel, item, _currencies));
                             isShowSubCategoryLabel = false;
                         }
@@ -421,11 +425,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 if (differenceCashTypes.Count > 0)
                     foreach (var differenceCashType in differenceCashTypes)
                     {
-                        result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType, _currencies, "difference type"));
+                        result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType, _currencies, isShowDifference: true));
                         isShowDifferenceLabel = false;
                     }
                 else
-                    result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", new TotalCashType(), _currencies, "difference type"));
+                    result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", new TotalCashType(), _currencies, isShowDifference: true));
             }
 
             return result;
@@ -534,7 +538,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             Total = totalCashType.Total;
         }
 
-        public BudgetCashflowItemDto(bool isShowDifferenceLabel, string differenceLabel, TotalCashType differenceCashType, List<CurrencyDto> currencies, /*Intentionally unused for flag*/ string type = "Difference Constructor")
+        public BudgetCashflowItemDto(bool isShowDifferenceLabel, string differenceLabel, TotalCashType differenceCashType, List<CurrencyDto> currencies, bool isShowDifference)
         {
             var currency = currencies.FirstOrDefault(element => element.Id == differenceCashType.CurrencyId);
             IsShowDifferenceLabel = isShowDifferenceLabel;
@@ -543,6 +547,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             Nominal = differenceCashType.Nominal;
             CurrencyNominal = differenceCashType.CurrencyNominal;
             Total = differenceCashType.Total;
+            IsShowDifference = isShowDifference;
         }
 
         public int CashflowTypeId { get; private set; }
@@ -563,6 +568,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public double Nominal { get; private set; }
         public double CurrencyNominal { get; private set; }
         public double Total { get; private set; }
+        public bool IsShowDifference { get; private set; }
         public bool IsShowTotalLabel { get; private set; }
         public string TotalLabel { get; private set; }
         public bool IsShowDifferenceLabel { get; private set; }
