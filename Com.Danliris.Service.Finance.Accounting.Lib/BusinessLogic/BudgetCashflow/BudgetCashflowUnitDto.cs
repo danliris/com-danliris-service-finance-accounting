@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow;
 using System;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow
@@ -34,6 +35,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             IsShowLabel = isFirst;
         }
 
+        public BudgetCashflowUnitDto(int cashflowTypeId, string cashflowTypeName)
+        {
+            CashflowTypeId = cashflowTypeId;
+            CashflowTypeName = cashflowTypeName;
+        }
+
+        public BudgetCashflowUnitDto(BudgetCashflowTypeModel cashflowType, BudgetCashflowCategoryModel cashflowCategory, BudgetCashflowSubCategoryModel cashflowSubCategory, BudgetCashflowUnitModel cashflowUnit)
+        {
+            CashflowType = cashflowType;
+            CashflowCategory = cashflowCategory;
+            CashflowSubCategory = cashflowSubCategory;
+            CashflowUnit = cashflowUnit;
+        }
+
         public int CashflowTypeId { get; private set; }
         public string CashflowTypeName { get; private set; }
         public int CashflowCategoryId { get; private set; }
@@ -53,6 +68,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public bool IsecondLevel { get; private set; }
         public int CashflowTypeRowspan { get; private set; }
         public bool IsShowLabel { get; private set; }
+        public BudgetCashflowTypeModel CashflowType { get; private set; }
+        public BudgetCashflowCategoryModel CashflowCategory { get; private set; }
+        public BudgetCashflowSubCategoryModel CashflowSubCategory { get; private set; }
+        public BudgetCashflowUnitModel CashflowUnit { get; private set; }
 
         public void UseSection()
         {
