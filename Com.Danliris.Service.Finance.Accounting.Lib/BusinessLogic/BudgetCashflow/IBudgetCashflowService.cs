@@ -20,7 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         int CreateBudgetCashflowSubCategory(CashflowSubCategoryFormDto form);
         int CreateBudgetCashflowUnit(CashflowUnitFormDto form);
         int EditBudgetCashflowUnit(CashflowUnitFormDto form);
-        List<BudgetCashflowUnitDto> GetBudgetCashflowUnit(int unitId, DateTimeOffset date);
+        List<BudgetCashflowItemDto> GetBudgetCashflowUnit(int unitId, DateTimeOffset date);
         List<BudgetCashflowUnitItemDto> GetBudgetCashflowUnit(int unitId, int subCategoryId, DateTimeOffset date);
     }
 }
