@@ -398,7 +398,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         foreach (var item in items)
                         {
                             if (item.CashflowSubCategory.Id != previousSubCategoryId)
+                            {
                                 isShowSubCategoryLabel = true;
+                                previousSubCategoryId = item.CashflowSubCategory.Id;
+                            }
+
                             result.Add(new BudgetCashflowItemDto(isShowSubCategoryLabel, item, _currencies));
                             isShowSubCategoryLabel = false;
                         }
