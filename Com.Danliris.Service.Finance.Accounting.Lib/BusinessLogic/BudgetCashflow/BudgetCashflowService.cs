@@ -345,9 +345,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         .GroupBy(element => element.CashflowUnit.CurrencyId)
                         .Select(element =>
                         {
-                            var nominal = element.Sum(sum => sum.Nominal);
-                            var currencyNominal = element.Sum(sum => sum.CurrencyNominal);
-                            var total = element.Sum(sum => sum.Total);
+                            var nominal = element.Sum(sum => sum.CashflowUnit.Nominal);
+                            var currencyNominal = element.Sum(sum => sum.CashflowUnit.CurrencyNominal);
+                            var total = element.Sum(sum => sum.CashflowUnit.Total);
 
                             return new TotalCashType(cashflowTypeId, cashType, element.Key, nominal, currencyNominal, total);
                         })
