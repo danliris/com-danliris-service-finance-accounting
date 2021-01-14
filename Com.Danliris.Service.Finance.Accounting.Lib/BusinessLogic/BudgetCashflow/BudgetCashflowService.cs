@@ -366,13 +366,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             foreach (var summary in summaries)
             {
                 var summaryItem = new BudgetCashflowItemDto(cashflowTypeId: summary.CashflowType.Id, cashflowTypeName: summary.CashflowType.Name, isUseSection: true);
-                summaryItem.SetSectionRowSpan(sectionRowSpan: summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count() + summary.Items.Where(element => element.CashflowType.Id == summary.CashflowType.Id).Count() + summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count() + summary.GetDifference(summary.CashflowType.Id).Count);
+
+                var cashCategoryRow = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count();
+                var itemRow = summary.Items.Where(element => element.CashflowType.Id == summary.CashflowType.Id).Count();
+                var totalRow = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count() == 0 ? 1 : summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count();
+                var differenceRow = summary.GetDifference(summary.CashflowType.Id).Count == 0 ? 1 : summary.GetDifference(summary.CashflowType.Id).Count;
+                summaryItem.SetSectionRowSpan(sectionRowSpan: cashCategoryRow + itemRow + totalRow + differenceRow);
 
                 var cashTypes = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Select(element => element.Type).Distinct().ToList();
 
                 foreach (var cashType in cashTypes)
                 {
-                    summaryItem.SetGroup(isUseGroup: true, groupRowSpan: summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.Type == cashType).Count() + summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.Type == cashType).Count() + summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count(), type: cashType);
+                    var selectedCasCategoryRow = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.Type == cashType).Count();
+                    var selectedItemRow = summary.Items.Where(element => element.CashflowType.Id == summary.CashflowType.Id && element.CashflowCategory.Type == cashType).Count();
+                    var selectedTotalRow = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count() == 0 ? 1 : summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count(); 
+                    summaryItem.SetGroup(isUseGroup: true, groupRowSpan: selectedCasCategoryRow + selectedItemRow + selectedTotalRow, type: cashType);
 
                     var cashflowCategories = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.Type == cashType).ToList();
 
