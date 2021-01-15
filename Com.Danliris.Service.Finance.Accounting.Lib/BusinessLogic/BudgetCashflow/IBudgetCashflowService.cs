@@ -8,16 +8,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 {
     public interface IBudgetCashflowService
     {
-        ReadResponse<BudgetCashflowTypeModel> GetBudgetCashflowTypes(string keyword, int page, int size);
-        ReadResponse<BudgetCashflowCategoryModel> GetBudgetCashflowCategories(string keyword, int categoryTypeId, int page, int size);
-        ReadResponse<BudgetCashflowSubCategoryModel> GetBudgetCashflowSubCategories(string keyword, int subCategoryId, int page, int size);
-        ReadResponse<BudgetCashflowMasterDto> GetBudgetCashflowMasterLayout(string keyword, int page, int size);
-        int DeleteBudgetCashflowType(int id);
-        int DeleteBudgetCashflowCategories(int id);
-        int DeleteBudgetCashflowSubCategories(int id);
         int CreateBudgetCashflowType(CashflowTypeFormDto form);
+        ReadResponse<BudgetCashflowTypeModel> GetBudgetCashflowTypes(string keyword, int page, int size);
+        BudgetCashflowTypeModel GetBudgetCashflowTypeById(int id);
+        int EditBudgetCashflowType(int id, CashflowTypeFormDto form);
+        int DeleteBudgetCashflowType(int id);
+
         int CreateBudgetCashflowCategory(CashflowCategoryFormDto form);
+        ReadResponse<BudgetCashflowCategoryModel> GetBudgetCashflowCategories(string keyword, int categoryTypeId, int page, int size);
+        BudgetCashflowCategoryModel GetBudgetCashflowCategoryById(int id);
+        int EditBudgetCashflowCategory(int id, CashflowCategoryFormDto form);
+        int DeleteBudgetCashflowCategories(int id);
+
         int CreateBudgetCashflowSubCategory(CashflowSubCategoryFormDto form);
+        ReadResponse<BudgetCashflowSubCategoryModel> GetBudgetCashflowSubCategories(string keyword, int subCategoryId, int page, int size);
+        BudgetCashflowSubCategoryTypeDto GetBudgetCashflowSubCategoryById(int id);
+        int EditBudgetCashflowSubCategory(int id, CashflowSubCategoryFormDto form);
+        int DeleteBudgetCashflowSubCategories(int id);
+
+        ReadResponse<BudgetCashflowMasterDto> GetBudgetCashflowMasterLayout(string keyword, int page, int size);
         int CreateBudgetCashflowUnit(CashflowUnitFormDto form);
         int EditBudgetCashflowUnit(CashflowUnitFormDto form);
         List<BudgetCashflowItemDto> GetBudgetCashflowUnit(int unitId, DateTimeOffset date);
