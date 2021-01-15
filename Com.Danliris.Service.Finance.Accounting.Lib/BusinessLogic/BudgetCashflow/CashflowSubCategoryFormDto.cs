@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public int CashflowCategoryId { get; set; }
         public int LayoutOrder { get; set; }
         public bool IsReadOnly { get; set; }
+        public ReportType ReportType { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -28,6 +29,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 if (PurchasingCategoryIds == null || PurchasingCategoryIds.Count == 0)
                     yield return new ValidationResult("Kategori Pembelian harus diisi", new List<string> { "PurchasingCategoryId" });
 
+                else
+                {
+                    var countItemsError = 0;
+                    var itemsError = "[";
+
+                    foreach (var purchasingId in PurchasingCategoryIds)
+                    {
+                        itemsError += "{ ";
+                        if (purchasingId <= 0)
+                        {
+                            countItemsError++;
+                            itemsError += "'CategoryId': 'Kategori harus diisi', ";
+                        }
+                        itemsError += "}, ";
+
+                    }
+
+                    itemsError += "]";
+
+                    if (countItemsError > 0)
+                        yield return new ValidationResult(itemsError, new List<string> { "PurchasingCategoryIds" });
+                }
+
+            }
+
+            if (ReportType <= 0)
+            {
+                yield return new ValidationResult("Jenis Laporan harus diisi", new List<string> { "ReportType" });
             }
         }
     }

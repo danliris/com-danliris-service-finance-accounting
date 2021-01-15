@@ -32,68 +32,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             });
         }
 
-        public int CreateBudgetCashflowCategory(CashflowCategoryFormDto form)
-        {
-            var model = new BudgetCashflowCategoryModel(form.Name, form.Type, form.CashflowTypeId, form.LayoutOrder, form.IsLabelOnly);
-            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
-            _dbContext.BudgetCashflowCategories.Add(model);
-            return _dbContext.SaveChanges();
-        }
-
-        public int CreateBudgetCashflowSubCategory(CashflowSubCategoryFormDto form)
-        {
-            var model = new BudgetCashflowSubCategoryModel(form.Name, form.CashflowCategoryId, form.LayoutOrder, form.PurchasingCategoryIds, form.IsReadOnly);
-            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
-            _dbContext.BudgetCashflowSubCategories.Add(model);
-            return _dbContext.SaveChanges();
-        }
-
-        public int CreateBudgetCashflowType(CashflowTypeFormDto form)
-        {
-            var model = new BudgetCashflowTypeModel(form.Name, form.LayoutOrder);
-            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
-            _dbContext.BudgetCashflowTypes.Add(model);
-            return _dbContext.SaveChanges();
-        }
-
-        public int DeleteBudgetCashflowCategories(int id)
-        {
-            var model = _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == id);
-            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
-            _dbContext.BudgetCashflowCategories.Update(model);
-            return _dbContext.SaveChanges();
-        }
-
-        public int DeleteBudgetCashflowSubCategories(int id)
-        {
-            var model = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == id);
-            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
-            _dbContext.BudgetCashflowSubCategories.Update(model);
-            return _dbContext.SaveChanges();
-        }
-
-        public int DeleteBudgetCashflowType(int id)
-        {
-            var model = _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == id);
-            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
-            _dbContext.BudgetCashflowTypes.Update(model);
-            return _dbContext.SaveChanges();
-        }
-
-        public ReadResponse<BudgetCashflowCategoryModel> GetBudgetCashflowCategories(string keyword, int cashflowTypeId, int page, int size)
-        {
-            var query = _dbContext.BudgetCashflowCategories.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(keyword))
-                query = query.Where(entity => entity.Name.Contains(keyword));
-
-            if (cashflowTypeId > 0)
-                query = query.Where(entity => entity.CashflowTypeId == cashflowTypeId);
-
-            var data = query.OrderBy(entity => entity.LayoutOrder).Skip((page - 1) * size).ToList();
-            return new ReadResponse<BudgetCashflowCategoryModel>(data, query.Count(), new Dictionary<string, string>(), new List<string>());
-        }
-
         public ReadResponse<BudgetCashflowMasterDto> GetBudgetCashflowMasterLayout(string keyword, int page, int size)
         {
             var budgetCashflowTypeQuery = _dbContext.BudgetCashflowTypes.OrderBy(entity => entity.LayoutOrder).AsQueryable();
@@ -111,31 +49,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         select new BudgetCashflowMasterDto(cashflowType, cashflowTypeWithCategory, cashflowCategoryWithSubCategory);
 
             return new ReadResponse<BudgetCashflowMasterDto>(query.OrderBy(entity => entity.CashflowTypeLayoutOrder).ThenBy(entity => entity.CashType).ThenBy(entity => entity.CashflowCategoryLayoutOrder).ThenBy(entity => entity.CashflowSubCategoryLayoutOrder).ToList(), query.Count(), new Dictionary<string, string>(), new List<string>());
-        }
-
-        public ReadResponse<BudgetCashflowTypeModel> GetBudgetCashflowTypes(string keyword, int page, int size)
-        {
-            var query = _dbContext.BudgetCashflowTypes.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(keyword))
-                query = query.Where(entity => entity.Name.Contains(keyword));
-
-            var data = query.OrderBy(entity => entity.LayoutOrder).OrderByDescending(entity => entity.LastModifiedUtc).Skip((page - 1) * size).ToList();
-            return new ReadResponse<BudgetCashflowTypeModel>(data, query.Count(), new Dictionary<string, string>(), new List<string>());
-        }
-
-        public ReadResponse<BudgetCashflowSubCategoryModel> GetBudgetCashflowSubCategories(string keyword, int subCategoryId, int page, int size)
-        {
-            var query = _dbContext.BudgetCashflowSubCategories.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(keyword))
-                query = query.Where(entity => entity.Name.Contains(keyword));
-
-            if (subCategoryId > 0)
-                query = query.Where(entity => entity.CashflowCategoryId == subCategoryId);
-
-            var data = query.OrderBy(entity => entity.LayoutOrder).OrderByDescending(entity => entity.LastModifiedUtc).Skip((page - 1) * size).ToList();
-            return new ReadResponse<BudgetCashflowSubCategoryModel>(data, query.Count(), new Dictionary<string, string>(), new List<string>());
         }
 
         public int CreateBudgetCashflowUnit(CashflowUnitFormDto form)
@@ -380,7 +293,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 {
                     var selectedCasCategoryRow = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.Type == cashType).Count();
                     var selectedItemRow = summary.Items.Where(element => element.CashflowType.Id == summary.CashflowType.Id && element.CashflowCategory.Type == cashType).Count();
-                    var selectedTotalRow = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count() == 0 ? 1 : summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count(); 
+                    var selectedTotalRow = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count() == 0 ? 1 : summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count();
                     summaryItem.SetGroup(isUseGroup: true, groupRowSpan: selectedCasCategoryRow + selectedItemRow + selectedTotalRow, type: cashType);
 
                     var cashflowCategories = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.Type == cashType).ToList();
@@ -467,6 +380,145 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             return _dbContext.SaveChanges();
         }
+
+        #region Budget Cashflow Type CRUD
+        public int CreateBudgetCashflowType(CashflowTypeFormDto form)
+        {
+            var model = new BudgetCashflowTypeModel(form.Name, form.LayoutOrder);
+            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+            _dbContext.BudgetCashflowTypes.Add(model);
+            return _dbContext.SaveChanges();
+        }
+
+        public ReadResponse<BudgetCashflowTypeModel> GetBudgetCashflowTypes(string keyword, int page, int size)
+        {
+            var query = _dbContext.BudgetCashflowTypes.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(entity => entity.Name.Contains(keyword));
+
+            var data = query.OrderBy(entity => entity.LayoutOrder).ToList();
+            return new ReadResponse<BudgetCashflowTypeModel>(data, query.Count(), new Dictionary<string, string>(), new List<string>());
+        }
+
+        public BudgetCashflowTypeModel GetBudgetCashflowTypeById(int id)
+        {
+            return _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == id);
+        }
+
+        public int EditBudgetCashflowType(int id, CashflowTypeFormDto form)
+        {
+            var model = _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == id);
+
+            model.SetNewNameAndLayoutOrder(form.Name, form.LayoutOrder);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.BudgetCashflowTypes.Update(model);
+            return _dbContext.SaveChanges();
+        }
+
+        public int DeleteBudgetCashflowType(int id)
+        {
+            var model = _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == id);
+            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
+            _dbContext.BudgetCashflowTypes.Update(model);
+            return _dbContext.SaveChanges();
+        }
+        #endregion
+
+        #region Budget Cashflow Category CRUD
+        public int CreateBudgetCashflowCategory(CashflowCategoryFormDto form)
+        {
+            var model = new BudgetCashflowCategoryModel(form.Name, form.Type, form.CashflowTypeId, form.LayoutOrder, form.IsLabelOnly);
+            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+            _dbContext.BudgetCashflowCategories.Add(model);
+            return _dbContext.SaveChanges();
+        }
+
+        public ReadResponse<BudgetCashflowCategoryModel> GetBudgetCashflowCategories(string keyword, int cashflowTypeId, int page, int size)
+        {
+            var query = _dbContext.BudgetCashflowCategories.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(entity => entity.Name.Contains(keyword));
+
+            if (cashflowTypeId > 0)
+                query = query.Where(entity => entity.CashflowTypeId == cashflowTypeId);
+
+            var data = query.OrderBy(entity => entity.LayoutOrder).ToList();
+            return new ReadResponse<BudgetCashflowCategoryModel>(data, query.Count(), new Dictionary<string, string>(), new List<string>());
+        }
+
+        public BudgetCashflowCategoryModel GetBudgetCashflowCategoryById(int id)
+        {
+            return _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == id);
+        }
+
+        public int EditBudgetCashflowCategory(int id, CashflowCategoryFormDto form)
+        {
+            var model = _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == id);
+
+            model.SetNewValue(form.Name, form.Type, form.LayoutOrder, form.CashflowTypeId);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.BudgetCashflowCategories.Update(model);
+            return _dbContext.SaveChanges();
+        }
+
+        public int DeleteBudgetCashflowCategories(int id)
+        {
+            var model = _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == id);
+            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
+            _dbContext.BudgetCashflowCategories.Update(model);
+            return _dbContext.SaveChanges();
+        }
+        #endregion
+
+        #region Budget Cashflow Sub Category CRUD
+        public int CreateBudgetCashflowSubCategory(CashflowSubCategoryFormDto form)
+        {
+            var model = new BudgetCashflowSubCategoryModel(form.Name, form.CashflowCategoryId, form.LayoutOrder, form.PurchasingCategoryIds, form.IsReadOnly, form.ReportType);
+            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+            _dbContext.BudgetCashflowSubCategories.Add(model);
+            return _dbContext.SaveChanges();
+        }
+
+        public ReadResponse<BudgetCashflowSubCategoryModel> GetBudgetCashflowSubCategories(string keyword, int subCategoryId, int page, int size)
+        {
+            var query = _dbContext.BudgetCashflowSubCategories.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(entity => entity.Name.Contains(keyword));
+
+            if (subCategoryId > 0)
+                query = query.Where(entity => entity.CashflowCategoryId == subCategoryId);
+
+            var data = query.OrderBy(entity => entity.LayoutOrder).ToList();
+            return new ReadResponse<BudgetCashflowSubCategoryModel>(data, query.Count(), new Dictionary<string, string>(), new List<string>());
+        }
+
+        public BudgetCashflowSubCategoryTypeDto GetBudgetCashflowSubCategoryById(int id)
+        {
+            var model = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == id);
+
+            return new BudgetCashflowSubCategoryTypeDto(model);
+        }
+
+        public int EditBudgetCashflowSubCategory(int id, CashflowSubCategoryFormDto form)
+        {
+            var model = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == id);
+            model.SetNewValue(form.CashflowCategoryId, form.IsReadOnly, form.LayoutOrder, form.Name, form.PurchasingCategoryIds, form.ReportType);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.BudgetCashflowSubCategories.Update(model);
+            return _dbContext.SaveChanges();
+        }
+
+        public int DeleteBudgetCashflowSubCategories(int id)
+        {
+            var model = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == id);
+            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
+            _dbContext.BudgetCashflowSubCategories.Update(model);
+            return _dbContext.SaveChanges();
+        }
+        #endregion
     }
 
     public class TotalCashType
