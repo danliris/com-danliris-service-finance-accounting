@@ -62,6 +62,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             IsShowDifference = isShowDifference;
         }
 
+        public BudgetCashflowItemDto(bool isShowSubCategoryLabel, BudgetCashflowSubCategoryModel subCategory, CurrencyDto currency)
+        {
+            IsShowSubCategoryLabel = isShowSubCategoryLabel;
+            SubCategoryId = subCategory.Id;
+            SubCategoryName = subCategory.Name;
+            IsReadOnly = subCategory.IsReadOnly;
+            Currency = currency;
+
+            Items = new List<UnitItemDto>();
+        }
+
+        public List<UnitItemDto> Items { get; private set; }
+
         public int CashflowTypeId { get; private set; }
         public string CashflowTypeName { get; private set; }
         public bool IsUseSection { get; private set; }

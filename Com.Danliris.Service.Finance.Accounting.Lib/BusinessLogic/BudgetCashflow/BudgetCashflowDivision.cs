@@ -6,13 +6,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 {
     public class BudgetCashflowDivision
     {
-        public BudgetCashflowDivision(List<string> headers, List<BudgetCashflowItemDivisionDto> items)
+        public BudgetCashflowDivision(List<string> headers, List<BudgetCashflowItemDto> items)
         {
             Headers = headers;
             Items = items;
         }
 
         public List<string> Headers { get; private set; }
-        public List<BudgetCashflowItemDivisionDto> Items { get; private set; }
+        public List<BudgetCashflowItemDto> Items { get; private set; }
     }
 }
