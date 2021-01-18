@@ -23,6 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public BudgetCashflowTypeModel CashflowType { get; private set; }
         public List<BudgetCashflowCategoryModel> CashflowCategories { get; }
         public List<BudgetCashflowUnitDto> Items { get; }
+        public List<BudgetCashflowDivisionDto> DivisionItems { get; }
         public List<TotalCashType> TotalCashTypes { get; }
 
         public void SetCashflowType(BudgetCashflowTypeModel cashflowType)

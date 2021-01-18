@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 {
@@ -93,12 +94,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
+        public async Task<IActionResult> Get([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
         {
 
             try
             {
-                var result = _service.GetBudgetCashflowUnit(unitId, date);
+                var result = await _service.GetBudgetCashflowUnit(unitId, date);
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
@@ -117,12 +118,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("divisions")]
-        public IActionResult GetDivision([FromQuery] int divisionId, [FromQuery] DateTimeOffset date)
+        public async Task<IActionResult> GetDivision([FromQuery] int divisionId, [FromQuery] DateTimeOffset date)
         {
 
             try
             {
-                var result = _service.GetBudgetCashflowUnit(divisionId, date);
+                var result = await _service.GetBudgetCashflowDivision(divisionId, date);
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
