@@ -1,5 +1,7 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
@@ -9,6 +11,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow
 {
@@ -18,6 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
         private readonly List<CurrencyDto> _currencies;
+        private readonly IServiceProvider _serviceProvider;
 
         public BudgetCashflowService(IServiceProvider serviceProvider)
         {
@@ -30,6 +34,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
+
+            _serviceProvider = serviceProvider;
         }
 
         public ReadResponse<BudgetCashflowMasterDto> GetBudgetCashflowMasterLayout(string keyword, int page, int size)
@@ -183,7 +189,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         //    return result;
         //}
 
-        public List<BudgetCashflowItemDto> GetBudgetCashflowUnit(int unitId, DateTimeOffset date)
+        private async Task<List<BudgetCashflowByCategoryDto>> GetCurrencyByCategoryAndDivisionId(int unitId, int divisionId, List<int> categoryIds)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"budget-cashflows/best-case/by-category?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<List<BudgetCashflowByCategoryDto>>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<List<BudgetCashflowByCategoryDto>>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
+        }
+
+        public async Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnit(int unitId, DateTimeOffset date)
         {
             var query = from cashflowType in _dbContext.BudgetCashflowTypes
 
@@ -211,9 +238,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             var cashflowTypeIds = query.Select(entity => entity.CashflowTypeId).Distinct().ToList();
 
+            var month = date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month;
+            var year = date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year;
             var cashflowSubCategoryIds = query.Select(entity => entity.CashflowSubCategoryId).ToList();
             var cashflowUnits = _dbContext.BudgetCashflowUnits
-                .Where(entity => entity.UnitId == unitId && cashflowSubCategoryIds.Contains(entity.BudgetCashflowSubCategoryId) && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year)
+                .Where(entity => entity.UnitId == unitId && cashflowSubCategoryIds.Contains(entity.BudgetCashflowSubCategoryId) && entity.Month == month && entity.Year == year)
                 .ToList();
 
             var summaries = new List<SummaryPerType>();
@@ -240,15 +269,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         {
                             var cashflowSubCategory = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == cashflowSubCategoryId);
 
-                            var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == cashflowSubCategoryId).ToList();
-
-                            if (selectedCashflowUnits.Count > 0)
-                                foreach (var cashflowUnit in selectedCashflowUnits)
+                            if (cashflowSubCategory != null)
+                                if (cashflowSubCategory.IsReadOnly)
                                 {
-                                    summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, cashflowUnit));
+                                    var categoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
+                                    var selectedCashflowUnits = await GetCurrencyByCategoryAndDivisionId(unitId, 0, categoryIds);
+
+                                    if (selectedCashflowUnits.Count > 0)
+                                        foreach (var cashflowUnit in selectedCashflowUnits)
+                                        {
+                                            summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel(0, unitId, 0, date, cashflowUnit.CurrencyId, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.ActualNominal)));
+                                        }
+                                    else
+                                        summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
                                 }
-                            else
-                                summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
+                                else
+                                {
+                                    var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == cashflowSubCategoryId).ToList();
+
+                                    if (selectedCashflowUnits.Count > 0)
+                                        foreach (var cashflowUnit in selectedCashflowUnits)
+                                        {
+                                            summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, cashflowUnit));
+                                        }
+                                    else
+                                        summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
+                                }   
                         }
                     }
 

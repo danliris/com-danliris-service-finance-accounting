@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow
 {
@@ -29,7 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         ReadResponse<BudgetCashflowMasterDto> GetBudgetCashflowMasterLayout(string keyword, int page, int size);
         int CreateBudgetCashflowUnit(CashflowUnitFormDto form);
         int EditBudgetCashflowUnit(CashflowUnitFormDto form);
-        List<BudgetCashflowItemDto> GetBudgetCashflowUnit(int unitId, DateTimeOffset date);
+        Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnit(int unitId, DateTimeOffset date);
         List<BudgetCashflowUnitItemDto> GetBudgetCashflowUnit(int unitId, int subCategoryId, DateTimeOffset date);
     }
 }
