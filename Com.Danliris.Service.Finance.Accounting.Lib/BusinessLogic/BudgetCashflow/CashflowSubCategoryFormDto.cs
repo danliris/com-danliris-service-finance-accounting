@@ -24,40 +24,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 yield return new ValidationResult("Kategori Cashflow harus diisi", new List<string> { "CashflowCategoryId" });
             }
 
-            if (IsReadOnly)
-            {
-                if (PurchasingCategoryIds == null || PurchasingCategoryIds.Count == 0)
-                    yield return new ValidationResult("Kategori Pembelian harus diisi", new List<string> { "PurchasingCategoryId" });
+            //if (IsReadOnly)
+            //{
+            //    if (PurchasingCategoryIds == null || PurchasingCategoryIds.Count == 0)
+            //        yield return new ValidationResult("Kategori Pembelian harus diisi", new List<string> { "PurchasingCategoryId" });
 
-                else
-                {
-                    var countItemsError = 0;
-                    var itemsError = "[";
+            //    else
+            //    {
+            //        var countItemsError = 0;
+            //        var itemsError = "[";
 
-                    foreach (var purchasingId in PurchasingCategoryIds)
-                    {
-                        itemsError += "{ ";
-                        if (purchasingId <= 0)
-                        {
-                            countItemsError++;
-                            itemsError += "'CategoryId': 'Kategori harus diisi', ";
-                        }
-                        itemsError += "}, ";
+            //        foreach (var purchasingId in PurchasingCategoryIds)
+            //        {
+            //            itemsError += "{ ";
+            //            if (purchasingId <= 0)
+            //            {
+            //                countItemsError++;
+            //                itemsError += "'CategoryId': 'Kategori harus diisi', ";
+            //            }
+            //            itemsError += "}, ";
 
-                    }
+            //        }
 
-                    itemsError += "]";
+            //        itemsError += "]";
 
-                    if (countItemsError > 0)
-                        yield return new ValidationResult(itemsError, new List<string> { "PurchasingCategoryIds" });
-                }
+            //        if (countItemsError > 0)
+            //            yield return new ValidationResult(itemsError, new List<string> { "PurchasingCategoryIds" });
+            //    }
 
-            }
+            //}
 
-            if (ReportType <= 0)
-            {
-                yield return new ValidationResult("Jenis Laporan harus diisi", new List<string> { "ReportType" });
-            }
+            //if (ReportType <= 0)
+            //{
+            //    yield return new ValidationResult("Jenis Laporan harus diisi", new List<string> { "ReportType" });
+            //}
         }
     }
 }

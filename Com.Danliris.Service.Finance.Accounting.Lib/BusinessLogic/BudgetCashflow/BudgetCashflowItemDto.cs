@@ -32,6 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             IsShowSubCategoryLabel = isShowSubCategoryLabel;
             SubCategoryId = item.CashflowSubCategory.Id;
             SubCategoryName = item.CashflowSubCategory.Name;
+            IsReadOnly = item.CashflowSubCategory.IsReadOnly;
             Currency = currency;
             Nominal = item.CashflowUnit.Nominal;
             CurrencyNominal = item.CashflowUnit.CurrencyNominal;
@@ -75,6 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public bool IsShowSubCategoryLabel { get; private set; }
         public int SubCategoryId { get; private set; }
         public string SubCategoryName { get; private set; }
+        public bool IsReadOnly { get; private set; }
         public CurrencyDto Currency { get; private set; }
         public double Nominal { get; private set; }
         public double CurrencyNominal { get; private set; }

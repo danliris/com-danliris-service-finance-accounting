@@ -1,5 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
@@ -9,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow
 {
@@ -18,6 +20,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
         private readonly List<CurrencyDto> _currencies;
+        private readonly List<DivisionDto> _divisions;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly List<UnitDto> _units;
 
         public BudgetCashflowService(IServiceProvider serviceProvider)
         {
@@ -30,6 +35,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
+
+            var jsonUnits = cache.GetString("Unit");
+            _units = JsonConvert.DeserializeObject<List<UnitDto>>(jsonUnits, new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            });
+
+            var jsonDivisions = cache.GetString("Division");
+            _divisions = JsonConvert.DeserializeObject<List<DivisionDto>>(jsonDivisions, new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            });
+
+            _serviceProvider = serviceProvider;
         }
 
         public ReadResponse<BudgetCashflowMasterDto> GetBudgetCashflowMasterLayout(string keyword, int page, int size)
@@ -183,7 +202,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         //    return result;
         //}
 
-        public List<BudgetCashflowItemDto> GetBudgetCashflowUnit(int unitId, DateTimeOffset date)
+        private async Task<List<BudgetCashflowByCategoryDto>> GetCurrencyByCategoryAndDivisionId(int unitId, int divisionId, List<int> categoryIds)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"budget-cashflows/best-case/by-category?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<List<BudgetCashflowByCategoryDto>>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<List<BudgetCashflowByCategoryDto>>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
+        }
+
+        public async Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnit(int unitId, DateTimeOffset date)
         {
             var query = from cashflowType in _dbContext.BudgetCashflowTypes
 
@@ -211,9 +251,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             var cashflowTypeIds = query.Select(entity => entity.CashflowTypeId).Distinct().ToList();
 
+            var month = date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month;
+            var year = date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year;
             var cashflowSubCategoryIds = query.Select(entity => entity.CashflowSubCategoryId).ToList();
             var cashflowUnits = _dbContext.BudgetCashflowUnits
-                .Where(entity => entity.UnitId == unitId && cashflowSubCategoryIds.Contains(entity.BudgetCashflowSubCategoryId) && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year)
+                .Where(entity => entity.UnitId == unitId && cashflowSubCategoryIds.Contains(entity.BudgetCashflowSubCategoryId) && entity.Month == month && entity.Year == year)
                 .ToList();
 
             var summaries = new List<SummaryPerType>();
@@ -240,15 +282,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         {
                             var cashflowSubCategory = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == cashflowSubCategoryId);
 
-                            var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == cashflowSubCategoryId).ToList();
-
-                            if (selectedCashflowUnits.Count > 0)
-                                foreach (var cashflowUnit in selectedCashflowUnits)
+                            if (cashflowSubCategory != null)
+                                if (cashflowSubCategory.IsReadOnly)
                                 {
-                                    summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, cashflowUnit));
+                                    var categoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
+                                    var selectedCashflowUnits = await GetCurrencyByCategoryAndDivisionId(unitId, 0, categoryIds);
+
+                                    if (selectedCashflowUnits.Count > 0)
+                                        foreach (var cashflowUnit in selectedCashflowUnits)
+                                        {
+                                            summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel(0, unitId, 0, date, cashflowUnit.CurrencyId, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.ActualNominal)));
+                                        }
+                                    else
+                                        summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
                                 }
-                            else
-                                summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
+                                else
+                                {
+                                    var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == cashflowSubCategoryId).ToList();
+
+                                    if (selectedCashflowUnits.Count > 0)
+                                        foreach (var cashflowUnit in selectedCashflowUnits)
+                                        {
+                                            summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, cashflowUnit));
+                                        }
+                                    else
+                                        summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
+                                }
                         }
                     }
 
@@ -351,181 +410,212 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             return result;
         }
 
-        //public List<BudgetCashflowItemDivisionDto> GetBudgetCashflowDivision(int divisionId, DateTimeOffset date)
-        //{
-        //    var query = from cashflowType in _dbContext.BudgetCashflowTypes
+        public async Task<BudgetCashflowDivision> GetBudgetCashflowDivision(int divisionId, DateTimeOffset date)
+        {
+            var query = from cashflowType in _dbContext.BudgetCashflowTypes
 
-        //                join cashflowCategory in _dbContext.BudgetCashflowCategories on cashflowType.Id equals cashflowCategory.CashflowTypeId into cashflowTypeCategories
-        //                from cashflowTypeCategory in cashflowTypeCategories.DefaultIfEmpty()
+                        join cashflowCategory in _dbContext.BudgetCashflowCategories on cashflowType.Id equals cashflowCategory.CashflowTypeId into cashflowTypeCategories
+                        from cashflowTypeCategory in cashflowTypeCategories.DefaultIfEmpty()
 
-        //                join cashflowSubCategory in _dbContext.BudgetCashflowSubCategories on cashflowTypeCategory.Id equals cashflowSubCategory.CashflowCategoryId into cashflowCategorySubCategories
-        //                from cashflowCategorySubCategory in cashflowCategorySubCategories.DefaultIfEmpty()
+                        join cashflowSubCategory in _dbContext.BudgetCashflowSubCategories on cashflowTypeCategory.Id equals cashflowSubCategory.CashflowCategoryId into cashflowCategorySubCategories
+                        from cashflowCategorySubCategory in cashflowCategorySubCategories.DefaultIfEmpty()
 
-        //                select new
-        //                {
-        //                    CashflowTypeId = cashflowType.Id,
-        //                    CashflowTypeName = cashflowType.Name,
-        //                    CashflowTypeLayoutOrder = cashflowType.LayoutOrder,
-        //                    CashflowCashType = cashflowTypeCategory != null ? cashflowTypeCategory.Type : 0,
-        //                    CashflowCategoryId = cashflowTypeCategory != null ? cashflowTypeCategory.Id : 0,
-        //                    CashflowCategoryName = cashflowTypeCategory != null ? cashflowTypeCategory.Name : "",
-        //                    CashflowCategoryLayoutOrder = cashflowTypeCategory != null ? cashflowTypeCategory.LayoutOrder : 0,
-        //                    CashflowSubCategoryId = cashflowCategorySubCategory != null ? cashflowCategorySubCategory.Id : 0,
-        //                    CashflowSubCategoryName = cashflowCategorySubCategory != null ? cashflowCategorySubCategory.Name : "",
-        //                    CashflowSubCategoryLayoutOrder = cashflowCategorySubCategory != null ? cashflowCategorySubCategory.LayoutOrder : 0
-        //                };
+                        select new
+                        {
+                            CashflowTypeId = cashflowType.Id,
+                            CashflowTypeName = cashflowType.Name,
+                            CashflowTypeLayoutOrder = cashflowType.LayoutOrder,
+                            CashflowCashType = cashflowTypeCategory != null ? cashflowTypeCategory.Type : 0,
+                            CashflowCategoryId = cashflowTypeCategory != null ? cashflowTypeCategory.Id : 0,
+                            CashflowCategoryName = cashflowTypeCategory != null ? cashflowTypeCategory.Name : "",
+                            CashflowCategoryLayoutOrder = cashflowTypeCategory != null ? cashflowTypeCategory.LayoutOrder : 0,
+                            CashflowSubCategoryId = cashflowCategorySubCategory != null ? cashflowCategorySubCategory.Id : 0,
+                            CashflowSubCategoryName = cashflowCategorySubCategory != null ? cashflowCategorySubCategory.Name : "",
+                            CashflowSubCategoryLayoutOrder = cashflowCategorySubCategory != null ? cashflowCategorySubCategory.LayoutOrder : 0
+                        };
 
-        //    query = query.Where(entity => entity.CashflowSubCategoryId > 0).OrderBy(entity => entity.CashflowTypeLayoutOrder).ThenBy(entity => entity.CashflowCashType).ThenBy(entity => entity.CashflowCategoryLayoutOrder).ThenBy(entity => entity.CashflowSubCategoryLayoutOrder);
+            query = query.Where(entity => entity.CashflowSubCategoryId > 0).OrderBy(entity => entity.CashflowTypeLayoutOrder).ThenBy(entity => entity.CashflowCashType).ThenBy(entity => entity.CashflowCategoryLayoutOrder).ThenBy(entity => entity.CashflowSubCategoryLayoutOrder);
 
-        //    var cashflowTypeIds = query.Select(entity => entity.CashflowTypeId).Distinct().ToList();
+            var cashflowTypeIds = query.Select(entity => entity.CashflowTypeId).Distinct().ToList();
 
-        //    var cashflowSubCategoryIds = query.Select(entity => entity.CashflowSubCategoryId).ToList();
-        //    var cashflowUnitQuery = _dbContext.BudgetCashflowUnits
-        //        .Where(entity => cashflowSubCategoryIds.Contains(entity.BudgetCashflowSubCategoryId) && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year);
+            var month = date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month;
+            var year = date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year;
+            var cashflowSubCategoryIds = query.Select(entity => entity.CashflowSubCategoryId).ToList();
+            var cashflowUnitQuery = _dbContext.BudgetCashflowUnits
+                .Where(entity => cashflowSubCategoryIds.Contains(entity.BudgetCashflowSubCategoryId) && entity.Month == month && entity.Year == year);
 
-        //    if (divisionId > 0)
-        //        cashflowUnitQuery = cashflowUnitQuery.Where(entity => entity.DivisionId == divisionId);
+            if (divisionId > 0)
+                cashflowUnitQuery.Where(entity => entity.DivisionId == divisionId);
 
-        //    var cashflowUnits = cashflowUnitQuery.ToList();
+            var cashflowUnits = cashflowUnitQuery.ToList();
 
-        //    var summaries = new List<SummaryPerType>();
-        //    foreach (var cashflowTypeId in cashflowTypeIds)
-        //    {
-        //        var cashflowType = _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == cashflowTypeId);
-        //        var summary = new SummaryPerType();
-        //        summary.SetCashflowType(cashflowType);
-        //        //var sectionRowSpan = 0;
-        //        var cashTypes = query.Select(entity => entity.CashflowCashType).Distinct().ToList();
-        //        foreach (var cashType in cashTypes)
-        //        {
-        //            //var groupRowSpan = 0;
-        //            var cashflowCategoryIds = query.Where(entity => entity.CashflowTypeId == cashflowTypeId && entity.CashflowCashType == cashType).Select(entity => entity.CashflowCategoryId).Distinct().ToList();
+            var summaries = new List<SummaryPerType>();
+            foreach (var cashflowTypeId in cashflowTypeIds)
+            {
+                var cashflowType = _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == cashflowTypeId);
+                var summary = new SummaryPerType();
+                summary.SetCashflowType(cashflowType);
+                //var sectionRowSpan = 0;
+                var cashTypes = query.Select(entity => entity.CashflowCashType).Distinct().ToList();
+                foreach (var cashType in cashTypes)
+                {
+                    //var groupRowSpan = 0;
+                    var cashflowCategoryIds = query.Where(entity => entity.CashflowTypeId == cashflowTypeId && entity.CashflowCashType == cashType).Select(entity => entity.CashflowCategoryId).Distinct().ToList();
 
-        //            foreach (var cashflowCategoryId in cashflowCategoryIds)
-        //            {
-        //                var cashflowCategory = _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == cashflowCategoryId);
-        //                cashflowSubCategoryIds = query.Where(entity => entity.CashflowCategoryId == cashflowCategoryId).Select(entity => entity.CashflowSubCategoryId).Distinct().ToList();
+                    foreach (var cashflowCategoryId in cashflowCategoryIds)
+                    {
+                        var cashflowCategory = _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == cashflowCategoryId);
+                        cashflowSubCategoryIds = query.Where(entity => entity.CashflowCategoryId == cashflowCategoryId).Select(entity => entity.CashflowSubCategoryId).Distinct().ToList();
 
-        //                summary.CashflowCategories.Add(cashflowCategory);
+                        summary.CashflowCategories.Add(cashflowCategory);
 
-        //                foreach (var cashflowSubCategoryId in cashflowSubCategoryIds)
-        //                {
-        //                    var cashflowSubCategory = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == cashflowSubCategoryId);
+                        foreach (var cashflowSubCategoryId in cashflowSubCategoryIds)
+                        {
+                            var cashflowSubCategory = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == cashflowSubCategoryId);
 
-        //                    var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == cashflowSubCategoryId).ToList();
+                            if (cashflowSubCategory != null)
+                                if (cashflowSubCategory.IsReadOnly)
+                                {
+                                    var categoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
+                                    var selectedCashflowUnits = await GetCurrencyByCategoryAndDivisionId(0, divisionId, categoryIds);
 
-        //                    var cashflowUnitCurrencyIds = selectedCashflowUnits.Select(element => element.CurrencyId).ToList();
+                                    if (selectedCashflowUnits.Count > 0)
+                                        foreach (var cashflowUnit in selectedCashflowUnits)
+                                        {
+                                            summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel(0, 0, divisionId, date, cashflowUnit.CurrencyId, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.ActualNominal)));
+                                        }
+                                    else
+                                        summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
+                                }
+                                else
+                                {
+                                    var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == cashflowSubCategoryId).ToList();
 
-        //                    var unitIds = selectedCashflowUnits.Select(element => element.UnitId).ToList();
+                                    if (selectedCashflowUnits.Count > 0)
+                                        foreach (var cashflowUnit in selectedCashflowUnits)
+                                        {
+                                            summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, cashflowUnit));
+                                        }
+                                    else
+                                        summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
+                                }
+                        }
+                    }
 
-        //                    if (cashflowUnitCurrencyIds.Count > 0)
-        //                        foreach (var cashflowUnit in selectedCashflowUnits)
-        //                        {
-        //                            summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, cashflowUnit));
-        //                        }
-        //                    else
-        //                        summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
-        //                }
-        //            }
+                    var totalCashTypes = summary
+                        .Items
+                        .Where(element => element.CashflowType.Id == cashflowTypeId && element.CashflowCategory.Type == cashType && element.CashflowUnit.CurrencyId > 0)
+                        .GroupBy(element => element.CashflowUnit.CurrencyId)
+                        .Select(element =>
+                        {
+                            var nominal = element.Sum(sum => sum.CashflowUnit.Nominal);
+                            var currencyNominal = element.Sum(sum => sum.CashflowUnit.CurrencyNominal);
+                            var total = element.Sum(sum => sum.CashflowUnit.Total);
 
-        //            var totalCashTypes = summary
-        //                .Items
-        //                .Where(element => element.CashflowType.Id == cashflowTypeId && element.CashflowCategory.Type == cashType && element.CashflowUnit.CurrencyId > 0)
-        //                .GroupBy(element => element.CashflowUnit.CurrencyId)
-        //                .Select(element =>
-        //                {
-        //                    var nominal = element.Sum(sum => sum.CashflowUnit.Nominal);
-        //                    var currencyNominal = element.Sum(sum => sum.CashflowUnit.CurrencyNominal);
-        //                    var total = element.Sum(sum => sum.CashflowUnit.Total);
+                            return new TotalCashType(cashflowTypeId, cashType, element.Key, nominal, currencyNominal, total);
+                        })
+                        .ToList();
 
-        //                    return new TotalCashType(cashflowTypeId, cashType, element.Key, nominal, currencyNominal, total);
-        //                })
-        //                .ToList();
+                    summary.AddTotalCashTypes(totalCashTypes);
+                }
+                summaries.Add(summary);
+            }
 
-        //            summary.AddTotalCashTypes(totalCashTypes);
-        //        }
+            var result = new List<BudgetCashflowItemDto>();
 
-        //        summaries.Add(summary);
+            foreach (var summary in summaries)
+            {
+                var summaryItem = new BudgetCashflowItemDto(cashflowTypeId: summary.CashflowType.Id, cashflowTypeName: summary.CashflowType.Name, isUseSection: true);
 
+                var cashCategoryRow = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count();
+                var itemRow = summary.Items.Where(element => element.CashflowType.Id == summary.CashflowType.Id).Count();
+                var totalInRow = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == CashType.In).Count() == 0 ? 1 : summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count();
+                var totalOutRow = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == CashType.Out).Count() == 0 ? 1 : summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count();
+                var differenceRow = summary.GetDifference(summary.CashflowType.Id).Count == 0 ? 1 : summary.GetDifference(summary.CashflowType.Id).Count;
+                summaryItem.SetSectionRowSpan(sectionRowSpan: cashCategoryRow + itemRow + totalInRow + totalOutRow + differenceRow);
 
-        //    }
+                var cashTypes = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Select(element => element.Type).Distinct().ToList();
 
-        //    var result = new List<BudgetCashflowItemDto>();
+                foreach (var cashType in cashTypes)
+                {
+                    var selectedCasCategoryRow = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.Type == cashType).Count();
+                    var selectedItemRow = summary.Items.Where(element => element.CashflowType.Id == summary.CashflowType.Id && element.CashflowCategory.Type == cashType).Count();
+                    var selectedTotalRow = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count() == 0 ? 1 : summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count();
+                    summaryItem.SetGroup(isUseGroup: true, groupRowSpan: selectedCasCategoryRow + selectedItemRow + selectedTotalRow, type: cashType);
 
-        //    foreach (var summary in summaries)
-        //    {
-        //        var summaryItem = new BudgetCashflowItemDto(cashflowTypeId: summary.CashflowType.Id, cashflowTypeName: summary.CashflowType.Name, isUseSection: true);
+                    var cashflowCategories = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.Type == cashType).ToList();
 
-        //        var cashCategoryRow = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count();
-        //        var itemRow = summary.Items.Where(element => element.CashflowType.Id == summary.CashflowType.Id).Count();
-        //        var totalInRow = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == CashType.In).Count() == 0 ? 1 : summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count();
-        //        var totalOutRow = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == CashType.Out).Count() == 0 ? 1 : summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Count();
-        //        var differenceRow = summary.GetDifference(summary.CashflowType.Id).Count == 0 ? 1 : summary.GetDifference(summary.CashflowType.Id).Count;
-        //        summaryItem.SetSectionRowSpan(sectionRowSpan: cashCategoryRow + itemRow + totalInRow + totalOutRow + differenceRow);
+                    foreach (var cashflowCategory in cashflowCategories)
+                    {
+                        summaryItem.SetLabelOnly(cashflowCategory);
+                        result.Add(summaryItem);
+                        summaryItem = new BudgetCashflowItemDto(cashflowCategory);
 
-        //        var cashTypes = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id).Select(element => element.Type).Distinct().ToList();
+                        var items = summary.Items.Where(element => element.CashflowCategory.Id == cashflowCategory.Id).ToList();
 
-        //        foreach (var cashType in cashTypes)
-        //        {
-        //            var selectedCasCategoryRow = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.Type == cashType).Count();
-        //            var selectedItemRow = summary.Items.Where(element => element.CashflowType.Id == summary.CashflowType.Id && element.CashflowCategory.Type == cashType).Count();
-        //            var selectedTotalRow = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count() == 0 ? 1 : summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).Count();
-        //            summaryItem.SetGroup(isUseGroup: true, groupRowSpan: selectedCasCategoryRow + selectedItemRow + selectedTotalRow, type: cashType);
+                        var isShowSubCategoryLabel = false;
+                        var previousSubCategoryId = 0;
+                        foreach (var item in items)
+                        {
+                            if (item.CashflowSubCategory == null)
+                                continue;
 
-        //            var cashflowCategories = summary.CashflowCategories.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.Type == cashType).ToList();
+                            if (item.CashflowSubCategory.Id != previousSubCategoryId)
+                            {
+                                isShowSubCategoryLabel = true;
+                                previousSubCategoryId = item.CashflowSubCategory.Id;
+                            }
 
-        //            foreach (var cashflowCategory in cashflowCategories)
-        //            {
-        //                summaryItem.SetLabelOnly(cashflowCategory);
-        //                result.Add(summaryItem);
-        //                summaryItem = new BudgetCashflowItemDto(cashflowCategory);
+                            result.Add(new BudgetCashflowItemDto(isShowSubCategoryLabel, item, _currencies));
+                            isShowSubCategoryLabel = false;
+                        }
+                    }
 
-        //                var items = summary.Items.Where(element => element.CashflowCategory.Id == cashflowCategory.Id).ToList();
+                    var totalCashTypes = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).ToList();
+                    var isShowTotalLabel = true;
+                    if (totalCashTypes.Count > 0)
+                        foreach (var totalCashType in totalCashTypes)
+                        {
+                            result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType, _currencies));
+                            isShowTotalLabel = false;
+                        }
+                    else
+                        result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", new TotalCashType(), _currencies));
+                }
 
-        //                var isShowSubCategoryLabel = false;
-        //                var previousSubCategoryId = 0;
-        //                foreach (var item in items)
-        //                {
-        //                    if (item.CashflowSubCategory == null)
-        //                        continue;
+                var differenceCashTypes = summary.GetDifference(summary.CashflowType.Id);
+                var isShowDifferenceLabel = true;
+                if (differenceCashTypes.Count > 0)
+                    foreach (var differenceCashType in differenceCashTypes)
+                    {
+                        result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType, _currencies, isShowDifference: true));
+                        isShowDifferenceLabel = false;
+                    }
+                else
+                    result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", new TotalCashType(), _currencies, isShowDifference: true));
+            }
 
-        //                    if (item.CashflowSubCategory.Id != previousSubCategoryId)
-        //                    {
-        //                        isShowSubCategoryLabel = true;
-        //                        previousSubCategoryId = item.CashflowSubCategory.Id;
-        //                    }
+            var divisionIds = summaries.SelectMany(element => element.Items).Select(element => element.CashflowUnit.DivisionId).Where(element => element > 0).ToList();
+            var divisions = _divisions.Where(element => divisionIds.Contains(element.Id)).ToList();
 
-        //                    result.Add(new BudgetCashflowItemDto(isShowSubCategoryLabel, item, _currencies));
-        //                    isShowSubCategoryLabel = false;
-        //                }
-        //            }
+            var headers = new List<string>();
+            foreach (var division in divisions)
+            {
+                var units = _units.Where(element => division.Id == element.DivisionId).ToList();
+                foreach (var unit in units)
+                {
+                    headers.Add($"Nominal {unit.Code}");
+                    headers.Add($"Nominal Valas {unit.Code}");
+                    headers.Add($"Actual {unit.Code}");
+                }
 
-        //            var totalCashTypes = summary.TotalCashTypes.Where(element => element.CashflowTypeId == summary.CashflowType.Id && element.CashType == cashType).ToList();
-        //            var isShowTotalLabel = true;
-        //            if (totalCashTypes.Count > 0)
-        //                foreach (var totalCashType in totalCashTypes)
-        //                {
-        //                    result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType, _currencies));
-        //                    isShowTotalLabel = false;
-        //                }
-        //            else
-        //                result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", new TotalCashType(), _currencies));
-        //        }
+                headers.Add($"Nominal {division.Code}");
+                headers.Add($"Nominal Valas {division.Code}");
+                headers.Add($"Actual {division.Code}");
+            }
 
-        //        var differenceCashTypes = summary.GetDifference(summary.CashflowType.Id);
-        //        var isShowDifferenceLabel = true;
-        //        if (differenceCashTypes.Count > 0)
-        //            foreach (var differenceCashType in differenceCashTypes)
-        //            {
-        //                result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType, _currencies, isShowDifference: true));
-        //                isShowDifferenceLabel = false;
-        //            }
-        //        else
-        //            result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", new TotalCashType(), _currencies, isShowDifference: true));
-        //    }
-
-        //    return result;
-        //}
+            return new BudgetCashflowDivision(headers, new List<BudgetCashflowItemDivisionDto>());
+        }
 
         public List<BudgetCashflowUnitItemDto> GetBudgetCashflowUnit(int unitId, int subCategoryId, DateTimeOffset date)
         {
