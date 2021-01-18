@@ -614,6 +614,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                                     row.Items.Add(new UnitItemDto(divisionTotal, divisionNominal, divisionCurrencyNominal, division, null));
                                 }
+
+                                result.Add(row);
                             }
                         }
                     }
@@ -718,8 +720,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public int DeleteBudgetCashflowType(int id)
         {
             var model = _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == id);
+
+            var cashflowCategories = _dbContext
+                .BudgetCashflowCategories
+                .Where(entity => entity.CashflowTypeId == id)
+                .ToList()
+                .Select(element => 
+                {
+                    EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+
+                    return element;
+                }).ToList();
+            var categoryIds = cashflowCategories.Select(element => element.Id).ToList();
+
+            var subCategories = _dbContext
+                .BudgetCashflowSubCategories
+                .Where(entity => categoryIds.Contains(entity.CashflowCategoryId))
+                .ToList()
+                .Select(element =>
+                {
+                    EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                    return element;
+                })
+                .ToList();
+
             EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
             _dbContext.BudgetCashflowTypes.Update(model);
+            _dbContext.BudgetCashflowCategories.UpdateRange(cashflowCategories);
+            _dbContext.BudgetCashflowSubCategories.UpdateRange(subCategories);
             return _dbContext.SaveChanges();
         }
         #endregion
@@ -765,8 +793,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public int DeleteBudgetCashflowCategories(int id)
         {
             var model = _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == id);
+
+            var subCategories = _dbContext
+                .BudgetCashflowSubCategories
+                .Where(entity => id == entity.CashflowCategoryId)
+                .ToList()
+                .Select(element =>
+                {
+                    EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                    return element;
+                })
+                .ToList();
+
             EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
             _dbContext.BudgetCashflowCategories.Update(model);
+            _dbContext.BudgetCashflowSubCategories.UpdateRange(subCategories);
             return _dbContext.SaveChanges();
         }
         #endregion
