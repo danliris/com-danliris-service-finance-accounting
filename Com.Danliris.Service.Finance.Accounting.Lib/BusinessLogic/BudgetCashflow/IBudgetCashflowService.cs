@@ -32,5 +32,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         int EditBudgetCashflowUnit(CashflowUnitFormDto form);
         Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnit(int unitId, DateTimeOffset date);
         List<BudgetCashflowUnitItemDto> GetBudgetCashflowUnit(int unitId, int subCategoryId, DateTimeOffset date);
+        Task<BudgetCashflowDivision> GetBudgetCashflowDivision(int divisionId, DateTimeOffset date);
     }
 }
