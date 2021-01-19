@@ -43,6 +43,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             if (supplierId > 0)
                 query = query.Where(entity => entity.SupplierId == supplierId);
 
+            if (position == GarmentPurchasingExpeditionPosition.Purchasing)
+            {
+                var notPurchasingInternalNoteIds = _dbContext.GarmentPurchasingExpeditions
+                    .GroupBy(entity => new { entity.InternalNoteId, entity.Position })
+                    .Select(groupped => new { groupped.Key.InternalNoteId, groupped.Key.Position })
+                    .Where(entity => entity.Position > GarmentPurchasingExpeditionPosition.Purchasing)
+                    .Select(entity => entity.InternalNoteId)
+                    .ToList();
+
+                var firstInternalNoteIds = _dbContext.GarmentPurchasingExpeditions
+                    .Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.Purchasing && !string.IsNullOrEmpty(entity.SendToPurchasingRemark))
+                    .GroupBy(entity => new { entity.InternalNoteId, entity.Position })
+                    .Select(groupped => new { groupped.OrderByDescending(entity => entity.CreatedUtc).FirstOrDefault().Id })
+                    .Select(entity => entity.Id)
+                    .ToList();
+                query = query.Where(entity => !notPurchasingInternalNoteIds.Contains(entity.InternalNoteId));
+                query = query.Where(entity => firstInternalNoteIds.Contains(entity.Id));
+            }
+
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
             query = QueryHelper<GarmentPurchasingExpeditionModel>.Order(query, orderDictionary);
 
@@ -83,7 +102,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var models = new List<GarmentPurchasingExpeditionModel>();
             foreach (var item in form.Items)
             {
-                var model = new GarmentPurchasingExpeditionModel(item.InternalNote.Id, item.InternalNote.DocumentNo, item.InternalNote.Date, item.InternalNote.DueDate, item.InternalNote.SupplierId, item.InternalNote.SupplierName, item.InternalNote.VAT, item.InternalNote.IncomeTax, item.InternalNote.TotalPaid, item.InternalNote.CurrencyId, item.InternalNote.CurrencyCode, item.Remark, item.InternalNote.AmountDPP);
+                var model = new GarmentPurchasingExpeditionModel(item.InternalNote.Id, item.InternalNote.DocumentNo, item.InternalNote.Date, item.InternalNote.DueDate, item.InternalNote.SupplierId, item.InternalNote.SupplierName, item.InternalNote.VAT, item.InternalNote.IncomeTax, item.InternalNote.TotalPaid, item.InternalNote.CurrencyId, item.InternalNote.CurrencyCode, item.Remark, item.InternalNote.AmountDPP, item.InternalNote.PaymentMethod, item.InternalNote.PaymentType, item.InternalNote.PaymentDueDays, item.InternalNote.InvoicesNo);
                 model.SendToAccounting(_identityService.Username);
 
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -140,7 +159,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var models = new List<GarmentPurchasingExpeditionModel>();
             foreach (var item in form.Items)
             {
-                var model = new GarmentPurchasingExpeditionModel(item.InternalNote.Id, item.InternalNote.DocumentNo, item.InternalNote.Date, item.InternalNote.DueDate, item.InternalNote.SupplierId, item.InternalNote.SupplierName, item.InternalNote.VAT, item.InternalNote.IncomeTax, item.InternalNote.TotalPaid, item.InternalNote.CurrencyId, item.InternalNote.CurrencyCode, item.Remark, item.InternalNote.AmountDPP);
+                var model = new GarmentPurchasingExpeditionModel(item.InternalNote.Id, item.InternalNote.DocumentNo, item.InternalNote.Date, item.InternalNote.DueDate, item.InternalNote.SupplierId, item.InternalNote.SupplierName, item.InternalNote.VAT, item.InternalNote.IncomeTax, item.InternalNote.TotalPaid, item.InternalNote.CurrencyId, item.InternalNote.CurrencyCode, item.Remark, item.InternalNote.AmountDPP, item.InternalNote.PaymentMethod, item.InternalNote.PaymentType, item.InternalNote.PaymentDueDays, item.InternalNote.InvoicesNo);
                 model.SendToVerification(_identityService.Username);
 
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -220,6 +239,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
             var internalNoteIds = models.Select(model => model.InternalNoteId).ToList();
             await UpdateInternalNotePosition(internalNoteIds, GarmentPurchasingExpeditionPosition.AccountingAccepted);
+
+            return result;
+        }
+
+        public async Task<int> PurchasingAccepted(List<int> ids)
+        {
+            var models = _dbContext.GarmentPurchasingExpeditions.Where(entity => ids.Contains(entity.Id)).ToList();
+
+            models = models.Select(model =>
+            {
+                model.PurchasingAccepted(_identityService.Username);
+
+                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+                return model;
+            }).ToList();
+
+            _dbContext.GarmentPurchasingExpeditions.UpdateRange(models);
+            var result = await _dbContext.SaveChangesAsync();
+
+            var internalNoteIds = models.Select(model => model.InternalNoteId).ToList();
+            await UpdateInternalNotePosition(internalNoteIds, GarmentPurchasingExpeditionPosition.Purchasing);
 
             return result;
         }

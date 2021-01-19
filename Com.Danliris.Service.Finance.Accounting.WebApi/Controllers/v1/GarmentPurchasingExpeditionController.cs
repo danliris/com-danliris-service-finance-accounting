@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition.Reports;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
@@ -23,12 +24,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
     {
         private readonly IIdentityService _identityService;
         private readonly IGarmentPurchasingExpeditionService _service;
+        private readonly IGarmentPurchasingExpeditionReportService _reportService;
         private readonly IValidateService _validateService;
         private const string ApiVersion = "1.0";
         public GarmentPurchasingExpeditionController(IServiceProvider serviceProvider)
         {
             _identityService = serviceProvider.GetService<IIdentityService>();
             _service = serviceProvider.GetService<IGarmentPurchasingExpeditionService>();
+            _reportService = serviceProvider.GetService<IGarmentPurchasingExpeditionReportService>();
             _validateService = serviceProvider.GetService<IValidateService>();
         }
 
@@ -198,6 +201,26 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 VerifyUser();
 
                 await _service.AccountingAccepted(ids);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("purchasing-accepted")]
+        public async Task<IActionResult> PurchasingAccepted([FromBody] List<int> ids)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.PurchasingAccepted(ids);
 
                 return NoContent();
             }
@@ -384,13 +407,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPut("send-to-purchasing-rejected/{id}")]
-        public async Task<IActionResult> SendToPurchasingRejected([FromRoute] int id, [FromBody] string remark)
+        public async Task<IActionResult> SendToPurchasingRejected([FromRoute] int id, [FromBody] RejectionForm form)
         {
             try
             {
                 VerifyUser();
 
-                await _service.SendToPurchasingRejected(id, remark);
+                await _service.SendToPurchasingRejected(id, form.Remark);
 
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
 
@@ -404,5 +427,56 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
+
+        [HttpGet("report")]
+        public IActionResult GetReport(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset? startDate, DateTimeOffset? endDate)
+        {
+            try
+            {
+                VerifyUser();
+                endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
+                startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
+
+                var result = _reportService.GetReport(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
+        [HttpGet("report/xls")]
+        public IActionResult GetReportXls(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset? startDate, DateTimeOffset? endDate)
+        {
+            try
+            {
+                VerifyUser();
+                endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
+                startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
+
+                var stream = _reportService.GenerateExcel(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+
+                var bytes = stream.ToArray();
+                var filename = "Laporan Ekspedisi Garment.xlsx";
+                var file = File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+    }
+
+    public class RejectionForm
+    {
+        public string Remark { get; set; }
     }
 }

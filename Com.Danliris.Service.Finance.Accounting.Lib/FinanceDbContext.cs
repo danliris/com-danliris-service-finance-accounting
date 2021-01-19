@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePayment;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingExpedition;
@@ -79,6 +80,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<VBRealizationDocumentUnitCostsItemModel> VBRealizationDocumentUnitCostsItems { get; set; }
 
         public DbSet<GarmentPurchasingExpeditionModel> GarmentPurchasingExpeditions { get; set; }
+
+        public DbSet<BudgetCashflowTypeModel> BudgetCashflowTypes { get; set; }
+        public DbSet<BudgetCashflowCategoryModel> BudgetCashflowCategories { get; set; }
+        public DbSet<BudgetCashflowSubCategoryModel> BudgetCashflowSubCategories { get; set; }
+        public DbSet<BudgetCashflowUnitModel> BudgetCashflowUnits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

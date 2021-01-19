@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition.Reports;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditBalance;
@@ -134,10 +136,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRequestDocumentService, VBRequestDocumentService>()
                 .AddTransient<IGarmentInvoicePaymentService, GarmentInvoicePaymentService>()
                 .AddTransient<IGarmentPurchasingExpeditionService, GarmentPurchasingExpeditionService>()
+                .AddTransient<IGarmentPurchasingExpeditionReportService, GarmentPurchasingExpeditionReportService>()
                 .AddTransient<IVBRealizationDocumentNonPOService, VBRealizationDocumentNonPOService>()
                 .AddTransient<IVBRealizationWithPOService, VBRealizationWithPOService>()
                 .AddTransient<IVBRealizationService, VBRealizationService>()
-                .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>();
+                .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>()
+                .AddTransient<IBudgetCashflowService, BudgetCashflowService>();
         }
 
 
@@ -188,6 +192,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             }));
 
             #endregion
+
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetValue<string>("RedisConnection") ?? Configuration["RedisConnection"];
+                options.InstanceName = Configuration.GetValue<string>("RedisConnectionName") ?? Configuration["RedisConnectionName"];
+            });
 
             #region API
 

@@ -27,6 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
                 CloseDate = DateTimeOffset.Now,
                 Date = DateTimeOffset.Now,
                 isClosed = true,
+                CreatedBy = "CreatedBy",
                 isNotVeridied = false,
                 isVerified = true,
                 RequestVbName = "RequestVbName",

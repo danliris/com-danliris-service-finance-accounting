@@ -139,7 +139,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             query = query.OrderByDescending(e => e.LastModifiedDate);
 
+            var vbRealizationIds = query.Select(entity => entity.VBRealizationId).ToList();
+            var unitCosts = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId) && entity.UseIncomeTax && entity.IncomeTaxBy.ToUpper() == "SUPPLIER").Select(entity => new { entity.VBRealizationDocumentId, entity.IncomeTaxRate, entity.Amount }).ToList();
+            var expenditureItems = _dbContext.VBRealizationDocumentExpenditureItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId) && entity.UseIncomeTax && entity.IncomeTaxBy.ToUpper() == "SUPPLIER").Select(entity => new { entity.VBRealizationDocumentId, entity.IncomeTaxRate }).ToList();
+
             var result = query.Skip((page - 1) * size).Take(size).ToList();
+            result = result.Select(element =>
+            {
+                var unitIncomeTax = unitCosts.Where(unit => unit.VBRealizationDocumentId == element.VBRealizationId).Sum(s => (decimal)s.IncomeTaxRate / 100 * element.VBAmount);
+                var itemIncomeTax = expenditureItems.Where(unit => unit.VBRealizationDocumentId == element.VBRealizationId).Sum(s => (decimal)s.IncomeTaxRate / 100 * element.VBAmount);
+                element.VBRealizationAmount = element.VBRealizationAmount - unitIncomeTax - itemIncomeTax;
+                return element;
+            }).ToList();
             var total = await query.CountAsync();
             return new VBRealizationDocumentExpeditionReportDto(result, total, size, page);
         }
@@ -179,7 +190,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var query = _dbContext.VBRealizationDocumentExpeditions.AsQueryable();
 
             var vbRequestNotCompletedIds = _dbContext.VBRequestDocuments.Where(entity => !entity.IsCompleted).Select(entity => entity.Id).ToList();
-            var vbRealizationNotCompletedIds = _dbContext.VBRealizationDocuments.Where(entity =>  vbRequestNotCompletedIds.Contains(entity.VBRequestDocumentId) || !entity.IsCompleted).Select(entity => entity.Id).ToList();
+            var vbRealizationNotCompletedIds = _dbContext.VBRealizationDocuments.Where(entity => vbRequestNotCompletedIds.Contains(entity.VBRequestDocumentId) || !entity.IsCompleted).Select(entity => entity.Id).ToList();
 
             query = query.Where(entity => vbRealizationNotCompletedIds.Contains(entity.VBRealizationId));
 
