@@ -815,7 +815,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         #region Budget Cashflow Sub Category CRUD
         public int CreateBudgetCashflowSubCategory(CashflowSubCategoryFormDto form)
         {
-            var model = new BudgetCashflowSubCategoryModel(form.Name, form.CashflowCategoryId, form.LayoutOrder, form.PurchasingCategoryIds, form.IsReadOnly, form.ReportType);
+            var model = new BudgetCashflowSubCategoryModel(form.Name, form.CashflowCategoryId, form.LayoutOrder, form.PurchasingCategoryIds, form.IsReadOnly, form.ReportType, form.IsImport);
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.BudgetCashflowSubCategories.Add(model);
             return _dbContext.SaveChanges();
