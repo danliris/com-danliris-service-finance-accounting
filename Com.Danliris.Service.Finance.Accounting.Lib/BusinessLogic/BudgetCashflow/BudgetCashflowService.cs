@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.CacheService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -29,20 +30,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             _dbContext = serviceProvider.GetService<FinanceDbContext>();
             _identityService = serviceProvider.GetService<IIdentityService>();
 
-            var cache = serviceProvider.GetService<IDistributedCache>();
-            var jsonCurrencies = cache.GetString("Currency");
+            var cacheService = serviceProvider.GetService<ICacheService>();
+            var jsonCurrencies = cacheService.GetString("Currency");
             _currencies = JsonConvert.DeserializeObject<List<CurrencyDto>>(jsonCurrencies, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
 
-            var jsonUnits = cache.GetString("Unit");
+            var jsonUnits = cacheService.GetString("Unit");
             _units = JsonConvert.DeserializeObject<List<UnitDto>>(jsonUnits, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
 
-            var jsonDivisions = cache.GetString("Division");
+            var jsonDivisions = cacheService.GetString("Division");
             _divisions = JsonConvert.DeserializeObject<List<DivisionDto>>(jsonDivisions, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
@@ -309,6 +310,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                     else
                                         summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
                                 }
+                            else
+                            {
+                                continue;
+                            }
                         }
                     }
 
