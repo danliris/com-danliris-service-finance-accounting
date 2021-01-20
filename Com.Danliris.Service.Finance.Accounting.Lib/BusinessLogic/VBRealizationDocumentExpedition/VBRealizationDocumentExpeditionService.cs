@@ -204,10 +204,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         {
             var query = _dbContext.VBRealizationDocumentExpeditions.AsQueryable();
 
-            var vbRequestNotCompletedIds = _dbContext.VBRequestDocuments.Where(entity => !entity.IsCompleted).Select(entity => entity.Id).ToList();
-            var vbRealizationNotCompletedIds = _dbContext.VBRealizationDocuments.Where(entity => vbRequestNotCompletedIds.Contains(entity.VBRequestDocumentId) || !entity.IsCompleted).Select(entity => entity.Id).ToList();
+            //var vbRequestNotCompletedIds = _dbContext.VBRequestDocuments.Where(entity => !entity.IsCompleted).Select(entity => entity.Id).ToList();
+            //var vbRealizationNotCompletedIds = _dbContext.VBRealizationDocuments.Where(entity => vbRequestNotCompletedIds.Contains(entity.VBRequestDocumentId) || !entity.IsCompleted).Select(entity => entity.Id).ToList();
 
-            query = query.Where(entity => vbRealizationNotCompletedIds.Contains(entity.VBRealizationId));
+            //query = query.Where(entity => vbRealizationNotCompletedIds.Contains(entity.VBRealizationId));
 
             if (position > 0)
                 query = query.Where(entity => entity.Position == position);
