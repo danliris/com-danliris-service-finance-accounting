@@ -251,7 +251,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             query = query.Where(entity => entity.CashflowSubCategoryId > 0).OrderBy(entity => entity.CashflowTypeLayoutOrder).ThenBy(entity => entity.CashflowCashType).ThenBy(entity => entity.CashflowCategoryLayoutOrder).ThenBy(entity => entity.CashflowSubCategoryLayoutOrder);
 
-            var cashflowTypeIds = query.Select(entity => entity.CashflowTypeId).Distinct().ToList();
+            var selectedCashflows = query.Select(entity => new { entity.CashflowTypeId, entity.CashflowTypeLayoutOrder }).Distinct().OrderBy(entity => entity.CashflowTypeLayoutOrder).ToList();
 
             var month = date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month;
             var year = date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year;
@@ -261,9 +261,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 .ToList();
 
             var summaries = new List<SummaryPerType>();
-            foreach (var cashflowTypeId in cashflowTypeIds)
+            foreach (var selectedCashflow in selectedCashflows)
             {
-                var cashflowType = _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == cashflowTypeId);
+                var cashflowType = _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == selectedCashflow.CashflowTypeId);
                 var summary = new SummaryPerType();
                 summary.SetCashflowType(cashflowType);
                 //var sectionRowSpan = 0;
@@ -271,18 +271,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 foreach (var cashType in cashTypes)
                 {
                     //var groupRowSpan = 0;
-                    var cashflowCategoryIds = query.Where(entity => entity.CashflowTypeId == cashflowTypeId && entity.CashflowCashType == cashType).Select(entity => entity.CashflowCategoryId).Distinct().ToList();
+                    var selectedCashflowCategories = query.Where(entity => entity.CashflowTypeId == selectedCashflow.CashflowTypeId && entity.CashflowCashType == cashType).Select(entity => new { entity.CashflowCategoryId, entity.CashflowCategoryLayoutOrder }).Distinct().OrderBy(entity => entity.CashflowCategoryLayoutOrder).ToList();
 
-                    foreach (var cashflowCategoryId in cashflowCategoryIds)
+                    foreach (var selectedCashflowCategory in selectedCashflowCategories)
                     {
-                        var cashflowCategory = _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == cashflowCategoryId);
-                        cashflowSubCategoryIds = query.Where(entity => entity.CashflowCategoryId == cashflowCategoryId).Select(entity => entity.CashflowSubCategoryId).Distinct().ToList();
+                        var cashflowCategory = _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == selectedCashflowCategory.CashflowCategoryId);
+                        var selectedSubCategories = query.Where(entity => entity.CashflowCategoryId == selectedCashflowCategory.CashflowCategoryId).Select(entity => new { entity.CashflowSubCategoryId, entity.CashflowSubCategoryLayoutOrder }).Distinct().OrderBy(entity => entity.CashflowSubCategoryLayoutOrder).ToList();
 
                         summary.CashflowCategories.Add(cashflowCategory);
 
-                        foreach (var cashflowSubCategoryId in cashflowSubCategoryIds)
+                        foreach (var selectedSubCategory in selectedSubCategories)
                         {
-                            var cashflowSubCategory = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == cashflowSubCategoryId);
+                            var cashflowSubCategory = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == selectedSubCategory.CashflowSubCategoryId);
 
                             if (cashflowSubCategory != null)
                                 if (cashflowSubCategory.IsReadOnly)
@@ -300,7 +300,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                 }
                                 else
                                 {
-                                    var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == cashflowSubCategoryId).ToList();
+                                    var selectedCashflowUnits = cashflowUnits.Where(element => element.BudgetCashflowSubCategoryId == selectedSubCategory.CashflowSubCategoryId).ToList();
 
                                     if (selectedCashflowUnits.Count > 0)
                                         foreach (var cashflowUnit in selectedCashflowUnits)
@@ -319,7 +319,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                     var totalCashTypes = summary
                         .Items
-                        .Where(element => element.CashflowType.Id == cashflowTypeId && element.CashflowCategory.Type == cashType && element.CashflowUnit.CurrencyId > 0)
+                        .Where(element => element.CashflowType.Id == selectedCashflow.CashflowTypeId && element.CashflowCategory.Type == cashType && element.CashflowUnit.CurrencyId > 0)
                         .GroupBy(element => element.CashflowUnit.CurrencyId)
                         .Select(element =>
                         {
@@ -327,7 +327,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             var currencyNominal = element.Sum(sum => sum.CashflowUnit.CurrencyNominal);
                             var total = element.Sum(sum => sum.CashflowUnit.Total);
 
-                            return new TotalCashType(cashflowTypeId, cashType, element.Key, nominal, currencyNominal, total);
+                            return new TotalCashType(selectedCashflow.CashflowTypeId, cashType, element.Key, nominal, currencyNominal, total);
                         })
                         .ToList();
 
@@ -730,7 +730,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 .BudgetCashflowCategories
                 .Where(entity => entity.CashflowTypeId == id)
                 .ToList()
-                .Select(element => 
+                .Select(element =>
                 {
                     EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
 
