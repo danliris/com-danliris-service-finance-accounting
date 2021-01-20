@@ -36,10 +36,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
         int CreateInitialCashBalance(CashBalanceFormDto form);
         int UpdateInitialCashBalance(CashBalanceFormDto form);
-        List<InitialCashBalanceModel> GetInitialCashBalance(int unitId, DateTimeOffset date);
+        List<BudgetCashflowUnitItemDto> GetInitialCashBalance(int unitId, DateTimeOffset date);
 
         int CreateRealCashBalance(CashBalanceFormDto form);
         int UpdateRealCashBalance(CashBalanceFormDto form);
-        List<RealCashBalanceModel> GetRealCashBalance(int unitId, DateTimeOffset date);
+        List<BudgetCashflowUnitItemDto> GetRealCashBalance(int unitId, DateTimeOffset date);
     }
 }
