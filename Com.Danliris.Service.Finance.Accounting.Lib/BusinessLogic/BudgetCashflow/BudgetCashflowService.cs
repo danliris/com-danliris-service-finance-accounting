@@ -927,9 +927,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             return _dbContext.SaveChanges();
         }
 
-        public List<InitialCashBalanceModel> GetInitialCashBalance(int unitId, DateTimeOffset date)
+        public List<BudgetCashflowUnitItemDto> GetInitialCashBalance(int unitId, DateTimeOffset date)
         {
-            return _dbContext.InitialCashBalances.Where(entity => entity.UnitId == unitId  && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+            return _dbContext
+                .InitialCashBalances
+                .Where(entity => entity.UnitId == unitId  && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year)
+                .ToList()
+                .Select(entity =>
+                {
+                    return new BudgetCashflowUnitItemDto(entity, _currencies);
+                }).ToList();
         }
 
         public int CreateRealCashBalance(CashBalanceFormDto form)
@@ -968,9 +975,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             return _dbContext.SaveChanges();
         }
 
-        public List<RealCashBalanceModel> GetRealCashBalance(int unitId, DateTimeOffset date)
+        public List<BudgetCashflowUnitItemDto> GetRealCashBalance(int unitId, DateTimeOffset date)
         {
-            return _dbContext.RealCashBalances.Where(entity => entity.UnitId == unitId && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+            return _dbContext
+                .RealCashBalances
+                .Where(entity => entity.UnitId == unitId && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year)
+                .ToList()
+                .Select(entity =>
+                {
+                    return new BudgetCashflowUnitItemDto(entity, _currencies);
+                })
+                .ToList();
         }
         #endregion
     }
