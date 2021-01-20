@@ -81,6 +81,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             IsShowSummaryLabel = isShowSummaryLabel;
             IsShowSummary = isShowSummary;
             Total = actual;
+            SummaryLabel = label;
+        }
+
+        public BudgetCashflowItemDto(bool isShowSummaryBalance, string label, TotalCashType totalCashType, List<CurrencyDto> currencies, bool isSummaryBalance, string type = "summary")
+        {
+            IsShowSummaryBalance = isShowSummaryBalance;
+            SummaryBalanceLabel = label;
+            IsSummaryBalance = isSummaryBalance;
         }
 
         public List<UnitItemDto> Items { get; private set; }
@@ -106,11 +114,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public bool IsShowSummaryLabel { get; private set; }
         public bool IsShowSummary { get; private set; }
         public double Total { get; private set; }
+        public string SummaryLabel { get; private set; }
         public bool IsShowDifference { get; private set; }
         public bool IsShowTotalLabel { get; private set; }
         public string TotalLabel { get; private set; }
         public bool IsShowDifferenceLabel { get; private set; }
         public string DifferenceLabel { get; private set; }
+        public bool IsShowSummaryBalance { get; }
+        public string SummaryBalanceLabel { get; }
+        public bool IsSummaryBalance { get; }
 
         public void SetSectionRowSpan(int sectionRowSpan)
         {
