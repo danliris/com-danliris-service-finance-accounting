@@ -413,6 +413,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", new TotalCashType(), _currencies, isShowDifference: true));
             }
 
+            var differenceSummary = result
+                .Where(element => element.IsShowDifference)
+                .GroupBy(element => element.Currency.Id)
+                .Select(element => new
+                {
+                    CurrencyId = element.Key,
+                    CurrencyNominal = element.Sum(s => s.CurrencyNominal),
+                    Nominal = element.Sum(s => s.Nominal),
+                    Actual = element.Sum(s => s.Total)
+                })
+                .ToList();
+
+            // Saldo Awal
+            result.Add(new BudgetCashflowItemDto(true, "Saldo Awal Kas", new TotalCashType(), _currencies, true));
+
+            // Total Surplus/Deficit Kas
+            var isShowSummaryLabel = true;
+            foreach (var item in differenceSummary)
+            {
+                var currency = _currencies.FirstOrDefault(element => element.Id == item.CurrencyId);
+                result.Add(new BudgetCashflowItemDto(isShowSummaryLabel, "TOTAL SURPLUS/DEFISIT KAS", currency, item.Nominal, item.CurrencyNominal, item.Actual, true));
+            }
+
+            // Saldo Akhir
+            result.Add(new BudgetCashflowItemDto(true, "Saldo Akhir Kas", new TotalCashType(), _currencies, true));
+
             return result;
         }
 

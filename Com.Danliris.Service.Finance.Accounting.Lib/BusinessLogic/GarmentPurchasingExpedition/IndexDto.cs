@@ -54,6 +54,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             AmountDPP = entity.DPP;
             VAT = entity.VAT;
             CorrectionAmount = entity.CorrectionAmount;
+            IncomeTax = entity.IncomeTax;
             Status = entity.Position.ToDescriptionString();
             Date = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing ? entity.SendToPurchasingDate : entity.VerificationAcceptedDate;
             VerifiedBy = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing ? entity.SendToPurchasingBy : entity.VerificationAcceptedBy;
@@ -74,6 +75,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         public double AmountDPP { get; private set; }
         public double VAT { get; private set; }
         public double CorrectionAmount { get; private set; }
+        public double IncomeTax { get; private set; }
         public string Status { get; private set; }
         public string SendToPurchasingRemark { get; private set; }
         public DateTimeOffset? Date { get; private set; }
