@@ -73,6 +73,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             Items = new List<UnitItemDto>();
         }
 
+        public BudgetCashflowItemDto(bool isShowSummaryLabel, string label, CurrencyDto currency, double nominal, double currencyNominal, double actual, bool isShowSummary)
+        {
+            Currency = currency;
+            Nominal = nominal;
+            CurrencyNominal = currencyNominal;
+            IsShowSummaryLabel = isShowSummaryLabel;
+            IsShowSummary = isShowSummary;
+            Total = actual;
+        }
+
         public List<UnitItemDto> Items { get; private set; }
 
         public int CashflowTypeId { get; private set; }
@@ -93,6 +103,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public CurrencyDto Currency { get; private set; }
         public double Nominal { get; private set; }
         public double CurrencyNominal { get; private set; }
+        public bool IsShowSummaryLabel { get; private set; }
+        public bool IsShowSummary { get; private set; }
         public double Total { get; private set; }
         public bool IsShowDifference { get; private set; }
         public bool IsShowTotalLabel { get; private set; }
