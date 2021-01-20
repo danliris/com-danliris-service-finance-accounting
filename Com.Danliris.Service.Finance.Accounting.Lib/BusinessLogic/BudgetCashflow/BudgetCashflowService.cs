@@ -434,6 +434,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             {
                 var currency = _currencies.FirstOrDefault(element => element.Id == item.CurrencyId);
                 result.Add(new BudgetCashflowItemDto(isShowSummaryLabel, "SURPLUS/DEFISIT KAS", currency, item.Nominal, item.CurrencyNominal, item.Actual, true));
+                isShowSummaryLabel = false;
             }
 
             // Saldo Akhir
