@@ -693,7 +693,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 .ToList();
         }
 
-        public int EditBudgetCashflowUnit(CashflowUnitFormDto form)
+        public int UpdateBudgetCashflowUnit(CashflowUnitFormDto form)
         {
             var existingModels = _dbContext.BudgetCashflowUnits.Where(entity => entity.BudgetCashflowSubCategoryId == form.CashflowSubCategoryId && entity.UnitId == form.UnitId && entity.DivisionId == form.DivisionId && entity.Month == form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
             foreach (var existingModel in existingModels)
@@ -739,7 +739,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             return _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == id);
         }
 
-        public int EditBudgetCashflowType(int id, CashflowTypeFormDto form)
+        public int UpdateBudgetCashflowType(int id, CashflowTypeFormDto form)
         {
             var model = _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == id);
 
@@ -812,7 +812,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             return _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == id);
         }
 
-        public int EditBudgetCashflowCategory(int id, CashflowCategoryFormDto form)
+        public int UpdateBudgetCashflowCategory(int id, CashflowCategoryFormDto form)
         {
             var model = _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == id);
 
@@ -874,7 +874,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             return new BudgetCashflowSubCategoryTypeDto(model);
         }
 
-        public int EditBudgetCashflowSubCategory(int id, CashflowSubCategoryFormDto form)
+        public int UpdateBudgetCashflowSubCategory(int id, CashflowSubCategoryFormDto form)
         {
             var model = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == id);
             model.SetNewValue(form.CashflowCategoryId, form.IsReadOnly, form.LayoutOrder, form.Name, form.PurchasingCategoryIds, form.ReportType);
@@ -889,6 +889,88 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
             _dbContext.BudgetCashflowSubCategories.Update(model);
             return _dbContext.SaveChanges();
+        }
+
+        public int CreateInitialCashBalance(CashBalanceFormDto form)
+        {
+            var models = new List<InitialCashBalanceModel>();
+
+            foreach (var item in form.Items)
+            {
+                var model = new InitialCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).Month, form.Date.AddHours(_identityService.TimezoneOffset).Year);
+                EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                models.Add(model);
+            }
+
+            _dbContext.InitialCashBalances.AddRange(models);
+            return _dbContext.SaveChanges();
+        }
+
+        public int UpdateInitialCashBalance(CashBalanceFormDto form)
+        {
+            var existingModels = _dbContext.InitialCashBalances.Where(entity => entity.UnitId == form.UnitId && entity.DivisionId == form.DivisionId && entity.Month == form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+            foreach (var existingModel in existingModels)
+            {
+                EntityExtension.FlagForDelete(existingModel, _identityService.Username, UserAgent);
+            }
+            _dbContext.InitialCashBalances.UpdateRange(existingModels);
+
+            var models = new List<InitialCashBalanceModel>();
+            foreach (var item in form.Items)
+            {
+                var model = new InitialCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).Month, form.Date.AddHours(_identityService.TimezoneOffset).Year);
+                EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                models.Add(model);
+            }
+            _dbContext.InitialCashBalances.AddRange(models);
+
+            return _dbContext.SaveChanges();
+        }
+
+        public List<InitialCashBalanceModel> GetInitialCashBalance(int unitId, DateTimeOffset date)
+        {
+            return _dbContext.InitialCashBalances.Where(entity => entity.UnitId == unitId  && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+        }
+
+        public int CreateRealCashBalance(CashBalanceFormDto form)
+        {
+            var models = new List<RealCashBalanceModel>();
+
+            foreach (var item in form.Items)
+            {
+                var model = new RealCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).Month, form.Date.AddHours(_identityService.TimezoneOffset).Year);
+                EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                models.Add(model);
+            }
+
+            _dbContext.RealCashBalances.AddRange(models);
+            return _dbContext.SaveChanges();
+        }
+
+        public int UpdateRealCashBalance(CashBalanceFormDto form)
+        {
+            var existingModels = _dbContext.RealCashBalances.Where(entity => entity.UnitId == form.UnitId && entity.DivisionId == form.DivisionId && entity.Month == form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+            foreach (var existingModel in existingModels)
+            {
+                EntityExtension.FlagForDelete(existingModel, _identityService.Username, UserAgent);
+            }
+            _dbContext.RealCashBalances.UpdateRange(existingModels);
+
+            var models = new List<RealCashBalanceModel>();
+            foreach (var item in form.Items)
+            {
+                var model = new RealCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).Month, form.Date.AddHours(_identityService.TimezoneOffset).Year);
+                EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                models.Add(model);
+            }
+            _dbContext.RealCashBalances.AddRange(models);
+
+            return _dbContext.SaveChanges();
+        }
+
+        public List<RealCashBalanceModel> GetRealCashBalance(int unitId, DateTimeOffset date)
+        {
+            return _dbContext.RealCashBalances.Where(entity => entity.UnitId == unitId && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
         }
         #endregion
     }
