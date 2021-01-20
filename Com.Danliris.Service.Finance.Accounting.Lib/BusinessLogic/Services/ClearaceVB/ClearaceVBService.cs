@@ -192,7 +192,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                         {
                             var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                            var body = new VBAutoJournalFormDto()
+                            var body = new VBAutoJournalFormDtoOld()
                             {
                                 Date = DateTimeOffset.UtcNow,
                                 DocumentNo = model.DocumentNo,
@@ -408,7 +408,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                         {
                             var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                            var body = new VBAutoJournalFormDto()
+                            var body = new VBAutoJournalFormDtoOld()
                             {
                                 Date = DateTimeOffset.UtcNow,
                                 DocumentNo = model.DocumentNo,

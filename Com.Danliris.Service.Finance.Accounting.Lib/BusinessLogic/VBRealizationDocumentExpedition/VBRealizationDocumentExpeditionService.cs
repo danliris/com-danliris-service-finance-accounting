@@ -1,6 +1,11 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
@@ -12,7 +17,9 @@ using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition
@@ -20,13 +27,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
     public class VBRealizationDocumentExpeditionService : IVBRealizationDocumentExpeditionService
     {
         private const string UserAgent = "finance-accounting-service";
-        private readonly FinanceDbContext _dbContext;
+        private readonly DbSet<VBRequestDocumentModel> _RequestDbSet;
+        private readonly DbSet<VBRealizationDocumentModel> _RealizationDbSet;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IIdentityService _identityService;
+        private readonly IAutoJournalService _autoJournalService;
+        private readonly FinanceDbContext _dbContext;
 
         public VBRealizationDocumentExpeditionService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
         {
             _dbContext = dbContext;
+            _RequestDbSet = dbContext.Set<VBRequestDocumentModel>();
+            _RealizationDbSet = dbContext.Set<VBRealizationDocumentModel>();
+            _serviceProvider = serviceProvider;
             _identityService = serviceProvider.GetService<IIdentityService>();
+            _autoJournalService = serviceProvider.GetService<IAutoJournalService>();
         }
 
         public Task<int> CashierReceipt(List<int> vbRealizationIds)
@@ -477,6 +492,161 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var totalData = pageable.TotalCount;
 
             return new ReadResponse<VBRealizationDocumentExpeditionModel>(data, totalData, orderDictionary, new List<string>());
+        }
+
+        public virtual void UpdateAsync(long id, VBRequestDocumentModel model)
+        {
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _RequestDbSet.Update(model);
+        }
+
+        public Task<VBRequestDocumentModel> ReadByIdAsync(long id)
+        {
+            return _dbContext.VBRequestDocuments.Where(entity => entity.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<int> ClearanceVBPost(List<ClearancePostId> listId)
+        {
+            var vbRequestIds = listId.Select(element => element.VBRequestId).ToList();
+            var vbRealizationIds = listId.Select(element => element.VBRealizationId).ToList();
+
+            var postedVB = new List<int>();
+            foreach (var id in vbRequestIds)
+            {
+                if (id > 0)
+                {
+                    var model = await ReadByIdAsync(id);
+                    model.SetIsCompleted(true, _identityService.Username, UserAgent);
+                    model.SetCompletedDate(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                    model.SetCompletedBy(_identityService.Username, _identityService.Username, UserAgent);
+
+                    UpdateAsync(id, model);
+                }
+            }
+
+            var vbNonPOIdsToBeAccounted = new List<int>();
+            foreach (var id in vbRealizationIds)
+            {
+                if (id > 0)
+                {
+                    var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
+                    model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                    _dbContext.VBRealizationDocuments.Update(model);
+
+                    if (model.Type == VBType.NonPO)
+                    {
+                        vbNonPOIdsToBeAccounted.Add(model.Id);
+                    }
+
+                    if (model.Type == VBType.WithPO)
+                    {
+                        var epoIds = _dbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == model.Id).Select(entity => (long)entity.UnitPaymentOrderId).ToList();
+                        var upoIds = _dbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == model.Id).Select(entity => new UPOandAmountDto() { UPOId = entity.UnitPaymentOrderId, Amount = (double)entity.Amount }).ToList();
+                        if (epoIds.Count > 0)
+                        {
+                            var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+
+                            var body = new VBAutoJournalFormDto()
+                            {
+                                Date = DateTimeOffset.UtcNow,
+                                DocumentNo = model.DocumentNo,
+                                EPOIds = epoIds,
+                                UPOIds = upoIds
+                            };
+
+                            var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                            var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                        }
+                    }
+
+                    if (model.VBRequestDocumentId > 0 && !postedVB.Contains(model.VBRequestDocumentId))
+                    {
+
+                        var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == model.VBRequestDocumentId);
+                    }
+                }
+            }
+
+            var result = await _dbContext.SaveChangesAsync();
+
+            if (vbNonPOIdsToBeAccounted.Count > 0)
+            {
+                await _autoJournalService.AutoJournalVBNonPOClearence(vbNonPOIdsToBeAccounted);
+            }
+
+            return result;
+        }
+
+        public async Task<int> ClearanceVBPost(ClearanceFormDto form)
+        {
+            var vbRequestIds = form.ListIds.Select(element => element.VBRequestId).ToList();
+            var vbRealizationIds = form.ListIds.Select(element => element.VBRealizationId).ToList();
+
+            var postedVB = new List<int>();
+            foreach (var id in vbRequestIds)
+            {
+                if (id > 0)
+                {
+                    var model = await ReadByIdAsync(id);
+                    model.SetIsCompleted(true, _identityService.Username, UserAgent);
+                    model.SetCompletedDate(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                    model.SetCompletedBy(_identityService.Username, _identityService.Username, UserAgent);
+
+                    UpdateAsync(id, model);
+                }
+            }
+
+            var vbNonPOIdsToBeAccounted = new List<int>();
+            foreach (var id in vbRealizationIds)
+            {
+                if (id > 0)
+                {
+                    var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
+                    model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                    _dbContext.VBRealizationDocuments.Update(model);
+
+                    if (model.Type == VBType.NonPO)
+                    {
+                        vbNonPOIdsToBeAccounted.Add(model.Id);
+                    }
+
+                    if (model.Type == VBType.WithPO)
+                    {
+                        var epoIds = _dbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == model.Id).Select(entity => (long)entity.UnitPaymentOrderId).ToList();
+                        var upoIds = _dbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == model.Id).Select(entity => new UPOandAmountDto() { UPOId = entity.UnitPaymentOrderId, Amount = (double)entity.Amount }).ToList();
+                        if (epoIds.Count > 0)
+                        {
+                            var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
+
+                            var body = new VBAutoJournalFormDto()
+                            {
+                                Date = DateTimeOffset.UtcNow,
+                                DocumentNo = model.DocumentNo,
+                                EPOIds = epoIds,
+                                UPOIds = upoIds
+                            };
+
+                            var httpClient = _serviceProvider.GetService<IHttpClientService>();
+                            var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                        }
+                    }
+
+                    if (model.VBRequestDocumentId > 0 && !postedVB.Contains(model.VBRequestDocumentId))
+                    {
+
+                        var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == model.VBRequestDocumentId);
+                    }
+                }
+            }
+
+            var result = await _dbContext.SaveChangesAsync();
+
+            if (vbNonPOIdsToBeAccounted.Count > 0)
+            {
+                await _autoJournalService.AutoJournalVBNonPOClearence(vbNonPOIdsToBeAccounted, form.Bank);
+            }
+
+            return result;
         }
     }
 }
