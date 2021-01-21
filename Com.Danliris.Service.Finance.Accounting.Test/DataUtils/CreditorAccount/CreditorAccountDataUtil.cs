@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
 
 
         }
-        public CreditorAccountUnitReceiptNotePostedViewModel GetUnitReceiptNotePostedViewModel()
+        public CreditorAccountUnitReceiptNotePostedViewModel GetNewData_UnitReceiptNotePostedViewModel()
         {
             return new CreditorAccountUnitReceiptNotePostedViewModel()
             {

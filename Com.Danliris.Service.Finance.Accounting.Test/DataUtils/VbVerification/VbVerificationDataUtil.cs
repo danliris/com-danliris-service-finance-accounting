@@ -193,13 +193,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbVerification
         }
         
 
-        public VbVerificationViewModel GetNewDataVbVerificationViewModel()
-        {
-            return new VbVerificationViewModel()
-            {
-
-            };
-        }
+      
 
        
     }

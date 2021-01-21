@@ -39,16 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
             return string.Concat(sf.GetMethod().Name, "_", ENTITY);
         }
 
-        protected string GetCurrentAsyncMethod([CallerMemberName] string methodName = "")
-        {
-            var method = new StackTrace()
-                .GetFrames()
-                .Select(frame => frame.GetMethod())
-                .FirstOrDefault(item => item.Name == methodName);
-
-            return method.Name;
-
-        }
+        
 
         private Mock<IServiceProvider> GetServiceProvider()
         {
@@ -234,14 +225,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
             await Assert.ThrowsAsync<NotImplementedException>(() => service.UpdateAsync(dataVm.Id, dataVm));
 
         }
-        //[Fact]
-        //public void Should_No_Error_Validate_Data_False()
-        //{
-        //    RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-        //    RealizationVbWithPOViewModel vm = _dataUtil(service).GetNewViewModelFalse();
-
-        //    Assert.True(vm.Validate(null).Count() > 0);
-        //}
+        
     }
         
 }

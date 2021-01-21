@@ -1338,7 +1338,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             };
         }
 
-        
+
 
         public VbRequestModel GetNewData_RequestVB()
         {
@@ -1350,7 +1350,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             };
         }
 
-       
+
 
         public async Task<RealizationVbNonPOViewModel> GetTestData()
         {

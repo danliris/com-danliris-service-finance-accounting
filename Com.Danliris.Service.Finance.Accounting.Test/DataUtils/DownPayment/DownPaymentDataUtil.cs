@@ -57,43 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DownPayment
             return TestData;
         }
 
-        public DownPaymentViewModel GetDataToValidate()
-        {
-
-            DownPaymentViewModel TestData = new DownPaymentViewModel()
-            {
-                DocumentNo = "DocumentNo",
-                DatePayment = DateTimeOffset.UtcNow,
-                Bank = new Bank()
-                {
-                    AccountName = "AccountName",
-                    BankName = "BankName",
-                    AccountNumber= "AccountNumber",
-
-                    Currency = new BankCurrency()
-                    {
-                        Code = "Code",
-                    },
-                },
-                Buyer = new Buyer()
-                {
-                    Id = 1,
-                    Code= "Code",
-                    Name = "UnitName",
-                },
-                TotalPayment = 14447,
-                Currency = new Currency()
-                {
-                    Id = 1,
-                    Code = "Code",
-                    Rate= 14447,
-                },
-                Remark = "Remark",               
-                
-            };
-
-            return TestData;
-        }
+        
 
         public async Task<DownPaymentModel> GetTestDataById()
         {

@@ -74,7 +74,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
-            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
             data.InvoiceNo = unitData.InvoiceNo;
@@ -95,7 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
-            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
             unitData.Currency = "USD";
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
@@ -119,7 +119,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
-            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
             unitData.Date = new DateTimeOffset(unitData.Date.Year, 1, unitData.Date.Day, unitData.Date.Hour, unitData.Date.Minute, unitData.Date.Second, unitData.Date.Offset);
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
@@ -140,7 +140,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
-            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
             data.InvoiceNo = unitData.InvoiceNo;
@@ -157,7 +157,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
-            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
             unitData.SupplierIsImport = false;
@@ -175,7 +175,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
-            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
             unitData.SupplierIsImport = false;
@@ -193,7 +193,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
-            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
             unitData.SupplierIsImport = false;
@@ -222,7 +222,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
-            var unitData = _dataUtil(service).GetUnitReceiptNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
             data.SupplierCode = unitData.SupplierCode;
             data.SupplierName = unitData.SupplierName;
             data.InvoiceNo = unitData.InvoiceNo;
