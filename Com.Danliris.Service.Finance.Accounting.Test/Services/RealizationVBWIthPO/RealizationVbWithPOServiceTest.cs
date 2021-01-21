@@ -125,10 +125,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
             RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
-            var dataRequestVb = _dataUtil(service).GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
             await service.CreateAsync(model, viewModel);
             var Response = await service.MappingData(viewModel);
@@ -161,58 +157,52 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         [Fact]
         public async Task ReadByIdAsync2_Return_Success()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProvider();
-
 
             var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
 
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
             RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
+            
             RealizationVbModel model = _dataUtil(service).GetNewData();
-
-            var dataRequestVb = _dataUtil(service).GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
             await service.CreateAsync(model, viewModel);
+
+            //Act
             var response = await service.ReadByIdAsync2(model.Id);
+
+            //Assert
             Assert.NotNull(response);
         }
 
-        //[Fact]
-        //public async Task MappingData_Return_Success()
-        //{
-        //    RealizationVbWithPOService service = new RealizationVbWithPOService(GetDbContext(GetCurrentMethod()), GetServiceProvider().Object);
-        //    RealizationVbModel model = _dataUtil(service).GetNewData();
-        //    RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
-        //    await service.CreateAsync(model, viewModel);
-        //    var response = await service.MappingData(viewModel);
-        //    Assert.NotEqual(0,response);
-        //}
-
+        
         [Fact]
         public async Task Read_Return_Success()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProvider();
+
             var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            
             RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
+            
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
-            var dataRequestVb = _dataUtil(service).GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-
+            
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
             await service.CreateAsync(model, viewModel);
 
-
+            //Act
             var response = service.Read(1, 1, "{}", new List<string>(), "", "{}");
+
+            //Assert
             Assert.NotNull(response);
 
         }

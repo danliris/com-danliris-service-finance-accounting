@@ -1338,36 +1338,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             };
         }
 
-        public RealizationVbNonPOViewModel GetNewViewModelFalse5()
-        {
-            return new RealizationVbNonPOViewModel()
-            {
-                VBRealizationNo = "VBRealizationNo",
-                Date = DateTimeOffset.Now.AddDays(10),
-                numberVB = new DetailRequestNonPO()
-                {
-                    Date = DateTimeOffset.Now.AddDays(-10),
-                },
-                Items = new List<VbNonPORequestDetailViewModel>()
-                {
-                    new VbNonPORequestDetailViewModel()
-                    {
-                        DateDetail = DateTimeOffset.Now,
-                        Remark = "",
-                        Amount = -1,
-                        isGetPPn = false,
-                        isGetPPh = true,
-                        IncomeTax = new IncomeTaxNew()
-                        {
-                            Id = 1,
-                            name = "name",
-                            rate = 1
-                        },
-                        IncomeTaxBy = "income"
-                    }
-                }
-            };
-        }
+        
 
         public VbRequestModel GetNewData_RequestVB()
         {
@@ -1379,17 +1350,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             };
         }
 
-        public RealizationVbModel GetDataRealizationVB()
-        {
-            return new RealizationVbModel()
-            {
-                VBNo = "VBNo",
-                isVerified = true,
-                IsDeleted = false,
-            };
-        }
+       
 
-        public async Task<RealizationVbNonPOViewModel> GetCreatedData()
+        public async Task<RealizationVbNonPOViewModel> GetTestData()
         {
             var model = GetNewData();
             var viewmodel = GetNewViewModel();
@@ -1397,7 +1360,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             return await Service.ReadByIdAsync2(model.Id);
         }
 
-        public async Task<RealizationVbNonPOViewModel> GetCreatedData2()
+        public async Task<RealizationVbNonPOViewModel> GetTestData2()
         {
             var model = GetNewData();
             var viewmodel = GetNewViewModelNew();

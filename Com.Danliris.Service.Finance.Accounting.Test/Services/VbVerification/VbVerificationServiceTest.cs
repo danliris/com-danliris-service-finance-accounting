@@ -4,13 +4,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Realiza
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBVerification;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
-using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWIthPO;
@@ -18,7 +13,6 @@ using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbVerification;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
-using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBWIthPO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -101,30 +95,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             return DbContex;
         }
 
-        private RealizationVbWithPODataUtil _realizationVbWithPODataUtil(RealizationVbWithPOService service)
-        {
-            return new RealizationVbWithPODataUtil(service);
-        }
-
-        private RealizationVBNonPODataUtil _realizationVBNonPODataUtil(RealizationVbNonPOService service)
-        {
-            return new RealizationVBNonPODataUtil(service);
-        }
-
-        private CashierApprovalDataUtil _cashierApprovalDataUtil(CashierApprovalService service)
-        {
-            return new CashierApprovalDataUtil(service);
-        }
+        
 
         private VbVerificationDataUtil _vbVerificationDataUtil(VbVerificationService service, FinanceDbContext dbContext)
         {
             return new VbVerificationDataUtil(service,dbContext);
         }
 
-        private VbNonPORequestDataUtil _dataUtil3(VbNonPORequestService service)
-        {
-            return new VbNonPORequestDataUtil(service);
-        }
+      
 
 
 

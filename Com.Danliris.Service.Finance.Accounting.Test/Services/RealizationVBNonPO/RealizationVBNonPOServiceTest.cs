@@ -620,6 +620,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var dataRequestVb = dataUtil.GetNewData_RequestVB();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
+
             var viewmodel = dataUtil.GetNewViewModel5();
 
             var viewmodelnew = dataUtil.GetNewViewModelNew1();
@@ -667,11 +668,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
-            await dataUtil.GetCreatedData();
-
-            var dataRequestVb = dataUtil.GetNewData_RequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
+            await dataUtil.GetTestData();
 
             //Act
             var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
@@ -693,11 +690,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
-            var dataRequestVb = dataUtil.GetNewData_RequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-            
-            var data = await dataUtil.GetCreatedData();
+           
+            var data = await dataUtil.GetTestData();
 
             //Act
             var result = await service.ReadByIdAsync2(data.Id);
@@ -719,11 +713,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
-            var data = await dataUtil.GetCreatedData();
-
-            var dataRequestVb = dataUtil.GetNewData_RequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
+            var data = await dataUtil.GetTestData();
 
             //Act
             var result = await service.DeleteAsync(data.Id);
@@ -741,13 +731,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+           
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
-            var data = await dataUtil.GetCreatedData2();
-
-            var dataRequestVb = dataUtil.GetNewData_RequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
+            var data = await dataUtil.GetTestData2();
 
             //Act
             var result = await service.DeleteAsync(data.Id);
