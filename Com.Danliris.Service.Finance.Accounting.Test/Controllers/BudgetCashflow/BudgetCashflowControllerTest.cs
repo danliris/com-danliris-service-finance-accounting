@@ -354,7 +354,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
 
             service
                 .Setup(s => s.GetBudgetCashflowUnit(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
-                .ThrowsAsync(new Exception());
+                .ThrowsAsync(new Exception("",new Exception()) { 
+                
+                });
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
@@ -637,5 +639,703 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
+
+
+        [Fact]
+        public void  PostInitialCashBalance_Return_Created()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.CreateInitialCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Returns(1);
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).PostInitialCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        }
+
+
+        [Fact]
+        public void PostInitialCashBalance_Throws_ValidationException()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.CreateInitialCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Throws(GetServiceValidationException(form));
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).PostInitialCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
+        public void PostInitialCashBalance_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.CreateInitialCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Throws(new Exception());
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).PostInitialCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void UpdateInitialCashBalance_Return_NoContent()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.UpdateInitialCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Returns(1);
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).UpdateInitialCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+        [Fact]
+        public void UpdateInitialCashBalance_Throws_ValidationException()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.UpdateInitialCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Throws(GetServiceValidationException(form));
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).UpdateInitialCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+
+        [Fact]
+        public void UpdateInitialCashBalance_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.UpdateInitialCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Throws(new Exception());
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).UpdateInitialCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public void GetInitialCashBalanceItems_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.GetInitialCashBalance(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
+              .Returns(new List<BudgetCashflowUnitItemDto>());
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetInitialCashBalanceItems(1,DateTimeOffset.Now);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+
+        [Fact]
+        public void GetInitialCashBalanceItems_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.GetInitialCashBalance(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
+              .Throws(new Exception());
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetInitialCashBalanceItems(1, DateTimeOffset.Now);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public void PostRealCashBalance_Return_Created()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.CreateRealCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Returns(1);
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).PostRealCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.Created, statusCode);
+        }
+
+        [Fact]
+        public void PostRealCashBalance_Throws_ValidationException()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.CreateRealCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Throws(GetServiceValidationException(form));
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).PostRealCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+
+        [Fact]
+        public void PostRealCashBalance_Throws_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.CreateRealCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Throws(new Exception());
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).PostRealCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public void UpdateRealCashBalance_Return_NoContent()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.UpdateRealCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Returns(1);
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).UpdateRealCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+        }
+
+
+        [Fact]
+        public void UpdateRealCashBalance_Throws_ValidationException()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.UpdateRealCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Throws(GetServiceValidationException(form));
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).UpdateRealCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusCode);
+        }
+
+        [Fact]
+        public void UpdateRealCashBalance_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            CashBalanceFormDto form = new CashBalanceFormDto();
+            service
+              .Setup(s => s.UpdateRealCashBalance(It.IsAny<CashBalanceFormDto>()))
+              .Throws(new Exception());
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).UpdateRealCashBalance(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public void GetRealCashBalanceItems_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            service
+              .Setup(s => s.GetRealCashBalance(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
+              .Returns(new List<BudgetCashflowUnitItemDto>());
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetRealCashBalanceItems(1,DateTimeOffset.Now);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+
+        [Fact]
+        public void GetRealCashBalanceItems_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+            ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            service
+              .Setup(s => s.GetRealCashBalance(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
+              .Throws(new Exception());
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+
+            //Act
+            IActionResult response = GetController(serviceProviderMock).GetRealCashBalanceItems(1, DateTimeOffset.Now);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
     }
 }
