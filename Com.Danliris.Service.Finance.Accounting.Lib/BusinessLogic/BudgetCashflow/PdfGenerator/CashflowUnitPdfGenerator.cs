@@ -133,7 +133,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     if (item.IsShowSubCategoryLabel)
                         cellLeft.Phrase = new Phrase(item.SubCategoryName, _smallFont);
                     else
-                        cellLeft.Phrase = new Phrase(item.SubCategoryName, _smallFont);
+                        cellLeft.Phrase = new Phrase("", _smallFont);
                     table.AddCell(cellLeft);
 
                     cellCenter.Colspan = 1;
