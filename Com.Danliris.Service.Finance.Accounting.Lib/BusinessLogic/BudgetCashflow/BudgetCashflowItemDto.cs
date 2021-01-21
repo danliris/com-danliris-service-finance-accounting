@@ -103,7 +103,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             Currency = currency;
             Nominal = realCashBalance.Nominal;
             CurrencyNominal = realCashBalance.CurrencyNominal;
-            Total = realCashBalance.Total;  
+            Total = realCashBalance.Total;
+            IsRealCashBalance = true;
         }
 
         public BudgetCashflowItemDto(bool isShowCurrencyRateLabel, CurrencyDto currency)
@@ -154,6 +155,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public bool IsShowSummary { get; private set; }
         public string EquivalentDifferenceLabel { get; private set; }
         public double Total { get; private set; }
+        public bool IsRealCashBalance { get; private set; }
         public string RealCashDifferenceLabel { get; private set; }
         public bool IsShowRealCashDifferenceLabel { get; private set; }
         public string SummaryLabel { get; private set; }
