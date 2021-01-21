@@ -123,7 +123,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             catch (Exception e)
             {
                 var result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message + "\n" + e.StackTrace + "\n" + e.InnerException.Message + "\n" + e.InnerException.StackTrace)
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
