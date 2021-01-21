@@ -29,7 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             document.Open();
 
             SetTitle(document, unit, dueDate, offset);
-            SetTable(data);
+            SetTable(document, data);
 
             document.Close();
             byte[] byteInfo = stream.ToArray();
@@ -39,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             return stream;
         }
 
-        private static void SetTable(List<BudgetCashflowItemDto> data)
+        private static void SetTable(Document document, List<BudgetCashflowItemDto> data)
         {
             var table = new PdfPTable(8)
             {
@@ -49,7 +49,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             table.SetWidths(new float[] { 4f, 4f, 1f, 12f, 6f, 8f, 8f, 8f });
             var cellRotate = new PdfPCell()
             {
-                Border = Rectangle.NO_BORDER,
+                Border = Rectangle.RECTANGLE,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_TOP,
                 Rotation = 270
@@ -57,21 +57,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             var cellCenter = new PdfPCell()
             {
-                Border = Rectangle.NO_BORDER,
+                Border = Rectangle.RECTANGLE,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_CENTER
             };
 
             var cellLeft = new PdfPCell()
             {
-                Border = Rectangle.NO_BORDER,
+                Border = Rectangle.RECTANGLE,
                 HorizontalAlignment = Element.ALIGN_LEFT,
                 VerticalAlignment = Element.ALIGN_CENTER
             };
 
             var cellRight = new PdfPCell()
             {
-                Border = Rectangle.NO_BORDER,
+                Border = Rectangle.RECTANGLE,
                 HorizontalAlignment = Element.ALIGN_RIGHT,
                 VerticalAlignment = Element.ALIGN_CENTER
             };
@@ -89,48 +89,117 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             cellCenter.Phrase = new Phrase("ACTUAL", _smallBoldFont);
             table.AddCell(cellCenter);
 
-            foreach(var item in data)
+            foreach (var item in data)
             {
                 if (item.IsUseSection)
                 {
-                    cellRotate.Rowspan = item.SectionRowSpan;
+                    cellRotate.Rowspan = item.SectionRowSpan > 0 ? item.SectionRowSpan : 1;
                     cellRotate.Phrase = new Phrase(item.CashflowTypeName, _smallFont);
                     table.AddCell(cellRotate);
                 }
-                else
-                {
-                    cellRotate.Rowspan = 1;
-                    cellRotate.Phrase = new Phrase(item.CashflowTypeName, _smallFont);
-                    table.AddCell(cellRotate);
-                }
+                //else
+                //{
+                //    cellRotate.Rowspan = 1;
+                //    cellRotate.Phrase = new Phrase(item.CashflowTypeName, _smallFont);
+                //    table.AddCell(cellRotate);
+                //}
 
                 if (item.IsUseGroup)
                 {
-                    cellRotate.Rowspan = item.GroupRowSpan;
+                    cellRotate.Rowspan = item.GroupRowSpan > 0 ? item.GroupRowSpan : 1;
                     cellRotate.Phrase = new Phrase(item.TypeName, _smallFont);
                     table.AddCell(cellRotate);
                 }
-                else
-                {
-                    cellRotate.Rowspan = 1;
-                    cellRotate.Phrase = new Phrase(item.TypeName, _smallFont);
-                    table.AddCell(cellRotate);
-                }
+                //else
+                //{
+                //    cellRotate.Rowspan = 1;
+                //    cellRotate.Phrase = new Phrase(item.TypeName, _smallFont);
+                //    table.AddCell(cellRotate);
+                //}
 
                 if (item.CashflowCategoryId > 0)
                 {
-                    cellLeft.Colspan = 3;
+                    cellLeft.Colspan = 6;
                     cellLeft.Phrase = new Phrase(item.CashflowCategoryName, _smallFont);
                     table.AddCell(cellLeft);
+                }
+
+                if (item.SubCategoryId > 0)
+                {
+                    cellLeft.Colspan = 1;
                     cellLeft.Phrase = new Phrase("", _smallFont);
                     table.AddCell(cellLeft);
+
+                    if (item.IsShowSubCategoryLabel)
+                        cellLeft.Phrase = new Phrase(item.SubCategoryName, _smallFont);
+                    else
+                        cellLeft.Phrase = new Phrase(item.SubCategoryName, _smallFont);
+                    table.AddCell(cellLeft);
+
+                    cellCenter.Rowspan = 1;
+                    cellCenter.Phrase = new Phrase(item.Currency?.Code, _smallFont);
+                    table.AddCell(cellCenter);
+
+                    cellRight.Rowspan = 1;
+                    cellRight.Phrase = new Phrase(item.Nominal.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(item.CurrencyNominal.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(item.Total.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                }
+
+                if (!string.IsNullOrWhiteSpace(item.TotalLabel))
+                {
+                    cellLeft.Colspan = 2;
+                    if (item.IsShowTotalLabel)
+                        cellLeft.Phrase = new Phrase(item.TotalLabel, _smallFont);
+                    else
+                        cellLeft.Phrase = new Phrase("", _smallFont);
+                    table.AddCell(cellLeft);
+
+                    cellCenter.Rowspan = 1;
+                    cellCenter.Phrase = new Phrase(item.Currency?.Code, _smallFont);
+                    table.AddCell(cellCenter);
+
+                    cellRight.Rowspan = 1;
+                    cellRight.Phrase = new Phrase(item.Nominal.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(item.CurrencyNominal.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(item.Total.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                }
+
+                if (!string.IsNullOrWhiteSpace(item.DifferenceLabel))
+                {
+                    cellLeft.Colspan = 3;
+                    if (item.IsShowDifferenceLabel)
+                        cellLeft.Phrase = new Phrase(item.DifferenceLabel, _smallFont);
+                    else
+                        cellLeft.Phrase = new Phrase("", _smallFont);
+                    table.AddCell(cellLeft);
+
+                    cellCenter.Rowspan = 1;
+                    cellCenter.Phrase = new Phrase(item.Currency?.Code, _smallFont);
+                    table.AddCell(cellCenter);
+
+                    cellRight.Rowspan = 1;
+                    cellRight.Phrase = new Phrase(item.Nominal.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(item.CurrencyNominal.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(item.Total.ToString(), _smallFont);
+                    table.AddCell(cellRight);
                 }
 
                 //if (item.SubCategoryId > 0)
                 //{
-                    
+
                 //}
             }
+
+            document.Add(table);
         }
 
         private static void SetTitle(Document document, UnitDto unit, DateTimeOffset dueDate, int offset)
@@ -167,7 +236,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             cell.Phrase = new Phrase(date, _headerFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("", _headerFont);
+            cell.Phrase = new Phrase("\n", _headerFont);
             table.AddCell(cell);
 
             document.Add(table);
