@@ -1046,7 +1046,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var models = new List<InitialCashBalanceModel>();
             foreach (var item in form.Items)
             {
-                var model = new InitialCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).Month, form.Date.AddHours(_identityService.TimezoneOffset).Year);
+                var model = new InitialCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month, form.Date.AddMonths(1).AddHours(_identityService.TimezoneOffset).Year);
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                 models.Add(model);
             }
@@ -1094,7 +1094,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var models = new List<RealCashBalanceModel>();
             foreach (var item in form.Items)
             {
-                var model = new RealCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).Month, form.Date.AddHours(_identityService.TimezoneOffset).Year);
+                var model = new RealCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month, form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year);
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                 models.Add(model);
             }
