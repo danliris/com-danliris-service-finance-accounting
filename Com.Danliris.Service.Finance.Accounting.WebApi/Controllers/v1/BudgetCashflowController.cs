@@ -1,4 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow.PdfGenerator;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.CacheService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -6,7 +8,9 @@ using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         private readonly IIdentityService _identityService;
         private readonly IBudgetCashflowService _service;
         private readonly IValidateService _validateService;
+        private readonly List<UnitDto> _units;
         private const string ApiVersion = "1.0";
 
         public BudgetCashflowController(IServiceProvider serviceProvider)
@@ -28,6 +33,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             _identityService = serviceProvider.GetService<IIdentityService>();
             _service = serviceProvider.GetService<IBudgetCashflowService>();
             _validateService = serviceProvider.GetService<IValidateService>();
+
+            var cacheService = serviceProvider.GetService<ICacheService>();
+            var jsonUnits = cacheService.GetString("Unit");
+            _units = JsonConvert.DeserializeObject<List<UnitDto>>(jsonUnits, new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            });
         }
 
         private void VerifyUser()
@@ -107,6 +119,29 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     message = General.OK_MESSAGE,
                     data = result
                 });
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("download/pdf")]
+        public async Task<IActionResult> GeneratePdf([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
+        {
+
+            try
+            {
+                var data = await _service.GetBudgetCashflowUnit(unitId, date);
+                var unit = _units.FirstOrDefault(element => element.Id == unitId);
+                var stream = CashflowUnitPdfGenerator.Generate(unit, date, _identityService.TimezoneOffset, data);
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = "Laporan Budget Cashflow.pdf"
+                };
             }
             catch (Exception e)
             {

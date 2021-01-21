@@ -84,7 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             SummaryLabel = label;
         }
 
-        public BudgetCashflowItemDto(bool isShowSummaryBalance, string label, TotalCashType totalCashType, List<CurrencyDto> currencies, bool isSummaryBalance, string type = "summary")
+        public BudgetCashflowItemDto(bool isShowSummaryBalance, string label, CurrencyDto currency, double nominal, double currencyNominal, double total, bool isSummaryBalance, string type = "summary")
         {
             IsShowSummaryBalance = isShowSummaryBalance;
             SummaryBalanceLabel = label;

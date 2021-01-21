@@ -261,6 +261,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 .ToList();
 
             var summaries = new List<SummaryPerType>();
+            var categories = _dbContext.BudgetCashflowCategories.ToList();
+            var cashflowSubCategories = _dbContext.BudgetCashflowSubCategories.ToList();
             foreach (var selectedCashflow in selectedCashflows)
             {
                 var cashflowType = _dbContext.BudgetCashflowTypes.FirstOrDefault(entity => entity.Id == selectedCashflow.CashflowTypeId);
@@ -275,14 +277,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                     foreach (var selectedCashflowCategory in selectedCashflowCategories)
                     {
-                        var cashflowCategory = _dbContext.BudgetCashflowCategories.FirstOrDefault(entity => entity.Id == selectedCashflowCategory.CashflowCategoryId);
+                        var cashflowCategory = categories.FirstOrDefault(entity => entity.Id == selectedCashflowCategory.CashflowCategoryId);
                         var selectedSubCategories = query.Where(entity => entity.CashflowCategoryId == selectedCashflowCategory.CashflowCategoryId).Select(entity => new { entity.CashflowSubCategoryId, entity.CashflowSubCategoryLayoutOrder }).Distinct().OrderBy(entity => entity.CashflowSubCategoryLayoutOrder).ToList();
 
                         summary.CashflowCategories.Add(cashflowCategory);
 
                         foreach (var selectedSubCategory in selectedSubCategories)
                         {
-                            var cashflowSubCategory = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == selectedSubCategory.CashflowSubCategoryId);
+                            var cashflowSubCategory = cashflowSubCategories.FirstOrDefault(entity => entity.Id == selectedSubCategory.CashflowSubCategoryId);
 
                             if (cashflowSubCategory != null)
                                 if (cashflowSubCategory.IsReadOnly)
@@ -413,7 +415,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", new TotalCashType(), _currencies, isShowDifference: true));
             }
 
-            var differenceSummary = result
+            // Saldo Awal
+            var initialBalances = _dbContext.InitialCashBalances.Where(entity => entity.UnitId == unitId && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+            var isShowSummaryBalance = true;
+            if (initialBalances.Count > 0)
+                foreach (var initialBalance in initialBalances)
+                {
+                    var currency = _currencies.FirstOrDefault(element => element.Id == initialBalance.CurrencyId);
+                    result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Awal Kas", currency, initialBalance.Nominal, initialBalance.CurrencyNominal, initialBalance.Total, true, "saldo"));
+                    isShowSummaryBalance = false;
+                }
+            else
+            {
+                result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Awal Kas", new CurrencyDto(), 0, 0, 0, true, "saldo"));
+                isShowSummaryBalance = false;
+            }
+
+            // Total Surplus/Deficit Kas
+            var differenceSummaries = result
                 .Where(element => element.IsShowDifference)
                 .GroupBy(element => element.Currency.Id)
                 .Select(element => new
@@ -424,13 +443,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     Actual = element.Sum(s => s.Total)
                 })
                 .ToList();
-
-            // Saldo Awal
-            result.Add(new BudgetCashflowItemDto(isShowSummaryBalance: true, "Saldo Awal Kas", new TotalCashType(), _currencies, true, "saldo"));
-
-            // Total Surplus/Deficit Kas
             var isShowSummaryLabel = true;
-            foreach (var item in differenceSummary)
+            foreach (var item in differenceSummaries)
             {
                 var currency = _currencies.FirstOrDefault(element => element.Id == item.CurrencyId);
                 result.Add(new BudgetCashflowItemDto(isShowSummaryLabel, "SURPLUS/DEFISIT KAS", currency, item.Nominal, item.CurrencyNominal, item.Actual, true));
@@ -438,7 +452,45 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             }
 
             // Saldo Akhir
-            result.Add(new BudgetCashflowItemDto(isShowSummaryBalance: true, "Saldo Akhir Kas", new TotalCashType(), _currencies, true, "saldo"));
+            var summaryCurrencyIds = new List<int>();
+            summaryCurrencyIds.AddRange(initialBalances.Select(element => element.CurrencyId).Where(element => element > 0).Distinct().ToList());
+            summaryCurrencyIds.AddRange(differenceSummaries.Select(element => element.CurrencyId).Where(element => element > 0).Distinct().ToList());
+
+            summaryCurrencyIds = summaryCurrencyIds.Distinct().ToList();
+            isShowSummaryBalance = true;
+            if (summaryCurrencyIds.Count > 0)
+                foreach (var currencyId in summaryCurrencyIds)
+                {
+                    var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
+                    var initialBalance = initialBalances.FirstOrDefault(element => element.CurrencyId == currencyId);
+                    var differenceSummary = differenceSummaries.FirstOrDefault(element => element.CurrencyId == currencyId);
+
+                    var nominal = 0.0;
+                    var currencyNominal = 0.0;
+                    var total = 0.0;
+
+                    if (initialBalance != null)
+                    {
+                        nominal += initialBalance.Nominal;
+                        currencyNominal += initialBalance.CurrencyNominal;
+                        total += initialBalance.Total;
+                    }
+
+                    if (differenceSummary != null)
+                    {
+                        nominal += differenceSummary.Nominal;
+                        currencyNominal += differenceSummary.CurrencyNominal;
+                        total += differenceSummary.Actual;
+                    }
+
+                    result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Akhir Kas", currency, nominal, currencyNominal, total, true, "saldo"));
+                    isShowSummaryBalance = false;
+                }
+            else
+            {
+                result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Akhir Kas", new CurrencyDto(), 0, 0, 0, true, "saldo"));
+                isShowSummaryBalance = false;
+            }
 
             return result;
         }
@@ -931,7 +983,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         {
             return _dbContext
                 .InitialCashBalances
-                .Where(entity => entity.UnitId == unitId  && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year)
+                .Where(entity => entity.UnitId == unitId && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year)
                 .ToList()
                 .Select(entity =>
                 {
