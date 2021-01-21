@@ -423,12 +423,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 foreach (var initialBalance in initialBalances)
                 {
                     var currency = _currencies.FirstOrDefault(element => element.Id == initialBalance.CurrencyId);
-                    result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Awal Kas", currency, initialBalance.Nominal, initialBalance.CurrencyNominal, initialBalance.Total, true, "saldo"));
+                    result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Awal Kas", currency, initialBalance.Nominal, initialBalance.CurrencyNominal, initialBalance.Total, true, "saldo", false));
                     isShowSummaryBalance = false;
                 }
             else
             {
-                result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Awal Kas", new CurrencyDto(), 0, 0, 0, true, "saldo"));
+                result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Awal Kas", new CurrencyDto(), 0, 0, 0, true, "saldo", false));
                 isShowSummaryBalance = false;
             }
 
@@ -484,12 +484,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         total += differenceSummary.Actual;
                     }
 
-                    result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Akhir Kas", currency, nominal, currencyNominal, total, true, "saldo"));
+                    result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Akhir Kas", currency, nominal, currencyNominal, total, true, "saldo", true));
                     isShowSummaryBalance = false;
                 }
             else
             {
-                result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Akhir Kas", new CurrencyDto(), 0, 0, 0, true, "saldo"));
+                result.Add(new BudgetCashflowItemDto(isShowSummaryBalance, "Saldo Akhir Kas", new CurrencyDto(), 0, 0, 0, true, "saldo", true));
                 isShowSummaryBalance = false;
             }
 
@@ -563,7 +563,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                 if (cashflowSubCategory.IsReadOnly)
                                 {
                                     var categoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
-                                    var selectedCashflowUnits = await GetCurrencyByCategoryAndDivisionId(0, divisionId, categoryIds);
+
+                                    //var selectedCashflowUnits = await GetCurrencyByCategoryAndDivisionId(unitId, 0, categoryIds);
+                                    var selectedCashflowUnits = new List<BudgetCashflowByCategoryDto>();
 
                                     if (selectedCashflowUnits.Count > 0)
                                         foreach (var cashflowUnit in selectedCashflowUnits)
