@@ -90,6 +90,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             SummaryBalanceLabel = label;
             IsSummaryBalance = isSummaryBalance;
             IsReadOnly = isReadOnly;
+            Currency = currency;
+            Nominal = nominal;
+            CurrencyNominal = currencyNominal;
+            Total = total;
         }
 
         public List<UnitItemDto> Items { get; private set; }
