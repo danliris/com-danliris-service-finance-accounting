@@ -111,6 +111,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         {
             Currency = currency;
             IsShowCurrencyRateLabel = isShowCurrencyRateLabel;
+            IsShowCurrencyRateLabel = true;
         }
 
         public BudgetCashflowItemDto(bool isShowRealCashDifferenceLabel, string label, CurrencyDto currency, double nominal, double currencyNominal, double total)
