@@ -1,4 +1,5 @@
 ﻿using Com.Moonlay.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow
@@ -19,5 +20,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow
         [MaxLength(512)]
         public string Name { get; private set; }
         public int LayoutOrder { get; private set; }
+
+        public void SetNewNameAndLayoutOrder(string name, int layoutOrder)
+        {
+            Name = name;
+            LayoutOrder = layoutOrder;
+        }
     }
 }

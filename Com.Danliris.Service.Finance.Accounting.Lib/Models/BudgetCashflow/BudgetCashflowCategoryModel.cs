@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow;
 using Com.Moonlay.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow
@@ -26,5 +27,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow
         public int LayoutOrder { get; private set; }
         public CashType Type { get; private set; }
         public bool IsLabelOnly { get; private set; }
+
+        public void SetNewValue(string name, CashType type, int layoutOrder, int cashflowTypeId)
+        {
+            Name = name;
+            Type = type;
+            LayoutOrder = layoutOrder;
+            CashflowTypeId = cashflowTypeId;
+        }
     }
 }

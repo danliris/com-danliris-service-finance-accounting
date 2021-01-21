@@ -1,4 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow.PdfGenerator;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.CacheService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -6,6 +8,7 @@ using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,20 +18,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("v{version:apiVersion}/master/budget-cashflows-template")]
+    [Route("v{version:apiVersion}/budget-cashflows")]
     [Authorize]
-    public class BudgetCashflowMasterController : Controller
+    public class BudgetCashflowController : Controller
     {
         private readonly IIdentityService _identityService;
         private readonly IBudgetCashflowService _service;
         private readonly IValidateService _validateService;
+        private readonly List<UnitDto> _units;
         private const string ApiVersion = "1.0";
 
-        public BudgetCashflowMasterController(IServiceProvider serviceProvider)
+        public BudgetCashflowController(IServiceProvider serviceProvider)
         {
             _identityService = serviceProvider.GetService<IIdentityService>();
             _service = serviceProvider.GetService<IBudgetCashflowService>();
             _validateService = serviceProvider.GetService<IValidateService>();
+
+            var cacheService = serviceProvider.GetService<ICacheService>();
+            var jsonUnits = cacheService.GetString("Unit");
+            _units = JsonConvert.DeserializeObject<List<UnitDto>>(jsonUnits, new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            });
         }
 
         private void VerifyUser()
@@ -38,15 +49,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             _identityService.TimezoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
         }
 
-        [HttpPost("cashflow-types")]
-        public IActionResult PostCashflowType([FromBody] CashflowTypeFormDto form)
+        [HttpPost]
+        public IActionResult PostCashflowUnit([FromBody] CashflowUnitFormDto form)
         {
             try
             {
                 VerifyUser();
                 _validateService.Validate(form);
 
-                var id = _service.CreateBudgetCashflowType(form);
+                var id = _service.CreateBudgetCashflowUnit(form);
 
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
 
@@ -66,164 +77,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpGet("cashflow-types")]
-        public IActionResult GetCashflowType([FromQuery] string keyword, [FromQuery] int page = 1, [FromQuery] int size = 10)
-        {
-            try
-            {
-                var result = _service.GetBudgetCashflowTypes(keyword, page, size);
-                return Ok(new
-                {
-                    apiVersion = ApiVersion,
-                    statusCode = General.OK_STATUS_CODE,
-                    message = General.OK_MESSAGE,
-                    data = result.Data,
-                    info = new
-                    {
-                        total = result.Count,
-                        page,
-                        size,
-                        count = result.Data.Count
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
-            }
-        }
-
-        [HttpPut("cashflow-types/{id}")]
-        public IActionResult PutCashflowType([FromRoute] int id, [FromBody] CashflowTypeFormDto form)
+        [HttpPut]
+        public IActionResult UpdateCashflowUnit([FromBody] CashflowUnitFormDto form)
         {
             try
             {
                 VerifyUser();
                 _validateService.Validate(form);
 
-                _service.UpdateBudgetCashflowType(id, form);
-
-                return NoContent();
-            }
-            catch (ServiceValidationException e)
-            {
-                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
-                return BadRequest(result);
-            }
-            catch (Exception e)
-            {
-                var result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
-            }
-        }
-
-        [HttpDelete("cashflow-types/{id}")]
-        public IActionResult DeleteCashflowType([FromRoute] int id)
-        {
-            try
-            {
-                VerifyUser();
-
-                _service.DeleteBudgetCashflowType(id);
-
-                return NoContent();
-            }
-            catch (Exception e)
-            {
-                var result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
-            }
-        }
-
-        [HttpGet("cashflow-types/{id}")]
-        public IActionResult GetCashflowTypeById(int id)
-        {
-            try
-            {
-                var result = _service.GetBudgetCashflowTypeById(id);
-                return Ok(new
-                {
-                    apiVersion = ApiVersion,
-                    statusCode = General.OK_STATUS_CODE,
-                    message = General.OK_MESSAGE,
-                    data = result
-                });
-            }
-            catch (Exception e)
-            {
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
-            }
-        }
-
-        [HttpPost("cashflow-categories")]
-        public IActionResult PostCashflowCategory([FromBody] CashflowCategoryFormDto form)
-        {
-            try
-            {
-                VerifyUser();
-                _validateService.Validate(form);
-
-                var id = _service.CreateBudgetCashflowCategory(form);
+                var id = _service.UpdateBudgetCashflowUnit(form);
 
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
 
-                return Created(string.Concat(Request.Path, "/", id), result);
-            }
-            catch (ServiceValidationException e)
-            {
-                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
-                return BadRequest(result);
-            }
-            catch (Exception e)
-            {
-                var result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
-            }
-        }
-
-        [HttpGet("cashflow-categories")]
-        public IActionResult GetCashflowCategories([FromQuery] int cashflowTypeId, [FromQuery] string keyword, [FromQuery] int page = 1, [FromQuery] int size = 10)
-        {
-            try
-            {
-                var result = _service.GetBudgetCashflowCategories(keyword, cashflowTypeId, page, size);
-                return Ok(new
-                {
-                    apiVersion = ApiVersion,
-                    statusCode = General.OK_STATUS_CODE,
-                    message = General.OK_MESSAGE,
-                    data = result.Data,
-                    info = new
-                    {
-                        total = result.Count,
-                        page,
-                        size,
-                        count = result.Data.Count
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
-            }
-        }
-
-        [HttpPut("cashflow-categories/{id}")]
-        public IActionResult PutCashflowCategories([FromRoute] int id, [FromBody] CashflowCategoryFormDto form)
-        {
-            try
-            {
-                VerifyUser();
-                _validateService.Validate(form);
-
-                _service.UpdateBudgetCashflowCategory(id, form);
-
                 return NoContent();
             }
             catch (ServiceValidationException e)
@@ -237,194 +102,261 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
-            }
-        }
-
-        [HttpDelete("cashflow-categories/{id}")]
-        public IActionResult DeleteCashflowCategory([FromRoute] int id)
-        {
-            try
-            {
-                VerifyUser();
-
-                _service.DeleteBudgetCashflowCategories(id);
-
-                return NoContent();
-            }
-            catch (Exception e)
-            {
-                var result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
-            }
-        }
-
-        [HttpGet("cashflow-categories/{id}")]
-        public IActionResult GetCashflowCategoryById(int id)
-        {
-            try
-            {
-                var result = _service.GetBudgetCashflowCategoryById(id);
-                return Ok(new
-                {
-                    apiVersion = ApiVersion,
-                    statusCode = General.OK_STATUS_CODE,
-                    message = General.OK_MESSAGE,
-                    data = result
-                });
-            }
-            catch (Exception e)
-            {
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
-            }
-        }
-
-        [HttpPost("cashflow-sub-categories")]
-        public IActionResult PostCashflowSubCategory([FromBody] CashflowSubCategoryFormDto form)
-        {
-            try
-            {
-                VerifyUser();
-                _validateService.Validate(form);
-
-                var id = _service.CreateBudgetCashflowSubCategory(form);
-
-                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
-
-                return Created(string.Concat(Request.Path, "/", id), result);
-            }
-            catch (ServiceValidationException e)
-            {
-                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
-                return BadRequest(result);
-            }
-            catch (Exception e)
-            {
-                var result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
-            }
-        }
-
-        [HttpGet("cashflow-sub-categories")]
-        public IActionResult GetCashflowSubCategories([FromQuery] int cashflowCategoryId, [FromQuery] string keyword, [FromQuery] int page = 1, [FromQuery] int size = 10)
-        {
-            try
-            {
-                var result = _service.GetBudgetCashflowSubCategories(keyword, cashflowCategoryId, page, size);
-                return Ok(new
-                {
-                    apiVersion = ApiVersion,
-                    statusCode = General.OK_STATUS_CODE,
-                    message = General.OK_MESSAGE,
-                    data = result.Data,
-                    info = new
-                    {
-                        total = result.Count,
-                        page,
-                        size,
-                        count = result.Data.Count
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
-            }
-        }
-
-        [HttpPut("cashflow-sub-categories/{id}")]
-        public IActionResult PutCashflowSubCategories([FromRoute] int id, [FromBody] CashflowSubCategoryFormDto form)
-        {
-            try
-            {
-                VerifyUser();
-                _validateService.Validate(form);
-
-                _service.UpdateBudgetCashflowSubCategory(id, form);
-
-                return NoContent();
-            }
-            catch (ServiceValidationException e)
-            {
-                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
-                return BadRequest(result);
-            }
-            catch (Exception e)
-            {
-                var result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
-            }
-        }
-
-        [HttpDelete("cashflow-sub-categories/{id}")]
-        public IActionResult DeleteCashflowSubCategory([FromRoute] int id)
-        {
-            try
-            {
-                VerifyUser();
-
-                _service.DeleteBudgetCashflowSubCategories(id);
-
-                return NoContent();
-            }
-            catch (Exception e)
-            {
-                var result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
-            }
-        }
-
-        [HttpGet("cashflow-sub-categories/{id}")]
-        public IActionResult GetCashflowSubCategoryById(int id)
-        {
-            try
-            {
-                var result = _service.GetBudgetCashflowSubCategoryById(id);
-                return Ok(new
-                {
-                    apiVersion = ApiVersion,
-                    statusCode = General.OK_STATUS_CODE,
-                    message = General.OK_MESSAGE,
-                    data = result
-                });
-            }
-            catch (Exception e)
-            {
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
             }
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] string keyword, [FromQuery] int page = 1, [FromQuery] int size = 10)
+        public async Task<IActionResult> Get([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
         {
+
             try
             {
-                var result = _service.GetBudgetCashflowMasterLayout(keyword, page, size);
+                var result = await _service.GetBudgetCashflowUnit(unitId, date);
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
                     statusCode = General.OK_STATUS_CODE,
                     message = General.OK_MESSAGE,
-                    data = result.Data,
-                    info = new
-                    {
-                        total = result.Count,
-                        page,
-                        size,
-                        count = result.Data.Count
-                    }
+                    data = result
                 });
             }
             catch (Exception e)
             {
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("download/pdf")]
+        public async Task<IActionResult> GeneratePdf([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
+        {
+
+            try
+            {
+                var data = await _service.GetBudgetCashflowUnit(unitId, date);
+                var unit = _units.FirstOrDefault(element => element.Id == unitId);
+                var stream = CashflowUnitPdfGenerator.Generate(unit, date, _identityService.TimezoneOffset, data);
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = "Laporan Budget Cashflow.pdf"
+                };
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("divisions")]
+        public async Task<IActionResult> GetDivision([FromQuery] int divisionId, [FromQuery] DateTimeOffset date)
+        {
+
+            try
+            {
+                var result = await _service.GetBudgetCashflowDivision(divisionId, date);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("items")]
+        public IActionResult GetItems([FromQuery] int unitId, [FromQuery] int subCategoryId, [FromQuery] DateTimeOffset date)
+        {
+
+            try
+            {
+                var result = _service.GetBudgetCashflowUnit(unitId, subCategoryId, date);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPost("initial-cash-balance")]
+        public IActionResult PostInitialCashBalance([FromBody] CashBalanceFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(form);
+
+                var id = _service.CreateInitialCashBalance(form);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return Created(string.Concat(Request.Path, "/", id), result);
+            }
+            catch (ServiceValidationException e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
+                return BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("initial-cash-balance")]
+        public IActionResult UpdateInitialCashBalance([FromBody] CashBalanceFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(form);
+
+                var id = _service.UpdateInitialCashBalance(form);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
+                return BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("initial-cash-balance/items")]
+        public IActionResult GetInitialCashBalanceItems([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
+        {
+
+            try
+            {
+                var result = _service.GetInitialCashBalance(unitId, date);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPost("real-cash-balance")]
+        public IActionResult PostRealCashBalance([FromBody] CashBalanceFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(form);
+
+                var id = _service.CreateRealCashBalance(form);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return Created(string.Concat(Request.Path, "/", id), result);
+            }
+            catch (ServiceValidationException e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
+                return BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("real-cash-balance")]
+        public IActionResult UpdateRealCashBalance([FromBody] CashBalanceFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(form);
+
+                var id = _service.UpdateRealCashBalance(form);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
+                return BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("real-cash-balance/items")]
+        public IActionResult GetRealCashBalanceItems([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
+        {
+
+            try
+            {
+                var result = _service.GetRealCashBalance(unitId, date);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
     }

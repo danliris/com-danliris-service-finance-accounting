@@ -8,6 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         {
             CashflowType = cashflowType.Name;
             CashflowTypeId = cashflowType.Id;
+            CashflowTypeLayoutOrder = cashflowType.LayoutOrder;
 
 
             if (cashflowTypeWithCategory != null)
@@ -15,12 +16,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 CashflowCategoryId = cashflowTypeWithCategory.Id;
                 CashType = cashflowTypeWithCategory.Type.ToDescriptionString();
                 CashflowCategory = cashflowTypeWithCategory.Name;
+                CashflowCategoryLayoutOrder = cashflowTypeWithCategory.LayoutOrder;
             }
 
             if (cashflowCategoryWithSubCategory != null)
             {
                 CashflowSubCategoryId = cashflowCategoryWithSubCategory.Id;
                 CashflowSubCategory = cashflowCategoryWithSubCategory.Name;
+                CashflowSubCategoryLayoutOrder = cashflowCategoryWithSubCategory.LayoutOrder;
             }
         }
 
@@ -37,11 +40,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         }
 
         public int CashflowTypeId { get; private set; }
+        public int CashflowTypeLayoutOrder { get; private set; }
         public int CashflowCategoryId { get; private set; }
         public int CashflowSubCategoryId { get; private set; }
         public string CashflowType { get; private set; }
         public string CashType { get; private set; }
         public string CashflowCategory { get; private set; }
+        public int CashflowCategoryLayoutOrder { get; private set; }
         public string CashflowSubCategory { get; private set; }
+        public int CashflowSubCategoryLayoutOrder { get; private set; }
     }
 }

@@ -380,6 +380,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpPut("post")]
+        public async Task<IActionResult> ClearanceVBPost([FromBody] ClearanceFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+                int result = await _service.ClearanceVBPost(form);
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         private MemoryStream GenerateExcel(IList<ReportDto> data, DateTime? dateStart, DateTime? dateEnd)
         {
             var timezoneoffset = _identityService.TimezoneOffset;
@@ -452,5 +471,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             return Lib.Helpers.Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Reports") },
                 new List<KeyValuePair<string, int>>() { new KeyValuePair<string, int>("Reports", index) }, title, dateFrom, dateTo, true);
         }
+    
+
     }
 }
