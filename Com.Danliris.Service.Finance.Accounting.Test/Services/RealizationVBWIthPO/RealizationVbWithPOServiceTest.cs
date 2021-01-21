@@ -91,21 +91,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBWIt
         [Fact]
         public async Task Should_Success_Create_Data()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProvider();
+
             var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock.Setup(s => s.InitializeExpedition(It.IsAny<int>())).ReturnsAsync(1);
 
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            
             RealizationVbWithPOService service = new RealizationVbWithPOService(dbContext, serviceProviderMock.Object);
             RealizationVbModel model = _dataUtil(service).GetNewData();
 
             var dataRequestVb = _dataUtil(service).GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-
             RealizationVbWithPOViewModel viewModel = _dataUtil(service).GetNewViewModel();
+            
+            //Act
             var Response = await service.CreateAsync(model, viewModel);
+
+            //Assert
             Assert.NotEqual(0, Response);
         }
 

@@ -1369,7 +1369,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNo
             };
         }
 
-        public VbRequestModel GetDataRequestVB()
+        public VbRequestModel GetNewData_RequestVB()
         {
             return new VbRequestModel()
             {
