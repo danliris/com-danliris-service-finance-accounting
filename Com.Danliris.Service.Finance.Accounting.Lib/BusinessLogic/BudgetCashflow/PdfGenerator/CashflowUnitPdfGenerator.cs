@@ -46,7 +46,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 WidthPercentage = 100,
                 HorizontalAlignment = Element.ALIGN_LEFT
             };
-            table.SetWidths(new float[] { 4f, 4f, 1f, 12f, 6f, 8f, 8f, 8f });
+            table.SetWidths(new float[] { 2f, 2f, 1f, 12f, 6f, 8f, 8f, 8f });
             var cellRotate = new PdfPCell()
             {
                 Border = Rectangle.RECTANGLE,
