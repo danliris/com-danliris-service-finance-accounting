@@ -493,6 +493,79 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 isShowSummaryBalance = false;
             }
 
+            // Saldo Awal
+            var realCashBalances = _dbContext.RealCashBalances.Where(entity => entity.UnitId == unitId && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+            var isShowRealCashBalance = true;
+            if (realCashBalances.Count > 0)
+                foreach (var realCashBalance in realCashBalances)
+                {
+                    var currency = _currencies.FirstOrDefault(element => element.Id == realCashBalance.CurrencyId);
+                    result.Add(new BudgetCashflowItemDto(isShowRealCashBalance, realCashBalance, currency));
+                    isShowRealCashBalance = false;
+                }
+            else
+            {
+                result.Add(new BudgetCashflowItemDto(isShowRealCashBalance, new RealCashBalanceModel(), new CurrencyDto()));
+                isShowSummaryBalance = false;
+            }
+
+            summaryCurrencyIds.AddRange(realCashBalances.Select(element => element.CurrencyId));
+            summaryCurrencyIds = summaryCurrencyIds.Distinct().ToList();
+
+            if (summaryCurrencyIds.Count > 0)
+            {
+                var isShowCurrencyRateLabel = true;
+                foreach (var summaryCurrencyId in summaryCurrencyIds)
+                {
+                    var currency = _currencies.FirstOrDefault(element => element.Id == summaryCurrencyId);
+                    result.Add(new BudgetCashflowItemDto(isShowCurrencyRateLabel, currency));
+                    isShowCurrencyRateLabel = false;
+                }
+            }
+            else
+            {
+                result.Add(new BudgetCashflowItemDto(true, new CurrencyDto()));
+            }
+
+            if (summaryCurrencyIds.Count > 0)
+            {
+                var endingBalances = result.Where(element => element.SummaryBalanceLabel == "Saldo Akhir Kas").ToList();
+                var isShowRealCashDifferenceLabel = true;
+                foreach (var currencyId in summaryCurrencyIds)
+                {
+                    var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
+                    var endingBalance = endingBalances.FirstOrDefault(element => element.Currency.Id == currencyId);
+                    var realCashBalance = realCashBalances.FirstOrDefault(element => element.CurrencyId == currencyId);
+
+                    var nominal = 0.0;
+                    var currencyNominal = 0.0;
+                    var total = 0.0;
+
+                    if (endingBalance != null)
+                    {
+                        nominal += endingBalance.Nominal;
+                        currencyNominal += endingBalance.CurrencyNominal;
+                        total += endingBalance.Total;
+                    }
+
+                    if (realCashBalance != null)
+                    {
+                        nominal -= realCashBalance.Nominal;
+                        currencyNominal -= realCashBalance.CurrencyNominal;
+                        total -= realCashBalance.Total;
+                    }
+
+                    result.Add(new BudgetCashflowItemDto(isShowRealCashDifferenceLabel, "Selisih", currency, nominal, currencyNominal, total));
+                    isShowRealCashDifferenceLabel = false;
+                }
+            }
+            else
+            {
+                result.Add(new BudgetCashflowItemDto(true, "Selisih", new CurrencyDto(), 0, 0, 0));
+            }
+
+
+            result.Add(new BudgetCashflowItemDto("Total Surplus (Defisit) Equivalent", result.Where(element => element.RealCashDifferenceLabel == "Selisih").Sum(element => element.Total)));
             return result;
         }
 
@@ -973,7 +1046,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var models = new List<InitialCashBalanceModel>();
             foreach (var item in form.Items)
             {
-                var model = new InitialCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).Month, form.Date.AddHours(_identityService.TimezoneOffset).Year);
+                var model = new InitialCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month, form.Date.AddMonths(1).AddHours(_identityService.TimezoneOffset).Year);
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                 models.Add(model);
             }
@@ -1021,7 +1094,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var models = new List<RealCashBalanceModel>();
             foreach (var item in form.Items)
             {
-                var model = new RealCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).Month, form.Date.AddHours(_identityService.TimezoneOffset).Year);
+                var model = new RealCashBalanceModel(form.UnitId, form.DivisionId, item.CurrencyId, item.Nominal, item.CurrencyNominal, item.Total, form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month, form.Date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year);
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                 models.Add(model);
             }
