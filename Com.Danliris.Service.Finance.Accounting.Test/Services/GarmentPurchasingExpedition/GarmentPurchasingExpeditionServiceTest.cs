@@ -23,7 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
 {
   public  class GarmentPurchasingExpeditionServiceTest
     {
-        private const string Entity = "PayrollCorrections";
+        private const string Entity = "GarmentPurchasingExpeditions";
 
         private string GetCurrentAsyncMethod([CallerMemberName] string methodName = "")
         {
