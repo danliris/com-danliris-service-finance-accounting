@@ -57,21 +57,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             var cellCenter = new PdfPCell()
             {
-                Border = Rectangle.RECTANGLE,
+                Border = Element.RECTANGLE,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_CENTER
             };
 
             var cellLeft = new PdfPCell()
             {
-                Border = Rectangle.RECTANGLE,
+                Border = Element.RECTANGLE,
                 HorizontalAlignment = Element.ALIGN_LEFT,
                 VerticalAlignment = Element.ALIGN_CENTER
             };
 
             var cellRight = new PdfPCell()
             {
-                Border = Rectangle.RECTANGLE,
+                Border = Element.RECTANGLE,
                 HorizontalAlignment = Element.ALIGN_RIGHT,
                 VerticalAlignment = Element.ALIGN_CENTER
             };
