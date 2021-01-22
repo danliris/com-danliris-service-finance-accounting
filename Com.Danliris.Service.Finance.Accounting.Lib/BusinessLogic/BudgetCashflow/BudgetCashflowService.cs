@@ -1018,6 +1018,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             _dbContext.BudgetCashflowSubCategories.Update(model);
             return _dbContext.SaveChanges();
         }
+        #endregion
 
         public int CreateInitialCashBalance(CashBalanceFormDto form)
         {
@@ -1115,6 +1116,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 })
                 .ToList();
         }
-        #endregion
     }
 }
