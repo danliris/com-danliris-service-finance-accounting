@@ -674,7 +674,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     {
                         item.SetLabelOnly(cashflowCategory);
                         result.Items.Add(item);
-                        item = new BudgetCashflowDivisionItemDto();
+                        item = new BudgetCashflowDivisionItemDto(cashflowType, type);
 
                         var selectedCashflowSubCategories = cashflowSubCategories.Where(element => element.CashflowCategoryId == cashflowCategory.Id).OrderBy(element => element.LayoutOrder).ToList();
 
@@ -684,13 +684,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                             var currencyIds = selectedCashflowUnits.Select(element => element.CurrencyId).Where(element => element > 0).Distinct().ToList();
 
-                            var isShowSubCategory = true;
+                            var isShowSubCategoryLabel = true;
                             foreach (var currencyId in currencyIds)
                             {
                                 var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
 
-                                item.SetSubCategory(cashflowSubCategory, currency, isShowSubCategory);
-                                isShowSubCategory = false;
+                                item.SetSubCategory(cashflowSubCategory, currency, isShowSubCategoryLabel);
+                                isShowSubCategoryLabel = false;
 
                                 item.InitializeItems();
                                 var divisionCurrencyNominalTotal = 0.0;
@@ -726,10 +726,134 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                 result.Items.Add(item);
                             }
                         }
-                        
+
                         // intentionally
                         item = new BudgetCashflowDivisionItemDto();
                     }
+
+                    var summaryByTypeAndCashflowTypes = result
+                        .Items
+                        .Where(element => element.CashflowType != null && element.CashflowType.Id == cashflowType.Id && element.Type == type && element.Currency != null)
+                        .GroupBy(element => element.Currency.Id)
+                        .Select(element => new
+                        {
+                            CurrencyId = element.Key,
+                            Items = element.SelectMany(e => e.Items).Where(e => e.CashflowUnit != null).ToList()
+                        })
+                        .ToList();
+
+                    var summaryCurrencyIds = summaryByTypeAndCashflowTypes.Select(element => element.CurrencyId).Where(element => element > 0).Distinct().ToList();
+                    var isShowSummaryLabel = true;
+                    if (summaryByTypeAndCashflowTypes.Count > 0)
+                        foreach (var summaryByTypeAndCashflowType in summaryByTypeAndCashflowTypes)
+                        {
+                            var currency = _currencies.FirstOrDefault(element => element.Id == summaryByTypeAndCashflowType.CurrencyId);
+
+                            var typeSummaryItem = new BudgetCashflowDivisionItemDto(cashflowType, type, currency, isShowSummaryLabel);
+
+                            typeSummaryItem.InitializeItems();
+                            var divisionCurrencyNominalTotal = 0.0;
+                            var divisionNominalTotal = 0.0;
+                            var divisionActualTotal = 0.0;
+                            foreach (var division in divisions)
+                            {
+                                var divisionUnits = units.Where(unit => unit.DivisionId == division.Id);
+
+                                var divisionCurrencyNominal = 0.0;
+                                var divisionNominal = 0.0;
+                                var divisionActual = 0.0;
+                                foreach (var divisionUnit in divisionUnits)
+                                {
+                                    var nominal = summaryByTypeAndCashflowType.Items.Sum(element => element.CashflowUnit.Nominal);
+                                    var currencyNominal = summaryByTypeAndCashflowType.Items.Sum(element => element.CashflowUnit.CurrencyNominal);
+                                    var actual = summaryByTypeAndCashflowType.Items.Sum(element => element.CashflowUnit.Total);
+
+                                    typeSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, nominal, currencyNominal, actual));
+
+                                    divisionCurrencyNominal += currencyNominal;
+                                    divisionNominal += nominal;
+                                    divisionActual += actual;
+                                    divisionCurrencyNominalTotal += currencyNominal;
+                                    divisionNominalTotal += nominal;
+                                    divisionActualTotal += actual;
+                                }
+
+                                typeSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionNominal, divisionCurrencyNominal, divisionActual));
+
+                            }
+
+                            typeSummaryItem.SetRowSummary(divisionCurrencyNominalTotal, divisionNominalTotal, divisionActualTotal);
+
+                            result.Items.Add(typeSummaryItem);
+                        }
+                    else
+                    {
+                        result.Items.Add(new BudgetCashflowDivisionItemDto(cashflowType, type, isShowSummaryLabel));
+                    }
+                }
+
+                var differenceByTypeAndCashflowTypes = result
+                        .Items
+                        .Where(element => element.CashflowType != null && element.CashflowType.Id == cashflowType.Id && element.Currency != null && element.IsSummary)
+                        .GroupBy(element => new { element.Currency.Id, element.Type })
+                        .Select(element => new
+                        {
+                            CurrencyId = element.Key.Id,
+                            Type = element.Key.Type,
+                            Items = element.SelectMany(e => e.Items).Where(e => e.CashflowUnit != null).ToList()
+                        })
+                        .ToList();
+
+                var differenceCurrencyIds = differenceByTypeAndCashflowTypes.Select(element => element.CurrencyId).Where(element => element > 0).Distinct().ToList();
+                var isShowDifferenceLabel = true;
+                if (differenceByTypeAndCashflowTypes.Count > 0)
+                    foreach (var differenceCurrencyId in differenceCurrencyIds)
+                    {
+                        var currency = _currencies.FirstOrDefault(element => element.Id == differenceCurrencyId);
+
+                        var typeDifferenceItem = new BudgetCashflowDivisionItemDto(cashflowType, currency, isShowDifferenceLabel);
+
+                        typeDifferenceItem.InitializeItems();
+                        var divisionCurrencyNominalTotal = 0.0;
+                        var divisionNominalTotal = 0.0;
+                        var divisionActualTotal = 0.0;
+                        foreach (var division in divisions)
+                        {
+                            var divisionUnits = units.Where(unit => unit.DivisionId == division.Id);
+
+                            var divisionCurrencyNominal = 0.0;
+                            var divisionNominal = 0.0;
+                            var divisionActual = 0.0;
+                            foreach (var divisionUnit in divisionUnits)
+                            {
+                                var cashInItems = differenceByTypeAndCashflowTypes.Where(element => element.CurrencyId == differenceCurrencyId && element.Type == CashType.In).SelectMany(element => element.Items).ToList();
+                                var cashOutItems = differenceByTypeAndCashflowTypes.Where(element => element.CurrencyId == differenceCurrencyId && element.Type == CashType.Out).SelectMany(element => element.Items).ToList();
+                                
+                                var nominal = cashInItems.Sum(element => element.Nominal) - cashOutItems.Sum(element => element.Nominal);
+                                var currencyNominal = cashInItems.Sum(element => element.CurrencyNominal) - cashOutItems.Sum(element => element.CurrencyNominal);
+                                var actual = cashInItems.Sum(element => element.Actual) - cashOutItems.Sum(element => element.Actual);
+
+                                typeDifferenceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, nominal, currencyNominal, actual));
+
+                                divisionCurrencyNominal += currencyNominal;
+                                divisionNominal += nominal;
+                                divisionActual += actual;
+                                divisionCurrencyNominalTotal += currencyNominal;
+                                divisionNominalTotal += nominal;
+                                divisionActualTotal += actual;
+                            }
+
+                            typeDifferenceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionNominal, divisionCurrencyNominal, divisionActual));
+
+                        }
+
+                        typeDifferenceItem.SetRowSummary(divisionCurrencyNominalTotal, divisionNominalTotal, divisionActualTotal);
+
+                        result.Items.Add(typeDifferenceItem);
+                    }
+                else
+                {
+                    result.Items.Add(new BudgetCashflowDivisionItemDto(cashflowType, isShowDifferenceLabel));
                 }
             }
 
