@@ -75,14 +75,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
             var dbContext = GetDbContext(GetCurrentAsyncMethod());
             var serviceProviderMock = GetServiceProvider();
 
-            //var httpClientService = new Mock<IHttpClientService>();
-            //httpClientService
-            //   .Setup(x => x.PutAsync(It.Is<string>(s => s.Contains("garment-purchasing-expeditions/internal-notes/position")), It.IsAny<HttpContent>()))
-            //   .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+            var httpClientService = new Mock<IHttpClientService>();
+            httpClientService
+               .Setup(x => x.PutAsync(It.Is<string>(s => s.Contains("garment-purchasing-expeditions/internal-notes/position")), It.IsAny<HttpContent>()))
+               .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
-            //serviceProviderMock
-            //    .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
-            //    .Returns(httpClientService.Object);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
 
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
