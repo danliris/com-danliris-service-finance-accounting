@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow.ExcelGenerator;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow.PdfGenerator;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.CacheService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -142,6 +143,29 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 {
                     FileDownloadName = "Laporan Budget Cashflow.pdf"
                 };
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("download/xls")]
+        public async Task<IActionResult> GenerateXls([FromQuery] int unitId, [FromQuery] DateTimeOffset date)
+        {
+
+            try
+            {
+                var data = await _service.GetBudgetCashflowUnit(unitId, date);
+                var unit = _units.FirstOrDefault(element => element.Id == unitId);
+                var stream = CashflowUnitExcelGenerator.Generate(unit, date, _identityService.TimezoneOffset, data);
+
+                var bytes = stream.ToArray();
+
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Laporan Budget Cashflow.xlsx");
             }
             catch (Exception e)
             {
