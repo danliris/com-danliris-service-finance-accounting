@@ -18,8 +18,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             DivisionActual = divisionActual;
         }
 
+        public BudgetCashflowDivisionUnitItemDto(DivisionDto division, UnitDto divisionUnit, double nominal, double currencyNominal, double actual)
+        {
+            Division = division;
+            Unit = divisionUnit;
+            Nominal = nominal;
+            CurrencyNominal = currencyNominal;
+            Actual = actual;
+        }
+
         public BudgetCashflowUnitModel CashflowUnit { get; private set; }
         public UnitDto Unit { get; private set; }
+        public double Nominal { get; private set; }
+        public double CurrencyNominal { get; private set; }
+        public double Actual { get; private set; }
         public DivisionDto Division { get; private set; }
         public double DivisionCurrencyNominal { get; private set; }
         public double DivisionNominal { get; private set; }

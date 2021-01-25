@@ -15,7 +15,45 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         {
         }
 
+        public BudgetCashflowDivisionItemDto(BudgetCashflowTypeModel cashflowType, CashType type, CurrencyDto currency, bool isShowSummaryLabel)
+        {
+            CashflowType = cashflowType;
+            Type = type;
+            SummaryLabel = $"Total {Type.ToDescriptionString()} {cashflowType.Name}";
+            Currency = currency;
+            IsSummary = true;
+            IsShowSummaryLabel = isShowSummaryLabel;
+        }
+
+        public BudgetCashflowDivisionItemDto(BudgetCashflowTypeModel cashflowType, CashType type, bool isShowSummaryLabel) : this(cashflowType)
+        {
+            Type = type;
+            SummaryLabel = $"Total {Type.ToDescriptionString()} {cashflowType.Name}";
+            IsSummary = true;
+            IsShowSummaryLabel = isShowSummaryLabel;
+        }
+
+        public BudgetCashflowDivisionItemDto(BudgetCashflowTypeModel cashflowType, CashType type) : this(cashflowType)
+        {
+            Type = type;
+        }
+
+        public BudgetCashflowDivisionItemDto(BudgetCashflowTypeModel cashflowType, CurrencyDto currency, bool isShowDifferenceLabel) : this(cashflowType)
+        {
+            IsDifference = true;
+            IsShowDifferenceLabel = isShowDifferenceLabel;
+            DifferenceLabel = $"Selisih {cashflowType.Name}";
+        }
+
+        public BudgetCashflowDivisionItemDto(BudgetCashflowTypeModel cashflowType, bool isShowDifferenceLabel) : this(cashflowType)
+        {
+            IsDifference = true;
+            IsShowDifferenceLabel = isShowDifferenceLabel;
+            DifferenceLabel = $"Selisih {cashflowType.Name}";
+        }
+
         public BudgetCashflowTypeModel CashflowType { get; private set; }
+        public string SummaryLabel { get; private set; }
         public bool IsUseSection { get; private set; }
         public int SectionRows { get; private set; }
         public string TypeName { get; private set; }
@@ -26,11 +64,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public BudgetCashflowCategoryModel CashflowCategory { get; private set; }
         public BudgetCashflowSubCategoryModel CashflowSubCategory { get; private set; }
         public CurrencyDto Currency { get; private set; }
-        public bool IsShowSubCategory { get; private set; }
+        public bool IsSummary { get; private set; }
+        public bool IsSubCategory { get; private set; }
+        public bool IsShowSummaryLabel { get; private set; }
+        public bool IsShowSubCategoryLabel { get; private set; }
         public List<BudgetCashflowDivisionUnitItemDto> Items { get; private set; }
+        public bool IsRowSummary { get; private set; }
         public double DivisionCurrencyNominalTotal { get; private set; }
         public double DivisionNominalTotal { get; private set; }
         public double DivisionActualTotal { get; private set; }
+        public bool IsDifference { get; private set; }
+        public bool IsShowDifferenceLabel { get; private set; }
+        public string DifferenceLabel { get; private set; }
 
         public void SetSection(int sectionRows)
         {
@@ -52,11 +97,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             CashflowCategory = cashflowCategory;
         }
 
-        public void SetSubCategory(BudgetCashflowSubCategoryModel cashflowSubCategory, CurrencyDto currency, bool isShowSubCategory)
+        public void SetSubCategory(BudgetCashflowSubCategoryModel cashflowSubCategory, CurrencyDto currency, bool isShowSubCategoryLabel)
         {
             CashflowSubCategory = cashflowSubCategory;
             Currency = currency;
-            IsShowSubCategory = isShowSubCategory;
+            IsSubCategory = true;
+            IsShowSubCategoryLabel = isShowSubCategoryLabel;
         }
 
         public void SetRowSummary(double divisionCurrencyNominalTotal, double divisionNominalTotal, double divisionActualTotal)
