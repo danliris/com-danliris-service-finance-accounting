@@ -4,6 +4,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 {
     public class BudgetCashflowDivisionUnitItemDto
     {
+        public BudgetCashflowDivisionUnitItemDto()
+        {
+        }
+
         public BudgetCashflowDivisionUnitItemDto(BudgetCashflowUnitModel cashflowUnit, UnitDto divisionUnit)
         {
             CashflowUnit = cashflowUnit;

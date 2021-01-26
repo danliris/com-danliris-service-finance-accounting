@@ -43,6 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             IsDifference = true;
             IsShowDifferenceLabel = isShowDifferenceLabel;
             DifferenceLabel = $"Selisih {cashflowType.Name}";
+            Currency = currency;
         }
 
         public BudgetCashflowDivisionItemDto(BudgetCashflowTypeModel cashflowType, bool isShowDifferenceLabel) : this(cashflowType)
@@ -63,6 +64,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             IsSubCategory = true;
             IsShowSubCategoryLabel = isShowSubCategoryLabel;
             Items = new List<BudgetCashflowDivisionUnitItemDto>();
+        }
+
+        public BudgetCashflowDivisionItemDto(string generalSummaryLabel, bool isGeneralSummary, bool isShowGeneralSummaryLabel, CurrencyDto currency)
+        {
+            GeneralSummaryLabel = generalSummaryLabel;
+            IsGeneralSummary = isGeneralSummary;
+            IsShowGeneralSummaryLabel = isShowGeneralSummaryLabel;
+            Items = new List<BudgetCashflowDivisionUnitItemDto>();
+            Currency = currency;
         }
 
         public BudgetCashflowTypeModel CashflowType { get; private set; }
@@ -89,6 +99,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public bool IsDifference { get; private set; }
         public bool IsShowDifferenceLabel { get; private set; }
         public string DifferenceLabel { get; private set; }
+        public string GeneralSummaryLabel { get; private set; }
+        public bool IsGeneralSummary { get; private set; }
+        public bool IsShowGeneralSummaryLabel { get; private set; }
 
         public void SetSection(int sectionRows)
         {
