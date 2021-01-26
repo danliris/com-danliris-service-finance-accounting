@@ -938,6 +938,77 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 }
             }
 
+            var initialBalances = _dbContext.InitialCashBalances.Where(entity => unitIds.Contains(entity.UnitId) && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+            var isShowGeneralSummaryLabel = true;
+            if (initialBalances.Count > 0)
+            {
+                var currencyIds = initialBalances.Select(element => element.CurrencyId).Distinct().ToList();
+
+                foreach (var currencyId in currencyIds)
+                {
+
+                    var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
+
+                    var initialBalanceItem = new BudgetCashflowDivisionItemDto("Saldo Awal Kas", true, isShowGeneralSummaryLabel, currency);
+                    var divisionNominalTotal = 0.0;
+                    var divisionCurrencyNominalTotal = 0.0;
+                    var divisionActualTotal = 0.0;
+                    foreach (var division in divisions)
+                    {
+                        var divisionUnits = units.Where(element => element.DivisionId == division.Id);
+                        var divisionNominal = 0.0;
+                        var divisionCurrencyNominal = 0.0;
+                        var divisionActual = 0.0;
+                        foreach (var unit in divisionUnits)
+                        {
+                            var initialBalance = initialBalances.FirstOrDefault(element => element.CurrencyId == currencyId && element.UnitId == unit.Id);
+                            var nominal = 0.0;
+                            var currencyNominal = 0.0;
+                            var actual = 0.0;
+
+                            if (initialBalance != null)
+                            {
+                                nominal = initialBalance.Nominal;
+                                currencyNominal = initialBalance.CurrencyNominal;
+                                actual = initialBalance.Total;
+
+                                divisionNominal += nominal;
+                                divisionCurrencyNominal += currencyNominal;
+                                divisionActual += actual;
+
+                                divisionNominalTotal += nominal;
+                                divisionCurrencyNominalTotal += currencyNominal;
+                                divisionActualTotal += actual;
+
+                            }
+                            initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual));
+                        }
+                        initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual));
+                    }
+
+                    initialBalanceItem.SetRowSummary(divisionCurrencyNominalTotal, divisionNominalTotal, divisionActualTotal);
+                    result.Items.Add(initialBalanceItem);
+                }
+
+            }
+            else
+            {
+                var initialBalanceItem = new BudgetCashflowDivisionItemDto("Saldo Awal Kas", true, isShowGeneralSummaryLabel, null);
+
+                foreach (var division in divisions)
+                {
+                    var divisionUnits = units.Where(element => element.DivisionId == division.Id).ToList();
+
+                    foreach (var divisionUnit in divisionUnits)
+                    {
+                        initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto());
+                    }
+                    initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto());
+                }
+
+                result.Items.Add(initialBalanceItem);
+            }
+
             return result;
         }
 
