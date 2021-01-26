@@ -1256,6 +1256,84 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", null));
             }
 
+            var endingBalances = result.Items.Where(element => element.GeneralSummaryLabel == "Saldo Akhir Kas").ToList();
+            isShowGeneralSummaryLabel = true;
+            var equivalent = 0.0;
+            if (generalSummaryCurrencyIds.Count > 0)
+                foreach (var currencyId in generalSummaryCurrencyIds)
+                {
+                    var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
+
+                    var differenceGeneralSummaryItem = new BudgetCashflowDivisionItemDto("Selisih", true, isShowGeneralSummaryLabel, currency);
+                    isShowGeneralSummaryLabel = false;
+                    var divisionNominalTotal = 0.0;
+                    var divisionCurrencyNominalTotal = 0.0;
+                    var divisionActualTotal = 0.0;
+                    foreach (var division in divisions)
+                    {
+                        var divisionUnits = units.Where(element => element.DivisionId == division.Id);
+                        var divisionNominal = 0.0;
+                        var divisionCurrencyNominal = 0.0;
+                        var divisionActual = 0.0;
+                        foreach (var unit in divisionUnits)
+                        {
+                            var selectedEndingBalances = endingBalances.Where(element => element.Currency != null && element.Currency.Id == currencyId).SelectMany(element => element.Items).Where(element => element.Unit != null && element.Unit.Id == unit.Id).ToList();
+                            var selectedRealCashBalance = realCashBalances.FirstOrDefault(element => element.CurrencyId == currencyId && unit.Id == element.UnitId);
+                            var nominal = 0.0;
+                            var currencyNominal = 0.0;
+                            var actual = 0.0;
+
+                            if (selectedEndingBalances.Count > 0)
+                            {
+                                nominal += selectedEndingBalances.Sum(sum => sum.Nominal);
+                                currencyNominal += selectedEndingBalances.Sum(sum => sum.CurrencyNominal); ;
+                                actual += selectedEndingBalances.Sum(sum => sum.Actual);
+                            }
+
+                            if (selectedRealCashBalance != null)
+                            {
+                                nominal -= selectedRealCashBalance.Nominal;
+                                currencyNominal -= selectedRealCashBalance.CurrencyNominal;
+                                actual -= selectedRealCashBalance.Total;
+                            }
+
+
+                            divisionNominal += nominal;
+                            divisionCurrencyNominal += currencyNominal;
+                            divisionActual += actual;
+
+                            divisionNominalTotal += nominal;
+                            divisionCurrencyNominalTotal += currencyNominal;
+                            divisionActualTotal += actual;
+                            equivalent += actual;
+                            differenceGeneralSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual));
+                        }
+                        differenceGeneralSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual));
+                    }
+
+                    differenceGeneralSummaryItem.SetRowSummary(divisionCurrencyNominalTotal, divisionNominalTotal, divisionActualTotal);
+                    result.Items.Add(differenceGeneralSummaryItem);
+                }
+            else
+            {
+                var finalBalanceItem = new BudgetCashflowDivisionItemDto("Saldo Akhir Kas", true, isShowGeneralSummaryLabel, null);
+
+                foreach (var division in divisions)
+                {
+                    var divisionUnits = units.Where(element => element.DivisionId == division.Id).ToList();
+
+                    foreach (var divisionUnit in divisionUnits)
+                    {
+                        finalBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto());
+                    }
+                    finalBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto());
+                }
+
+                result.Items.Add(finalBalanceItem);
+            }
+
+
+            result.Items.Add(new BudgetCashflowDivisionUnitItemDto("Total Surplus (Defisit) Equivalent", equivalent));
             return result;
         }
 
