@@ -75,6 +75,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             Currency = currency;
         }
 
+        public BudgetCashflowDivisionItemDto(string currencyRateLabel, CurrencyDto currency)
+        {
+            CurrencyRateLabel = currencyRateLabel;
+            Currency = currency;
+        }
+
         public BudgetCashflowTypeModel CashflowType { get; private set; }
         public string SummaryLabel { get; private set; }
         public bool IsUseSection { get; private set; }
@@ -86,6 +92,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public bool IsLabelOnly { get; private set; }
         public BudgetCashflowCategoryModel CashflowCategory { get; private set; }
         public BudgetCashflowSubCategoryModel CashflowSubCategory { get; private set; }
+        public string CurrencyRateLabel { get; private set; }
         public CurrencyDto Currency { get; private set; }
         public bool IsSummary { get; private set; }
         public bool IsSubCategory { get; private set; }
