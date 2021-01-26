@@ -950,6 +950,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
 
                     var initialBalanceItem = new BudgetCashflowDivisionItemDto("Saldo Awal Kas", true, isShowGeneralSummaryLabel, currency);
+                    isShowGeneralSummaryLabel = false;
                     var divisionNominalTotal = 0.0;
                     var divisionCurrencyNominalTotal = 0.0;
                     var divisionActualTotal = 0.0;
@@ -1007,6 +1008,252 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 }
 
                 result.Items.Add(initialBalanceItem);
+            }
+
+            // Total Surplus/Deficit Kas
+            var differenceSummaries = result
+                .Items
+                .Where(element => element.IsDifference && element.Currency != null)
+                .GroupBy(element => element.Currency.Id)
+                .Select(element => new
+                {
+                    CurrencyId = element.Key,
+                    Items = element.SelectMany(e => e.Items).ToList()
+                })
+                .ToList();
+            isShowGeneralSummaryLabel = true;
+            if (differenceSummaries.Count > 0)
+            {
+                var currencyIds = differenceSummaries.Select(element => element.CurrencyId).Distinct().ToList();
+
+                foreach (var currencyId in currencyIds)
+                {
+
+                    var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
+
+                    var differenceBalanceItem = new BudgetCashflowDivisionItemDto("SURPLUS/DEFISIT KAS", true, isShowGeneralSummaryLabel, currency);
+                    isShowGeneralSummaryLabel = false;
+                    var divisionNominalTotal = 0.0;
+                    var divisionCurrencyNominalTotal = 0.0;
+                    var divisionActualTotal = 0.0;
+                    foreach (var division in divisions)
+                    {
+                        var divisionUnits = units.Where(element => element.DivisionId == division.Id);
+                        var divisionNominal = 0.0;
+                        var divisionCurrencyNominal = 0.0;
+                        var divisionActual = 0.0;
+                        foreach (var unit in divisionUnits)
+                        {
+                            var differenceSummary = differenceSummaries.FirstOrDefault(element => element.CurrencyId == currencyId);
+                            var nominal = 0.0;
+                            var currencyNominal = 0.0;
+                            var actual = 0.0;
+
+                            if (differenceSummary != null)
+                            {
+                                nominal = differenceSummary.Items.Where(element => element.Unit != null && element.Unit.Id == unit.Id).Sum(sum => sum.Nominal);
+                                currencyNominal = differenceSummary.Items.Where(element => element.Unit != null && element.Unit.Id == unit.Id).Sum(sum => sum.CurrencyNominal); ;
+                                actual = differenceSummary.Items.Where(element => element.Unit != null && element.Unit.Id == unit.Id).Sum(sum => sum.Actual); ;
+
+                                divisionNominal += nominal;
+                                divisionCurrencyNominal += currencyNominal;
+                                divisionActual += actual;
+
+                                divisionNominalTotal += nominal;
+                                divisionCurrencyNominalTotal += currencyNominal;
+                                divisionActualTotal += actual;
+
+                            }
+                            differenceBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual));
+                        }
+                        differenceBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual));
+                    }
+
+                    differenceBalanceItem.SetRowSummary(divisionCurrencyNominalTotal, divisionNominalTotal, divisionActualTotal);
+                    result.Items.Add(differenceBalanceItem);
+                }
+
+            }
+            else
+            {
+                var differenceBalanceItem = new BudgetCashflowDivisionItemDto("SURPLUS/DEFISIT KAS", true, isShowGeneralSummaryLabel, null);
+
+                foreach (var division in divisions)
+                {
+                    var divisionUnits = units.Where(element => element.DivisionId == division.Id).ToList();
+
+                    foreach (var divisionUnit in divisionUnits)
+                    {
+                        differenceBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto());
+                    }
+                    differenceBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto());
+                }
+
+                result.Items.Add(differenceBalanceItem);
+            }
+
+            var generalSummaryCurrencyIds = new List<int>();
+            generalSummaryCurrencyIds.AddRange(initialBalances.Select(element => element.CurrencyId).Where(element => element > 0).Distinct().ToList());
+            generalSummaryCurrencyIds.AddRange(differenceSummaries.Select(element => element.CurrencyId).Where(element => element > 0).Distinct().ToList());
+
+            generalSummaryCurrencyIds = generalSummaryCurrencyIds.Distinct().ToList();
+            isShowGeneralSummaryLabel = true;
+            if (generalSummaryCurrencyIds.Count > 0)
+                foreach (var currencyId in generalSummaryCurrencyIds)
+                {
+                    var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
+
+                    var finalBalanceItem = new BudgetCashflowDivisionItemDto("Saldo Akhir Kas", true, isShowGeneralSummaryLabel, currency);
+                    isShowGeneralSummaryLabel = false;
+                    var divisionNominalTotal = 0.0;
+                    var divisionCurrencyNominalTotal = 0.0;
+                    var divisionActualTotal = 0.0;
+                    foreach (var division in divisions)
+                    {
+                        var divisionUnits = units.Where(element => element.DivisionId == division.Id);
+                        var divisionNominal = 0.0;
+                        var divisionCurrencyNominal = 0.0;
+                        var divisionActual = 0.0;
+                        foreach (var unit in divisionUnits)
+                        {
+                            var selectedInitialBalance = initialBalances.FirstOrDefault(element => element.CurrencyId == currencyId && unit.Id == element.UnitId);
+                            var selectedDifferenceSummary = differenceSummaries.Where(element => element.CurrencyId == currencyId).SelectMany(element => element.Items).Where(element => element.Unit != null && element.Unit.Id == unit.Id).ToList();
+                            var nominal = 0.0;
+                            var currencyNominal = 0.0;
+                            var actual = 0.0;
+
+                            if (selectedDifferenceSummary.Count > 0)
+                            {
+                                nominal += selectedDifferenceSummary.Sum(sum => sum.Nominal);
+                                currencyNominal += selectedDifferenceSummary.Sum(sum => sum.CurrencyNominal); ;
+                                actual += selectedDifferenceSummary.Sum(sum => sum.Actual);
+                            }
+
+                            if (selectedInitialBalance != null)
+                            {
+                                nominal += selectedInitialBalance.Nominal;
+                                currencyNominal += selectedInitialBalance.CurrencyNominal;
+                                actual += selectedInitialBalance.Total;
+                            }
+
+
+                            divisionNominal += nominal;
+                            divisionCurrencyNominal += currencyNominal;
+                            divisionActual += actual;
+
+                            divisionNominalTotal += nominal;
+                            divisionCurrencyNominalTotal += currencyNominal;
+                            divisionActualTotal += actual;
+                            finalBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual));
+                        }
+                        finalBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual));
+                    }
+
+                    finalBalanceItem.SetRowSummary(divisionCurrencyNominalTotal, divisionNominalTotal, divisionActualTotal);
+                    result.Items.Add(finalBalanceItem);
+                }
+            else
+            {
+                var finalBalanceItem = new BudgetCashflowDivisionItemDto("Saldo Akhir Kas", true, isShowGeneralSummaryLabel, null);
+
+                foreach (var division in divisions)
+                {
+                    var divisionUnits = units.Where(element => element.DivisionId == division.Id).ToList();
+
+                    foreach (var divisionUnit in divisionUnits)
+                    {
+                        finalBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto());
+                    }
+                    finalBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto());
+                }
+
+                result.Items.Add(finalBalanceItem);
+            }
+
+            var realCashBalances = _dbContext.RealCashBalances.Where(entity => unitIds.Contains(entity.UnitId) && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+            isShowGeneralSummaryLabel = true;
+            if (realCashBalances.Count > 0)
+            {
+                var currencyIds = realCashBalances.Select(element => element.CurrencyId).Distinct().ToList();
+
+                foreach (var currencyId in currencyIds)
+                {
+
+                    var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
+
+                    var realCashBalanceItem = new BudgetCashflowDivisionItemDto("Saldo Real Kas", true, isShowGeneralSummaryLabel, currency);
+                    isShowGeneralSummaryLabel = false;
+                    var divisionNominalTotal = 0.0;
+                    var divisionCurrencyNominalTotal = 0.0;
+                    var divisionActualTotal = 0.0;
+                    foreach (var division in divisions)
+                    {
+                        var divisionUnits = units.Where(element => element.DivisionId == division.Id);
+                        var divisionNominal = 0.0;
+                        var divisionCurrencyNominal = 0.0;
+                        var divisionActual = 0.0;
+                        foreach (var unit in divisionUnits)
+                        {
+                            var realCashBalance = realCashBalances.FirstOrDefault(element => element.CurrencyId == currencyId && element.UnitId == unit.Id);
+                            var nominal = 0.0;
+                            var currencyNominal = 0.0;
+                            var actual = 0.0;
+
+                            if (realCashBalance != null)
+                            {
+                                nominal = realCashBalance.Nominal;
+                                currencyNominal = realCashBalance.CurrencyNominal;
+                                actual = realCashBalance.Total;
+                            }
+
+                            divisionNominal += nominal;
+                            divisionCurrencyNominal += currencyNominal;
+                            divisionActual += actual;
+
+                            divisionNominalTotal += nominal;
+                            divisionCurrencyNominalTotal += currencyNominal;
+                            divisionActualTotal += actual;
+
+                            realCashBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual));
+                        }
+                        realCashBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual));
+                    }
+
+                    realCashBalanceItem.SetRowSummary(divisionCurrencyNominalTotal, divisionNominalTotal, divisionActualTotal);
+                    result.Items.Add(realCashBalanceItem);
+                }
+
+            }
+            else
+            {
+                var realCashBalanceItem = new BudgetCashflowDivisionItemDto("Saldo Real Kas", true, isShowGeneralSummaryLabel, null);
+
+                foreach (var division in divisions)
+                {
+                    var divisionUnits = units.Where(element => element.DivisionId == division.Id).ToList();
+
+                    foreach (var divisionUnit in divisionUnits)
+                    {
+                        realCashBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto());
+                    }
+                    realCashBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto());
+                }
+
+                result.Items.Add(realCashBalanceItem);
+            }
+
+            if (generalSummaryCurrencyIds.Count > 0)
+            {
+                foreach (var currencyId in generalSummaryCurrencyIds)
+                {
+
+                    var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
+                    result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", currency));
+                }
+            }
+            else
+            {
+                result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", null));
             }
 
             return result;
