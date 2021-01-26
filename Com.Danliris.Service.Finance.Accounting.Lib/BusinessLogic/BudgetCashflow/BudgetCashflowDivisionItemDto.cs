@@ -52,6 +52,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             DifferenceLabel = $"Selisih {cashflowType.Name}";
         }
 
+        public BudgetCashflowDivisionItemDto(BudgetCashflowTypeModel cashflowType, CashType type, BudgetCashflowCategoryModel cashflowCategory, BudgetCashflowSubCategoryModel cashflowSubCategory, CurrencyDto currency, bool isShowSubCategoryLabel) : this(cashflowType, type)
+        {
+            CashflowType = cashflowType;
+            Type = type;
+            TypeName = type.ToDescriptionString();
+            CashflowCategory = cashflowCategory;
+            CashflowSubCategory = cashflowSubCategory;
+            Currency = currency;
+            IsSubCategory = true;
+            IsShowSubCategoryLabel = isShowSubCategoryLabel;
+            Items = new List<BudgetCashflowDivisionUnitItemDto>();
+        }
+
         public BudgetCashflowTypeModel CashflowType { get; private set; }
         public string SummaryLabel { get; private set; }
         public bool IsUseSection { get; private set; }

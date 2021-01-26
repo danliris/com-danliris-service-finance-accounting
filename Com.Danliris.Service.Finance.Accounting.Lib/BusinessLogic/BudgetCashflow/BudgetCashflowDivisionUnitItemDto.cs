@@ -13,9 +13,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public BudgetCashflowDivisionUnitItemDto(DivisionDto division, double divisionCurrencyNominal, double divisionNominal, double divisionActual)
         {
             Division = division;
-            DivisionCurrencyNominal = divisionCurrencyNominal;
-            DivisionNominal = divisionNominal;
-            DivisionActual = divisionActual;
+            CurrencyNominal = divisionCurrencyNominal;
+            Nominal = divisionNominal;
+            Actual = divisionActual;
         }
 
         public BudgetCashflowDivisionUnitItemDto(DivisionDto division, UnitDto divisionUnit, double nominal, double currencyNominal, double actual)
