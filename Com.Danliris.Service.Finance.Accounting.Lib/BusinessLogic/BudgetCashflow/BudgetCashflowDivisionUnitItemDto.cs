@@ -7,6 +7,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public BudgetCashflowDivisionUnitItemDto(BudgetCashflowUnitModel cashflowUnit, UnitDto divisionUnit)
         {
             CashflowUnit = cashflowUnit;
+            if (cashflowUnit != null)
+            {
+                Nominal = cashflowUnit.Nominal;
+                CurrencyNominal = cashflowUnit.CurrencyNominal;
+                Actual = cashflowUnit.Total;
+            }
             Unit = divisionUnit;
         }
 

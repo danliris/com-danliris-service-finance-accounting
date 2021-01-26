@@ -646,7 +646,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var result = new BudgetCashflowDivision();
             foreach (var division in divisions)
             {
-                foreach (var unit in units)
+                var divisionUnits = units.Where(element => element.DivisionId == division.Id);
+                foreach (var unit in divisionUnits)
                 {
                     result.Headers.Add($"UNIT {unit.Code}");
                 }
@@ -782,6 +783,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             var currency = _currencies.FirstOrDefault(element => element.Id == summaryByTypeAndCashflowType.CurrencyId);
 
                             var typeSummaryItem = new BudgetCashflowDivisionItemDto(cashflowType, type, currency, isShowSummaryLabel);
+                            isShowSummaryLabel = false;
 
                             typeSummaryItem.InitializeItems();
                             var divisionCurrencyNominalTotal = 0.0;
@@ -856,7 +858,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         {
                             CurrencyId = element.Key.Id,
                             Type = element.Key.Type,
-                            Items = element.SelectMany(e => e.Items).Where(e => e.CashflowUnit != null).ToList()
+                            Items = element.SelectMany(e => e.Items).ToList()
                         })
                         .ToList();
 
@@ -883,8 +885,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             var divisionActual = 0.0;
                             foreach (var divisionUnit in divisionUnits)
                             {
-                                var cashInItems = differenceByTypeAndCashflowTypes.Where(element => element.CurrencyId == differenceCurrencyId && element.Type == CashType.In).SelectMany(element => element.Items).ToList();
-                                var cashOutItems = differenceByTypeAndCashflowTypes.Where(element => element.CurrencyId == differenceCurrencyId && element.Type == CashType.Out).SelectMany(element => element.Items).ToList();
+                                var cashInItems = differenceByTypeAndCashflowTypes.Where(element => element.CurrencyId == differenceCurrencyId && element.Type == CashType.In).SelectMany(element => element.Items).Where(element => element.Unit != null && element.Unit.Id == divisionUnit.Id).ToList();
+                                var cashOutItems = differenceByTypeAndCashflowTypes.Where(element => element.CurrencyId == differenceCurrencyId && element.Type == CashType.Out).SelectMany(element => element.Items).Where(element => element.Unit != null && element.Unit.Id == divisionUnit.Id).ToList();
 
                                 var nominal = cashInItems.Sum(element => element.Nominal) - cashOutItems.Sum(element => element.Nominal);
                                 var currencyNominal = cashInItems.Sum(element => element.CurrencyNominal) - cashOutItems.Sum(element => element.CurrencyNominal);
@@ -927,9 +929,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         {
                             typeDifferenceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, 0, 0, 0));
                         }
-
                         typeDifferenceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionNominal, divisionCurrencyNominal, divisionActual));
-
                     }
 
                     typeDifferenceItem.SetRowSummary(divisionCurrencyNominalTotal, divisionNominalTotal, divisionActualTotal);
