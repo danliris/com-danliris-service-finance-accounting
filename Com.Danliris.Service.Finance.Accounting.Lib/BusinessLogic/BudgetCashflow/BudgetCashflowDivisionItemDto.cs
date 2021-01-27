@@ -82,6 +82,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             Currency = currency;
         }
 
+        public BudgetCashflowDivisionItemDto(string equivalentLabel, double equivalent)
+        {
+            IsEquivalent = true;
+            EquivalentLabel = equivalentLabel;
+            Equivalent = equivalent;
+        }
+
         public BudgetCashflowTypeModel CashflowType { get; private set; }
         public string SummaryLabel { get; private set; }
         public bool IsUseSection { get; private set; }
@@ -111,6 +118,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public string GeneralSummaryLabel { get; private set; }
         public bool IsGeneralSummary { get; private set; }
         public bool IsShowGeneralSummaryLabel { get; private set; }
+        public bool IsEquivalent { get; private set; }
+        public string EquivalentLabel { get; private set; }
+        public double Equivalent { get; private set; }
 
         public void SetSection(int sectionRows)
         {

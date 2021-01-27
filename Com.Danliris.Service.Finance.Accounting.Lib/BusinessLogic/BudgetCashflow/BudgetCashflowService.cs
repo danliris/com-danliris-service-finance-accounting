@@ -1333,7 +1333,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             }
 
 
-            result.Items.Add(new BudgetCashflowDivisionUnitItemDto("Total Surplus (Defisit) Equivalent", equivalent));
+            result.Items.Add(new BudgetCashflowDivisionItemDto("Total Surplus (Defisit) Equivalent", equivalent));
             return result;
         }
 
