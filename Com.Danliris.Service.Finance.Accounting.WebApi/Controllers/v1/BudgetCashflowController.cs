@@ -236,9 +236,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             try
             {
-                var data = await _service.GetBudgetCashflowUnit(divisionId, date);
-                var unit = _units.FirstOrDefault(element => element.Id == divisionId);
-                var stream = CashflowUnitExcelGenerator.Generate(unit, date, _identityService.TimezoneOffset, data);
+                var data = await _service.GetBudgetCashflowDivision(divisionId, date);
+                var division = _divisions.FirstOrDefault(element => element.Id == divisionId);
+                var stream = CashflowDivisionExcelGenerator.Generate(division, date, _identityService.TimezoneOffset, data);
 
                 var bytes = stream.ToArray();
 
