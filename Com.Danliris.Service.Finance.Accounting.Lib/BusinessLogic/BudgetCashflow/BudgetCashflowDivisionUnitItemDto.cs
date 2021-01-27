@@ -20,13 +20,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             Unit = divisionUnit;
         }
 
-        public BudgetCashflowDivisionUnitItemDto(string equivalentLabel, double equivalent)
-        {
-            IsEquivalent = true;
-            EquivalentLabel = equivalentLabel;
-            Equivalent = equivalent;
-        }
-
         public BudgetCashflowDivisionUnitItemDto(DivisionDto division, double divisionCurrencyNominal, double divisionNominal, double divisionActual)
         {
             Division = division;
@@ -50,11 +43,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public double CurrencyNominal { get; private set; }
         public double Actual { get; private set; }
         public DivisionDto Division { get; private set; }
-        public double DivisionCurrencyNominal { get; private set; }
-        public double DivisionNominal { get; private set; }
-        public double DivisionActual { get; private set; }
-        public bool IsEquivalent { get; private set; }
-        public string EquivalentLabel { get; private set; }
-        public double Equivalent { get; private set; }
     }
 }
