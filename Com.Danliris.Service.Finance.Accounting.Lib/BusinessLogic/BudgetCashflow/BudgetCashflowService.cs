@@ -1242,18 +1242,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 result.Items.Add(realCashBalanceItem);
             }
 
+            var isShowCurrencyLabel = true;
             if (generalSummaryCurrencyIds.Count > 0)
             {
                 foreach (var currencyId in generalSummaryCurrencyIds)
                 {
-
                     var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
-                    result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", currency));
+                    result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", currency, isShowCurrencyLabel));
+                    isShowCurrencyLabel = false;
                 }
             }
             else
             {
-                result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", null));
+                result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", null, isShowCurrencyLabel));
             }
 
             var endingBalances = result.Items.Where(element => element.GeneralSummaryLabel == "Saldo Akhir Kas").ToList();

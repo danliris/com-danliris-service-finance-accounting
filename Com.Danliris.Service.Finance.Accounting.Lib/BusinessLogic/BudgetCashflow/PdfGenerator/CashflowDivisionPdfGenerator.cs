@@ -64,7 +64,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 Border = Element.RECTANGLE,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_TOP,
-                Rotation = 270
+                Rotation = 90
             };
 
             var cellCenter = new PdfPCell()
@@ -232,27 +232,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     table.AddCell(cellRight);
                 }
 
-                //if (item.IsSummaryBalance)
-                //{
-                //    cellLeft.Colspan = 4;
-                //    if (item.IsShowSummaryBalance)
-                //        cellLeft.Phrase = new Phrase(item.SummaryBalanceLabel, _smallFont);
-                //    else
-                //        cellLeft.Phrase = new Phrase("", _smallFont);
-                //    table.AddCell(cellLeft);
+                if (item.IsGeneralSummary)
+                {
+                    cellLeft.Colspan = 4;
+                    if (item.IsShowGeneralSummaryLabel)
+                        cellLeft.Phrase = new Phrase(item.GeneralSummaryLabel, _smallFont);
+                    else
+                        cellLeft.Phrase = new Phrase("", _smallFont);
+                    table.AddCell(cellLeft);
 
-                //    cellCenter.Colspan = 1;
-                //    cellCenter.Phrase = new Phrase(item.Currency?.Code, _smallFont);
-                //    table.AddCell(cellCenter);
+                    cellCenter.Colspan = 1;
+                    cellCenter.Phrase = new Phrase(item.Currency?.Code, _smallFont);
+                    table.AddCell(cellCenter);
 
-                //    cellRight.Colspan = 1;
-                //    cellRight.Phrase = new Phrase(item.CurrencyNominal.ToString(), _smallFont);
-                //    table.AddCell(cellRight);
-                //    cellRight.Phrase = new Phrase(item.Nominal.ToString(), _smallFont);
-                //    table.AddCell(cellRight);
-                //    cellRight.Phrase = new Phrase(item.Total.ToString(), _smallFont);
-                //    table.AddCell(cellRight);
-                //}
+                    foreach (var subCategoryItem in item.Items)
+                    {
+                        cellRight.Colspan = 1;
+                        cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString(), _smallFont);
+                        table.AddCell(cellRight);
+                        cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString(), _smallFont);
+                        table.AddCell(cellRight);
+                        cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString(), _smallFont);
+                        table.AddCell(cellRight);
+                    }
+
+                    cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                }
 
                 //if (item.IsShowSummary)
                 //{
@@ -319,44 +325,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 //    table.AddCell(cellRight);
                 //}
 
-                //if (item.IsShowRealCashDifference)
-                //{
-                //    cellLeft.Colspan = 4;
-                //    if (item.IsShowRealCashDifferenceLabel)
-                //        cellLeft.Phrase = new Phrase(item.RealCashDifferenceLabel, _smallFont);
-                //    else
-                //        cellLeft.Phrase = new Phrase("", _smallFont);
-                //    table.AddCell(cellLeft);
+                if (item.IsCurrencyRate)
+                {
+                    cellLeft.Colspan = 4;
+                    if (item.IsShowCurrencyLabel)
+                        cellLeft.Phrase = new Phrase(item.CurrencyRateLabel, _smallFont);
+                    else
+                        cellLeft.Phrase = new Phrase("", _smallFont);
+                    table.AddCell(cellLeft);
 
-                //    cellCenter.Colspan = 1;
-                //    cellCenter.Phrase = new Phrase(item.Currency?.Code, _smallFont);
-                //    table.AddCell(cellCenter);
+                    cellCenter.Colspan = 1;
+                    cellCenter.Phrase = new Phrase(item.Currency?.Code, _smallFont);
+                    table.AddCell(cellCenter);
 
-                //    cellRight.Colspan = 1;
-                //    cellRight.Phrase = new Phrase(item.CurrencyNominal.ToString(), _smallFont);
-                //    table.AddCell(cellRight);
-                //    cellRight.Phrase = new Phrase(item.Nominal.ToString(), _smallFont);
-                //    table.AddCell(cellRight);
-                //    cellRight.Phrase = new Phrase(item.Total.ToString(), _smallFont);
-                //    table.AddCell(cellRight);
-                //}
+                    cellRight.Colspan = 1;
+                    cellRight.Phrase = new Phrase(item.Currency == null ? "" : item.Currency.Rate.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                    cellRight.Colspan = dynamicColumns;
+                    cellRight.Phrase = new Phrase("", _smallFont);
+                    table.AddCell(cellRight);
+                }
 
-                //if (item.IsEquivalentDifference)
-                //{
-                //    cellLeft.Colspan = 4;
-                //    cellLeft.Phrase = new Phrase("Total Surplus (Defisit) Equivalent", _smallFont);
-                //    table.AddCell(cellLeft);
+                if (item.IsEquivalent)
+                {
+                    cellLeft.Colspan = 4;
+                    cellLeft.Phrase = new Phrase("Total Surplus (Defisit) Equivalent", _smallFont);
+                    table.AddCell(cellLeft);
 
-                //    cellCenter.Colspan = 1;
-                //    cellCenter.Phrase = new Phrase("IDR", _smallFont);
-                //    table.AddCell(cellCenter);
-                //    cellRight.Colspan = 1;
-                //    cellRight.Phrase = new Phrase(item.Total.ToString(), _smallFont);
-                //    table.AddCell(cellRight);
-                //    cellRight.Colspan = 2;
-                //    cellRight.Phrase = new Phrase("", _smallFont);
-                //    table.AddCell(cellRight);
-                //}
+                    cellCenter.Colspan = 1;
+                    cellCenter.Phrase = new Phrase("IDR", _smallFont);
+                    table.AddCell(cellCenter);
+                    cellRight.Colspan = 1;
+                    cellRight.Phrase = new Phrase(item.Equivalent.ToString(), _smallFont);
+                    table.AddCell(cellRight);
+                    cellRight.Colspan = dynamicColumns;
+                    cellRight.Phrase = new Phrase("", _smallFont);
+                    table.AddCell(cellRight);
+                }
             }
 
             document.Add(table);
