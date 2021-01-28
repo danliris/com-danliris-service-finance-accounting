@@ -19,16 +19,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         {
             CashflowType = cashflowType;
             Type = type;
-            SummaryLabel = $"Total {Type.ToDescriptionString()} {cashflowType.Name}";
+            SummaryLabel = type == CashType.In ? $"Total Penerimaan {cashflowType.Name}" : $"Total Pengeluaran {cashflowType.Name}";
             Currency = currency;
-            IsSummary = true;
-            IsShowSummaryLabel = isShowSummaryLabel;
-        }
-
-        public BudgetCashflowDivisionItemDto(BudgetCashflowTypeModel cashflowType, CashType type, bool isShowSummaryLabel) : this(cashflowType)
-        {
-            Type = type;
-            SummaryLabel = $"Total {Type.ToDescriptionString()} {cashflowType.Name}";
             IsSummary = true;
             IsShowSummaryLabel = isShowSummaryLabel;
         }
@@ -42,15 +34,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         {
             IsDifference = true;
             IsShowDifferenceLabel = isShowDifferenceLabel;
-            DifferenceLabel = $"Selisih {cashflowType.Name}";
+            DifferenceLabel = $"Surplus/Deficit-Kas dari {cashflowType.Name}";
             Currency = currency;
-        }
-
-        public BudgetCashflowDivisionItemDto(BudgetCashflowTypeModel cashflowType, bool isShowDifferenceLabel) : this(cashflowType)
-        {
-            IsDifference = true;
-            IsShowDifferenceLabel = isShowDifferenceLabel;
-            DifferenceLabel = $"Selisih {cashflowType.Name}";
         }
 
         public BudgetCashflowDivisionItemDto(BudgetCashflowTypeModel cashflowType, CashType type, BudgetCashflowCategoryModel cashflowCategory, BudgetCashflowSubCategoryModel cashflowSubCategory, CurrencyDto currency, bool isShowSubCategoryLabel) : this(cashflowType, type)
