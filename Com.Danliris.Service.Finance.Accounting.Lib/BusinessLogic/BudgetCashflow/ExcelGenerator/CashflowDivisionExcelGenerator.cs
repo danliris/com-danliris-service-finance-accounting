@@ -142,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
         private static void SetData(ExcelWorksheet worksheet, BudgetCashflowDivision data)
         {
-            var currentRow = 7;
+            var currentRow = 8;
             var dynamicCol = data.Headers.Count * 3;
             foreach (var item in data.Items)
             {
@@ -170,10 +170,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                 if (item.IsLabelOnly)
                 {
-                    worksheet.Cells[$"C{currentRow}:H{currentRow}"].Value = item.CashflowCategory.Name;
-                    worksheet.Cells[$"C{currentRow}:H{currentRow}"].Merge = true;
-                    worksheet.Cells[$"C{currentRow}:H{currentRow}"].Style.Font.Bold = true;
-                    worksheet.Cells[$"C{currentRow}:H{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    worksheet.Cells[currentRow, 3, currentRow, 6 + dynamicCol].Value = item.CashflowCategory.Name;
+                    worksheet.Cells[currentRow, 3, currentRow, 6 + dynamicCol].Merge = true;
+                    worksheet.Cells[currentRow, 3, currentRow, 6 + dynamicCol].Style.Font.Bold = true;
+                    worksheet.Cells[currentRow, 3, currentRow, 6 + dynamicCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                 }
 
                 if (item.IsSubCategory)
@@ -216,7 +216,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                     worksheet.Cells[currentRow, writeableCol].Value = item.DivisionActualTotal;
                     worksheet.Cells[currentRow, writeableCol].Merge = true;
-                    worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 }
 
                 if (item.IsGeneralSummary)
@@ -259,10 +259,53 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                     worksheet.Cells[currentRow, writeableCol].Value = item.DivisionActualTotal;
                     worksheet.Cells[currentRow, writeableCol].Merge = true;
-                    worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 }
 
-                if (!string.IsNullOrWhiteSpace(item.DifferenceLabel))
+                if (item.IsSummary)
+                {
+                    if (item.IsShowSummaryLabel)
+                    {
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Value = item.SummaryLabel;
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    }
+                    else
+                    {
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Value = "";
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    }
+
+                    worksheet.Cells[$"E{currentRow}"].Value = item.Currency?.Code;
+                    worksheet.Cells[$"E{currentRow}"].Merge = true;
+                    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                    var writeableCol = 6;
+                    foreach (var subCategoryItem in item.Items)
+                    {
+                        worksheet.Cells[currentRow, writeableCol].Value = subCategoryItem.CurrencyNominal;
+                        worksheet.Cells[currentRow, writeableCol].Merge = true;
+                        worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        writeableCol++;
+
+                        worksheet.Cells[currentRow, writeableCol].Value = subCategoryItem.Nominal;
+                        worksheet.Cells[currentRow, writeableCol].Merge = true;
+                        worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        writeableCol++;
+
+                        worksheet.Cells[currentRow, writeableCol].Value = subCategoryItem.Actual;
+                        worksheet.Cells[currentRow, writeableCol].Merge = true;
+                        worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        writeableCol++;
+                    }
+
+                    worksheet.Cells[currentRow, writeableCol].Value = item.DivisionActualTotal;
+                    worksheet.Cells[currentRow, writeableCol].Merge = true;
+                    worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                }
+
+                if (item.IsDifference)
                 {
                     if (item.IsShowDifferenceLabel)
                     {
@@ -300,186 +343,82 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         writeableCol++;
                     }
 
-                    //worksheet.Cells[$"F{currentRow}"].Value = item.CurrencyNominal;
-                    //worksheet.Cells[$"F{currentRow}"].Merge = true;
-                    //worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-
-                    //worksheet.Cells[$"G{currentRow}"].Value = item.Nominal;
-                    //worksheet.Cells[$"G{currentRow}"].Merge = true;
-                    //worksheet.Cells[$"G{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-
-                    //worksheet.Cells[$"H{currentRow}"].Value = item.Total;
-                    //worksheet.Cells[$"H{currentRow}"].Merge = true;
-                    //worksheet.Cells[$"H{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    worksheet.Cells[currentRow, writeableCol].Value = item.DivisionActualTotal;
+                    worksheet.Cells[currentRow, writeableCol].Merge = true;
+                    worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 }
 
-                //if (item.IsSummaryBalance)
-                //{
-                //    if (item.IsShowSummaryBalance)
-                //    {
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = item.SummaryBalanceLabel;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                //    }
-                //    else
-                //    {
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "";
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                //    }
+                if (item.IsCurrencyRate)
+                {
+                    if (item.IsShowCurrencyLabel)
+                    {
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = item.CurrencyRateLabel;
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    }
+                    else
+                    {
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "";
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    }
 
-                //    worksheet.Cells[$"E{currentRow}"].Value = item.Currency?.Code;
-                //    worksheet.Cells[$"E{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[$"E{currentRow}"].Value = item.Currency?.Code;
+                    worksheet.Cells[$"E{currentRow}"].Merge = true;
+                    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[$"E{currentRow}"].Value = item.Currency == null ? 0 : item.Currency.Rate;
+                    worksheet.Cells[$"E{currentRow}"].Merge = true;
+                    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
 
-                //    worksheet.Cells[$"F{currentRow}"].Value = item.CurrencyNominal;
-                //    worksheet.Cells[$"F{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    worksheet.Cells[currentRow, 6, currentRow, 6 + dynamicCol].Value = "";
+                    worksheet.Cells[currentRow, 6, currentRow, 6 + dynamicCol].Merge = true;
+                    worksheet.Cells[currentRow, 6, currentRow, 6 + dynamicCol].Style.Font.Bold = true;
+                    worksheet.Cells[currentRow, 6, currentRow, 6 + dynamicCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                }
 
-                //    worksheet.Cells[$"G{currentRow}"].Value = item.Nominal;
-                //    worksheet.Cells[$"G{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"G{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                if (item.IsGeneralSummary)
+                {
+                    if (item.IsShowGeneralSummaryLabel)
+                    {
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = item.GeneralSummaryLabel;
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    }
+                    else
+                    {
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "";
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    }
 
-                //    worksheet.Cells[$"H{currentRow}"].Value = item.Total;
-                //    worksheet.Cells[$"H{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"H{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
+                    worksheet.Cells[$"E{currentRow}"].Value = item.Currency?.Code;
+                    worksheet.Cells[$"E{currentRow}"].Merge = true;
+                    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-                //if (item.IsShowSummary)
-                //{
-                //    if (item.IsShowSummaryLabel)
-                //    {
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = item.SummaryLabel;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                //    }
-                //    else
-                //    {
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "";
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                //    }
+                    var writeableCol = 6;
+                    foreach (var subCategoryItem in item.Items)
+                    {
+                        worksheet.Cells[currentRow, writeableCol].Value = subCategoryItem.CurrencyNominal;
+                        worksheet.Cells[currentRow, writeableCol].Merge = true;
+                        worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        writeableCol++;
 
-                //    worksheet.Cells[$"E{currentRow}"].Value = item.Currency?.Code;
-                //    worksheet.Cells[$"E{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        worksheet.Cells[currentRow, writeableCol].Value = subCategoryItem.Nominal;
+                        worksheet.Cells[currentRow, writeableCol].Merge = true;
+                        worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        writeableCol++;
 
-                //    worksheet.Cells[$"F{currentRow}"].Value = item.CurrencyNominal;
-                //    worksheet.Cells[$"F{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        worksheet.Cells[currentRow, writeableCol].Value = subCategoryItem.Actual;
+                        worksheet.Cells[currentRow, writeableCol].Merge = true;
+                        worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        writeableCol++;
+                    }
 
-                //    worksheet.Cells[$"G{currentRow}"].Value = item.Nominal;
-                //    worksheet.Cells[$"G{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"G{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    worksheet.Cells[currentRow, writeableCol].Value = item.DivisionActualTotal;
+                    worksheet.Cells[currentRow, writeableCol].Merge = true;
+                    worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                }
 
-                //    worksheet.Cells[$"H{currentRow}"].Value = item.Total;
-                //    worksheet.Cells[$"H{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"H{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
-
-                //if (item.IsRealCashBalance)
-                //{
-                //    if (item.IsShowRealCashBalanceLabel)
-                //    {
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "Saldo Real Kas";
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                //    }
-                //    else
-                //    {
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "";
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                //    }
-
-                //    worksheet.Cells[$"E{currentRow}"].Value = item.Currency?.Code;
-                //    worksheet.Cells[$"E{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-                //    worksheet.Cells[$"F{currentRow}"].Value = item.CurrencyNominal;
-                //    worksheet.Cells[$"F{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-
-                //    worksheet.Cells[$"G{currentRow}"].Value = item.Nominal;
-                //    worksheet.Cells[$"G{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"G{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-
-                //    worksheet.Cells[$"H{currentRow}"].Value = item.Total;
-                //    worksheet.Cells[$"H{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"H{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
-
-                //if (item.IsShowCurrencyRate)
-                //{
-
-                //    if (item.IsShowRealCashBalanceLabel)
-                //    {
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "Rate";
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                //    }
-                //    else
-                //    {
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "";
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                //    }
-
-                //    worksheet.Cells[$"E{currentRow}"].Value = item.Currency?.Code;
-                //    worksheet.Cells[$"E{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-                //    worksheet.Cells[$"F{currentRow}"].Value = item.Currency == null ? 0 : item.Currency.Rate;
-                //    worksheet.Cells[$"F{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
-
-                //if (item.IsShowRealCashDifference)
-                //{
-                //    if (item.IsShowRealCashDifferenceLabel)
-                //    {
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = item.RealCashDifferenceLabel;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                //    }
-                //    else
-                //    {
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "";
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                //    }
-
-                //    worksheet.Cells[$"E{currentRow}"].Value = item.Currency?.Code;
-                //    worksheet.Cells[$"E{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-                //    worksheet.Cells[$"F{currentRow}"].Value = item.CurrencyNominal;
-                //    worksheet.Cells[$"F{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-
-                //    worksheet.Cells[$"G{currentRow}"].Value = item.Nominal;
-                //    worksheet.Cells[$"G{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"G{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-
-                //    worksheet.Cells[$"H{currentRow}"].Value = item.Total;
-                //    worksheet.Cells[$"H{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"H{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
-
-                //if (item.IsEquivalentDifference)
-                //{
-                //    worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "Total Surplus (Defisit) Equivalent";
-                //    worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-
-                //    worksheet.Cells[$"E{currentRow}"].Value = "IDR";
-                //    worksheet.Cells[$"E{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-                //    worksheet.Cells[$"F{currentRow}"].Value = item.Total;
-                //    worksheet.Cells[$"F{currentRow}"].Merge = true;
-                //    worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                //}
                 currentRow += 1;
             }
         }

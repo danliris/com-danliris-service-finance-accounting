@@ -448,7 +448,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             foreach (var item in differenceSummaries)
             {
                 var currency = _currencies.FirstOrDefault(element => element.Id == item.CurrencyId);
-                result.Add(new BudgetCashflowItemDto(isShowSummaryLabel, "SURPLUS/DEFISIT KAS", currency, item.Nominal, item.CurrencyNominal, item.Actual, true));
+                result.Add(new BudgetCashflowItemDto(isShowSummaryLabel, "TOTAL SURPLUS/DEFISIT KAS", currency, item.Nominal, item.CurrencyNominal, item.Actual, true));
                 isShowSummaryLabel = false;
             }
 
@@ -649,7 +649,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 var divisionUnits = units.Where(element => element.DivisionId == division.Id);
                 foreach (var unit in divisionUnits)
                 {
-                    result.Headers.Add($"UNIT {unit.Code}");
+                    result.Headers.Add($"UNIT {unit.Name}");
                 }
 
                 result.Headers.Add($"DIVISI {division.Name}");
@@ -1031,7 +1031,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                     var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
 
-                    var differenceBalanceItem = new BudgetCashflowDivisionItemDto("SURPLUS/DEFISIT KAS", true, isShowGeneralSummaryLabel, currency);
+                    var differenceBalanceItem = new BudgetCashflowDivisionItemDto("TOTAL SURPLUS/DEFISIT KAS", true, isShowGeneralSummaryLabel, currency);
                     isShowGeneralSummaryLabel = false;
                     var divisionNominalTotal = 0.0;
                     var divisionCurrencyNominalTotal = 0.0;
@@ -1076,7 +1076,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             }
             else
             {
-                var differenceBalanceItem = new BudgetCashflowDivisionItemDto("SURPLUS/DEFISIT KAS", true, isShowGeneralSummaryLabel, null);
+                var differenceBalanceItem = new BudgetCashflowDivisionItemDto("TOTAL SURPLUS/DEFISIT KAS", true, isShowGeneralSummaryLabel, null);
 
                 foreach (var division in divisions)
                 {
