@@ -49,16 +49,161 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
         {
             try
             {
-                //ReadResponse<GarmentPurchasingPphBankExpenditureNoteDataViewModel> read = Service.Read(page, size, order, select, keyword, filter);
-                ReadResponse<GarmentPurchasingPphBankExpenditureNoteDataViewModel> read = new ReadResponse<GarmentPurchasingPphBankExpenditureNoteDataViewModel>();
+                ReadResponse<GarmentPurchasingPphBankExpenditureNoteDataViewModel> read = Service.Read(page, size, order, select, keyword, filter);
 
-
-                List<GarmentPurchasingPphBankExpenditureNoteDataViewModel> dataVM = Mapper.Map<List<GarmentInvoicePaymentViewModel>>(read.Data);
+                List<GarmentPurchasingPphBankExpenditureNoteDataViewModel> dataVM = Mapper.Map<List<GarmentPurchasingPphBankExpenditureNoteDataViewModel>>(read.Data);
 
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                     .Ok(Mapper, dataVM, page, size, read.Count, dataVM.Count, read.Order, read.Selected);
                 return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Post([FromBody] GarmentPurchasingPphBankExpenditureNoteDataViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+
+                ValidateService.Validate(viewModel);
+                GarmentPurchasingPphBankExpenditureNoteDataViewModel model = Mapper.Map<GarmentPurchasingPphBankExpenditureNoteDataViewModel>(viewModel);
+                await Service.CreateAsync(model);
+
+                Dictionary<string, object> Result =
+                       new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                       .Ok();
+                return Created(String.Concat(Request.Path, "/", 0), Result);
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetById([FromRoute] int id)
+        {
+            try
+            {
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                var model = await Service.ReadByIdAsync(id);
+                GarmentPurchasingPphBankExpenditureNoteDataViewModel viewModel = Mapper.Map<GarmentPurchasingPphBankExpenditureNoteDataViewModel>(model);
+
+                if (model == null)
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                        .Fail();
+                    return NotFound(Result);
+                }
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data = viewModel,
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await Service.DeleteAsync(id);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPost("posting/{id}")]
+        public async Task<IActionResult> PostingDocument([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                await Service.PostingDocument(id);
+
+                Dictionary<string, object> Result =
+                       new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                       .Ok();
+                return Created(String.Concat(Request.Path, "/", 0), Result);
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+
+        [HttpPost("print-invoice/{id}")]
+        public async Task<IActionResult> PrintInvoice([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+
+                var dataReport = await Service.PrintInvoice(id);
+
+                Dictionary<string, object> Result =
+                       new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                       .Ok();
+                return Created(String.Concat(Request.Path, "/", 0), Result);
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
             }
             catch (Exception e)
             {

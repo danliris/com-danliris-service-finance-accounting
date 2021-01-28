@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using Newtonsoft.Json;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPphBankExpenditureNote;
+using System.Threading.Tasks;
+using Com.Moonlay.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingPphBankExpenditureNote
 {
@@ -25,6 +28,66 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             _serviceProvider = serviceProvider;
         }
 
+        public Task CreateAsync(GarmentPurchasingPphBankExpenditureNoteDataViewModel model)
+        {
+            model.No = await GenerateNo(model, 7);
+            EntityExtension.FlagForCreate(model, IdentityService.Username, UserAgent);
+            foreach (var item in model.Items)
+            {
+                EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
+            }
+            DbSet.Add(model);
+            return await DbContext.SaveChangesAsync();
+        }
+
+        public Task DeleteAsync(int id)
+        {
+            var existingModel = DbSet
+                        .Include(d => d.Items)
+                        .Single(x => x.Id == id && !x.IsDeleted);
+            GarmentInvoicePaymentModel model = await ReadByIdAsync(id);
+            foreach (var item in model.Items)
+            {
+                EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
+            }
+            EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
+            DbSet.Update(model);
+
+            return await DbContext.SaveChangesAsync();
+        }
+
+        public Task PostingDocument(int id)
+        {
+            var existingModel = DbSet
+                        .Include(d => d.Items)
+                        .Single(x => x.Id == id && !x.IsDeleted);
+            GarmentInvoicePaymentModel model = await ReadByIdAsync(id);
+            foreach (var item in model.Items)
+            {
+                EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
+            }
+            EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
+            DbSet.Update(model);
+
+            return await DbContext.SaveChangesAsync();
+        }
+
+        public List<GarmentPurchasingPphBankExpenditureNoteDataViewModel> PrintInvoice(int id)
+        {
+            var existingModel = DbSet
+                        .Include(d => d.Items)
+                        .Single(x => x.Id == id && !x.IsDeleted);
+            GarmentInvoicePaymentModel model = await ReadByIdAsync(id);
+            foreach (var item in model.Items)
+            {
+                EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
+            }
+            EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
+            DbSet.Update(model);
+
+            return await DbContext.SaveChangesAsync();
+        }
+
         public ReadResponse<GarmentPurchasingPphBankExpenditureNoteDataViewModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _dbContext.GarmentPurchasingPphBankExpenditureNotes.AsQueryable();
@@ -40,10 +103,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .Select(entity => new IndexDto(entity))
+                .Select(entity => new GarmentPurchasingPphBankExpenditureNoteDataViewModel(entity))
                 .ToList();
 
-            return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
+            return new ReadResponse<GarmentPurchasingPphBankExpenditureNoteDataViewModel>(data, count, orderDictionary, new List<string>());
+        }
+
+        public Task<GarmentPurchasingPphBankExpenditureNoteDataViewModel> ReadByIdAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

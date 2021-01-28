@@ -38,7 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
             TotalIncomeTax = model.Items.Sum(element => element.IncomeTaxTotal);
             Currency = model.BankCurrencyCode;
             LastModifiedUtc = model.LastModifiedUtc;
-            IsPosted = model.IsPosted
+            IsPosted = model.IsPosted;
 
 
         }
