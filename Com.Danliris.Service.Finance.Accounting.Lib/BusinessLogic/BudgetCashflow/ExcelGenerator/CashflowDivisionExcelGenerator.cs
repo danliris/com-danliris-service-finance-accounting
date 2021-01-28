@@ -55,7 +55,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var writeableCol = 6;
             foreach (var header in headers)
             {
-                worksheet.Cells[6, writeableCol, 6, writeableCol + 2].Value = headers;
+                worksheet.Cells[6, writeableCol, 6, writeableCol + 2].Value = header;
                 worksheet.Cells[6, writeableCol, 6, writeableCol + 2].Merge = true;
                 worksheet.Cells[6, writeableCol, 6, writeableCol + 2].Style.Font.Size = 14;
                 worksheet.Cells[6, writeableCol, 6, writeableCol + 2].Style.Font.Bold = true;
@@ -366,14 +366,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     worksheet.Cells[$"E{currentRow}"].Value = item.Currency?.Code;
                     worksheet.Cells[$"E{currentRow}"].Merge = true;
                     worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    worksheet.Cells[$"E{currentRow}"].Value = item.Currency == null ? 0 : item.Currency.Rate;
-                    worksheet.Cells[$"E{currentRow}"].Merge = true;
-                    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
 
-                    worksheet.Cells[currentRow, 6, currentRow, 6 + dynamicCol].Value = "";
-                    worksheet.Cells[currentRow, 6, currentRow, 6 + dynamicCol].Merge = true;
-                    worksheet.Cells[currentRow, 6, currentRow, 6 + dynamicCol].Style.Font.Bold = true;
-                    worksheet.Cells[currentRow, 6, currentRow, 6 + dynamicCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    worksheet.Cells[$"F{currentRow}"].Value = item.Currency == null ? 0 : item.Currency.Rate;
+                    worksheet.Cells[$"F{currentRow}"].Merge = true;
+                    worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+
+                    worksheet.Cells[currentRow, 7, currentRow, 6 + dynamicCol].Value = "";
+                    worksheet.Cells[currentRow, 7, currentRow, 6 + dynamicCol].Merge = true;
+                    worksheet.Cells[currentRow, 7, currentRow, 6 + dynamicCol].Style.Font.Bold = true;
+                    worksheet.Cells[currentRow, 7, currentRow, 6 + dynamicCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                 }
 
                 if (item.IsGeneralSummary)
@@ -417,6 +418,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     worksheet.Cells[currentRow, writeableCol].Value = item.DivisionActualTotal;
                     worksheet.Cells[currentRow, writeableCol].Merge = true;
                     worksheet.Cells[currentRow, writeableCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                }
+
+                if (item.IsEquivalent)
+                {
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = item.EquivalentLabel;
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+
+                    worksheet.Cells[$"E{currentRow}"].Value = "IDR";
+                    worksheet.Cells[$"E{currentRow}"].Merge = true;
+                    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                    worksheet.Cells[$"F{currentRow}"].Value = item.Equivalent;
+                    worksheet.Cells[$"F{currentRow}"].Merge = true;
+                    worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+
+                    worksheet.Cells[currentRow, 7, currentRow, dynamicCol].Value = "";
+                    worksheet.Cells[currentRow, 7, currentRow, dynamicCol].Merge = true;
+                    worksheet.Cells[currentRow, 7, currentRow, dynamicCol].Style.Font.Bold = true;
+                    worksheet.Cells[currentRow, 7, currentRow, dynamicCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                 }
 
                 currentRow += 1;
