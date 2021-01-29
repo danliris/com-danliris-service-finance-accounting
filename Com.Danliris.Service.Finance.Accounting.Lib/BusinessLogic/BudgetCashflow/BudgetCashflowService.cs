@@ -1534,7 +1534,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public int UpdateBudgetCashflowSubCategory(int id, CashflowSubCategoryFormDto form)
         {
             var model = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == id);
-            model.SetNewValue(form.CashflowCategoryId, form.IsReadOnly, form.LayoutOrder, form.Name, form.PurchasingCategoryIds, form.ReportType);
+            model.SetNewValue(form.CashflowCategoryId, form.IsReadOnly, form.LayoutOrder, form.Name, form.PurchasingCategoryIds, form.ReportType, form.IsImport);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             _dbContext.BudgetCashflowSubCategories.Update(model);
             return _dbContext.SaveChanges();
