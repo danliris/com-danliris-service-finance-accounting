@@ -68,14 +68,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] GarmentPurchasingPphBankExpenditureNoteDataViewModel viewModel)
+        public async Task<ActionResult> Post([FromBody] FormInsert viewModel)
         {
             try
             {
                 VerifyUser();
 
                 ValidateService.Validate(viewModel);
-                GarmentPurchasingPphBankExpenditureNoteDataViewModel model = Mapper.Map<GarmentPurchasingPphBankExpenditureNoteDataViewModel>(viewModel);
+                FormInsert model = Mapper.Map<FormInsert>(viewModel);
                 await Service.CreateAsync(model);
 
                 Dictionary<string, object> Result =

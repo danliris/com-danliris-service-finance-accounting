@@ -1,6 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasingPphBankExpenditureNoteViewModels;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,18 +21,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IDailyBankTransactionService _serviceDailyBankTransaction;
 
         public GarmentPurchasingPphBankExpenditureNoteService(IServiceProvider serviceProvider)
         {
             _dbContext = serviceProvider.GetService<FinanceDbContext>();
             _identityService = serviceProvider.GetService<IIdentityService>();
             _serviceProvider = serviceProvider;
+            _serviceDailyBankTransaction = serviceProvider.GetService<IDailyBankTransactionService>();
         }
 
-        public Task CreateAsync(GarmentPurchasingPphBankExpenditureNoteDataViewModel model)
+        public async Task CreateAsync(FormInsert model)
         {
-            model.No = await GenerateNo(model, 7);
-            EntityExtension.FlagForCreate(model, IdentityService.Username, UserAgent);
+            var typeDocument = "K";
+            var username = _identityService.Username;
+            model.PphBankInvoiceNo = await _serviceDailyBankTransaction.GetDocumentNo("K",model.Bank.BankCode,username);
+
+
+            EntityExtension.FlagForCreate(model, username, UserAgent);
             foreach (var item in model.Items)
             {
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);

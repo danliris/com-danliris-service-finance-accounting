@@ -68,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return await _DbContext.SaveChangesAsync();
         }
         //TODO : (Enhancement) Get Nomor Urut By bank untuk enhancement API Create PPH Bank, {type = K}, {bankCode = BankCode sesuai dipilih dari depan}, {username = dari identityService}
-        private async Task<string> GetDocumentNo(string type, string bankCode, string username)
+        public async Task<string> GetDocumentNo(string type, string bankCode, string username)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
             {

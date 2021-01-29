@@ -10,7 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
     public interface IGarmentPurchasingPphBankExpenditureNoteService
     {
         ReadResponse<GarmentPurchasingPphBankExpenditureNoteDataViewModel> Read(int page, int size, string order, List<string> select, string keyword, string filter);
-        Task CreateAsync(GarmentPurchasingPphBankExpenditureNoteDataViewModel model);
+        Task CreateAsync(FormInsert model);
         Task<GarmentPurchasingPphBankExpenditureNoteDataViewModel> ReadByIdAsync(int id);
         Task DeleteAsync(int id);
         Task PostingDocument(int id);
