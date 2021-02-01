@@ -52,7 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 Border = Rectangle.RECTANGLE,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_TOP,
-                Rotation = 270
+                Rotation = 90
             };
 
             var cellCenter = new PdfPCell()
