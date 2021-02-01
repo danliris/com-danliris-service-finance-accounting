@@ -140,7 +140,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
             {
                 VerifyUser();
 
-                await Service.DeleteAsync(id);
+                //await Service.DeleteAsync(id);
 
                 return NoContent();
             }
@@ -160,7 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
             {
                 VerifyUser();
 
-                await Service.PostingDocument(id);
+                //await Service.PostingDocument(id);
 
                 Dictionary<string, object> Result =
                        new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
@@ -191,7 +191,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
             {
                 VerifyUser();
 
-                var dataReport = await Service.PrintInvoice(id);
+                //var dataReport = await Service.PrintInvoice(id);
 
                 Dictionary<string, object> Result =
                        new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)

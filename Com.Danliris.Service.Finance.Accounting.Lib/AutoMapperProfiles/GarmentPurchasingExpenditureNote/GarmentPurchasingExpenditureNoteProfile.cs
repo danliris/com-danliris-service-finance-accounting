@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPphBankExpenditureNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasingPphBankExpenditureNoteViewModels;
+using System.Linq;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.GarmentPurchasingExpenditureNote
 {
@@ -11,27 +12,55 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
     {
         public GarmentPurchasingExpenditureNoteProfile()
         {
-            CreateMap<FormInsert,GarmentPurchasingPphBankExpenditureNoteModel>()
-                .ForPath(d=> d.)
-
-                string InvoiceOutNumber { get; set; }
-                DateTimeOffset InvoiceOutDate { get; set; }
-                DateTimeOffset DueDateStart { get; set; }
-                DateTimeOffset DueDateEnd { get; set; }
-                int IncomeTaxId { get; set; }
-                string IncomeTaxName { get; set; }
-                double IncomeTaxRate { get; set; }
-                string AccountBankCOA { get; set; }
-                string AccountBankName { get; set; }
-                string AccountBankNumber { get; set; }
-                string BankAddress { get; set; }
-                string BankCode { get; set; }
-                string BankName { get; set; }
-                string BankCode1 { get; set; }
-                string BankCurrencyCode { get; set; }
-                int BankCurrencyId { get; set; }
-                string BankSwiftCode { get; set; }
-                bool IsPosted { get; set; }
-    }
+            CreateMap<FormInsert, GarmentPurchasingPphBankExpenditureNoteModel>()
+                 .ForPath(d => d.InvoiceOutNumber, opt => opt.MapFrom(s => s.PphBankInvoiceNo))
+                 .ForPath(d => d.InvoiceOutDate, opt => opt.MapFrom(s => s.Date))
+                 .ForPath(d => d.DueDateStart, opt => opt.MapFrom(s => s.DateFrom))
+                 .ForPath(d => d.DueDateEnd, opt => opt.MapFrom(s => s.DateTo))
+                 .ForPath(d => d.IncomeTaxId, opt => opt.MapFrom(s => s.IncomeTax.Id))
+                 .ForPath(d => d.IncomeTaxName, opt => opt.MapFrom(s => s.IncomeTax.Name))
+                 .ForPath(d => d.IncomeTaxRate, opt => opt.MapFrom(s => s.IncomeTax.Rate))
+                 .ForPath(d => d.AccountBankCOA, opt => opt.MapFrom(s => s.Bank.AccountCOA))
+                 .ForPath(d => d.AccountBankName, opt => opt.MapFrom(s => s.Bank.AccountName))
+                 .ForPath(d => d.AccountBankNumber, opt => opt.MapFrom(s => s.Bank.AccountNumber))
+                 .ForPath(d => d.BankAddress, opt => opt.MapFrom(s => s.Bank.BankAddress))
+                 .ForPath(d => d.BankCode, opt => opt.MapFrom(s => s.Bank.Code))
+                 .ForPath(d => d.BankName, opt => opt.MapFrom(s => s.Bank.BankName))
+                 .ForPath(d => d.BankCode1, opt => opt.MapFrom(s => s.Bank.BankCode))
+                 .ForPath(d => d.BankCurrencyCode, opt => opt.MapFrom(s => s.Bank.Currency.Code))
+                 .ForPath(d => d.BankCurrencyId, opt => opt.MapFrom(s => s.Bank.Currency.Id))
+                 .ForPath(d => d.BankSwiftCode, opt => opt.MapFrom(s => s.Bank.SwiftCode))
+                 .ForPath(d => d.IsPosted, opt => opt.MapFrom(s => false))
+                 .ForPath(d=>  d.Items, opt => opt.MapFrom(s=> s.PPHBankExpenditureNoteItems.Select(item => new GarmentPurchasingPphBankExpenditureNoteItemModel { 
+                    Date = item.INDate,
+                    DueDate = item.INDueDate,
+                    CurrencyCode = item.CurrencyCode,
+                    CurrencyId = item.CurrencyId,
+                    IncomeTaxId = s.IncomeTax.Id,
+                    IncomeTaxName = s.IncomeTax.Name,
+                    IncomeTaxRate = Convert.ToDouble(s.IncomeTax.Rate),
+                    IncomeTaxTotal = Convert.ToDouble(s.IncomeTax.Rate),
+                    SupplierId = item.SupplierId,
+                    SupplierName = item.SupplierName,
+                    InternalNotesId = item.Id,
+                    InternalNotesNo = item.INNo,
+                    PaymentDueDays = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentDueDays,
+                    PaymentMethod = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentMethod,
+                    PaymentType = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentType,
+                    TotalPaid = item.Items.Sum(j=> j.TotalAmount),
+                    GarmentPurchasingPphBankExpenditureNoteInvoices = item.Items.Select(invoice => new GarmentPurchasingPphBankExpenditureNoteInvoiceModel
+                    {
+                        InvoicesDate = invoice.InvoiceDate,
+                        InvoicesNo = invoice.InvoiceNo,
+                        InvoicesId = invoice.InvoiceId,
+                        ProductCategory = invoice.ProductCode,
+                        ProductId = invoice.ProductId,
+                        ProductName = invoice.ProductName,
+                        Total = Convert.ToDecimal(invoice.TotalAmount)
+                    })
+                    .ToList()
+                 })))
+                 .ReverseMap();
+        }
     }
 }

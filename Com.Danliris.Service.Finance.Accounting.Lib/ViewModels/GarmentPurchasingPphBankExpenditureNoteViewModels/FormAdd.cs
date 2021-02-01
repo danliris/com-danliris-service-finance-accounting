@@ -9,6 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public string INNo { get; set; }
         public string Remark { get; set; }
         public DateTimeOffset INDate { get; set; }
+        public DateTimeOffset INDueDate { get; set; }
         public int CurrencyId { get; set; }
         public string CurrencyCode { get; set; }
         public int CurrencyRate { get; set; }
@@ -53,6 +54,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public string DeletedBy { get; set; }
         public string DeletedAgent { get; set; }
         public int Id { get; set; }
+        public string ProductName { get; set; }
+        public int ProductId { get; set; }
+        public string ProductCode { get; set; }
     }
 
     public class Detail

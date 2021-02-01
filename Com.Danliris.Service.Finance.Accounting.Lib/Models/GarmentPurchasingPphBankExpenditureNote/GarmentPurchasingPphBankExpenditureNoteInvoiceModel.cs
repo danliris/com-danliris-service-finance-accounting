@@ -8,7 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPp
 {
     public class GarmentPurchasingPphBankExpenditureNoteInvoiceModel: StandardEntity
     {
-        public string InvoicesNo { get; private set; }
+        public string InvoicesNo { get; set; }
         public DateTimeOffset InvoicesDate { get; set; }
         public long InvoicesId { get; set; }
         public string ProductName { get; set; }

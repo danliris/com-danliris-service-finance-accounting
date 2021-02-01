@@ -11,7 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public DateTimeOffset DateFrom { get; set; }
         public DateTimeOffset DateTo { get; set; }
         public IncomeTax IncomeTax { get; set; }
-        public ICollection<FormAdd> UnitPaymentOrders { get; set; }
+        public ICollection<FormAdd> PPHBankExpenditureNoteItems { get; set; }
         public string PphBankInvoiceNo { get; set; }
     }
 
