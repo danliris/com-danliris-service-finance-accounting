@@ -495,7 +495,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
 
             service
               .Setup(s => s.GetBudgetCashflowDivision(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
-              .ReturnsAsync(new BudgetCashflowDivision(new List<string>(), new List<BudgetCashflowItemDto>()));
+              .ReturnsAsync(new BudgetCashflowDivision(new List<string>(), new List<BudgetCashflowDivisionItemDto>()));
 
 
             serviceProviderMock
