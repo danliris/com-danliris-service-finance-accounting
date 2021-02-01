@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition.Reports;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierApproval;
@@ -142,7 +143,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRealizationWithPOService, VBRealizationWithPOService>()
                 .AddTransient<IVBRealizationService, VBRealizationService>()
                 .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>()
-                .AddTransient<IBudgetCashflowService, BudgetCashflowService>();
+                .AddTransient<IBudgetCashflowService, BudgetCashflowService>()
+                .AddTransient<IDPPVATBankExpenditureNoteService, DPPVATBankExpenditureNoteService>();
         }
 
 

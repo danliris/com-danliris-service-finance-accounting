@@ -6,6 +6,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBVerif
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -258,6 +259,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
                 throw new NotImplementedException();
             }
 
+            public Task<int> ClearanceVBPost(List<ClearancePostId> listId)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<int> ClearanceVBPost(ClearanceFormDto form)
+            {
+                throw new NotImplementedException();
+            }
+
             public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
             {
                 throw new NotImplementedException();
@@ -291,6 +302,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             }
 
             public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, VBRealizationPosition position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<VBRequestDocumentModel> ReadByIdAsync(long id)
             {
                 throw new NotImplementedException();
             }
