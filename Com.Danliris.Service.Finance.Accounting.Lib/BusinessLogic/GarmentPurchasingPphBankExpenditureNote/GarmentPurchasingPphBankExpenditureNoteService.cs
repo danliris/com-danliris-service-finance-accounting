@@ -39,8 +39,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         {
             var typeDocument = "K";
             var username = _identityService.Username;
-            //model.PphBankInvoiceNo = await _serviceDailyBankTransaction.GetDocumentNo("K", model.Bank.BankCode, username);
-            model.PphBankInvoiceNo = "test";
+            model.PphBankInvoiceNo = await _serviceDailyBankTransaction.GetDocumentNo("K", model.Bank.BankCode, username);
+            //model.PphBankInvoiceNo = "test";
 
             var mapper = _mapper.Map<GarmentPurchasingPphBankExpenditureNoteModel>(model);
 
