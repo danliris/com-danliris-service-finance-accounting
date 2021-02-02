@@ -798,9 +798,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                 var divisionActual = 0.0;
                                 foreach (var divisionUnit in divisionUnits)
                                 {
-                                    var nominal = summaryByTypeAndCashflowType.Items.Sum(element => element.CashflowUnit.Nominal);
-                                    var currencyNominal = summaryByTypeAndCashflowType.Items.Sum(element => element.CashflowUnit.CurrencyNominal);
-                                    var actual = summaryByTypeAndCashflowType.Items.Sum(element => element.CashflowUnit.Total);
+                                    var nominal = summaryByTypeAndCashflowType.Items.Where(unitItem => unitItem.Unit != null && unitItem.Unit.Id == divisionUnit.Id).Sum(element => element.CashflowUnit.Nominal);
+                                    var currencyNominal = summaryByTypeAndCashflowType.Items.Where(unitItem => unitItem.Unit != null && unitItem.Unit.Id == divisionUnit.Id).Sum(element => element.CashflowUnit.CurrencyNominal);
+                                    var actual = summaryByTypeAndCashflowType.Items.Where(unitItem => unitItem.Unit != null && unitItem.Unit.Id == divisionUnit.Id).Sum(element => element.CashflowUnit.Total);
 
                                     typeSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, nominal, currencyNominal, actual));
 
@@ -1534,7 +1534,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public int UpdateBudgetCashflowSubCategory(int id, CashflowSubCategoryFormDto form)
         {
             var model = _dbContext.BudgetCashflowSubCategories.FirstOrDefault(entity => entity.Id == id);
-            model.SetNewValue(form.CashflowCategoryId, form.IsReadOnly, form.LayoutOrder, form.Name, form.PurchasingCategoryIds, form.ReportType);
+            model.SetNewValue(form.CashflowCategoryId, form.IsReadOnly, form.LayoutOrder, form.Name, form.PurchasingCategoryIds, form.ReportType, form.IsImport);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             _dbContext.BudgetCashflowSubCategories.Update(model);
             return _dbContext.SaveChanges();
