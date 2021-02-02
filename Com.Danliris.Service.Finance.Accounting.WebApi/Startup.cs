@@ -145,8 +145,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRealizationService, VBRealizationService>()
                 .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>()
                 .AddTransient<IBudgetCashflowService, BudgetCashflowService>()
-                .AddTransient<IDPPVATBankExpenditureNoteService, DPPVATBankExpenditureNoteService>();
-                .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>()
+                .AddTransient<IDPPVATBankExpenditureNoteService, DPPVATBankExpenditureNoteService>()
+                .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>();
         }
 
 
