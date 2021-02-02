@@ -10,7 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public DPPVATBankExpenditureNoteDto(DPPVATBankExpenditureNoteModel model, List<DPPVATBankExpenditureNoteItemModel> items, List<DPPVATBankExpenditureNoteDetailModel> details)
         {
             Id = model.Id;
-            Bank = new AccountBankDto(model.BankAccountId, model.BankAccountingCode, model.BankAccountNumber, model.BankName);
+            Bank = new AccountBankDto(model.BankAccountId, model.BankAccountingCode, model.BankAccountNumber, model.BankName, model.BankCurrencyCode, model.BankCurrencyId, model.BankCurrencyRate);
             Currency = new CurrencyDto(model.CurrencyCode, model.CurrencyId, model.CurrencyRate);
             Supplier = new SupplierDto(model.SupplierId, model.SupplierName, model.IsImportSupplier);
             BGCheckNo = model.BGCheckNo;
