@@ -203,7 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         //    return result;
         //}
 
-        private async Task<List<BudgetCashflowByCategoryDto>> GetCurrencyByCategoryAndDivisionId(int unitId, int divisionId, List<int> categoryIds)
+        private async Task<List<DebtDispositionDto>> GetDebtBudgetCashflow(int unitId, int divisionId, int year, int month, List<int> categoryIds)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
             {
@@ -211,16 +211,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             };
 
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"budget-cashflows/best-case/by-category?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}";
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}";
             var response = await http.GetAsync(uri);
 
-            var result = new BaseResponse<List<BudgetCashflowByCategoryDto>>();
-            result.data = new List<BudgetCashflowByCategoryDto>();
+            var result = new BaseResponse<List<DebtDispositionDto>>();
+            result.data = new List<DebtDispositionDto>();
 
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<BaseResponse<List<BudgetCashflowByCategoryDto>>>(responseContent, jsonSerializerSettings);
+                result = JsonConvert.DeserializeObject<BaseResponse<List<DebtDispositionDto>>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
+        }
+
+        private async Task<List<DebtDispositionDto>> GetSummaryBudgetCashflow(int unitId, int divisionId, int year, int month, List<int> categoryIds)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/budget-cashflow-summary?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<List<DebtDispositionDto>>();
+            result.data = new List<DebtDispositionDto>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<List<DebtDispositionDto>>>(responseContent, jsonSerializerSettings);
             }
             return result.data;
         }
@@ -260,6 +282,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 .Where(entity => entity.UnitId == unitId && cashflowSubCategoryIds.Contains(entity.BudgetCashflowSubCategoryId) && entity.Month == month && entity.Year == year)
                 .ToList();
 
+            var purchasingCategoryIds = _dbContext.BudgetCashflowSubCategories.Where(entity => !string.IsNullOrWhiteSpace(entity.PurchasingCategoryIds)).Select(entity => JsonConvert.DeserializeObject<List<int>>(entity.PurchasingCategoryIds)).SelectMany(purchasingCategoryId => purchasingCategoryId).ToList();
+            var debtSummaries = await GetDebtBudgetCashflow(unitId, 0, year, month, purchasingCategoryIds);
+            var debtDispositionSummaries = await GetSummaryBudgetCashflow(unitId, 0, year, month, purchasingCategoryIds);
+
             var summaries = new List<SummaryPerType>();
             var categories = _dbContext.BudgetCashflowCategories.ToList();
             var cashflowSubCategories = _dbContext.BudgetCashflowSubCategories.ToList();
@@ -293,13 +319,58 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                     //var selectedCashflowUnits = await GetCurrencyByCategoryAndDivisionId(unitId, 0, categoryIds);
                                     var selectedCashflowUnits = new List<BudgetCashflowByCategoryDto>();
 
-                                    if (selectedCashflowUnits != null && selectedCashflowUnits.Count > 0)
-                                        foreach (var cashflowUnit in selectedCashflowUnits)
-                                        {
-                                            summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel(0, unitId, 0, date, cashflowUnit.CurrencyId, cashflowUnit.CurrencyNominal, cashflowUnit.Nominal, cashflowUnit.ActualNominal)));
-                                        }
+                                    if (cashflowSubCategory.ReportType == ReportType.DebtAndDispositionSummary)
+                                    {
+                                        var subCategoryPurchasingCategoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
+                                        var selectedDebtDispositionSummaries = debtDispositionSummaries
+                                            .Where(element => subCategoryPurchasingCategoryIds.Contains(element.GetCategoryId()))
+                                            .GroupBy(element => element.CurrencyId)
+                                            .Select(element => new
+                                            {
+                                                CurrencyCode = element.FirstOrDefault().CurrencyCode,
+                                                Total = element.Sum(s => s.Total),
+                                                CurrencyRate = element.FirstOrDefault().CurrencyRate,
+                                                CurrencyId = int.Parse(element.Key)
+                                            })
+                                            .ToList();
+                                        if (selectedDebtDispositionSummaries != null && selectedDebtDispositionSummaries.Count > 0)
+                                            foreach (var selectedDebtDispositionSummary in selectedDebtDispositionSummaries)
+                                            {
+                                                var currencyNominal = selectedDebtDispositionSummary.CurrencyCode == "IDR" ? 0 : selectedDebtDispositionSummary.Total / selectedDebtDispositionSummary.CurrencyRate;
+                                                var nominal = selectedDebtDispositionSummary.CurrencyCode == "IDR" ? selectedDebtDispositionSummary.Total : 0;
+                                                summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel(0, unitId, 0, date, selectedDebtDispositionSummary.CurrencyId, currencyNominal, nominal, selectedDebtDispositionSummary.Total)));
+                                            }
+                                        else
+                                            summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
+                                    }
+                                    else if (cashflowSubCategory.ReportType == ReportType.PurchasingReport)
+                                    {
+                                        var subCategoryPurchasingCategoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
+                                        var selectedDebtSummaries = debtSummaries
+                                            .Where(element => subCategoryPurchasingCategoryIds.Contains(element.GetCategoryId()))
+                                            .GroupBy(element => element.CurrencyId)
+                                            .Select(element => new
+                                            {
+                                                CurrencyCode = element.FirstOrDefault().CurrencyCode,
+                                                Total = element.Sum(s => s.Total),
+                                                CurrencyRate = element.FirstOrDefault().CurrencyRate,
+                                                CurrencyId = int.Parse(element.Key)
+                                            })
+                                            .ToList();
+                                        if (selectedDebtSummaries != null && selectedDebtSummaries.Count > 0)
+                                            foreach (var selectedDebtSummary in selectedDebtSummaries)
+                                            {
+                                                var currencyNominal = selectedDebtSummary.CurrencyCode == "IDR" ? 0 : selectedDebtSummary.Total / selectedDebtSummary.CurrencyRate;
+                                                var nominal = selectedDebtSummary.CurrencyCode == "IDR" ? selectedDebtSummary.Total : 0;
+                                                summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel(0, unitId, 0, date, selectedDebtSummary.CurrencyId, currencyNominal, nominal, selectedDebtSummary.Total)));
+                                            }
+                                        else
+                                            summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
+                                    }
                                     else
+                                    {
                                         summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
+                                    }
                                 }
                                 else
                                 {
