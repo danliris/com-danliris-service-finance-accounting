@@ -2,6 +2,11 @@
 {
     public class CurrencyDto
     {
+        public CurrencyDto()
+        {
+
+        }
+
         public CurrencyDto(string currencyCode, int currencyId, double currencyRate)
         {
             Id = currencyId;

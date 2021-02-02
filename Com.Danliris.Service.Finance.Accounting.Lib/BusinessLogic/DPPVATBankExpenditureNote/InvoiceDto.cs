@@ -5,6 +5,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 {
     public class InvoiceDto
     {
+        public InvoiceDto()
+        {
+                
+        }
+
         public InvoiceDto(DPPVATBankExpenditureNoteDetailModel detail)
         {
             Id = detail.InvoiceId;
