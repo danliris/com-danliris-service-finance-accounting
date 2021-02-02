@@ -30,7 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public async Task<int> Create(FormDto form)
         {
             var documentNo = await GetDocumentNo("K", form.Bank.BankCode, _identityService.Username);
-            var model = new DPPVATBankExpenditureNoteModel(documentNo, form.Bank.Id, form.Bank.AccountNumber, form.Bank.BankName, form.Bank.BankCode, form.Currency.Id, form.Currency.Code, form.Currency.Rate, form.Supplier.Id, form.Supplier.Name, form.Supplier.IsImport, form.BGCheckNo, form.Amount, form.Date);
+            var model = new DPPVATBankExpenditureNoteModel(documentNo, form.Bank.Id, form.Bank.AccountNumber, form.Bank.BankName, form.Bank.BankCode, form.Currency.Id, form.Currency.Code, form.Currency.Rate, form.Supplier.Id, form.Supplier.Name, form.Supplier.IsImport, form.BGCheckNo, form.Amount, form.Date, form.Bank.Currency.Code, form.Bank.Currency.Id, form.Bank.Currency.Rate);
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.DPPVATBankExpenditureNotes.Add(model);
             _dbContext.SaveChanges();
@@ -139,7 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 .Skip((page - 1) * size)
                 .Take(size)
                 .ToList()
-                .Select(entity => new DPPVATBankExpenditureNoteIndexDto(entity.Id, entity.DocumentNo, entity.Date, entity.BankName, entity.BankAccountNumber, itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Sum(item => item.TotalAmount), entity.CurrencyCode, string.Join("\n", itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Select(item => $"- {item.InternalNoteNo}").ToList())))
+                .Select(entity => new DPPVATBankExpenditureNoteIndexDto(entity.Id, entity.DocumentNo, entity.Date, entity.BankName, entity.BankAccountNumber, itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Sum(item => item.TotalAmount), entity.CurrencyCode, string.Join("\n", itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Select(item => $"- {item.InternalNoteNo}").ToList()), entity.SupplierName))
                 .ToList();
 
             return new ReadResponse<DPPVATBankExpenditureNoteIndexDto>(data, count, orderDictionary, new List<string>());
