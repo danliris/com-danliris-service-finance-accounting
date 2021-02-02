@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingPphBankExpenditureNote.PdfGenerator;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentPurchasingPphBankExpenditureNote
 {
@@ -75,8 +76,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
                 VerifyUser();
 
                 ValidateService.Validate(viewModel);
-                FormInsert model = Mapper.Map<FormInsert>(viewModel);
-                await Service.CreateAsync(model);
+                //FormInsert model = Mapper.Map<FormInsert>(viewModel);
+                await Service.CreateAsync(viewModel);
 
                 Dictionary<string, object> Result =
                        new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
@@ -99,14 +100,54 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
             }
         }
 
-        [HttpGet("{Id}")]
-        public async Task<IActionResult> GetById([FromRoute] int id)
+        [HttpGet("pdf/{Id}")]
+        public async Task<IActionResult> DownloadPdfById([FromRoute] int id)
         {
             try
             {
                 var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
                 var model = await Service.ReadByIdAsync(id);
-                GarmentPurchasingPphBankExpenditureNoteDataViewModel viewModel = Mapper.Map<GarmentPurchasingPphBankExpenditureNoteDataViewModel>(model);
+                //GarmentPurchasingPphBankExpenditureNoteDataViewModel viewModel = Mapper.Map<GarmentPurchasingPphBankExpenditureNoteDataViewModel>(model);
+
+                var stream = GarmentPurchasingPphBankExpenditureNotePdfGenerator.GeneratePdfTemplate(model, IdentityService.TimezoneOffset);
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = "Garment Purchasing PPH Bank.pdf"
+                };
+
+                //if (model == null)
+                //{
+                //    Dictionary<string, object> Result =
+                //        new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                //        .Fail();
+                //    return NotFound(Result);
+                //}
+
+                //return Ok(new
+                //{
+                //    apiVersion = ApiVersion,
+                //    data = viewModel,
+                //    message = General.OK_MESSAGE,
+                //    statusCode = General.OK_STATUS_CODE
+                //});
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetById([FromRoute] int id)
+        {
+            try
+            {
+                
+                var model = await Service.ReadByIdAsync(id);
+                
 
                 if (model == null)
                 {
@@ -119,7 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
-                    data = viewModel,
+                    data = model,
                     message = General.OK_MESSAGE,
                     statusCode = General.OK_STATUS_CODE
                 });
@@ -140,7 +181,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
             {
                 VerifyUser();
 
-                //await Service.DeleteAsync(id);
+                await Service.DeleteAsync(id);
 
                 return NoContent();
             }
@@ -160,7 +201,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
             {
                 VerifyUser();
 
-                //await Service.PostingDocument(id);
+                await Service.PostingDocument(id);
 
                 Dictionary<string, object> Result =
                        new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)

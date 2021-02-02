@@ -7,9 +7,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
     public class FormAdd
     {
         public string INNo { get; set; }
+        public int INId { get; set; }
         public string Remark { get; set; }
-        public DateTimeOffset INDate { get; set; }
-        public DateTimeOffset INDueDate { get; set; }
+        public DateTimeOffset? INDate { get; set; }
+        public DateTimeOffset? INDueDate { get; set; }
         public int CurrencyId { get; set; }
         public string CurrencyCode { get; set; }
         public int CurrencyRate { get; set; }
@@ -17,20 +18,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public string SupplierCode { get; set; }
         public string SupplierName { get; set; }
         public List<Item> Items { get; set; }
+        public GarmentPurchasingInvoiceInfoDto GarmentInvoice { get; set; }
+        //public List<Detail> DataView { get; set; }
         public bool IsCreatedVB { get; set; }
         public int Position { get; set; }
         public string UId { get; set; }
-        public bool Active { get; set; }
-        public DateTimeOffset CreatedUtc { get; set; }
-        public string CreatedBy { get; set; }
-        public string CreatedAgent { get; set; }
-        public DateTimeOffset LastModifiedUtc { get; set; }
-        public string LastModifiedBy { get; set; }
-        public string LastModifiedAgent { get; set; }
-        public bool IsDeleted { get; set; }
-        public DateTimeOffset DeletedUtc { get; set; }
-        public string DeletedBy { get; set; }
-        public string DeletedAgent { get; set; }
+        //public bool Active { get; set; }
+        //public DateTimeOffset CreatedUtc { get; set; }
+        //public string CreatedBy { get; set; }
+        //public string CreatedAgent { get; set; }
+        //public DateTimeOffset LastModifiedUtc { get; set; }
+        //public string LastModifiedBy { get; set; }
+        //public string LastModifiedAgent { get; set; }
+        //public bool IsDeleted { get; set; }
+        //public DateTimeOffset DeletedUtc { get; set; }
+        //public string DeletedBy { get; set; }
+        //public string DeletedAgent { get; set; }
         public int Id { get; set; }
     }
 
@@ -39,23 +42,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public int InvoiceId { get; set; }
         public string InvoiceNo { get; set; }
         public DateTimeOffset InvoiceDate { get; set; }
-        public int TotalAmount { get; set; }
+        public double? TotalAmount { get; set; }
         public List<Detail> Details { get; set; }
-        public int GarmentINId { get; set; }
-        public bool Active { get; set; }
-        public DateTimeOffset CreatedUtc { get; set; }
-        public string CreatedBy { get; set; }
-        public string CreatedAgent { get; set; }
-        public DateTimeOffset LastModifiedUtc { get; set; }
-        public string LastModifiedBy { get; set; }
-        public string LastModifiedAgent { get; set; }
-        public bool IsDeleted { get; set; }
-        public DateTimeOffset DeletedUtc { get; set; }
-        public string DeletedBy { get; set; }
-        public string DeletedAgent { get; set; }
+        //public int GarmentINId { get; set; }
+        //public bool Active { get; set; }
+        //public DateTimeOffset CreatedUtc { get; set; }
+        //public string CreatedBy { get; set; }
+        //public string CreatedAgent { get; set; }
+        //public DateTimeOffset LastModifiedUtc { get; set; }
+        //public string LastModifiedBy { get; set; }
+        //public string LastModifiedAgent { get; set; }
+        //public bool IsDeleted { get; set; }
+        //public DateTimeOffset DeletedUtc { get; set; }
+        //public string DeletedBy { get; set; }
+        //public string DeletedAgent { get; set; }
         public int Id { get; set; }
         public string ProductName { get; set; }
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         public string ProductCode { get; set; }
     }
 
@@ -82,20 +85,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public string UnitName { get; set; }
         public int UOMId { get; set; }
         public string UOMUnit { get; set; }
-        public int PricePerDealUnit { get; set; }
-        public int PriceTotal { get; set; }
-        public int GarmentItemINId { get; set; }
-        public bool Active { get; set; }
-        public DateTimeOffset CreatedUtc { get; set; }
-        public string CreatedBy { get; set; }
-        public string CreatedAgent { get; set; }
-        public DateTimeOffset LastModifiedUtc { get; set; }
-        public string LastModifiedBy { get; set; }
-        public string LastModifiedAgent { get; set; }
-        public bool IsDeleted { get; set; }
-        public DateTimeOffset DeletedUtc { get; set; }
-        public string DeletedBy { get; set; }
-        public string DeletedAgent { get; set; }
-        public int Id { get; set; }
+        public decimal PricePerDealUnit { get; set; }
+        public decimal PriceTotal { get; set; }
+        public int InvoiceId { get; set; }
+        public DateTimeOffset InvoiceDate { get; set; }
+        public string InvoiceNo { get; set; }
+        public double InvoiceTotalAmount { get; set; }
+
+        //public int? GarmentItemINId { get; set; }
+        //public bool Active { get; set; }
+        //public DateTimeOffset? CreatedUtc { get; set; }
+        //public string CreatedBy { get; set; }
+        //public string CreatedAgent { get; set; }
+        //public DateTimeOffset? LastModifiedUtc { get; set; }
+        //public string LastModifiedBy { get; set; }
+        //public string LastModifiedAgent { get; set; }
+        //public bool IsDeleted { get; set; }
+        //public DateTimeOffset? DeletedUtc { get; set; }
+        //public string DeletedBy { get; set; }
+        //public string DeletedAgent { get; set; }
+        public int? Id { get; set; }
     }
 }

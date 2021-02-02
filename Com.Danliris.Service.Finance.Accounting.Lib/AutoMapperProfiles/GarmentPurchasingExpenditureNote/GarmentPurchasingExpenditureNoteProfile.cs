@@ -31,35 +31,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                  .ForPath(d => d.BankCurrencyId, opt => opt.MapFrom(s => s.Bank.Currency.Id))
                  .ForPath(d => d.BankSwiftCode, opt => opt.MapFrom(s => s.Bank.SwiftCode))
                  .ForPath(d => d.IsPosted, opt => opt.MapFrom(s => false))
-                 .ForPath(d=>  d.Items, opt => opt.MapFrom(s=> s.PPHBankExpenditureNoteItems.Select(item => new GarmentPurchasingPphBankExpenditureNoteItemModel { 
-                    Date = item.INDate,
-                    DueDate = item.INDueDate,
-                    CurrencyCode = item.CurrencyCode,
-                    CurrencyId = item.CurrencyId,
-                    IncomeTaxId = s.IncomeTax.Id,
-                    IncomeTaxName = s.IncomeTax.Name,
-                    IncomeTaxRate = Convert.ToDouble(s.IncomeTax.Rate),
-                    IncomeTaxTotal = Convert.ToDouble(s.IncomeTax.Rate),
-                    SupplierId = item.SupplierId,
-                    SupplierName = item.SupplierName,
-                    InternalNotesId = item.Id,
-                    InternalNotesNo = item.INNo,
-                    PaymentDueDays = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentDueDays,
-                    PaymentMethod = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentMethod,
-                    PaymentType = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentType,
-                    TotalPaid = item.Items.Sum(j=> j.TotalAmount),
-                    GarmentPurchasingPphBankExpenditureNoteInvoices = item.Items.Select(invoice => new GarmentPurchasingPphBankExpenditureNoteInvoiceModel
-                    {
-                        InvoicesDate = invoice.InvoiceDate,
-                        InvoicesNo = invoice.InvoiceNo,
-                        InvoicesId = invoice.InvoiceId,
-                        ProductCategory = invoice.ProductCode,
-                        ProductId = invoice.ProductId,
-                        ProductName = invoice.ProductName,
-                        Total = Convert.ToDecimal(invoice.TotalAmount)
-                    })
-                    .ToList()
-                 })))
+                 .ForPath(d => d.Items, opt => opt.MapFrom(s => s.PPHBankExpenditureNoteItems.Select(item => new GarmentPurchasingPphBankExpenditureNoteItemModel
+                 {
+                     Date = item.INDate.GetValueOrDefault(),
+                     DueDate = item.INDueDate.GetValueOrDefault(),
+                     CurrencyCode = item.CurrencyCode,
+                     CurrencyId = item.CurrencyId,
+                     IncomeTaxId = item.GarmentInvoice == null ? 0 : (int)item.GarmentInvoice.IncomeTaxId,
+                     IncomeTaxName = item.GarmentInvoice == null ? string.Empty : item.GarmentInvoice.IncomeTaxName,
+                     IncomeTaxRate = item.GarmentInvoice == null? 0 : item.GarmentInvoice.IncomeTaxRate,
+                     IncomeTaxTotal = Convert.ToDouble(s.IncomeTax.Rate),
+                     SupplierId = item.SupplierId,
+                     SupplierName = item.SupplierName,
+                     InternalNotesId = item.INId,
+                     InternalNotesNo = item.INNo,
+                     PaymentDueDays = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentDueDays,
+                     PaymentMethod = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentMethod,
+                     PaymentType = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentType,
+                     TotalPaid = item.Items.Sum(j => j.TotalAmount.GetValueOrDefault()),
+                     GarmentPurchasingPphBankExpenditureNoteInvoices = item.Items.SelectMany(t => t.Details).Select(invoice => new GarmentPurchasingPphBankExpenditureNoteInvoiceModel
+                     {
+                         InvoicesDate = invoice.InvoiceDate,
+                         InvoicesNo = invoice.InvoiceNo,
+                         InvoicesId = invoice.InvoiceId,
+                         ProductCategory = invoice.ProductCode,
+                         ProductId = invoice.ProductId,
+                         ProductName = invoice.ProductName,
+                         Total = Convert.ToDecimal(invoice.PriceTotal),
+
+                     })
+                     .ToList()
+                 })
+                 ))
                  .ReverseMap();
         }
     }
