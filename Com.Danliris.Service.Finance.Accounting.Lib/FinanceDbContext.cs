@@ -1,6 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePayment;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
@@ -87,6 +88,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<BudgetCashflowUnitModel> BudgetCashflowUnits { get; set; }
         public DbSet<InitialCashBalanceModel> InitialCashBalances { get; set; }
         public DbSet<RealCashBalanceModel> RealCashBalances { get; set; }
+        
+        public DbSet<DPPVATBankExpenditureNoteModel> DPPVATBankExpenditureNotes { get; set; }
+        public DbSet<DPPVATBankExpenditureNoteItemModel> DPPVATBankExpenditureNoteItems { get; set; }
+        public DbSet<DPPVATBankExpenditureNoteDetailModel> DPPVATBankExpenditureNoteDetails { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
