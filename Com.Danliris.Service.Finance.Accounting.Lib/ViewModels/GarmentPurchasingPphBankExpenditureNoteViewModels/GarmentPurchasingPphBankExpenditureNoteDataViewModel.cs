@@ -64,7 +64,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
             InvoiceOutNo = model.GarmentPurchasingPphBankExpenditureNote.InvoiceOutNumber;
             InvoucieOutDate = model.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate;
             INNo = model.InternalNotesNo;
-            TotalDpp = model.AmountDPP;
+            TotalDpp = Convert.ToDouble(model.GarmentPurchasingPphBankExpenditureNoteInvoices.Sum(t=> t.Total));
         }
     }
 }

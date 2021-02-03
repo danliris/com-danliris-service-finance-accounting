@@ -15,6 +15,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPp
         public long ProductId { get; set; }
         public string ProductCategory { get; set; }
         public decimal Total { get; set; }
+        public string UnitId { get; set; }
+        public string UnitName { get; set; }
+        public string UnitCode { get; set; }
+        public string PaymentBill { get; set; }
+        public string BillNo { get; set; }
+        public string DoNo { get; set; }
         public virtual int GarmentPurchasingPphBankExpenditureNoteItemId { get; set; }
         [ForeignKey("GarmentPurchasingPphBankExpenditureNoteItemId")]
         public virtual GarmentPurchasingPphBankExpenditureNoteItemModel GarmentPurchasingPphBankExpenditureNoteItem { get; set; }

@@ -92,6 +92,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public DateTimeOffset InvoiceDate { get; set; }
         public string InvoiceNo { get; set; }
         public double InvoiceTotalAmount { get; set; }
+        public DeliveryOrderInfo GarmentDeliveryOrder { get; set; }
 
         //public int? GarmentItemINId { get; set; }
         //public bool Active { get; set; }
@@ -106,5 +107,45 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         //public string DeletedBy { get; set; }
         //public string DeletedAgent { get; set; }
         public int? Id { get; set; }
+    }
+    public class DeliveryOrderInfo
+    {
+        public int Id { get; set; }
+        public long CustomsId { get; set; }
+        public string DONo { get; set; }
+        public DateTimeOffset DODate { get; set; }
+        public DateTimeOffset ArrivalDate { get; set; }
+
+        /* Supplier */
+        public long SupplierId { get; set; }
+        public string SupplierCode { get; set; }
+        public string SupplierName { get; set; }
+
+        public string ShipmentType { get; set; }
+        public string ShipmentNo { get; set; }
+
+        public string Remark { get; set; }
+        public bool IsClosed { get; set; }
+        public bool IsCustoms { get; set; }
+        public bool IsInvoice { get; set; }
+        public string InternNo { get; set; }
+        public string BillNo { get; set; }
+        public string PaymentBill { get; set; }
+        public double TotalAmount { get; set; }
+
+        public bool? IsCorrection { get; set; }
+
+        public bool? UseVat { get; set; }
+        public bool? UseIncomeTax { get; set; }
+
+        public int? IncomeTaxId { get; set; }
+        public string IncomeTaxName { get; set; }
+        public double? IncomeTaxRate { get; set; }
+
+        public string PaymentType { get; set; }
+        public string PaymentMethod { get; set; }
+        public long? DOCurrencyId { get; set; }
+        public string DOCurrencyCode { get; set; }
+        public double? DOCurrencyRate { get; set; }
     }
 }

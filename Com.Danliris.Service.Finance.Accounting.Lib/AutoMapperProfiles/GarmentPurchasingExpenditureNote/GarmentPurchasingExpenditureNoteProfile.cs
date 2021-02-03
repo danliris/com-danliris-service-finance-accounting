@@ -59,6 +59,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                          ProductId = invoice.ProductId,
                          ProductName = invoice.ProductName,
                          Total = Convert.ToDecimal(invoice.PriceTotal),
+                         UnitCode = invoice.UnitCode,
+                         UnitId = invoice.UnitId,
+                         UnitName = invoice.UnitName,
+                         PaymentBill = invoice.GarmentDeliveryOrder.PaymentBill,
+                         BillNo = invoice.GarmentDeliveryOrder.BillNo,
+                         DoNo = invoice.GarmentDeliveryOrder.DONo
 
                      })
                      .ToList()
