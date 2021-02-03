@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote
 {
@@ -31,7 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             if (Date == null)
                 yield return new ValidationResult("Tanggal harus diisi", new List<string> { "Date" });
 
-            if (Items == null || Items.Count.Equals(0))
+            if (Items == null || Items.Count.Equals(0) || !Items.Any(item => item.Select))
             {
                 yield return new ValidationResult("Nota Intern harus dipilih", new List<string> { "Item" });
             }
@@ -44,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 {
                     ItemsError += "{ ";
 
-                    if (item.InternalNote == null || item.InternalNote.Items == null || item.InternalNote.Items.Count <= 0)
+                    if (item.InternalNote == null || item.InternalNote.Items == null || item.InternalNote.Items.Count <= 0 || !item.InternalNote.Items.Any(itemItem => itemItem.SelectInvoice))
                     {
                         CountItemsError++;
                         ItemsError += "'Invoice': 'Invoice harus dipilih', ";

@@ -40,14 +40,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] FormDto form)
+        public async Task<IActionResult> Post([FromBody] FormDto form)
         {
             try
             {
                 VerifyUser();
                 _validateService.Validate(form);
 
-                var id = _service.Create(form);
+                var id = await _service.Create(form);
 
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
 
