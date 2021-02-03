@@ -60,6 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public string ProductName { get; set; }
         public int? ProductId { get; set; }
         public string ProductCode { get; set; }
+        public double TotalIncomeTax { get; set; }
     }
 
     public class Detail

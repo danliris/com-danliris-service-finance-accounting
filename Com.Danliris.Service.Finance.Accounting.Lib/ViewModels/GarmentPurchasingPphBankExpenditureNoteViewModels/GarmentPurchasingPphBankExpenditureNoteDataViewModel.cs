@@ -15,7 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public string BankAccountName { get; set; }
         public string IncomeTaxName { get; set; }
         public double IncomeTaxRate { get; set; }
-        public Int64 TotalDpp { get; set; }
+        public double TotalDpp { get; set; }
         public double TotalIncomeTax { get; set; }
         public string Currency { get; set; }
         public DateTimeOffset LastModifiedUtc { get; set; }
@@ -52,16 +52,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
             Date = model.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate;
             No = model.GarmentPurchasingPphBankExpenditureNote.InvoiceOutNumber;
             CreatedUtc = model.GarmentPurchasingPphBankExpenditureNote.CreatedUtc;
-            BankAccountName = model.GarmentPurchasingPphBankExpenditureNote.BankName;
+            BankAccountName = model.GarmentPurchasingPphBankExpenditureNote.BankName +' '+ model.GarmentPurchasingPphBankExpenditureNote.BankCurrencyCode;
             IncomeTaxName = model.GarmentPurchasingPphBankExpenditureNote.IncomeTaxName;
             IncomeTaxRate = model.GarmentPurchasingPphBankExpenditureNote.IncomeTaxRate;
-            TotalIncomeTax = model.GarmentPurchasingPphBankExpenditureNote.Items.Sum(element => element.IncomeTaxTotal);
+            //TotalIncomeTax = model.GarmentPurchasingPphBankExpenditureNote.Items.Sum(element => element.IncomeTaxTotal * (element.IncomeTaxRate/100));
+            TotalIncomeTax = model.GarmentPurchasingPphBankExpenditureNote.Items.Sum(element => element.TotalPaid * (element.IncomeTaxTotal / 100));
+
             Currency = model.GarmentPurchasingPphBankExpenditureNote.BankCurrencyCode;
             LastModifiedUtc = model.GarmentPurchasingPphBankExpenditureNote.LastModifiedUtc;
             IsPosted = model.GarmentPurchasingPphBankExpenditureNote.IsPosted;
             InvoiceOutNo = model.GarmentPurchasingPphBankExpenditureNote.InvoiceOutNumber;
             InvoucieOutDate = model.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate;
             INNo = model.InternalNotesNo;
+            TotalDpp = model.AmountDPP;
         }
     }
 }

@@ -140,14 +140,132 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
             }
         }
 
+        [HttpGet("report")]
+        public async Task<IActionResult> GetReport([FromQuery] GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter, int page = 1, int size = 25, string order = "{}")
+        {
+            try
+            {
+                VerifyUser();
+                var model = Service.GetReportView(page, size, order, filter);
+
+                //List<GarmentPurchasingPphBankExpenditureNoteReportViewDto> dataVM = Mapper.Map<List<GarmentPurchasingPphBankExpenditureNoteReportViewDto>>(model.Data);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, model.Data, page, size, model.Count, model.Count, new Dictionary<string, string>(), new List<string>());
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("loader-pph-intern-note")]
+        public async Task<IActionResult> GetLoaderInternNote([FromQuery] string keyword= "")
+        {
+            try
+            {
+                VerifyUser();
+                var model = Service.GetLoaderInterNotePPH(keyword);
+
+                //List<GarmentPurchasingPphBankExpenditureNoteReportViewDto> dataVM = Mapper.Map<List<GarmentPurchasingPphBankExpenditureNoteReportViewDto>>(model.Data);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, model, 1, 10, model.Count, model.Count, new Dictionary<string, string>(), new List<string>());
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("loader-pph-supplier")]
+        public async Task<IActionResult> GetLoaderSupplier([FromQuery] string keyword = "")
+        {
+            try
+            {
+                VerifyUser();
+                var model = Service.GetLoaderSupplier(keyword);
+
+                //List<GarmentPurchasingPphBankExpenditureNoteReportViewDto> dataVM = Mapper.Map<List<GarmentPurchasingPphBankExpenditureNoteReportViewDto>>(model.Data);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, model, 1, 10, model.Count, model.Count, new Dictionary<string, string>(), new List<string>());
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+        [HttpGet("loader-pph-invoice")]
+        public async Task<IActionResult> GetLoaderInvoice([FromQuery] string keyword = "")
+        {
+            try
+            {
+                VerifyUser();
+                var model = Service.GetLoaderInvoice(keyword);
+
+                //List<GarmentPurchasingPphBankExpenditureNoteReportViewDto> dataVM = Mapper.Map<List<GarmentPurchasingPphBankExpenditureNoteReportViewDto>>(model.Data);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, model, 1, 10, model.Count, model.Count, new Dictionary<string, string>(), new List<string>());
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+        [HttpGet("loader-pph-invoice-out")]
+        public async Task<IActionResult> GetLoaderInvoiceOut([FromQuery] string keyword = "")
+        {
+            try
+            {
+                VerifyUser();
+                var model = Service.GetLoaderInvoiceOut(keyword);
+
+                //List<GarmentPurchasingPphBankExpenditureNoteReportViewDto> dataVM = Mapper.Map<List<GarmentPurchasingPphBankExpenditureNoteReportViewDto>>(model.Data);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, model, 1, 10, model.Count, model.Count, new Dictionary<string, string>(), new List<string>());
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             try
             {
-                
+
                 var model = await Service.ReadByIdAsync(id);
-                
+
 
                 if (model == null)
                 {

@@ -49,6 +49,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                      PaymentMethod = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentMethod,
                      PaymentType = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentType,
                      TotalPaid = item.Items.Sum(j => j.TotalAmount.GetValueOrDefault()),
+                     AmountDPP = Convert.ToDouble(item.Items.Sum(j=> j.Details.Sum(k=> k.PricePerDealUnit))),
                      GarmentPurchasingPphBankExpenditureNoteInvoices = item.Items.SelectMany(t => t.Details).Select(invoice => new GarmentPurchasingPphBankExpenditureNoteInvoiceModel
                      {
                          InvoicesDate = invoice.InvoiceDate,
