@@ -39,8 +39,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         {
             var typeDocument = "K";
             var username = _identityService.Username;
-            model.PphBankInvoiceNo = await _serviceDailyBankTransaction.GetDocumentNo("K", model.Bank.BankCode, username);
-            //model.PphBankInvoiceNo = "test";
+            //model.PphBankInvoiceNo = await _serviceDailyBankTransaction.GetDocumentNo("K", model.Bank.BankCode, username);
+            model.PphBankInvoiceNo = "test";
 
             var mapper = _mapper.Map<GarmentPurchasingPphBankExpenditureNoteModel>(model);
 
@@ -194,8 +194,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                                             InvoiceId = Convert.ToInt32(detail.InvoicesId),
                                             InvoiceNo = detail.InvoicesNo,
                                             InvoiceTotalAmount = Convert.ToDouble(detail.Total),
-                                            ProductCode = detail.ProductCategory,
+                                            ProductCode = detail.ProductCode,
                                             ProductId = Convert.ToInt32(detail.ProductId),
+                                            ProductCategory = detail.ProductCategory,
                                             ProductName = detail.ProductName,
                                             PriceTotal = detail.Total,
                                             UnitCode = detail.UnitCode,
