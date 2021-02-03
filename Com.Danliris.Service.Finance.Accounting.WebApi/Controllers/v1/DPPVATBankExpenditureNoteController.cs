@@ -172,5 +172,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
             }
         }
+
+        [HttpGet("report")]
+        public IActionResult GetReport([FromQuery] int expenditureId, [FromQuery] int internalNoteId, [FromQuery] int invoiceId, [FromQuery] int supplierId, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                startDate = startDate.HasValue ? startDate : DateTimeOffset.MinValue;
+                endDate = endDate.HasValue ? endDate : DateTimeOffset.MaxValue;
+                var result = _service.ExpenditureReport(expenditureId, internalNoteId, invoiceId, supplierId, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
     }
 }
