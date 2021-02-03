@@ -274,7 +274,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
         public List<GarmentPurchasingPphBankExpenditureNoteLoaderInternNote> GetLoaderInterNotePPH(string keyword)
         {
-            var query = _dbContext.GarmentPurchasingPphBankExpenditureNoteItems.Where(s=> keyword.Contains( s.InternalNotesNo)).Select(s => new GarmentPurchasingPphBankExpenditureNoteLoaderInternNote
+            var query = _dbContext.GarmentPurchasingPphBankExpenditureNoteItems.Where(s=> s.InternalNotesNo.Contains(keyword)).Select(s => new GarmentPurchasingPphBankExpenditureNoteLoaderInternNote
             {
                 Id = s.InternalNotesId,
                 Name = s.InternalNotesNo,
@@ -286,7 +286,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
         public List<GarmentPurchasingPphBankExpenditureLoaderSupplierDto> GetLoaderSupplier(string keyword)
         {
-            var query = _dbContext.GarmentPurchasingPphBankExpenditureNoteItems.Where(s => keyword.Contains(s.SupplierName)).Select(s => new GarmentPurchasingPphBankExpenditureLoaderSupplierDto
+            var query = _dbContext.GarmentPurchasingPphBankExpenditureNoteItems.Where(s => s.SupplierName.Contains(keyword)).Select(s => new GarmentPurchasingPphBankExpenditureLoaderSupplierDto
             {
                 Id = s.SupplierId,
                 Name = s.SupplierName,
@@ -298,7 +298,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
         public List<GarmentPurchasingPphBankExpenditureNoteLoaderInvoiceDto> GetLoaderInvoice(string keyword)
         {
-            var query = _dbContext.GarmentPurchasingPphBankExpenditureNoteInvoices.Where(s => keyword.Contains(s.InvoicesNo)).Select(s => new GarmentPurchasingPphBankExpenditureNoteLoaderInvoiceDto
+            var query = _dbContext.GarmentPurchasingPphBankExpenditureNoteInvoices.Where(s => s.InvoicesNo.Contains(keyword)).Select(s => new GarmentPurchasingPphBankExpenditureNoteLoaderInvoiceDto
             {
                 Id = s.InvoicesId,
                 Name = s.InvoicesNo,
@@ -309,7 +309,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         }
         public List<GarmentPurchasingPphBankExpenditureNoteLoaderInvoiceOutDto> GetLoaderInvoiceOut(string keyword)
         {
-            var query = _dbContext.GarmentPurchasingPphBankExpenditureNotes.Where(s => keyword.Contains(s.InvoiceOutNumber)).Select(s => new GarmentPurchasingPphBankExpenditureNoteLoaderInvoiceOutDto
+            var query = _dbContext.GarmentPurchasingPphBankExpenditureNotes.Where(s => s.InvoiceOutNumber.Contains(keyword)).Select(s => new GarmentPurchasingPphBankExpenditureNoteLoaderInvoiceOutDto
             {
                 Id = s.Id,
                 Name = s.InvoiceOutNumber,
