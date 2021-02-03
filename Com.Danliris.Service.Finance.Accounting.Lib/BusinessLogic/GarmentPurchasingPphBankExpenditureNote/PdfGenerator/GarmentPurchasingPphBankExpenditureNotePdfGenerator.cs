@@ -76,7 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
             cellHeaderBody.Phrase = new Phrase("Bank", normal_font);
             headerTable2.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(": " + model.Bank.BankName + " - A/C : " + model.Bank.AccountName, normal_font);
+            cellHeaderBody.Phrase = new Phrase(": " + model.Bank.BankName+" " +model.Bank.Currency.Code + " - A/C : " + model.Bank.AccountName +" "+model.Bank.AccountNumber, normal_font);
             headerTable2.AddCell(cellHeaderBody);
 
             cellHeader2.AddElement(headerTable2);
@@ -130,7 +130,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             bodyTable.AddCell(bodyCell);
 
             int index = 1;
-            double totalDPP = 0, totalPPH = 0;
+            double totalDPP = model.PPHBankExpenditureNoteItems.SelectMany(s => s.Items).Sum(s => s.TotalAmount.GetValueOrDefault());
+            double totalPPH = model.PPHBankExpenditureNoteItems.SelectMany(s=> s.Items).Sum(s=>s.TotalIncomeTax);
 
             Dictionary<string, double> units = new Dictionary<string, double>();
 
@@ -163,17 +164,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     bodyTable.AddCell(bodyCell);
 
                     bodyCell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    bodyCell.Phrase = new Phrase("", normal_font);// unit code
+                    bodyCell.Phrase = new Phrase(string.Join(',',item.Items.SelectMany(s=>s.Details).Select(s=> s.UnitCode)), normal_font);
                     bodyTable.AddCell(bodyCell);
 
                     bodyCell.Phrase = new Phrase(item.CurrencyCode, normal_font);
                     bodyTable.AddCell(bodyCell);
 
                     bodyCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                    bodyCell.Phrase = new Phrase(string.Format("{0:n4}", 0), normal_font);
+                    bodyCell.Phrase = new Phrase(string.Format("{0:n4}",item.Items.FirstOrDefault().TotalIncomeTax), normal_font);
                     bodyTable.AddCell(bodyCell);
 
-                    bodyCell.Phrase = new Phrase(string.Format("{0:n4}", 0), normal_font);
+                    bodyCell.Phrase = new Phrase(string.Format("{0:n4}", item.Items.FirstOrDefault().TotalAmount), normal_font);
                     bodyTable.AddCell(bodyCell);
 
                     //if (units.ContainsKey(pdeItem.UnitCode))

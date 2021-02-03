@@ -119,7 +119,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         public ReadResponse<GarmentPurchasingPphBankExpenditureNoteDataViewModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
             //var query = _dbContext.GarmentPurchasingPphBankExpenditureNotes.Include(s=> s.Items).ThenInclude(s=> s.GarmentPurchasingPphBankExpenditureNoteInvoices).AsQueryable();
-            var query = _dbContext.GarmentPurchasingPphBankExpenditureNoteItems.Include(s => s.GarmentPurchasingPphBankExpenditureNote).AsQueryable();
+            var query = _dbContext.GarmentPurchasingPphBankExpenditureNoteItems.Include(s => s.GarmentPurchasingPphBankExpenditureNote).Include(s=>s.GarmentPurchasingPphBankExpenditureNoteInvoices).AsQueryable();
 
 
             if (!string.IsNullOrWhiteSpace(keyword))
