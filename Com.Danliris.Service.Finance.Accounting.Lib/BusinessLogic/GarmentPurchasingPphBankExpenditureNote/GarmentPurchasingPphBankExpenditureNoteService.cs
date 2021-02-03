@@ -197,7 +197,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                                             ProductCode = detail.ProductCategory,
                                             ProductId = Convert.ToInt32(detail.ProductId),
                                             ProductName = detail.ProductName,
-                                            PriceTotal = detail.Total
+                                            PriceTotal = detail.Total,
+                                            UnitCode = detail.UnitCode,
+                                            UnitId = detail.UnitId,
+                                            UnitName = detail.UnitName
                                             }).ToList(),
                                 TotalIncomeTax = item.TotalPaid *(item.IncomeTaxTotal/100)
                             }
