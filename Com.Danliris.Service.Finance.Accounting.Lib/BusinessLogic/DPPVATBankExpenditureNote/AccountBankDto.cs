@@ -2,6 +2,11 @@
 {
     public class AccountBankDto
     {
+        public AccountBankDto()
+        {
+
+        }
+
         public AccountBankDto(int bankAccountId, string bankAccountingCode, string bankAccountNumber, string bankName, string currencyCode, int currencyId, double currencyRate)
         {
             BankName = bankName;

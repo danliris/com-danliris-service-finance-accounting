@@ -7,6 +7,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 {
     public class InternalNoteDto
     {
+        public InternalNoteDto()
+        {
+
+        }
+
         public InternalNoteDto(DPPVATBankExpenditureNoteItemModel item, List<DPPVATBankExpenditureNoteDetailModel> details)
         {
             Id = item.Id;
