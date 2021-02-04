@@ -95,7 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute] int id, [FromBody] FormDto form)
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] FormDto form)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
                 _validateService.Validate(form);
 
-                _service.Update(id, form);
+                await _service.Update(id, form);
 
                 return NoContent();
             }
@@ -126,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             try
             {
@@ -136,7 +136,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 if (note == null)
                     return NotFound();
 
-                _service.Delete(id);
+                await _service.Delete(id);
 
                 return NoContent();
             }

@@ -59,6 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
         public string BGCheckNo { get; private set; }
         public double Amount { get; private set; }
         public DateTimeOffset Date { get; private set; }
+        public bool IsPosted { get; private set; }
 
         public void UpdateData(double amount, int supplierId, bool isImportSupplier, string supplierName, string bgCheckNo, DateTimeOffset date)
         {
@@ -68,6 +69,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
             IsImportSupplier = isImportSupplier;
             BGCheckNo = bgCheckNo;
             Date = date;
+        }
+
+        public void Posted()
+        {
+            IsPosted = true;
         }
     }
 }

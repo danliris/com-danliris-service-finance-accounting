@@ -257,5 +257,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
             return reportQuery.ToList();
         }
+
+        public int Posting(List<int> ids)
+        {
+            var documents = _dbContext
+                .DPPVATBankExpenditureNotes
+                .Where(entity => ids.Contains(entity.Id))
+                .ToList()
+                .Select(element =>
+                {
+                    element.Posted();
+                    EntityExtension.FlagForUpdate(element, _identityService.Username, UserAgent);
+
+                    return element;
+                })
+                .ToList();
+            _dbContext.DPPVATBankExpenditureNotes.UpdateRange(documents);
+
+            return _dbContext.SaveChanges();
+        }
     }
 }
