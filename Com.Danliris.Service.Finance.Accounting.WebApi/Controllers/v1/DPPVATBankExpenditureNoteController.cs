@@ -126,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPut("posting")]
-        public async Task<IActionResult> Posting([FromBody] List<int> ids)
+        public IActionResult Posting([FromBody] List<int> ids)
         {
             try
             {
