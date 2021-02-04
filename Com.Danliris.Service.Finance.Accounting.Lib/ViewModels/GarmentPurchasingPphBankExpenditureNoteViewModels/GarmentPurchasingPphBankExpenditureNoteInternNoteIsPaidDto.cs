@@ -8,6 +8,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
     {
         public int InternNoteId { get; set; }
         public string InternNoteNo { get; set; }
-        public bool IsPaidPph { get; set; }
+        public bool IsPphPaid { get; set; }
     }
 }

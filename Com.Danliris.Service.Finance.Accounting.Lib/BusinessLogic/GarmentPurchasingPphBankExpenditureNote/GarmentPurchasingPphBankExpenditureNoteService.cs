@@ -65,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var listIsPaidStatus = model.PPHBankExpenditureNoteItems.Select( s=> new GarmentPurchasingPphBankExpenditureNoteInternNoteIsPaidDto { 
                 InternNoteId = s.INId,
                 InternNoteNo = s.INNo,
-                IsPaidPph = true
+                IsPphPaid = true
             }).ToList();
             await UpdateIsPaidPph(listIsPaidStatus);
         }
