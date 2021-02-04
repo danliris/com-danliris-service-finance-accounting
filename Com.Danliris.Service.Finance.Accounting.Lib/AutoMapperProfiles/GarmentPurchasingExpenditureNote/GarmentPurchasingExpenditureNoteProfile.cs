@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
         public GarmentPurchasingExpenditureNoteProfile()
         {
             CreateMap<FormInsert, GarmentPurchasingPphBankExpenditureNoteModel>()
+                 .ForPath(d=> d.Id ,opt=> opt.MapFrom(s=> s.Id))
                  .ForPath(d => d.InvoiceOutNumber, opt => opt.MapFrom(s => s.PphBankInvoiceNo))
                  .ForPath(d => d.InvoiceOutDate, opt => opt.MapFrom(s => s.Date))
                  .ForPath(d => d.DueDateStart, opt => opt.MapFrom(s => s.DateFrom))
@@ -33,6 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                  .ForPath(d => d.IsPosted, opt => opt.MapFrom(s => false))
                  .ForPath(d => d.Items, opt => opt.MapFrom(s => s.PPHBankExpenditureNoteItems.Select(item => new GarmentPurchasingPphBankExpenditureNoteItemModel
                  {
+                     Id = item.Id,
                      Date = item.INDate.GetValueOrDefault(),
                      DueDate = item.INDueDate.GetValueOrDefault(),
                      CurrencyCode = item.CurrencyCode,
@@ -53,6 +55,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                      AmountDPP = Convert.ToDouble(item.Items.Sum(j=> j.Details.Sum(k=> k.PricePerDealUnit))),
                      GarmentPurchasingPphBankExpenditureNoteInvoices = item.Items.SelectMany(t => t.Details).Select(invoice => new GarmentPurchasingPphBankExpenditureNoteInvoiceModel
                      {
+                         Id = invoice.Id.GetValueOrDefault(),
                          InvoicesDate = invoice.InvoiceDate,
                          InvoicesNo = invoice.InvoiceNo,
                          InvoicesId = invoice.InvoiceId,

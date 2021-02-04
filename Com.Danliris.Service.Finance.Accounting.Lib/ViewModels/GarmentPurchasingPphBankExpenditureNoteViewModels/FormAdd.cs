@@ -23,6 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public bool IsCreatedVB { get; set; }
         public int Position { get; set; }
         public string UId { get; set; }
+        public double TotalIncomeTaxNI { get; set; }
         //public bool Active { get; set; }
         //public DateTimeOffset CreatedUtc { get; set; }
         //public string CreatedBy { get; set; }

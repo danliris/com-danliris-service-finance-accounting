@@ -14,6 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public ICollection<FormAdd> PPHBankExpenditureNoteItems { get; set; }
         public string PphBankInvoiceNo { get; set; }
         public int Id { get; set; }
+        public bool IsPosted { get; set; }
     }
 
     public class Bank
