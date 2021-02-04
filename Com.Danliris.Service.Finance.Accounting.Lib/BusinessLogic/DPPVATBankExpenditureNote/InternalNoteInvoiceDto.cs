@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         {
             Id = detail.Id;
             Invoice = new InvoiceDto(detail);
+            SelectInvoice = true;
         }
 
         public int Id { get; set; }

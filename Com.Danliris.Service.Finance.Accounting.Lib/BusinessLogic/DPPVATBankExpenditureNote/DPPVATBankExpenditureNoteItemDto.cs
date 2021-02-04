@@ -10,9 +10,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             InternalNote = new InternalNoteDto(item, details);
             OutstandingAmount = item.OutstandingAmount;
             Id = item.Id;
+            Select = true;
         }
 
         public int Id { get; set; }
+        public bool Select { get; set; }
         public InternalNoteDto InternalNote { get; set; }
         public double OutstandingAmount { get; set; }
     }

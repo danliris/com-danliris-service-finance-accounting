@@ -68,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet]
-        public IActionResult GetCashflowType([FromQuery] string keyword, [FromQuery] int page = 1, [FromQuery] int size = 10, [FromQuery] string order = "{}")
+        public IActionResult Get([FromQuery] string keyword, [FromQuery] int page = 1, [FromQuery] int size = 10, [FromQuery] string order = "{}")
         {
             try
             {
@@ -126,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteCashflowType([FromRoute] int id)
+        public IActionResult Delete([FromRoute] int id)
         {
             try
             {
@@ -150,7 +150,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetCashflowTypeById(int id)
+        public IActionResult Get(int id)
         {
             try
             {

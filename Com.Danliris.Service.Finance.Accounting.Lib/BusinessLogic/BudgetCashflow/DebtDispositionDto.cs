@@ -45,12 +45,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
         public int GetUnitId()
         {
-            return int.Parse(UnitId);
+            int.TryParse(UnitId, out var unitId);
+            return unitId;
         }
 
         public int GetDivisionId()
         {
-            return int.Parse(DivisionId);
+            int.TryParse(DivisionId, out var divisionId);
+            return divisionId;
         }
     }
 }
