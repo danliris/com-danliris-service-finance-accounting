@@ -49,7 +49,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public GarmentPurchasingPphBankExpenditureNoteDataViewModel(GarmentPurchasingPphBankExpenditureNoteItemModel model)
         {
             Id = model.GarmentPurchasingPphBankExpenditureNoteId;
-            Date = model.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate;
+            //Date = model.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate;
+            Date = model.GarmentPurchasingPphBankExpenditureNote.CreatedUtc >= model.GarmentPurchasingPphBankExpenditureNote.LastModifiedUtc? model.GarmentPurchasingPphBankExpenditureNote.CreatedUtc : model.GarmentPurchasingPphBankExpenditureNote.LastModifiedUtc;
+
             No = model.GarmentPurchasingPphBankExpenditureNote.InvoiceOutNumber;
             CreatedUtc = model.GarmentPurchasingPphBankExpenditureNote.CreatedUtc;
             BankAccountName = model.GarmentPurchasingPphBankExpenditureNote.BankName +' '+ model.GarmentPurchasingPphBankExpenditureNote.BankCurrencyCode;
