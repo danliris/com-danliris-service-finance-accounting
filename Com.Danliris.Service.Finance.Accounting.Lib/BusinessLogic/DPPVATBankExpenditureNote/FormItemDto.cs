@@ -2,6 +2,7 @@
 {
     public class FormItemDto
     {
+        public bool Select { get; set; }
         public InternalNoteDto InternalNote { get; set; }
         public double OutstandingAmount { get; set; }
     }
