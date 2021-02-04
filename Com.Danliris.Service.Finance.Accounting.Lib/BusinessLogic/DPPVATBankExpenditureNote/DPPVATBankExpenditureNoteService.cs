@@ -35,14 +35,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             _dbContext.DPPVATBankExpenditureNotes.Add(model);
             _dbContext.SaveChanges();
 
-            foreach (var formItem in form.Items)
+            foreach (var formItem in form.Items.Where(element => element.Select))
             {
                 var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount);
                 EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
                 _dbContext.DPPVATBankExpenditureNoteItems.Add(item);
                 _dbContext.SaveChanges();
 
-                foreach (var formDetail in formItem.InternalNote.Items)
+                foreach (var formDetail in formItem.InternalNote.Items.Where(element => element.SelectInvoice))
                 {
                     var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount);
                     EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
@@ -193,6 +193,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             }
 
             return model.Id;
+        }
+
+        public List<ReportDto> ExpenditureReport(int expenditureId, int internalNoteId, int invoiceId, int supplierId, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            var detailQuery = _dbContext.DPPVATBankExpenditureNoteDetails.AsQueryable();
+            var itemQuery = _dbContext.DPPVATBankExpenditureNoteItems.AsQueryable();
+            var query = _dbContext.DPPVATBankExpenditureNotes.AsQueryable();
+
+            var reportQuery = from detail in detailQuery
+
+                              join item in itemQuery on detail.DPPVATBankExpenditureNoteItemId equals item.Id into itemDetails
+                              from itemDetail in itemDetails.DefaultIfEmpty()
+
+                              join document in query on itemDetail.DPPVATBankExpenditureNoteId equals document.Id into documentItems
+                              from documentItem in documentItems.DefaultIfEmpty()
+
+                              select new ReportDto(detail, itemDetail, documentItem);
+
+            reportQuery = reportQuery.Where(entity => entity.ExpenditureDate >= startDate && entity.ExpenditureDate <= endDate);
+
+            if (expenditureId > 0)
+                reportQuery = reportQuery.Where(entity => entity.ExpenditureId == expenditureId);
+
+            if (internalNoteId > 0)
+                reportQuery = reportQuery.Where(entity => entity.InternalNoteId == internalNoteId);
+
+            if (invoiceId > 0)
+                reportQuery = reportQuery.Where(entity => entity.InvoiceId == invoiceId);
+
+            if (supplierId > 0)
+                reportQuery = reportQuery.Where(entity => entity.SupplierId == supplierId);
+
+            return reportQuery.ToList();
         }
     }
 }

@@ -203,7 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         //    return result;
         //}
 
-        private async Task<List<DebtDispositionDto>> GetDebtBudgetCashflow(int unitId, int divisionId, int year, int month, List<int> categoryIds)
+        private async Task<List<DebtDispositionDto>> GetDebtBudgetCashflow(int unitId, int divisionId, int year, int month, List<int> categoryIds, DateTimeOffset date)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
             {
@@ -211,7 +211,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             };
 
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}";
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={date.Date}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<List<DebtDispositionDto>>();
@@ -225,7 +225,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             return result.data;
         }
 
-        private async Task<List<DebtDispositionDto>> GetSummaryBudgetCashflow(int unitId, int divisionId, int year, int month, List<int> categoryIds)
+        private async Task<List<DebtDispositionDto>> GetSummaryBudgetCashflow(int unitId, int divisionId, int year, int month, List<int> categoryIds, DateTimeOffset date)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
             {
@@ -233,7 +233,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             };
 
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/budget-cashflow-summary?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}";
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/budget-cashflow-summary?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={date.Date}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<List<DebtDispositionDto>>();
@@ -283,8 +283,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 .ToList();
 
             var purchasingCategoryIds = _dbContext.BudgetCashflowSubCategories.Where(entity => !string.IsNullOrWhiteSpace(entity.PurchasingCategoryIds)).Select(entity => JsonConvert.DeserializeObject<List<int>>(entity.PurchasingCategoryIds)).SelectMany(purchasingCategoryId => purchasingCategoryId).ToList();
-            var debtSummaries = await GetDebtBudgetCashflow(unitId, 0, year, month, purchasingCategoryIds);
-            var debtDispositionSummaries = await GetSummaryBudgetCashflow(unitId, 0, year, month, purchasingCategoryIds);
+            var debtSummaries = await GetDebtBudgetCashflow(unitId, 0, year, month, purchasingCategoryIds, date);
+            var debtDispositionSummaries = await GetSummaryBudgetCashflow(unitId, 0, year, month, purchasingCategoryIds, date);
 
             var summaries = new List<SummaryPerType>();
             var categories = _dbContext.BudgetCashflowCategories.ToList();
