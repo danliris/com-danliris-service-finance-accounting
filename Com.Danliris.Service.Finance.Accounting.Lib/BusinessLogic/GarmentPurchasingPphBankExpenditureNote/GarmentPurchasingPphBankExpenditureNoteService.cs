@@ -308,38 +308,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
         public ReadResponse<GarmentPurchasingPphBankExpenditureNoteReportViewDto> GetReportView(int page, int size, string order, GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter)
         {
-            var query = _dbContext.GarmentPurchasingPphBankExpenditureNoteItems.Include(s => s.GarmentPurchasingPphBankExpenditureNote).Include(s=> s.GarmentPurchasingPphBankExpenditureNoteInvoices).AsQueryable();
+            var query = _dbContext.GarmentPurchasingPphBankExpenditureNoteInvoices.Include(s => s.GarmentPurchasingPphBankExpenditureNoteItem).ThenInclude(s=> s.GarmentPurchasingPphBankExpenditureNote).AsQueryable();
 
             if (!string.IsNullOrEmpty(filter.InvoiceOutNo))
             {
-                query = query.Where(entity => entity.GarmentPurchasingPphBankExpenditureNote.InvoiceOutNumber.Contains(filter.InvoiceOutNo));
+                query = query.Where(entity => entity.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.InvoiceOutNumber.Contains(filter.InvoiceOutNo));
             }
             
             if(!string.IsNullOrEmpty(filter.InvoiceNo))
             {
-                query = query.Where(entity => entity.GarmentPurchasingPphBankExpenditureNoteInvoices.Any(t => t.InvoicesNo.Contains(filter.InvoiceNo)));
+                query = query.Where(entity => entity.InvoicesNo.Contains(filter.InvoiceNo));
             }
 
             if (!string.IsNullOrEmpty(filter.INNo))
             {
-                query = query.Where(entity => entity.InternalNotesNo.Contains(filter.INNo));
+                query = query.Where(entity => entity.GarmentPurchasingPphBankExpenditureNoteItem.InternalNotesNo.Contains(filter.INNo));
             }
 
             if (!string.IsNullOrEmpty(filter.SupplierName))
             {
-                query = query.Where(entity => entity.SupplierName.Contains(filter.SupplierName));
+                query = query.Where(entity => entity.GarmentPurchasingPphBankExpenditureNoteItem.SupplierName.Contains(filter.SupplierName));
             }
 
             //if(filter.DateStart.HasValue)
             if (filter.DateStart.HasValue && filter.DateStart.GetValueOrDefault().Year != 1)
             {
-                query = query.Where(entity => entity.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate >= filter.DateStart);
+                query = query.Where(entity => entity.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate >= filter.DateStart);
             }
 
             //if(filter.DateEnd.HasValue)
             if (filter.DateEnd.HasValue && filter.DateEnd.GetValueOrDefault().Year != 1)
             {
-                query = query.Where(entity => entity.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate <= filter.DateEnd);
+                query = query.Where(entity => entity.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate <= filter.DateEnd);
             }
             //if (filter.DateStart.HasValue && filter.DateStart.GetValueOrDefault().Year != 1)
             //{
@@ -357,28 +357,49 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             var count = query.Count();
             var queryList = query.ToList();
 
-            var data = queryList.SelectMany(s=> s.GarmentPurchasingPphBankExpenditureNoteInvoices)
+            //var data = queryList
+            //    .Skip((page - 1) * size)
+            //    .Take(size)
+            //    .ToList()
+            //                    .GroupBy(
+            //    invoice => new { invoice.InvoicesId, invoice.InvoicesNo, invoice.InvoicesDate },
+            //    groupInvoice => groupInvoice,
+            //    (key, grp) => new GarmentPurchasingPphBankExpenditureNoteReportViewDto
+            //    {
+            //        BankName = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.AccountBankName + " - "+ 
+            //                   grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.BankName+ " - "+
+            //                   grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.AccountBankNumber+" - "+
+            //                   grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.BankCurrencyCode
+            //                    ?? string.Empty,
+            //        Category = grp.FirstOrDefault().ProductCategory ?? string.Empty,
+            //        INNO = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.InternalNotesNo ?? string.Empty,
+            //        InvoiceNo = key.InvoicesNo ?? string.Empty,
+            //        CurrencyCode = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.CurrencyCode ?? string.Empty,
+            //        InvoiceOutNo = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.InvoiceOutNumber ?? string.Empty,
+            //        PaidDate = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate,
+            //        SupplierName = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.SupplierName ?? string.Empty,
+            //        PPH = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.TotalPaid * (grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.IncomeTaxTotal / 100)
+            //    }).ToList()
+            //    ;
+
+            var data = queryList
                 .Skip((page - 1) * size)
                 .Take(size)
-                .ToList()
-                                .GroupBy(
-                invoice => new { invoice.InvoicesId, invoice.InvoicesNo, invoice.InvoicesDate },
-                groupInvoice => groupInvoice,
-                (key, grp) => new GarmentPurchasingPphBankExpenditureNoteReportViewDto
+                .Select(grp => new GarmentPurchasingPphBankExpenditureNoteReportViewDto
                 {
-                    BankName = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.AccountBankName + " - "+ 
-                               grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.BankName+ " - "+
-                               grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.AccountBankNumber+" - "+
-                               grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.BankCurrencyCode
+                    BankName = grp.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.AccountBankName + " - " +
+                               grp.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.BankName + " - " +
+                               grp.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.AccountBankNumber + " - " +
+                               grp.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.BankCurrencyCode
                                 ?? string.Empty,
-                    Category = grp.FirstOrDefault().ProductCategory ?? string.Empty,
-                    INNO = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.InternalNotesNo ?? string.Empty,
-                    InvoiceNo = key.InvoicesNo ?? string.Empty,
-                    CurrencyCode = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.CurrencyCode ?? string.Empty,
-                    InvoiceOutNo = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.InvoiceOutNumber ?? string.Empty,
-                    PaidDate = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate,
-                    SupplierName = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.SupplierName ?? string.Empty,
-                    PPH = grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.TotalPaid * (grp.FirstOrDefault().GarmentPurchasingPphBankExpenditureNoteItem.IncomeTaxTotal / 100)
+                    Category = grp.ProductCategory ?? string.Empty,
+                    INNO = grp.GarmentPurchasingPphBankExpenditureNoteItem.InternalNotesNo ?? string.Empty,
+                    InvoiceNo = grp.InvoicesNo ?? string.Empty,
+                    CurrencyCode = grp.GarmentPurchasingPphBankExpenditureNoteItem.CurrencyCode ?? string.Empty,
+                    InvoiceOutNo = grp.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.InvoiceOutNumber ?? string.Empty,
+                    PaidDate = grp.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.InvoiceOutDate,
+                    SupplierName = grp.GarmentPurchasingPphBankExpenditureNoteItem.SupplierName ?? string.Empty,
+                    PPH = grp.GarmentPurchasingPphBankExpenditureNoteItem.TotalPaid * (grp.GarmentPurchasingPphBankExpenditureNoteItem.IncomeTaxTotal / 100)
                 }).ToList()
                 ;
 

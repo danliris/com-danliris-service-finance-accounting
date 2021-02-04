@@ -45,6 +45,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public DateTimeOffset InvoiceDate { get; set; }
         public double? TotalAmount { get; set; }
         public List<Detail> Details { get; set; }
+        public GarmentPurchasingInvoiceInfoDto GarmentInvoice { get; set; }
+
         //public int GarmentINId { get; set; }
         //public bool Active { get; set; }
         //public DateTimeOffset CreatedUtc { get; set; }
