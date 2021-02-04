@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasingPphBankExpenditureNoteViewModels
 {
-    public class GarmentPurchasingPphBankExpenditureNoteReportViewDto
+    public class GarmentPurchasingPphBankExpenditureNoteReportGroupView
     {
         public string InvoiceOutNo { get; set; }
         public DateTimeOffset PaidDate { get; set; }
@@ -14,7 +14,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public string BankName { get; set; }
         public string SupplierName { get; set; }
         public string INNO { get; set; }
-        public string InvoiceNo { get; set; }
+        public List<GarmentPurchasingPphBankExpenditureReportGroupItemDto> InvoiceItems { get; set; }
+
         public int Id { get; set; }
     }
 }

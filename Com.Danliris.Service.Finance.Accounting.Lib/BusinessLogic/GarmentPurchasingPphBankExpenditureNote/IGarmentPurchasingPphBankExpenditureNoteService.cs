@@ -26,5 +26,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         List<GarmentPurchasingPphBankExpenditureNoteInternNoteIsPaidDto> GetInternNoteIsPaid();
         List<GarmentPurchasingPphBankExpenditureNoteModel> GetReportData(GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter);
         MemoryStream DownloadReportXls(GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter);
+        ReadResponse<GarmentPurchasingPphBankExpenditureNoteReportGroupView> GetReportGroupView(int page, int size, string order, GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter);
     }
 }

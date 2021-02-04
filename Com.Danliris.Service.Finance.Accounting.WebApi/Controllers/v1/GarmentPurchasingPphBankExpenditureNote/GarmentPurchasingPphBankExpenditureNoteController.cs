@@ -179,6 +179,29 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+        [HttpGet("report-group")]
+        public async Task<IActionResult> GetReportGroup([FromQuery] GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter, int page = 1, int size = 25, string order = "{}")
+        {
+            try
+            {
+                VerifyUser();
+                var model = Service.GetReportGroupView(page, size, order, filter);
+
+                //List<GarmentPurchasingPphBankExpenditureNoteReportViewDto> dataVM = Mapper.Map<List<GarmentPurchasingPphBankExpenditureNoteReportViewDto>>(model.Data);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, model.Data, page, size, model.Count, model.Count, new Dictionary<string, string>(), new List<string>());
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
         [HttpGet("report/xls")]
         public async Task<IActionResult> DownloadReportXls([FromQuery] GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter, int page = 1, int size = 25, string order = "{}")
         {
