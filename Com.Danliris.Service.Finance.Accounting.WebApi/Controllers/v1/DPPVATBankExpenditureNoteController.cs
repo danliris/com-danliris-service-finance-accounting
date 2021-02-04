@@ -94,8 +94,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpPut]
-        public IActionResult Put([FromRoute] int id, [FromBody] FormDto form)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] FormDto form)
         {
             try
             {
@@ -107,7 +107,32 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
                 _validateService.Validate(form);
 
-                _service.Update(id, form);
+                await _service.Update(id, form);
+
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
+                return BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("posting")]
+        public IActionResult Posting([FromBody] List<int> ids)
+        {
+            try
+            {
+                VerifyUser();
+
+                var note = _service.Posting(ids);
 
                 return NoContent();
             }
@@ -126,7 +151,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             try
             {
@@ -136,7 +161,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 if (note == null)
                     return NotFound();
 
-                _service.Delete(id);
+                await _service.Delete(id);
 
                 return NoContent();
             }
