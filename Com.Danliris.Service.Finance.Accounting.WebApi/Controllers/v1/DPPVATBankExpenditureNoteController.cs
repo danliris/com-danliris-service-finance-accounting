@@ -94,7 +94,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public IActionResult Put([FromRoute] int id, [FromBody] FormDto form)
         {
             try
