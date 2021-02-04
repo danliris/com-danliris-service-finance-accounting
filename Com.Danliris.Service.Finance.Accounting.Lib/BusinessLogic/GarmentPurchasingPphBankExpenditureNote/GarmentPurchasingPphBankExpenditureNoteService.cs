@@ -248,18 +248,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                 query = query.Where(entity => entity.SupplierName.Contains(filter.SupplierName));
             }
 
-            //if(filter.DateStart.HasValue)
+            ////if(filter.DateStart.HasValue)
+            //if (filter.DateStart.HasValue && filter.DateStart.GetValueOrDefault().Year != 1)
+            //{
+            //    query = query.Where(entity => entity.Date >= filter.DateStart);
+            //}
+
+            ////if(filter.DateEnd.HasValue)
+            //if (filter.DateEnd.HasValue && filter.DateEnd.GetValueOrDefault().Year != 1)
+            //{
+            //    query = query.Where(entity => entity.Date <= filter.DateEnd);
+            //}
             if (filter.DateStart.HasValue && filter.DateStart.GetValueOrDefault().Year != 1)
             {
-                query = query.Where(entity => entity.Date >= filter.DateStart);
+                query = query.Where(entity => (entity.CreatedUtc>= entity.LastModifiedUtc? entity.CreatedUtc : entity.LastModifiedUtc) >= filter.DateStart);
             }
 
             //if(filter.DateEnd.HasValue)
             if (filter.DateEnd.HasValue && filter.DateEnd.GetValueOrDefault().Year != 1)
             {
-                query = query.Where(entity => entity.Date <= filter.DateEnd);
+                query = query.Where(entity => (entity.CreatedUtc >= entity.LastModifiedUtc ? entity.CreatedUtc : entity.LastModifiedUtc) <= filter.DateEnd);
             }
-
             //var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
             //query = QueryHelper<GarmentPurchasingPphBankExpenditureNoteItemModel>.Order(query, orderDictionary);
 
@@ -320,12 +329,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
             if (filter.DateStart.HasValue && filter.DateStart.GetValueOrDefault().Year!=1)
             {
-                query = query.Where(entity => entity.DueDateStart >= filter.DateStart);
+                //query = query.Where(entity => entity.DueDateStart >= filter.DateStart);
+                query = query.Where(entity => (entity.CreatedUtc >= entity.LastModifiedUtc ? entity.CreatedUtc : entity.LastModifiedUtc) >= filter.DateStart);
+
             }
 
             if (filter.DateEnd.HasValue && filter.DateEnd.GetValueOrDefault().Year != 1)
             {
-                query = query.Where(entity => entity.DueDateEnd <= filter.DateEnd);
+                //query = query.Where(entity => entity.DueDateEnd <= filter.DateEnd);
+                query = query.Where(entity => (entity.CreatedUtc >= entity.LastModifiedUtc ? entity.CreatedUtc : entity.LastModifiedUtc) <= filter.DateEnd);
             }
 
             //var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
