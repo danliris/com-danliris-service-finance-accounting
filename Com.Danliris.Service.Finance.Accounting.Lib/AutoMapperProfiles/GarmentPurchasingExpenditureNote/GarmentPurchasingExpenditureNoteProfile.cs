@@ -67,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                          PaymentBill = invoice.GarmentDeliveryOrder.PaymentBill,
                          BillNo = invoice.GarmentDeliveryOrder.BillNo,
                          DoNo = invoice.GarmentDeliveryOrder.DONo,
-                         NPH = item.GarmentInvoice.NPH
+                         NPH = item.GarmentInvoice == null ? string.Empty: item.GarmentInvoice.NPH
                      })
                      .ToList()
                  })
