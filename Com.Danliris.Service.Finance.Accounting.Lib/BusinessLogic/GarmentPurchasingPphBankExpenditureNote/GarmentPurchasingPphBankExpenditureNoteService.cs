@@ -387,6 +387,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                 .Take(size)
                 .Select(grp => new GarmentPurchasingPphBankExpenditureNoteReportViewDto
                 {
+                    Id = grp.Id,
                     BankName = grp.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.AccountBankName + " - " +
                                grp.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.BankName + " - " +
                                grp.GarmentPurchasingPphBankExpenditureNoteItem.GarmentPurchasingPphBankExpenditureNote.AccountBankNumber + " - " +
@@ -405,6 +406,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
             return new ReadResponse<GarmentPurchasingPphBankExpenditureNoteReportViewDto>(data, count, new Dictionary<string, string>(), new List<string>());
         }
+
+        public ReadResponse<GarmentPurchasingPphBankExpenditureNoteReportGroupView> GetReportGroupView(int page, int size, string order, GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter)
+        {
+            var reportView = GetReportView(page, size, order, filter);
+
+            var groupReport = reportView.Data.GroupBy(
+                key => new { key.INNO, key.InvoiceOutNo, key.PaidDate, key.PPH, key.SupplierName, key.CurrencyCode, key.Category, key.BankName },
+                value => new { value.InvoiceNo },
+                (key, value) => new GarmentPurchasingPphBankExpenditureNoteReportGroupView
+                {
+                    BankName = key.BankName,
+                    Category = key.Category,
+                    CurrencyCode = key.CurrencyCode,
+                    //Id = key.Id,
+                    INNO = key.INNO,
+                    InvoiceOutNo = key.InvoiceOutNo,
+                    PaidDate = key.PaidDate,
+                    PPH = key.PPH,
+                    SupplierName = key.SupplierName,
+                    InvoiceItems = value.Select(s => new GarmentPurchasingPphBankExpenditureReportGroupItemDto { NoInvoice = s.InvoiceNo }).ToList()
+                }
+                ).ToList();
+            return new ReadResponse<GarmentPurchasingPphBankExpenditureNoteReportGroupView>(groupReport, reportView.Count, new Dictionary<string, string>(), new List<string>());
+        }
+
 
         public List<GarmentPurchasingPphBankExpenditureNoteModel> GetReportData( GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter)
         {
