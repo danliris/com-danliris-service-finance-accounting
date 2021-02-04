@@ -316,12 +316,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                 query = query.Where(entity => entity.Items.Any(s=> s.SupplierName.Contains(filter.SupplierName)));
             }
 
-            if (filter.DateStart.HasValue|| filter.DateStart.GetValueOrDefault().Year!=1)
+            if (filter.DateStart.HasValue && filter.DateStart.GetValueOrDefault().Year!=1)
             {
                 query = query.Where(entity => entity.DueDateStart >= filter.DateStart);
             }
 
-            if (filter.DateEnd.HasValue|| filter.DateEnd.GetValueOrDefault().Year != 1)
+            if (filter.DateEnd.HasValue && filter.DateEnd.GetValueOrDefault().Year != 1)
             {
                 query = query.Where(entity => entity.DueDateEnd <= filter.DateEnd);
             }
