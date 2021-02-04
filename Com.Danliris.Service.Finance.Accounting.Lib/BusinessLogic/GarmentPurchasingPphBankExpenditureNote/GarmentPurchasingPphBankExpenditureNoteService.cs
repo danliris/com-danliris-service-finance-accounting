@@ -248,12 +248,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                 query = query.Where(entity => entity.SupplierName.Contains(filter.SupplierName));
             }
 
-            if(filter.DateStart.HasValue)
+            //if(filter.DateStart.HasValue)
+            if (filter.DateStart.HasValue && filter.DateStart.GetValueOrDefault().Year != 1)
             {
                 query = query.Where(entity => entity.Date >= filter.DateStart);
             }
 
-            if(filter.DateEnd.HasValue)
+            //if(filter.DateEnd.HasValue)
+            if (filter.DateEnd.HasValue && filter.DateEnd.GetValueOrDefault().Year != 1)
             {
                 query = query.Where(entity => entity.Date <= filter.DateEnd);
             }
