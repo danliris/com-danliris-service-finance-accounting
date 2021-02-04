@@ -22,6 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPp
         public string PaymentBill { get; set; }
         public string BillNo { get; set; }
         public string DoNo { get; set; }
+        public string NPH { get; set; }
         public virtual int GarmentPurchasingPphBankExpenditureNoteItemId { get; set; }
         [ForeignKey("GarmentPurchasingPphBankExpenditureNoteItemId")]
         public virtual GarmentPurchasingPphBankExpenditureNoteItemModel GarmentPurchasingPphBankExpenditureNoteItem { get; set; }
