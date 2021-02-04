@@ -100,6 +100,38 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
             }
         }
 
+        [HttpPut]
+        public async Task<ActionResult> Put([FromBody] FormInsert viewModel)
+        {
+            try
+            {
+                VerifyUser();
+
+                ValidateService.Validate(viewModel);
+                //FormInsert model = Mapper.Map<FormInsert>(viewModel);
+                await Service.UpdateAsync(viewModel);
+
+                Dictionary<string, object> Result =
+                       new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
+                       .Ok();
+                return Created(String.Concat(Request.Path, "/", 0), Result);
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("pdf/{Id}")]
         public async Task<IActionResult> DownloadPdfById([FromRoute] int id)
         {
@@ -316,8 +348,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
             }
         }
 
-        [HttpPost("posting/{id}")]
-        public async Task<IActionResult> PostingDocument([FromRoute] int id)
+        [HttpPost("posting")]
+        public async Task<IActionResult> PostingDocument([FromBody] List<int> id)
         {
             try
             {

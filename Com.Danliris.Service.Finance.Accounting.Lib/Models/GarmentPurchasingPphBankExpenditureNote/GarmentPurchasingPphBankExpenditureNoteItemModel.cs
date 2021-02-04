@@ -28,7 +28,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPp
         public string PaymentType { get; set; }
         public string PaymentMethod { get; set; }
         public int PaymentDueDays { get; set; }
-
         public virtual int GarmentPurchasingPphBankExpenditureNoteId { get; set; }
         [ForeignKey("GarmentPurchasingPphBankExpenditureNoteId")]
         public virtual GarmentPurchasingPphBankExpenditureNoteModel GarmentPurchasingPphBankExpenditureNote { get; set; }

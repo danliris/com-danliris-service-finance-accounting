@@ -247,22 +247,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     col++;
                     #endregion
 
-                    #region NoNI
-                    worksheet.Cells[row, col, row + dataCount, col].Value = item.Data.Items.FirstOrDefault().InternalNotesNo;
-                    worksheet.Cells[row, col, row + dataCount, col].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                    worksheet.Cells[row, col, row + dataCount, col].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                    worksheet.Cells[row, col, row + dataCount, col].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                    worksheet.Cells[row, col, row + dataCount, col].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                    //worksheet.Cells[row, col, row dataCount 1, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[row, col, row + dataCount, col].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    worksheet.Cells[row, col, row + dataCount, col].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                    worksheet.Cells[row, col, row + dataCount, col].Style.Font.Name = "Calibri";
-                    worksheet.Cells[row, col, row + dataCount, col].Style.Font.Size = 11f;
-                    worksheet.Cells[row, col, row + dataCount, col].Style.WrapText = true;
 
-                    worksheet.Cells[row, col, row + dataCount, col].Merge = true;
-                    col++;
-                    #endregion
 
 
                     foreach (var invoice in item.Data.Items)
@@ -272,10 +257,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                             grpInvoice => grpInvoice,
                             (invoiceKey, grpInvoice) => new { Key = invoiceKey, Grp = grpInvoice }
                             );
-
                         foreach (var invoiceGrp in groupByInvoice)
                         {
                             var dataCountNoDO = invoiceGrp.Grp.Count()-1;
+
+                            #region NoNI
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Value = invoice.InternalNotesNo;
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                            //worksheet.Cells[row, col, row dataCountNoDO 1, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Font.Name = "Calibri";
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Font.Size = 11f;
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Style.WrapText = true;
+
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Merge = true;
+                            col++;
+                            #endregion
 
                             #region NoInvoice
                             worksheet.Cells[row, col, row + dataCountNoDO, col].Value = invoiceGrp.Key.InvoicesNo;
@@ -373,13 +374,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                                 worksheet.Cells[row, col].Merge = true;
                                 col -= 2;
                                 #endregion
-                                //row++;
+                                row++;
                             }
-                            col -= 3;
+                            col -= 4;
                         }
+                        //row -= 1;
 
                     }
-                    row += 1;
+                    //row += 1;
                     col = 1;
                 }
 
