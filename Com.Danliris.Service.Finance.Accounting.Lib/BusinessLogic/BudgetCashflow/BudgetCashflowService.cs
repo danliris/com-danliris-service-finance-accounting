@@ -727,9 +727,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                             {
                                                 if (cashflowSubCategory.ReportType == ReportType.DebtAndDispositionSummary)
                                                 {
-                                                    var categoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
+                                                    var subCategoryPurchasingCategoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
                                                     var summary = debtDispositionSummaries
-                                                        .Where(element => categoryIds.Contains(element.GetCategoryId()) && element.IsImport == cashflowSubCategory.IsImport && element.GetUnitId() == divisionUnit.Id)
+                                                        .Where(element => subCategoryPurchasingCategoryIds.Contains(element.GetCategoryId()) && element.IsImport == cashflowSubCategory.IsImport && element.GetUnitId() == divisionUnit.Id)
                                                         .GroupBy(element => element.CurrencyId)
                                                         .Select(element => new
                                                         {
@@ -756,9 +756,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                                 }
                                                 else if (cashflowSubCategory.ReportType == ReportType.PurchasingReport)
                                                 {
-                                                    var categoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
+                                                    var subCategoryPurchasingCategoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
                                                     var summary = debtSummaries
-                                                        .Where(element => categoryIds.Contains(element.GetCategoryId()) && element.IsImport == cashflowSubCategory.IsImport && element.GetUnitId() == divisionUnit.Id)
+                                                        .Where(element => subCategoryPurchasingCategoryIds.Contains(element.GetCategoryId()) && element.IsImport == cashflowSubCategory.IsImport && element.GetUnitId() == divisionUnit.Id)
                                                         .GroupBy(element => element.CurrencyId)
                                                         .Select(element => new
                                                         {
