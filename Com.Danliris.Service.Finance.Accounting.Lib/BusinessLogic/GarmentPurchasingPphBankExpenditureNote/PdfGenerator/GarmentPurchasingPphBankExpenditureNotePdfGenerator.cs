@@ -117,7 +117,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
             bodyCell.Colspan = 1;
             bodyCell.Rowspan = 1;
-            bodyCell.Phrase = new Phrase("No. SPB", normal_font);
+            bodyCell.Phrase = new Phrase("No. NI", normal_font);
             bodyTable.AddCell(bodyCell);
 
             bodyCell.Phrase = new Phrase("Supplier", normal_font);

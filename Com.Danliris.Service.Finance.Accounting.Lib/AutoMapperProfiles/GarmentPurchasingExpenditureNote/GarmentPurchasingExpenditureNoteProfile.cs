@@ -43,6 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                      IncomeTaxTotal = Convert.ToDouble(s.IncomeTax.Rate),
                      SupplierId = item.SupplierId,
                      SupplierName = item.SupplierName,
+                     SupplierCode = item.SupplierCode,
                      InternalNotesId = item.INId,
                      InternalNotesNo = item.INNo,
                      PaymentDueDays = item.Items.FirstOrDefault().Details.FirstOrDefault().PaymentDueDays,
@@ -55,7 +56,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                          InvoicesDate = invoice.InvoiceDate,
                          InvoicesNo = invoice.InvoiceNo,
                          InvoicesId = invoice.InvoiceId,
-                         ProductCategory = invoice.ProductCode,
+                         ProductCategory = invoice.ProductCategory,
+                         ProductCode = invoice.ProductCode,
                          ProductId = invoice.ProductId,
                          ProductName = invoice.ProductName,
                          Total = Convert.ToDecimal(invoice.PriceTotal),
@@ -64,8 +66,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                          UnitName = invoice.UnitName,
                          PaymentBill = invoice.GarmentDeliveryOrder.PaymentBill,
                          BillNo = invoice.GarmentDeliveryOrder.BillNo,
-                         DoNo = invoice.GarmentDeliveryOrder.DONo
-
+                         DoNo = invoice.GarmentDeliveryOrder.DONo,
+                         NPH = item.GarmentInvoice.NPH
                      })
                      .ToList()
                  })

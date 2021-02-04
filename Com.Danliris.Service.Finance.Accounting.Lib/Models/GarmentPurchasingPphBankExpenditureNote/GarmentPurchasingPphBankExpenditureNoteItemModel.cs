@@ -14,6 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPp
         public DateTimeOffset DueDate { get; set; }
         public int SupplierId { get; set; }
         public string SupplierName { get; set; }
+        public string SupplierCode { get; set; }
         public double VAT { get; set; }
         public double CorrectionAmount { get; set; }
         public double IncomeTaxTotal { get; set; }

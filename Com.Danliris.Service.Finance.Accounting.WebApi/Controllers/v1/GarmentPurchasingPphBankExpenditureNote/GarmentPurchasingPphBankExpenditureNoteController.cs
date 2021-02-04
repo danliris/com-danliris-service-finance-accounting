@@ -114,22 +114,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
                 {
                     FileDownloadName = "Garment Purchasing PPH Bank.pdf"
                 };
-
-                //if (model == null)
-                //{
-                //    Dictionary<string, object> Result =
-                //        new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
-                //        .Fail();
-                //    return NotFound(Result);
-                //}
-
-                //return Ok(new
-                //{
-                //    apiVersion = ApiVersion,
-                //    data = viewModel,
-                //    message = General.OK_MESSAGE,
-                //    statusCode = General.OK_STATUS_CODE
-                //});
             }
             catch (Exception e)
             {
@@ -163,7 +147,27 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+        [HttpGet("report/xls")]
+        public async Task<IActionResult> DownloadReportXls([FromQuery] GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter, int page = 1, int size = 25, string order = "{}")
+        {
+            try
+            {
+                VerifyUser();
+                var stream = Service.DownloadReportXls(filter);
 
+                return new FileStreamResult(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                {
+                    FileDownloadName = "Garment Purchasing Laporan PPH Bank.xls"
+                };
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
         [HttpGet("loader-pph-intern-note")]
         public async Task<IActionResult> GetLoaderInternNote([FromQuery] string keyword= "")
         {
@@ -372,5 +376,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentP
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+
     }
 }

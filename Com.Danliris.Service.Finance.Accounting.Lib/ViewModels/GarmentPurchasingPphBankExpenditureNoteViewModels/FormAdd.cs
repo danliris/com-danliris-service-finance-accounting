@@ -80,6 +80,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public string ProductCode { get; set; }
         public int ProductId { get; set; }
         public string ProductName { get; set; }
+        public string ProductCategory { get; set; }
         public int Quantity { get; set; }
         public string UnitId { get; set; }
         public string UnitCode { get; set; }

@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasingPphBankExpenditureNoteViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,5 +22,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         List<GarmentPurchasingPphBankExpenditureLoaderSupplierDto> GetLoaderSupplier(string keyword);
         List<GarmentPurchasingPphBankExpenditureNoteLoaderInvoiceDto> GetLoaderInvoice(string keyword);
         List<GarmentPurchasingPphBankExpenditureNoteLoaderInvoiceOutDto> GetLoaderInvoiceOut(string keyword);
+        List<GarmentPurchasingPphBankExpenditureNoteInternNoteIsPaidDto> GetInternNoteIsPaid();
+        List<GarmentPurchasingPphBankExpenditureNoteModel> GetReportData(GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter);
+        MemoryStream DownloadReportXls(GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter);
     }
 }
