@@ -20,9 +20,9 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurchasingPphBankExpenditureNote
 {
-   public class GarmentPurchasingPphBankExpenditureNoteControllerTest
+    public class GarmentPurchasingPphBankExpenditureNoteControllerTest
     {
-        protected (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentPurchasingPphBankExpenditureNoteService> Service, Mock<IMapper> Mapper ) GetMocks()
+        protected (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentPurchasingPphBankExpenditureNoteService> Service, Mock<IMapper> Mapper) GetMocks()
         {
             return (IdentityService: new Mock<IIdentityService>(), ValidateService: new Mock<IValidateService>(), Service: new Mock<IGarmentPurchasingPphBankExpenditureNoteService>(), Mapper: new Mock<IMapper>());
         }
@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
                 new Claim("username", "unittestusername")
             };
             user.Setup(u => u.Claims).Returns(claims);
-            GarmentPurchasingPphBankExpenditureNoteController controller =new  GarmentPurchasingPphBankExpenditureNoteController( mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Service.Object, mocks.Mapper.Object);
+            GarmentPurchasingPphBankExpenditureNoteController controller = new GarmentPurchasingPphBankExpenditureNoteController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Service.Object, mocks.Mapper.Object);
             controller.ControllerContext = new ControllerContext()
             {
                 HttpContext = new DefaultHttpContext()
@@ -64,7 +64,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
         }
 
         [Fact]
-        public void  Get_Return_OK()
+        public void Get_Return_OK()
         {
             var mocks = GetMocks();
             mocks.Service
@@ -76,7 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
                 .Returns(new List<GarmentPurchasingPphBankExpenditureNoteDataViewModel>());
 
             var controller = GetController(mocks);
-            var response =  controller.Get();
+            var response = controller.Get();
 
             int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
@@ -109,7 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
             mocks.Service
                 .Setup(f => f.CreateAsync(It.IsAny<FormInsert>()))
                 .Returns(Task.FromResult(1));
-                
+
 
             mocks.Mapper
                 .Setup(f => f.Map<List<GarmentPurchasingPphBankExpenditureNoteDataViewModel>>(It.IsAny<List<GarmentPurchasingPphBankExpenditureNoteDataViewModel>>()))
@@ -118,7 +118,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
             var controller = GetController(mocks);
 
             FormInsert viewModel = new FormInsert();
-            var response =await controller.Post(viewModel);
+            var response = await controller.Post(viewModel);
 
             int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.Created, statusCode);
@@ -140,7 +140,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
 
             var controller = GetController(mocks);
 
-           
+
             var response = await controller.Post(viewModel);
 
             int statusCode = GetStatusCode(response);
@@ -208,7 +208,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
 
             var controller = GetController(mocks);
 
-           
+
             var response = await controller.Put(viewModel);
 
             int statusCode = GetStatusCode(response);
@@ -237,5 +237,423 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
             int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
+
+        [Fact]
+        public async Task DownloadPdfById_Return_PdfFile()
+        {
+            //Arrange
+            var mocks = GetMocks();
+
+            FormInsert formInsert = new FormInsert()
+            {
+
+                Bank = new Bank()
+                {
+                    AccountCOA = "AccountCOA",
+                    AccountName = "AccountName",
+                    AccountNumber = "AccountNumber",
+                    BankAddress = "BankAddress",
+                    BankCode = "BankCode",
+                    BankName = "BankName",
+                    Code = "Code",
+                    Currency = new Currency()
+                    {
+                        Code = "COde",
+                        Description = "Description",
+                        Rate = 1
+                    },
+                    SwiftCode = "SwiftCode",
+
+
+                },
+
+                Date = DateTimeOffset.Now,
+                DateFrom = DateTimeOffset.Now.AddDays(-1),
+                DateTo = DateTimeOffset.Now.AddDays(1),
+                IncomeTax = new IncomeTax()
+                {
+                    Description = "Description"
+                },
+                IsPosted = false,
+                PPHBankExpenditureNoteItems = new List<FormAdd>() {
+                new FormAdd()
+                {
+                    CurrencyCode="IDR",
+                    CurrencyRate=1,
+
+                    GarmentInvoice=new GarmentPurchasingInvoiceInfoDto()
+                    {
+                        CurrencyCode="IDR",
+                        HasInternNote=false,
+                        IncomeTaxDate=DateTimeOffset.Now,
+                        CurrencyId=1,
+                        IncomeTaxId=1,
+                        IncomeTaxName="IncomeTaxName",
+                        IncomeTaxNo="IncomeTaxNo",
+                        IncomeTaxRate=1,
+                        InvoiceDate=DateTimeOffset.Now,
+                        InvoiceNo="InvoiceNo",
+                        IsPayTax=false,
+                        IsPayVat=false,
+                        NPH="NPH",
+                        NPN="NPN",
+                        SupplierCode="SupplierCode",
+                        SupplierName="SupplierName",
+                        TotalAmount=1,
+                        SupplierId=1,
+                        UseIncomeTax=false,
+                        UseVat=false,
+                        VatDate=DateTimeOffset.Now,
+                        VatNo="VatNo",
+
+                    },
+                    TotalIncomeTaxNI=1,
+                    CurrencyId=1,
+                    INDueDate=DateTimeOffset.Now,
+                    Position=1,
+                    Remark="Remark",
+                    SupplierCode="SupplierCode",
+                    IsCreatedVB=false,
+                    INId=1,
+                    INNo="INNo",
+                    SupplierId=1,
+                    SupplierName="SupplierName",
+                       INDate=DateTimeOffset.Now,
+                       Items=new List<Item>()
+                       {
+                           new Item()
+                           {
+                               ProductCode="ProductCode",
+                               Details=new List<Detail>()
+                               {
+                                   new Detail()
+                                   {
+                                       POSerialNumber="POSerialNumber",
+                                       PaymentType="PaymentType",
+                                       PaymentMethod="PaymentMethod",
+                                       PaymentDueDays=1,
+                                       PaymentDueDate=DateTimeOffset.Now.AddDays(1),
+                                       DODate=DateTimeOffset.Now.AddDays(1),
+                                       DOId=1,
+                                       DONo="DONo",
+                                       EPOId=1,
+                                       EPONo="EPONo",
+                                       GarmentDeliveryOrder=new DeliveryOrderInfo(),
+                                       InvoiceDate=DateTimeOffset.Now,
+                                       InvoiceDetailId=1,
+                                       InvoiceId=1,
+                                       InvoiceNo="InvoiceNo",
+                                       InvoiceTotalAmount=1,
+                                       PricePerDealUnit=1,
+                                       PriceTotal=1,
+                                       ProductCategory="ProductCategory",
+                                       ProductCode="ProductCode",
+                                       ProductId=1,
+                                       ProductName="ProductName",
+                                       Quantity=1,
+                                       RONo="RONo",
+                                       UnitCode="UnitCode",
+                                       UnitId="UnitId",
+                                       UnitName="UnitName",
+                                       UOMId=1,
+                                       UOMUnit="UOMUnit"
+                                   }
+                               }
+                           }
+                       }
+
+,                }
+                },
+                PphBankInvoiceNo = "PphBankInvoiceNo",
+
+            };
+            mocks.Service
+                .Setup(f => f.ReadByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(formInsert);
+
+
+            var controller = GetController(mocks);
+
+            //Act
+            var response = await controller.DownloadPdfById(1);
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
+
+
+        [Fact]
+        public async Task DownloadPdfById_Return_InternalServerError()
+        {
+            //Arrange
+            var mocks = GetMocks();
+
+            mocks.Service
+                .Setup(f => f.ReadByIdAsync(It.IsAny<int>()))
+                .ThrowsAsync(new Exception());
+
+
+            var controller = GetController(mocks);
+
+            //Act
+            var response = await controller.DownloadPdfById(1);
+
+            //Assert
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public async Task GetReport_Return_OK()
+        {
+            //Arrange
+            var mocks = GetMocks();
+
+
+
+            mocks.Service
+                .Setup(f => f.GetReportView(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<GarmentPurchasingPphBankExpenditureNoteFilterReportDto>()))
+                .Returns(new ReadResponse<GarmentPurchasingPphBankExpenditureNoteReportViewDto>(new List<GarmentPurchasingPphBankExpenditureNoteReportViewDto>(), 1, new Dictionary<string, string>(), new List<string>()));
+
+
+            var controller = GetController(mocks);
+
+            //Act
+            GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter = new GarmentPurchasingPphBankExpenditureNoteFilterReportDto()
+            {
+                DateEnd = DateTime.Now.AddDays(2),
+                DateStart = DateTime.Now.AddDays(-1),
+                INNo = "INNo",
+                InvoiceNo = "InvoiceNo",
+                InvoiceOutNo = "InvoiceOutNo",
+                SupplierName = "SupplierName"
+            };
+            var response = await controller.GetReport(filter, 1, 25, "{}");
+
+            //Assert
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+        [Fact]
+        public async Task GetReport_Return_InternalServerError()
+        {
+            //Arrange
+            var mocks = GetMocks();
+
+            mocks.Service
+                .Setup(f => f.GetReportView(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<GarmentPurchasingPphBankExpenditureNoteFilterReportDto>()))
+                .Throws(new Exception());
+
+
+            var controller = GetController(mocks);
+
+            //Act
+            GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter = new GarmentPurchasingPphBankExpenditureNoteFilterReportDto()
+            {
+                DateEnd = DateTime.Now.AddDays(2),
+                DateStart = DateTime.Now.AddDays(-1),
+                INNo = "INNo",
+                InvoiceNo = "InvoiceNo",
+                InvoiceOutNo = "InvoiceOutNo",
+                SupplierName = "SupplierName"
+            };
+            var response = await controller.GetReport(filter, 1, 25, "{}");
+
+            //Assert
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public async Task GetReportGroup_Return_OK()
+        {
+            //Arrange
+            var mocks = GetMocks();
+
+            mocks.Service
+                .Setup(f => f.GetReportGroupView(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<GarmentPurchasingPphBankExpenditureNoteFilterReportDto>()))
+                .Returns(new ReadResponse<GarmentPurchasingPphBankExpenditureNoteReportGroupView>(new List<GarmentPurchasingPphBankExpenditureNoteReportGroupView>(), 1, new Dictionary<string, string>(), new List<string>()));
+
+            var controller = GetController(mocks);
+
+            //Act
+            GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter = new GarmentPurchasingPphBankExpenditureNoteFilterReportDto()
+            {
+                DateEnd = DateTime.Now.AddDays(2),
+                DateStart = DateTime.Now.AddDays(-1),
+                INNo = "INNo",
+                InvoiceNo = "InvoiceNo",
+                InvoiceOutNo = "InvoiceOutNo",
+                SupplierName = "SupplierName"
+            };
+            var response = await controller.GetReportGroup(filter, 1, 25, "{}");
+
+            //Assert
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+
+        [Fact]
+        public async Task GetReportGroup_Return_InternalServerError()
+        {
+            //Arrange
+            var mocks = GetMocks();
+
+            mocks.Service
+                .Setup(f => f.GetReportGroupView(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<GarmentPurchasingPphBankExpenditureNoteFilterReportDto>()))
+                .Throws(new Exception());
+
+            var controller = GetController(mocks);
+
+            //Act
+            GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter = new GarmentPurchasingPphBankExpenditureNoteFilterReportDto()
+            {
+                DateEnd = DateTime.Now.AddDays(2),
+                DateStart = DateTime.Now.AddDays(-1),
+                INNo = "INNo",
+                InvoiceNo = "InvoiceNo",
+                InvoiceOutNo = "InvoiceOutNo",
+                SupplierName = "SupplierName"
+            };
+            var response = await controller.GetReportGroup(filter, 1, 25, "{}");
+
+            //Assert
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public async Task DownloadReportXls_Return_XlsFile()
+        {
+            //Arrange
+            var mocks = GetMocks();
+
+            mocks.Service
+                .Setup(f => f.DownloadReportXls(It.IsAny<GarmentPurchasingPphBankExpenditureNoteFilterReportDto>()))
+                .Returns(new System.IO.MemoryStream());
+
+            var controller = GetController(mocks);
+
+            //Act
+            GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter = new GarmentPurchasingPphBankExpenditureNoteFilterReportDto()
+            {
+                DateEnd = DateTime.Now.AddDays(2),
+                DateStart = DateTime.Now.AddDays(-1),
+                INNo = "INNo",
+                InvoiceNo = "InvoiceNo",
+                InvoiceOutNo = "InvoiceOutNo",
+                SupplierName = "SupplierName"
+            };
+            var response = await controller.DownloadReportXls(filter, 1, 25, "{}");
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
+
+        [Fact]
+        public async Task DownloadReportXls_Return_InternalServerError()
+        {
+            //Arrange
+            var mocks = GetMocks();
+
+            mocks.Service
+                .Setup(f => f.DownloadReportXls(It.IsAny<GarmentPurchasingPphBankExpenditureNoteFilterReportDto>()))
+                .Throws(new Exception());
+
+            var controller = GetController(mocks);
+
+            //Act
+            GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter = new GarmentPurchasingPphBankExpenditureNoteFilterReportDto()
+            {
+                DateEnd = DateTime.Now.AddDays(2),
+                DateStart = DateTime.Now.AddDays(-1),
+                INNo = "INNo",
+                InvoiceNo = "InvoiceNo",
+                InvoiceOutNo = "InvoiceOutNo",
+                SupplierName = "SupplierName"
+            };
+            var response = await controller.DownloadReportXls(filter, 1, 25, "{}");
+
+            //Assert
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public async Task GetLoaderInternNote_Return_OK()
+        {
+            //Arrange
+            var mocks = GetMocks();
+
+            GarmentPurchasingPphBankExpenditureNoteLoaderInternNote data = new GarmentPurchasingPphBankExpenditureNoteLoaderInternNote()
+            {
+                Name = ""
+            };
+            mocks.Service
+                .Setup(f => f.GetLoaderInterNotePPH(It.IsAny<string>()))
+                .Returns(new List<GarmentPurchasingPphBankExpenditureNoteLoaderInternNote>() {
+                data
+                });
+
+            var controller = GetController(mocks);
+
+            //Act
+            GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter = new GarmentPurchasingPphBankExpenditureNoteFilterReportDto()
+            {
+                DateEnd = DateTime.Now.AddDays(2),
+                DateStart = DateTime.Now.AddDays(-1),
+                INNo = "INNo",
+                InvoiceNo = "InvoiceNo",
+                InvoiceOutNo = "InvoiceOutNo",
+                SupplierName = "SupplierName"
+            };
+            var response = await controller.GetLoaderInternNote("");
+
+            //Assert
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+
+        [Fact]
+        public async Task GetLoaderInternNote_Return_InternalServerError()
+        {
+            //Arrange
+            var mocks = GetMocks();
+
+            GarmentPurchasingPphBankExpenditureNoteLoaderInternNote data = new GarmentPurchasingPphBankExpenditureNoteLoaderInternNote()
+            {
+                Name = ""
+            };
+            mocks.Service
+                .Setup(f => f.GetLoaderInterNotePPH(It.IsAny<string>()))
+                .Throws(new Exception());
+
+            var controller = GetController(mocks);
+
+            //Act
+            GarmentPurchasingPphBankExpenditureNoteFilterReportDto filter = new GarmentPurchasingPphBankExpenditureNoteFilterReportDto()
+            {
+                DateEnd = DateTime.Now.AddDays(2),
+                DateStart = DateTime.Now.AddDays(-1),
+                INNo = "INNo",
+                InvoiceNo = "InvoiceNo",
+                InvoiceOutNo = "InvoiceOutNo",
+                SupplierName = "SupplierName"
+            };
+            var response = await controller.DownloadReportXls(filter, 1, 25, "{}");
+
+            //Assert
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
     }
 }
