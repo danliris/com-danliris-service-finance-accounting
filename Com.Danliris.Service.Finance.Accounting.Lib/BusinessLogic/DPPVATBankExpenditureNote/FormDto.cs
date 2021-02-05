@@ -45,11 +45,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 {
                     ItemsError += "{ ";
 
-                    if (item.InternalNote == null || item.InternalNote.Items == null || item.InternalNote.Items.Count <= 0 || !item.InternalNote.Items.Any(itemItem => itemItem.SelectInvoice))
+                    if (item.Select)
                     {
-                        CountItemsError++;
-                        ItemsError += "'Invoice': 'Invoice harus dipilih', ";
+                        if (item.InternalNote == null || item.InternalNote.Items == null || item.InternalNote.Items.Count <= 0 || !item.InternalNote.Items.Any(itemItem => itemItem.SelectInvoice))
+                        {
+                            CountItemsError++;
+                            ItemsError += "'Invoice': 'Invoice harus dipilih', ";
+                        }
                     }
+                    
 
                     ItemsError += "}, ";
                 }
