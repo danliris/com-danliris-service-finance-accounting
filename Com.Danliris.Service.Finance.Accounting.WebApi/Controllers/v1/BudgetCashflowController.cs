@@ -119,6 +119,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             try
             {
+                VerifyUser();
                 var result = await _service.GetBudgetCashflowUnit(unitId, date);
                 return Ok(new
                 {
@@ -143,6 +144,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             try
             {
+                VerifyUser();
                 var data = await _service.GetBudgetCashflowUnit(unitId, date);
                 var unit = _units.FirstOrDefault(element => element.Id == unitId);
                 var stream = CashflowUnitPdfGenerator.Generate(unit, date, _identityService.TimezoneOffset, data);
@@ -166,6 +168,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             try
             {
+                VerifyUser();
                 var data = await _service.GetBudgetCashflowUnit(unitId, date);
                 var unit = _units.FirstOrDefault(element => element.Id == unitId);
                 var stream = CashflowUnitExcelGenerator.Generate(unit, date, _identityService.TimezoneOffset, data);
@@ -189,6 +192,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             try
             {
+                VerifyUser();
                 var result = await _service.GetBudgetCashflowDivision(divisionId, date);
                 return Ok(new
                 {
@@ -213,6 +217,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             try
             {
+                VerifyUser();
                 var data = await _service.GetBudgetCashflowDivision(divisionId, date);
                 var division = _divisions.FirstOrDefault(element => element.Id == divisionId);
                 var stream = CashflowDivisionPdfGenerator.Generate(division, date, _identityService.TimezoneOffset, data);
@@ -236,6 +241,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             try
             {
+                VerifyUser();
                 var data = await _service.GetBudgetCashflowDivision(divisionId, date);
                 var division = _divisions.FirstOrDefault(element => element.Id == divisionId);
                 var stream = CashflowDivisionExcelGenerator.Generate(division, date, _identityService.TimezoneOffset, data);
@@ -259,6 +265,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             try
             {
+                VerifyUser();
                 var result = _service.GetBudgetCashflowUnit(unitId, subCategoryId, date);
                 return Ok(new
                 {
@@ -339,6 +346,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             try
             {
+                VerifyUser();
                 var result = _service.GetInitialCashBalance(unitId, date);
                 return Ok(new
                 {
@@ -419,6 +427,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             try
             {
+                VerifyUser();
                 var result = _service.GetRealCashBalance(unitId, date);
                 return Ok(new
                 {

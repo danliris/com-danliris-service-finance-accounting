@@ -47,6 +47,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDoc
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingPphBankExpenditureNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.CacheService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -144,7 +145,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRealizationService, VBRealizationService>()
                 .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>()
                 .AddTransient<IBudgetCashflowService, BudgetCashflowService>()
-                .AddTransient<IDPPVATBankExpenditureNoteService, DPPVATBankExpenditureNoteService>();
+                .AddTransient<IDPPVATBankExpenditureNoteService, DPPVATBankExpenditureNoteService>()
+                .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>();
         }
 
 

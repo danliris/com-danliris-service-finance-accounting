@@ -4,13 +4,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 {
     public class InternalNoteInvoiceDto
     {
+        public InternalNoteInvoiceDto()
+        {
+
+        }
+
         public InternalNoteInvoiceDto(DPPVATBankExpenditureNoteDetailModel detail)
         {
             Id = detail.Id;
             Invoice = new InvoiceDto(detail);
+            SelectInvoice = true;
         }
 
         public int Id { get; set; }
         public InvoiceDto Invoice { get; set; }
+        public bool SelectInvoice { get; set; }
     }
 }

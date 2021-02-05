@@ -22,5 +22,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.D
         Task<int> Posting(List<int> ids);
         Task<int> CreateInOutTransactionAsync(DailyBankTransactionModel model);
         MemoryStream GenerateExcelDailyBalance(int bankId, DateTime startDate, DateTime endDate, string divisionName, int clientTimeZoneOffset);
+        Task<string> GetDocumentNo(string type, string bankCode, string username);
     }
 }

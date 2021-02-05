@@ -1,6 +1,7 @@
 ﻿using Com.Moonlay.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote
@@ -33,10 +34,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
 
         public int DPPVATBankExpenditureNoteId { get; private set; }
         public int InternalNoteId { get; private set; }
+        [MaxLength(32)]
         public string InternalNoteNo { get; private set; }
         public DateTimeOffset InternalNoteDate { get; private set; }
         public DateTimeOffset DueDate { get; private set; }
         public int SupplierId { get; private set; }
+        [MaxLength(1024)]
         public string SupplierName { get; private set; }
         public bool IsImportSupplier { get; private set; }
         public double VATAmount { get; private set; }
@@ -44,6 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
         public double DPP { get; private set; }
         public double TotalAmount { get; private set; }
         public int CurrencyId { get; private set; }
+        [MaxLength(32)]
         public string CurrencyCode { get; private set; }
         public double OutstandingAmount { get; private set; }
     }

@@ -2,6 +2,11 @@
 {
     public class SupplierDto
     {
+        public SupplierDto()
+        {
+
+        }
+
         public SupplierDto(int supplierId, string supplierName, bool isImportSupplier)
         {
             Id = supplierId;
