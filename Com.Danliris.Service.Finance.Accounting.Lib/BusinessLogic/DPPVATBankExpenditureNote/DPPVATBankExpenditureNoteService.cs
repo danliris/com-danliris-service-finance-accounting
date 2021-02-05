@@ -87,7 +87,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         private async Task UpdateInternalNoteInvoiceNoteIsPaid(bool dppVATIsPaid, List<int> internalNoteIds, List<int> invoiceNoteIds)
         {
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"dpp-vat-bank-expenditures/is-paid?dppVATIsPaid={dppVATIsPaid}&internalNoteIds={JsonConvert.SerializeObject(internalNoteIds)}&invoiceNoteIds={JsonConvert.SerializeObject(invoiceNoteIds)}";
+            var uri = APIEndpoint.Purchasing + $"garment-intern-notes/dpp-vat-bank-expenditures/is-paid?dppVATIsPaid={dppVATIsPaid}&internalNoteIds={JsonConvert.SerializeObject(internalNoteIds)}&invoiceNoteIds={JsonConvert.SerializeObject(invoiceNoteIds)}";
             await http.PutAsync(uri, new StringContent(JsonConvert.SerializeObject(internalNoteIds), Encoding.UTF8, General.JsonMediaType));
         }
 
