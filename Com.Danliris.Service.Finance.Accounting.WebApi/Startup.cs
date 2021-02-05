@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition.Reports;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierApproval;
@@ -45,6 +47,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDoc
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingPphBankExpenditureNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.CacheService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditureProofDocument;
@@ -139,7 +143,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRealizationDocumentNonPOService, VBRealizationDocumentNonPOService>()
                 .AddTransient<IVBRealizationWithPOService, VBRealizationWithPOService>()
                 .AddTransient<IVBRealizationService, VBRealizationService>()
-                .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>();
+                .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>()
+                .AddTransient<IBudgetCashflowService, BudgetCashflowService>()
+                .AddTransient<IDPPVATBankExpenditureNoteService, DPPVATBankExpenditureNoteService>()
+                .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>();
         }
 
 
@@ -190,6 +197,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             }));
 
             #endregion
+
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetValue<string>("RedisConnection") ?? Configuration["RedisConnection"];
+                options.InstanceName = Configuration.GetValue<string>("RedisConnectionName") ?? Configuration["RedisConnectionName"];
+            });
+            services.AddSingleton<ICacheService, CacheService>();
 
             #region API
 

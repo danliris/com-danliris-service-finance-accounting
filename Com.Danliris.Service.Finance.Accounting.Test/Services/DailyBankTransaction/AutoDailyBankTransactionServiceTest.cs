@@ -207,5 +207,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             throw new NotImplementedException();
         }
+
+        public Task<string> GetDocumentNo(string type, string bankCode, string username)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

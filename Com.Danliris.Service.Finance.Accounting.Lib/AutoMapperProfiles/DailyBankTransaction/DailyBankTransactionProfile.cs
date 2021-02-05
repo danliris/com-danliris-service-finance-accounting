@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPphBankExpenditureNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasingPphBankExpenditureNoteViewModels;
+using System.Linq;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBankTransaction
 {
@@ -42,6 +45,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBa
                 .ForPath(d => d.Buyer.Code, opt => opt.MapFrom(s => s.BuyerCode))
                 .ForPath(d => d.Buyer.Name, opt => opt.MapFrom(s => s.BuyerName))
 
+                .ReverseMap();
+
+            // this map is for insert from pph to daily bank transaction
+            CreateMap<GarmentPurchasingPphBankExpenditureNoteModel, DailyBankTransactionModel>()
+                .ForPath(d=> d.Id,opt => opt.MapFrom(s=>0))
+                .ForPath(d => d.AccountBankAccountName, opt => opt.MapFrom(s => s.AccountBankName))
+                .ForPath(d=> d.AccountBankAccountNumber, opt=> opt.MapFrom(s=>s.AccountBankNumber))
+                .ForPath(d=> d.AccountBankCode, opt=>opt.MapFrom(s=> s.BankCode))
+                .ForPath(d=> d.AccountBankCurrencyCode, opt=> opt.MapFrom(s=>s.BankCurrencyCode))
+                .ForPath(d=> d.AccountBankCurrencyId, opt=> opt.MapFrom(s=>s.BankCurrencyId))
+                //.ForPath(d=> d.AccountBankId, opt=> opt.MapFrom(s=> s.BankCode1))
+                .ForPath(d=> d.AccountBankName, opt=> opt.MapFrom(s=> s.BankName))
+                .ForPath(d=> d.SupplierCode, opt=> opt.MapFrom(s=> s.Items.FirstOrDefault().SupplierId))
+                .ForPath(d => d.SupplierId, opt => opt.MapFrom(s => s.Items.FirstOrDefault().SupplierId))
+                .ForPath(d => d.SupplierName, opt => opt.MapFrom(s => s.Items.FirstOrDefault().SupplierName))
+                .ForPath(d => d.Nominal, opt => opt.MapFrom(s => (s.IncomeTaxRate/100)*s.Items.Sum(j=> j.TotalPaid)))
+                .ForPath(d=> d.ReferenceNo, opt=> opt.MapFrom(s=> s.InvoiceOutNumber))
+                .ForPath(d=> d.SourceType, opt=> opt.MapFrom(s=> "Operasional"))
+                .ForPath(d=> d.Status, opt=> opt.MapFrom(s=> "OUT"))
+                .ReverseMap();
+
+            CreateMap<FormInsert, DailyBankTransactionModel>()
+                .ForPath(d => d.Id, opt => opt.MapFrom(s => 0))
+                .ForPath(d => d.AccountBankAccountName, opt => opt.MapFrom(s => s.Bank.AccountName))
+                .ForPath(d => d.AccountBankAccountNumber, opt => opt.MapFrom(s => s.Bank.AccountNumber))
+                .ForPath(d => d.AccountBankCode, opt => opt.MapFrom(s => s.Bank.Code))
+                .ForPath(d => d.AccountBankCurrencyCode, opt => opt.MapFrom(s => s.Bank.Currency.Code))
+                .ForPath(d => d.AccountBankCurrencyId, opt => opt.MapFrom(s => s.Bank.Currency.Id))
+                //.ForPath(d=> d.AccountBankId, opt=> opt.MapFrom(s=> s.BankCode1))
+                .ForPath(d => d.AccountBankName, opt => opt.MapFrom(s => s.Bank.BankName))
+                .ForPath(d => d.SupplierCode, opt => opt.MapFrom(s => s.PPHBankExpenditureNoteItems.FirstOrDefault().SupplierCode))
+                .ForPath(d => d.SupplierId, opt => opt.MapFrom(s => s.PPHBankExpenditureNoteItems.FirstOrDefault().SupplierId))
+                .ForPath(d => d.SupplierName, opt => opt.MapFrom(s => s.PPHBankExpenditureNoteItems.FirstOrDefault().SupplierName))
+                .ForPath(d => d.Nominal, opt => opt.MapFrom(s => s.PPHBankExpenditureNoteItems.Sum(t=> t.Items.Sum(j=> j.TotalIncomeTax))))
+                .ForPath(d => d.ReferenceNo, opt => opt.MapFrom(s => s.PphBankInvoiceNo))
+                .ForPath(d => d.SourceType, opt => opt.MapFrom(s => "Operasional"))
+                .ForPath(d => d.Status, opt => opt.MapFrom(s => "OUT"))
                 .ReverseMap();
         }
     }
