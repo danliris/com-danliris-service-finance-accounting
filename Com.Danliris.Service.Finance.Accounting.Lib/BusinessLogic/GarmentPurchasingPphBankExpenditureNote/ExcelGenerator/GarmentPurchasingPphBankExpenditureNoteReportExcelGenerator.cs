@@ -129,7 +129,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     #endregion
 
                     #region TanggalBayarPPH
-                    worksheet.Cells[row, col, row + dataCount, col].Value = item.Data.InvoiceOutDate.ToString("dd-MM-yyy");
+                    worksheet.Cells[row, col, row + dataCount, col].Value = item.Data.InvoiceOutDate.AddHours(7).ToString("dd-MM-yyy");
                     worksheet.Cells[row, col, row + dataCount, col].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                     worksheet.Cells[row, col, row + dataCount, col].Style.Border.Left.Style = ExcelBorderStyle.Thin;
                     worksheet.Cells[row, col, row + dataCount, col].Style.Border.Right.Style = ExcelBorderStyle.Thin;
