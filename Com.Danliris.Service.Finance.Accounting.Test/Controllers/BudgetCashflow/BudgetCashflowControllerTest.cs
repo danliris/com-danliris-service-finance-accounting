@@ -20,7 +20,7 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflow
 {
- public   class BudgetCashflowControllerTest
+    public class BudgetCashflowControllerTest
     {
         protected BudgetCashflowController GetController(Mock<IServiceProvider> serviceProvider)
         {
@@ -338,7 +338,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
               .Returns(ICacheServiceMock.Object);
 
             //Act
-            IActionResult response =await GetController(serviceProviderMock).Get(1, DateTimeOffset.Now);
+            IActionResult response = await GetController(serviceProviderMock).Get(1, DateTimeOffset.Now);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -354,8 +354,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
 
             service
                 .Setup(s => s.GetBudgetCashflowUnit(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
-                .ThrowsAsync(new Exception("",new Exception()) { 
-                
+                .ThrowsAsync(new Exception("", new Exception())
+                {
+
                 });
 
             serviceProviderMock
@@ -387,13 +388,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
         }
 
         [Fact]
-        public async Task GeneratePdf_Success_Return_FilePdf()
+        public async Task GeneratePdf_Success_Return_PdfFile()
         {
             //Setup
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IBudgetCashflowService>();
-            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1,"",false);
-            
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
             service
                 .Setup(s => s.GetBudgetCashflowUnit(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
                 .ReturnsAsync(new List<BudgetCashflowItemDto>() { budgetCashflowItemDto });
@@ -411,7 +412,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
                     Code="Code"
                 }
             };
-           
+
             //Tranform it to Json object
             string json_data = JsonConvert.SerializeObject(dataUnits);
             ICacheServiceMock.Setup(s => s.GetString(It.IsAny<string>())).Returns(json_data);
@@ -425,6 +426,320 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
             //Assert
             Assert.NotNull(response);
             Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
+
+
+        [Fact]
+        public async Task GenerateXls_Success_Return_XLSFile()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            service
+                .Setup(s => s.GetBudgetCashflowUnit(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
+                .ReturnsAsync(new List<BudgetCashflowItemDto>() { budgetCashflowItemDto });
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code",
+                    Id=1,
+                    DivisionId=1,
+                    Name="Name"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+
+            ICacheServiceMock
+                .Setup(s => s.GetString(It.IsAny<string>()))
+                .Returns(json_data);
+
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GenerateXls(1, DateTimeOffset.Now);
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
+
+
+        [Fact]
+        public async Task GenerateXls_Return_Internal_Service()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+            BudgetCashflowItemDto budgetCashflowItemDto = new BudgetCashflowItemDto(1, "", false);
+
+            service
+                .Setup(s => s.GetBudgetCashflowUnit(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
+                .ThrowsAsync(new Exception());
+
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataUnits = new List<UnitDto>()
+            {
+                new UnitDto()
+                {
+                    Code="Code",
+                    Id=1,
+                    DivisionId=1,
+                    Name="Name"
+                }
+            };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataUnits);
+
+            ICacheServiceMock
+                .Setup(s => s.GetString(It.IsAny<string>()))
+                .Returns(json_data);
+
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+              .Returns(ICacheServiceMock.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GenerateXls(1, DateTimeOffset.Now);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public async Task GeneratePdfDivision_Success_Return_PdfFile()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+
+            BudgetCashflowTypeModel cashflowType = new BudgetCashflowTypeModel("", 1);
+            List<string> headers = new List<string>()
+            {
+                "headers"
+            };
+            List<BudgetCashflowDivisionItemDto> items = new List<BudgetCashflowDivisionItemDto>()
+            {
+                new BudgetCashflowDivisionItemDto(cashflowType)
+            };
+
+            service
+                .Setup(s => s.GetBudgetCashflowDivision(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
+                    .ReturnsAsync(new BudgetCashflowDivision(headers, items));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataDivision = new List<DivisionDto>()
+                {
+                    new DivisionDto()
+                    {
+                        Code="Code",
+                        Id=1,
+                        Name="Name"
+                    }
+                };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataDivision);
+
+            ICacheServiceMock
+                .Setup(s => s.GetString(It.IsAny<string>()))
+                    .Returns(json_data);
+
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+                  .Returns(ICacheServiceMock.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GeneratePdfDivision(1, DateTimeOffset.Now);
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
+
+
+
+        [Fact]
+        public async Task GeneratePdfDivision_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+
+
+            service
+                .Setup(s => s.GetBudgetCashflowDivision(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
+                .ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataDivision = new List<DivisionDto>()
+                {
+                    new DivisionDto()
+                    {
+                        Code="Code",
+                        Id=1,
+                        Name="Name"
+                    }
+                };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataDivision);
+
+            ICacheServiceMock
+                .Setup(s => s.GetString(It.IsAny<string>()))
+                    .Returns(json_data);
+
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+                  .Returns(ICacheServiceMock.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GeneratePdfDivision(1, DateTimeOffset.Now);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
+        [Fact]
+        public async Task GenerateXlsDivision_Success_Return_XlsFile()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+
+            BudgetCashflowTypeModel cashflowType = new BudgetCashflowTypeModel("", 1);
+            List<string> headers = new List<string>()
+            {
+                "headers"
+            };
+            List<BudgetCashflowDivisionItemDto> items = new List<BudgetCashflowDivisionItemDto>()
+            {
+                new BudgetCashflowDivisionItemDto(cashflowType)
+            };
+
+            service
+                .Setup(s => s.GetBudgetCashflowDivision(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
+                    .ReturnsAsync(new BudgetCashflowDivision(headers, items));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataDivision = new List<DivisionDto>()
+                {
+                    new DivisionDto()
+                    {
+                        Code="Code",
+                        Id=1,
+                        Name="Name"
+                    }
+                };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataDivision);
+
+            ICacheServiceMock
+                .Setup(s => s.GetString(It.IsAny<string>()))
+                    .Returns(json_data);
+
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+                  .Returns(ICacheServiceMock.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GenerateXlsDivision(1, DateTimeOffset.Now);
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
+
+        [Fact]
+        public async Task GenerateXlsDivision_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IBudgetCashflowService>();
+
+            BudgetCashflowTypeModel cashflowType = new BudgetCashflowTypeModel("", 1);
+            List<string> headers = new List<string>()
+            {
+                "headers"
+            };
+            List<BudgetCashflowDivisionItemDto> items = new List<BudgetCashflowDivisionItemDto>()
+            {
+                new BudgetCashflowDivisionItemDto(cashflowType)
+            };
+
+            service
+                .Setup(s => s.GetBudgetCashflowDivision(It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
+                   // .ReturnsAsync(new BudgetCashflowDivision(headers, items));
+                 .ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IBudgetCashflowService)))
+               .Returns(service.Object);
+
+            Mock<ICacheService> ICacheServiceMock = new Mock<ICacheService>();
+            var dataDivision = new List<DivisionDto>()
+                {
+                    new DivisionDto()
+                    {
+                        Code="Code",
+                        Id=1,
+                        Name="Name"
+                    }
+                };
+
+            //Tranform it to Json object
+            string json_data = JsonConvert.SerializeObject(dataDivision);
+
+            ICacheServiceMock
+                .Setup(s => s.GetString(It.IsAny<string>()))
+                    .Returns(json_data);
+
+            serviceProviderMock
+              .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
+                  .Returns(ICacheServiceMock.Object);
+
+            //Act
+            IActionResult response = await GetController(serviceProviderMock).GenerateXlsDivision(1, DateTimeOffset.Now);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
 
 
@@ -578,7 +893,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
               .Setup(serviceProvider => serviceProvider.GetService(typeof(ICacheService)))
               .Returns(ICacheServiceMock.Object);
 
-            BudgetCashflowUnitModel budgetCashflowUnit = new BudgetCashflowUnitModel(); 
+            BudgetCashflowUnitModel budgetCashflowUnit = new BudgetCashflowUnitModel();
             service
               .Setup(s => s.GetBudgetCashflowUnit(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>()))
               .Returns(new List<BudgetCashflowUnitItemDto>());
@@ -590,7 +905,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
 
 
             //Act
-            IActionResult response =  GetController(serviceProviderMock).GetItems(1,1, DateTimeOffset.Now);
+            IActionResult response = GetController(serviceProviderMock).GetItems(1, 1, DateTimeOffset.Now);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -633,7 +948,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
 
 
             //Act
-            IActionResult response =  GetController(serviceProviderMock).GetItems(1, 1, DateTimeOffset.Now);
+            IActionResult response = GetController(serviceProviderMock).GetItems(1, 1, DateTimeOffset.Now);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -642,7 +957,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
 
 
         [Fact]
-        public void  PostInitialCashBalance_Return_Created()
+        public void PostInitialCashBalance_Return_Created()
         {
             //Setup
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
@@ -938,7 +1253,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
 
 
             //Act
-            IActionResult response = GetController(serviceProviderMock).GetInitialCashBalanceItems(1,DateTimeOffset.Now);
+            IActionResult response = GetController(serviceProviderMock).GetInitialCashBalanceItems(1, DateTimeOffset.Now);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -1287,7 +1602,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.BudgetCashflo
 
 
             //Act
-            IActionResult response = GetController(serviceProviderMock).GetRealCashBalanceItems(1,DateTimeOffset.Now);
+            IActionResult response = GetController(serviceProviderMock).GetRealCashBalanceItems(1, DateTimeOffset.Now);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
