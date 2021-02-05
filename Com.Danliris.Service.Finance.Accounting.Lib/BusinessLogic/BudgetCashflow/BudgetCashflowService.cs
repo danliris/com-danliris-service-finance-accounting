@@ -466,11 +466,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     if (totalCashTypes.Count > 0)
                         foreach (var totalCashType in totalCashTypes)
                         {
-                            result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType, _currencies));
+                            result.Add(new BudgetCashflowItemDto(isShowTotalLabel: isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType: totalCashType, currencies: _currencies));
+                         //   result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType, _currencies));
                             isShowTotalLabel = false;
                         }
                     else
-                        result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", new TotalCashType(), _currencies));
+                        // result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", new TotalCashType(), _currencies));
+                        result.Add(new BudgetCashflowItemDto(isShowTotalLabel:isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType: new TotalCashType(), currencies: _currencies));
                 }
 
                 var differenceCashTypes = summary.GetDifference(summary.CashflowType.Id);
@@ -478,11 +480,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 if (differenceCashTypes.Count > 0)
                     foreach (var differenceCashType in differenceCashTypes)
                     {
-                        result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType, _currencies, isShowDifference: true));
+                        //result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType, _currencies, isShowDifference: true));
+                        result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel:isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType: differenceCashType, currencies: _currencies, isShowDifference: true));
                         isShowDifferenceLabel = false;
                     }
                 else
-                    result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", new TotalCashType(), _currencies, isShowDifference: true));
+                    result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel:isShowDifferenceLabel,  differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType: new TotalCashType(), currencies: _currencies, isShowDifference: true));
+                //result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", new TotalCashType(), _currencies, isShowDifference: true));
             }
 
             // Saldo Awal

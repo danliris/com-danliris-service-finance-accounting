@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
 
 
         }
-        public CreditorAccountUnitReceiptNotePostedViewModel GetUnitReceiptNotePostedViewModel()
+        public CreditorAccountUnitReceiptNotePostedViewModel GetNewData_UnitReceiptNotePostedViewModel()
         {
             return new CreditorAccountUnitReceiptNotePostedViewModel()
             {
@@ -55,7 +55,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 UseIncomeTax = true,
                 MemoDPP = 1,
                 MemoMutation = 1,
-                MemoPPN = 0
+                MemoPPN = 0,
+                DivisionId=1
             };
         }
 

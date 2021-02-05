@@ -803,5 +803,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
+
+        [Fact]
+        public async Task ClearanceVBPost_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service
+                .Setup(s => s.ClearanceVBPost(It.IsAny<ClearanceFormDto>()))
+                .ReturnsAsync(1);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            //Act
+            ClearanceFormDto form = new ClearanceFormDto();
+            IActionResult response = await GetController(serviceProviderMock).ClearanceVBPost(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+
+        [Fact]
+        public async Task ClearanceVBPost_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            service
+                .Setup(s => s.ClearanceVBPost(It.IsAny<ClearanceFormDto>()))
+                .ThrowsAsync(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
+               .Returns(service.Object);
+
+            //Act
+            ClearanceFormDto form = new ClearanceFormDto();
+            IActionResult response = await GetController(serviceProviderMock).ClearanceVBPost(form);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+
     }
 }

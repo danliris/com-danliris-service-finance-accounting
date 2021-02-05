@@ -116,5 +116,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBStatusReport
             var Response = await service.GetByApplicantName(data.CreatedBy);
             Assert.NotNull(Response);
         }
+
+
+        [Fact]
+        public async Task Should_Success_GetReportWithCurrency()
+        {
+            //Arrange
+            VBStatusReportService service = new VBStatusReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestData_ById();
+
+            //Act
+            var Response = service.GetReportWithCurrency(data.UnitId, data.Id, "", "CANCEL", data.Date, data.Date, data.Date, data.Date, data.Date, data.Date, 7);
+            
+            //Assert
+            Assert.NotNull(Response);
+        }
     }
 }
