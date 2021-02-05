@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote.PDF;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -195,6 +196,29 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             catch (Exception e)
             {
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
+        [HttpGet("download/pdf/{id}")]
+        public IActionResult GeneratePdf([FromRoute] int id)
+        {
+
+            try
+            {
+                VerifyUser();
+                var data = _service.Read(id);
+                var stream = DPPVATBankExpenditureNotePDFGenerator.Generate(data, _identityService.TimezoneOffset);
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = "Bukti Pengeluaran Bank DPP+PPN.pdf"
+                };
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
 
