@@ -77,8 +77,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             if (unit != null)
                 unitName += unit.Name;
 
-            var dueDateString = $"{dueDate.AddMonths(1).DateTime.ToString("MMMM yyyy", new CultureInfo("id-ID"))}";
-            var date = $"JATUH TEMPO s.d. {dueDateString}";
+            var cultureInfo = new CultureInfo("id-ID");
+            var date = $"PERIODE {dueDate.AddMonths(1).DateTime.ToString("MMMM yyyy", cultureInfo)}";
 
             worksheet.Cells["A1"].Value = company;
             worksheet.Cells["A1:H1"].Merge = true;
@@ -171,6 +171,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     {
                         worksheet.Cells[$"C{currentRow}:D{currentRow}"].Value = item.TotalLabel;
                         worksheet.Cells[$"C{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.Font.Bold = true;
                         worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     }
                     else
@@ -203,6 +204,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     {
                         worksheet.Cells[$"B{currentRow}:D{currentRow}"].Value = item.DifferenceLabel;
                         worksheet.Cells[$"B{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.Font.Bold = true;
                         worksheet.Cells[$"B{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     }
                     else
@@ -235,6 +237,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     {
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = item.SummaryBalanceLabel;
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.Font.Bold = true;
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     }
                     else
@@ -267,6 +270,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     {
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = item.SummaryLabel;
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.Font.Bold = true;
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     }
                     else
@@ -299,6 +303,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     {
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "Saldo Real Kas";
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.Font.Bold = true;
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     }
                     else
@@ -332,6 +337,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     {
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "Rate";
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.Font.Bold = true;
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     }
                     else
@@ -356,6 +362,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     {
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = item.RealCashDifferenceLabel;
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                        worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.Font.Bold = true;
                         worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     }
                     else
@@ -386,6 +393,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 {
                     worksheet.Cells[$"A{currentRow}:D{currentRow}"].Value = "Total Surplus (Defisit) Equivalent";
                     worksheet.Cells[$"A{currentRow}:D{currentRow}"].Merge = true;
+                    worksheet.Cells[$"C{currentRow}:D{currentRow}"].Style.Font.Bold = true;
                     worksheet.Cells[$"A{currentRow}:D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
 
                     worksheet.Cells[$"E{currentRow}"].Value = "IDR";
