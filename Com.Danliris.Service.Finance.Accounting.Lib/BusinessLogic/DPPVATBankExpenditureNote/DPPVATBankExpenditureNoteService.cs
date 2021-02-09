@@ -47,7 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
                 foreach (var formDetail in formItem.InternalNote.Items.Where(element => element.SelectInvoice))
                 {
-                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount);
+                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod);
                     EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
                     _dbContext.DPPVATBankExpenditureNoteDetails.Add(detail);
                     _dbContext.SaveChanges();
@@ -210,7 +210,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
                 foreach (var formDetail in formItem.InternalNote.Items.Where(invoiceItem => invoiceItem.SelectInvoice))
                 {
-                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount);
+                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod);
                     EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
                     _dbContext.DPPVATBankExpenditureNoteDetails.Add(detail);
                     _dbContext.SaveChanges();

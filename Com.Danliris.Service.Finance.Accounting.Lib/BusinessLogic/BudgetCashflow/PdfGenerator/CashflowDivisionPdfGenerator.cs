@@ -195,17 +195,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             foreach (var subCategoryItem in item.Items.Skip(loopedChildHeaders).Take(headers.Count))
                             {
                                 cellRight.Colspan = 1;
-                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
 
                             if (isLastPage)
                             {
-                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
                         }
@@ -226,17 +226,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             foreach (var subCategoryItem in item.Items.Skip(loopedChildHeaders).Take(headers.Count))
                             {
                                 cellRight.Colspan = 1;
-                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
 
                             if (isLastPage)
                             {
-                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
                         }
@@ -257,17 +257,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             foreach (var subCategoryItem in item.Items.Skip(loopedChildHeaders).Take(headers.Count))
                             {
                                 cellRight.Colspan = 1;
-                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
 
                             if (isLastPage)
                             {
-                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
                         }
@@ -288,17 +288,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             foreach (var subCategoryItem in item.Items.Skip(loopedChildHeaders).Take(headers.Count))
                             {
                                 cellRight.Colspan = 1;
-                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
 
                             if (isLastPage)
                             {
-                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
                         }
@@ -317,7 +317,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             table.AddCell(cellCenter);
 
                             cellRight.Colspan = 1;
-                            cellRight.Phrase = new Phrase(item.Currency == null ? "" : item.Currency.Rate.ToString(), _smallFont);
+                            cellRight.Phrase = new Phrase(item.Currency == null ? "" : item.Currency.Rate.ToString("#,##0.00"), _smallFont);
                             table.AddCell(cellRight);
                             var currencyRateColumns = dynamicColumns;
                             if (isLastPage)
@@ -337,7 +337,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             cellCenter.Phrase = new Phrase("IDR", _smallFont);
                             table.AddCell(cellCenter);
                             cellRight.Colspan = 1;
-                            cellRight.Phrase = new Phrase(item.Equivalent.ToString(), _smallFont);
+                            cellRight.Phrase = new Phrase(item.Equivalent.ToString("#,##0.00"), _smallFont);
                             table.AddCell(cellRight);
                             var equivalentColumns = dynamicColumns;
                             if (isLastPage)
@@ -423,17 +423,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             foreach (var subCategoryItem in item.Items.Skip(loopedChildHeaders).Take(headers.Count))
                             {
                                 cellRight.Colspan = 1;
-                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
 
                             if (isLastPage)
                             {
-                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
 
@@ -444,17 +444,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             foreach (var subCategoryItem in item.Items.Skip(loopedChildHeaders).Take(headers.Count))
                             {
                                 cellRight.Colspan = 1;
-                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
 
                             if (isLastPage)
                             {
-                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
                         }
@@ -464,17 +464,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             foreach (var subCategoryItem in item.Items.Skip(loopedChildHeaders).Take(headers.Count))
                             {
                                 cellRight.Colspan = 1;
-                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
 
                             if (isLastPage)
                             {
-                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
                         }
@@ -484,17 +484,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             foreach (var subCategoryItem in item.Items.Skip(loopedChildHeaders).Take(headers.Count))
                             {
                                 cellRight.Colspan = 1;
-                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.CurrencyNominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Nominal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
-                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(subCategoryItem.Actual.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
 
                             if (isLastPage)
                             {
-                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString(), _smallFont);
+                                cellRight.Phrase = new Phrase(item.DivisionActualTotal.ToString("#,##0.00"), _smallFont);
                                 table.AddCell(cellRight);
                             }
                         }

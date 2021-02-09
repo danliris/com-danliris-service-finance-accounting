@@ -17,6 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             Date = detail.InvoiceDate;
             ProductNames = detail.ProductNames;
             Category = new CategoryDto(detail.CategoryId, detail.CategoryName);
+            PaymentMethod = detail.PaymentMethod;
             Amount = detail.Amount;
         }
 
@@ -24,6 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public DateTimeOffset Date { get; set; }
         public string ProductNames { get; set; }
         public CategoryDto Category { get; set; }
+        public string PaymentMethod { get; set; }
         public double Amount { get; set; }
         public int Id { get; set; }
     }
