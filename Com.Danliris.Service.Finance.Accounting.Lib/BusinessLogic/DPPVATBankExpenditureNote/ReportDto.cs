@@ -11,16 +11,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             ExpenditureNoteNo = documentItem.DocumentNo;
             ExpenditureDate = documentItem.Date;
             CategoryName = detail.CategoryName;
-            PaymentMethod = "";
+            PaymentMethod = detail.PaymentMethod;
             DPP = itemDetail.DPP;
             VAT = itemDetail.VATAmount;
             Amount = itemDetail.TotalAmount;
             CurrencyCode = documentItem.CurrencyCode;
+            CurrencyRate = documentItem.CurrencyRate;
             BankName = documentItem.BankName;
             SupplierId = itemDetail.SupplierId;
             SupplierName = itemDetail.SupplierName;
             InternalNoteId = itemDetail.InternalNoteId;
             InternalNoteNo = itemDetail.InternalNoteNo;
+            InternalNoteAmount = itemDetail.TotalAmount;
+            OutstandingAmount = itemDetail.OutstandingAmount;
             InvoiceId = detail.InvoiceId;
             InvoiceNo = detail.InvoiceNo;
             InvoiceAmount = detail.Amount;
@@ -37,11 +40,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public double VAT { get; private set; }
         public double Amount { get; private set; }
         public string CurrencyCode { get; private set; }
+        public double CurrencyRate { get; private set; }
         public string BankName { get; private set; }
         public int SupplierId { get; private set; }
         public string SupplierName { get; private set; }
         public int InternalNoteId { get; private set; }
         public string InternalNoteNo { get; private set; }
+        public double InternalNoteAmount { get; private set; }
+        public double OutstandingAmount { get; private set; }
         public int InvoiceId { get; private set; }
         public string InvoiceNo { get; private set; }
         public double InvoiceAmount { get; private set; }

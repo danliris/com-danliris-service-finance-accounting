@@ -29,19 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.LockTransaction
             };
         }
 
-        public LockTransactionViewModel GetNewViewModel()
-        {
-            return new LockTransactionViewModel()
-            {
-                Description = "Description",
-                IsActiveStatus = false,
-                //BeginLockDate = DateTimeOffset.Now.AddDays(-2),
-                LockDate = DateTimeOffset.Now,
-                Type = "Type"
-
-            };
-        }
-
+     
         public async Task<LockTransactionModel> GetTestData()
         {
             var model = GetNewData();

@@ -163,13 +163,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWI
 
       
 
-        //public async Task<RealizationVbModel> GetTestData()
-        //{
-        //    RealizationVbModel model = GetNewData();
-        //    RealizationVbWithPOViewModel viewModel = GetNewViewModel();
-        //    await Service.CreateAsync(model, viewModel);
-
-        //}
+       
     }
 
 

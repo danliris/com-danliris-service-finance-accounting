@@ -1,4 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote.Excel;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote.PDF;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -198,6 +200,29 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpGet("download/pdf/{id}")]
+        public IActionResult GeneratePdf([FromRoute] int id)
+        {
+
+            try
+            {
+                VerifyUser();
+                var data = _service.Read(id);
+                var stream = DPPVATBankExpenditureNotePDFGenerator.Generate(data, _identityService.TimezoneOffset);
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = "Bukti Pengeluaran Bank DPP+PPN.pdf"
+                };
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
         [HttpGet("report")]
         public IActionResult GetReport([FromQuery] int expenditureId, [FromQuery] int internalNoteId, [FromQuery] int invoiceId, [FromQuery] int supplierId, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
         {
@@ -214,6 +239,26 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     message = General.OK_MESSAGE,
                     data = result
                 });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
+        [HttpGet("report/download/xls")]
+        public IActionResult GetReportXls([FromQuery] int expenditureId, [FromQuery] int internalNoteId, [FromQuery] int invoiceId, [FromQuery] int supplierId, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                startDate = startDate.HasValue ? startDate : DateTimeOffset.MinValue;
+                endDate = endDate.HasValue ? endDate : DateTimeOffset.MaxValue;
+                var result = _service.ExpenditureReport(expenditureId, internalNoteId, invoiceId, supplierId, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                var stream = DPPVATBankExpenditureNoteExcelGenerator.Generate(result, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+
+                var bytes = stream.ToArray();
+
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Laporan Pengeluaran Bank DPP+PPN.xlsx");
             }
             catch (Exception e)
             {

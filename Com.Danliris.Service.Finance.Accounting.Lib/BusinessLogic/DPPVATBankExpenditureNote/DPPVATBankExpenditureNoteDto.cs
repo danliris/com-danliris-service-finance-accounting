@@ -17,6 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             Amount = model.Amount;
             Date = model.Date;
             Items = items.Select(item => new DPPVATBankExpenditureNoteItemDto(item, details.Where(detail => detail.DPPVATBankExpenditureNoteItemId == item.Id).ToList())).ToList();
+            DocumentNo = model.DocumentNo;
         }
 
         public int Id { get; private set; }
@@ -27,5 +28,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public double Amount { get; private set; }
         public DateTimeOffset Date { get; private set; }
         public List<DPPVATBankExpenditureNoteItemDto> Items { get; private set; }
+        public string DocumentNo { get; private set; }
     }
 }
