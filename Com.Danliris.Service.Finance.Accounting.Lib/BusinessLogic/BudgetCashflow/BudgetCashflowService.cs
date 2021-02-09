@@ -334,9 +334,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                         if (selectedDebtDispositionSummaries != null && selectedDebtDispositionSummaries.Count > 0)
                                             foreach (var selectedDebtDispositionSummary in selectedDebtDispositionSummaries)
                                             {
-                                                var currencyNominal = selectedDebtDispositionSummary.CurrencyCode == "IDR" ? 0 : selectedDebtDispositionSummary.Total / selectedDebtDispositionSummary.CurrencyRate;
+                                                var currencyNominal = selectedDebtDispositionSummary.CurrencyCode == "IDR" ? 0 : selectedDebtDispositionSummary.Total;
                                                 var nominal = selectedDebtDispositionSummary.CurrencyCode == "IDR" ? selectedDebtDispositionSummary.Total : 0;
-                                                summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel(0, unitId, 0, date, selectedDebtDispositionSummary.CurrencyId, currencyNominal, nominal, selectedDebtDispositionSummary.Total)));
+
+                                                var total = selectedDebtDispositionSummary.CurrencyCode == "IDR" ? selectedDebtDispositionSummary.Total : selectedDebtDispositionSummary.CurrencyRate;
+
+                                                summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel(0, unitId, 0, date, selectedDebtDispositionSummary.CurrencyId, currencyNominal, nominal, selectedDebtDispositionSummary.Total * selectedDebtDispositionSummary.CurrencyRate)));
                                             }
                                         else
                                             summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
@@ -358,9 +361,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                         if (selectedDebtSummaries != null && selectedDebtSummaries.Count > 0)
                                             foreach (var selectedDebtSummary in selectedDebtSummaries)
                                             {
-                                                var currencyNominal = selectedDebtSummary.CurrencyCode == "IDR" ? 0 : selectedDebtSummary.Total / selectedDebtSummary.CurrencyRate;
+                                                var currencyNominal = selectedDebtSummary.CurrencyCode == "IDR" ? 0 : selectedDebtSummary.Total;
                                                 var nominal = selectedDebtSummary.CurrencyCode == "IDR" ? selectedDebtSummary.Total : 0;
-                                                summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel(0, unitId, 0, date, selectedDebtSummary.CurrencyId, currencyNominal, nominal, selectedDebtSummary.Total)));
+
+                                                var total = selectedDebtSummary.CurrencyCode == "IDR" ? selectedDebtSummary.Total : selectedDebtSummary.CurrencyRate;
+
+                                                summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel(0, unitId, 0, date, selectedDebtSummary.CurrencyId, currencyNominal, nominal, total)));
                                             }
                                         else
                                             summary.Items.Add(new BudgetCashflowUnitDto(cashflowType, cashflowCategory, cashflowSubCategory, new BudgetCashflowUnitModel()));
@@ -743,9 +749,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                                                     if (summary != null)
                                                     {
-                                                        var currencyNominal = summary.CurrencyCode == "IDR" ? 0 : summary.Total / summary.CurrencyRate;
+                                                        var currencyNominal = summary.CurrencyCode == "IDR" ? 0 : summary.Total;
                                                         var nominal = summary.CurrencyCode == "IDR" ? summary.Total : 0;
-                                                        var cashflowUnit = new BudgetCashflowUnitModel(0, divisionUnit.Id, divisionUnit.DivisionId, date, summary.CurrencyId, currencyNominal, nominal, summary.Total);
+
+                                                        var total = summary.CurrencyCode == "IDR" ? summary.Total : summary.Total * summary.CurrencyRate;
+
+                                                        var cashflowUnit = new BudgetCashflowUnitModel(0, divisionUnit.Id, divisionUnit.DivisionId, date, summary.CurrencyId, currencyNominal, nominal, total);
                                                         divisionTemporaryRow.Items.Add(new DivisionTemporaryDivisionUnitDto(cashflowType, type, cashflowCategory, cashflowSubCategory, currency, division, divisionUnit, cashflowUnit));
                                                     }
                                                     else
@@ -772,9 +781,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                                                     if (summary != null)
                                                     {
-                                                        var currencyNominal = summary.CurrencyCode == "IDR" ? 0 : summary.Total / summary.CurrencyRate;
+                                                        var currencyNominal = summary.CurrencyCode == "IDR" ? 0 : summary.Total;
                                                         var nominal = summary.CurrencyCode == "IDR" ? summary.Total : 0;
-                                                        var cashflowUnit = new BudgetCashflowUnitModel(0, divisionUnit.Id, divisionUnit.DivisionId, date, summary.CurrencyId, currencyNominal, nominal, summary.Total);
+
+                                                        var total = summary.CurrencyCode == "IDR" ? summary.Total : summary.Total * summary.CurrencyRate;
+
+                                                        var cashflowUnit = new BudgetCashflowUnitModel(0, divisionUnit.Id, divisionUnit.DivisionId, date, summary.CurrencyId, currencyNominal, nominal, total);
                                                         divisionTemporaryRow.Items.Add(new DivisionTemporaryDivisionUnitDto(cashflowType, type, cashflowCategory, cashflowSubCategory, currency, division, divisionUnit, cashflowUnit));
                                                     }
                                                     else
