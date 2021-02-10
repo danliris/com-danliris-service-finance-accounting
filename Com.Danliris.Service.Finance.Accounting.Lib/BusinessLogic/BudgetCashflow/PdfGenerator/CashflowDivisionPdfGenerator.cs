@@ -107,7 +107,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         widths.Add(8f);
                         widths.Add(8f);
                     }
-                    
+
                     if (isLastPage)
                         widths.Add(8f);
 
@@ -336,15 +336,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             cellCenter.Colspan = 1;
                             cellCenter.Phrase = new Phrase("IDR", _smallFont);
                             table.AddCell(cellCenter);
-                            cellRight.Colspan = 1;
-                            cellRight.Phrase = new Phrase(item.Equivalent.ToString("#,##0.00"), _smallFont);
-                            table.AddCell(cellRight);
+                            //cellRight.Colspan = 1;
+                            //cellRight.Phrase = new Phrase(item.Equivalent.ToString("#,##0.00"), _smallFont);
+                            //table.AddCell(cellRight);
                             var equivalentColumns = dynamicColumns;
-                            if (isLastPage)
-                                equivalentColumns += 1;
+                            //if (isLastPage)
+                            //    equivalentColumns += 1;
                             cellRight.Colspan = equivalentColumns;
                             cellRight.Phrase = new Phrase("", _smallFont);
                             table.AddCell(cellRight);
+
+                            if (isLastPage)
+                            {
+                                cellRight.Colspan = 1;
+                                cellRight.Phrase = new Phrase(item.Equivalent.ToString("#,##0.00"), _smallFont);
+                                table.AddCell(cellRight);
+                            }
                         }
                     }
 
@@ -508,9 +515,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
                         if (item.IsEquivalent)
                         {
-                            cellRight.Colspan = columns;
-                            cellRight.Phrase = new Phrase("\n", _smallFont);
-                            table.AddCell(cellRight);
+                            if (!isLastPage)
+                            {
+                                cellRight.Colspan = columns;
+                                cellRight.Phrase = new Phrase("\n", _smallFont);
+                                table.AddCell(cellRight);
+                            }
+                            else
+                            {
+                                cellRight.Colspan = columns - 1;
+                                cellRight.Phrase = new Phrase("\n", _smallFont);
+                                table.AddCell(cellRight);
+                                cellRight.Colspan = 1;
+                                cellRight.Phrase = new Phrase(item.Equivalent.ToString("#,##0.00"), _smallFont);
+                                table.AddCell(cellRight);
+                            }
+
                         }
                     }
 
