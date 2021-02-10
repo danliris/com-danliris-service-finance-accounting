@@ -741,6 +741,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                                 {
                                                     var subCategoryPurchasingCategoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
                                                     var summary = debtDispositionSummaries
+                                                        .Where(element => element.GetUnitId() == divisionUnit.Id)
                                                         .Where(element => subCategoryPurchasingCategoryIds.Contains(element.GetCategoryId()) && element.GetCurrencyId() > 0)
                                                         .Where(element => element.CategoryCode != "BB" || element.IsImport == cashflowSubCategory.IsImport)
                                                         .GroupBy(element => element.CurrencyId)
@@ -774,6 +775,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                                 {
                                                     var subCategoryPurchasingCategoryIds = JsonConvert.DeserializeObject<List<int>>(cashflowSubCategory.PurchasingCategoryIds);
                                                     var summary = debtSummaries
+                                                        .Where(element => element.GetUnitId() == divisionUnit.Id)
                                                         .Where(element => subCategoryPurchasingCategoryIds.Contains(element.GetCategoryId()) && element.GetCurrencyId() > 0)
                                                         .Where(element => element.CategoryCode != "BB" || element.IsImport == cashflowSubCategory.IsImport)
                                                         .GroupBy(element => element.CurrencyId)
