@@ -400,9 +400,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     worksheet.Cells[$"E{currentRow}"].Merge = true;
                     worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-                    worksheet.Cells[$"F{currentRow}"].Value = item.Total;
-                    worksheet.Cells[$"F{currentRow}"].Merge = true;
-                    worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    worksheet.Cells[$"H{currentRow}"].Value = item.Total;
+                    worksheet.Cells[$"H{currentRow}"].Merge = true;
+                    worksheet.Cells[$"H{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 }
                 currentRow += 1;
             }
