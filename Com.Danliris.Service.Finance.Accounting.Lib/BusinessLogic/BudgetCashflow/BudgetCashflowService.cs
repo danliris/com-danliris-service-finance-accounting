@@ -888,7 +888,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                 {
 
                                     currencyIds = debtDispositionSummaries
-                                        .Where(element => categoryIds.Contains(element.GetCategoryId()) && element.IsImport == selectedCashflowSubCategory.IsImport && element.GetCurrencyId() > 0)
+                                        .Where(element => categoryIds.Contains(element.GetCategoryId()) && element.GetCurrencyId() > 0)
+                                        .Where(element => element.CategoryCode != "BB" || element.IsImport == selectedCashflowSubCategory.IsImport)
                                         .Select(element => element.GetCurrencyId())
                                         .Distinct()
                                         .ToList();
@@ -896,7 +897,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                 else
                                 {
                                     currencyIds = debtSummaries
-                                        .Where(element => categoryIds.Contains(element.GetCategoryId()) && element.IsImport == selectedCashflowSubCategory.IsImport && element.GetCurrencyId() > 0)
+                                        .Where(element => categoryIds.Contains(element.GetCategoryId()) && element.GetCurrencyId() > 0)
+                                        .Where(element => element.CategoryCode != "BB" || element.IsImport == selectedCashflowSubCategory.IsImport)
                                         .Select(element => element.GetCurrencyId())
                                         .Distinct()
                                         .ToList();
