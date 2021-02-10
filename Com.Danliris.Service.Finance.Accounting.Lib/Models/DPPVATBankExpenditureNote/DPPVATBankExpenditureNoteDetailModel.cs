@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
 
         }
 
-        public DPPVATBankExpenditureNoteDetailModel(int dppVATBankExpenditureNoteId, int dppVATBankExpenditureNoteItemId, int invoiceId, string invoiceNo, DateTimeOffset invoiceDate, string productNames, int categoryId, string categoryName, double amount, string paymentMethod)
+        public DPPVATBankExpenditureNoteDetailModel(int dppVATBankExpenditureNoteId, int dppVATBankExpenditureNoteItemId, int invoiceId, string invoiceNo, DateTimeOffset invoiceDate, string productNames, int categoryId, string categoryName, double amount, string paymentMethod, string deliveryOrdersNo, string paymentBills, string billsNo)
         {
             DPPVATBankExpenditureNoteId = dppVATBankExpenditureNoteId;
             DPPVATBankExpenditureNoteItemId = dppVATBankExpenditureNoteItemId;
@@ -25,6 +25,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
             CategoryName = categoryName;
             Amount = amount;
             PaymentMethod = paymentMethod;
+            DeliveryOrdersNo = deliveryOrdersNo;
+            PaymentBills = paymentBills;
+            BillsNo = billsNo;
         }
 
         public int DPPVATBankExpenditureNoteId { get; private set; }
@@ -40,5 +43,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
         public double Amount { get; private set; }
         [MaxLength(512)]
         public string PaymentMethod { get; private set; }
+        public string DeliveryOrdersNo { get; internal set; }
+        public string PaymentBills { get; private set; }
+        public string BillsNo { get; private set; }
+        //public string 
     }
 }
