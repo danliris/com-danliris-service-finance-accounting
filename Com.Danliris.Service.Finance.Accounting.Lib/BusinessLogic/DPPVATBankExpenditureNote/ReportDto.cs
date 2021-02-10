@@ -29,6 +29,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             InvoiceAmount = detail.Amount;
             PaidAmount = itemDetail.OutstandingAmount;
             Difference = 0.0;
+            BillsNo = detail.BillsNo;
+            PaymentBills = detail.PaymentBills;
         }
 
         public int ExpenditureId { get; private set; }
@@ -53,5 +55,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public double InvoiceAmount { get; private set; }
         public double PaidAmount { get; private set; }
         public double Difference { get; private set; }
+        public string BillsNo { get; private set; }
+        public string PaymentBills { get; private set; }
+        public string DeliveryOrdersNo { get; private set; }
     }
 }

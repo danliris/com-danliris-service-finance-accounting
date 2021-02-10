@@ -4,7 +4,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 {
     public class DPPVATBankExpenditureNoteIndexDto
     {
-        public DPPVATBankExpenditureNoteIndexDto(int id, string documentNo, DateTimeOffset date, string bankName, string bankAccountNumber, double totalAmount, string currencyCode, string documentNoInternalNotes, string supplierName)
+        public DPPVATBankExpenditureNoteIndexDto(int id, string documentNo, DateTimeOffset date, string bankName, string bankAccountNumber, double totalAmount, string currencyCode, string documentNoInternalNotes, string supplierName, bool isPosted)
         {
             Id = id;
             DocumentNo = documentNo;
@@ -15,6 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             CurrencyCode = currencyCode;
             DocumentNoInternalNotes = documentNoInternalNotes;
             SupplierName = supplierName;
+            IsPosted = isPosted;
         }
 
         public int Id { get; }
@@ -26,5 +27,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public string CurrencyCode { get; }
         public string DocumentNoInternalNotes { get; }
         public string SupplierName { get; }
+        public bool IsPosted { get; private set; }
     }
 }

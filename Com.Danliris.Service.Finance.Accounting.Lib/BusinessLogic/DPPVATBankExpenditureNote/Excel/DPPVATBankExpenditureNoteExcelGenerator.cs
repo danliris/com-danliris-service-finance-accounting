@@ -40,7 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"B{currentRow}"].Value = datum.ExpenditureNoteNo;
                 worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"B{currentRow}"].Style.Font.Bold = true;
-                worksheet.Cells[$"C{currentRow}"].Value = datum.ExpenditureDate;
+                worksheet.Cells[$"C{currentRow}"].Value = datum.ExpenditureDate.ToString("dd/MM/yyyy");
                 worksheet.Cells[$"C{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"C{currentRow}"].Style.Font.Bold = true;
                 worksheet.Cells[$"D{currentRow}"].Value = datum.Amount;
@@ -70,7 +70,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"L{currentRow}"].Value = datum.BankName;
                 worksheet.Cells[$"L{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"L{currentRow}"].Style.Font.Bold = true;
-                worksheet.Cells[$"M{currentRow}"].Value = "";
+                worksheet.Cells[$"M{currentRow}"].Value = datum.DeliveryOrdersNo;
                 worksheet.Cells[$"M{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"M{currentRow}"].Style.Font.Bold = true;
                 worksheet.Cells[$"N{currentRow}"].Value = datum.SupplierName;
@@ -94,16 +94,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"T{currentRow}"].Value = datum.Amount - datum.OutstandingAmount;
                 worksheet.Cells[$"T{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"T{currentRow}"].Style.Font.Bold = true;
-                worksheet.Cells[$"U{currentRow}"].Value = "";
+                worksheet.Cells[$"U{currentRow}"].Value = datum.InvoiceAmount;
                 worksheet.Cells[$"U{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"U{currentRow}"].Style.Font.Bold = true;
-                worksheet.Cells[$"V{currentRow}"].Value = "";
+                worksheet.Cells[$"V{currentRow}"].Value = datum.BillsNo;
                 worksheet.Cells[$"V{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"V{currentRow}"].Style.Font.Bold = true;
-                worksheet.Cells[$"W{currentRow}"].Value = "";
+                worksheet.Cells[$"W{currentRow}"].Value = datum.PaymentBills;
                 worksheet.Cells[$"W{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"W{currentRow}"].Style.Font.Bold = true;
-                worksheet.Cells[$"X{currentRow}"].Value = 0;
+                worksheet.Cells[$"X{currentRow}"].Value = datum.InvoiceAmount;
                 worksheet.Cells[$"X{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"X{currentRow}"].Style.Font.Bold = true;
                 worksheet.Cells[$"Y{currentRow}"].Value = datum.CurrencyRate;
@@ -112,13 +112,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"Z{currentRow}"].Value = datum.CurrencyRate;
                 worksheet.Cells[$"Z{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"Z{currentRow}"].Style.Font.Bold = true;
-                worksheet.Cells[$"AA{currentRow}"].Value = 0;
+                worksheet.Cells[$"AA{currentRow}"].Value = datum.InternalNoteAmount;
                 worksheet.Cells[$"AA{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"AA{currentRow}"].Style.Font.Bold = true;
-                worksheet.Cells[$"AB{currentRow}"].Value = 0;
+                worksheet.Cells[$"AB{currentRow}"].Value = datum.PaidAmount;
                 worksheet.Cells[$"AB{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"AB{currentRow}"].Style.Font.Bold = true;
-                worksheet.Cells[$"AC{currentRow}"].Value = 0;
+                worksheet.Cells[$"AC{currentRow}"].Value = datum.Amount;
                 worksheet.Cells[$"AC{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"AC{currentRow}"].Style.Font.Bold = true;
 
