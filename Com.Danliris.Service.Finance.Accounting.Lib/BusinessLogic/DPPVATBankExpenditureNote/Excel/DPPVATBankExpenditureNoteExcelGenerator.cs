@@ -70,7 +70,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"L{currentRow}"].Value = datum.BankName;
                 worksheet.Cells[$"L{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"L{currentRow}"].Style.Font.Bold = true;
-                worksheet.Cells[$"M{currentRow}"].Value = datum.DeliveryOrdersNo;
+                worksheet.Cells[$"M{currentRow}"].Value = datum.SupplierCode;
                 worksheet.Cells[$"M{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"M{currentRow}"].Style.Font.Bold = true;
                 worksheet.Cells[$"N{currentRow}"].Value = datum.SupplierName;
