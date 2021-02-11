@@ -484,8 +484,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 VerticalAlignment = Element.ALIGN_MIDDLE,
             };
 
-            cell.Phrase = new Phrase(" ", normal_font);
-            table.AddCell(cell);
+            PdfPCell cellLeft = new PdfPCell()
+            {
+                Border = Rectangle.NO_BORDER,
+                HorizontalAlignment = Element.ALIGN_LEFT,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+            };
+
             cell.Phrase = new Phrase("", normal_font);
             table.AddCell(cell);
             cell.Phrase = new Phrase("", normal_font);
@@ -494,6 +499,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             table.AddCell(cell);
             cell.Phrase = new Phrase("", normal_font);
             table.AddCell(cell);
+            cell.Phrase = new Phrase("", normal_font);
+            table.AddCell(cell);
+
+            cellLeft.Colspan = 5;
+            cellLeft.Phrase = new Phrase("Keterangan: ", normal_font);
+            table.AddCell(cellLeft);
+
+            cellLeft.Colspan = 1;
+            cellLeft.Phrase = new Phrase("", normal_font);
+            table.AddCell(cellLeft);
+            cellLeft.Colspan = 4;
+            cellLeft.Phrase = new Phrase(viewModel.Remark, normal_font);
+            table.AddCell(cellLeft);
 
             // Menyetujui
             cell.Phrase = new Phrase("Menyetujui,", normal_font);

@@ -41,6 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
 
         public IEnumerable<VBRealizationDocumentNonPOExpenditureItemViewModel> Items { get; set; }
         public IEnumerable<VBRealizationDocumentNonPOUnitCostViewModel> UnitCosts { get; set; }
+        public string Remark { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
