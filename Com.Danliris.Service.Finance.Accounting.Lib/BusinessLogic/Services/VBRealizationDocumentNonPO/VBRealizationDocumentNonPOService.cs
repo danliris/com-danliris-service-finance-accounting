@@ -307,6 +307,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                     Purpose = model.VBRequestDocumentPurpose
                 },
                 VBNonPOType = model.VBNonPoType,
+                Remark = model.Remark,
                 Items = items.Select(s => new VBRealizationDocumentNonPOExpenditureItemViewModel()
                 {
                     Active = s.Active,
