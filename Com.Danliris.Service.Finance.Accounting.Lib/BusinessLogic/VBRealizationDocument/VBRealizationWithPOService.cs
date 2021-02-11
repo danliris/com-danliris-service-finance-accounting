@@ -111,7 +111,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 .FirstOrDefault();
             var documentNo = GetDocumentNo(form, existingData);
 
-            var amount = form.Items.Sum(element => 
+            var amount = form.Items.Sum(element =>
             {
                 var nominal = element.UnitPaymentOrder.Amount.GetValueOrDefault();
                 if (element.UnitPaymentOrder.UseVat.GetValueOrDefault())
@@ -126,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             });
 
             if (form.Type == "Tanpa Nomor VB")
-                model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo, (decimal)amount);
+                model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo, (decimal)amount, form.Remark);
             else
             {
                 var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
@@ -137,7 +137,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                     _dbContext.VBRequestDocuments.Update(vbRequest);
                 }
 
-                model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, (decimal)amount);
+                model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, (decimal)amount, form.Remark);
             }
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -253,7 +253,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             return new ReadResponse<VBRealizationDocumentModel>(data, TotalData, orderDictionary, new List<string>());
         }
-        
+
         public ReadResponse<VBRealizationDocumentModel> ReadByUser(int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _dbContext.Set<VBRealizationDocumentModel>().AsQueryable();
