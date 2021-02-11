@@ -18,7 +18,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             DocumentNo = item.InternalNoteNo;
             Date = item.InternalNoteDate;
             DueDate = item.DueDate;
-            Supplier = new SupplierDto(item.SupplierId, item.SupplierName, item.IsImportSupplier);
+            Supplier = new SupplierDto(item.SupplierId, item.SupplierName, item.IsImportSupplier, item.SupplierCode);
             VATAmount = item.VATAmount;
             IncomeTaxAmount = item.IncomeTaxAmount;
             DPP = item.DPP;

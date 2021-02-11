@@ -40,7 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
             foreach (var formItem in form.Items.Where(element => element.Select))
             {
-                var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount);
+                var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount, formItem.InternalNote.Supplier.Code);
                 EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
                 _dbContext.DPPVATBankExpenditureNoteItems.Add(item);
                 _dbContext.SaveChanges();
@@ -203,7 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
             foreach (var formItem in form.Items.Where(item => item.Select))
             {
-                var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount);
+                var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount, formItem.InternalNote.Supplier.Code);
                 EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
                 _dbContext.DPPVATBankExpenditureNoteItems.Add(item);
                 _dbContext.SaveChanges();

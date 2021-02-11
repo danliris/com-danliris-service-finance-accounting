@@ -30,9 +30,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public CategoryDto Category { get; set; }
         public string PaymentMethod { get; set; }
         public double Amount { get; set; }
-        public string DeliveryOrdersNo { get; private set; }
-        public string PaymentBills { get; private set; }
-        public string BillsNo { get; private set; }
+        public string DeliveryOrdersNo { get; set; }
+        public string PaymentBills { get; set; }
+        public string BillsNo { get; set; }
         public int Id { get; set; }
     }
 }

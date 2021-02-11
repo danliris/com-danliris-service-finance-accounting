@@ -31,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             Difference = 0.0;
             BillsNo = detail.BillsNo;
             PaymentBills = detail.PaymentBills;
+            SupplierCode = itemDetail.SupplierCode;
         }
 
         public int ExpenditureId { get; private set; }
@@ -58,5 +59,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public string BillsNo { get; private set; }
         public string PaymentBills { get; private set; }
         public string DeliveryOrdersNo { get; private set; }
+        public object SupplierCode { get; private set; }
     }
 }
