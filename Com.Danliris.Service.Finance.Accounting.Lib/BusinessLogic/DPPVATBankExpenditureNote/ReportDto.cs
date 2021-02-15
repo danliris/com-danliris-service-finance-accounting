@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             PaymentMethod = detail.PaymentMethod;
             DPP = itemDetail.DPP;
             VAT = itemDetail.VATAmount;
-            Amount = itemDetail.TotalAmount;
+            Amount = documentItem.Amount;
             CurrencyCode = documentItem.CurrencyCode;
             CurrencyRate = documentItem.CurrencyRate;
             BankName = documentItem.BankName;

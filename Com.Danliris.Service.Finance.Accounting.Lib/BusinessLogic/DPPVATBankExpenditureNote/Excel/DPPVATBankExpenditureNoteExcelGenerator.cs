@@ -9,15 +9,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 {
     public class DPPVATBankExpenditureNoteExcelGenerator
     {
-        public static MemoryStream Generate(List<ReportDto> data, DateTimeOffset startDate, DateTimeOffset endDate)
+        public static MemoryStream Generate(List<ReportDto> data, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset)
         {
             using (var package = new ExcelPackage())
             {
                 var worksheet = package.Workbook.Worksheets.Add("Sheet 1");
 
-                SetTitle(worksheet, startDate, endDate);
-                SetTableHeader(worksheet);
-                SetData(worksheet, data);
+                SetTitle(worksheet, startDate, endDate, timezoneOffset);
+                SetTableHeader(worksheet, timezoneOffset);
+                SetData(worksheet, data, timezoneOffset);
 
                 worksheet.Cells[worksheet.Cells.Address].AutoFitColumns();
 
@@ -28,7 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             }
         }
 
-        private static void SetData(ExcelWorksheet worksheet, List<ReportDto> data)
+        private static void SetData(ExcelWorksheet worksheet, List<ReportDto> data, int timezoneOffset)
         {
             var currentRow = 6;
             var index = 1;
@@ -38,7 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"A{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"B{currentRow}"].Value = datum.ExpenditureNoteNo;
                 worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"C{currentRow}"].Value = datum.ExpenditureDate.ToString("dd/MM/yyyy");
+                worksheet.Cells[$"C{currentRow}"].Value = datum.ExpenditureDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy");
                 worksheet.Cells[$"C{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"D{currentRow}"].Value = datum.Amount;
                 worksheet.Cells[$"D{currentRow}"].Style.Font.Size = 14;
@@ -50,7 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"G{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"H{currentRow}"].Value = datum.VAT;
                 worksheet.Cells[$"H{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"I{currentRow}"].Value = "";
+                worksheet.Cells[$"I{currentRow}"].Value = 0.0;
                 worksheet.Cells[$"I{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"J{currentRow}"].Value = datum.InternalNoteAmount;
                 worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
@@ -72,7 +72,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"R{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"S{currentRow}"].Value = datum.OutstandingAmount;
                 worksheet.Cells[$"S{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"T{currentRow}"].Value = datum.Amount - datum.OutstandingAmount;
+                worksheet.Cells[$"T{currentRow}"].Value = datum.OutstandingAmount;
                 worksheet.Cells[$"T{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"U{currentRow}"].Value = datum.DeliveryOrdersNo;
                 worksheet.Cells[$"U{currentRow}"].Style.Font.Size = 14;
@@ -86,11 +86,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"Y{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"Z{currentRow}"].Value = datum.CurrencyRate;
                 worksheet.Cells[$"Z{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"AA{currentRow}"].Value = datum.InternalNoteAmount;
+                worksheet.Cells[$"AA{currentRow}"].Value = datum.InvoiceAmount * datum.CurrencyRate;
                 worksheet.Cells[$"AA{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"AB{currentRow}"].Value = datum.PaidAmount;
                 worksheet.Cells[$"AB{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"AC{currentRow}"].Value = datum.Amount;
+                worksheet.Cells[$"AC{currentRow}"].Value = datum.InvoiceAmount - (datum.InvoiceAmount * datum.CurrencyRate);
                 worksheet.Cells[$"AC{currentRow}"].Style.Font.Size = 14;
 
                 index++;
@@ -98,7 +98,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             }
         }
 
-        private static void SetTableHeader(ExcelWorksheet worksheet)
+        private static void SetTableHeader(ExcelWorksheet worksheet, int timezoneOffset)
         {
             worksheet.Cells["A5"].Value = "No";
             worksheet.Cells["A5"].Style.Font.Size = 14;
@@ -142,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             worksheet.Cells["N5"].Value = "Nama Supplier";
             worksheet.Cells["N5"].Style.Font.Size = 14;
             worksheet.Cells["N5"].Style.Font.Bold = true;
-            worksheet.Cells["O5"].Value = "No SPB";
+            worksheet.Cells["O5"].Value = "No NI";
             worksheet.Cells["O5"].Style.Font.Size = 14;
             worksheet.Cells["O5"].Style.Font.Bold = true;
             worksheet.Cells["P5"].Value = "No Invoice";
@@ -189,13 +189,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             worksheet.Cells["AC5"].Style.Font.Bold = true;
         }
 
-        private static void SetTitle(ExcelWorksheet worksheet, DateTimeOffset startDate, DateTimeOffset endDate)
+        private static void SetTitle(ExcelWorksheet worksheet, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset)
         {
             var company = "PT DAN LIRIS";
             var title = "LAPORAN BUKTI PENGELUARAN BANK DPP + PPN";
 
             var cultureInfo = new CultureInfo("id-ID");
-            var date = $"PERIODE: {startDate.DateTime.ToString("dd MMMM yyyy", cultureInfo)} sampai dengan {endDate.DateTime.ToString("dd MMMM yyyy", cultureInfo)}";
+            var date = $"PERIODE: {startDate.DateTime.AddHours(timezoneOffset).ToString("dd MMMM yyyy", cultureInfo)} sampai dengan {endDate.DateTime.AddHours(timezoneOffset).ToString("dd MMMM yyyy", cultureInfo)}";
 
             worksheet.Cells["A1"].Value = company;
             worksheet.Cells["A1:AC1"].Merge = true;
