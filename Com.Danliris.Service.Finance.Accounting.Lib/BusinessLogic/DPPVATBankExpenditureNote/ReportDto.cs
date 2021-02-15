@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             PaymentMethod = detail.PaymentMethod;
             DPP = itemDetail.DPP;
             VAT = itemDetail.VATAmount;
-            Amount = itemDetail.TotalAmount;
+            Amount = documentItem.Amount;
             CurrencyCode = documentItem.CurrencyCode;
             CurrencyRate = documentItem.CurrencyRate;
             BankName = documentItem.BankName;
@@ -27,8 +27,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             InvoiceId = detail.InvoiceId;
             InvoiceNo = detail.InvoiceNo;
             InvoiceAmount = detail.Amount;
-            PaidAmount = itemDetail.OutstandingAmount;
-            Difference = 0.0;
+            PaidAmount = itemDetail.TotalAmount;
+            Difference = InternalNoteAmount - PaidAmount;
             BillsNo = detail.BillsNo;
             PaymentBills = detail.PaymentBills;
             SupplierCode = itemDetail.SupplierCode;
