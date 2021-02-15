@@ -504,12 +504,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 VerticalAlignment = Element.ALIGN_MIDDLE,
             };
 
-            PdfPCell cellLeft = new PdfPCell()
-            {
-                Border = Rectangle.NO_BORDER,
-                HorizontalAlignment = Element.ALIGN_LEFT,
-                VerticalAlignment = Element.ALIGN_MIDDLE,
-            };
+            //PdfPCell cellLeft = new PdfPCell()
+            //{
+            //    Border = Rectangle.NO_BORDER,
+            //    HorizontalAlignment = Element.ALIGN_LEFT,
+            //    VerticalAlignment = Element.ALIGN_MIDDLE,
+            //};
 
             cell.Phrase = new Phrase("", normal_font);
             table.AddCell(cell);
