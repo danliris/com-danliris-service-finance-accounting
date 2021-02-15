@@ -322,7 +322,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody5a);
 
                 // Jumlah
-                cellHeaderBody5a.Phrase = new Phrase(res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
+                cellHeaderBody5a.Phrase = new Phrase("(" + res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
                 cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody5a);
             }
@@ -468,6 +468,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             {
                 writer.AddAnnotation(annotation);
             }
+
+            document.Add(new Paragraph("\n"));
+
+            PdfPCell cellLeft = new PdfPCell()
+            {
+                Border = Rectangle.NO_BORDER,
+                HorizontalAlignment = Element.ALIGN_LEFT,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+            };
+
+            cellLeft.Colspan = 6;
+            cellLeft.Phrase = new Phrase("Keterangan: ", normal_font);
+            headerTable3.AddCell(cellLeft);
+
+            cellLeft.Colspan = 1;
+            cellLeft.Phrase = new Phrase("", normal_font);
+            headerTable3.AddCell(cellLeft);
+            cellLeft.Colspan = 5;
+            cellLeft.Phrase = new Phrase(viewModel.Remark, normal_font);
+            headerTable3.AddCell(cellLeft);
             #endregion
 
             #region Footer
@@ -501,17 +521,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             table.AddCell(cell);
             cell.Phrase = new Phrase("", normal_font);
             table.AddCell(cell);
-
-            cellLeft.Colspan = 5;
-            cellLeft.Phrase = new Phrase("Keterangan: ", normal_font);
-            table.AddCell(cellLeft);
-
-            cellLeft.Colspan = 1;
-            cellLeft.Phrase = new Phrase("", normal_font);
-            table.AddCell(cellLeft);
-            cellLeft.Colspan = 4;
-            cellLeft.Phrase = new Phrase(viewModel.Remark, normal_font);
-            table.AddCell(cellLeft);
 
             // Menyetujui
             cell.Phrase = new Phrase("Menyetujui,", normal_font);
