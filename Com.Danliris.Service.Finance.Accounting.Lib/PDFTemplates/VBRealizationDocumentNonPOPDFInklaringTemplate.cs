@@ -494,14 +494,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             cellHeader3a.AddElement(headerTable3a);
             headerTable_C.AddCell(cellHeader3a);
-            document.Add(headerTable_C);
-
-            foreach (var annotation in annotations)
-            {
-                writer.AddAnnotation(annotation);
-            }
-
-            document.Add(new Paragraph("\n"));
 
             PdfPCell cellLeft = new PdfPCell()
             {
@@ -511,7 +503,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             };
 
             cellLeft.Colspan = 5;
-            cellLeft.Phrase = new Phrase("Keterangan: ", normal_font);
+            cellLeft.Phrase = new Phrase("\n\nKeterangan: ", normal_font);
             headerTable3b.AddCell(cellLeft);
 
             cellLeft.Colspan = 1;
@@ -520,7 +512,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellLeft.Colspan = 4;
             cellLeft.Phrase = new Phrase(viewModel.Remark, normal_font);
             headerTable3b.AddCell(cellLeft);
-            document.Add(headerTable3b);
+            headerTable_C.AddCell(headerTable3b);
+
+            document.Add(headerTable_C);
+
+            foreach (var annotation in annotations)
+            {
+                writer.AddAnnotation(annotation);
+            }
             #endregion
 
             #region Footer

@@ -254,6 +254,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 var context = serviceScope.ServiceProvider.GetService<FinanceDbContext>();
                 context.Database.Migrate();
             }
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
