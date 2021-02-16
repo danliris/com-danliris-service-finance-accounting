@@ -495,11 +495,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeader3a.AddElement(headerTable3a);
             headerTable_C.AddCell(cellHeader3a);
 
-            PdfPCell cellLeft = new PdfPCell()
+            var cellLeft = new PdfPCell()
             {
                 Border = Rectangle.NO_BORDER,
                 HorizontalAlignment = Element.ALIGN_LEFT,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
+            };
+
+            var emptyBorder = new PdfPCell()
+            {
+                Border = Rectangle.NO_BORDER
             };
 
             cellLeft.Colspan = 5;
@@ -512,7 +517,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellLeft.Colspan = 4;
             cellLeft.Phrase = new Phrase(viewModel.Remark, normal_font);
             headerTable3b.AddCell(cellLeft);
-            headerTable_C.AddCell(headerTable3b);
+            emptyBorder.AddElement(headerTable3b);
+            headerTable_C.AddCell(emptyBorder);
 
             document.Add(headerTable_C);
 
@@ -536,17 +542,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 VerticalAlignment = Element.ALIGN_MIDDLE,
             };
 
-            cell.Phrase = new Phrase(" ", normal_font);
+            cell.Phrase = new Phrase("\n\n", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
+            cell.Phrase = new Phrase("\n\n", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
+            cell.Phrase = new Phrase("\n\n", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
+            cell.Phrase = new Phrase("\n\n", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
+            cell.Phrase = new Phrase("\n\n", normal_font);
             table.AddCell(cell);
-
+                
             // Menyetujui
             cell.Phrase = new Phrase("Menyetujui,", normal_font);
             table.AddCell(cell);
