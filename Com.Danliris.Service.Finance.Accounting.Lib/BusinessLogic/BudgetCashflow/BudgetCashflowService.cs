@@ -247,6 +247,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             return result.data;
         }
 
+        private async Task<List<BudgetCashFlowAccountingUnitItemDto>> GetDetailUnitAccounting(int unitAccounting)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Core + $"master/units/by-accounting-unit-id/{unitAccounting}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<List<BudgetCashFlowAccountingUnitItemDto>>();
+            result.data = new List<BudgetCashFlowAccountingUnitItemDto>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<List<BudgetCashFlowAccountingUnitItemDto>>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
+        }
+
         public async Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnit(int unitId, DateTimeOffset date)
         {
             var query = from cashflowType in _dbContext.BudgetCashflowTypes
@@ -640,6 +662,106 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             result.Add(new BudgetCashflowItemDto("Total Surplus (Defisit) Equivalent", result.Where(element => element.RealCashDifferenceLabel == "Selisih").Sum(element => element.Total)));
             return result;
+        }
+
+        public async Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnitAccounting(int unitAccountingId, DateTimeOffset date) 
+        {
+            var unitsByUnitAccountingId = await GetDetailUnitAccounting(unitAccountingId);
+            var budgetCashFlowPerUnit = new List<BudgetCashflowItemDto>();
+
+            foreach(var unit in unitsByUnitAccountingId)
+            {
+                var budgetCashFlow = await GetBudgetCashflowUnit(unit.Id, date);
+                budgetCashFlowPerUnit.AddRange(budgetCashFlow);
+            }
+
+            var groupBudget = budgetCashFlowPerUnit.GroupBy(
+                key => new
+                {
+                    key.CashflowCategoryId,
+                    key.CashflowCategoryName,
+                    key.CashflowTypeId,
+                    key.CashflowTypeName,
+                    key.Currency,
+                    key.DifferenceLabel,
+                    key.EquivalentDifferenceLabel,
+                    key.GroupRowSpan,
+                    key.IsEquivalentDifference,
+                    key.IsLabelOnly,
+                    key.IsReadOnly,
+                    key.IsRealCashBalance,
+                    key.IsShowCurrencyRate,
+                    key.IsShowCurrencyRateLabel,
+                    key.IsShowDifference,
+                    key.IsShowDifferenceLabel,
+                    key.IsShowRealCashBalanceLabel,
+                    key.IsShowRealCashDifference,
+                    key.IsShowRealCashDifferenceLabel,
+                    key.IsShowSubCategoryLabel,
+                    key.IsShowSummary,
+                    key.IsShowSummaryBalance,
+                    key.IsShowSummaryLabel,
+                    key.IsShowTotalLabel,
+                    key.IsSummaryBalance,
+                    key.IsUseGroup,
+                    key.IsUseSection,
+                    key.Items,
+                    key.RealCashDifferenceLabel,
+                    key.SectionRowSpan,
+                    key.SubCategoryId,
+                    key.SubCategoryName,
+                    key.SummaryBalanceLabel,
+                    key.SummaryLabel,
+                    key.TotalLabel,
+                    key.Type,
+                    key.TypeName
+                },
+                val => val,
+                (key, val) => new BudgetCashflowItemDto
+                (
+                    items: key.Items,
+                    cashflowTypeId: key.CashflowTypeId,
+                    cashflowTypeName: key.CashflowTypeName,
+                    isUseSection: key.IsUseSection,
+                    sectionRowSpan: key.SectionRowSpan,
+                    isUseGroup: key.IsUseGroup,
+                    groupRowSpan: key.GroupRowSpan,
+                    type:key.Type,
+                    typeName:key.TypeName,
+                    isLabelOnly: key.IsLabelOnly,
+                    cashflowCategoryId: key.CashflowCategoryId,
+                    cashflowCategoryName: key.CashflowCategoryName,
+                    isShowSubCategoryLabel: key.IsShowSubCategoryLabel,
+                    subCategoryId:key.SubCategoryId,
+                    subCategoryName: key.SubCategoryName,
+                    isReadOnly: key.IsReadOnly,
+                    currency: key.Currency,
+                    isShowCurrencyRateLabel: key.IsShowCurrencyRateLabel,
+                    isShowCurrencyRate: key.IsShowCurrencyRate,
+                    isShowRealCashBalanceLabel: key.IsShowRealCashBalanceLabel,
+                    nominal:val.Sum(s=>s.Nominal),
+                    currencyNominal: val.Sum(s=> s.CurrencyNominal),
+                    isShowSummaryLabel:key.IsShowSummaryLabel,
+                    isShowSummary: key.IsShowSummary,
+                    equivalentDifferenceLabel: key.EquivalentDifferenceLabel,
+                    isEquivalentDifference: key.IsEquivalentDifference,
+                    total : val.Sum(s=> s.Total),
+                    isRealCashBalance: key.IsRealCashBalance,
+                    realCashDifferenceLabel: key.RealCashDifferenceLabel,
+                    isShowRealCashDifferenceLabel: key.IsShowRealCashDifferenceLabel,
+                    isShowRealCashDifference: key.IsShowRealCashDifference,
+                    summaryLabel:key.SummaryLabel,
+                    isShowDifference: key.IsShowDifference,
+                    isShowTotalLabel: key.IsShowTotalLabel,
+                    totalLabel: key.TotalLabel,
+                    isShowDifferenceLabel: key.IsShowDifferenceLabel,
+                    differenceLabel:key.DifferenceLabel,
+                    isShowSummaryBalance: key.IsShowSummaryBalance,
+                    summaryBalanceLabel: key.SummaryBalanceLabel,
+                    isSummaryBalance: key.IsSummaryBalance
+                    )
+                );
+            return groupBudget.ToList();
         }
 
         public async Task<BudgetCashflowDivision> GetBudgetCashflowDivision(int divisionId, DateTimeOffset date)

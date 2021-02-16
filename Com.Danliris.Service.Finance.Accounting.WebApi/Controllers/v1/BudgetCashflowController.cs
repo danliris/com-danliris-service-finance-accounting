@@ -120,7 +120,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             try
             {
                 VerifyUser();
-                var result = await _service.GetBudgetCashflowUnit(unitId, date);
+                var result = await _service.GetBudgetCashflowUnitAccounting(unitId, date);
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
