@@ -68,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"P{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"Q{currentRow}"].Value = datum.InvoiceAmount;
                 worksheet.Cells[$"Q{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"R{currentRow}"].Value = datum.Amount;
+                worksheet.Cells[$"R{currentRow}"].Value = datum.InvoiceAmount;
                 worksheet.Cells[$"R{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"S{currentRow}"].Value = datum.OutstandingAmount;
                 worksheet.Cells[$"S{currentRow}"].Style.Font.Size = 14;
