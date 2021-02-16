@@ -357,5 +357,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Position = position;
             this.FlagForUpdate(user, userAgent);
         }
+
+        public void SetRemark(string remark)
+        {
+            Remark = remark;
+        }
     }
 }

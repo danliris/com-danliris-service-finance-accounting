@@ -385,6 +385,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
             var data = _dbContext.VBRealizationDocuments.FirstOrDefault(s => s.Id == id);
 
             model.Amount = model.Items.Sum(s => s.Total);
+            data.SetRemark(model.Remark);
             data.SetAmount(model.Amount, _identityService.Username, UserAgent);
             if(data.VBRequestDocumentId != model.VBDocument.Id)
             {

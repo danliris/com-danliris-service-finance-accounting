@@ -32,6 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             BillsNo = detail.BillsNo;
             PaymentBills = detail.PaymentBills;
             SupplierCode = itemDetail.SupplierCode;
+            DeliveryOrdersNo = detail.DeliveryOrdersNo;
         }
 
         public int ExpenditureId { get; private set; }
