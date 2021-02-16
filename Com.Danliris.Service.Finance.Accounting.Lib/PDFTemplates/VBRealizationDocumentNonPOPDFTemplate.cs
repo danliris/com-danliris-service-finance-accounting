@@ -40,6 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             PdfPTable headerTable2 = new PdfPTable(1);
             PdfPTable headerTable3 = new PdfPTable(6);
             PdfPTable headerTable3a = new PdfPTable(5);
+            PdfPTable headerTable3b = new PdfPTable(5);
             PdfPTable headerTable4 = new PdfPTable(2);
 
             headerTable_A.SetWidths(new float[] { 10f, 10f });
@@ -48,6 +49,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.WidthPercentage = 110;
             headerTable3a.SetWidths(new float[] { 3f, 15f, 5f, 15f, 62f });
             headerTable3a.WidthPercentage = 110;
+            headerTable3b.SetWidths(new float[] { 3f, 15f, 5f, 15f, 62f });
+            headerTable3b.WidthPercentage = 110;
             headerTable4.SetWidths(new float[] { 10f, 40f });
             headerTable4.WidthPercentage = 100;
 
@@ -322,7 +325,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody5a);
 
                 // Jumlah
-                cellHeaderBody5a.Phrase = new Phrase(res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
+                cellHeaderBody5a.Phrase = new Phrase("(" + res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
                 cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody5a);
             }
@@ -462,6 +465,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             cellHeader3a.AddElement(headerTable3a);
             headerTable_C.AddCell(cellHeader3a);
+
+            var cellLeft = new PdfPCell()
+            {
+                Border = Rectangle.NO_BORDER,
+                HorizontalAlignment = Element.ALIGN_LEFT,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+            };
+
+            var emptyBorder = new PdfPCell()
+            {
+                Border = Rectangle.NO_BORDER
+            };
+
+            cellLeft.Colspan = 5;
+            cellLeft.Phrase = new Phrase("\n\nKeterangan: ", normal_font);
+            headerTable3b.AddCell(cellLeft);
+
+            cellLeft.Colspan = 1;
+            cellLeft.Phrase = new Phrase("", normal_font);
+            headerTable3b.AddCell(cellLeft);
+            cellLeft.Colspan = 4;
+            cellLeft.Phrase = new Phrase(viewModel.Remark, normal_font);
+            headerTable3b.AddCell(cellLeft);
+            emptyBorder.AddElement(headerTable3b);
+            headerTable_C.AddCell(emptyBorder);
+
             document.Add(headerTable_C);
 
             foreach (var annotation in annotations)
@@ -484,15 +513,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 VerticalAlignment = Element.ALIGN_MIDDLE,
             };
 
-            cell.Phrase = new Phrase(" ", normal_font);
+            //PdfPCell cellLeft = new PdfPCell()
+            //{
+            //    Border = Rectangle.NO_BORDER,
+            //    HorizontalAlignment = Element.ALIGN_LEFT,
+            //    VerticalAlignment = Element.ALIGN_MIDDLE,
+            //};
+
+            cell.Phrase = new Phrase("\n\n", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
+            cell.Phrase = new Phrase("\n\n", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
+            cell.Phrase = new Phrase("\n\n", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
+            cell.Phrase = new Phrase("\n\n", normal_font);
             table.AddCell(cell);
-            cell.Phrase = new Phrase("", normal_font);
+            cell.Phrase = new Phrase("\n\n", normal_font);
             table.AddCell(cell);
 
             // Menyetujui

@@ -19,6 +19,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             Category = new CategoryDto(detail.CategoryId, detail.CategoryName);
             PaymentMethod = detail.PaymentMethod;
             Amount = detail.Amount;
+            DeliveryOrdersNo = detail.DeliveryOrdersNo;
+            PaymentBills = detail.PaymentBills;
+            BillsNo = detail.BillsNo;
         }
 
         public string DocumentNo { get; set; }
@@ -27,6 +30,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public CategoryDto Category { get; set; }
         public string PaymentMethod { get; set; }
         public double Amount { get; set; }
+        public string DeliveryOrdersNo { get; set; }
+        public string PaymentBills { get; set; }
+        public string BillsNo { get; set; }
         public int Id { get; set; }
     }
 }

@@ -40,14 +40,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
             foreach (var formItem in form.Items.Where(element => element.Select))
             {
-                var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount);
+                var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount, formItem.InternalNote.Supplier.Code);
                 EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
                 _dbContext.DPPVATBankExpenditureNoteItems.Add(item);
                 _dbContext.SaveChanges();
 
                 foreach (var formDetail in formItem.InternalNote.Items.Where(element => element.SelectInvoice))
                 {
-                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod);
+                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod, formDetail.Invoice.DeliveryOrdersNo, formDetail.Invoice.PaymentBills, formDetail.Invoice.BillsNo);
                     EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
                     _dbContext.DPPVATBankExpenditureNoteDetails.Add(detail);
                     _dbContext.SaveChanges();
@@ -159,7 +159,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 .Skip((page - 1) * size)
                 .Take(size)
                 .ToList()
-                .Select(entity => new DPPVATBankExpenditureNoteIndexDto(entity.Id, entity.DocumentNo, entity.Date, entity.BankName, entity.BankAccountNumber, itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Sum(item => item.TotalAmount), entity.CurrencyCode, string.Join("\n", itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Select(item => $"- {item.InternalNoteNo}").ToList()), entity.SupplierName))
+                .Select(entity => new DPPVATBankExpenditureNoteIndexDto(entity.Id, entity.DocumentNo, entity.Date, entity.BankName, entity.BankAccountNumber, itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Sum(item => item.TotalAmount), entity.CurrencyCode, string.Join("\n", itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Select(item => $"- {item.InternalNoteNo}").ToList()), entity.SupplierName, entity.IsPosted))
                 .ToList();
 
             return new ReadResponse<DPPVATBankExpenditureNoteIndexDto>(data, count, orderDictionary, new List<string>());
@@ -203,14 +203,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
             foreach (var formItem in form.Items.Where(item => item.Select))
             {
-                var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount);
+                var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount, formItem.InternalNote.Supplier.Code);
                 EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
                 _dbContext.DPPVATBankExpenditureNoteItems.Add(item);
                 _dbContext.SaveChanges();
 
                 foreach (var formDetail in formItem.InternalNote.Items.Where(invoiceItem => invoiceItem.SelectInvoice))
                 {
-                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod);
+                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod, formDetail.Invoice.DeliveryOrdersNo, formDetail.Invoice.PaymentBills, formDetail.Invoice.BillsNo);
                     EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
                     _dbContext.DPPVATBankExpenditureNoteDetails.Add(detail);
                     _dbContext.SaveChanges();

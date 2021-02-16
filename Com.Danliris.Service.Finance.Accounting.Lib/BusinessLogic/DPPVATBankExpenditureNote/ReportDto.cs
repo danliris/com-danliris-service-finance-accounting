@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             PaymentMethod = detail.PaymentMethod;
             DPP = itemDetail.DPP;
             VAT = itemDetail.VATAmount;
-            Amount = itemDetail.TotalAmount;
+            Amount = documentItem.Amount;
             CurrencyCode = documentItem.CurrencyCode;
             CurrencyRate = documentItem.CurrencyRate;
             BankName = documentItem.BankName;
@@ -27,8 +27,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             InvoiceId = detail.InvoiceId;
             InvoiceNo = detail.InvoiceNo;
             InvoiceAmount = detail.Amount;
-            PaidAmount = itemDetail.OutstandingAmount;
-            Difference = 0.0;
+            PaidAmount = itemDetail.TotalAmount;
+            Difference = InternalNoteAmount - PaidAmount;
+            BillsNo = detail.BillsNo;
+            PaymentBills = detail.PaymentBills;
+            SupplierCode = itemDetail.SupplierCode;
+            DeliveryOrdersNo = detail.DeliveryOrdersNo;
         }
 
         public int ExpenditureId { get; private set; }
@@ -53,5 +57,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public double InvoiceAmount { get; private set; }
         public double PaidAmount { get; private set; }
         public double Difference { get; private set; }
+        public string BillsNo { get; private set; }
+        public string PaymentBills { get; private set; }
+        public string DeliveryOrdersNo { get; private set; }
+        public object SupplierCode { get; private set; }
     }
 }

@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
 
         }
 
-        public DPPVATBankExpenditureNoteItemModel(int dppVATBankExpenditureNoteId, int internalNoteId, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset dueDate, int supplierId, string supplierName, bool isImportSupplier, double vatAmount, double incomeTaxAmount, double dpp, double totalAmount, int currencyId, string currencyCode, double outstandingAmount)
+        public DPPVATBankExpenditureNoteItemModel(int dppVATBankExpenditureNoteId, int internalNoteId, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset dueDate, int supplierId, string supplierName, bool isImportSupplier, double vatAmount, double incomeTaxAmount, double dpp, double totalAmount, int currencyId, string currencyCode, double outstandingAmount, string supplierCode)
         {
             DPPVATBankExpenditureNoteId = dppVATBankExpenditureNoteId;
             InternalNoteId = internalNoteId;
@@ -22,6 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
             DueDate = dueDate;
             SupplierId = supplierId;
             SupplierName = supplierName;
+            SupplierCode = supplierCode;
             IsImportSupplier = isImportSupplier;
             VATAmount = vatAmount;
             IncomeTaxAmount = incomeTaxAmount;
@@ -50,5 +51,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
         [MaxLength(32)]
         public string CurrencyCode { get; private set; }
         public double OutstandingAmount { get; private set; }
+        public string SupplierCode { get; private set; }
     }
 }

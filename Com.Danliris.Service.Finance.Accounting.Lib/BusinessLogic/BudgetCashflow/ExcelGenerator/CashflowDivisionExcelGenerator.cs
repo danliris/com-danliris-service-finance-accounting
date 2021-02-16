@@ -436,14 +436,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     worksheet.Cells[$"E{currentRow}"].Merge = true;
                     worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-                    worksheet.Cells[$"F{currentRow}"].Value = item.Equivalent;
-                    worksheet.Cells[$"F{currentRow}"].Merge = true;
-                    worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    //worksheet.Cells[$"F{currentRow}"].Value = item.Equivalent;
+                    //worksheet.Cells[$"F{currentRow}"].Merge = true;
+                    //worksheet.Cells[$"F{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
 
-                    worksheet.Cells[currentRow, 7, currentRow, dynamicCol].Value = "";
-                    worksheet.Cells[currentRow, 7, currentRow, dynamicCol].Merge = true;
-                    worksheet.Cells[currentRow, 7, currentRow, dynamicCol].Style.Font.Bold = true;
-                    worksheet.Cells[currentRow, 7, currentRow, dynamicCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    worksheet.Cells[currentRow, 6, currentRow, 6 + (data.Headers.Count * 3) - 1].Value = "";
+                    worksheet.Cells[currentRow, 6, currentRow, 6 + (data.Headers.Count * 3) - 1].Merge = true;
+                    worksheet.Cells[currentRow, 6, currentRow, 6 + (data.Headers.Count * 3) - 1].Style.Font.Bold = true;
+                    worksheet.Cells[currentRow, 6, currentRow, 6 + (data.Headers.Count * 3) - 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+
+                    worksheet.Cells[currentRow, 6 + (data.Headers.Count * 3)].Value = item.Equivalent;
+                    worksheet.Cells[currentRow, 6 + (data.Headers.Count * 3)].Merge = true;
+                    worksheet.Cells[currentRow, 6 + (data.Headers.Count * 3)].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 }
 
                 currentRow += 1;
