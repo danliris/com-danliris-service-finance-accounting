@@ -42,5 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         int UpdateRealCashBalance(CashBalanceFormDto form);
         List<BudgetCashflowUnitItemDto> GetRealCashBalance(int unitId, DateTimeOffset date);
         Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnitAccounting(int unitAccountingId, DateTimeOffset date);
+        Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnitAccountingV2(int unitAccountingId, DateTimeOffset date);
+        Task<UnitDto> GetUnitAccountingById(int unitAccounting);
     }
 }
