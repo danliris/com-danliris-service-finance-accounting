@@ -41,12 +41,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
         private static void SetTable(Document document, DPPVATBankExpenditureNoteDto data, int timezoneOffset)
         {
-            var table = new PdfPTable(7)
+            var table = new PdfPTable(5)
             {
                 WidthPercentage = 100,
                 HorizontalAlignment = Element.ALIGN_LEFT
             };
-            table.SetWidths(new float[] { 1f, 3f, 3f, 3f, 2f, 2f, 6f });
+            table.SetWidths(new float[] { 1f, 3f, 3f, 2f, 6f });
 
             var cellCenter = new PdfPCell()
             {
@@ -72,10 +72,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             table.AddCell(cellCenter);
             cellCenter.Phrase = new Phrase("Kategori Barang", _subHeaderFont);
             table.AddCell(cellCenter);
-            cellCenter.Phrase = new Phrase("Divisi", _subHeaderFont);
-            table.AddCell(cellCenter);
-            cellCenter.Phrase = new Phrase("Unit", _subHeaderFont);
-            table.AddCell(cellCenter);
             cellCenter.Phrase = new Phrase("Mata Uang", _subHeaderFont);
             table.AddCell(cellCenter);
             cellCenter.Phrase = new Phrase("Jumlah", _subHeaderFont);
@@ -89,16 +85,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 cellLeft.Phrase = new Phrase(item.InternalNote.DocumentNo, _normalFont);
                 table.AddCell(cellLeft);
                 cellLeft.Phrase = new Phrase(string.Join("\n", item.InternalNote.Items.Select(element => $"- {element.Invoice.Category.Name}")), _subHeaderFont);
-                table.AddCell(cellLeft);
-                cellCenter.Phrase = new Phrase("", _subHeaderFont);
-                table.AddCell(cellCenter);
-                cellCenter.Phrase = new Phrase("", _subHeaderFont);
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(item.InternalNote.Currency.Code, _subHeaderFont);
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(item.InternalNote.Items.Sum(itemInvoice => itemInvoice.Invoice.Amount).ToString(), _subHeaderFont);
                 table.AddCell(cellCenter);
             }
+
+            document.Add(table);
         }
 
         private static void SetTitle(Document document, DPPVATBankExpenditureNoteDto data, int timezoneOffset)
