@@ -158,7 +158,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 cellLeft.Phrase = new Phrase(item.InternalNote.DocumentNo, _normalFont);
                 table.AddCell(cellLeft);
                 cellLeft.Phrase = new Phrase(string.Join("\n", item.InternalNote.Items.Select(element => $"- {element.Invoice.Category.Name}")), _subHeaderFont);
-                table.AddCell(cellCenter);
+                table.AddCell(cellLeft);
                 cellCenter.Phrase = new Phrase(item.InternalNote.Currency.Code, _subHeaderFont);
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(item.InternalNote.Items.Sum(itemInvoice => itemInvoice.Invoice.Amount).ToString(), _subHeaderFont);
