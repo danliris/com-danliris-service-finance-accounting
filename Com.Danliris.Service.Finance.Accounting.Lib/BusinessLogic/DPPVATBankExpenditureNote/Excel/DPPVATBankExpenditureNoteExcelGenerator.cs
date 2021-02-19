@@ -30,6 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
         private static void SetData(ExcelWorksheet worksheet, List<ReportDto> data, int timezoneOffset)
         {
+            CultureInfo ci = new CultureInfo("en-us");
             var currentRow = 6;
             var index = 1;
             foreach (var datum in data)
@@ -40,19 +41,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"C{currentRow}"].Value = datum.ExpenditureDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy");
                 worksheet.Cells[$"C{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"D{currentRow}"].Value = datum.Amount;
+                worksheet.Cells[$"D{currentRow}"].Value = datum.Amount.ToString("N2",ci);
                 worksheet.Cells[$"D{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"E{currentRow}"].Value = datum.CategoryName;
                 worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"F{currentRow}"].Value = datum.PaymentMethod;
                 worksheet.Cells[$"F{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"G{currentRow}"].Value = datum.InvoiceAmount;
+                worksheet.Cells[$"G{currentRow}"].Value = datum.InvoiceAmount.ToString("N2",ci);
                 worksheet.Cells[$"G{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"H{currentRow}"].Value = datum.InvoiceAmount * 0.1;
+                worksheet.Cells[$"H{currentRow}"].Value = (datum.InvoiceAmount * 0.1).ToString("N2", ci);
                 worksheet.Cells[$"H{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"I{currentRow}"].Value = 0.0;
                 worksheet.Cells[$"I{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"J{currentRow}"].Value = datum.InvoiceAmount + (datum.InvoiceAmount * 0.1);
+                worksheet.Cells[$"J{currentRow}"].Value = (datum.InvoiceAmount + (datum.InvoiceAmount * 0.1)).ToString("N2", ci);
                 worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"K{currentRow}"].Value = datum.CurrencyCode;
                 worksheet.Cells[$"K{currentRow}"].Style.Font.Size = 14;
@@ -66,9 +67,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"O{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"P{currentRow}"].Value = datum.InvoiceNo;
                 worksheet.Cells[$"P{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"Q{currentRow}"].Value = datum.InvoiceAmount;
+                worksheet.Cells[$"Q{currentRow}"].Value = datum.InvoiceAmount.ToString("N2",ci);
                 worksheet.Cells[$"Q{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"R{currentRow}"].Value = datum.InvoiceAmount;
+                worksheet.Cells[$"R{currentRow}"].Value = datum.InvoiceAmount.ToString("N2",ci);
                 worksheet.Cells[$"R{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"S{currentRow}"].Value = datum.OutstandingAmount;
                 worksheet.Cells[$"S{currentRow}"].Style.Font.Size = 14;
@@ -80,15 +81,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"V{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"W{currentRow}"].Value = datum.PaymentBills;
                 worksheet.Cells[$"W{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"X{currentRow}"].Value = datum.InvoiceAmount;
+                worksheet.Cells[$"X{currentRow}"].Value = datum.InvoiceAmount.ToString("N2",ci);
                 worksheet.Cells[$"X{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"Y{currentRow}"].Value = datum.CurrencyRate;
                 worksheet.Cells[$"Y{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"Z{currentRow}"].Value = datum.CurrencyRate;
                 worksheet.Cells[$"Z{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"AA{currentRow}"].Value = datum.InvoiceAmount * datum.CurrencyRate;
+                worksheet.Cells[$"AA{currentRow}"].Value = (datum.InvoiceAmount * datum.CurrencyRate).ToString("N2",ci);
                 worksheet.Cells[$"AA{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"AB{currentRow}"].Value = datum.PaidAmount;
+                worksheet.Cells[$"AB{currentRow}"].Value = datum.PaidAmount.ToString("N2",ci);
                 worksheet.Cells[$"AB{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"AC{currentRow}"].Value = datum.InvoiceAmount - (datum.InvoiceAmount * datum.CurrencyRate);
                 worksheet.Cells[$"AC{currentRow}"].Style.Font.Size = 14;
@@ -112,7 +113,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             worksheet.Cells["D5"].Value = "Nilai Pembayaran Keluar";
             worksheet.Cells["D5"].Style.Font.Size = 14;
             worksheet.Cells["D5"].Style.Font.Bold = true;
-            worksheet.Cells["E5"].Value = "Category";
+            worksheet.Cells["E5"].Value = "Nama Barang";
             worksheet.Cells["E5"].Style.Font.Size = 14;
             worksheet.Cells["E5"].Style.Font.Bold = true;
             worksheet.Cells["F5"].Value = "Cara Pembayaran";
