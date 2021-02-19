@@ -28,6 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         private readonly IValidateService _validateService;
         private readonly List<UnitDto> _units;
         private readonly List<DivisionDto> _divisions;
+        private readonly List<UnitAccountingDto> _unitAccountings;
         private const string ApiVersion = "1.0";
 
         public BudgetCashflowController(IServiceProvider serviceProvider)
@@ -47,6 +48,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             var jsonDivisions = cacheService.GetString("Division");
             //var jsonDivisions = "[{\"Id\":0,\"Code\":\"SP\",\"Name\":\"SPINNING\"}]";
             _divisions = JsonConvert.DeserializeObject<List<DivisionDto>>(jsonDivisions, new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            });
+
+            var jsonAccountingUnit = cacheService.GetString("AccountingUnit");
+            _unitAccountings = JsonConvert.DeserializeObject<List<UnitAccountingDto>>(jsonAccountingUnit, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
@@ -122,7 +129,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             try
             {
                 VerifyUser();
-                var result = await _service.GetBudgetCashflowUnitAccountingV2(unitId, date);
+                var result = await _service.GetBudgetCashflowUnit(unitId, date);
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
@@ -148,7 +155,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             {
                 VerifyUser();
                 var data = await _service.GetBudgetCashflowUnit(unitId, date);
-                var unit = _units.FirstOrDefault(element => element.Id == unitId);
+                var unit = _unitAccountings.FirstOrDefault(element => element.Id == unitId);
                 var stream = CashflowUnitPdfGenerator.Generate(unit, date, _identityService.TimezoneOffset, data);
                 return new FileStreamResult(stream, "application/pdf")
                 {

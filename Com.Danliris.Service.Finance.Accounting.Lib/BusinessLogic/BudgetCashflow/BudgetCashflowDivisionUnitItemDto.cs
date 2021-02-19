@@ -20,6 +20,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             Unit = divisionUnit;
         }
 
+        public BudgetCashflowDivisionUnitItemDto(BudgetCashflowUnitModel cashflowUnit, UnitAccountingDto divisionUnit)
+        {
+            CashflowUnit = cashflowUnit;
+            if (cashflowUnit != null)
+            {
+                Nominal = cashflowUnit.Nominal;
+                CurrencyNominal = cashflowUnit.CurrencyNominal;
+                Actual = cashflowUnit.Total;
+            }
+            Unit = new UnitDto { 
+                Code = divisionUnit.Code,
+                DivisionId = divisionUnit.DivisionId,
+                Id = divisionUnit.Id,
+                Name = divisionUnit.Name
+            };
+        }
+
         public BudgetCashflowDivisionUnitItemDto(DivisionDto division, double divisionCurrencyNominal, double divisionNominal, double divisionActual)
         {
             Division = division;
@@ -32,6 +49,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         {
             Division = division;
             Unit = divisionUnit;
+            Nominal = nominal;
+            CurrencyNominal = currencyNominal;
+            Actual = actual;
+        }
+        //isnew for overload ambigue
+        public BudgetCashflowDivisionUnitItemDto(DivisionDto division, UnitAccountingDto divisionUnit, double nominal, double currencyNominal, double actual,bool IsNew)
+        {
+            Division = division;
+            Unit = divisionUnit == null? new UnitDto() : new UnitDto {
+                Code = divisionUnit.Code,
+                DivisionId = divisionUnit.DivisionId,
+                Id = divisionUnit.Id,
+                Name = divisionUnit.Name
+            };
             Nominal = nominal;
             CurrencyNominal = currencyNominal;
             Actual = actual;
