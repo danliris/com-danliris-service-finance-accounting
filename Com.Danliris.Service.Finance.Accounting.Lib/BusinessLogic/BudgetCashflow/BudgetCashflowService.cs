@@ -23,7 +23,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         private readonly List<CurrencyDto> _currencies;
         private readonly List<DivisionDto> _divisions;
         private readonly IServiceProvider _serviceProvider;
-        private readonly List<UnitDto> _units;
+        //private readonly List<UnitDto> _units;
+        private readonly List<UnitAccountingDto> _units;
+
+        private readonly List<UnitAccountingDto> _unitAccounting;
 
         public BudgetCashflowService(IServiceProvider serviceProvider)
         {
@@ -38,16 +41,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
 
-            var jsonUnits = cacheService.GetString("Unit");
+            //var jsonUnits = cacheService.GetString("Unit");
+            ////var jsonUnits = "[{\"Id\":0,\"Code\":\"IDR\",\"Name\":\"SPINNING 1\",\"DivisionId\":1}]";
+            //_units = JsonConvert.DeserializeObject<List<UnitDto>>(jsonUnits, new JsonSerializerSettings
+            //{
+            //    MissingMemberHandling = MissingMemberHandling.Ignore
+            //});
+
+            var jsonUnits = cacheService.GetString("AccountingUnit");
             //var jsonUnits = "[{\"Id\":0,\"Code\":\"IDR\",\"Name\":\"SPINNING 1\",\"DivisionId\":1}]";
-            _units = JsonConvert.DeserializeObject<List<UnitDto>>(jsonUnits, new JsonSerializerSettings
+            _units = JsonConvert.DeserializeObject<List<UnitAccountingDto>>(jsonUnits, new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            });
+            var jsonDivisions = cacheService.GetString("Division");
+            //var jsonDivisions = "[{\"Id\":0,\"Code\":\"SP\",\"Name\":\"SPINNING\"}]";
+            _divisions = JsonConvert.DeserializeObject<List<DivisionDto>>(jsonDivisions, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
 
-            var jsonDivisions = cacheService.GetString("Division");
-            //var jsonDivisions = "[{\"Id\":0,\"Code\":\"SP\",\"Name\":\"SPINNING\"}]";
-            _divisions = JsonConvert.DeserializeObject<List<DivisionDto>>(jsonDivisions, new JsonSerializerSettings
+            var jsonAccountingUnit = cacheService.GetString("AccountingUnit");
+            _unitAccounting = JsonConvert.DeserializeObject<List<UnitAccountingDto>>(jsonAccountingUnit, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
@@ -214,7 +229,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             };
 
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={date.Date}";
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={date}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<List<DebtDispositionDto>>();
@@ -227,7 +242,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             }
             return result.data;
         }
+        private async Task<List<DebtDispositionDto>> GetDebtBudgetCashflow(List<int> unitIds, int divisionId, int year, int month, List<int> categoryIds, DateTimeOffset date)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
 
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var unitIdsStr = string.Join("&unitId=",unitIds);
+            var unitStr = unitIds.Count > 0 ? "&unitId=" + unitIdsStr : string.Empty;
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={date}{unitStr}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<List<DebtDispositionDto>>();
+            result.data = new List<DebtDispositionDto>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<List<DebtDispositionDto>>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
+        }
         private async Task<List<DebtDispositionDto>> GetSummaryBudgetCashflow(int unitId, int divisionId, int year, int month, List<int> categoryIds, DateTimeOffset date)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
@@ -294,6 +331,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         }
         public async Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnit(int unitId, DateTimeOffset date)
         {
+            var unitsByUnitAccountingId = await GetDetailUnitAccounting(unitId);
+            var unitIds = unitsByUnitAccountingId.Select(s => s.Id).ToList();
             var query = from cashflowType in _dbContext.BudgetCashflowTypes
 
                         join cashflowCategory in _dbContext.BudgetCashflowCategories on cashflowType.Id equals cashflowCategory.CashflowTypeId into cashflowTypeCategories
@@ -328,7 +367,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 .ToList();
 
             var purchasingCategoryIds = _dbContext.BudgetCashflowSubCategories.Where(entity => !string.IsNullOrWhiteSpace(entity.PurchasingCategoryIds)).Select(entity => JsonConvert.DeserializeObject<List<int>>(entity.PurchasingCategoryIds)).SelectMany(purchasingCategoryId => purchasingCategoryId).ToList();
-            var debtSummaries = await GetDebtBudgetCashflow(unitId, 0, year, month, purchasingCategoryIds, date);
+            var debtSummaries = await GetDebtBudgetCashflow(unitIds, 0, year, month, purchasingCategoryIds, date);
             var debtDispositionSummaries = await GetSummaryBudgetCashflow(unitId, 0, year, month, purchasingCategoryIds, date);
 
             var summaries = new List<SummaryPerType>();
@@ -1591,7 +1630,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                     var currencyNominal = summaryByTypeAndCashflowType.Items.Where(unitItem => unitItem.Unit != null && unitItem.Unit.Id == divisionUnit.Id).Sum(element => element.CashflowUnit.CurrencyNominal);
                                     var actual = summaryByTypeAndCashflowType.Items.Where(unitItem => unitItem.Unit != null && unitItem.Unit.Id == divisionUnit.Id).Sum(element => element.CashflowUnit.Total);
 
-                                    typeSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, nominal, currencyNominal, actual));
+                                    typeSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, nominal, currencyNominal, actual, true));
 
                                     divisionCurrencyNominal += currencyNominal;
                                     divisionNominal += nominal;
@@ -1626,7 +1665,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             var divisionActual = 0.0;
                             foreach (var divisionUnit in divisionUnits)
                             {
-                                typeSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, 0, 0, 0));
+                                typeSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, 0, 0, 0, true));
                             }
 
                             typeSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionNominal, divisionCurrencyNominal, divisionActual));
@@ -1681,7 +1720,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                 var currencyNominal = cashInItems.Sum(element => element.CurrencyNominal) - cashOutItems.Sum(element => element.CurrencyNominal);
                                 var actual = cashInItems.Sum(element => element.Actual) - cashOutItems.Sum(element => element.Actual);
 
-                                typeDifferenceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, nominal, currencyNominal, actual));
+                                typeDifferenceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, nominal, currencyNominal, actual, true));
 
                                 divisionCurrencyNominal += currencyNominal;
                                 divisionNominal += nominal;
@@ -1716,7 +1755,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         var divisionActual = 0.0;
                         foreach (var divisionUnit in divisionUnits)
                         {
-                            typeDifferenceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, 0, 0, 0));
+                            typeDifferenceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionUnit, 0, 0, 0, true));
                         }
                         typeDifferenceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, divisionNominal, divisionCurrencyNominal, divisionActual));
                     }
@@ -1771,9 +1810,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                 divisionActualTotal += actual;
 
                             }
-                            initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual));
+                            initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual, true));
                         }
-                        initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual));
+                        initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual,true));
                     }
 
                     initialBalanceItem.SetRowSummary(divisionCurrencyNominalTotal, divisionNominalTotal, divisionActualTotal);
@@ -1853,7 +1892,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                                 divisionActualTotal += actual;
 
                             }
-                            differenceBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual));
+                            differenceBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual, true));
                         }
                         differenceBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual));
                     }
@@ -1933,7 +1972,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             divisionNominalTotal += nominal;
                             divisionCurrencyNominalTotal += currencyNominal;
                             divisionActualTotal += actual;
-                            finalBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual));
+                            finalBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual, true));
                         }
                         finalBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual));
                     }
@@ -2003,7 +2042,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             divisionCurrencyNominalTotal += currencyNominal;
                             divisionActualTotal += actual;
 
-                            realCashBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual));
+                            realCashBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual, true));
                         }
                         realCashBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual));
                     }
@@ -2096,7 +2135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             divisionCurrencyNominalTotal += currencyNominal;
                             divisionActualTotal += actual;
                             equivalent += actual;
-                            differenceGeneralSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual));
+                            differenceGeneralSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual, true));
                         }
                         differenceGeneralSummaryItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual));
                     }

@@ -21,7 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         private static readonly Font _smallerBoldFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 7);
         private static readonly Font _smallerBoldWhiteFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 7, 0, BaseColor.White);
 
-        public static MemoryStream Generate(UnitDto unit, DateTimeOffset dueDate, int offset, List<BudgetCashflowItemDto> data)
+        public static MemoryStream Generate(UnitAccountingDto unit, DateTimeOffset dueDate, int offset, List<BudgetCashflowItemDto> data)
         {
             var document = new Document(PageSize.A4, 20, 20, 20, 20);
             var stream = new MemoryStream();
@@ -327,7 +327,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             document.Add(table);
         }
 
-        private static void SetTitle(Document document, UnitDto unit, DateTimeOffset dueDate, int offset)
+        private static void SetTitle(Document document, UnitAccountingDto unit, DateTimeOffset dueDate, int offset)
         {
             var company = "PT DAN LIRIS";
             var title = "LAPORAN BUDGET CASHFLOW";
