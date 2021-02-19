@@ -184,7 +184,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             cellLeftBorderless.Phrase = new Phrase("Terbilang", _normalBoldFont);
             table.AddCell(cellLeftBorderless);
             cellLeftBorderless.Colspan = 3;
-            cellLeftBorderless.Phrase = new Phrase($": {NumberToTextIDN.terbilang(total)}", _normalBoldFont);
+            cellLeftBorderless.Phrase = new Phrase($": {data.Currency.Code} {NumberToTextIDN.terbilang(total)}", _normalBoldFont);
             table.AddCell(cellLeftBorderless);
 
             cellLeftBorderless.Colspan = 5;
