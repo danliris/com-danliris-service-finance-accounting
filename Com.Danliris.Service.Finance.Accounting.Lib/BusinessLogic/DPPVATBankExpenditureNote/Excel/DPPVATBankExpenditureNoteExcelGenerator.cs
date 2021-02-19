@@ -47,13 +47,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"F{currentRow}"].Value = datum.PaymentMethod;
                 worksheet.Cells[$"F{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"G{currentRow}"].Value = datum.DPP.ToString("N2",ci);
+                worksheet.Cells[$"G{currentRow}"].Value = datum.InvoiceAmount;
                 worksheet.Cells[$"G{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"H{currentRow}"].Value = datum.VAT.ToString("N2",ci);
+                worksheet.Cells[$"H{currentRow}"].Value = datum.InvoiceAmount * 0.1;
                 worksheet.Cells[$"H{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"I{currentRow}"].Value = 0.0;
                 worksheet.Cells[$"I{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"J{currentRow}"].Value = datum.InternalNoteAmount.ToString("N2",ci);
+                worksheet.Cells[$"J{currentRow}"].Value = datum.InvoiceAmount + (datum.InvoiceAmount * 0.1);
                 worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"K{currentRow}"].Value = datum.CurrencyCode;
                 worksheet.Cells[$"K{currentRow}"].Style.Font.Size = 14;
