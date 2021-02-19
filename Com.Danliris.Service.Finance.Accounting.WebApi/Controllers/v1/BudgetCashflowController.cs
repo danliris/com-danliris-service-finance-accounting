@@ -38,12 +38,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
             var cacheService = serviceProvider.GetService<ICacheService>();
             var jsonUnits = cacheService.GetString("Unit");
+            //var jsonUnits = "[{\"Id\":0,\"Code\":\"IDR\",\"Name\":\"SPINNING 1\",\"DivisionId\":1}]";
             _units = JsonConvert.DeserializeObject<List<UnitDto>>(jsonUnits, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
 
             var jsonDivisions = cacheService.GetString("Division");
+            //var jsonDivisions = "[{\"Id\":0,\"Code\":\"SP\",\"Name\":\"SPINNING\"}]";
             _divisions = JsonConvert.DeserializeObject<List<DivisionDto>>(jsonDivisions, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
@@ -120,7 +122,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             try
             {
                 VerifyUser();
-                var result = await _service.GetBudgetCashflowUnit(unitId, date);
+                var result = await _service.GetBudgetCashflowUnitAccountingV2(unitId, date);
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
@@ -169,8 +171,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             try
             {
                 VerifyUser();
-                var data = await _service.GetBudgetCashflowUnit(unitId, date);
-                var unit = _units.FirstOrDefault(element => element.Id == unitId);
+                var data = await _service.GetBudgetCashflowUnitAccountingV2(unitId, date);
+                //var unit = _units.FirstOrDefault(element => element.Id == unitId);
+                var unit = await _service.GetUnitAccountingById(unitId);
+
                 var stream = CashflowUnitExcelGenerator.Generate(unit, date, _identityService.TimezoneOffset, data);
 
                 var bytes = stream.ToArray();

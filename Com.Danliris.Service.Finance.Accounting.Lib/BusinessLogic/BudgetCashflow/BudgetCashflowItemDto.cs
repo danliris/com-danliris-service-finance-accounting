@@ -132,6 +132,50 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             Total = total;
         }
 
+        public BudgetCashflowItemDto(List<UnitItemDto> items, int cashflowTypeId, string cashflowTypeName, bool isUseSection, int sectionRowSpan, bool isUseGroup, int groupRowSpan, CashType type, string typeName, bool isLabelOnly, int cashflowCategoryId, string cashflowCategoryName, bool isShowSubCategoryLabel, int subCategoryId, string subCategoryName, bool isReadOnly, CurrencyDto currency, bool isShowCurrencyRateLabel, bool isShowCurrencyRate, bool isShowRealCashBalanceLabel, double nominal, double currencyNominal, bool isShowSummaryLabel, bool isShowSummary, string equivalentDifferenceLabel, bool isEquivalentDifference, double total, bool isRealCashBalance, string realCashDifferenceLabel, bool isShowRealCashDifferenceLabel, bool isShowRealCashDifference, string summaryLabel, bool isShowDifference, bool isShowTotalLabel, string totalLabel, bool isShowDifferenceLabel, string differenceLabel, bool isShowSummaryBalance, string summaryBalanceLabel, bool isSummaryBalance)
+        {
+            Items = items;
+            CashflowTypeId = cashflowTypeId;
+            CashflowTypeName = cashflowTypeName;
+            IsUseSection = isUseSection;
+            SectionRowSpan = sectionRowSpan;
+            IsUseGroup = isUseGroup;
+            GroupRowSpan = groupRowSpan;
+            Type = type;
+            TypeName = typeName;
+            IsLabelOnly = isLabelOnly;
+            CashflowCategoryId = cashflowCategoryId;
+            CashflowCategoryName = cashflowCategoryName;
+            IsShowSubCategoryLabel = isShowSubCategoryLabel;
+            SubCategoryId = subCategoryId;
+            SubCategoryName = subCategoryName;
+            IsReadOnly = isReadOnly;
+            Currency = currency;
+            IsShowCurrencyRateLabel = isShowCurrencyRateLabel;
+            IsShowCurrencyRate = isShowCurrencyRate;
+            IsShowRealCashBalanceLabel = isShowRealCashBalanceLabel;
+            Nominal = nominal;
+            CurrencyNominal = currencyNominal;
+            IsShowSummaryLabel = isShowSummaryLabel;
+            IsShowSummary = isShowSummary;
+            EquivalentDifferenceLabel = equivalentDifferenceLabel;
+            IsEquivalentDifference = isEquivalentDifference;
+            Total = total;
+            IsRealCashBalance = isRealCashBalance;
+            RealCashDifferenceLabel = realCashDifferenceLabel;
+            IsShowRealCashDifferenceLabel = isShowRealCashDifferenceLabel;
+            IsShowRealCashDifference = isShowRealCashDifference;
+            SummaryLabel = summaryLabel;
+            IsShowDifference = isShowDifference;
+            IsShowTotalLabel = isShowTotalLabel;
+            TotalLabel = totalLabel;
+            IsShowDifferenceLabel = isShowDifferenceLabel;
+            DifferenceLabel = differenceLabel;
+            IsShowSummaryBalance = isShowSummaryBalance;
+            SummaryBalanceLabel = summaryBalanceLabel;
+            IsSummaryBalance = isSummaryBalance;
+        }
+
         public List<UnitItemDto> Items { get; private set; }
 
         public int CashflowTypeId { get; private set; }
