@@ -227,9 +227,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
+            var dateStr = date.ToString("yyyy-MM-dd");
 
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={date}";
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={dateStr}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<List<DebtDispositionDto>>();
@@ -252,7 +253,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var http = _serviceProvider.GetService<IHttpClientService>();
             var unitIdsStr = string.Join("&unitId=",unitIds);
             var unitStr = unitIds.Count > 0 ? "&unitId=" + unitIdsStr : string.Empty;
-            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={date}{unitStr}";
+            var dateStr = date.ToString("yyyy-MM-dd");
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={dateStr}{unitStr}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<List<DebtDispositionDto>>();
@@ -271,9 +273,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
+            var dateStr = date.ToString("yyyy-MM-dd");
 
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/budget-cashflow-summary?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={date.Date}";
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/budget-cashflow-summary?unitId={unitId}&divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={dateStr}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<List<DebtDispositionDto>>();
@@ -296,7 +299,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var http = _serviceProvider.GetService<IHttpClientService>();
             var unitIdsStr = string.Join("&unitId=", unitIds);
             var unitStr = unitIds.Count > 0 ? "&unitId=" + unitIdsStr : string.Empty;
-            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/budget-cashflow-summary?divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={date.Date}{unitStr}";
+            var dateStr = date.ToString("yyyy-MM-dd");
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/budget-cashflow-summary?divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={dateStr}{unitStr}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<List<DebtDispositionDto>>();
@@ -1283,11 +1287,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var existingDivisionIds = cashflowUnits.Select(element => element.DivisionId).Distinct().ToList();
 
             var purchasingCategoryIds = _dbContext.BudgetCashflowSubCategories.Where(entity => !string.IsNullOrWhiteSpace(entity.PurchasingCategoryIds)).Select(entity => JsonConvert.DeserializeObject<List<int>>(entity.PurchasingCategoryIds)).SelectMany(purchasingCategoryId => purchasingCategoryId).ToList();
-            //var debtSummaries = await GetDebtBudgetCashflow(0, divisionId, year, month, purchasingCategoryIds, date);
-            var debtSummaries = await GetDebtBudgetCashflow(units.Select(s=> s.Id).ToList(), divisionId, year, month, purchasingCategoryIds, date);
+            var debtSummaries = await GetDebtBudgetCashflow(0, divisionId, year, month, purchasingCategoryIds, date);
+            //var debtSummaries = await GetDebtBudgetCashflow(units.Select(s => s.Id).ToList(), 0, year, month, purchasingCategoryIds, date);
 
-            //var debtDispositionSummaries = await GetSummaryBudgetCashflow(0, divisionId, year, month, purchasingCategoryIds, date);
-            var debtDispositionSummaries = await GetSummaryBudgetCashflow(units.Select(s => s.Id).ToList(), divisionId, year, month, purchasingCategoryIds, date);
+            var debtDispositionSummaries = await GetSummaryBudgetCashflow(0, divisionId, year, month, purchasingCategoryIds, date);
+            //var debtDispositionSummaries = await GetSummaryBudgetCashflow(units.Select(s => s.Id).ToList(), 0, year, month, purchasingCategoryIds, date);
 
             existingUnitIds.AddRange(debtSummaries.Select(element => element.GetUnitId()));
             existingUnitIds.AddRange(debtDispositionSummaries.Select(element => element.GetUnitId()));
