@@ -206,11 +206,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             worksheet.Cells["AC5"].Style.Font.Size = 14;
             worksheet.Cells["AC5"].Style.Font.Bold = true;
 
-            worksheet.Cells["A5:AC4"].AutoFitColumns();
-            worksheet.Cells["A5:AC4"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells["A5:AC4"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells["A5:AC4"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells["A5:AC4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A5:AC5"].AutoFitColumns();
+            worksheet.Cells["A5:AC5"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A5:AC5"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A5:AC5"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A5:AC5"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
         }
 
         private static void SetTitle(ExcelWorksheet worksheet, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset)
