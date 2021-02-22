@@ -286,6 +286,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             }
             return result.data;
         }
+        private async Task<List<DebtDispositionDto>> GetSummaryBudgetCashflow(List<int> unitIds, int divisionId, int year, int month, List<int> categoryIds, DateTimeOffset date)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var unitIdsStr = string.Join("&unitId=", unitIds);
+            var unitStr = unitIds.Count > 0 ? "&unitId=" + unitIdsStr : string.Empty;
+            var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/budget-cashflow-summary?divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={date.Date}{unitStr}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<List<DebtDispositionDto>>();
+            result.data = new List<DebtDispositionDto>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<List<DebtDispositionDto>>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
+        }
 
         private async Task<List<BudgetCashFlowAccountingUnitItemDto>> GetDetailUnitAccounting(int unitAccounting)
         {
@@ -368,7 +391,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             var purchasingCategoryIds = _dbContext.BudgetCashflowSubCategories.Where(entity => !string.IsNullOrWhiteSpace(entity.PurchasingCategoryIds)).Select(entity => JsonConvert.DeserializeObject<List<int>>(entity.PurchasingCategoryIds)).SelectMany(purchasingCategoryId => purchasingCategoryId).ToList();
             var debtSummaries = await GetDebtBudgetCashflow(unitIds, 0, year, month, purchasingCategoryIds, date);
-            var debtDispositionSummaries = await GetSummaryBudgetCashflow(unitId, 0, year, month, purchasingCategoryIds, date);
+            var debtDispositionSummaries = await GetSummaryBudgetCashflow(unitIds, 0, year, month, purchasingCategoryIds, date);
 
             var summaries = new List<SummaryPerType>();
             var categories = _dbContext.BudgetCashflowCategories.ToList();
@@ -1243,6 +1266,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var month = date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month;
             var year = date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year;
 
+            //var unitAccountingsByDivisionId = _units.Where(s => s.DivisionId == divisionId).ToList();
+            //var unitAccoutingIds = unitAccountingsByDivisionId.Select(s => s.Id).ToList();
+
             var cashflowTypes = _dbContext.BudgetCashflowTypes.OrderBy(entity => entity.LayoutOrder).ToList();
             var cashflowTypeIds = cashflowTypes.Select(element => element.Id).ToList();
             var cashflowCategories = _dbContext.BudgetCashflowCategories.Where(entity => cashflowTypeIds.Contains(entity.CashflowTypeId)).ToList();
@@ -1257,8 +1283,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             var existingDivisionIds = cashflowUnits.Select(element => element.DivisionId).Distinct().ToList();
 
             var purchasingCategoryIds = _dbContext.BudgetCashflowSubCategories.Where(entity => !string.IsNullOrWhiteSpace(entity.PurchasingCategoryIds)).Select(entity => JsonConvert.DeserializeObject<List<int>>(entity.PurchasingCategoryIds)).SelectMany(purchasingCategoryId => purchasingCategoryId).ToList();
-            var debtSummaries = await GetDebtBudgetCashflow(0, divisionId, year, month, purchasingCategoryIds, date);
-            var debtDispositionSummaries = await GetSummaryBudgetCashflow(0, divisionId, year, month, purchasingCategoryIds, date);
+            //var debtSummaries = await GetDebtBudgetCashflow(0, divisionId, year, month, purchasingCategoryIds, date);
+            var debtSummaries = await GetDebtBudgetCashflow(units.Select(s=> s.Id).ToList(), divisionId, year, month, purchasingCategoryIds, date);
+
+            //var debtDispositionSummaries = await GetSummaryBudgetCashflow(0, divisionId, year, month, purchasingCategoryIds, date);
+            var debtDispositionSummaries = await GetSummaryBudgetCashflow(units.Select(s => s.Id).ToList(), divisionId, year, month, purchasingCategoryIds, date);
+
             existingUnitIds.AddRange(debtSummaries.Select(element => element.GetUnitId()));
             existingUnitIds.AddRange(debtDispositionSummaries.Select(element => element.GetUnitId()));
             existingDivisionIds.AddRange(debtSummaries.Select(element => element.GetDivisionId()));
