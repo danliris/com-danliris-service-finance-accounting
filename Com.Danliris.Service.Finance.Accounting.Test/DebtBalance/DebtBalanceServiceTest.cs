@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
 
         private GarmentDebtBalanceModel GenerateDataUtil(FinanceDbContext dbContext)
         {
-            var model = new GarmentDebtBalanceModel(1, "purchasingCategory","billsNo", "paymentBills", 1, "deliveryOrder", 1, DateTimeOffset.Now, "invoice", 1, "supplier", 1, "IDR", 100, 0, 10, 3, true, true);
+            var model = new GarmentDebtBalanceModel(1, "category", "billsNo", "paymentBills", 1, "deliveryOrderNo", 1, "supplier", 1, "IDR", 1);
             EntityExtension.FlagForCreate(model, "unit-test", "data-util");
             dbContext.GarmentDebtBalances.Add(model);
             dbContext.SaveChanges();
@@ -59,6 +59,67 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
             return serviceProviderMock.Object;
         }
 
+        private CustomsFormDto GetValidCustomsForm()
+        {
+            return new CustomsFormDto()
+            {
+                BillsNo = "BillsNo",
+                CurrencyCode = "IDR",
+                CurrencyId = 1,
+                GarmentDeliveryOrderId = 1,
+                GarmentDeliveryOrderNo = "SJ No",
+                PaymentBills = "PaymentBills",
+                PurchasingCategoryId = 1,
+                PurchasingCategoryName = "Category",
+                SupplierId = 1,
+                SupplierName = "Supplier",
+            };
+        }
+
+        private InvoiceFormDto GetValidInvoiceForm()
+        {
+            return new InvoiceFormDto()
+            {
+                CurrencyDPPAmount = 0,
+                DPPAmount = 100,
+                IncomeTaxAmount = 1,
+                InvoiceDate = DateTimeOffset.Now,
+                InvoiceId = 1,
+                InvoiceNo = "InvoiceNo",
+                IsPayIncomeTax = true,
+                IsPayVAT = true,
+                VATAmount = 10
+            };
+        }
+
+        private InternalNoteFormDto GetValidInternalNoteForm()
+        {
+            return new InternalNoteFormDto()
+            {
+                InternalNoteId = 1,
+                InternalNoteNo = "InternalNoteNo"
+            };
+        }
+
+        private BankExpenditureNoteFormDto GetValidBankExpenditureNoteForm()
+        {
+            return new BankExpenditureNoteFormDto()
+            {
+                BankExpenditureNoteId = 1,
+                BankExpenditureNoteInvoiceAmount = 100,
+                BankExpenditureNoteNo = "BankExpenditureNoteNo"
+            };
+        }
+
+        private GarmentDebtBalanceService GetService(string methodName)
+        {
+            var dbContext = GetDbContext(methodName);
+
+            var serviceProvider = GetServiceProvider(dbContext);
+
+            return new GarmentDebtBalanceService(serviceProvider);
+        }
+
         [Fact]
         public void Should_Success_Get_Data_With_Match_Params()
         {
@@ -72,6 +133,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
             var result = service.GetDebtBalanceCardDto(1, DateTimeOffset.Now.Month, DateTimeOffset.Now.Year);
 
             Assert.NotEmpty(result);
+        }
+
+        [Fact]
+        public void Should_Success_Create_From_Customs()
+        {
+            var form = GetValidCustomsForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.CreateFromCustoms(form);
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public void Should_Success_Update_From_Invoice()
+        {
+            var form = GetValidInvoiceForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.UpdateFromInvoice(form);
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public void Should_Success_Update_From_InternalNote()
+        {
+            var form = GetValidInternalNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.UpdateFromInternalNote(form);
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public void Should_Success_Update_From_BankExpenditureNote()
+        {
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.UpdateFromBankExpenditureNote(form);
+            Assert.NotEqual(0, result);
         }
     }
 }
