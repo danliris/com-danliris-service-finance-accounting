@@ -178,7 +178,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             try
             {
                 VerifyUser();
-                var data = await _service.GetBudgetCashflowUnitAccountingV2(unitId, date);
+                var data = await _service.GetBudgetCashflowUnit(unitId, date);
                 //var unit = _units.FirstOrDefault(element => element.Id == unitId);
                 var unit = await _service.GetUnitAccountingById(unitId);
 
