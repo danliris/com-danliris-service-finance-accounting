@@ -22,6 +22,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -98,6 +99,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<GarmentPurchasingPphBankExpenditureNoteModel> GarmentPurchasingPphBankExpenditureNotes { get; set; }
         public DbSet<GarmentPurchasingPphBankExpenditureNoteItemModel> GarmentPurchasingPphBankExpenditureNoteItems { get; set; }
         public DbSet<GarmentPurchasingPphBankExpenditureNoteInvoiceModel> GarmentPurchasingPphBankExpenditureNoteInvoices { get; set; }
+
+        public DbSet<GarmentDebtBalanceModel> GarmentDebtBalances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
