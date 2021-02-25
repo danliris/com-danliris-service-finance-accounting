@@ -29,6 +29,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             var garmentDebtBalance = GetData(supplierId, month, year);
 
             //auto map
+            List<GarmentDebtBalanceCardDto> garmentDebtDto = Mapper.Map<List<GarmentDebtBalanceCardDto>>(garmentDebtBalance);
+
+            return garmentDebtDto;
+        }
+
+        public GarmentDebtBalanceIndexDto GetDebtBalanceCardIndex(int supplierId, int month , int year)
+        {
+            var query = GetDebtBalanceCardDto(supplierId, month, year);
+            var result = new GarmentDebtBalanceIndexDto
+            {
+                Data = query,
+                Count = query.Count,
+                Order = new List<string>(),
+                Selected = new List<string>()
+            };
+            return result;
         }
 
         private IQueryable<Models.GarmentDebtBalance.GarmentDebtBalanceModel> GetData(int supplierId, int month,int year)

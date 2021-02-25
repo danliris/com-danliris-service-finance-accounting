@@ -29,6 +29,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public double BankExpenditureNoteInvoiceAmount { get; private set; }
         public int InternalNoteId { get; private set; }
         public string InternalNoteNo { get; private set; }
+        public string ProductName { get; private set; }
+        public int ProductId { get; set; }
+        public double CurrencyRate { get; set; }
+
         public double TotalInvoice { get; set; }
         public double MutationPurchase { get; set; }
         public double MutationPayment { get; set; }

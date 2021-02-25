@@ -7,6 +7,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalan
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentDebtBalance
@@ -38,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
             {
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                var data = Service.GetDebtBalanceCardDto(filter.supplierId,filter.month,filter.year);
+                var data = Service.GetDebtBalanceCardIndex(filter.supplierId,filter.month,filter.year);
 
                 return Ok(new
                 {
