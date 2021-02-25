@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -23,7 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
         private readonly string ApiVersion;
         private readonly IMapper Mapper;
 
-        public GarmentDebtBalanceController(IIdentityService identityService, IValidateService validateService, IGarmentDebtBalanceService service, string apiVersion, IMapper mapper)
+        public GarmentDebtBalanceController(IIdentityService identityService, IValidateService validateService, IGarmentDebtBalanceService service, IMapper mapper)
         {
             IdentityService = identityService;
             ValidateService = validateService;
@@ -32,11 +33,20 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
             Mapper = mapper;
         }
 
+        protected void VerifyUser()
+        {
+            IdentityService.Username = User.Claims.ToArray().SingleOrDefault(p => p.Type.Equals("username")).Value;
+            IdentityService.Token = Request.Headers["Authorization"].FirstOrDefault().Replace("Bearer ", "");
+            IdentityService.TimezoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+        }
+
+
         [HttpGet]
         public IActionResult Get([FromQuery] GarmentDebtBalanceFilterViewModel filter)
         {
             try
             {
+                VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
                 var data = Service.GetDebtBalanceCardIndex(filter.supplierId,filter.month,filter.year);
@@ -62,6 +72,58 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
                    .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
+        }
+
+        [HttpGet("downloads/xls")]
+        public async Task<IActionResult> GetXls([FromQuery] GarmentDebtBalanceFilterViewModel filter)
+        {
+            try
+            {
+                VerifyUser();
+                var data = Service.GetDebtBalanceCardIndex(filter.supplierId, filter.month, filter.year);
+
+                MemoryStream result = new MemoryStream();
+                var filename = "Kartu Hutang.xlsx";
+                result = Lib.BusinessLogic.GarmentDebtBalance.Excel.GarmentDebtBalanceExcel.GenerateExcel(data, filter.month, filter.year, filter.supplierName,IdentityService.TimezoneOffset);
+                //filename += ".xlsx";
+
+                var bytes = result.ToArray();
+
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("download/pdf")]
+        public IActionResult GetPDF([FromQuery] string billNo, [FromQuery] string paymentBill, [FromQuery] string category, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate, [FromQuery] bool isForeignCurrency, [FromQuery] bool isImportSupplier)
+        {
+            //try
+            //{
+            //    VerifyUser();
+            //    var data = Service.GetDebtBalanceCardIndex(filter.supplierId, filter.month, filter.year);
+
+            //    MemoryStream result = new MemoryStream();
+            //    var filename = "Kartu Hutang.xlsx";
+            //    result = Lib.BusinessLogic.GarmentDebtBalance.Excel.GarmentDebtBalanceExcel.GenerateExcel(data, filter.month, filter.year, filter.supplierName, IdentityService.TimezoneOffset);
+            //    //filename += ".xlsx";
+
+            //    var bytes = result.ToArray();
+
+            //    return File(bytes, "application/pdf", filename);
+            //}
+            //catch (Exception e)
+            //{
+            //    Dictionary<string, object> Result =
+            //        new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+            //        .Fail();
+            //    return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            //}
         }
 
     }
