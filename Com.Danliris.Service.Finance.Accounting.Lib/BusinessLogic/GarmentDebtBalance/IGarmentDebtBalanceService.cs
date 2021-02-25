@@ -11,5 +11,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         int UpdateFromInternalNote(InternalNoteFormDto form);
         int UpdateFromInvoice(InvoiceFormDto form);
         int UpdateFromBankExpenditureNote(BankExpenditureNoteFormDto form);
+        GarmentDebtBalanceIndexDto GetDebtBalanceCardIndex(int supplierId, int month, int year);
     }
 }

@@ -65,6 +65,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         [MaxLength(64)]
         public string BankExpenditureNoteNo { get; private set; }
         public double BankExpenditureNoteInvoiceAmount { get; private set; }
+        public string ProductNames { get; set; }
+
 
         public void SetInternalNote(int internalNoteId, string internalNoteNo)
         {
