@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
 
         }
 
-        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int invoiceId, DateTimeOffset invoiceDate, string invoiceNo, int supplierId, string supplierName, int currencyId, string currencyCode, double dppAmount, double currencyDPPAmount, double vatAmount, double incomeTaxAmount, bool isPayVAT, bool isPayIncomeTax)
+        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierName, int currencyId, string currencyCode, double currencyRate)
         {
             PurchasingCategoryId = purchasingCategoryId;
             PurchasingCategoryName = purchasingCategoryName;
@@ -21,50 +21,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             PaymentBills = paymentBills;
             GarmentDeliveryOrderId = garmentDeliveryOrderId;
             GarmentDeliveryOrderNo = garmentDeliveryOrderNo;
-            InvoiceId = invoiceId;
-            InvoiceDate = invoiceDate;
-            InvoiceNo = invoiceNo;
             SupplierId = supplierId;
             SupplierName = supplierName;
             CurrencyId = currencyId;
             CurrencyCode = currencyCode;
-            DPPAmount = dppAmount;
-            CurrencyDPPAmount = currencyDPPAmount;
-            VATAmount = vatAmount;
-            IncomeTaxAmount = incomeTaxAmount;
-            IsPayVAT = isPayVAT;
-            IsPayIncomeTax = isPayIncomeTax;
-        }
-
-        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int invoiceId, DateTimeOffset invoiceDate, string invoiceNo, int supplierId, string supplierName, int currencyId, string currencyCode, double dPPAmount, double currencyDPPAmount, double vATAmount, double incomeTaxAmount, bool isPayVAT, bool isPayIncomeTax, int bankExpenditureNoteId, string bankExpenditureNoteNo, double bankExpenditureNoteInvoiceAmount, int internalNoteId, string internalNoteNo, double currencyRate, string productName, int productId)
-        {
-            PurchasingCategoryId = purchasingCategoryId;
-            PurchasingCategoryName = purchasingCategoryName;
-            BillsNo = billsNo;
-            PaymentBills = paymentBills;
-            GarmentDeliveryOrderId = garmentDeliveryOrderId;
-            GarmentDeliveryOrderNo = garmentDeliveryOrderNo;
-            InvoiceId = invoiceId;
-            InvoiceDate = invoiceDate;
-            InvoiceNo = invoiceNo;
-            SupplierId = supplierId;
-            SupplierName = supplierName;
-            CurrencyId = currencyId;
-            CurrencyCode = currencyCode;
-            DPPAmount = dPPAmount;
-            CurrencyDPPAmount = currencyDPPAmount;
-            VATAmount = vATAmount;
-            IncomeTaxAmount = incomeTaxAmount;
-            IsPayVAT = isPayVAT;
-            IsPayIncomeTax = isPayIncomeTax;
-            BankExpenditureNoteId = bankExpenditureNoteId;
-            BankExpenditureNoteNo = bankExpenditureNoteNo;
-            BankExpenditureNoteInvoiceAmount = bankExpenditureNoteInvoiceAmount;
-            InternalNoteId = internalNoteId;
-            InternalNoteNo = internalNoteNo;
             CurrencyRate = currencyRate;
-            ProductName = productName;
-            ProductId = productId;
         }
 
         public int PurchasingCategoryId { get; private set; }
@@ -77,16 +38,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         public int GarmentDeliveryOrderId { get; private set; }
         [MaxLength(64)]
         public string GarmentDeliveryOrderNo { get; private set; }
-        public int InvoiceId { get; private set; }
-        public DateTimeOffset InvoiceDate { get; private set; }
-        [MaxLength(64)]
-        public string InvoiceNo { get; private set; }
         public int SupplierId { get; private set; }
         [MaxLength(512)]
         public string SupplierName { get; private set; }
         public int CurrencyId { get; private set; }
         [MaxLength(32)]
         public string CurrencyCode { get; private set; }
+        public double CurrencyRate { get; private set; }
+
+        public int InvoiceId { get; private set; }
+        public DateTimeOffset InvoiceDate { get; private set; }
+        [MaxLength(64)]
+        public string InvoiceNo { get; private set; }
         public double DPPAmount { get; private set; }
         public double CurrencyDPPAmount { get; private set; }
         public double VATAmount { get; private set; }
@@ -94,13 +57,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         public bool IsPayVAT { get; private set; }
         public bool IsPayIncomeTax { get; private set; }
 
+        public int InternalNoteId { get; private set; }
+        [MaxLength(64)]
+        public string InternalNoteNo { get; private set; }
+
         public int BankExpenditureNoteId { get; private set; }
         [MaxLength(64)]
         public string BankExpenditureNoteNo { get; private set; }
         public double BankExpenditureNoteInvoiceAmount { get; private set; }
-        public int InternalNoteId { get; private set; }
-        [MaxLength(64)]
-        public string InternalNoteNo { get; private set; }
         public double CurrencyRate { get; private set; }
         [MaxLength(128)]
         public string ProductName { get; private set; }
@@ -117,6 +81,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             BankExpenditureNoteId = bankExpenditureNoteId;
             BankExpenditureNoteNo = bankExpenditureNoteNo;
             BankExpenditureNoteInvoiceAmount = bankExpenditureNoteInvoiceAmount;
+        }
+
+        public void SetInvoice(int invoiceId, DateTimeOffset invoiceDate, string invoiceNo, double dppAmount, double currencyDPPAmount, double vatAmount, double incomeTaxAmount, bool isPayVAT, bool isPayIncomeTax)
+        {
+            InvoiceId = invoiceId;
+            InvoiceDate = invoiceDate;
+            InvoiceNo = invoiceNo;
+            DPPAmount = dppAmount;
+            CurrencyDPPAmount = currencyDPPAmount;
+            VATAmount = vatAmount;
+            IncomeTaxAmount = incomeTaxAmount;
+            IsPayVAT = isPayVAT;
+            IsPayIncomeTax = isPayIncomeTax;
         }
     }
 }

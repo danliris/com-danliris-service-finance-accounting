@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance;
+using Com.Moonlay.Models;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,6 +37,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             return garmentDebtDto;
         }
 
+        public int CreateFromCustoms(CustomsFormDto form)
+        {
+            var model = new GarmentDebtBalanceModel(form.PurchasingCategoryId, form.PurchasingCategoryName, form.BillsNo, form.PaymentBills, form.GarmentDeliveryOrderId, form.GarmentDeliveryOrderNo, form.SupplierId, form.SupplierName, form.CurrencyId, form.CurrencyCode, form.CurrencyRate);
+            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+            _dbContext.GarmentDebtBalances.Add(model);
+
+            _dbContext.SaveChanges();
+
+            return model.Id;
+        }
+
         public GarmentDebtBalanceIndexDto GetDebtBalanceCardIndex(int supplierId, int month , int year)
         {
             var query = GetDebtBalanceCardDto(supplierId, month, year);
@@ -59,6 +73,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             if (year > 1)
                 query = query.Where(s => s.InvoiceDate.Year == year);
             return query;
+        }
+
+        public int UpdateFromBankExpenditureNote(BankExpenditureNoteFormDto form)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int UpdateFromInternalNote(InternalNoteFormDto form)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int UpdateFromInvoice(InvoiceFormDto form)
+        {
+            throw new NotImplementedException();
         }
     }
 }
