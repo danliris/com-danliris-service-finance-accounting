@@ -46,7 +46,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
         {
             try
             {
-                VerifyUser();
+                //VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
                 var data = Service.GetDebtBalanceCardIndex(filter.supplierId,filter.month,filter.year);
@@ -79,12 +79,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
         {
             try
             {
-                VerifyUser();
+                //VerifyUser();
                 var data = Service.GetDebtBalanceCardIndex(filter.supplierId, filter.month, filter.year);
 
                 MemoryStream result = new MemoryStream();
                 var filename = "Kartu Hutang.xlsx";
-                result = Lib.BusinessLogic.GarmentDebtBalance.Excel.GarmentDebtBalanceExcel.GenerateExcel(data, filter.month, filter.year, filter.supplierName,IdentityService.TimezoneOffset);
+                result = Lib.BusinessLogic.GarmentDebtBalance.Excel.GarmentDebtBalanceExcel.GenerateExcel(data, filter.month, filter.year,filter.supplierName,filter.import,IdentityService.TimezoneOffset);
                 //filename += ".xlsx";
 
                 var bytes = result.ToArray();
@@ -100,31 +100,30 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
             }
         }
 
-        [HttpGet("download/pdf")]
-        public IActionResult GetPDF([FromQuery] string billNo, [FromQuery] string paymentBill, [FromQuery] string category, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate, [FromQuery] bool isForeignCurrency, [FromQuery] bool isImportSupplier)
+        [HttpGet("downloads/pdf")]
+        public IActionResult GetPDF([FromQuery] GarmentDebtBalanceFilterViewModel filter)
         {
-            //try
-            //{
-            //    VerifyUser();
-            //    var data = Service.GetDebtBalanceCardIndex(filter.supplierId, filter.month, filter.year);
+            try
+            {
+                //VerifyUser();
+                var data = Service.GetDebtBalanceCardWithBalanceBeforeIndex(filter.supplierId, filter.month, filter.year);
 
-            //    MemoryStream result = new MemoryStream();
-            //    var filename = "Kartu Hutang.xlsx";
-            //    result = Lib.BusinessLogic.GarmentDebtBalance.Excel.GarmentDebtBalanceExcel.GenerateExcel(data, filter.month, filter.year, filter.supplierName, IdentityService.TimezoneOffset);
-            //    //filename += ".xlsx";
+                MemoryStream result = new MemoryStream();
+                var filename = "Kartu Hutang.pdf";
+                result = Lib.BusinessLogic.GarmentDebtBalance.Pdf.GarmentDebtBalancePdf.Generate(data, filter.month, filter.year, filter.import, IdentityService.TimezoneOffset);
+                //filename += ".xlsx";
 
-            //    var bytes = result.ToArray();
+                var bytes = result.ToArray();
 
-            //    return File(bytes, "application/pdf", filename);
-            //}
-            //catch (Exception e)
-            //{
-            //    Dictionary<string, object> Result =
-            //        new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-            //        .Fail();
-            //    return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
-            //}
+                return File(bytes, "application/pdf", filename);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
         }
-
     }
 }

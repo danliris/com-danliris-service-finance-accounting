@@ -29,13 +29,71 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public double BankExpenditureNoteInvoiceAmount { get; private set; }
         public int InternalNoteId { get; private set; }
         public string InternalNoteNo { get; private set; }
-        public string ProductName { get; private set; }
-        public int ProductId { get; set; }
+        public string ProductNames { get; private set; }
         public double CurrencyRate { get; set; }
 
         public double TotalInvoice { get; set; }
         public double MutationPurchase { get; set; }
         public double MutationPayment { get; set; }
         public double RemainBalance { get; set; }
+
+        public GarmentDebtBalanceCardDto(Models.GarmentDebtBalance.GarmentDebtBalanceModel model)
+        {
+            PurchasingCategoryId = model.PurchasingCategoryId;
+            PurchasingCategoryName = model.PurchasingCategoryName;
+            BillsNo = model.BillsNo;
+            PaymentBills = model.PaymentBills;
+            GarmentDeliveryOrderId = model.GarmentDeliveryOrderId;
+            GarmentDeliveryOrderNo = model.GarmentDeliveryOrderNo;
+            InvoiceId = model.InvoiceId;
+            InvoiceDate = model.InvoiceDate;
+            InvoiceNo = model.InvoiceNo;
+            SupplierId = model.SupplierId;
+            SupplierName = model.SupplierName;
+            CurrencyId = model.CurrencyId;
+            CurrencyCode = model.CurrencyCode;
+            DPPAmount = model.DPPAmount;
+            CurrencyDPPAmount = model.CurrencyDPPAmount;
+            VATAmount = model.VATAmount;
+            IncomeTaxAmount = model.IncomeTaxAmount;
+            IsPayVAT = model.IsPayVAT;
+            IsPayIncomeTax = model.IsPayIncomeTax;
+            BankExpenditureNoteId = model.BankExpenditureNoteId;
+            BankExpenditureNoteNo = model.BankExpenditureNoteNo;
+            BankExpenditureNoteInvoiceAmount = model.BankExpenditureNoteInvoiceAmount;
+            InternalNoteId = model.InternalNoteId;
+            InternalNoteNo = model.InternalNoteNo;
+            ProductNames = model.ProductNames;
+            CurrencyRate = model.CurrencyRate;
+            TotalInvoice = model.CurrencyDPPAmount + model.VATAmount - model.IncomeTaxAmount;
+            MutationPurchase = (model.CurrencyDPPAmount + model.VATAmount - model.IncomeTaxAmount) * model.CurrencyRate;
+            MutationPayment = model.BankExpenditureNoteInvoiceAmount;
+            RemainBalance = ((model.CurrencyDPPAmount + model.VATAmount - model.IncomeTaxAmount) * model.CurrencyRate) - model.BankExpenditureNoteInvoiceAmount;
+        }
+        /// <summary>
+        /// ovveride for saldo awal (pdf)
+        /// </summary>
+        /// <param name="productName"></param>
+        /// <param name="remainBalance"></param>
+        public GarmentDebtBalanceCardDto(string productName, double remainBalance)
+        {
+            ProductNames = productName;
+            RemainBalance = remainBalance;
+            InvoiceDate = DateTimeOffset.MaxValue;
+        }
+        /// <summary>
+        /// override for total (pdf)
+        /// </summary>
+        /// <param name="productName"></param>
+        /// <param name="remainBalance"></param>
+        /// <param name="mutationPurchase"></param>
+        /// <param name="mutationPayment"></param>
+        public GarmentDebtBalanceCardDto(string productName, double remainBalance,double mutationPurchase, double mutationPayment)
+        {
+            ProductNames = productName;
+            RemainBalance = remainBalance;
+            InvoiceDate = DateTimeOffset.MinValue;
+
+        }
     }
 }
