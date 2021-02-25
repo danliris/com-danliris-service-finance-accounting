@@ -28,37 +28,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             CurrencyRate = currencyRate;
         }
 
-        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierName, int currencyId, string currencyCode, double currencyRate, int invoiceId, DateTimeOffset invoiceDate, string invoiceNo, double dPPAmount, double currencyDPPAmount, double vATAmount, double incomeTaxAmount, bool isPayVAT, bool isPayIncomeTax, int internalNoteId, string internalNoteNo, int bankExpenditureNoteId, string bankExpenditureNoteNo, double bankExpenditureNoteInvoiceAmount, string productName, int productId)
-        {
-            PurchasingCategoryId = purchasingCategoryId;
-            PurchasingCategoryName = purchasingCategoryName;
-            BillsNo = billsNo;
-            PaymentBills = paymentBills;
-            GarmentDeliveryOrderId = garmentDeliveryOrderId;
-            GarmentDeliveryOrderNo = garmentDeliveryOrderNo;
-            SupplierId = supplierId;
-            SupplierName = supplierName;
-            CurrencyId = currencyId;
-            CurrencyCode = currencyCode;
-            CurrencyRate = currencyRate;
-            InvoiceId = invoiceId;
-            InvoiceDate = invoiceDate;
-            InvoiceNo = invoiceNo;
-            DPPAmount = dPPAmount;
-            CurrencyDPPAmount = currencyDPPAmount;
-            VATAmount = vATAmount;
-            IncomeTaxAmount = incomeTaxAmount;
-            IsPayVAT = isPayVAT;
-            IsPayIncomeTax = isPayIncomeTax;
-            InternalNoteId = internalNoteId;
-            InternalNoteNo = internalNoteNo;
-            BankExpenditureNoteId = bankExpenditureNoteId;
-            BankExpenditureNoteNo = bankExpenditureNoteNo;
-            BankExpenditureNoteInvoiceAmount = bankExpenditureNoteInvoiceAmount;
-            ProductName = productName;
-            ProductId = productId;
-        }
-
         public int PurchasingCategoryId { get; private set; }
         [MaxLength(64)]
         public string PurchasingCategoryName { get; private set; }
@@ -96,9 +65,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         [MaxLength(64)]
         public string BankExpenditureNoteNo { get; private set; }
         public double BankExpenditureNoteInvoiceAmount { get; private set; }
-        [MaxLength(128)]
-        public string ProductName { get; private set; }
-        public int ProductId { get; private set; }
+        public string ProductNames { get; set; }
+
 
         public void SetInternalNote(int internalNoteId, string internalNoteNo)
         {
