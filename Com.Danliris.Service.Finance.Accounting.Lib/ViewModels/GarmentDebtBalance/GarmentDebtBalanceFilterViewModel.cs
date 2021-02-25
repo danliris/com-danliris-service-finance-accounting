@@ -8,6 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentDebtBala
     {
         public int supplierId { get; set; }
         public string supplierName { get; set; }
+        public bool import { get; set; }
         public int month { get; set; }
         public int year { get; set; }
     }
