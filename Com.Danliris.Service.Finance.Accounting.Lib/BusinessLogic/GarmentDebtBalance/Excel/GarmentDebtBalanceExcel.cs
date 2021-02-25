@@ -27,9 +27,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "DPP Valas", DataType = typeof(string) });
-            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(decimal) });
+            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "PPH", DataType = typeof(string) });
-            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(double) });
+            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
 
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Pembelian", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Pembayaran", DataType = typeof(string) });
