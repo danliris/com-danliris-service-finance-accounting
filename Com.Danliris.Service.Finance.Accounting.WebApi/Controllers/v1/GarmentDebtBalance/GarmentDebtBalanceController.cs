@@ -23,7 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
         private readonly string ApiVersion;
         private readonly IMapper Mapper;
 
-        public GarmentDebtBalanceController(IIdentityService identityService, IValidateService validateService, IGarmentDebtBalanceService service, string apiVersion, IMapper mapper)
+        public GarmentDebtBalanceController(IIdentityService identityService, IValidateService validateService, IGarmentDebtBalanceService service, IMapper mapper)
         {
             IdentityService = identityService;
             ValidateService = validateService;

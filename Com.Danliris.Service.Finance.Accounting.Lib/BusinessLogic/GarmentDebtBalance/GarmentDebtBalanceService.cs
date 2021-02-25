@@ -29,10 +29,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         public List<GarmentDebtBalanceCardDto> GetDebtBalanceCardDto(int supplierId, int month, int year)
         {
-            var garmentDebtBalance = GetData(supplierId, month, year);
+            var garmentDebtBalance = GetData(supplierId, month, year).ToList();
 
             //auto map
-            List<GarmentDebtBalanceCardDto> garmentDebtDto = Mapper.Map<List<GarmentDebtBalanceCardDto>>(garmentDebtBalance);
+            List<GarmentDebtBalanceCardDto> garmentDebtDto = Mapper.Map<List<Models.GarmentDebtBalance.GarmentDebtBalanceModel>,List<GarmentDebtBalanceCardDto>>(garmentDebtBalance);
 
             return garmentDebtDto;
         }
