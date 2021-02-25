@@ -31,6 +31,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             CashflowUnit = cashflowUnit;
         }
 
+        public DivisionTemporaryDivisionUnitDto(BudgetCashflowTypeModel cashflowType, CashType type, BudgetCashflowCategoryModel cashflowCategory, BudgetCashflowSubCategoryModel cashflowSubCategory, CurrencyDto currency, DivisionDto division, UnitAccountingDto unitAccounting, BudgetCashflowUnitModel cashflowUnit)
+        {
+            CashflowType = cashflowType;
+            Type = type;
+            CashflowCategory = cashflowCategory;
+            CashflowSubCategory = cashflowSubCategory;
+            Currency = currency;
+            Division = division;
+            Unit = new UnitDto {
+                Code = unitAccounting.Code,
+                DivisionId = unitAccounting.DivisionId,
+                Id = unitAccounting.Id,
+                Name = unitAccounting.Name
+            };
+            CashflowUnit = cashflowUnit;
+        }
+
         public BudgetCashflowTypeModel CashflowType { get; private set; }
         public CashType Type { get; private set; }
         public BudgetCashflowCategoryModel CashflowCategory { get; private set; }

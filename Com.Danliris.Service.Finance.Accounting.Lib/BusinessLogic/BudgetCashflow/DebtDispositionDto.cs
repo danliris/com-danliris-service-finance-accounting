@@ -32,6 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
         public bool UseVat { get; set; }
         public int CategoryLayoutIndex { get; set; }
         public string AccountingUnitName { get; set; }
+        public string AccountingUnitId { get; set; }
 
         public int GetCurrencyId()
         {
@@ -45,7 +46,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
         public int GetUnitId()
         {
-            int.TryParse(UnitId, out var unitId);
+            //int.TryParse(UnitId, out var unitId);
+            int.TryParse(AccountingUnitId, out var unitId);
+
             return unitId;
         }
 

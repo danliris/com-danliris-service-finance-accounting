@@ -70,6 +70,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -146,7 +147,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>()
                 .AddTransient<IBudgetCashflowService, BudgetCashflowService>()
                 .AddTransient<IDPPVATBankExpenditureNoteService, DPPVATBankExpenditureNoteService>()
-                .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>();
+                .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>()
+                .AddTransient<IGarmentDebtBalanceService, GarmentDebtBalanceService>();
         }
 
 

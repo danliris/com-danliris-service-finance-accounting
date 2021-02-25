@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -30,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
         private static void SetData(ExcelWorksheet worksheet, List<ReportDto> data, int timezoneOffset)
         {
+            CultureInfo cultureInfo = new CultureInfo("en-us");
             var currentRow = 6;
             var index = 1;
             foreach (var datum in data)
@@ -40,20 +42,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"C{currentRow}"].Value = datum.ExpenditureDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy");
                 worksheet.Cells[$"C{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"D{currentRow}"].Value = datum.Amount;
+                worksheet.Cells[$"D{currentRow}"].Value = datum.Amount.ToString("N2", cultureInfo);
                 worksheet.Cells[$"D{currentRow}"].Style.Font.Size = 14;
+                worksheet.Cells[$"D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 worksheet.Cells[$"E{currentRow}"].Value = datum.CategoryName;
                 worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"F{currentRow}"].Value = datum.PaymentMethod;
                 worksheet.Cells[$"F{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"G{currentRow}"].Value = datum.DPP;
+                worksheet.Cells[$"G{currentRow}"].Value = datum.InvoiceAmount.ToString("N2", cultureInfo);
                 worksheet.Cells[$"G{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"H{currentRow}"].Value = datum.VAT;
+                worksheet.Cells[$"G{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells[$"H{currentRow}"].Value = (datum.InvoiceAmount * 0.1).ToString("N2", cultureInfo);
                 worksheet.Cells[$"H{currentRow}"].Style.Font.Size = 14;
+                worksheet.Cells[$"H{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 worksheet.Cells[$"I{currentRow}"].Value = 0.0;
                 worksheet.Cells[$"I{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"J{currentRow}"].Value = datum.InternalNoteAmount;
+                worksheet.Cells[$"J{currentRow}"].Value = (datum.InvoiceAmount + (datum.InvoiceAmount * 0.1)).ToString("N2", cultureInfo);
                 worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
+                worksheet.Cells[$"J{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 worksheet.Cells[$"K{currentRow}"].Value = datum.CurrencyCode;
                 worksheet.Cells[$"K{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"L{currentRow}"].Value = datum.BankName;
@@ -66,10 +72,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"O{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"P{currentRow}"].Value = datum.InvoiceNo;
                 worksheet.Cells[$"P{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"Q{currentRow}"].Value = datum.InvoiceAmount;
+                worksheet.Cells[$"Q{currentRow}"].Value = datum.InvoiceAmount.ToString("N2", cultureInfo);
                 worksheet.Cells[$"Q{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"R{currentRow}"].Value = datum.InvoiceAmount;
+                worksheet.Cells[$"Q{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells[$"R{currentRow}"].Value = datum.InvoiceAmount.ToString("N2", cultureInfo);
                 worksheet.Cells[$"R{currentRow}"].Style.Font.Size = 14;
+                worksheet.Cells[$"R{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 worksheet.Cells[$"S{currentRow}"].Value = datum.OutstandingAmount;
                 worksheet.Cells[$"S{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"T{currentRow}"].Value = datum.OutstandingAmount;
@@ -80,22 +88,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"V{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"W{currentRow}"].Value = datum.PaymentBills;
                 worksheet.Cells[$"W{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"X{currentRow}"].Value = datum.InvoiceAmount;
+                worksheet.Cells[$"X{currentRow}"].Value = datum.InvoiceAmount.ToString("N2", cultureInfo);
                 worksheet.Cells[$"X{currentRow}"].Style.Font.Size = 14;
+                worksheet.Cells[$"X{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 worksheet.Cells[$"Y{currentRow}"].Value = datum.CurrencyRate;
                 worksheet.Cells[$"Y{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"Z{currentRow}"].Value = datum.CurrencyRate;
                 worksheet.Cells[$"Z{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"AA{currentRow}"].Value = datum.InvoiceAmount * datum.CurrencyRate;
+                worksheet.Cells[$"AA{currentRow}"].Value = (datum.InvoiceAmount * datum.CurrencyRate).ToString("N2", cultureInfo);
                 worksheet.Cells[$"AA{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"AB{currentRow}"].Value = datum.PaidAmount;
+                worksheet.Cells[$"AA{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells[$"AB{currentRow}"].Value = (datum.InvoiceAmount * datum.CurrencyRate).ToString("N2", cultureInfo);
                 worksheet.Cells[$"AB{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"AC{currentRow}"].Value = datum.InvoiceAmount - (datum.InvoiceAmount * datum.CurrencyRate);
+                worksheet.Cells[$"AB{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells[$"AC{currentRow}"].Value = (datum.InvoiceAmount - (datum.InvoiceAmount * datum.CurrencyRate)).ToString("N2", cultureInfo);
                 worksheet.Cells[$"AC{currentRow}"].Style.Font.Size = 14;
+                worksheet.Cells[$"AC{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
 
                 index++;
                 currentRow++;
             }
+
+            worksheet.Cells[$"A6:AC{currentRow}"].AutoFitColumns();
+            worksheet.Cells[$"A6:AC{currentRow}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A6:AC{currentRow}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A6:AC{currentRow}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A6:AC{currentRow}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
         }
 
         private static void SetTableHeader(ExcelWorksheet worksheet, int timezoneOffset)
@@ -112,7 +130,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             worksheet.Cells["D5"].Value = "Nilai Pembayaran Keluar";
             worksheet.Cells["D5"].Style.Font.Size = 14;
             worksheet.Cells["D5"].Style.Font.Bold = true;
-            worksheet.Cells["E5"].Value = "Category";
+            worksheet.Cells["E5"].Value = "Nama Barang";
             worksheet.Cells["E5"].Style.Font.Size = 14;
             worksheet.Cells["E5"].Style.Font.Bold = true;
             worksheet.Cells["F5"].Value = "Cara Pembayaran";
@@ -187,6 +205,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             worksheet.Cells["AC5"].Value = "Selisih Kurs";
             worksheet.Cells["AC5"].Style.Font.Size = 14;
             worksheet.Cells["AC5"].Style.Font.Bold = true;
+
+            worksheet.Cells["A5:AC5"].AutoFitColumns();
+            worksheet.Cells["A5:AC5"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A5:AC5"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A5:AC5"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A5:AC5"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
         }
 
         private static void SetTitle(ExcelWorksheet worksheet, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset)
