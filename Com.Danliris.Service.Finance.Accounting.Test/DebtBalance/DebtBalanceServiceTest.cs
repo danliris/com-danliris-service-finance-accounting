@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
 
         private GarmentDebtBalanceModel GenerateDataUtil(FinanceDbContext dbContext)
         {
-            var model = new GarmentDebtBalanceModel(1, "category", "billsNo", "paymentBills", 1, "deliveryOrderNo", 1, "supplier", 1, "IDR", 1);
+            var model = new GarmentDebtBalanceModel(1, "category", "billsNo", "paymentBills", 1, "deliveryOrderNo", 1, "supplier", "supplierName", false, 1, "IDR", 1);
             EntityExtension.FlagForCreate(model, "unit-test", "data-util");
             dbContext.GarmentDebtBalances.Add(model);
             dbContext.SaveChanges();
@@ -149,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
         {
             var form = GetValidInvoiceForm();
             var service = GetService(GetCurrentMethod());
-            var result = service.UpdateFromInvoice(form);
+            var result = service.UpdateFromInvoice(1, form);
             Assert.NotEqual(0, result);
         }
 
@@ -158,7 +158,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
         {
             var form = GetValidInternalNoteForm();
             var service = GetService(GetCurrentMethod());
-            var result = service.UpdateFromInternalNote(form);
+            var result = service.UpdateFromInternalNote(1, form);
             Assert.NotEqual(0, result);
         }
 
@@ -167,7 +167,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
         {
             var form = GetValidBankExpenditureNoteForm();
             var service = GetService(GetCurrentMethod());
-            var result = service.UpdateFromBankExpenditureNote(form);
+            var result = service.UpdateFromBankExpenditureNote(1, form);
             Assert.NotEqual(0, result);
         }
     }
