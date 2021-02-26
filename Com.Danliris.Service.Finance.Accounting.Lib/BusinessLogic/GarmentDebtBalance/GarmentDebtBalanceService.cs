@@ -182,8 +182,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     SupplierIsImport = entity.FirstOrDefault().SupplierIsImport,
                     CurrencyId = entity.Key.CurrencyId,
                     CurrencyCode = entity.FirstOrDefault().CurrencyCode,
-                    PurchaseAmount = entity.Sum(sum => sum.DPPAmount + sum.CurrencyDPPAmount + sum.VATAmount - sum.IncomeTaxAmount),
-                    PaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount)
+                    CurrencyPurchaseAmount = entity.Sum(sum => sum.DPPAmount + sum.CurrencyDPPAmount + sum.VATAmount - sum.IncomeTaxAmount),
+                    CurrencyPaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount),
+                    PaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount * sum.CurrencyRate),
+                    PurchaseAmount = entity.Sum(sum => (sum.DPPAmount + sum.CurrencyDPPAmount + sum.VATAmount - sum.IncomeTaxAmount) * sum.CurrencyRate)
                 })
                 .ToList();
 
@@ -198,8 +200,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     SupplierName = entity.FirstOrDefault().SupplierName,
                     CurrencyId = entity.Key.CurrencyId,
                     CurrencyCode = entity.FirstOrDefault().CurrencyCode,
-                    PurchaseAmount = entity.Sum(sum => sum.DPPAmount + sum.CurrencyDPPAmount + sum.VATAmount - sum.IncomeTaxAmount),
-                    PaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount)
+                    CurrencyPurchaseAmount = entity.Sum(sum => sum.DPPAmount + sum.CurrencyDPPAmount + sum.VATAmount - sum.IncomeTaxAmount),
+                    CurrencyPaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount),
+                    PaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount * sum.CurrencyRate),
+                    PurchaseAmount = entity.Sum(sum => (sum.DPPAmount + sum.CurrencyDPPAmount + sum.VATAmount - sum.IncomeTaxAmount) * sum.CurrencyRate)
                 })
                 .ToList();
 
@@ -208,13 +212,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             {
                 var initialBalance = initialBalances.FirstOrDefault(element => element.CurrencyId == item.CurrencyId && element.SupplierId == item.SupplierId);
                 var initialBalanceAmount = 0.0;
+                var currencyInitialBalanceAmount = 0.0;
 
                 if (initialBalance != null)
+                {
                     initialBalanceAmount = initialBalance.PaymentAmount - initialBalance.PurchaseAmount;
+                    currencyInitialBalanceAmount = initialBalance.CurrencyPaymentAmount - initialBalance.CurrencyPurchaseAmount;
+                }
 
                 var currentBalance = initialBalanceAmount + (item.PaymentAmount - item.PurchaseAmount);
+                var currencyCurrentBalance = currencyInitialBalanceAmount + (item.CurrencyPaymentAmount - item.CurrencyPurchaseAmount);
 
-                result.Add(new GarmentDebtBalanceSummaryDto(item.SupplierId, item.SupplierCode, item.SupplierName, item.SupplierIsImport, item.CurrencyId, item.CurrencyCode, initialBalanceAmount, item.PurchaseAmount, item.PaymentAmount, currentBalance));
+                result.Add(new GarmentDebtBalanceSummaryDto(item.SupplierId, item.SupplierCode, item.SupplierName, item.SupplierIsImport, item.CurrencyId, item.CurrencyCode, initialBalanceAmount, item.PurchaseAmount, item.PaymentAmount, currentBalance, currencyInitialBalanceAmount, item.CurrencyPurchaseAmount, item.CurrencyPaymentAmount, currencyCurrentBalance));
                 
             }
 
