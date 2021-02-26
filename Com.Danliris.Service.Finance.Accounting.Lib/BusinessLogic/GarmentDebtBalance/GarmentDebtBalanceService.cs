@@ -31,9 +31,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             var garmentDebtBalance = GetData(supplierId, month, year).ToList();
 
             //auto map
-            List<GarmentDebtBalanceCardDto> garmentDebtDto = Mapper.Map<List<Models.GarmentDebtBalance.GarmentDebtBalanceModel>, List<GarmentDebtBalanceCardDto>>(garmentDebtBalance);
+            //List<GarmentDebtBalanceCardDto> garmentDebtDto = Mapper.Map<List<Models.GarmentDebtBalance.GarmentDebtBalanceModel>,List<GarmentDebtBalanceCardDto>>(garmentDebtBalance);
+            //List<GarmentDebtBalanceCardDto> garmentDebtDto = garmentDebtBalance.Select(s=> Mapper.Map<GarmentDebtBalanceCardDto>(s)).ToList();
+            List<GarmentDebtBalanceCardDto> garmentDebtDto = garmentDebtBalance.Select(s => new GarmentDebtBalanceCardDto(s)).ToList();
 
             return garmentDebtDto;
+        }
+
+        public List<GarmentDebtBalanceCardDto> GetDebtBalanceCardWithBeforeBalanceAndTotalDto(int supplierId, int month, int year)
+        {
+            var garmentDebtBalance = GetData(supplierId, month, year).ToList();
+
+            //get last balance
+            var queryGetAllSaldoBefore = _dbContext.GarmentDebtBalances.Where(s => s.InvoiceDate.Month < month && s.InvoiceDate.Year < year).OrderByDescending(s => s.InvoiceDate).Select(s => new GarmentDebtBalance.GarmentDebtBalanceCardDto(s)).AsQueryable();
+            var lastMonthAndYearSaldo = queryGetAllSaldoBefore.Select(s=> s.InvoiceDate).FirstOrDefault();
+            //filter by last saldo year and month
+            var querySaldoBefore = queryGetAllSaldoBefore.Where(s => s.InvoiceDate.Month < month && s.InvoiceDate.Year < year).OrderByDescending(s=> s.InvoiceDate).ToList(); 
+
+            List<GarmentDebtBalanceCardDto> garmentDebtDto = garmentDebtBalance.Select(s => new GarmentDebtBalanceCardDto(s)).ToList();
+
+            //insert
+            var getLastQueryBefore = querySaldoBefore.FirstOrDefault();
+            var lastBalance = getLastQueryBefore == null ? 0 : getLastQueryBefore.RemainBalance;
+            garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<saldo awal>>", lastBalance));
+            garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<total>>", 0,0,0));
+
+            return garmentDebtDto.OrderBy(d=> d.InvoiceDate).ToList();
         }
 
         public int CreateFromCustoms(CustomsFormDto form)
@@ -60,7 +83,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             return result;
         }
 
-        private IQueryable<Models.GarmentDebtBalance.GarmentDebtBalanceModel> GetData(int supplierId, int month, int year)
+        public GarmentDebtBalanceIndexDto GetDebtBalanceCardWithBalanceBeforeIndex(int supplierId, int month, int year)
+        {
+            var query = GetDebtBalanceCardWithBeforeBalanceAndTotalDto(supplierId, month, year);
+            var result = new GarmentDebtBalanceIndexDto
+            {
+                Data = query,
+                Count = query.Count,
+                Order = new List<string>(),
+                Selected = new List<string>()
+            };
+            return result;
+        }
+
+        private IQueryable<Models.GarmentDebtBalance.GarmentDebtBalanceModel> GetData(int supplierId, int month,int year)
         {
             var query = _dbContext.GarmentDebtBalances.AsQueryable();
             if (supplierId > 0)

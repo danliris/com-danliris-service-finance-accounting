@@ -10,7 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 {
     public static class GarmentDebtBalanceExcel
     {
-        public static MemoryStream GenerateExcel(GarmentDebtBalanceIndexDto data,int month, int year, string supplierName,int timeZone)
+        public static MemoryStream GenerateExcel(GarmentDebtBalanceIndexDto data,int month, int year, string supplierName,bool isImport,int timeZone)
         {
             CultureInfo ci = new CultureInfo("en-us");
             var result = data;
@@ -27,9 +27,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "DPP Valas", DataType = typeof(string) });
-            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(decimal) });
+            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "PPH", DataType = typeof(string) });
-            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(double) });
+            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
 
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Pembelian", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Pembayaran", DataType = typeof(string) });
@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 {
                     reportDataTable.Rows.Add(
                         report.InvoiceDate.AddHours(timeZone).ToString("dd/MM/yyyy"),
-                        report.ProductName,
+                        report.ProductNames,
                         report.PurchasingCategoryName,
                         report.PaymentBills,
                         report.BillsNo,
@@ -68,16 +68,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             {
                 var company = "PT DAN LIRIS";
                 var title = "KARTU HUTANG";
-                var monthYear = new DateTime(year, month, 1);
-                var monthYearStr = monthYear.ToString("MMM yyyy");
+                var monthYear = new DateTime(year, month, DateTime.DaysInMonth(year,month));
+                var monthYearStr = monthYear.ToString("dd MMMM yyyy");
                 var period = monthYearStr;
 
                 var worksheet = package.Workbook.Worksheets.Add("Sheet 1");
                 worksheet.Cells["A1"].Value = company;
                 worksheet.Cells["A2"].Value = title;
-                worksheet.Cells["A3"].Value = period;
+                worksheet.Cells["A3"].Value = supplierName;
+                worksheet.Cells["A4"].Value = $"Periode : {period}";
+
                 #region PrintHeaderExcel
-                var rowStartHeader = 4;
+                var rowStartHeader = 5;
                 var colStartHeader = 1;
                 foreach (var columns in reportDataTable.Columns)
                 {
@@ -93,11 +95,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
 
                         worksheet.Cells[rowStartHeader, colStartHeader].Value = "Nilai Invoice";
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Merge = true;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.Font.Bold = true;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 4].Merge = true;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 4].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 4].Style.Font.Bold = true;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 4].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                     }
                     else if (column.ColumnName == "Pembelian")
                     {
@@ -110,11 +112,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
 
                         worksheet.Cells[rowStartHeader, colStartHeader].Value = "Mutasi";
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Merge = true;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.Font.Bold = true;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 1].Merge = true;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 1].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 1].Style.Font.Bold = true;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 1].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                     }
                     else if (column.ColumnName == "DPP Valas" || column.ColumnName == "PPN" || column.ColumnName == "PPH" || column.ColumnName == "Total"|| column.ColumnName == "Pembayaran")
                     {
@@ -137,8 +139,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     colStartHeader++;
                 }
                 #endregion
-                worksheet.Cells["A6"].LoadFromDataTable(reportDataTable, false);
-                for (int i = 6; i < result.Data.Count + 6; i++)
+                worksheet.Cells["A7"].LoadFromDataTable(reportDataTable, false);
+                for (int i = 7; i < result.Data.Count + 7; i++)
                 {
                     for (int j = 1; j <= reportDataTable.Columns.Count; j++)
                     {
