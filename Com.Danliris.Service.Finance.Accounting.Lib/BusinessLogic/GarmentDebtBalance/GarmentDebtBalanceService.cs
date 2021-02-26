@@ -229,5 +229,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             return result;
         }
+
+        public GarmentDebtBalanceSummaryAndTotalCurrencyDto GetDebtBalanceSummaryAndTotalCurrency(int supplierId, int month, int year, bool isForeignCurrency, bool supplierIsImport)
+        {
+            var datasummary = GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
+
+            var groupData = datasummary.GroupBy(
+                key => key.CurrencyCode,
+                val => val,
+                (key, val) => new GarmentDebtBalanceSummaryTotalByCurrencyDto
+                {
+                    CurrencyCode = key,
+                    TotalCurrencyCurrentBalance = val.Sum(s => s.CurrencyCurrentBalance),
+                    TotalCurrencyInitialBalance = val.Sum(s => s.CurrencyInitialBalance),
+                    TotalCurrencyPayment = val.Sum(s => s.CurrencyPaymentAmount),
+                    TotalCurrencyPurchase = val.Sum(s => s.CurrencyPurchaseAmount),
+                    TotalCurrentBalance = val.Sum(s => s.CurrentBalance),
+                    TotalInitialBalance = val.Sum(s => s.InitialBalance),
+                    TotalPayment = val.Sum(s => s.PaymentAmount),
+                    TotalPurchase = val.Sum(s => s.PurchaseAmount)
+                }
+                ).ToList();
+            return new GarmentDebtBalanceSummaryAndTotalCurrencyDto
+            {
+                Data = datasummary,
+                GroupTotalCurrency = groupData
+            };
+        }
     }
 }
