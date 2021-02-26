@@ -56,5 +56,27 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
+
+        [HttpGet("summary")]
+        public IActionResult GetSummary([FromQuery] int supplierId, [FromQuery] int month, [FromQuery] int year, [FromQuery] bool isForeignCurrency, [FromQuery] bool supplierIsImport)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return Created(string.Concat(Request.Path, "/", id), result);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
     }
 }
