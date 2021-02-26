@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
 
         }
 
-        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierName, int currencyId, string currencyCode, double currencyRate)
+        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double currencyRate)
         {
             PurchasingCategoryId = purchasingCategoryId;
             PurchasingCategoryName = purchasingCategoryName;
@@ -22,7 +22,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             GarmentDeliveryOrderId = garmentDeliveryOrderId;
             GarmentDeliveryOrderNo = garmentDeliveryOrderNo;
             SupplierId = supplierId;
+            SupplierCode = supplierCode;
             SupplierName = supplierName;
+            SupplierIsImport = supplierIsImport;
             CurrencyId = currencyId;
             CurrencyCode = currencyCode;
             CurrencyRate = currencyRate;
@@ -39,8 +41,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         [MaxLength(64)]
         public string GarmentDeliveryOrderNo { get; private set; }
         public int SupplierId { get; private set; }
+        [MaxLength(256)]
+        public string SupplierCode { get; private set; }
         [MaxLength(512)]
         public string SupplierName { get; private set; }
+        public bool SupplierIsImport { get; private set; }
         public int CurrencyId { get; private set; }
         [MaxLength(32)]
         public string CurrencyCode { get; private set; }
