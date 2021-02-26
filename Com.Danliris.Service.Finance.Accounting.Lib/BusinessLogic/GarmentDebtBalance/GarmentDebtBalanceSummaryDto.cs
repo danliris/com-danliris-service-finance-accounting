@@ -2,7 +2,7 @@
 {
     public class GarmentDebtBalanceSummaryDto
     {
-        public GarmentDebtBalanceSummaryDto(int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double initialBalance, double purchaseAmount, double paymentAmount, double currentBalance)
+        public GarmentDebtBalanceSummaryDto(int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double initialBalance, double purchaseAmount, double paymentAmount, double currentBalance, double currencyInitialBalance, double currencyPurchaseAmount, double currencyPaymentAmount, double currencyCurrentBalance)
         {
             SupplierId = supplierId;
             SupplierCode = supplierCode;
@@ -14,6 +14,10 @@
             PurchaseAmount = purchaseAmount;
             PaymentAmount = paymentAmount;
             CurrentBalance = currentBalance;
+            CurrencyInitialBalance = currencyInitialBalance;
+            CurrencyPurchaseAmount = currencyPurchaseAmount;
+            CurrencyPaymentAmount = currencyPaymentAmount;
+            CurrencyCurrentBalance = currencyCurrentBalance;
         }
 
         public int SupplierId { get; private set; }
@@ -26,5 +30,9 @@
         public double PurchaseAmount { get; private set; }
         public double PaymentAmount { get; private set; }
         public double CurrentBalance { get; private set; }
+        public double CurrencyInitialBalance { get; private set; }
+        public double CurrencyPurchaseAmount { get; private set; }
+        public double CurrencyPaymentAmount { get; private set; }
+        public double CurrencyCurrentBalance { get; private set; }
     }
 }
