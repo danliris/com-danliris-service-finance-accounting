@@ -72,7 +72,45 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     data = data,
                     info = new
                     {
-                        data.Count
+                        Count = data.Count,
+                        Order= new List<string>(),
+                        Selected = new List<string>()
+                    },
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("summary-with-group-currency")]
+        public IActionResult GetSummaryAndTotalByCurrency([FromQuery] int supplierId, [FromQuery] int month, [FromQuery] int year, [FromQuery] bool isForeignCurrency, [FromQuery] bool supplierIsImport)
+        {
+            try
+            {
+                VerifyUser();
+
+                var data = _service.GetDebtBalanceSummaryAndTotalCurrency(supplierId, month, year, isForeignCurrency, supplierIsImport);
+
+                //var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Ok(id);
+
+                //return Created(string.Concat(Request.Path, "/", id), result);
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data = data,
+                    info = new
+                    {
+                        Count = data.Data.Count,
+                        Order = new List<string>(),
+                        Selected = new List<string>()
                     },
                     message = General.OK_MESSAGE,
                     statusCode = General.OK_STATUS_CODE
