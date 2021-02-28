@@ -64,11 +64,19 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             {
                 VerifyUser();
 
-                var id = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
+                var data = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
 
-                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
-
-                return Created(string.Concat(Request.Path, "/", id), result);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data = data,
+                    info = new
+                    {
+                        data.Count
+                    },
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
             }
             catch (Exception e)
             {
