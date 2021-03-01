@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance.Pdf;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
@@ -66,10 +67,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
                 var data = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
 
-                //var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Ok(id);
-
-                //return Created(string.Concat(Request.Path, "/", id), result);
-
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
@@ -77,12 +74,70 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     info = new
                     {
                         Count = data.Count,
-                        Order= new List<string>(),
+                        Order = new List<string>(),
                         Selected = new List<string>()
                     },
                     message = General.OK_MESSAGE,
                     statusCode = General.OK_STATUS_CODE
                 });
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("summary/downloads/pdf")]
+        public IActionResult GetPdf([FromQuery] int supplierId, [FromQuery] int month, [FromQuery] int year, [FromQuery] bool isForeignCurrency, [FromQuery] bool supplierIsImport)
+        {
+            try
+            {
+                VerifyUser();
+
+                var data = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
+                var stream = GarmentDebtBalancePdfGenerator.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
+
+                var filename = "SALDO HUTANG LOKAL";
+                if (supplierIsImport)
+                    filename = "SALDO HUTANG IMPOR";
+                filename += ".pdf";
+
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = filename
+                };
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("summary/downloads/xls")]
+        public IActionResult GetXls([FromQuery] int supplierId, [FromQuery] int month, [FromQuery] int year, [FromQuery] bool isForeignCurrency, [FromQuery] bool supplierIsImport)
+        {
+            try
+            {
+                VerifyUser();
+
+                var data = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
+                var stream = GarmentDebtBalancePdfGenerator.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
+
+                var filename = "SALDO HUTANG LOKAL";
+                if (supplierIsImport)
+                    filename = "SALDO HUTANG IMPOR";
+                filename += ".pdf";
+
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = filename
+                };
             }
             catch (Exception e)
             {
