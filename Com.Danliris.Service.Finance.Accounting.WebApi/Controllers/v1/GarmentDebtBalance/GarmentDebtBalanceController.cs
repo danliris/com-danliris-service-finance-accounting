@@ -110,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
 
                 MemoryStream result = new MemoryStream();
                 var filename = "Kartu Hutang.pdf";
-                result = Lib.BusinessLogic.GarmentDebtBalance.Pdf.GarmentDebtBalancePdf.Generate(data, filter.month, filter.year, filter.import, IdentityService.TimezoneOffset);
+                result = Lib.BusinessLogic.GarmentDebtBalance.Pdf.GarmentDebtBalanceLocalForeignCurrencyPdf.Generate(data, filter.month, filter.year, filter.import, IdentityService.TimezoneOffset);
                 //filename += ".xlsx";
 
                 var bytes = result.ToArray();

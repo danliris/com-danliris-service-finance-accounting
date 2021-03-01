@@ -98,7 +98,36 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 VerifyUser();
 
                 var data = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
-                var stream = GarmentDebtBalanceLocalPdf.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
+                var stream = GarmentDebtBalancePdfGenerator.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
+
+                var filename = "SALDO HUTANG LOKAL";
+                if (supplierIsImport)
+                    filename = "SALDO HUTANG IMPOR";
+                filename += ".pdf";
+
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = filename
+                };
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("summary/downloads/xls")]
+        public IActionResult GetXls([FromQuery] int supplierId, [FromQuery] int month, [FromQuery] int year, [FromQuery] bool isForeignCurrency, [FromQuery] bool supplierIsImport)
+        {
+            try
+            {
+                VerifyUser();
+
+                var data = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
+                var stream = GarmentDebtBalancePdfGenerator.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
 
                 var filename = "SALDO HUTANG LOKAL";
                 if (supplierIsImport)
