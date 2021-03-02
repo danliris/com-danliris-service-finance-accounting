@@ -96,7 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             return result;
         }
 
-        private IQueryable<Models.GarmentDebtBalance.GarmentDebtBalanceModel> GetData(int supplierId, int month,int year)
+        private IQueryable<GarmentDebtBalanceModel> GetData(int supplierId, int month,int year)
         {
             var query = _dbContext.GarmentDebtBalances.AsQueryable();
             if (supplierId > 0)
@@ -114,7 +114,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             var model = _dbContext.GarmentDebtBalances.FirstOrDefault(entity => entity.GarmentDeliveryOrderId == deliveryOrderId);
 
-            model.SetBankExpenditureNote(form.BankExpenditureNoteId, form.BankExpenditureNoteNo, form.BankExpenditureNoteInvoiceAmount);
+            model.SetBankExpenditureNote(form.BankExpenditureNoteId, form.BankExpenditureNoteNo, form.BankExpenditureNoteInvoiceAmount, form.CurrencyBankExpenditureNoteInvoiceAmount);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
 
             _dbContext.GarmentDebtBalances.Update(model);
@@ -142,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             var model = _dbContext.GarmentDebtBalances.FirstOrDefault(entity => entity.GarmentDeliveryOrderId == deliveryOrderId);
 
-            model.SetInvoice(form.InvoiceId, form.InvoiceDate, form.InvoiceNo, form.DPPAmount, form.CurrencyDPPAmount, form.VATAmount, form.IncomeTaxAmount, form.IsPayVAT, form.IsPayIncomeTax);
+            model.SetInvoice(form.InvoiceId, form.InvoiceDate, form.InvoiceNo, form.DPPAmount, form.CurrencyDPPAmount, form.VATAmount, form.IncomeTaxAmount, form.IsPayVAT, form.IsPayIncomeTax, form.CurrencyVATAmount, form.CurrencyIncomeTaxAmount);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
 
             _dbContext.GarmentDebtBalances.Update(model);
@@ -182,10 +182,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     SupplierIsImport = entity.FirstOrDefault().SupplierIsImport,
                     CurrencyId = entity.Key.CurrencyId,
                     CurrencyCode = entity.FirstOrDefault().CurrencyCode,
-                    CurrencyPurchaseAmount = entity.Sum(sum => sum.DPPAmount + sum.CurrencyDPPAmount + sum.VATAmount - sum.IncomeTaxAmount),
-                    CurrencyPaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount),
-                    PaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount * sum.CurrencyRate),
-                    PurchaseAmount = entity.Sum(sum => (sum.DPPAmount + sum.CurrencyDPPAmount + sum.VATAmount - sum.IncomeTaxAmount) * sum.CurrencyRate)
+                    CurrencyPurchaseAmount = entity.Sum(sum => sum.CurrencyDPPAmount + sum.CurrencyVATAmount - sum.CurrencyIncomeTaxAmount),
+                    CurrencyPaymentAmount = entity.Sum(sum => sum.CurrencyBankExpenditureNoteInvoiceAmount),
+                    PaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount),
+                    PurchaseAmount = entity.Sum(sum => sum.DPPAmount + sum.VATAmount - sum.IncomeTaxAmount)
                 })
                 .ToList();
 
@@ -200,10 +200,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     SupplierName = entity.FirstOrDefault().SupplierName,
                     CurrencyId = entity.Key.CurrencyId,
                     CurrencyCode = entity.FirstOrDefault().CurrencyCode,
-                    CurrencyPurchaseAmount = entity.Sum(sum => sum.DPPAmount + sum.CurrencyDPPAmount + sum.VATAmount - sum.IncomeTaxAmount),
-                    CurrencyPaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount),
-                    PaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount * sum.CurrencyRate),
-                    PurchaseAmount = entity.Sum(sum => (sum.DPPAmount + sum.CurrencyDPPAmount + sum.VATAmount - sum.IncomeTaxAmount) * sum.CurrencyRate)
+                    CurrencyPurchaseAmount = entity.Sum(sum => sum.CurrencyDPPAmount + sum.CurrencyVATAmount - sum.CurrencyIncomeTaxAmount),
+                    CurrencyPaymentAmount = entity.Sum(sum => sum.CurrencyBankExpenditureNoteInvoiceAmount),
+                    PaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount),
+                    PurchaseAmount = entity.Sum(sum => sum.DPPAmount + sum.VATAmount - sum.IncomeTaxAmount)
                 })
                 .ToList();
 
