@@ -37,8 +37,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             _identityService.TimezoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
         }
 
-        [HttpPost]
-        public IActionResult Post([FromBody] CustomsFormDto form)
+        [HttpPost("customs")]
+        public IActionResult PostCustoms([FromBody] CustomsFormDto form)
         {
             try
             {
@@ -49,6 +49,72 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
 
                 return Created(string.Concat(Request.Path, "/", id), result);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("invoice/{deliveryOrderId}")]
+        public IActionResult PutInvoice([FromRoute] int deliveryOrderId, [FromBody] InvoiceFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.UpdateFromInvoice(deliveryOrderId, form);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("internal-note/{deliveryOrderId}")]
+        public IActionResult PutInternalNote([FromRoute] int deliveryOrderId, [FromBody] InternalNoteFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.UpdateFromInternalNote(deliveryOrderId, form);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("bank-expenditure-note/{deliveryOrderId}")]
+        public IActionResult PutBankExpenditureNote([FromRoute] int deliveryOrderId, [FromBody] BankExpenditureNoteFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.UpdateFromBankExpenditureNote(deliveryOrderId, form);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
             }
             catch (Exception e)
             {
