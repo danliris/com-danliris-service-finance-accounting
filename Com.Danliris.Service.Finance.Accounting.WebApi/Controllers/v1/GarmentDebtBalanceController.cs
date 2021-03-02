@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance.Excel;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance.Pdf;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -127,17 +128,16 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 VerifyUser();
 
                 var data = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
-                var stream = GarmentDebtBalancePdfGenerator.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
+                var stream = GarmentDebtBalanceExcelGenerator.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
 
                 var filename = "SALDO HUTANG LOKAL";
                 if (supplierIsImport)
                     filename = "SALDO HUTANG IMPOR";
-                filename += ".pdf";
+                filename += ".xlsx";
 
-                return new FileStreamResult(stream, "application/pdf")
-                {
-                    FileDownloadName = filename
-                };
+                var bytes = stream.ToArray();
+
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
             }
             catch (Exception e)
             {
