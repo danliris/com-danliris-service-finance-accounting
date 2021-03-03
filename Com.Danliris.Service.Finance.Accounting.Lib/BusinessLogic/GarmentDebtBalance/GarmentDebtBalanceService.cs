@@ -61,7 +61,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         public int CreateFromCustoms(CustomsFormDto form)
         {
-            var model = new GarmentDebtBalanceModel(form.PurchasingCategoryId, form.PurchasingCategoryName, form.BillsNo, form.PaymentBills, form.GarmentDeliveryOrderId, form.GarmentDeliveryOrderNo, form.SupplierId, form.SupplierCode, form.SupplierName, form.SupplierIsImport, form.CurrencyId, form.CurrencyCode, form.CurrencyRate);
+            var model = new GarmentDebtBalanceModel(form.PurchasingCategoryId, form.PurchasingCategoryName, form.BillsNo, form.PaymentBills, form.GarmentDeliveryOrderId, form.GarmentDeliveryOrderNo, form.SupplierId, form.SupplierCode, form.SupplierName, form.SupplierIsImport, form.CurrencyId, form.CurrencyCode, form.CurrencyRate, form.ProductNames, form.ArrivalDate);
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.GarmentDebtBalances.Add(model);
 
@@ -103,10 +103,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 query = query.Where(s => s.SupplierId == supplierId);
 
             if (month > 0)
-                query = query.Where(s => s.InvoiceDate.Month == month);
+                query = query.Where(s => s.ArrivalDate.Month == month);
 
             if (year > 1)
-                query = query.Where(s => s.InvoiceDate.Year == year);
+                query = query.Where(s => s.ArrivalDate.Year == year);
             return query;
         }
 
@@ -158,7 +158,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             var beginningOfMonth = new DateTimeOffset(year, month, 1, 0, 0, 0, 0, TimeSpan.Zero);
 
-            query = query.Where(entity => entity.InvoiceDate != DateTimeOffset.MinValue && (entity.InvoiceDate.AddHours(_identityService.TimezoneOffset).Month == month && entity.InvoiceDate.AddHours(_identityService.TimezoneOffset).Year == year));
+            query = query.Where(entity => entity.ArrivalDate != DateTimeOffset.MinValue && (entity.InvoiceDate.AddHours(_identityService.TimezoneOffset).Month == month && entity.InvoiceDate.AddHours(_identityService.TimezoneOffset).Year == year));
 
             if (supplierId > 0)
                 query = query.Where(entity => entity.SupplierId == supplierId);
@@ -191,7 +191,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             var initialBalances = _dbContext
                 .GarmentDebtBalances
-                .Where(entity => entity.InvoiceDate < beginningOfMonth)
+                .Where(entity => entity.ArrivalDate < beginningOfMonth)
                 .GroupBy(entity => new { entity.SupplierId, entity.CurrencyId })
                 .Select(entity => new
                 {

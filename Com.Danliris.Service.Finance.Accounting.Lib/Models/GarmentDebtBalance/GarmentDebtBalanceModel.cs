@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
 
         }
 
-        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double currencyRate)
+        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double currencyRate, string productNames, DateTimeOffset arrivalDate)
         {
             PurchasingCategoryId = purchasingCategoryId;
             PurchasingCategoryName = purchasingCategoryName;
@@ -28,6 +28,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             CurrencyId = currencyId;
             CurrencyCode = currencyCode;
             CurrencyRate = currencyRate;
+            ProductNames = productNames;
+            ArrivalDate = arrivalDate;
         }
 
         public int PurchasingCategoryId { get; private set; }
@@ -74,6 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         public double BankExpenditureNoteInvoiceAmount { get; private set; }
         public double CurrencyBankExpenditureNoteInvoiceAmount { get; private set; }
         public string ProductNames { get; set; }
+        public DateTimeOffset ArrivalDate { get; set; }
 
 
         public void SetInternalNote(int internalNoteId, string internalNoteNo)

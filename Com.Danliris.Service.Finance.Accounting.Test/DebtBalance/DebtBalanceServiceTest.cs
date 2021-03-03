@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
 
         private GarmentDebtBalanceModel GenerateDataUtil(FinanceDbContext dbContext)
         {
-            var model = new GarmentDebtBalanceModel(1, "category", "billsNo", "paymentBills", 1, "deliveryOrderNo", 1, "supplier", "supplierName", false, 1, "IDR", 1);
+            var model = new GarmentDebtBalanceModel(1, "category", "billsNo", "paymentBills", 1, "deliveryOrderNo", 1, "supplier", "supplierName", false, 1, "IDR", 1, "", DateTimeOffset.Now);
             EntityExtension.FlagForCreate(model, "unit-test", "data-util");
             dbContext.GarmentDebtBalances.Add(model);
             dbContext.SaveChanges();

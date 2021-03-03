@@ -1,4 +1,6 @@
-﻿namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance
+﻿using System;
+
+namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance
 {
     public class CustomsFormDto
     {
@@ -15,5 +17,7 @@
         public int CurrencyId { get;  set; }
         public string CurrencyCode { get;  set; }
         public double CurrencyRate { get;  set; }
+        public string ProductNames { get; set; }
+        public DateTimeOffset ArrivalDate { get; set; }
     }
 }
