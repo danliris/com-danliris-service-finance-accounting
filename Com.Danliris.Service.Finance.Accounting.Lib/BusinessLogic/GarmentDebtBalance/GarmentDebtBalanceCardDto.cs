@@ -65,10 +65,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             InternalNoteNo = model.InternalNoteNo;
             ProductNames = model.ProductNames;
             CurrencyRate = model.CurrencyRate;
-            TotalInvoice = model.CurrencyDPPAmount + model.VATAmount - model.IncomeTaxAmount;
-            MutationPurchase = (model.CurrencyDPPAmount + model.VATAmount - model.IncomeTaxAmount) * model.CurrencyRate;
+            TotalInvoice = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount;
+            MutationPurchase = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount;
             MutationPayment = model.BankExpenditureNoteInvoiceAmount;
-            RemainBalance = ((model.CurrencyDPPAmount + model.VATAmount - model.IncomeTaxAmount) * model.CurrencyRate) - model.BankExpenditureNoteInvoiceAmount;
+            RemainBalance = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount - model.BankExpenditureNoteInvoiceAmount;
         }
         /// <summary>
         /// ovveride for saldo awal (pdf)
