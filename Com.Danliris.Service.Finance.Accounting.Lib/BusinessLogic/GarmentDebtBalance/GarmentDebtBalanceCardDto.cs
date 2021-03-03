@@ -65,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             InternalNoteNo = model.InternalNoteNo;
             ProductNames = model.ProductNames;
             CurrencyRate = model.CurrencyRate;
-            TotalInvoice = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount;
+            TotalInvoice = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount;
             MutationPurchase = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount;
             MutationPayment = model.BankExpenditureNoteInvoiceAmount;
             RemainBalance = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount - model.BankExpenditureNoteInvoiceAmount;
