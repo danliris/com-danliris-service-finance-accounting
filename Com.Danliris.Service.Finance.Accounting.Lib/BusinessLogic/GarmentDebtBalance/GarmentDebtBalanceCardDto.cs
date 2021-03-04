@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Migrations;
+using System;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance
 {
@@ -36,6 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public double MutationPurchase { get; set; }
         public double MutationPayment { get; set; }
         public double RemainBalance { get; set; }
+        public DateTimeOffset ArrivalDate { get; private set; }
 
         public GarmentDebtBalanceCardDto(Models.GarmentDebtBalance.GarmentDebtBalanceModel model)
         {
@@ -69,6 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             MutationPurchase = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount;
             MutationPayment = model.BankExpenditureNoteInvoiceAmount;
             RemainBalance = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount - model.BankExpenditureNoteInvoiceAmount;
+            ArrivalDate = model.ArrivalDate;
         }
         /// <summary>
         /// ovveride for saldo awal (pdf)
