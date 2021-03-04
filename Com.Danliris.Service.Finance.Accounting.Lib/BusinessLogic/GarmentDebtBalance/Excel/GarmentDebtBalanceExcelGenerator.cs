@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance.Pdf;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,54 +50,78 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             if (!supplierIsImport)
             {
-                var startedRow = 5;
+                var currentRow = 5;
 
                 foreach (var item in data)
                 {
-                    worksheet.Cells[$"A{startedRow}"].Value = item.SupplierName;
-                    worksheet.Cells[$"A{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"B{startedRow}"].Value = item.CurrencyCode;
-                    worksheet.Cells[$"B{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"C{startedRow}"].Value = item.InitialBalance;
-                    worksheet.Cells[$"C{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"D{startedRow}"].Value = item.PurchaseAmount;
-                    worksheet.Cells[$"D{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"E{startedRow}"].Value = item.PaymentAmount;
-                    worksheet.Cells[$"E{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"F{startedRow}"].Value = item.CurrentBalance;
-                    worksheet.Cells[$"F{startedRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"A{currentRow}"].Value ="{item.SupplierCode} - {item.SupplierName}";
+                    worksheet.Cells[$"A{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"B{currentRow}"].Value = item.CurrencyCode;
+                    worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"C{currentRow}"].Value = item.InitialBalance;
+                    worksheet.Cells[$"C{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"C{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"D{currentRow}"].Value = item.PurchaseAmount;
+                    worksheet.Cells[$"D{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"D{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"E{currentRow}"].Value = item.PaymentAmount;
+                    worksheet.Cells[$"E{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"F{currentRow}"].Value = item.CurrentBalance;
+                    worksheet.Cells[$"F{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"F{currentRow}"].Style.Font.Size = 14;
 
-                    startedRow++;
+                    currentRow++;
                 }
+
+                worksheet.Cells[$"A5:F{currentRow}"].AutoFitColumns();
+                worksheet.Cells[$"A5:F{currentRow}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[$"A5:F{currentRow}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[$"A5:F{currentRow}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[$"A5:F{currentRow}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
             }
             else
             {
-                var startedRow = 6;
+                var currentRow = 6;
                 foreach (var item in data)
                 {
-                    worksheet.Cells[$"A{startedRow}"].Value = item.SupplierName;
-                    worksheet.Cells[$"A{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"B{startedRow}"].Value = item.CurrencyCode;
-                    worksheet.Cells[$"B{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"C{startedRow}"].Value = item.CurrencyInitialBalance;
-                    worksheet.Cells[$"C{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"D{startedRow}"].Value = item.CurrencyPurchaseAmount;
-                    worksheet.Cells[$"D{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"E{startedRow}"].Value = item.CurrencyPaymentAmount;
-                    worksheet.Cells[$"E{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"F{startedRow}"].Value = item.CurrencyCurrentBalance;
-                    worksheet.Cells[$"F{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"G{startedRow}"].Value = item.InitialBalance;
-                    worksheet.Cells[$"G{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"H{startedRow}"].Value = item.PurchaseAmount;
-                    worksheet.Cells[$"H{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"I{startedRow}"].Value = item.PaymentAmount;
-                    worksheet.Cells[$"I{startedRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"J{startedRow}"].Value = item.CurrentBalance;
-                    worksheet.Cells[$"J{startedRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"A{currentRow}"].Value ="{item.SupplierCode} - {item.SupplierName}";
+                    worksheet.Cells[$"A{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"B{currentRow}"].Value = item.CurrencyCode;
+                    worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"C{currentRow}"].Value = item.CurrencyInitialBalance;
+                    worksheet.Cells[$"C{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"C{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"D{currentRow}"].Value = item.CurrencyPurchaseAmount;
+                    worksheet.Cells[$"D{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"D{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"E{currentRow}"].Value = item.CurrencyPaymentAmount;
+                    worksheet.Cells[$"E{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"F{currentRow}"].Value = item.CurrencyCurrentBalance;
+                    worksheet.Cells[$"F{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"F{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"G{currentRow}"].Value = item.InitialBalance;
+                    worksheet.Cells[$"G{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"G{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"H{currentRow}"].Value = item.PurchaseAmount;
+                    worksheet.Cells[$"H{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"H{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"I{currentRow}"].Value = item.PaymentAmount;
+                    worksheet.Cells[$"I{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"I{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"J{currentRow}"].Value = item.CurrentBalance;
+                    worksheet.Cells[$"J{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
 
-                    startedRow++;
+                    currentRow++;
                 }
+
+                worksheet.Cells[$"A5:J{currentRow}"].AutoFitColumns();
+                worksheet.Cells[$"A5:J{currentRow}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[$"A5:J{currentRow}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[$"A5:J{currentRow}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[$"A5:J{currentRow}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
             }
         }
 
@@ -122,6 +147,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 worksheet.Cells["F4"].Value = "SALDO AKHIR";
                 worksheet.Cells["F4"].Style.Font.Size = 14;
                 worksheet.Cells["F4"].Style.Font.Bold = true;
+
+                worksheet.Cells["A4:F4"].AutoFitColumns();
+                worksheet.Cells["A4:F4"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:F4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:F4"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:F4"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
             }
             else
             {
@@ -165,6 +196,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 worksheet.Cells["J5"].Value = "SALDO AKHIR";
                 worksheet.Cells["J5"].Style.Font.Size = 14;
                 worksheet.Cells["J5"].Style.Font.Bold = true;
+
+                worksheet.Cells["A4:J5"].AutoFitColumns();
+                worksheet.Cells["A4:J5"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:J5"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:J5"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:J5"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
             }
         }
 
@@ -176,7 +213,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             {
                 var title = "LEDGER HUTANG LOKAL";
                 var monthName = _months.FirstOrDefault(element => element.Value == month);
-                var period = $"PER {monthName.Name.ToUpper()} {year}";
+                var period ="PER {monthName.Name.ToUpper()} {year}";
 
                 worksheet.Cells["A1"].Value = company;
                 worksheet.Cells["A1:F1"].Merge = true;
@@ -195,7 +232,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             {
                 var title = "LEDGER HUTANG IMPOR";
                 var monthName = _months.FirstOrDefault(element => element.Value == month);
-                var period = $"PER {monthName.Name.ToUpper()} {year}";
+                var period ="PER {monthName.Name.ToUpper()} {year}";
 
                 worksheet.Cells["A1"].Value = company;
                 worksheet.Cells["A1:J1"].Merge = true;
