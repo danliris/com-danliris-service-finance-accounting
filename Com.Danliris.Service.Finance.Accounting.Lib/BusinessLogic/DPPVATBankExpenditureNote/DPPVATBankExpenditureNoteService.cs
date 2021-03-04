@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             var internalNoteIds = form.Items.Where(element => element.Select).Select(element => element.InternalNote.Id).ToList();
             var invoiceNoteIds = form.Items.Where(element => element.Select).SelectMany(element => element.InternalNote.Items).Where(element => element.SelectInvoice).Select(element => element.Invoice.Id).ToList();
 
-            await UpdateInternalNoteInvoiceNoteIsPaid(true, internalNoteIds, invoiceNoteIds);
+            await UpdateInternalNoteInvoiceNoteIsPaid(true, model.Id, model.DocumentNo, internalNoteIds, invoiceNoteIds);
 
             return model.Id;
         }
@@ -84,10 +84,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             return result.data;
         }
 
-        private async Task UpdateInternalNoteInvoiceNoteIsPaid(bool dppVATIsPaid, List<int> internalNoteIds, List<int> invoiceNoteIds)
+        private async Task UpdateInternalNoteInvoiceNoteIsPaid(bool dppVATIsPaid, int bankExpenditureNoteId, string bankExpenditureNoteNo, List<int> internalNoteIds, List<int> invoiceNoteIds)
         {
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"garment-intern-notes/dpp-vat-bank-expenditures/is-paid?dppVATIsPaid={dppVATIsPaid}&internalNoteIds={JsonConvert.SerializeObject(internalNoteIds)}&invoiceNoteIds={JsonConvert.SerializeObject(invoiceNoteIds)}";
+            var uri = APIEndpoint.Purchasing + $"garment-intern-notes/dpp-vat-bank-expenditures/is-paid?dppVATIsPaid={dppVATIsPaid}&bankExpenditureNoteId={bankExpenditureNoteId}&bankExpenditureNoteNo={bankExpenditureNoteNo}&internalNoteIds={JsonConvert.SerializeObject(internalNoteIds)}&invoiceNoteIds={JsonConvert.SerializeObject(invoiceNoteIds)}";
             await http.PutAsync(uri, new StringContent(JsonConvert.SerializeObject(internalNoteIds), Encoding.UTF8, General.JsonMediaType));
         }
 
@@ -124,7 +124,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             var internalNoteIds = items.Select(element => element.InternalNoteId).ToList();
             var invoiceNoteIds = details.Select(element => element.InvoiceId).ToList();
 
-            await UpdateInternalNoteInvoiceNoteIsPaid(false, internalNoteIds, invoiceNoteIds);
+            await UpdateInternalNoteInvoiceNoteIsPaid(false, model.Id, model.DocumentNo, internalNoteIds, invoiceNoteIds);
 
             return _dbContext.SaveChanges();
         }
@@ -199,7 +199,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             var existingInternalNoteIds = items.Select(element => element.InternalNoteId).ToList();
             var existingInvoiceNoteIds = details.Select(element => element.InvoiceId).ToList();
 
-            await UpdateInternalNoteInvoiceNoteIsPaid(false, existingInternalNoteIds, existingInvoiceNoteIds);
+            await UpdateInternalNoteInvoiceNoteIsPaid(false, model.Id, model.DocumentNo, existingInternalNoteIds, existingInvoiceNoteIds);
 
             foreach (var formItem in form.Items.Where(item => item.Select))
             {
@@ -220,7 +220,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             var internalNoteIds = form.Items.Where(element => element.Select).Select(element => element.InternalNote.Id).ToList();
             var invoiceNoteIds = form.Items.Where(element => element.Select).SelectMany(element => element.InternalNote.Items).Where(element => element.SelectInvoice).Select(element => element.Invoice.Id).ToList();
 
-            await UpdateInternalNoteInvoiceNoteIsPaid(true, internalNoteIds, invoiceNoteIds);
+            await UpdateInternalNoteInvoiceNoteIsPaid(true, model.Id, model.DocumentNo, internalNoteIds, invoiceNoteIds);
 
             return model.Id;
         }
