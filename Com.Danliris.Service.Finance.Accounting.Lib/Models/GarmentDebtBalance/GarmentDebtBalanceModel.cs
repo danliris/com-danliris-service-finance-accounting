@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
 
         }
 
-        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double currencyRate, string productNames, DateTimeOffset arrivalDate)
+        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double currencyRate, string productNames, DateTimeOffset arrivalDate, double dppAmount, double currencyDPPAmount)
         {
             PurchasingCategoryId = purchasingCategoryId;
             PurchasingCategoryName = purchasingCategoryName;
@@ -30,6 +30,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             CurrencyRate = currencyRate;
             ProductNames = productNames;
             ArrivalDate = arrivalDate;
+            DPPAmount = dppAmount;
+            CurrencyDPPAmount = currencyDPPAmount;
         }
 
         public int PurchasingCategoryId { get; private set; }
@@ -93,13 +95,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             CurrencyBankExpenditureNoteInvoiceAmount = currencyBankExpenditureNoteInvoiceAmount;
         }
 
-        public void SetInvoice(int invoiceId, DateTimeOffset invoiceDate, string invoiceNo, double dppAmount, double currencyDPPAmount, double vatAmount, double incomeTaxAmount, bool isPayVAT, bool isPayIncomeTax, double currencyVATAmount, double currencyIncomeTaxAmount)
+        public void SetInvoice(int invoiceId, DateTimeOffset invoiceDate, string invoiceNo, double vatAmount, double incomeTaxAmount, bool isPayVAT, bool isPayIncomeTax, double currencyVATAmount, double currencyIncomeTaxAmount)
         {
             InvoiceId = invoiceId;
             InvoiceDate = invoiceDate;
             InvoiceNo = invoiceNo;
-            DPPAmount = dppAmount;
-            CurrencyDPPAmount = currencyDPPAmount;
             VATAmount = vatAmount;
             CurrencyVATAmount = currencyVATAmount;
             IncomeTaxAmount = incomeTaxAmount;

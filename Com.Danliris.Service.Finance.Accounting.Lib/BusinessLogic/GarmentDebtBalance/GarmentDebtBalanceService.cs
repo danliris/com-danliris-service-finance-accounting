@@ -61,7 +61,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         public int CreateFromCustoms(CustomsFormDto form)
         {
-            var model = new GarmentDebtBalanceModel(form.PurchasingCategoryId, form.PurchasingCategoryName, form.BillsNo, form.PaymentBills, form.GarmentDeliveryOrderId, form.GarmentDeliveryOrderNo, form.SupplierId, form.SupplierCode, form.SupplierName, form.SupplierIsImport, form.CurrencyId, form.CurrencyCode, form.CurrencyRate, form.ProductNames, form.ArrivalDate);
+            var model = new GarmentDebtBalanceModel(form.PurchasingCategoryId, form.PurchasingCategoryName, form.BillsNo, form.PaymentBills, form.GarmentDeliveryOrderId, form.GarmentDeliveryOrderNo, form.SupplierId, form.SupplierCode, form.SupplierName, form.SupplierIsImport, form.CurrencyId, form.CurrencyCode, form.CurrencyRate, form.ProductNames, form.ArrivalDate, form.DPPAmount, form.CurrencyDPPAmount);
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.GarmentDebtBalances.Add(model);
 
@@ -142,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             var model = _dbContext.GarmentDebtBalances.FirstOrDefault(entity => entity.GarmentDeliveryOrderId == deliveryOrderId);
 
-            model.SetInvoice(form.InvoiceId, form.InvoiceDate, form.InvoiceNo, form.DPPAmount, form.CurrencyDPPAmount, form.VATAmount, form.IncomeTaxAmount, form.IsPayVAT, form.IsPayIncomeTax, form.CurrencyVATAmount, form.CurrencyIncomeTaxAmount);
+            model.SetInvoice(form.InvoiceId, form.InvoiceDate, form.InvoiceNo, form.VATAmount, form.IncomeTaxAmount, form.IsPayVAT, form.IsPayIncomeTax, form.CurrencyVATAmount, form.CurrencyIncomeTaxAmount);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
 
             _dbContext.GarmentDebtBalances.Update(model);
