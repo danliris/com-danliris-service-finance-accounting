@@ -1,6 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Moonlay.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -54,7 +55,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
         private IServiceProvider GetServiceProvider(FinanceDbContext dbContext)
         {
             var serviceProviderMock = new Mock<IServiceProvider>();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext))).Returns(dbContext);
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+               .Returns(dbContext);
+
+            serviceProviderMock
+               .Setup(x => x.GetService(typeof(IIdentityService)))
+               .Returns(new IdentityService() { Token = "Token", Username = "Test" });
 
             return serviceProviderMock.Object;
         }
@@ -147,6 +158,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
         [Fact]
         public void Should_Success_Update_From_Invoice()
         {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            GenerateDataUtil(dbContext);
             var form = GetValidInvoiceForm();
             var service = GetService(GetCurrentMethod());
             var result = service.UpdateFromInvoice(1, form);
@@ -156,8 +169,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
         [Fact]
         public void Should_Success_Update_From_InternalNote()
         {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            GenerateDataUtil(dbContext);
             var form = GetValidInternalNoteForm();
             var service = GetService(GetCurrentMethod());
+         
             var result = service.UpdateFromInternalNote(1, form);
             Assert.NotEqual(0, result);
         }
@@ -165,6 +181,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
         [Fact]
         public void Should_Success_Update_From_BankExpenditureNote()
         {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            GenerateDataUtil(dbContext);
             var form = GetValidBankExpenditureNoteForm();
             var service = GetService(GetCurrentMethod());
             var result = service.UpdateFromBankExpenditureNote(1, form);
