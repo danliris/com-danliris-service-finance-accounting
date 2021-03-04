@@ -54,7 +54,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
                 foreach (var item in data)
                 {
-                    worksheet.Cells[$"A{currentRow}"].Value ="{item.SupplierCode} - {item.SupplierName}";
+                    worksheet.Cells[$"A{currentRow}"].Value = $"{item.SupplierCode} - {item.SupplierName}";
                     worksheet.Cells[$"A{currentRow}"].Style.Font.Size = 14;
                     worksheet.Cells[$"B{currentRow}"].Value = item.CurrencyCode;
                     worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
@@ -85,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 var currentRow = 6;
                 foreach (var item in data)
                 {
-                    worksheet.Cells[$"A{currentRow}"].Value ="{item.SupplierCode} - {item.SupplierName}";
+                    worksheet.Cells[$"A{currentRow}"].Value = $"{item.SupplierCode} - {item.SupplierName}";
                     worksheet.Cells[$"A{currentRow}"].Style.Font.Size = 14;
                     worksheet.Cells[$"B{currentRow}"].Value = item.CurrencyCode;
                     worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
@@ -213,7 +213,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             {
                 var title = "LEDGER HUTANG LOKAL";
                 var monthName = _months.FirstOrDefault(element => element.Value == month);
-                var period ="PER {monthName.Name.ToUpper()} {year}";
+                var period = "PER {monthName.Name.ToUpper()} {year}";
 
                 worksheet.Cells["A1"].Value = company;
                 worksheet.Cells["A1:F1"].Merge = true;
@@ -232,7 +232,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             {
                 var title = "LEDGER HUTANG IMPOR";
                 var monthName = _months.FirstOrDefault(element => element.Value == month);
-                var period ="PER {monthName.Name.ToUpper()} {year}";
+                var period = "PER {monthName.Name.ToUpper()} {year}";
 
                 worksheet.Cells["A1"].Value = company;
                 worksheet.Cells["A1:J1"].Merge = true;
