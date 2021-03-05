@@ -168,6 +168,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 var stream = GarmentDebtBalancePdfGenerator.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
 
                 var filename = "SALDO HUTANG LOKAL";
+                if (isForeignCurrency)
+                    filename = "SALDO HUTANG LOKAL VALAS";
                 if (supplierIsImport)
                     filename = "SALDO HUTANG IMPOR";
                 filename += ".pdf";
@@ -197,6 +199,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 var stream = GarmentDebtBalanceExcelGenerator.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
 
                 var filename = "SALDO HUTANG LOKAL";
+                if (isForeignCurrency)
+                    filename = "SALDO HUTANG LOKAL VALAS";
                 if (supplierIsImport)
                     filename = "SALDO HUTANG IMPOR";
                 filename += ".xlsx";
