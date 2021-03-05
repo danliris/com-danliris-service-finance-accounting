@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         private static void SetTable(Document document, List<GarmentDebtBalanceSummaryDto> data, bool isForeignCurrency, bool supplierIsImport, int timezoneOffset)
         {
-            if (supplierIsImport)
+            if (supplierIsImport || isForeignCurrency)
             {
                 SetTableImport(document, data, timezoneOffset);
             }
@@ -223,6 +223,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         private static void SetTitle(Document document, int month, int year, bool isForeignCurrency, bool supplierIsImport)
         {
             var title = "LEDGER HUTANG LOKAL";
+
+            if (isForeignCurrency)
+                title = "LEDGER HUTANG LOKAL VALAS";
 
             if (supplierIsImport)
                 title = "LEDGER HUTANG IMPOR";
