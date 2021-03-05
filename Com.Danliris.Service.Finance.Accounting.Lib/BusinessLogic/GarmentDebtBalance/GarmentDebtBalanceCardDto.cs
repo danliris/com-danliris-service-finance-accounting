@@ -86,7 +86,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             ProductNames = productName;
             RemainBalance = remainBalance;
-            InvoiceDate = DateTimeOffset.MaxValue;
+            ArrivalDate = DateTimeOffset.MaxValue;
         }
         /// <summary>
         /// override for total (pdf)
@@ -99,7 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             ProductNames = productName;
             RemainBalance = remainBalance;
-            InvoiceDate = DateTimeOffset.MinValue;
+            ArrivalDate = DateTimeOffset.MinValue;
 
         }
     }
