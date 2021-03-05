@@ -258,7 +258,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             return reportQuery.ToList();
         }
 
-        public int Posting(List<int> ids)
+        public async Task<int> Posting(List<int> ids)
         {
             var documents = _dbContext
                 .DPPVATBankExpenditureNotes
@@ -273,6 +273,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 })
                 .ToList();
             _dbContext.DPPVATBankExpenditureNotes.UpdateRange(documents);
+
+            foreach (var document in documents)
+            {
+                var internalNoteIds = _dbContext.DPPVATBankExpenditureNoteItems.Where(entity => entity.DPPVATBankExpenditureNoteId == document.Id).Select(entity => entity.InternalNoteId).ToList();
+                var invoiceNoteIds = _dbContext.DPPVATBankExpenditureNoteDetails.Where(entity => entity.DPPVATBankExpenditureNoteId == document.Id).Select(entity => entity.InvoiceId).ToList();
+
+                await UpdateInternalNoteInvoiceNoteIsPaid(true, document.Id, document.DocumentNo, internalNoteIds, invoiceNoteIds);
+            }
 
             return _dbContext.SaveChanges();
         }
