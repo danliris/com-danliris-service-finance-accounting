@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         private static void SetTable(Document document, List<GarmentDebtBalanceSummaryDto> data, bool isForeignCurrency, bool supplierIsImport, int timezoneOffset)
         {
-            if (supplierIsImport)
+            if (supplierIsImport || isForeignCurrency)
             {
                 SetTableImport(document, data, timezoneOffset);
             }
