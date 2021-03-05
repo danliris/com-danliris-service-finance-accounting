@@ -224,6 +224,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             var title = "LEDGER HUTANG LOKAL";
 
+            if (isForeignCurrency)
+                title = "LEDGER HUTANG LOKAL VALAS";
+
             if (supplierIsImport)
                 title = "LEDGER HUTANG IMPOR";
 
