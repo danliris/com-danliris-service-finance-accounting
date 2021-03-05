@@ -158,13 +158,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             var beginningOfMonth = new DateTimeOffset(year, month, 1, 0, 0, 0, 0, TimeSpan.Zero);
 
-            query = query.Where(entity => entity.ArrivalDate != DateTimeOffset.MinValue && (entity.InvoiceDate.AddHours(_identityService.TimezoneOffset).Month == month && entity.InvoiceDate.AddHours(_identityService.TimezoneOffset).Year == year));
+            query = query.Where(entity => entity.ArrivalDate != DateTimeOffset.MinValue && (entity.ArrivalDate.AddHours(_identityService.TimezoneOffset).Month == month && entity.ArrivalDate.AddHours(_identityService.TimezoneOffset).Year == year));
 
             if (supplierId > 0)
                 query = query.Where(entity => entity.SupplierId == supplierId);
 
             if (supplierIsImport)
-                query = query.Where(entity => entity.SupplierIsImport);
+                query = query.Where(entity => entity.SupplierIsImport == supplierIsImport);
 
             if (isForeignCurrency)
                 query = query.Where(entity => !entity.SupplierIsImport && entity.CurrencyCode != "IDR");

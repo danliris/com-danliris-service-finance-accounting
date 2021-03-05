@@ -48,7 +48,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         private static void SetData(ExcelWorksheet worksheet, List<GarmentDebtBalanceSummaryDto> data, bool isForeignCurrency, bool supplierIsImport)
         {
-            if (!supplierIsImport)
+            if (!supplierIsImport && !isForeignCurrency)
             {
                 var currentRow = 5;
 
@@ -127,7 +127,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         private static void SetTableHeader(ExcelWorksheet worksheet, bool isForeignCurrency, bool supplierIsImport)
         {
-            if (!supplierIsImport)
+            if (!supplierIsImport && !isForeignCurrency)
             {
                 worksheet.Cells["A4"].Value = "SUPPLIER";
                 worksheet.Cells["A4"].Style.Font.Size = 14;
@@ -209,11 +209,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             var company = "PT DAN LIRIS";
 
-            if (!supplierIsImport)
+            if (!supplierIsImport && !isForeignCurrency)
             {
                 var title = "LEDGER HUTANG LOKAL";
                 var monthName = _months.FirstOrDefault(element => element.Value == month);
-                var period = "PER {monthName.Name.ToUpper()} {year}";
+                var period = $"PER {monthName.Name.ToUpper()} {year}";
 
                 worksheet.Cells["A1"].Value = company;
                 worksheet.Cells["A1:F1"].Merge = true;
@@ -228,11 +228,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 worksheet.Cells["A3:F3"].Style.Font.Size = 20;
                 worksheet.Cells["A3:F3"].Style.Font.Bold = true;
             }
+            else if (isForeignCurrency)
+            {
+                var title = "LEDGER HUTANG LOKAL VALAS";
+                var monthName = _months.FirstOrDefault(element => element.Value == month);
+                var period = $"PER {monthName.Name.ToUpper()} {year}";
+
+                worksheet.Cells["A1"].Value = company;
+                worksheet.Cells["A1:J1"].Merge = true;
+                worksheet.Cells["A1:J1"].Style.Font.Size = 20;
+                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
+                worksheet.Cells["A2"].Value = title;
+                worksheet.Cells["A2:J2"].Merge = true;
+                worksheet.Cells["A2:J2"].Style.Font.Size = 20;
+                worksheet.Cells["A2:J2"].Style.Font.Bold = true;
+                worksheet.Cells["A3"].Value = period;
+                worksheet.Cells["A3:J3"].Merge = true;
+                worksheet.Cells["A3:J3"].Style.Font.Size = 20;
+                worksheet.Cells["A3:J3"].Style.Font.Bold = true;
+            }
             else
             {
                 var title = "LEDGER HUTANG IMPOR";
                 var monthName = _months.FirstOrDefault(element => element.Value == month);
-                var period = "PER {monthName.Name.ToUpper()} {year}";
+                var period = $"PER {monthName.Name.ToUpper()} {year}";
 
                 worksheet.Cells["A1"].Value = company;
                 worksheet.Cells["A1:J1"].Merge = true;

@@ -13,6 +13,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         Task<int> Update(int id, FormDto form);
         Task<int> Delete(int id);
         List<ReportDto> ExpenditureReport(int expenditureId, int internalNoteId, int invoiceId, int supplierId, DateTimeOffset startDate, DateTimeOffset endDate);
-        int Posting(List<int> ids);
+        Task<int> Posting(List<int> ids);
     }
 }
