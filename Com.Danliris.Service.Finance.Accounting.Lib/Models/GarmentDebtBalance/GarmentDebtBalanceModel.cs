@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
 
         }
 
-        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double currencyRate)
+        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double currencyRate, string productNames, DateTimeOffset arrivalDate, double dppAmount, double currencyDPPAmount)
         {
             PurchasingCategoryId = purchasingCategoryId;
             PurchasingCategoryName = purchasingCategoryName;
@@ -28,6 +28,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             CurrencyId = currencyId;
             CurrencyCode = currencyCode;
             CurrencyRate = currencyRate;
+            ProductNames = productNames;
+            ArrivalDate = arrivalDate;
+            DPPAmount = dppAmount;
+            CurrencyDPPAmount = currencyDPPAmount;
         }
 
         public int PurchasingCategoryId { get; private set; }
@@ -58,7 +62,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         public double DPPAmount { get; private set; }
         public double CurrencyDPPAmount { get; private set; }
         public double VATAmount { get; private set; }
+        public double CurrencyVATAmount { get; private set; }
         public double IncomeTaxAmount { get; private set; }
+        public double CurrencyIncomeTaxAmount { get; private set; }
         public bool IsPayVAT { get; private set; }
         public bool IsPayIncomeTax { get; private set; }
 
@@ -70,7 +76,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         [MaxLength(64)]
         public string BankExpenditureNoteNo { get; private set; }
         public double BankExpenditureNoteInvoiceAmount { get; private set; }
+        public double CurrencyBankExpenditureNoteInvoiceAmount { get; private set; }
         public string ProductNames { get; set; }
+        public DateTimeOffset ArrivalDate { get; set; }
 
 
         public void SetInternalNote(int internalNoteId, string internalNoteNo)
@@ -79,22 +87,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             InternalNoteNo = internalNoteNo;
         }
 
-        public void SetBankExpenditureNote(int bankExpenditureNoteId, string bankExpenditureNoteNo, double bankExpenditureNoteInvoiceAmount)
+        public void SetBankExpenditureNote(int bankExpenditureNoteId, string bankExpenditureNoteNo, double bankExpenditureNoteInvoiceAmount, double currencyBankExpenditureNoteInvoiceAmount)
         {
             BankExpenditureNoteId = bankExpenditureNoteId;
             BankExpenditureNoteNo = bankExpenditureNoteNo;
             BankExpenditureNoteInvoiceAmount = bankExpenditureNoteInvoiceAmount;
+            CurrencyBankExpenditureNoteInvoiceAmount = currencyBankExpenditureNoteInvoiceAmount;
         }
 
-        public void SetInvoice(int invoiceId, DateTimeOffset invoiceDate, string invoiceNo, double dppAmount, double currencyDPPAmount, double vatAmount, double incomeTaxAmount, bool isPayVAT, bool isPayIncomeTax)
+        public void SetInvoice(int invoiceId, DateTimeOffset invoiceDate, string invoiceNo, double vatAmount, double incomeTaxAmount, bool isPayVAT, bool isPayIncomeTax, double currencyVATAmount, double currencyIncomeTaxAmount)
         {
             InvoiceId = invoiceId;
             InvoiceDate = invoiceDate;
             InvoiceNo = invoiceNo;
-            DPPAmount = dppAmount;
-            CurrencyDPPAmount = currencyDPPAmount;
             VATAmount = vatAmount;
+            CurrencyVATAmount = currencyVATAmount;
             IncomeTaxAmount = incomeTaxAmount;
+            CurrencyIncomeTaxAmount = currencyIncomeTaxAmount;
             IsPayVAT = isPayVAT;
             IsPayIncomeTax = isPayIncomeTax;
         }

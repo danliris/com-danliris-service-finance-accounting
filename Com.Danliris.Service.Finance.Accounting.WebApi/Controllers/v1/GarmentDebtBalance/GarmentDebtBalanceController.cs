@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance.Excel;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentDebtBalance;
@@ -84,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
 
                 MemoryStream result = new MemoryStream();
                 var filename = "Kartu Hutang.xlsx";
-                result = Lib.BusinessLogic.GarmentDebtBalance.Excel.GarmentDebtBalanceExcel.GenerateExcel(data, filter.month, filter.year,filter.supplierName,filter.import,IdentityService.TimezoneOffset);
+                result = GarmentBalanceCardExcelGenerator.GenerateExcel(data, filter.month, filter.year,filter.supplierName,filter.import,IdentityService.TimezoneOffset);
                 //filename += ".xlsx";
 
                 var bytes = result.ToArray();
@@ -110,7 +111,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
 
                 MemoryStream result = new MemoryStream();
                 var filename = "Kartu Hutang.pdf";
-                result = Lib.BusinessLogic.GarmentDebtBalance.Pdf.GarmentDebtBalancePdf.Generate(data, filter.month, filter.year, filter.import, IdentityService.TimezoneOffset);
+                result = Lib.BusinessLogic.GarmentDebtBalance.Pdf.GarmentBalanceCardPDFGenerator.Generate(data, filter.month, filter.year, false, filter.import, IdentityService.TimezoneOffset);
                 //filename += ".xlsx";
 
                 var bytes = result.ToArray();

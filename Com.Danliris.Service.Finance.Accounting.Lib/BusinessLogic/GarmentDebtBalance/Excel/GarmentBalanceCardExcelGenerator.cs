@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance.Excel
 {
-    public static class GarmentDebtBalanceExcel
+    public static class GarmentBalanceCardExcelGenerator
     {
         public static MemoryStream GenerateExcel(GarmentDebtBalanceIndexDto data,int month, int year, string supplierName,bool isImport,int timeZone)
         {

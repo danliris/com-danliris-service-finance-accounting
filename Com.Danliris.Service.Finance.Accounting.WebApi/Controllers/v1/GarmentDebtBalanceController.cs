@@ -1,4 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance.Excel;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance.Pdf;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentDebtBalance;
@@ -37,8 +39,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             _identityService.TimezoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
         }
 
-        [HttpPost]
-        public IActionResult Post([FromBody] CustomsFormDto form)
+        [HttpPost("customs")]
+        public IActionResult PostCustoms([FromBody] CustomsFormDto form)
         {
             try
             {
@@ -59,6 +61,72 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpPut("invoice/{deliveryOrderId}")]
+        public IActionResult PutInvoice([FromRoute] int deliveryOrderId, [FromBody] InvoiceFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.UpdateFromInvoice(deliveryOrderId, form);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("internal-note/{deliveryOrderId}")]
+        public IActionResult PutInternalNote([FromRoute] int deliveryOrderId, [FromBody] InternalNoteFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.UpdateFromInternalNote(deliveryOrderId, form);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("bank-expenditure-note/{deliveryOrderId}")]
+        public IActionResult PutBankExpenditureNote([FromRoute] int deliveryOrderId, [FromBody] BankExpenditureNoteFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.UpdateFromBankExpenditureNote(deliveryOrderId, form);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
         [HttpGet("summary")]
         public IActionResult GetSummary([FromQuery] int supplierId, [FromQuery] int month, [FromQuery] int year, [FromQuery] bool isForeignCurrency, [FromQuery] bool supplierIsImport)
         {
@@ -68,10 +136,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
                 var data = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
 
-                //var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Ok(id);
-
-                //return Created(string.Concat(Request.Path, "/", id), result);
-
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
@@ -79,12 +143,69 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     info = new
                     {
                         Count = data.Count,
-                        Order= new List<string>(),
+                        Order = new List<string>(),
                         Selected = new List<string>()
                     },
                     message = General.OK_MESSAGE,
                     statusCode = General.OK_STATUS_CODE
                 });
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("summary/downloads/pdf")]
+        public IActionResult GetPdf([FromQuery] int supplierId, [FromQuery] int month, [FromQuery] int year, [FromQuery] bool isForeignCurrency, [FromQuery] bool supplierIsImport)
+        {
+            try
+            {
+                VerifyUser();
+
+                var data = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
+                var stream = GarmentDebtBalancePdfGenerator.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
+
+                var filename = "SALDO HUTANG LOKAL";
+                if (supplierIsImport)
+                    filename = "SALDO HUTANG IMPOR";
+                filename += ".pdf";
+
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = filename
+                };
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("summary/downloads/xls")]
+        public IActionResult GetXls([FromQuery] int supplierId, [FromQuery] int month, [FromQuery] int year, [FromQuery] bool isForeignCurrency, [FromQuery] bool supplierIsImport)
+        {
+            try
+            {
+                VerifyUser();
+
+                var data = _service.GetDebtBalanceSummary(supplierId, month, year, isForeignCurrency, supplierIsImport);
+                var stream = GarmentDebtBalanceExcelGenerator.Generate(data, month, year, isForeignCurrency, supplierIsImport, _identityService.TimezoneOffset);
+
+                var filename = "SALDO HUTANG LOKAL";
+                if (supplierIsImport)
+                    filename = "SALDO HUTANG IMPOR";
+                filename += ".xlsx";
+
+                var bytes = stream.ToArray();
+
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
             }
             catch (Exception e)
             {
