@@ -143,8 +143,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     cellCenter.Colspan = 13;
                     cellCenter.Phrase = new Phrase("SALDO AWAL", _normalFont);
                     table.AddCell(cellCenter);
-                    cellCenter.Phrase = new Phrase(item.RemainBalance.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                    table.AddCell(cellCenter);
+                    cellRight.Phrase = new Phrase(item.RemainBalance.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
                 }
                 else
                 {
@@ -154,16 +154,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     table.AddCell(cellCenter);
                     cellCenter.Rowspan = 1;
                     cellCenter.Colspan = 1;
-                    cellCenter.Phrase = new Phrase(report.Data.Sum(s => s.MutationPurchase).ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                    table.AddCell(cellCenter);
-                    cellCenter.Phrase = new Phrase(report.Data.Sum(s => s.CurrencyMutationPurchase).ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                    table.AddCell(cellCenter);
-                    cellCenter.Phrase = new Phrase(report.Data.Sum(s => s.MutationPayment).ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                    table.AddCell(cellCenter);
-                    cellCenter.Phrase = new Phrase(report.Data.Sum(s => s.CurrencyMutationPayment).ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                    table.AddCell(cellCenter);
-                    cellCenter.Phrase = new Phrase(report.Data.Sum(s => s.RemainBalance).ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                    table.AddCell(cellCenter);
+                    cellRight.Phrase = new Phrase(report.Data.Sum(s => s.MutationPurchase).ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(report.Data.Sum(s => s.CurrencyMutationPurchase).ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(report.Data.Sum(s => s.MutationPayment).ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(report.Data.Sum(s => s.CurrencyMutationPayment).ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(report.Data.Sum(s => s.RemainBalance).ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
                 }
             }
 
