@@ -32,7 +32,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
 
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Pembelian", DataType = typeof(string) });
+            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Pembelian Valas", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Pembayaran", DataType = typeof(string) });
+            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Pembayaran Valas", DataType = typeof(string) });
 
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(string) });
 
@@ -42,11 +44,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 foreach (var report in result.Data)
                 {
                     reportDataTable.Rows.Add(
-                        report.InvoiceDate.AddHours(timeZone).ToString("dd/MM/yyyy"),
+                        report.ArrivalDate.AddHours(timeZone).ToString("dd/MM/yyyy"),
                         report.ProductNames,
                         report.PurchasingCategoryName,
-                        report.PaymentBills,
                         report.BillsNo,
+                        report.PaymentBills,
                         report.GarmentDeliveryOrderNo,
                         report.BankExpenditureNoteNo,
                         report.InternalNoteNo,
@@ -57,7 +59,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                         report.IncomeTaxAmount.ToString("N2", ci),
                         report.TotalInvoice.ToString("N2", ci),
                         report.MutationPurchase.ToString("N2", ci),
+                        report.CurrencyMutationPurchase.ToString("N2", ci),
                         report.MutationPayment.ToString("N2", ci),
+                        report.CurrencyMutationPayment.ToString("N2", ci),
                         report.RemainBalance.ToString("N2", ci)
                         );
                 }
@@ -112,13 +116,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
 
                         worksheet.Cells[rowStartHeader, colStartHeader].Value = "Mutasi";
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 1].Merge = true;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 1].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 1].Style.Font.Bold = true;
-                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 1].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Merge = true;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.Font.Bold = true;
+                        worksheet.Cells[rowStartHeader, colStartHeader, rowStartHeader, colStartHeader + 3].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                     }
-                    else if (column.ColumnName == "DPP Valas" || column.ColumnName == "PPN" || column.ColumnName == "PPH" || column.ColumnName == "Total"|| column.ColumnName == "Pembayaran")
+                    else if (column.ColumnName == "DPP Valas" || column.ColumnName == "PPN" || column.ColumnName == "PPH" || column.ColumnName == "Total"|| column.ColumnName == "Pembayaran"||column.ColumnName == "Pembayaran Valas" || column.ColumnName == "Pembelian Valas")
                     {
                         var rowStartHeaderSpan = rowStartHeader + 1;
                         worksheet.Cells[rowStartHeaderSpan, colStartHeader].Value = column.ColumnName;
