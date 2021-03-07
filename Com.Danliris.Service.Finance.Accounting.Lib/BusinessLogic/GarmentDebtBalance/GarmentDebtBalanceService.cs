@@ -256,5 +256,52 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 GroupTotalCurrency = groupData
             };
         }
+
+        public int RemoveBalance(int deliveryOrderId)
+        {
+            var model = _dbContext.GarmentDebtBalances.FirstOrDefault(element => element.GarmentDeliveryOrderId == deliveryOrderId);
+            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
+            _dbContext.GarmentDebtBalances.Update(model);
+
+            _dbContext.SaveChanges();
+
+            return model.Id;
+        }
+
+        public int EmptyInternalNoteValue(int deliveryOrderId)
+        {
+            var model = _dbContext.GarmentDebtBalances.FirstOrDefault(element => element.GarmentDeliveryOrderId == deliveryOrderId);
+            model.SetInternalNote(0, null);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.GarmentDebtBalances.Update(model);
+
+            _dbContext.SaveChanges();
+
+            return model.Id;
+        }
+
+        public int EmptyInvoiceValue(int deliveryOrderId)
+        {
+            var model = _dbContext.GarmentDebtBalances.FirstOrDefault(element => element.GarmentDeliveryOrderId == deliveryOrderId);
+            model.SetInvoice(0, DateTime.MinValue, null, 0, 0, false, false, 0, 0);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.GarmentDebtBalances.Update(model);
+
+            _dbContext.SaveChanges();
+
+            return model.Id;
+        }
+
+        public int EmptyBankExpenditureNoteValue(int deliveryOrderId)
+        {
+            var model = _dbContext.GarmentDebtBalances.FirstOrDefault(element => element.GarmentDeliveryOrderId == deliveryOrderId);
+            model.SetBankExpenditureNote(0, null, 0, 0);
+            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            _dbContext.GarmentDebtBalances.Update(model);
+
+            _dbContext.SaveChanges();
+
+            return model.Id;
+        }
     }
 }

@@ -125,6 +125,94 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpPut("remove-customs/{deliveryOrderId}")]
+        public IActionResult RemoveCustom([FromBody] int deliveryOrderId)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.RemoveBalance(deliveryOrderId);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("remove-invoice/{deliveryOrderId}")]
+        public IActionResult RemoveInvoice([FromRoute] int deliveryOrderId)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.EmptyInvoiceValue(deliveryOrderId);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("remove-internal-note/{deliveryOrderId}")]
+        public IActionResult RemoveInternalNote([FromRoute] int deliveryOrderId)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.EmptyInternalNoteValue(deliveryOrderId);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpPut("remove-bank-expenditure-note/{deliveryOrderId}")]
+        public IActionResult RemoveBankExpenditureNote([FromRoute] int deliveryOrderId)
+        {
+            try
+            {
+                VerifyUser();
+
+                var id = _service.EmptyBankExpenditureNoteValue(deliveryOrderId);
+
+                var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
         [HttpGet("summary")]
         public IActionResult GetSummary([FromQuery] int supplierId, [FromQuery] int month, [FromQuery] int year, [FromQuery] bool isForeignCurrency, [FromQuery] bool supplierIsImport)
         {
