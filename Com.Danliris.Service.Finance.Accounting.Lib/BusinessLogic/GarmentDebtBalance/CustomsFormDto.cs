@@ -21,5 +21,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public DateTimeOffset ArrivalDate { get; set; }
         public double DPPAmount { get; set; }
         public double CurrencyDPPAmount { get; set; }
+        public string PaymentType { get; set; }
     }
 }

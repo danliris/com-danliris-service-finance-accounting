@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
 
         }
 
-        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double currencyRate, string productNames, DateTimeOffset arrivalDate, double dppAmount, double currencyDPPAmount)
+        public GarmentDebtBalanceModel(int purchasingCategoryId, string purchasingCategoryName, string billsNo, string paymentBills, int garmentDeliveryOrderId, string garmentDeliveryOrderNo, int supplierId, string supplierCode, string supplierName, bool supplierIsImport, int currencyId, string currencyCode, double currencyRate, string productNames, DateTimeOffset arrivalDate, double dppAmount, double currencyDPPAmount, string paymentType)
         {
             PurchasingCategoryId = purchasingCategoryId;
             PurchasingCategoryName = purchasingCategoryName;
@@ -32,6 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             ArrivalDate = arrivalDate;
             DPPAmount = dppAmount;
             CurrencyDPPAmount = currencyDPPAmount;
+            PaymentType = paymentType;
         }
 
         public int PurchasingCategoryId { get; private set; }
@@ -77,9 +78,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         public string BankExpenditureNoteNo { get; private set; }
         public double BankExpenditureNoteInvoiceAmount { get; private set; }
         public double CurrencyBankExpenditureNoteInvoiceAmount { get; private set; }
-        public string ProductNames { get; set; }
-        public DateTimeOffset ArrivalDate { get; set; }
-        public string PaymentType { get; internal set; }
+        public string ProductNames { get; private set; }
+        public DateTimeOffset ArrivalDate { get; private set; }
+        [MaxLength(128)]
+        public string PaymentType { get; private set; }
 
         public void SetInternalNote(int internalNoteId, string internalNoteNo)
         {
