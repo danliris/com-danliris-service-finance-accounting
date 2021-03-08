@@ -61,7 +61,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         public int CreateFromCustoms(CustomsFormDto form)
         {
-            var model = new GarmentDebtBalanceModel(form.PurchasingCategoryId, form.PurchasingCategoryName, form.BillsNo, form.PaymentBills, form.GarmentDeliveryOrderId, form.GarmentDeliveryOrderNo, form.SupplierId, form.SupplierCode, form.SupplierName, form.SupplierIsImport, form.CurrencyId, form.CurrencyCode, form.CurrencyRate, form.ProductNames, form.ArrivalDate, form.DPPAmount, form.CurrencyDPPAmount);
+            var model = new GarmentDebtBalanceModel(form.PurchasingCategoryId, form.PurchasingCategoryName, form.BillsNo, form.PaymentBills, form.GarmentDeliveryOrderId, form.GarmentDeliveryOrderNo, form.SupplierId, form.SupplierCode, form.SupplierName, form.SupplierIsImport, form.CurrencyId, form.CurrencyCode, form.CurrencyRate, form.ProductNames, form.ArrivalDate, form.DPPAmount, form.CurrencyDPPAmount, form.PaymentType);
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.GarmentDebtBalances.Add(model);
 
