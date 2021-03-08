@@ -36,6 +36,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public double TotalInvoice { get; set; }
         public double MutationPurchase { get; set; }
         public double MutationPayment { get; set; }
+        public double CurrencyMutationPurchase { get; set; }
+        public double CurrencyMutationPayment { get; set; }
         public double RemainBalance { get; set; }
         public DateTimeOffset ArrivalDate { get; private set; }
 
@@ -70,6 +72,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             TotalInvoice = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount;
             MutationPurchase = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount;
             MutationPayment = model.BankExpenditureNoteInvoiceAmount;
+            CurrencyMutationPayment = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount;
+            CurrencyMutationPurchase = model.CurrencyBankExpenditureNoteInvoiceAmount;
             RemainBalance = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount - model.BankExpenditureNoteInvoiceAmount;
             ArrivalDate = model.ArrivalDate;
         }
@@ -82,7 +86,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             ProductNames = productName;
             RemainBalance = remainBalance;
-            InvoiceDate = DateTimeOffset.MaxValue;
+            ArrivalDate = DateTimeOffset.MaxValue;
         }
         /// <summary>
         /// override for total (pdf)
@@ -95,7 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             ProductNames = productName;
             RemainBalance = remainBalance;
-            InvoiceDate = DateTimeOffset.MinValue;
+            ArrivalDate = DateTimeOffset.MinValue;
 
         }
     }
