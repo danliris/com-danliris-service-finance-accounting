@@ -20,7 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Kategori Pembelian", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "No BP Besar", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "No BP Kecil", DataType = typeof(string) });
-            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "No SJI", DataType = typeof(string) });
+            reportDataTable.Columns.Add(new DataColumn() { ColumnName = "No SJ", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "No Bukti Pengeluaran Bank", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "No NI", DataType = typeof(string) });
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "No Invoice", DataType = typeof(string) });
