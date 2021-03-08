@@ -47,7 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
         {
             try
             {
-                //VerifyUser();
+                VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
                 var data = Service.GetDebtBalanceCardIndex(filter.supplierId,filter.month,filter.year);
@@ -80,7 +80,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
         {
             try
             {
-                //VerifyUser();
+                VerifyUser();
                 var data = Service.GetDebtBalanceCardIndex(filter.supplierId, filter.month, filter.year);
 
                 MemoryStream result = new MemoryStream();
@@ -106,7 +106,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
         {
             try
             {
-                //VerifyUser();
+                VerifyUser();
                 var data = Service.GetDebtBalanceCardWithBalanceBeforeIndex(filter.supplierId, filter.month, filter.year);
 
                 MemoryStream result = new MemoryStream();
