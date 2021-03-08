@@ -303,5 +303,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             return model.Id;
         }
+
+        public List<GarmentDebtBalanceDetailDto> GetDebtBalanceDetail(DateTimeOffset arrivalDate, GarmentDebtBalanceDetailFilterEnum supplierTypeFilter, int supplierId, int currencyId, string paymentType)
+        {
+            var query = _dbContext.GarmentDebtBalances.Where(entity => (entity.DPPAmount + entity.CurrencyDPPAmount + entity.VATAmount - entity.IncomeTaxAmount) - entity.BankExpenditureNoteInvoiceAmount != 0);
+
+            query = query.Where(entity => entity.ArrivalDate != DateTimeOffset.MinValue && entity.ArrivalDate <= arrivalDate);
+
+            if (supplierId > 0)
+                query = query.Where(entity => entity.SupplierId == supplierId);
+
+            if (supplierTypeFilter == GarmentDebtBalanceDetailFilterEnum.SupplierImport)
+                query = query.Where(entity => entity.SupplierIsImport);
+
+            if (supplierTypeFilter == GarmentDebtBalanceDetailFilterEnum.SupplierLocal)
+                query = query.Where(entity => !entity.SupplierIsImport);
+
+            if (currencyId > 0)
+                query = query.Where(entity => entity.CurrencyId == currencyId);
+
+            if (!string.IsNullOrWhiteSpace(paymentType))
+                query = query.Where(entity => entity.PaymentType == paymentType);
+
+            var queryResult = query.ToList();
+            var result = new List<GarmentDebtBalanceDetailDto>();
+            var now = DateTimeOffset.Now;
+            foreach (var element in queryResult)
+            {
+                var debtAging = (int)(now - element.ArrivalDate).TotalDays;
+                var total = element.DPPAmount + element.VATAmount - element.IncomeTaxAmount;
+                var currencyTotal = element.CurrencyDPPAmount + element.CurrencyVATAmount - element.CurrencyIncomeTaxAmount;
+                result.Add(new GarmentDebtBalanceDetailDto(element.SupplierId, element.SupplierCode, element.SupplierName, element.BillsNo, element.PaymentBills, element.GarmentDeliveryOrderId, element.GarmentDeliveryOrderNo, element.PaymentType, element.ArrivalDate, debtAging, element.InternalNoteId, element.InternalNoteNo, element.InvoiceId, element.InvoiceNo, element.DPPAmount, element.CurrencyDPPAmount, element.VATAmount, element.CurrencyVATAmount, element.IncomeTaxAmount, element.CurrencyIncomeTaxAmount, total, currencyTotal, element.CurrencyId, element.CurrencyCode, element.CurrencyRate));
+            }
+
+            return result;
+        }
     }
 }

@@ -79,7 +79,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         public double CurrencyBankExpenditureNoteInvoiceAmount { get; private set; }
         public string ProductNames { get; set; }
         public DateTimeOffset ArrivalDate { get; set; }
-
+        public string PaymentType { get; internal set; }
 
         public void SetInternalNote(int internalNoteId, string internalNoteNo)
         {

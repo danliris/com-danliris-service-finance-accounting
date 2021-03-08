@@ -341,5 +341,90 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
+
+        [HttpGet("detail")]
+        public IActionResult GetDetail([FromQuery] DateTimeOffset arrivalDate, [FromQuery] GarmentDebtBalanceDetailFilterEnum supplierTypeFilter, [FromQuery] int supplierId, [FromQuery] int currencyId, [FromQuery] string paymentType)
+        {
+            try
+            {
+                VerifyUser();
+
+                var data = _service.GetDebtBalanceDetail(arrivalDate, supplierTypeFilter, supplierId, currencyId, paymentType);
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data = data,
+                    info = new
+                    {
+                        Count = data.Count,
+                        Order = new List<string>(),
+                        Selected = new List<string>()
+                    },
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("detail/downloads/pdf")]
+        public IActionResult GetPdf([FromQuery] DateTimeOffset arrivalDate, [FromQuery] GarmentDebtBalanceDetailFilterEnum supplierTypeFilter, [FromQuery] int supplierId, [FromQuery] int currencyId, [FromQuery] string paymentType)
+        {
+            try
+            {
+                VerifyUser();
+
+                var data = _service.GetDebtBalanceDetail(arrivalDate, supplierTypeFilter, supplierId, currencyId, paymentType);
+                var stream = GarmentDebtBalanceDetailPDFGenerator.Generate(data, _identityService.TimezoneOffset);
+
+                var filename = "LAPORAN RINCIAN HUTANG";
+                filename += ".pdf";
+
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = filename
+                };
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("detail/downloads/xls")]
+        public IActionResult GetXls([FromQuery] DateTimeOffset arrivalDate, [FromQuery] GarmentDebtBalanceDetailFilterEnum supplierTypeFilter, [FromQuery] int supplierId, [FromQuery] int currencyId, [FromQuery] string paymentType)
+        {
+            try
+            {
+                VerifyUser();
+
+                var data = _service.GetDebtBalanceDetail(arrivalDate, supplierTypeFilter, supplierId, currencyId, paymentType);
+                var stream = GarmentDebtBalanceDetailExcelGenerator.Generate(data, _identityService.TimezoneOffset);
+
+                var filename = "LAPORAN RINCIAN HUTANG";
+                filename += ".xlsx";
+
+                var bytes = stream.ToArray();
+
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
     }
 }
