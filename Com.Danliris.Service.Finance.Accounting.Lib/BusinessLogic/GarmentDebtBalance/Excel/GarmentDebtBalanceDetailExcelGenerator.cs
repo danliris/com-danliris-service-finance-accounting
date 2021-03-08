@@ -79,11 +79,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 currentRow++;
             }
 
-            worksheet.Cells[$"A5:F{currentRow}"].AutoFitColumns();
-            worksheet.Cells[$"A5:F{currentRow}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[$"A5:F{currentRow}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[$"A5:F{currentRow}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[$"A5:F{currentRow}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A5:Q{currentRow}"].AutoFitColumns();
+            worksheet.Cells[$"A5:Q{currentRow}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A5:Q{currentRow}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A5:Q{currentRow}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A5:Q{currentRow}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
         }
 
         private static void SetTableHeader(ExcelWorksheet worksheet)
@@ -151,7 +151,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             var company = "PT DAN LIRIS";
 
-            var title = "LEDGER HUTANG LOKAL";
+            var title = "LAPORAN RINCIAN HUTANG";
 
             worksheet.Cells["A1"].Value = company;
             worksheet.Cells["A1:Q1"].Merge = true;
