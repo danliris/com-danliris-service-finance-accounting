@@ -142,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         {
             var model = _dbContext.GarmentDebtBalances.FirstOrDefault(entity => entity.GarmentDeliveryOrderId == deliveryOrderId);
 
-            model.SetInvoice(form.InvoiceId, form.InvoiceDate, form.InvoiceNo, form.VATAmount, form.IncomeTaxAmount, form.IsPayVAT, form.IsPayIncomeTax, form.CurrencyVATAmount, form.CurrencyIncomeTaxAmount);
+            model.SetInvoice(form.InvoiceId, form.InvoiceDate, form.InvoiceNo, form.VATAmount, form.IncomeTaxAmount, form.IsPayVAT, form.IsPayIncomeTax, form.CurrencyVATAmount, form.CurrencyIncomeTaxAmount, form.VATNo);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
 
             _dbContext.GarmentDebtBalances.Update(model);
@@ -283,7 +283,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public int EmptyInvoiceValue(int deliveryOrderId)
         {
             var model = _dbContext.GarmentDebtBalances.FirstOrDefault(element => element.GarmentDeliveryOrderId == deliveryOrderId);
-            model.SetInvoice(0, DateTime.MinValue, null, 0, 0, false, false, 0, 0);
+            model.SetInvoice(0, DateTime.MinValue, null, 0, 0, false, false, 0, 0, null);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             _dbContext.GarmentDebtBalances.Update(model);
 
@@ -327,13 +327,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             var queryResult = query.ToList();
             var result = new List<GarmentDebtBalanceDetailDto>();
-            var now = DateTimeOffset.Now;
             foreach (var element in queryResult)
             {
-                var debtAging = (int)(now - element.ArrivalDate).TotalDays;
+                var debtAging = Math.Abs((int)(arrivalDate - element.ArrivalDate).TotalDays);
                 var total = element.DPPAmount + element.VATAmount - element.IncomeTaxAmount;
                 var currencyTotal = element.CurrencyDPPAmount + element.CurrencyVATAmount - element.CurrencyIncomeTaxAmount;
-                result.Add(new GarmentDebtBalanceDetailDto(element.SupplierId, element.SupplierCode, element.SupplierName, element.BillsNo, element.PaymentBills, element.GarmentDeliveryOrderId, element.GarmentDeliveryOrderNo, element.PaymentType, element.ArrivalDate, debtAging, element.InternalNoteId, element.InternalNoteNo, element.InvoiceId, element.InvoiceNo, element.DPPAmount, element.CurrencyDPPAmount, element.VATAmount, element.CurrencyVATAmount, element.IncomeTaxAmount, element.CurrencyIncomeTaxAmount, total, currencyTotal, element.CurrencyId, element.CurrencyCode, element.CurrencyRate));
+                result.Add(new GarmentDebtBalanceDetailDto(element.SupplierId, element.SupplierCode, element.SupplierName, element.BillsNo, element.PaymentBills, element.GarmentDeliveryOrderId, element.GarmentDeliveryOrderNo, element.PaymentType, element.ArrivalDate, debtAging, element.InternalNoteId, element.InternalNoteNo, element.InvoiceId, element.InvoiceNo, element.DPPAmount, element.CurrencyDPPAmount, element.VATAmount, element.CurrencyVATAmount, element.IncomeTaxAmount, element.CurrencyIncomeTaxAmount, total, currencyTotal, element.CurrencyId, element.CurrencyCode, element.CurrencyRate, element.VATNo));
             }
 
             return result;

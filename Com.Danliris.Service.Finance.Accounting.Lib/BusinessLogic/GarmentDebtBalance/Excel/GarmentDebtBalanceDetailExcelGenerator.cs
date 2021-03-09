@@ -2,6 +2,7 @@
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -10,13 +11,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
     public static class GarmentDebtBalanceDetailExcelGenerator
     {
 
-        public static MemoryStream Generate(List<GarmentDebtBalanceDetailDto> data, int timezoneOffset)
+        public static MemoryStream Generate(List<GarmentDebtBalanceDetailDto> data, DateTimeOffset arrivalDate, int timezoneOffset)
         {
             using (var package = new ExcelPackage())
             {
                 var worksheet = package.Workbook.Worksheets.Add("Sheet 1");
 
-                SetTitle(worksheet);
+                SetTitle(worksheet, arrivalDate, timezoneOffset);
                 SetTableHeader(worksheet);
                 SetData(worksheet, data, timezoneOffset);
 
@@ -147,8 +148,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             worksheet.Cells["A4:Q4"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
         }
 
-        private static void SetTitle(ExcelWorksheet worksheet)
+        private static void SetTitle(ExcelWorksheet worksheet, DateTimeOffset arrivalDate, int timezoneOffset)
         {
+            var cultureInfo = new CultureInfo("id-ID");
+            var period = $"PER {arrivalDate.AddHours(timezoneOffset).ToString("MMMM yyyy", cultureInfo)}";
+
             var company = "PT DAN LIRIS";
 
             var title = "LAPORAN RINCIAN HUTANG";
@@ -161,6 +165,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             worksheet.Cells["A2:Q2"].Merge = true;
             worksheet.Cells["A2:Q2"].Style.Font.Size = 20;
             worksheet.Cells["A2:Q2"].Style.Font.Bold = true;
+            worksheet.Cells["A3"].Value = period;
+            worksheet.Cells["A3:Q3"].Merge = true;
+            worksheet.Cells["A3:Q3"].Style.Font.Size = 20;
+            worksheet.Cells["A3:Q3"].Style.Font.Bold = true;
         }
     }
 }

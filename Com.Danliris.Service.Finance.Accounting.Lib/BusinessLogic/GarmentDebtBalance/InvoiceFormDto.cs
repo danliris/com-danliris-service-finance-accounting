@@ -15,5 +15,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public bool IsPayIncomeTax { get; set; }
         public double CurrencyVATAmount { get; set; }
         public double CurrencyIncomeTaxAmount { get; set; }
+        public string VATNo { get; set; }
     }
 }
