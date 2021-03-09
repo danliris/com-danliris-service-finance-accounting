@@ -128,7 +128,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPut("remove-customs/{deliveryOrderId}")]
-        public IActionResult RemoveCustom([FromBody] int deliveryOrderId)
+        public IActionResult RemoveCustom([FromRoute] int deliveryOrderId)
         {
             try
             {
