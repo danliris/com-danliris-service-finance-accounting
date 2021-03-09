@@ -68,7 +68,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
         public double CurrencyIncomeTaxAmount { get; private set; }
         public bool IsPayVAT { get; private set; }
         public bool IsPayIncomeTax { get; private set; }
-
+        [MaxLength(128)]
+        public string VATNo { get; private set; }
         public int InternalNoteId { get; private set; }
         [MaxLength(64)]
         public string InternalNoteNo { get; private set; }
@@ -97,7 +98,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             CurrencyBankExpenditureNoteInvoiceAmount = currencyBankExpenditureNoteInvoiceAmount;
         }
 
-        public void SetInvoice(int invoiceId, DateTimeOffset invoiceDate, string invoiceNo, double vatAmount, double incomeTaxAmount, bool isPayVAT, bool isPayIncomeTax, double currencyVATAmount, double currencyIncomeTaxAmount)
+        public void SetInvoice(int invoiceId, DateTimeOffset invoiceDate, string invoiceNo, double vatAmount, double incomeTaxAmount, bool isPayVAT, bool isPayIncomeTax, double currencyVATAmount, double currencyIncomeTaxAmount, string vatNo)
         {
             InvoiceId = invoiceId;
             InvoiceDate = invoiceDate;
@@ -108,6 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             CurrencyIncomeTaxAmount = currencyIncomeTaxAmount;
             IsPayVAT = isPayVAT;
             IsPayIncomeTax = isPayIncomeTax;
+            VATNo = vatNo;
         }
     }
 }
