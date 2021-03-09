@@ -37,14 +37,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             new MonthName(12, "Desember"),
         };
 
-        public static MemoryStream Generate(List<GarmentDebtBalanceDetailDto> data, int timezoneOffset)
+        public static MemoryStream Generate(List<GarmentDebtBalanceDetailDto> data, DateTimeOffset arrivalDate, int timezoneOffset)
         {
             var document = new Document(PageSize.A4.Rotate(), 20, 20, 20, 20);
             var stream = new MemoryStream();
             var writer = PdfWriter.GetInstance(document, stream);
             document.Open();
 
-            SetTitle(document);
+            SetTitle(document, arrivalDate, timezoneOffset);
             SetTable(document, data, timezoneOffset);
             document.Close();
             byte[] byteInfo = stream.ToArray();
@@ -134,7 +134,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(datum.PaymentType, _normalFont);
                 table.AddCell(cellCenter);
-                cellCenter.Phrase = new Phrase(datum.ArrivalDate.ToString("dd/MM/yyyy"), _normalFont);
+                cellCenter.Phrase = new Phrase(datum.ArrivalDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy"), _normalFont);
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(datum.DebtAging.ToString(), _normalFont);
                 table.AddCell(cellCenter);
@@ -163,8 +163,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             document.Add(table);
         }
 
-        private static void SetTitle(Document document)
+        private static void SetTitle(Document document, DateTimeOffset arrivalDate, int timezoneOffset)
         {
+            var cultureInfo = new CultureInfo("id-ID");
+            var period = $"PER {arrivalDate.AddHours(timezoneOffset).ToString("MMMM yyyy", cultureInfo)}";
             var title = "LAPORAN RINCIAN HUTANG";
 
             var table = new PdfPTable(1)
@@ -184,6 +186,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             cellLeft.Phrase = new Phrase("PT. DAN LIRIS", _headerFont);
             table.AddCell(cellLeft);
             cellLeft.Phrase = new Phrase(title, _headerFont);
+            table.AddCell(cellLeft);
+            cellLeft.Phrase = new Phrase(period, _headerFont);
             table.AddCell(cellLeft);
 
             document.Add(table);

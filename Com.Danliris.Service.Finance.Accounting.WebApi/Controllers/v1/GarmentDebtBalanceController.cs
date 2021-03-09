@@ -436,7 +436,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 VerifyUser();
 
                 var data = _service.GetDebtBalanceDetail(arrivalDate, supplierTypeFilter, supplierId, currencyId, paymentType);
-                var stream = GarmentDebtBalanceDetailPDFGenerator.Generate(data, _identityService.TimezoneOffset);
+                var stream = GarmentDebtBalanceDetailPDFGenerator.Generate(data, arrivalDate, _identityService.TimezoneOffset);
 
                 var filename = "LAPORAN RINCIAN HUTANG";
                 filename += ".pdf";
@@ -463,7 +463,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 VerifyUser();
 
                 var data = _service.GetDebtBalanceDetail(arrivalDate, supplierTypeFilter, supplierId, currencyId, paymentType);
-                var stream = GarmentDebtBalanceDetailExcelGenerator.Generate(data, _identityService.TimezoneOffset);
+                var stream = GarmentDebtBalanceDetailExcelGenerator.Generate(data, arrivalDate, _identityService.TimezoneOffset);
 
                 var filename = "LAPORAN RINCIAN HUTANG";
                 filename += ".xlsx";
