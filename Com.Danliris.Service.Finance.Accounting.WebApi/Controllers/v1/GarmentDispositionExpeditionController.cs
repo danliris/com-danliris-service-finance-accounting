@@ -291,8 +291,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        [HttpPut("send-to-internal-note/{id}")]
-        public async Task<IActionResult> SendToInternalNote([FromRoute] int id)
+        [HttpPut("send-to-disposition-note/{id}")]
+        public async Task<IActionResult> SendToDispositionNote([FromRoute] int id)
         {
             try
             {
