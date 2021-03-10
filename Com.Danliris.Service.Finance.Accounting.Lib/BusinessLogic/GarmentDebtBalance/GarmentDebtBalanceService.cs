@@ -234,7 +234,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             //}
 
-            foreach (var supplierCurrency in supplierCurrencyData.Distinct())
+            foreach (var supplierCurrency in supplierCurrencyData.GroupBy(element => new { element.CurrencyId, element.SupplierId}).Select(element => new SupplierIdCurrencyIdDto(element.Key.SupplierId, element.Key.CurrencyId)))
             {
                 var current = tempResult.FirstOrDefault(element => element.CurrencyId == supplierCurrency.CurrencyId && element.SupplierId == element.SupplierId);
                 var initial = initialBalances.FirstOrDefault(element => element.CurrencyId == element.CurrencyId && element.SupplierId == element.SupplierId);
