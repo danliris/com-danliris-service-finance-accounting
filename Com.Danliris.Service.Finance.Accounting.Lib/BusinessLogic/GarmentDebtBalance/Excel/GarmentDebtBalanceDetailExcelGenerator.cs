@@ -54,7 +54,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 worksheet.Cells[$"H{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"I{currentRow}"].Value = item.InvoiceNo;
                 worksheet.Cells[$"I{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"J{currentRow}"].Value = "";
+                worksheet.Cells[$"J{currentRow}"].Value = item.VATNo;
                 worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"K{currentRow}"].Value = item.CurrencyDPPAmount == 0 ? item.DPPAmount : item.CurrencyDPPAmount;
                 worksheet.Cells[$"K{currentRow}"].Style.Numberformat.Format = "#,##0.00";

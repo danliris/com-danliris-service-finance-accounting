@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -83,6 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<VBRealizationDocumentUnitCostsItemModel> VBRealizationDocumentUnitCostsItems { get; set; }
 
         public DbSet<GarmentPurchasingExpeditionModel> GarmentPurchasingExpeditions { get; set; }
+        public DbSet<GarmentDispositionExpeditionModel> GarmentDispositionExpeditions { get; set; }
 
         public DbSet<BudgetCashflowTypeModel> BudgetCashflowTypes { get; set; }
         public DbSet<BudgetCashflowCategoryModel> BudgetCashflowCategories { get; set; }
