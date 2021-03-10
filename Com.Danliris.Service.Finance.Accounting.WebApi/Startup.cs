@@ -71,6 +71,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionExpedition;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -140,6 +141,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRequestDocumentService, VBRequestDocumentService>()
                 .AddTransient<IGarmentInvoicePaymentService, GarmentInvoicePaymentService>()
                 .AddTransient<IGarmentPurchasingExpeditionService, GarmentPurchasingExpeditionService>()
+                .AddTransient<IGarmentDispositionExpeditionService, GarmentDispositionExpeditionService>()
                 .AddTransient<IGarmentPurchasingExpeditionReportService, GarmentPurchasingExpeditionReportService>()
                 .AddTransient<IVBRealizationDocumentNonPOService, VBRealizationDocumentNonPOService>()
                 .AddTransient<IVBRealizationWithPOService, VBRealizationWithPOService>()

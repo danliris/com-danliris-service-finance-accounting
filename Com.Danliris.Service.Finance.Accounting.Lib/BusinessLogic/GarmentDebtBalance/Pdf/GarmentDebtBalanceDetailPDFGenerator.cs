@@ -142,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(datum.InvoiceNo, _normalFont);
                 table.AddCell(cellCenter);
-                cellCenter.Phrase = new Phrase("", _normalFont);
+                cellCenter.Phrase = new Phrase(datum.VATNo, _normalFont);
                 table.AddCell(cellCenter);
                 cellRight.Phrase = new Phrase(datum.CurrencyDPPAmount == 0 ? datum.DPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.CurrencyDPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
                 table.AddCell(cellRight);
