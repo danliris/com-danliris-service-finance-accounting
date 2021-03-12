@@ -56,7 +56,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         private static void SetTable(Document document, List<GarmentDebtBalanceDetailDto> data, int timezoneOffset)
         {
-            var table = new PdfPTable(17)
+            var table = new PdfPTable(19)
             {
                 WidthPercentage = 100,
                 HorizontalAlignment = Element.ALIGN_LEFT
