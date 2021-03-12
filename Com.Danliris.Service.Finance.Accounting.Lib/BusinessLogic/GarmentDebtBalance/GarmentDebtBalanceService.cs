@@ -269,9 +269,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     currencyCurrentBalanceAmount = currencyInitialBalanceAmount + (current.CurrencyPurchaseAmount - current.CurrencyPaymentAmount);
                 }
 
-                if (current != null)
+                if (current != null && currentBalanceAmount != 0)
                     result.Add(new GarmentDebtBalanceSummaryDto(current.SupplierId, current.SupplierCode, current.SupplierName, current.SupplierIsImport, current.CurrencyId, current.CurrencyCode, initialBalanceAmount, current.PurchaseAmount, current.PaymentAmount, currentBalanceAmount, currencyInitialBalanceAmount, current.CurrencyPurchaseAmount, current.CurrencyPaymentAmount, currencyCurrentBalanceAmount));
-                else if (current == null && initial != null)
+                else if (current == null && initial != null && currentBalanceAmount != 0)
                     result.Add(new GarmentDebtBalanceSummaryDto(initial.SupplierId, initial.SupplierCode, initial.SupplierName, initial.SupplierIsImport, initial.CurrencyId, initial.CurrencyCode, initialBalanceAmount, 0, 0, currentBalanceAmount, currencyInitialBalanceAmount, 0, 0, currencyCurrentBalanceAmount));
             }
 
