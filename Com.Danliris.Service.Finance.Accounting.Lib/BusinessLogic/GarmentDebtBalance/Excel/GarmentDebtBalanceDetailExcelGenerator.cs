@@ -46,7 +46,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 worksheet.Cells[$"D{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"E{currentRow}"].Value = item.PaymentType;
                 worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"F{currentRow}"].Value = item.ArrivalDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy");
+                worksheet.Cells[$"F{currentRow}"].Value = item.ArrivalDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy");
                 worksheet.Cells[$"F{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"G{currentRow}"].Value = item.DebtAging;
                 worksheet.Cells[$"G{currentRow}"].Style.Font.Size = 14;
