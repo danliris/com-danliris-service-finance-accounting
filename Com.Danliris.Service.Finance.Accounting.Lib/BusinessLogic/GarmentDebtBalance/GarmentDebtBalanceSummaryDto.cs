@@ -1,4 +1,6 @@
-﻿namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance
+﻿using System;
+
+namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance
 {
     public class GarmentDebtBalanceSummaryDto
     {
@@ -34,5 +36,10 @@
         public double CurrencyPurchaseAmount { get; private set; }
         public double CurrencyPaymentAmount { get; private set; }
         public double CurrencyCurrentBalance { get; private set; }
+
+        public void SetTotal()
+        {
+            SupplierName = "TOTAL";
+        }
     }
 }
