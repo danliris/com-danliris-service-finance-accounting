@@ -252,7 +252,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 var current = tempResult.FirstOrDefault(element => element.CurrencyId == supplierCurrency.CurrencyId && element.SupplierId == supplierCurrency.SupplierId);
                 var initial = initialBalances.FirstOrDefault(element => element.CurrencyId == supplierCurrency.CurrencyId && element.SupplierId == supplierCurrency.SupplierId);
                 var initialBalanceAmount = 0.0;
-                var currencyInitialBalanceAmounTt = 0.0;
+                var currencyInitialBalanceAmount = 0.0;
 
                 if (initial != null)
                 {
