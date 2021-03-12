@@ -193,9 +193,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             supplierCurrencyData.AddRange(tempResult.Select(element => new SupplierIdCurrencyIdDto(element.SupplierId, element.CurrencyId)));
 
-            var initialBalances = _dbContext
+            var initialBalanceQuery = _dbContext
                 .GarmentDebtBalances
-                .Where(entity => entity.ArrivalDate <= beginningOfMonth)
+                .Where(entity => entity.ArrivalDate <= beginningOfMonth && (entity.DPPAmount + entity.CurrencyDPPAmount + entity.VATAmount - entity.IncomeTaxAmount) - entity.BankExpenditureNoteInvoiceAmount != 0)
                 .GroupBy(entity => new { entity.SupplierId, entity.CurrencyId })
                 .Select(entity => new
                 {
@@ -209,9 +209,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     CurrencyPaymentAmount = entity.Sum(sum => sum.CurrencyBankExpenditureNoteInvoiceAmount),
                     PaymentAmount = entity.Sum(sum => sum.BankExpenditureNoteInvoiceAmount),
                     PurchaseAmount = entity.Sum(sum => sum.DPPAmount + sum.VATAmount - sum.IncomeTaxAmount)
-                })
-                .ToList();
+                });
 
+            if (supplierId > 0)
+                initialBalanceQuery = initialBalanceQuery.Where(entity => entity.SupplierId == supplierId);
+
+            if (supplierIsImport)
+                initialBalanceQuery = initialBalanceQuery.Where(entity => entity.SupplierIsImport == supplierIsImport);
+
+            if (isForeignCurrency)
+                initialBalanceQuery = initialBalanceQuery.Where(entity => !entity.SupplierIsImport && entity.CurrencyCode != "IDR");
+
+            if (!isForeignCurrency && !supplierIsImport)
+                initialBalanceQuery = initialBalanceQuery.Where(entity => !entity.SupplierIsImport && entity.CurrencyCode == "IDR");
+
+            var initialBalances = initialBalanceQuery.ToList();
             supplierCurrencyData.AddRange(initialBalances.Select(element => new SupplierIdCurrencyIdDto(element.SupplierId, element.CurrencyId)));
 
             var result = new List<GarmentDebtBalanceSummaryDto>();
@@ -234,10 +246,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             //}
 
-            foreach (var supplierCurrency in supplierCurrencyData.GroupBy(element => new { element.CurrencyId, element.SupplierId}).Select(element => new SupplierIdCurrencyIdDto(element.Key.SupplierId, element.Key.CurrencyId)))
+            var supplierCurrencies = supplierCurrencyData.GroupBy(element => new { element.CurrencyId, element.SupplierId }).Select(element => new SupplierIdCurrencyIdDto(element.Key.SupplierId, element.Key.CurrencyId)).ToList();
+            foreach (var supplierCurrency in supplierCurrencies)
             {
-                var current = tempResult.FirstOrDefault(element => element.CurrencyId == supplierCurrency.CurrencyId && element.SupplierId == element.SupplierId);
-                var initial = initialBalances.FirstOrDefault(element => element.CurrencyId == element.CurrencyId && element.SupplierId == element.SupplierId);
+                var current = tempResult.FirstOrDefault(element => element.CurrencyId == supplierCurrency.CurrencyId && element.SupplierId == supplierCurrency.SupplierId);
+                var initial = initialBalances.FirstOrDefault(element => element.CurrencyId == supplierCurrency.CurrencyId && element.SupplierId == supplierCurrency.SupplierId);
                 var initialBalanceAmount = 0.0;
                 var currencyInitialBalanceAmount = 0.0;
 
