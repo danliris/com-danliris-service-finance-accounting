@@ -6,7 +6,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 {
     public class GarmentDebtBalanceDetailDto
     {
-        public GarmentDebtBalanceDetailDto(int supplierId, string supplierCode, string supplierName, string billNo, string paymentBill, int deliveryOrderId, string deliveryOrderNo, string paymentType, DateTimeOffset arrivalDate, int debtAging, int internalNoteId, string internalNoteNo, int invoiceId, string invoiceNo, double dppAmount, double currencyDPPAmount, double vatAmount, double currencyVATAmount, double incomeTaxAmount, double currencyIncomeTaxAmount, double total, double currencyTotal, int currencyId, string currencyCode, double currencyRate, string vatNo)
+        public GarmentDebtBalanceDetailDto(int supplierId, string supplierCode, string supplierName, string billNo, string paymentBill, int deliveryOrderId, string deliveryOrderNo, string paymentType, DateTimeOffset? arrivalDate, int debtAging, int internalNoteId, string internalNoteNo, int invoiceId, string invoiceNo, double dppAmount, double currencyDPPAmount, double vatAmount, double currencyVATAmount, double incomeTaxAmount, double currencyIncomeTaxAmount, double total, double currencyTotal, int currencyId, string currencyCode, double currencyRate, string vatNo)
         {
             SupplierId = supplierId;
             SupplierCode = supplierCode;
@@ -44,7 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public int DeliveryOrderId { get; private set; }
         public string DeliveryOrderNo { get; private set; }
         public string PaymentType { get; private set; }
-        public DateTimeOffset ArrivalDate { get; private set; }
+        public DateTimeOffset? ArrivalDate { get; private set; }
         public int DebtAging { get; private set; }
         public int InternalNoteId { get; private set; }
         public string InternalNoteNo { get; private set; }
@@ -62,5 +62,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public string CurrencyCode { get; private set; }
         public double CurrencyRate { get; private set; }
         public string VATNo { get; private set; }
+
+        public void SetTotal()
+        {
+            VATNo = "TOTAL";
+        }
     }
 }

@@ -389,6 +389,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 result.Add(new GarmentDebtBalanceDetailDto(element.SupplierId, element.SupplierCode, element.SupplierName, element.BillsNo, element.PaymentBills, element.GarmentDeliveryOrderId, element.GarmentDeliveryOrderNo, element.PaymentType, element.ArrivalDate, debtAging, element.InternalNoteId, element.InternalNoteNo, element.InvoiceId, element.InvoiceNo, element.DPPAmount, element.CurrencyDPPAmount, element.VATAmount, element.CurrencyVATAmount, element.IncomeTaxAmount, element.CurrencyIncomeTaxAmount, total, currencyTotal, element.CurrencyId, element.CurrencyCode, element.CurrencyRate, element.VATNo));
             }
 
+            var totalResult = result.GroupBy(element => element.CurrencyId).Select(element => new GarmentDebtBalanceDetailDto(0, "", "", "", "", 0, "", "", null, 0, 0, "", 0, "", element.Sum(sum => sum.DPPAmount), element.Sum(sum => sum.CurrencyDPPAmount), element.Sum(sum => sum.VATAmount), element.Sum(sum => sum.CurrencyVATAmount), element.Sum(sum => sum.IncomeTaxAmount), element.Sum(sum => sum.CurrencyIncomeTaxAmount), element.Sum(sum => sum.Total), element.Sum(sum => sum.CurrencyTotal), element.FirstOrDefault().CurrencyId, element.FirstOrDefault().CurrencyCode, element.FirstOrDefault().CurrencyRate, "")).ToList();
+            var firstTotal = totalResult.FirstOrDefault();
+            if (firstTotal != null)
+                firstTotal.SetTotal();
             return result;
         }
     }

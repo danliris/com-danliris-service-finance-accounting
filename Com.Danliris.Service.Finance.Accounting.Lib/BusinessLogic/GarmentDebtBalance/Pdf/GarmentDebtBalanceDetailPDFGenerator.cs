@@ -109,6 +109,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             table.AddCell(cellCenterWithBackground);
             cellCenterWithBackground.Phrase = new Phrase("DPP", _subHeaderFont);
             table.AddCell(cellCenterWithBackground);
+            cellCenterWithBackground.Phrase = new Phrase("DPP Valas", _subHeaderFont);
+            table.AddCell(cellCenterWithBackground);
             cellCenterWithBackground.Phrase = new Phrase("PPN", _subHeaderFont);
             table.AddCell(cellCenterWithBackground);
             cellCenterWithBackground.Phrase = new Phrase("PPh", _subHeaderFont);
@@ -118,6 +120,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             cellCenterWithBackground.Phrase = new Phrase("MATA UANG", _subHeaderFont);
             table.AddCell(cellCenterWithBackground);
             cellCenterWithBackground.Phrase = new Phrase("RATE", _subHeaderFont);
+            table.AddCell(cellCenterWithBackground);
+            cellCenterWithBackground.Phrase = new Phrase("TOTAL (Valas)", _subHeaderFont);
             table.AddCell(cellCenterWithBackground);
             cellCenterWithBackground.Phrase = new Phrase("TOTAL (IDR)", _subHeaderFont);
             table.AddCell(cellCenterWithBackground);
@@ -134,7 +138,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(datum.PaymentType, _normalFont);
                 table.AddCell(cellCenter);
-                cellCenter.Phrase = new Phrase(datum.ArrivalDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy"), _normalFont);
+                cellCenter.Phrase = new Phrase(datum.ArrivalDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy"), _normalFont);
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(datum.DebtAging.ToString(), _normalFont);
                 table.AddCell(cellCenter);
@@ -144,7 +148,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(datum.VATNo, _normalFont);
                 table.AddCell(cellCenter);
-                cellRight.Phrase = new Phrase(datum.CurrencyDPPAmount == 0 ? datum.DPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.CurrencyDPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                cellRight.Phrase = new Phrase(datum.DPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                table.AddCell(cellRight);
+                cellRight.Phrase = new Phrase(datum.CurrencyDPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
                 table.AddCell(cellRight);
                 cellRight.Phrase = new Phrase(datum.CurrencyVATAmount == 0 ? datum.VATAmount.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.CurrencyVATAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
                 table.AddCell(cellRight);
@@ -156,6 +162,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(datum.CurrencyRate.ToString(), _normalFont);
                 table.AddCell(cellCenter);
+                cellRight.Phrase = new Phrase(datum.CurrencyTotal.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                table.AddCell(cellRight);
                 cellRight.Phrase = new Phrase(datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
                 table.AddCell(cellRight);
             }
