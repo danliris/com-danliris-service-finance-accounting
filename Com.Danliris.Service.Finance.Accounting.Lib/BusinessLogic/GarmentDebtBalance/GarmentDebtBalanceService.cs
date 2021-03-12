@@ -252,7 +252,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 var current = tempResult.FirstOrDefault(element => element.CurrencyId == supplierCurrency.CurrencyId && element.SupplierId == supplierCurrency.SupplierId);
                 var initial = initialBalances.FirstOrDefault(element => element.CurrencyId == supplierCurrency.CurrencyId && element.SupplierId == supplierCurrency.SupplierId);
                 var initialBalanceAmount = 0.0;
-                var currencyInitialBalanceAmount = 0.0;
+                var currencyInitialBalanceAmounTt = 0.0;
 
                 if (initial != null)
                 {
@@ -275,7 +275,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     result.Add(new GarmentDebtBalanceSummaryDto(initial.SupplierId, initial.SupplierCode, initial.SupplierName, initial.SupplierIsImport, initial.CurrencyId, initial.CurrencyCode, initialBalanceAmount, 0, 0, currentBalanceAmount, currencyInitialBalanceAmount, 0, 0, currencyCurrentBalanceAmount));
             }
 
-            result.AddRange(result.GroupBy(element => element.CurrencyId).Select(element => new GarmentDebtBalanceSummaryDto(0, "", "TOTAL", false, element.Key, element.FirstOrDefault().CurrencyCode, element.Sum(sum => sum.InitialBalance), element.Sum(sum => sum.PurchaseAmount), element.Sum(sum => sum.PaymentAmount), element.Sum(sum => sum.CurrentBalance), element.Sum(sum => sum.CurrencyInitialBalance), element.Sum(sum => sum.CurrencyPurchaseAmount), element.Sum(sum => sum.CurrencyPaymentAmount), element.Sum(sum => sum.CurrencyCurrentBalance))));
+            var total = result.GroupBy(element => element.CurrencyId).Select(element => new GarmentDebtBalanceSummaryDto(0, "", "", false, element.Key, element.FirstOrDefault().CurrencyCode, element.Sum(sum => sum.InitialBalance), element.Sum(sum => sum.PurchaseAmount), element.Sum(sum => sum.PaymentAmount), element.Sum(sum => sum.CurrentBalance), element.Sum(sum => sum.CurrencyInitialBalance), element.Sum(sum => sum.CurrencyPurchaseAmount), element.Sum(sum => sum.CurrencyPaymentAmount), element.Sum(sum => sum.CurrencyCurrentBalance)));
+            var firstRowTotal = total.FirstOrDefault();
+            if (firstRowTotal != null)
+                firstRowTotal.SetTotal();
+            result.AddRange(total);
 
             return result;
         }

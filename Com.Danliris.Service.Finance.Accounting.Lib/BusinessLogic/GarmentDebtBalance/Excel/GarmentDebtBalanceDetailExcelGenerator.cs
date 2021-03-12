@@ -46,7 +46,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 worksheet.Cells[$"D{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"E{currentRow}"].Value = item.PaymentType;
                 worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"F{currentRow}"].Value = item.ArrivalDate.AddHours(timezoneOffset);
+                worksheet.Cells[$"F{currentRow}"].Value = item.ArrivalDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy");
                 worksheet.Cells[$"F{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"G{currentRow}"].Value = item.DebtAging;
                 worksheet.Cells[$"G{currentRow}"].Style.Font.Size = 14;
@@ -56,35 +56,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 worksheet.Cells[$"I{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"J{currentRow}"].Value = item.VATNo;
                 worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"K{currentRow}"].Value = item.CurrencyDPPAmount == 0 ? item.DPPAmount : item.CurrencyDPPAmount;
+                worksheet.Cells[$"K{currentRow}"].Value = item.DPPAmount;
                 worksheet.Cells[$"K{currentRow}"].Style.Numberformat.Format = "#,##0.00";
                 worksheet.Cells[$"K{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"L{currentRow}"].Value = item.CurrencyVATAmount == 0 ? item.VATAmount : item.CurrencyVATAmount;
+                worksheet.Cells[$"L{currentRow}"].Value = item.CurrencyDPPAmount;
                 worksheet.Cells[$"L{currentRow}"].Style.Numberformat.Format = "#,##0.00";
                 worksheet.Cells[$"L{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"M{currentRow}"].Value = item.CurrencyIncomeTaxAmount == 0 ? item.IncomeTaxAmount : item.CurrencyIncomeTaxAmount;
+                worksheet.Cells[$"M{currentRow}"].Value = item.CurrencyVATAmount == 0 ? item.VATAmount : item.CurrencyVATAmount;
                 worksheet.Cells[$"M{currentRow}"].Style.Numberformat.Format = "#,##0.00";
                 worksheet.Cells[$"M{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"N{currentRow}"].Value = item.CurrencyTotal == 0 ? item.Total : item.CurrencyTotal;
+                worksheet.Cells[$"N{currentRow}"].Value = item.CurrencyIncomeTaxAmount == 0 ? item.IncomeTaxAmount : item.CurrencyIncomeTaxAmount;
                 worksheet.Cells[$"N{currentRow}"].Style.Numberformat.Format = "#,##0.00";
                 worksheet.Cells[$"N{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"O{currentRow}"].Value = item.CurrencyCode;
+                worksheet.Cells[$"O{currentRow}"].Value = item.CurrencyTotal == 0 ? item.Total : item.CurrencyTotal;
+                worksheet.Cells[$"O{currentRow}"].Style.Numberformat.Format = "#,##0.00";
                 worksheet.Cells[$"O{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"P{currentRow}"].Value = item.CurrencyRate;
-                worksheet.Cells[$"P{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                worksheet.Cells[$"P{currentRow}"].Value = item.CurrencyCode;
                 worksheet.Cells[$"P{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"Q{currentRow}"].Value = item.Total;
+                worksheet.Cells[$"Q{currentRow}"].Value = item.CurrencyRate;
                 worksheet.Cells[$"Q{currentRow}"].Style.Numberformat.Format = "#,##0.00";
                 worksheet.Cells[$"Q{currentRow}"].Style.Font.Size = 14;
+                worksheet.Cells[$"R{currentRow}"].Value = item.Total;
+                worksheet.Cells[$"R{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                worksheet.Cells[$"R{currentRow}"].Style.Font.Size = 14;
+                worksheet.Cells[$"S{currentRow}"].Value = item.CurrencyTotal;
+                worksheet.Cells[$"S{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                worksheet.Cells[$"S{currentRow}"].Style.Font.Size = 14;
 
                 currentRow++;
             }
 
-            worksheet.Cells[$"A5:Q{currentRow}"].AutoFitColumns();
-            worksheet.Cells[$"A5:Q{currentRow}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[$"A5:Q{currentRow}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[$"A5:Q{currentRow}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[$"A5:Q{currentRow}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A5:S{currentRow}"].AutoFitColumns();
+            worksheet.Cells[$"A5:S{currentRow}"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A5:S{currentRow}"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A5:S{currentRow}"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[$"A5:S{currentRow}"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
         }
 
         private static void SetTableHeader(ExcelWorksheet worksheet)
@@ -122,30 +128,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             worksheet.Cells["K4"].Value = "DPP";
             worksheet.Cells["K4"].Style.Font.Size = 14;
             worksheet.Cells["K4"].Style.Font.Bold = true;
-            worksheet.Cells["L4"].Value = "PPN";
+            worksheet.Cells["L4"].Value = "DPP Valas";
             worksheet.Cells["L4"].Style.Font.Size = 14;
             worksheet.Cells["L4"].Style.Font.Bold = true;
-            worksheet.Cells["M4"].Value = "PPh";
+            worksheet.Cells["M4"].Value = "PPN";
             worksheet.Cells["M4"].Style.Font.Size = 14;
             worksheet.Cells["M4"].Style.Font.Bold = true;
-            worksheet.Cells["N4"].Value = "TOTAL (DPP + PPN - PPh)";
+            worksheet.Cells["N4"].Value = "PPh";
             worksheet.Cells["N4"].Style.Font.Size = 14;
             worksheet.Cells["N4"].Style.Font.Bold = true;
-            worksheet.Cells["O4"].Value = "MATA UANG";
+            worksheet.Cells["O4"].Value = "TOTAL (DPP + PPN - PPh)";
             worksheet.Cells["O4"].Style.Font.Size = 14;
             worksheet.Cells["O4"].Style.Font.Bold = true;
-            worksheet.Cells["P4"].Value = "RATE";
+            worksheet.Cells["P4"].Value = "MATA UANG";
             worksheet.Cells["P4"].Style.Font.Size = 14;
             worksheet.Cells["P4"].Style.Font.Bold = true;
-            worksheet.Cells["Q4"].Value = "TOTAL (IDR)";
+            worksheet.Cells["Q4"].Value = "RATE";
             worksheet.Cells["Q4"].Style.Font.Size = 14;
             worksheet.Cells["Q4"].Style.Font.Bold = true;
+            worksheet.Cells["R4"].Value = "TOTAL (IDR)";
+            worksheet.Cells["R4"].Style.Font.Size = 14;
+            worksheet.Cells["R4"].Style.Font.Bold = true;
+            worksheet.Cells["S4"].Value = "TOTAL (Valas)";
+            worksheet.Cells["S4"].Style.Font.Size = 14;
+            worksheet.Cells["S4"].Style.Font.Bold = true;
 
-            worksheet.Cells["A4:Q4"].AutoFitColumns();
-            worksheet.Cells["A4:Q4"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells["A4:Q4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells["A4:Q4"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells["A4:Q4"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A4:S4"].AutoFitColumns();
+            worksheet.Cells["A4:S4"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A4:S4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A4:S4"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells["A4:S4"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
         }
 
         private static void SetTitle(ExcelWorksheet worksheet, DateTimeOffset arrivalDate, int timezoneOffset)
@@ -158,17 +170,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             var title = "LAPORAN RINCIAN HUTANG";
 
             worksheet.Cells["A1"].Value = company;
-            worksheet.Cells["A1:Q1"].Merge = true;
-            worksheet.Cells["A1:Q1"].Style.Font.Size = 20;
-            worksheet.Cells["A1:Q1"].Style.Font.Bold = true;
+            worksheet.Cells["A1:S1"].Merge = true;
+            worksheet.Cells["A1:S1"].Style.Font.Size = 20;
+            worksheet.Cells["A1:S1"].Style.Font.Bold = true;
             worksheet.Cells["A2"].Value = title;
-            worksheet.Cells["A2:Q2"].Merge = true;
-            worksheet.Cells["A2:Q2"].Style.Font.Size = 20;
-            worksheet.Cells["A2:Q2"].Style.Font.Bold = true;
+            worksheet.Cells["A2:S2"].Merge = true;
+            worksheet.Cells["A2:S2"].Style.Font.Size = 20;
+            worksheet.Cells["A2:S2"].Style.Font.Bold = true;
             worksheet.Cells["A3"].Value = period;
-            worksheet.Cells["A3:Q3"].Merge = true;
-            worksheet.Cells["A3:Q3"].Style.Font.Size = 20;
-            worksheet.Cells["A3:Q3"].Style.Font.Bold = true;
+            worksheet.Cells["A3:S3"].Merge = true;
+            worksheet.Cells["A3:S3"].Style.Font.Size = 20;
+            worksheet.Cells["A3:S3"].Style.Font.Bold = true;
         }
     }
 }
