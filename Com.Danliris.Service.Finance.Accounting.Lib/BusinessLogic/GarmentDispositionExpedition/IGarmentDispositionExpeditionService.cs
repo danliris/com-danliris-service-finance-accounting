@@ -16,6 +16,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         Task<int> SendToPurchasing(int id);
         Task<int> SendToPurchasingRejected(int id, string remark);
         ReadResponse<IndexDto> GetSendToVerificationOrAccounting(string keyword, int page, int size, string order);
+        ReadResponse<IndexDto> GetByPosition(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int dispositionNoteId, int supplierId);
         Task<int> VerificationAccepted(List<int> ids);
         Task<int> CashierAccepted(List<int> ids);
         Task<int> AccountingAccepted(List<int> ids);

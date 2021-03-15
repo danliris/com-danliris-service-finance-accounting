@@ -40,6 +40,32 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             _identityService.TimezoneOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
         }
 
+        [HttpGet]
+        public IActionResult Get([FromQuery] string keyword, [FromQuery] int dispositionNoteId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string order = "{}", [FromQuery] int page = 1, [FromQuery] int size = 10)
+        {
+            try
+            {
+                var result = _service.GetByPosition(keyword, page, size, order, position, dispositionNoteId, supplierId);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result.Data,
+                    info = new
+                    {
+                        total = result.Count,
+                        page,
+                        size
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
         [HttpPost("send-to-verification")]
         public async Task<IActionResult> SendToVerification([FromBody] SendToVerificationAccountingFormDto form)
         {
