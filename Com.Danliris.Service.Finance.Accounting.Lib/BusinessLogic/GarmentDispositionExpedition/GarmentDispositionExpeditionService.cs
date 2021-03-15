@@ -336,5 +336,51 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         {
             throw new NotImplementedException();
         }
+
+        public ReadResponse<IndexDto> GetByPosition(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int dispositionNoteId, int supplierId)
+        {
+            var query = _dbContext.GarmentDispositionExpeditions.Where(entity => entity.Position == position);
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(entity => entity.DispositionNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
+
+            if (dispositionNoteId > 0)
+                query = query.Where(entity => entity.DispositionNoteId == dispositionNoteId);
+
+            if (supplierId > 0)
+                query = query.Where(entity => entity.SupplierId == supplierId);
+
+            if (position == GarmentPurchasingExpeditionPosition.Purchasing)
+            {
+                var notPurchasingInternalNoteIds = _dbContext.GarmentDispositionExpeditions
+                    .GroupBy(entity => new { entity.DispositionNoteId, entity.Position })
+                    .Select(groupped => new { groupped.Key.DispositionNoteId, groupped.Key.Position })
+                    .Where(entity => entity.Position > GarmentPurchasingExpeditionPosition.Purchasing)
+                    .Select(entity => entity.DispositionNoteId)
+                    .ToList();
+
+                var firstInternalNoteIds = _dbContext.GarmentDispositionExpeditions
+                    .Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.Purchasing && !string.IsNullOrEmpty(entity.SendToPurchasingRemark))
+                    .GroupBy(entity => new { entity.DispositionNoteId, entity.Position })
+                    .Select(groupped => new { groupped.OrderByDescending(entity => entity.CreatedUtc).FirstOrDefault().Id })
+                    .Select(entity => entity.Id)
+                    .ToList();
+                query = query.Where(entity => !notPurchasingInternalNoteIds.Contains(entity.DispositionNoteId));
+                query = query.Where(entity => firstInternalNoteIds.Contains(entity.Id));
+            }
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<GarmentDispositionExpeditionModel>.Order(query, orderDictionary);
+
+            var count = query.Count();
+
+            var data = query
+                .Skip((page - 1) * size)
+                .Take(size)
+                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode))
+                .ToList();
+
+            return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
+        }
     }
 }
