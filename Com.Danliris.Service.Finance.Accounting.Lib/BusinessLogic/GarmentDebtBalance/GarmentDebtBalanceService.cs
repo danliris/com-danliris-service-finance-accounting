@@ -393,6 +393,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             var firstTotal = totalResult.FirstOrDefault();
             if (firstTotal != null)
                 firstTotal.SetTotal();
+
+            result.AddRange(totalResult);
             return result;
         }
     }
