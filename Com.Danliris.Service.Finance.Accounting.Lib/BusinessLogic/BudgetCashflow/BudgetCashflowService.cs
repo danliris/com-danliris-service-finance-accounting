@@ -251,7 +251,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             };
 
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var unitIdsStr = string.Join("&unitId=",unitIds);
+            var unitIdsStr = string.Join("&unitId=", unitIds);
             var unitStr = unitIds.Count > 0 ? "&unitId=" + unitIdsStr : string.Empty;
             var dateStr = date.ToString("yyyy-MM-dd");
             var uri = APIEndpoint.Purchasing + $"reports/debt-and-disposition-summaries/debt-budget-cashflow?divisionId={divisionId}&categoryIds={JsonConvert.SerializeObject(categoryIds)}&year={year}&month={month}&date={dateStr}{unitStr}";
@@ -587,12 +587,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                         foreach (var totalCashType in totalCashTypes)
                         {
                             result.Add(new BudgetCashflowItemDto(isShowTotalLabel: isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType: totalCashType, currencies: _currencies));
-                         //   result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType, _currencies));
+                            //   result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType, _currencies));
                             isShowTotalLabel = false;
                         }
                     else
                         // result.Add(new BudgetCashflowItemDto(isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", new TotalCashType(), _currencies));
-                        result.Add(new BudgetCashflowItemDto(isShowTotalLabel:isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType: new TotalCashType(), currencies: _currencies));
+                        result.Add(new BudgetCashflowItemDto(isShowTotalLabel: isShowTotalLabel, totalLabel: cashType == CashType.In ? $"Total Penerimaan {summary.CashflowType.Name}" : $"Total Pengeluaran {summary.CashflowType.Name}", totalCashType: new TotalCashType(), currencies: _currencies));
                 }
 
                 var differenceCashTypes = summary.GetDifference(summary.CashflowType.Id);
@@ -601,11 +601,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     foreach (var differenceCashType in differenceCashTypes)
                     {
                         //result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType, _currencies, isShowDifference: true));
-                        result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel:isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType: differenceCashType, currencies: _currencies, isShowDifference: true));
+                        result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel: isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType: differenceCashType, currencies: _currencies, isShowDifference: true));
                         isShowDifferenceLabel = false;
                     }
                 else
-                    result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel:isShowDifferenceLabel,  differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType: new TotalCashType(), currencies: _currencies, isShowDifference: true));
+                    result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel: isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", differenceCashType: new TotalCashType(), currencies: _currencies, isShowDifference: true));
                 //result.Add(new BudgetCashflowItemDto(isShowDifferenceLabel, differenceLabel: $"Surplus/Deficit-Kas dari {summary.CashflowType.Name}", new TotalCashType(), _currencies, isShowDifference: true));
             }
 
@@ -707,21 +707,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
             if (summaryCurrencyIds.Count > 0)
             {
-                var isShowCurrencyRateLabel = true;
-                foreach (var summaryCurrencyId in summaryCurrencyIds)
-                {
-                    var currency = _currencies.FirstOrDefault(element => element.Id == summaryCurrencyId);
-                    result.Add(new BudgetCashflowItemDto(isShowCurrencyRateLabel, currency));
-                    isShowCurrencyRateLabel = false;
-                }
-            }
-            else
-            {
-                result.Add(new BudgetCashflowItemDto(true, new CurrencyDto()));
-            }
-
-            if (summaryCurrencyIds.Count > 0)
-            {
                 var endingBalances = result.Where(element => element.SummaryBalanceLabel == "Saldo Akhir Kas").ToList();
                 var isShowRealCashDifferenceLabel = true;
                 foreach (var currencyId in summaryCurrencyIds)
@@ -759,15 +744,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
 
             result.Add(new BudgetCashflowItemDto("Total Surplus (Defisit) Equivalent", result.Where(element => element.RealCashDifferenceLabel == "Selisih").Sum(element => element.Total)));
+
+            if (summaryCurrencyIds.Count > 0)
+            {
+                var isShowCurrencyRateLabel = true;
+                foreach (var summaryCurrencyId in summaryCurrencyIds)
+                {
+                    var currency = _currencies.FirstOrDefault(element => element.Id == summaryCurrencyId);
+                    result.Add(new BudgetCashflowItemDto(isShowCurrencyRateLabel, currency));
+                    isShowCurrencyRateLabel = false;
+                }
+            }
+            else
+            {
+                result.Add(new BudgetCashflowItemDto(true, new CurrencyDto()));
+            }
+
             return result;
         }
 
-        public async Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnitAccounting(int unitAccountingId, DateTimeOffset date) 
+        public async Task<List<BudgetCashflowItemDto>> GetBudgetCashflowUnitAccounting(int unitAccountingId, DateTimeOffset date)
         {
             var unitsByUnitAccountingId = await GetDetailUnitAccounting(unitAccountingId);
             var budgetCashFlowPerUnit = new List<BudgetCashflowItemDto>();
 
-            foreach(var unit in unitsByUnitAccountingId)
+            foreach (var unit in unitsByUnitAccountingId)
             {
                 var budgetCashFlow = await GetBudgetCashflowUnit(unit.Id, date);
                 budgetCashFlowPerUnit.AddRange(budgetCashFlow);
@@ -824,36 +825,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                     sectionRowSpan: key.SectionRowSpan,
                     isUseGroup: key.IsUseGroup,
                     groupRowSpan: key.GroupRowSpan,
-                    type:key.Type,
-                    typeName:key.TypeName,
+                    type: key.Type,
+                    typeName: key.TypeName,
                     isLabelOnly: key.IsLabelOnly,
                     cashflowCategoryId: key.CashflowCategoryId,
                     cashflowCategoryName: key.CashflowCategoryName,
                     isShowSubCategoryLabel: key.IsShowSubCategoryLabel,
-                    subCategoryId:key.SubCategoryId,
+                    subCategoryId: key.SubCategoryId,
                     subCategoryName: key.SubCategoryName,
                     isReadOnly: key.IsReadOnly,
                     currency: key.Currency,
                     isShowCurrencyRateLabel: key.IsShowCurrencyRateLabel,
                     isShowCurrencyRate: key.IsShowCurrencyRate,
                     isShowRealCashBalanceLabel: key.IsShowRealCashBalanceLabel,
-                    nominal:val.Sum(s=>s.Nominal),
-                    currencyNominal: val.Sum(s=> s.CurrencyNominal),
-                    isShowSummaryLabel:key.IsShowSummaryLabel,
+                    nominal: val.Sum(s => s.Nominal),
+                    currencyNominal: val.Sum(s => s.CurrencyNominal),
+                    isShowSummaryLabel: key.IsShowSummaryLabel,
                     isShowSummary: key.IsShowSummary,
                     equivalentDifferenceLabel: key.EquivalentDifferenceLabel,
                     isEquivalentDifference: key.IsEquivalentDifference,
-                    total : val.Sum(s=> s.Total),
+                    total: val.Sum(s => s.Total),
                     isRealCashBalance: key.IsRealCashBalance,
                     realCashDifferenceLabel: key.RealCashDifferenceLabel,
                     isShowRealCashDifferenceLabel: key.IsShowRealCashDifferenceLabel,
                     isShowRealCashDifference: key.IsShowRealCashDifference,
-                    summaryLabel:key.SummaryLabel,
+                    summaryLabel: key.SummaryLabel,
                     isShowDifference: key.IsShowDifference,
                     isShowTotalLabel: key.IsShowTotalLabel,
                     totalLabel: key.TotalLabel,
                     isShowDifferenceLabel: key.IsShowDifferenceLabel,
-                    differenceLabel:key.DifferenceLabel,
+                    differenceLabel: key.DifferenceLabel,
                     isShowSummaryBalance: key.IsShowSummaryBalance,
                     summaryBalanceLabel: key.SummaryBalanceLabel,
                     isSummaryBalance: key.IsSummaryBalance
@@ -1190,7 +1191,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             }
 
             // Saldo Awal
-            var realCashBalances = _dbContext.RealCashBalances.Where(entity => unitAccountingIds.Contains(entity.UnitId)&& entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
+            var realCashBalances = _dbContext.RealCashBalances.Where(entity => unitAccountingIds.Contains(entity.UnitId) && entity.Month == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Month && entity.Year == date.AddHours(_identityService.TimezoneOffset).AddMonths(1).Year).ToList();
             var isShowRealCashBalance = true;
             if (realCashBalances.Count > 0)
                 foreach (var realCashBalance in realCashBalances)
@@ -1846,7 +1847,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                             }
                             initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, unit, nominal, currencyNominal, actual, true));
                         }
-                        initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual,true));
+                        initialBalanceItem.Items.Add(new BudgetCashflowDivisionUnitItemDto(division, null, divisionNominal, divisionCurrencyNominal, divisionActual, true));
                     }
 
                     initialBalanceItem.SetRowSummary(divisionCurrencyNominalTotal, divisionNominalTotal, divisionActualTotal);
@@ -2104,21 +2105,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
                 result.Items.Add(realCashBalanceItem);
             }
 
-            var isShowCurrencyLabel = true;
-            if (generalSummaryCurrencyIds.Count > 0)
-            {
-                foreach (var currencyId in generalSummaryCurrencyIds)
-                {
-                    var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
-                    result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", currency, isShowCurrencyLabel));
-                    isShowCurrencyLabel = false;
-                }
-            }
-            else
-            {
-                result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", null, isShowCurrencyLabel));
-            }
-
             var endingBalances = result.Items.Where(element => element.GeneralSummaryLabel == "Saldo Akhir Kas").ToList();
             isShowGeneralSummaryLabel = true;
             var equivalent = 0.0;
@@ -2197,6 +2183,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
 
 
             result.Items.Add(new BudgetCashflowDivisionItemDto("Total Surplus (Defisit) Equivalent", equivalent));
+            var isShowCurrencyLabel = true;
+            if (generalSummaryCurrencyIds.Count > 0)
+            {
+                foreach (var currencyId in generalSummaryCurrencyIds)
+                {
+                    var currency = _currencies.FirstOrDefault(element => element.Id == currencyId);
+                    result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", currency, isShowCurrencyLabel));
+                    isShowCurrencyLabel = false;
+                }
+            }
+            else
+            {
+                result.Items.Add(new BudgetCashflowDivisionItemDto("Rate Kurs", null, isShowCurrencyLabel));
+            }
             return result;
         }
 
