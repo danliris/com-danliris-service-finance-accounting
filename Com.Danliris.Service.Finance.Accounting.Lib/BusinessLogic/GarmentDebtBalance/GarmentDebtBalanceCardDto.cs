@@ -30,6 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public double BankExpenditureNoteInvoiceAmount { get; private set; }
         public int InternalNoteId { get; private set; }
         public string InternalNoteNo { get; private set; }
+        public bool IsInitialBalance { get; private set; }
         public string ProductNames { get; private set; }
         public double CurrencyRate { get; set; }
 
@@ -39,6 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public double CurrencyMutationPurchase { get; set; }
         public double CurrencyMutationPayment { get; set; }
         public double RemainBalance { get; set; }
+        public double CurrencyRemainBalance { get; private set; }
         public DateTimeOffset ArrivalDate { get; private set; }
 
         public GarmentDebtBalanceCardDto(Models.GarmentDebtBalance.GarmentDebtBalanceModel model)
@@ -75,6 +77,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             CurrencyMutationPurchase = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount;
             CurrencyMutationPayment = model.CurrencyBankExpenditureNoteInvoiceAmount;
             RemainBalance = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount - model.BankExpenditureNoteInvoiceAmount;
+            CurrencyRemainBalance = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount - model.CurrencyBankExpenditureNoteInvoiceAmount;
             ArrivalDate = model.ArrivalDate;
         }
         /// <summary>
@@ -84,6 +87,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         /// <param name="remainBalance"></param>
         public GarmentDebtBalanceCardDto(string productName, double remainBalance)
         {
+            IsInitialBalance = true;
             ProductNames = productName;
             RemainBalance = remainBalance;
             ArrivalDate = DateTimeOffset.MaxValue;
