@@ -8,7 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 {
     public class IndexDto
     {
-        public IndexDto(int id, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, DateTimeOffset dispositionNoteDueDate, int dispositionNoteId, double currencyTotalPaid, double totalPaid, int currencyId, string currencyCode)
+        public IndexDto(int id, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, DateTimeOffset dispositionNoteDueDate, int dispositionNoteId, double currencyTotalPaid, double totalPaid, int currencyId, string currencyCode, string suppliername, string remark)
         {
             Id = id;
             DispositionNoteNo = dispositionNoteNo;
@@ -19,6 +19,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             TotalPaid = totalPaid;
             CurrencyId = currencyId;
             CurrencyCode = currencyCode;
+            Suppliername = suppliername;
+            Remark = remark;
         }
 
         public int Id { get; private set; }
@@ -30,5 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public double TotalPaid { get; private set; }
         public int CurrencyId { get; private set; }
         public string CurrencyCode { get; private set; }
+        public string Suppliername { get; private set; }
+        public string Remark { get; private set; }
     }
 }

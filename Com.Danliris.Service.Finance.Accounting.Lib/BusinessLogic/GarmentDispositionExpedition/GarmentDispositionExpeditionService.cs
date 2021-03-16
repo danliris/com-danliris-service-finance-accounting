@@ -45,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode))
+                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode, entity.SupplierName, entity.Remark))
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 Position = GarmentPurchasingExpeditionPosition.SendToAccounting
             };
 
-            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/disposition/position", new StringContent(JsonConvert.SerializeObject(updateDispositionNotePositionData), Encoding.UTF8, General.JsonMediaType));
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/disposition-notes/position", new StringContent(JsonConvert.SerializeObject(updateDispositionNotePositionData), Encoding.UTF8, General.JsonMediaType));
             return _dbContext.SaveChanges();
         }
 
@@ -128,7 +128,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 Position = GarmentPurchasingExpeditionPosition.SendToVerification
             };
 
-            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/disposition/position", new StringContent(JsonConvert.SerializeObject(updateDispositionNotePositionData), Encoding.UTF8, General.JsonMediaType));
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/disposition-notes/position", new StringContent(JsonConvert.SerializeObject(updateDispositionNotePositionData), Encoding.UTF8, General.JsonMediaType));
             return _dbContext.SaveChanges();
         }
 
@@ -377,7 +377,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode))
+                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode, entity.SupplierName, entity.Remark))
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
