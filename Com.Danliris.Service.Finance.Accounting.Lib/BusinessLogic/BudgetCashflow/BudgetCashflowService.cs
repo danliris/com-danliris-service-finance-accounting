@@ -313,7 +313,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashfl
             }
             return result.data;
         }
-
         private async Task<List<BudgetCashFlowAccountingUnitItemDto>> GetDetailUnitAccounting(int unitAccounting)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
