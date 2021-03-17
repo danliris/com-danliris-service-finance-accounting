@@ -355,21 +355,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 
             if (position == GarmentPurchasingExpeditionPosition.Purchasing)
             {
-                var notPurchasingInternalNoteIds = _dbContext.GarmentDispositionExpeditions
+                var notPurchasingDispositionNoteIds = _dbContext.GarmentDispositionExpeditions
                     .GroupBy(entity => new { entity.DispositionNoteId, entity.Position })
                     .Select(groupped => new { groupped.Key.DispositionNoteId, groupped.Key.Position })
                     .Where(entity => entity.Position > GarmentPurchasingExpeditionPosition.Purchasing)
                     .Select(entity => entity.DispositionNoteId)
                     .ToList();
 
-                var firstInternalNoteIds = _dbContext.GarmentDispositionExpeditions
+                var firstDispositionNoteIds = _dbContext.GarmentDispositionExpeditions
                     .Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.Purchasing && !string.IsNullOrEmpty(entity.SendToPurchasingRemark))
                     .GroupBy(entity => new { entity.DispositionNoteId, entity.Position })
                     .Select(groupped => new { groupped.OrderByDescending(entity => entity.CreatedUtc).FirstOrDefault().Id })
                     .Select(entity => entity.Id)
                     .ToList();
-                query = query.Where(entity => !notPurchasingInternalNoteIds.Contains(entity.DispositionNoteId));
-                query = query.Where(entity => firstInternalNoteIds.Contains(entity.Id));
+                query = query.Where(entity => !notPurchasingDispositionNoteIds.Contains(entity.DispositionNoteId));
+                query = query.Where(entity => firstDispositionNoteIds.Contains(entity.Id));
             }
 
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
