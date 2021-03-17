@@ -257,6 +257,53 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpGet("verified")]
+        public IActionResult GetVerified([FromQuery] string keyword, [FromQuery] string order = "{}", [FromQuery] int page = 1, [FromQuery] int size = 10)
+        {
+            try
+            {
+                var result = _service.GetVerified(keyword, page, size, order);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result.Data,
+                    info = new
+                    {
+                        total = result.Count,
+                        page,
+                        size,
+                        count = result.Data.Count
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
+        [HttpGet("verified/{id}")]
+        public IActionResult GetVerifiedById([FromRoute] int id)
+        {
+            try
+            {
+                var result = _service.GetById(id);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
         [HttpPut("void-verification-accepted/{id}")]
         public async Task<IActionResult> VoidVerificationAccepted([FromRoute] int id)
         {

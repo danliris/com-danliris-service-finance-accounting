@@ -332,9 +332,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             return _dbContext.SaveChanges();
         }
 
-        public IndexDto GetById(int id)
+        public GarmentDispositionExpeditionModel GetById(int id)
         {
-            throw new NotImplementedException();
+            return _dbContext
+                .GarmentDispositionExpeditions
+                .Where(entity => entity.Id == id)
+                .FirstOrDefault();
         }
 
         public ReadResponse<IndexDto> GetByPosition(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int dispositionNoteId, int supplierId)
@@ -378,6 +381,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 .Skip((page - 1) * size)
                 .Take(size)
                 .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode, entity.SupplierName, entity.Remark,entity.ProformaNo, entity.CreatedBy))
+                .ToList();
+
+            return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
+        }
+
+        public ReadResponse<IndexDto> GetVerified(string keyword, int page, int size, string order)
+        {
+            var query = _dbContext.GarmentDispositionExpeditions.Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier || entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting || entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing);
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(entity => entity.DispositionNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<GarmentDispositionExpeditionModel>.Order(query, orderDictionary);
+
+            var count = query.Count();
+
+            var data = query
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToList()
+                .Select(entity => 
+                {
+                    var date = entity.SendToCashierDate;
+
+                    if (entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing)
+                        date = entity.SendToPurchasingDate;
+
+                    return new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteId, entity.SupplierName, entity.Position, entity.TotalPaid, entity.CurrencyCode, entity.SendToPurchasingRemark);
+                })
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());

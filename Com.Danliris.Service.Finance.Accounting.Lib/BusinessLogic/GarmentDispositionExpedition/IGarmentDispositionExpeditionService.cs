@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         Task<int> SendToPurchasingRejected(int id, string remark);
         ReadResponse<IndexDto> GetSendToVerificationOrAccounting(string keyword, int page, int size, string order);
         ReadResponse<IndexDto> GetByPosition(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int dispositionNoteId, int supplierId);
+        ReadResponse<IndexDto> GetVerified(string keyword, int page, int size, string order);
         Task<int> VerificationAccepted(List<int> ids);
         Task<int> CashierAccepted(List<int> ids);
         Task<int> AccountingAccepted(List<int> ids);
@@ -24,6 +26,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         Task<int> VoidVerificationAccepted(int id);
         Task<int> VoidCashierAccepted(int id);
         Task<int> VoidAccountingAccepted(int id);
-        IndexDto GetById(int id);
+        GarmentDispositionExpeditionModel GetById(int id);
     }
 }
