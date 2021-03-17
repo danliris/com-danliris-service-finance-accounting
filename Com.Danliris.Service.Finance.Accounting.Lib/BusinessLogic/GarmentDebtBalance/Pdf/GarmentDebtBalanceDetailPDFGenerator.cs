@@ -138,9 +138,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(datum.PaymentType, _normalFont);
                 table.AddCell(cellCenter);
-                cellCenter.Phrase = new Phrase(datum.ArrivalDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy"), _normalFont);
+                cellCenter.Phrase = new Phrase(string.IsNullOrWhiteSpace(datum.SupplierName) ? "" : datum.ArrivalDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy"), _normalFont);
                 table.AddCell(cellCenter);
-                cellCenter.Phrase = new Phrase(datum.DebtAging.ToString(), _normalFont);
+                cellCenter.Phrase = new Phrase(string.IsNullOrWhiteSpace(datum.SupplierName) ? "" : datum.DebtAging.ToString(), _normalFont);
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(datum.InternalNoteNo, _normalFont);
                 table.AddCell(cellCenter);
