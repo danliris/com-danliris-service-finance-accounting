@@ -45,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode, entity.SupplierName, entity.Remark))
+                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode, entity.SupplierName, entity.Remark, entity.ProformaNo,entity.SendToVerificationBy))
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
@@ -377,7 +377,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode, entity.SupplierName, entity.Remark))
+                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode, entity.SupplierName, entity.Remark,entity.ProformaNo, entity.CreatedBy))
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
