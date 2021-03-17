@@ -21,7 +21,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             Status = position.ToDescriptionString();
         }
 
-        public IndexDto(int id, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, DateTimeOffset dispositionNoteDueDate, int dispositionNoteId, double currencyTotalPaid, double totalPaid, int currencyId, string currencyCode, string suppliername, string remark)
+        public IndexDto(int id, string dispositionNoteNo,
+            DateTimeOffset dispositionNoteDate,
+            DateTimeOffset dispositionNoteDueDate, 
+            int dispositionNoteId, 
+            double currencyTotalPaid, 
+            double totalPaid, 
+            int currencyId, 
+            string currencyCode, 
+            string suppliername, 
+            string remark,
+            string proformaNo, 
+            string createdBy,
+            double currencyRate,
+            int supplierId,
+            string supplierCode,
+            double vatAmount,
+            double currencyVatAmount,
+            double incomeTaxAmount,
+            double currencyIncomeTaxAmount,
+            double dppAmount,
+            double currencyDppAmount
+            )
         {
             Id = id;
             DispositionNoteNo = dispositionNoteNo;
@@ -34,6 +55,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             CurrencyCode = currencyCode;
             SupplierName = suppliername;
             Remark = remark;
+            CreatedBy = createdBy;
+            ProformaNo = proformaNo;
+            CurrencyRate = currencyRate;
+            SupplierId = supplierId;
+            SupplierCode = supplierCode;
+            VATAmount = vatAmount;
+            CurrencyVATAmount = currencyVatAmount;
+            IncomeTaxAmount = incomeTaxAmount;
+            CurrencyIncomeTaxAmount = currencyIncomeTaxAmount;
+            DPPAmount = dppAmount;
+            CurrencyDPPAmount = currencyDppAmount;
+
         }
 
         public int Id { get; private set; }
@@ -45,8 +78,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public double TotalPaid { get; private set; }
         public int CurrencyId { get; private set; }
         public string CurrencyCode { get; private set; }
+        public double CurrencyRate { get; private set; }
         public string SupplierName { get; private set; }
+        public int SupplierId { get; private set; }
+        public string SupplierCode { get; private set; }
+        public double VATAmount { get; private set; }
+        public double CurrencyVATAmount { get; private set; }
+        public double IncomeTaxAmount { get; private set; }
+        public double CurrencyIncomeTaxAmount { get; private set; }
+        public double DPPAmount { get; private set; }
+        public double CurrencyDPPAmount { get; set; }
         public string Remark { get; private set; }
         public string Status { get; private set; }
+        public string ProformaNo { get; private set; }
+        public string CreatedBy { get; private set; }
     }
 }
