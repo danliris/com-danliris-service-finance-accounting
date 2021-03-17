@@ -60,6 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionE
         public string CurrencyCode { get; private set; }
         public double CurrencyRate { get; private set; }
         public string Remark { get; private set; }
+        public string ProformaNo { get; set; }
         public GarmentPurchasingExpeditionPosition Position { get; private set; }
 
         public DateTimeOffset? SendToVerificationDate { get; private set; }
