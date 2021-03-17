@@ -19,7 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             TotalPaid = totalPaid;
             CurrencyId = currencyId;
             CurrencyCode = currencyCode;
-            Suppliername = suppliername;
+            SupplierName = suppliername;
             Remark = remark;
         }
 
@@ -32,7 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public double TotalPaid { get; private set; }
         public int CurrencyId { get; private set; }
         public string CurrencyCode { get; private set; }
-        public string Suppliername { get; private set; }
+        public string SupplierName { get; private set; }
         public string Remark { get; private set; }
     }
 }
