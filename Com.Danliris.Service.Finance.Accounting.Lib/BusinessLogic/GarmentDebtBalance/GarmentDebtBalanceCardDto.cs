@@ -31,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public int InternalNoteId { get; private set; }
         public string InternalNoteNo { get; private set; }
         public bool IsInitialBalance { get; private set; }
+        public bool IsTotalBalance { get; private set; }
         public string ProductNames { get; private set; }
         public double CurrencyRate { get; set; }
 
@@ -90,7 +91,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             IsInitialBalance = true;
             ProductNames = productName;
             RemainBalance = remainBalance;
-            ArrivalDate = DateTimeOffset.MaxValue;
+            ArrivalDate = DateTimeOffset.MinValue;
         }
         /// <summary>
         /// override for total (pdf)
@@ -101,9 +102,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         /// <param name="mutationPayment"></param>
         public GarmentDebtBalanceCardDto(string productName, double remainBalance,double mutationPurchase, double mutationPayment)
         {
+            IsTotalBalance = true;
             ProductNames = productName;
             RemainBalance = remainBalance;
-            ArrivalDate = DateTimeOffset.MinValue;
+            ArrivalDate = DateTimeOffset.MaxValue;
 
         }
     }
