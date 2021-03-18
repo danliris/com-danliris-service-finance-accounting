@@ -99,7 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDebtBa
         {
             //Setup
             var mocks = GetMocks();
-            GarmentDebtBalanceModel model = new GarmentDebtBalanceModel(1, "purchasingCategoryName", "bilssNo", "paymentBills", 1, "garmentDeliveryOrderNumber", 1, "supplierCode", "supplierName", true, 1, "IDR", 1, "productNames", DateTimeOffset.Now,1,1);
+            GarmentDebtBalanceModel model = new GarmentDebtBalanceModel(1, "purchasingCategoryName", "bilssNo", "paymentBills", 1, "garmentDeliveryOrderNumber", 1, "supplierCode", "supplierName", true, 1, "IDR", 1, "productNames", DateTimeOffset.Now,1,1, "paymentType");
 
             GarmentDebtBalanceIndexDto dto = new GarmentDebtBalanceIndexDto()
             {
@@ -164,7 +164,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDebtBa
         {
             //Setup
             var mocks = GetMocks();
-            GarmentDebtBalanceModel model = new GarmentDebtBalanceModel(1, "purchasingCategoryName", "bilssNo", "paymentBills", 1, "garmentDeliveryOrderNumber", 1, "supplierCode", "supplierName", true, 1, "IDR", 1, "productNames", DateTimeOffset.Now,1,1);
+            GarmentDebtBalanceModel model = new GarmentDebtBalanceModel(1, "purchasingCategoryName", "bilssNo", "paymentBills", 1, "garmentDeliveryOrderNumber", 1, "supplierCode", "supplierName", true, 1, "IDR", 1, "productNames", DateTimeOffset.Now,1,1, "paymentType");
 
             GarmentDebtBalanceIndexDto dto = new GarmentDebtBalanceIndexDto()
             {
