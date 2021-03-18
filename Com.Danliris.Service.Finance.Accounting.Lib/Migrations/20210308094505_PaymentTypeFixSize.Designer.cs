@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210308094505_PaymentTypeFixSize")]
+    partial class PaymentTypeFixSize
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1139,140 +1141,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<double>("VATAmount");
 
-                    b.Property<string>("VATNo")
-                        .HasMaxLength(128);
-
                     b.HasKey("Id");
 
                     b.ToTable("GarmentDebtBalances");
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition.GarmentDispositionExpeditionModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AccountingAcceptedBy")
-                        .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset?>("AccountingAcceptedDate");
-
-                    b.Property<bool>("Active");
-
-                    b.Property<string>("CashierAcceptedBy")
-                        .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset?>("CashierAcceptedDate");
-
-                    b.Property<string>("CreatedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<string>("CurrencyCode")
-                        .HasMaxLength(16);
-
-                    b.Property<double>("CurrencyDPPAmount");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<double>("CurrencyIncomeTaxAmount");
-
-                    b.Property<double>("CurrencyRate");
-
-                    b.Property<double>("CurrencyTotalPaid");
-
-                    b.Property<double>("CurrencyVATAmount");
-
-                    b.Property<double>("DPPAmount");
-
-                    b.Property<string>("DeletedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("DeletedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<DateTimeOffset>("DispositionNoteDate");
-
-                    b.Property<DateTimeOffset>("DispositionNoteDueDate");
-
-                    b.Property<int>("DispositionNoteId");
-
-                    b.Property<string>("DispositionNoteNo")
-                        .HasMaxLength(64);
-
-                    b.Property<double>("IncomeTaxAmount");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<string>("LastModifiedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("LastModifiedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<int>("Position");
-
-                    b.Property<string>("ProformaNo");
-
-                    b.Property<string>("Remark");
-
-                    b.Property<string>("SendToAccountingBy")
-                        .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset?>("SendToAccountingDate");
-
-                    b.Property<string>("SendToCashierBy")
-                        .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset?>("SendToCashierDate");
-
-                    b.Property<string>("SendToPurchasingBy")
-                        .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset?>("SendToPurchasingDate");
-
-                    b.Property<string>("SendToPurchasingRemark");
-
-                    b.Property<string>("SendToVerificationBy")
-                        .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset?>("SendToVerificationDate");
-
-                    b.Property<string>("SupplierCode")
-                        .HasMaxLength(128);
-
-                    b.Property<int>("SupplierId");
-
-                    b.Property<string>("SupplierName")
-                        .HasMaxLength(512);
-
-                    b.Property<double>("TotalPaid");
-
-                    b.Property<double>("VATAmount");
-
-                    b.Property<string>("VerificationAcceptedBy")
-                        .HasMaxLength(64);
-
-                    b.Property<DateTimeOffset?>("VerificationAcceptedDate");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GarmentDispositionExpeditions");
                 });
 
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePayment.GarmentInvoicePaymentItemModel", b =>

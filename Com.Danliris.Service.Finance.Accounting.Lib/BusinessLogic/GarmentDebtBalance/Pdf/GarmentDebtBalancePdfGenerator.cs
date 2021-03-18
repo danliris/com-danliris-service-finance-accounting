@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         private static void SetTable(Document document, List<GarmentDebtBalanceSummaryDto> data, bool isForeignCurrency, bool supplierIsImport, int timezoneOffset)
         {
-            if (supplierIsImport)
+            if (supplierIsImport || isForeignCurrency)
             {
                 SetTableImport(document, data, timezoneOffset);
             }
@@ -115,7 +115,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             foreach (var datum in data)
             {
-                cellLeft.Phrase = new Phrase($"{datum.SupplierCode} - {datum.SupplierName}", _normalFont);
+                cellLeft.Phrase = new Phrase(!string.IsNullOrWhiteSpace(datum.SupplierCode) ? $"{datum.SupplierCode} - {datum.SupplierName}" : datum.SupplierName, _normalFont);
                 table.AddCell(cellLeft);
                 cellCenter.Phrase = new Phrase(datum.CurrencyCode, _normalFont);
                 table.AddCell(cellCenter);
@@ -195,7 +195,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             foreach (var datum in data)
             {
-                cellLeft.Phrase = new Phrase($"{datum.SupplierCode} - {datum.SupplierName}", _normalFont);
+                cellLeft.Phrase = new Phrase(!string.IsNullOrWhiteSpace(datum.SupplierCode) ? $"{datum.SupplierCode} - {datum.SupplierName}" : datum.SupplierName, _normalFont);
                 table.AddCell(cellLeft);
                 cellCenter.Phrase = new Phrase(datum.CurrencyCode, _normalFont);
                 table.AddCell(cellCenter);
@@ -223,6 +223,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         private static void SetTitle(Document document, int month, int year, bool isForeignCurrency, bool supplierIsImport)
         {
             var title = "LEDGER HUTANG LOKAL";
+
+            if (isForeignCurrency)
+                title = "LEDGER HUTANG LOKAL VALAS";
 
             if (supplierIsImport)
                 title = "LEDGER HUTANG IMPOR";
