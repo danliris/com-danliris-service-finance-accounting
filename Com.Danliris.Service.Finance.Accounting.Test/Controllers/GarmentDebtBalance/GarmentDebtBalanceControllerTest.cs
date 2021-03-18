@@ -63,12 +63,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDebtBa
         {
             //Setup
             var mocks = GetMocks();
-
+            GarmentDebtBalanceModel model = new GarmentDebtBalanceModel(1, "purchasingCategoryName", "billsNo", "paymentBilss", 1, "garmentDeliveryOrderNo", 1, "suplierCode", "suplierName", false, 1, "IDR", 1, "productNames", DateTimeOffset.UtcNow, 1, 1, "paymentType");
+           
+            GarmentDebtBalanceIndexDto dto = new GarmentDebtBalanceIndexDto()
+            {
+                Count=1,
+                Data=new List<GarmentDebtBalanceCardDto>()
+                {
+                    new GarmentDebtBalanceCardDto(model)
+                    
+                   
+                },
+                Order=new List<string>()
+                {
+                    ""
+                },
+                Selected=new List<string>()
+                {
+                    ""
+                }
+            };
             mocks.Service
-                .Setup(s => s.GetDebtBalanceCardIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns(new GarmentDebtBalanceIndexDto());
+                .Setup(s => s.GetDebtBalanceCardWithBalanceBeforeIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Returns(dto);
 
             //Act
+          
             IActionResult response = GetController(mocks).Get(new GarmentDebtBalanceFilterViewModel());
 
             //Assert
@@ -83,7 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDebtBa
             var mocks = GetMocks();
 
             mocks.Service
-                .Setup(s => s.GetDebtBalanceCardIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetDebtBalanceCardWithBalanceBeforeIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Throws(new Exception());
 
             //Act
@@ -115,7 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDebtBa
                 
             };
             mocks.Service
-                .Setup(s => s.GetDebtBalanceCardIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetDebtBalanceCardWithBalanceBeforeIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Returns(dto);
 
             //Act
@@ -140,7 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDebtBa
             var mocks = GetMocks();
            
             mocks.Service
-                .Setup(s => s.GetDebtBalanceCardIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetDebtBalanceCardWithBalanceBeforeIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Throws(new Exception());
 
             //Act
