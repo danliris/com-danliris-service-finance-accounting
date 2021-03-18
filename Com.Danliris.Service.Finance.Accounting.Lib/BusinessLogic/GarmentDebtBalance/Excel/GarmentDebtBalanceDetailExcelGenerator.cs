@@ -54,34 +54,78 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 worksheet.Cells[$"H{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"I{currentRow}"].Value = item.InvoiceNo;
                 worksheet.Cells[$"I{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"J{currentRow}"].Value = item.VATNo;
-                worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"K{currentRow}"].Value = item.DPPAmount;
-                worksheet.Cells[$"K{currentRow}"].Style.Numberformat.Format = "#,##0.00";
-                worksheet.Cells[$"K{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"L{currentRow}"].Value = item.CurrencyDPPAmount;
-                worksheet.Cells[$"L{currentRow}"].Style.Numberformat.Format = "#,##0.00";
-                worksheet.Cells[$"L{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"M{currentRow}"].Value = item.CurrencyVATAmount == 0 ? item.VATAmount : item.CurrencyVATAmount;
-                worksheet.Cells[$"M{currentRow}"].Style.Numberformat.Format = "#,##0.00";
-                worksheet.Cells[$"M{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"N{currentRow}"].Value = item.CurrencyIncomeTaxAmount == 0 ? item.IncomeTaxAmount : item.CurrencyIncomeTaxAmount;
-                worksheet.Cells[$"N{currentRow}"].Style.Numberformat.Format = "#,##0.00";
-                worksheet.Cells[$"N{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"O{currentRow}"].Value = item.CurrencyTotal == 0 ? item.Total : item.CurrencyTotal;
-                worksheet.Cells[$"O{currentRow}"].Style.Numberformat.Format = "#,##0.00";
-                worksheet.Cells[$"O{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"P{currentRow}"].Value = item.CurrencyCode;
-                worksheet.Cells[$"P{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"Q{currentRow}"].Value = item.CurrencyRate;
-                worksheet.Cells[$"Q{currentRow}"].Style.Numberformat.Format = "#,##0.00";
-                worksheet.Cells[$"Q{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"R{currentRow}"].Value = item.Total;
-                worksheet.Cells[$"R{currentRow}"].Style.Numberformat.Format = "#,##0.00";
-                worksheet.Cells[$"R{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"S{currentRow}"].Value = item.CurrencyTotal;
-                worksheet.Cells[$"S{currentRow}"].Style.Numberformat.Format = "#,##0.00";
-                worksheet.Cells[$"S{currentRow}"].Style.Font.Size = 14;
+                
+                if (string.IsNullOrWhiteSpace(item.SupplierName))
+                {
+                    worksheet.Cells[$"J{currentRow}"].Value = item.VATNo;
+                    worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"J{currentRow}"].Style.Font.Bold = true;
+                    worksheet.Cells[$"K{currentRow}"].Value = item.DPPAmount;
+                    worksheet.Cells[$"K{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"K{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"K{currentRow}"].Style.Font.Bold = true;
+                    worksheet.Cells[$"L{currentRow}"].Value = item.CurrencyDPPAmount;
+                    worksheet.Cells[$"L{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"L{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"L{currentRow}"].Style.Font.Bold = true;
+                    worksheet.Cells[$"M{currentRow}"].Value = item.CurrencyVATAmount == 0 ? item.VATAmount : item.CurrencyVATAmount;
+                    worksheet.Cells[$"M{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"M{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"M{currentRow}"].Style.Font.Bold = true;
+                    worksheet.Cells[$"N{currentRow}"].Value = item.CurrencyIncomeTaxAmount == 0 ? item.IncomeTaxAmount : item.CurrencyIncomeTaxAmount;
+                    worksheet.Cells[$"N{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"N{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"N{currentRow}"].Style.Font.Bold = true;
+                    worksheet.Cells[$"O{currentRow}"].Value = item.CurrencyTotal == 0 ? item.Total : item.CurrencyTotal;
+                    worksheet.Cells[$"O{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"O{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"O{currentRow}"].Style.Font.Bold = true;
+                    worksheet.Cells[$"P{currentRow}"].Value = item.CurrencyCode;
+                    worksheet.Cells[$"P{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"P{currentRow}"].Style.Font.Bold = true;
+                    worksheet.Cells[$"Q{currentRow}"].Value = item.CurrencyRate;
+                    worksheet.Cells[$"Q{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"Q{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"Q{currentRow}"].Style.Font.Bold = true;
+                    worksheet.Cells[$"R{currentRow}"].Value = item.Total;
+                    worksheet.Cells[$"R{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"R{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"R{currentRow}"].Style.Font.Bold = true;
+                    worksheet.Cells[$"S{currentRow}"].Value = item.CurrencyTotal;
+                    worksheet.Cells[$"S{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"S{currentRow}"].Style.Font.Bold = true;
+                }
+                else
+                {
+                    worksheet.Cells[$"J{currentRow}"].Value = item.VATNo;
+                    worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"K{currentRow}"].Value = item.DPPAmount;
+                    worksheet.Cells[$"K{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"K{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"L{currentRow}"].Value = item.CurrencyDPPAmount;
+                    worksheet.Cells[$"L{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"L{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"M{currentRow}"].Value = item.CurrencyVATAmount == 0 ? item.VATAmount : item.CurrencyVATAmount;
+                    worksheet.Cells[$"M{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"M{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"N{currentRow}"].Value = item.CurrencyIncomeTaxAmount == 0 ? item.IncomeTaxAmount : item.CurrencyIncomeTaxAmount;
+                    worksheet.Cells[$"N{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"N{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"O{currentRow}"].Value = item.CurrencyTotal == 0 ? item.Total : item.CurrencyTotal;
+                    worksheet.Cells[$"O{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"O{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"P{currentRow}"].Value = item.CurrencyCode;
+                    worksheet.Cells[$"P{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"Q{currentRow}"].Value = item.CurrencyRate;
+                    worksheet.Cells[$"Q{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"Q{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"R{currentRow}"].Value = item.Total;
+                    worksheet.Cells[$"R{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"R{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"S{currentRow}"].Value = item.CurrencyTotal;
+                    worksheet.Cells[$"S{currentRow}"].Style.Numberformat.Format = "#,##0.00";
+                    worksheet.Cells[$"S{currentRow}"].Style.Font.Size = 14;
+                }
 
                 currentRow++;
             }

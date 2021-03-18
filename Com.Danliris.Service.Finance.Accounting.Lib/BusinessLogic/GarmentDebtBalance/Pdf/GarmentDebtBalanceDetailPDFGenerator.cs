@@ -146,26 +146,54 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 table.AddCell(cellCenter);
                 cellCenter.Phrase = new Phrase(datum.InvoiceNo, _normalFont);
                 table.AddCell(cellCenter);
-                cellCenter.Phrase = new Phrase(datum.VATNo, _normalFont);
-                table.AddCell(cellCenter);
-                cellRight.Phrase = new Phrase(datum.DPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                table.AddCell(cellRight);
-                cellRight.Phrase = new Phrase(datum.CurrencyDPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                table.AddCell(cellRight);
-                cellRight.Phrase = new Phrase(datum.CurrencyVATAmount == 0 ? datum.VATAmount.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.CurrencyVATAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                table.AddCell(cellRight);
-                cellRight.Phrase = new Phrase(datum.CurrencyIncomeTaxAmount == 0 ? datum.IncomeTaxAmount.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.CurrencyIncomeTaxAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                table.AddCell(cellRight);
-                cellRight.Phrase = new Phrase(datum.CurrencyTotal == 0 ? datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                table.AddCell(cellRight);
-                cellCenter.Phrase = new Phrase(datum.CurrencyCode, _normalFont);
-                table.AddCell(cellCenter);
-                cellCenter.Phrase = new Phrase(datum.CurrencyRate.ToString(), _normalFont);
-                table.AddCell(cellCenter);
-                cellRight.Phrase = new Phrase(datum.CurrencyTotal.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                table.AddCell(cellRight);
-                cellRight.Phrase = new Phrase(datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
-                table.AddCell(cellRight);
+                
+                if (string.IsNullOrWhiteSpace(datum.SupplierName))
+                {
+                    cellCenter.Phrase = new Phrase(datum.VATNo, _normalBoldFont);
+                    table.AddCell(cellCenter);
+                    cellRight.Phrase = new Phrase(datum.DPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalBoldFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(datum.CurrencyDPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalBoldFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(datum.CurrencyVATAmount == 0 ? datum.VATAmount.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.CurrencyVATAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalBoldFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(datum.CurrencyIncomeTaxAmount == 0 ? datum.IncomeTaxAmount.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.CurrencyIncomeTaxAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalBoldFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(datum.CurrencyTotal == 0 ? datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture), _normalBoldFont);
+                    table.AddCell(cellRight);
+                    cellCenter.Phrase = new Phrase(datum.CurrencyCode, _normalBoldFont);
+                    table.AddCell(cellCenter);
+                    cellCenter.Phrase = new Phrase(datum.CurrencyRate.ToString(), _normalBoldFont);
+                    table.AddCell(cellCenter);
+                    cellRight.Phrase = new Phrase(datum.CurrencyTotal.ToString("0,0.00", CultureInfo.InvariantCulture), _normalBoldFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture), _normalBoldFont);
+                    cellRight.Phrase = new Phrase(datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture), _normalBoldFont);
+                    table.AddCell(cellRight);
+                }
+                else
+                {
+                    cellCenter.Phrase = new Phrase(datum.VATNo, _normalFont);
+                    table.AddCell(cellCenter);
+                    cellRight.Phrase = new Phrase(datum.DPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(datum.CurrencyDPPAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(datum.CurrencyVATAmount == 0 ? datum.VATAmount.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.CurrencyVATAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(datum.CurrencyIncomeTaxAmount == 0 ? datum.IncomeTaxAmount.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.CurrencyIncomeTaxAmount.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(datum.CurrencyTotal == 0 ? datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture) : datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                    cellCenter.Phrase = new Phrase(datum.CurrencyCode, _normalFont);
+                    table.AddCell(cellCenter);
+                    cellCenter.Phrase = new Phrase(datum.CurrencyRate.ToString(), _normalFont);
+                    table.AddCell(cellCenter);
+                    cellRight.Phrase = new Phrase(datum.CurrencyTotal.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                    cellRight.Phrase = new Phrase(datum.Total.ToString("0,0.00", CultureInfo.InvariantCulture), _normalFont);
+                    table.AddCell(cellRight);
+                }
             }
 
             document.Add(table);
