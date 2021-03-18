@@ -625,7 +625,75 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
 
+        [Fact]
+        public void GeneratePdf_Succes_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IDPPVATBankExpenditureNoteService>();
+            // , List< DPPVATBankExpenditureNoteItemModel > items, List<DPPVATBankExpenditureNoteDetailModel> details
 
+            DPPVATBankExpenditureNoteModel model = new DPPVATBankExpenditureNoteModel("documentNo", 1, "bankAcountNumber", "bankName", "bankAccountingCode", 1, "IDR", 1, 1, "supplierName", false, "bgCheckNo", 1, DateTimeOffset.Now, "IDR", 1, 1);
+            List<DPPVATBankExpenditureNoteItemModel> items = new List<DPPVATBankExpenditureNoteItemModel>()
+            {
+
+            };
+
+            List<DPPVATBankExpenditureNoteDetailModel> details = new List<DPPVATBankExpenditureNoteDetailModel>()
+            {
+
+            };
+            service
+                .Setup(s => s.Read( It.IsAny<int>()))
+                .Returns(new DPPVATBankExpenditureNoteDto(model, items, details));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IDPPVATBankExpenditureNoteService)))
+               .Returns(service.Object);
+
+            //Act
+            FormDto form = new FormDto();
+            IActionResult response = GetController(serviceProviderMock).GeneratePdf(1);
+
+            //Assert
+            //Assert
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+           
+        }
+        [Fact]
+        public void GeneratePdf_Succes_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IDPPVATBankExpenditureNoteService>();
+            // , List< DPPVATBankExpenditureNoteItemModel > items, List<DPPVATBankExpenditureNoteDetailModel> details
+
+            DPPVATBankExpenditureNoteModel model = new DPPVATBankExpenditureNoteModel("documentNo", 1, "bankAcountNumber", "bankName", "bankAccountingCode", 1, "IDR", 1, 1, "supplierName", false, "bgCheckNo", 1, DateTimeOffset.Now, "IDR", 1, 1);
+            List<DPPVATBankExpenditureNoteItemModel> items = new List<DPPVATBankExpenditureNoteItemModel>()
+            {
+
+            };
+
+            List<DPPVATBankExpenditureNoteDetailModel> details = new List<DPPVATBankExpenditureNoteDetailModel>()
+            {
+
+            };
+            service
+                .Setup(s => s.Read(It.IsAny<int>()))
+                .Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IDPPVATBankExpenditureNoteService)))
+               .Returns(service.Object);
+
+            //Act
+            FormDto form = new FormDto();
+            IActionResult response = GetController(serviceProviderMock).GeneratePdf(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
     }
 
 
