@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionE
 
         }
 
-        public GarmentDispositionExpeditionModel(int dispositionNoteId, string dispositionNoteNo, DateTimeOffset dispositionNotedate, DateTimeOffset dispositionNoteDueDate, int supplierId, string supplierName, double vatAmount, double currencyVATAmount, double incomeTax, double currencyIncomeTaxAmount, double totalPaid, double currencyTotalPaid, int currencyId, string currencyCode, string remark, double dppAmount, double currencyDPPAmount, string supplierCode, double currencyRate)
+        public GarmentDispositionExpeditionModel(int dispositionNoteId, string dispositionNoteNo, DateTimeOffset dispositionNotedate, DateTimeOffset dispositionNoteDueDate, int supplierId, string supplierName, double vatAmount, double currencyVATAmount, double incomeTax, double currencyIncomeTaxAmount, double totalPaid, double currencyTotalPaid, int currencyId, string currencyCode, string remark, double dppAmount, double currencyDPPAmount, string supplierCode, double currencyRate, string proformaNo)
         {
             DispositionNoteId = dispositionNoteId;
             DispositionNoteNo = dispositionNoteNo;
@@ -35,6 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionE
             Remark = remark;
             SupplierCode = supplierCode;
             CurrencyRate = currencyRate;
+            ProformaNo = proformaNo;
         }
 
         public int DispositionNoteId { get; private set; }
