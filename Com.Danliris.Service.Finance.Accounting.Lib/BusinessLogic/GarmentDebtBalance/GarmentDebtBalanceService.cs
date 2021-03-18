@@ -337,7 +337,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public int EmptyInvoiceValue(int deliveryOrderId)
         {
             var model = _dbContext.GarmentDebtBalances.FirstOrDefault(element => element.GarmentDeliveryOrderId == deliveryOrderId);
-            model.SetInvoice(0, DateTime.MinValue, null, 0, 0, false, false, 0, 0, null);
+            model.SetInvoice(0, DateTimeOffset.MinValue, null, 0, 0, false, false, 0, 0, null);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             _dbContext.GarmentDebtBalances.Update(model);
 
