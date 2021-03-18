@@ -50,7 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
                 VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                var data = Service.GetDebtBalanceCardIndex(filter.supplierId,filter.month,filter.year);
+                var data = Service.GetDebtBalanceCardWithBalanceBeforeIndex(filter.supplierId,filter.month,filter.year);
 
                 return Ok(new
                 {
@@ -81,7 +81,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
             try
             {
                 VerifyUser();
-                var data = Service.GetDebtBalanceCardIndex(filter.supplierId, filter.month, filter.year);
+                var data = Service.GetDebtBalanceCardWithBalanceBeforeIndex(filter.supplierId, filter.month, filter.year);
 
                 MemoryStream result = new MemoryStream();
                 var filename = "Kartu Hutang.xlsx";

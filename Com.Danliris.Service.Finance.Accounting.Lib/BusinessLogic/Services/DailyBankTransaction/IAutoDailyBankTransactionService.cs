@@ -11,5 +11,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         Task<int> AutoRevertFromPaymentDisposition(PaymentDispositionNoteModel model);
         Task<int> AutoCreateFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels);
         Task<int> AutoRevertFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels);
+        //Task<int> AutoCreateFromGarmentDPPVATExpenditureNote();
     }
 }
