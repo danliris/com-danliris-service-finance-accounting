@@ -186,5 +186,117 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
             var result = service.UpdateFromBankExpenditureNote(1, form);
             Assert.NotEqual(0, result);
         }
+
+        [Fact]
+        public void Should_Success_GetDebtBalanceCardWithBeforeBalanceAndTotalDto()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var data= GenerateDataUtil(dbContext);
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.GetDebtBalanceCardWithBeforeBalanceAndTotalDto(data.SupplierId,data.ArrivalDate.Month,data.ArrivalDate.Year);
+            Assert.True( result.Count >0 );
+        }
+
+        [Fact]
+        public void Should_Success_GetDebtBalanceCardIndex()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var data = GenerateDataUtil(dbContext);
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.GetDebtBalanceCardIndex(data.SupplierId, data.ArrivalDate.Month, data.ArrivalDate.Year);
+            Assert.True(result.Count > 0);
+        }
+
+        [Fact]
+        public void Should_Success_GetDebtBalanceCardWithBalanceBeforeIndex()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var data = GenerateDataUtil(dbContext);
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.GetDebtBalanceCardIndex(data.SupplierId, data.ArrivalDate.Month, data.ArrivalDate.Year);
+            Assert.True(result.Count > 0);
+        }
+
+        [Fact]
+        public void Should_Success_GetDebtBalanceSummary()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var data = GenerateDataUtil(dbContext);
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.GetDebtBalanceSummary(data.SupplierId, data.ArrivalDate.Month, data.ArrivalDate.Year,false,data.SupplierIsImport);
+            Assert.True(result.Count > 0);
+        }
+
+        [Fact]
+        public void Should_Success_GetDebtBalanceSummaryAndTotalCurrency()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var data = GenerateDataUtil(dbContext);
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.GetDebtBalanceSummaryAndTotalCurrency(data.SupplierId, data.ArrivalDate.Month, data.ArrivalDate.Year, false, data.SupplierIsImport);
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void Should_Success_RemoveBalance()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var data = GenerateDataUtil(dbContext);
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.RemoveBalance(data.GarmentDeliveryOrderId);
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public void Should_Success_EmptyInternalNoteValue()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var data = GenerateDataUtil(dbContext);
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.EmptyInternalNoteValue(data.GarmentDeliveryOrderId);
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public void Should_Success_EmptyInvoiceValue()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var data = GenerateDataUtil(dbContext);
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.EmptyInvoiceValue(data.GarmentDeliveryOrderId);
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public void Should_Success_EmptyBankExpenditureNoteValue()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var data = GenerateDataUtil(dbContext);
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            var result = service.EmptyBankExpenditureNoteValue(data.GarmentDeliveryOrderId);
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public void Should_Success_GetDebtBalanceDetail()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var data = GenerateDataUtil(dbContext);
+            var form = GetValidBankExpenditureNoteForm();
+            var service = GetService(GetCurrentMethod());
+            
+            var filter = GarmentDebtBalanceDetailFilterEnum.All;
+            var result = service.GetDebtBalanceDetail(data.ArrivalDate, filter,data.SupplierId,data.CurrencyId,data.PaymentType);
+            Assert.True(0 < result.Count);
+        }
     }
 }
