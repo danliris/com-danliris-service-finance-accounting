@@ -216,7 +216,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
             var data = GenerateDataUtil(dbContext);
             var form = GetValidBankExpenditureNoteForm();
             var service = GetService(GetCurrentMethod());
-            var result = service.GetDebtBalanceCardIndex(data.SupplierId, data.ArrivalDate.Month, data.ArrivalDate.Year);
+            var result = service.GetDebtBalanceCardWithBalanceBeforeIndex(data.SupplierId, data.ArrivalDate.Month, data.ArrivalDate.Year);
             Assert.True(result.Count > 0);
         }
 
