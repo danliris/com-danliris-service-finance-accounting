@@ -41,7 +41,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             double incomeTaxAmount,
             double currencyIncomeTaxAmount,
             double dppAmount,
-            double currencyDppAmount
+            double currencyDppAmount,
+            DateTimeOffset verifiedDateSend,
+            DateTimeOffset verifiedDateReceived
             )
         {
             Id = id;
@@ -66,6 +68,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             CurrencyIncomeTaxAmount = currencyIncomeTaxAmount;
             DPPAmount = dppAmount;
             CurrencyDPPAmount = currencyDppAmount;
+            VerifiedDateSend = verifiedDateSend;
+            VerifiedDateReceived = verifiedDateReceived;
 
         }
 
@@ -92,5 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public string Status { get; private set; }
         public string ProformaNo { get; private set; }
         public string CreatedBy { get; private set; }
+        public DateTimeOffset VerifiedDateSend { get; set; }
+        public DateTimeOffset VerifiedDateReceived { get; set; }
     }
 }
