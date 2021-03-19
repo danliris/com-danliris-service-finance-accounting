@@ -115,7 +115,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             foreach (var datum in data)
             {
-                cellLeft.Phrase = new Phrase(!string.IsNullOrWhiteSpace(datum.SupplierCode) ? $"{datum.SupplierCode} - {datum.SupplierName}" : datum.SupplierName, _normalFont);
+                cellLeft.Phrase = new Phrase(!string.IsNullOrWhiteSpace(datum.SupplierCode) ? $"{datum.SupplierCode} - {datum.SupplierName}" : "Total", _normalFont);
                 table.AddCell(cellLeft);
                 cellCenter.Phrase = new Phrase(datum.CurrencyCode, _normalFont);
                 table.AddCell(cellCenter);
