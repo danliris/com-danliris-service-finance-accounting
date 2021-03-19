@@ -20,6 +20,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             Remark = remark;
             Status = position.ToDescriptionString();
         }
+        public IndexDto(int id, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, int dispositionNoteId, string supplierName, GarmentPurchasingExpeditionPosition position, double totalPaid, string currencyCode, string remark, DateTimeOffset verifiedDateSend, DateTimeOffset verifiedDateReceived)
+        {
+            Id = id;
+            DispositionNoteNo = dispositionNoteNo;
+            DispositionNoteDate = dispositionNoteDate;
+            DispositionNoteId = dispositionNoteId;
+            SupplierName = supplierName;
+            TotalPaid = totalPaid;
+            CurrencyCode = currencyCode;
+            Remark = remark;
+            Status = position.ToDescriptionString();
+            VerifiedDateReceived = verifiedDateReceived;
+            VerifiedDateSend = verifiedDateSend;
+        }
 
         public IndexDto(int id, string dispositionNoteNo,
             DateTimeOffset dispositionNoteDate,

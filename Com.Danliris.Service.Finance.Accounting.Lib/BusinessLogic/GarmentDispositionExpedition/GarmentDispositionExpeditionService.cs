@@ -411,7 +411,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                     if (entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing)
                         date = entity.SendToPurchasingDate;
 
-                    return new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteId, entity.SupplierName, entity.Position, entity.TotalPaid, entity.CurrencyCode, entity.SendToPurchasingRemark);
+                    return new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteId, entity.SupplierName, entity.Position, entity.TotalPaid, entity.CurrencyCode, entity.Remark,entity.VerifiedDateSend,entity.VerifiedDateReceived);
                 })
                 .ToList();
 

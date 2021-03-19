@@ -48,11 +48,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             //filter by last saldo year and month
             var querySaldoBefore = queryGetAllSaldoBefore.Where(s => s.ArrivalDate.Month < month && s.ArrivalDate.Year < year).OrderByDescending(s => s.ArrivalDate).ToList();
 
-            List<GarmentDebtBalanceCardDto> garmentDebtDto = garmentDebtBalance.Select(s => new GarmentDebtBalanceCardDto(s)).ToList();
-
-            //insert
             var getLastQueryBefore = querySaldoBefore.FirstOrDefault();
             var lastBalance = getLastQueryBefore == null ? 0 : getLastQueryBefore.RemainBalance;
+            var lastBalanceAdd = lastBalance;
+
+            List<GarmentDebtBalanceCardDto> garmentDebtDto = garmentDebtBalance.Select(s => {
+
+                var balance = new GarmentDebtBalanceCardDto(s);
+                balance.RemainBalance += lastBalanceAdd;
+                lastBalanceAdd += balance.TotalInvoice;
+                return balance;
+                }).ToList();
+
+            //insert
+            ;
             garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<saldo awal>>", lastBalance));
             garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<total>>", 0, 0, 0));
 
@@ -337,7 +346,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public int EmptyInvoiceValue(int deliveryOrderId)
         {
             var model = _dbContext.GarmentDebtBalances.FirstOrDefault(element => element.GarmentDeliveryOrderId == deliveryOrderId);
-            model.SetInvoice(0, DateTimeOffset.MinValue, null, 0, 0, false, false, 0, 0, null);
+            model.SetInvoice(0, DateTime.MinValue, null, 0, 0, false, false, 0, 0, null);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             _dbContext.GarmentDebtBalances.Update(model);
 
