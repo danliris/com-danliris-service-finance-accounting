@@ -92,12 +92,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionE
         public DateTimeOffset? AccountingAcceptedDate { get; private set; }
         [MaxLength(64)]
         public string AccountingAcceptedBy { get; private set; }
+        /// <summary>
+        /// Tanggal pembelian Kirim
+        /// </summary>
+        public DateTimeOffset VerifiedDateSend { get; private set; }
+        /// <summary>
+        /// Tanggal Pembelian Terima
+        /// </summary>
+        public DateTimeOffset VerifiedDateReceived { get; private set; }
 
         public void SendToVerification(string username)
         {
             SendToVerificationBy = username;
             SendToVerificationDate = DateTimeOffset.Now;
             Position = GarmentPurchasingExpeditionPosition.SendToVerification;
+            VerifiedDateSend = DateTimeOffset.Now.ToUniversalTime();
         }
 
         public void SendToAccounting(string username)
