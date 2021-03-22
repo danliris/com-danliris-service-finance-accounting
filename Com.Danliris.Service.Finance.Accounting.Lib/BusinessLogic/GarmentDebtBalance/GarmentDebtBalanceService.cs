@@ -49,7 +49,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             var querySaldoBefore = queryGetAllSaldoBefore.Where(s => s.ArrivalDate.Month < month && s.ArrivalDate.Year < year).OrderByDescending(s => s.ArrivalDate).ToList();
 
             var getLastQueryBefore = querySaldoBefore.FirstOrDefault();
-            var lastBalance = getLastQueryBefore == null ? 0 : getLastQueryBefore.RemainBalance;
+            //var lastBalance = getLastQueryBefore == null ? 0 : getLastQueryBefore.RemainBalance;
+            var lastBalance = getLastQueryBefore == null ? 0 : querySaldoBefore.Sum(s => s.TotalInvoice);
             var lastBalanceAdd = lastBalance;
 
             List<GarmentDebtBalanceCardDto> garmentDebtDto = garmentDebtBalance.Select(s => {
