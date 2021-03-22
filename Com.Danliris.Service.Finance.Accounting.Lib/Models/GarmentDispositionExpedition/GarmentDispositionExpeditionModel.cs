@@ -137,6 +137,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionE
             VerificationAcceptedBy = username;
             VerificationAcceptedDate = DateTimeOffset.Now;
             Position = GarmentPurchasingExpeditionPosition.VerificationAccepted;
+            VerifiedDateReceived = DateTimeOffset.Now.ToUniversalTime();
         }
 
         public void CashierAccepted(string username)

@@ -77,7 +77,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             MutationPayment = model.BankExpenditureNoteInvoiceAmount;
             CurrencyMutationPurchase = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount;
             CurrencyMutationPayment = model.CurrencyBankExpenditureNoteInvoiceAmount;
-            RemainBalance = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount - model.BankExpenditureNoteInvoiceAmount;
+            RemainBalance = (model.DPPAmount + model.VATAmount - model.IncomeTaxAmount - model.BankExpenditureNoteInvoiceAmount);
             CurrencyRemainBalance = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount - model.CurrencyBankExpenditureNoteInvoiceAmount;
             ArrivalDate = model.ArrivalDate;
         }
