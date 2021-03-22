@@ -85,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 var currentRow = 6;
                 foreach (var item in data)
                 {
-                    worksheet.Cells[$"A{currentRow}"].Value = !string.IsNullOrWhiteSpace(item.SupplierCode) ? $"{item.SupplierCode} - {item.SupplierName}" : item.SupplierName;
+                    worksheet.Cells[$"A{currentRow}"].Value = !string.IsNullOrWhiteSpace(item.SupplierCode) ? $"{item.SupplierCode} - {item.SupplierName}" : "Total";
                     worksheet.Cells[$"A{currentRow}"].Style.Font.Size = 14;
                     worksheet.Cells[$"B{currentRow}"].Value = item.CurrencyCode;
                     worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
