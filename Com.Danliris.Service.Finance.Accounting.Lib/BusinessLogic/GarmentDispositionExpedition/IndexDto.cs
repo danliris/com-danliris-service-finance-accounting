@@ -8,7 +8,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 {
     public class IndexDto
     {
-        public IndexDto(int id, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, int dispositionNoteId, string supplierName, GarmentPurchasingExpeditionPosition position, double totalPaid, string currencyCode, string remark)
+        public IndexDto(int id, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, int dispositionNoteId, string supplierName, GarmentPurchasingExpeditionPosition position, double totalPaid, string currencyCode, string remark,DateTimeOffset createdDate)
         {
             Id = id;
             DispositionNoteNo = dispositionNoteNo;
@@ -19,8 +19,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             CurrencyCode = currencyCode;
             Remark = remark;
             Status = position.ToDescriptionString();
+            CreatedDate = createdDate;
         }
-        public IndexDto(int id, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, int dispositionNoteId, string supplierName, GarmentPurchasingExpeditionPosition position, double totalPaid, string currencyCode, string remark, DateTimeOffset verifiedDateSend, DateTimeOffset verifiedDateReceived)
+        public IndexDto(int id, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, int dispositionNoteId, string supplierName, GarmentPurchasingExpeditionPosition position, double totalPaid, string currencyCode, string remark, DateTimeOffset verifiedDateSend, DateTimeOffset verifiedDateReceived,string sendToPurchasingRemark, DateTimeOffset createdDate)
         {
             Id = id;
             DispositionNoteNo = dispositionNoteNo;
@@ -33,19 +34,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             Status = position.ToDescriptionString();
             VerifiedDateReceived = verifiedDateReceived;
             VerifiedDateSend = verifiedDateSend;
+            SendToPurchasingRemark = sendToPurchasingRemark;
+            CreatedDate = createdDate;
         }
 
         public IndexDto(int id, string dispositionNoteNo,
             DateTimeOffset dispositionNoteDate,
-            DateTimeOffset dispositionNoteDueDate, 
-            int dispositionNoteId, 
-            double currencyTotalPaid, 
-            double totalPaid, 
-            int currencyId, 
-            string currencyCode, 
-            string suppliername, 
+            DateTimeOffset dispositionNoteDueDate,
+            int dispositionNoteId,
+            double currencyTotalPaid,
+            double totalPaid,
+            int currencyId,
+            string currencyCode,
+            string suppliername,
             string remark,
-            string proformaNo, 
+            string proformaNo,
             string createdBy,
             double currencyRate,
             int supplierId,
@@ -57,7 +60,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             double dppAmount,
             double currencyDppAmount,
             DateTimeOffset verifiedDateSend,
-            DateTimeOffset verifiedDateReceived
+            DateTimeOffset verifiedDateReceived,
+            string sendToPurchasingRemark,
+            DateTimeOffset createdDate
             )
         {
             Id = id;
@@ -84,7 +89,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             CurrencyDPPAmount = currencyDppAmount;
             VerifiedDateSend = verifiedDateSend;
             VerifiedDateReceived = verifiedDateReceived;
-
+            SendToPurchasingRemark = sendToPurchasingRemark;
+            CreatedDate = createdDate;
         }
 
         public int Id { get; private set; }
@@ -112,5 +118,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public string CreatedBy { get; private set; }
         public DateTimeOffset VerifiedDateSend { get; set; }
         public DateTimeOffset VerifiedDateReceived { get; set; }
+        public string SendToPurchasingRemark { get; private set; }
+        public DateTimeOffset CreatedDate { get; private set; }
     }
 }
