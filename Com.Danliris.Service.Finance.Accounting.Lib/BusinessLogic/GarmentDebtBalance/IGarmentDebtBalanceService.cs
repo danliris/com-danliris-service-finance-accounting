@@ -20,5 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         List<GarmentDebtBalanceDetailDto> GetDebtBalanceDetail(DateTimeOffset arrivalDate, GarmentDebtBalanceDetailFilterEnum supplierTypeFilter, int supplierId, int currencyId, string paymentType);
         GarmentDebtBalanceIndexDto GetDebtBalanceCardWithBalanceBeforeIndex(int supplierId, int month, int year);
         GarmentDebtBalanceSummaryAndTotalCurrencyDto GetDebtBalanceSummaryAndTotalCurrency(int supplierId, int month, int year, bool isForeignCurrency, bool supplierIsImport);
+        List<GarmentDebtBalanceCardDto> GetDebtBalanceCardWithBeforeBalanceAndSaldoAkhirDto(int supplierId, int month, int year);
+        GarmentDebtBalanceIndexDto GetDebtBalanceCardWithBalanceBeforeAndRemainBalanceIndex(int supplierId, int month, int year);
     }
 }

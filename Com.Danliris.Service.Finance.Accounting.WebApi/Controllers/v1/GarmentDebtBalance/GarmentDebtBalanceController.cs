@@ -50,7 +50,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
                 VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                var data = Service.GetDebtBalanceCardWithBalanceBeforeIndex(filter.supplierId, filter.month, filter.year);
+                var data = Service.GetDebtBalanceCardWithBalanceBeforeAndRemainBalanceIndex(filter.supplierId, filter.month, filter.year);
 
                 return Ok(new
                 {
@@ -81,7 +81,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
             try
             {
                 VerifyUser();
-                var data = Service.GetDebtBalanceCardWithBalanceBeforeIndex(filter.supplierId, filter.month, filter.year);
+                var data = Service.GetDebtBalanceCardWithBalanceBeforeAndRemainBalanceIndex(filter.supplierId, filter.month, filter.year);
 
                 MemoryStream result = new MemoryStream();
                 var filename = "Kartu Hutang.xlsx";
@@ -111,7 +111,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentD
 
                 MemoryStream result = new MemoryStream();
                 var filename = "Kartu Hutang.pdf";
-                result = Lib.BusinessLogic.GarmentDebtBalance.Pdf.GarmentBalanceCardPDFGenerator.Generate(data, filter.month, filter.year, false, filter.import, IdentityService.TimezoneOffset);
+                result = Lib.BusinessLogic.GarmentDebtBalance.Pdf.GarmentBalanceCardPDFGenerator.Generate(data, filter.month, filter.year, false, filter.import, IdentityService.TimezoneOffset,filter.supplierName);
                 //filename += ".xlsx";
 
                 var bytes = result.ToArray();

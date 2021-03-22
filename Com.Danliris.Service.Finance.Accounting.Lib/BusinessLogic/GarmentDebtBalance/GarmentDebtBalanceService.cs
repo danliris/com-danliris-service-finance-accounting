@@ -40,7 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         public List<GarmentDebtBalanceCardDto> GetDebtBalanceCardWithBeforeBalanceAndTotalDto(int supplierId, int month, int year)
         {
-            var garmentDebtBalance = GetData(supplierId, month, year).ToList();
+            var garmentDebtBalance = GetData(supplierId, month, year).OrderBy(s => s.ArrivalDate).ToList();
 
             //get last balance
             var queryGetAllSaldoBefore = _dbContext.GarmentDebtBalances.Where(s => s.ArrivalDate.Month < month && s.ArrivalDate.Year < year).OrderByDescending(s => s.ArrivalDate).Select(s => new GarmentDebtBalance.GarmentDebtBalanceCardDto(s)).AsQueryable();
@@ -55,8 +55,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             List<GarmentDebtBalanceCardDto> garmentDebtDto = garmentDebtBalance.Select(s => {
 
                 var balance = new GarmentDebtBalanceCardDto(s);
-                balance.RemainBalance += lastBalanceAdd;
                 lastBalanceAdd += balance.TotalInvoice;
+                balance.RemainBalance += lastBalanceAdd;
                 return balance;
                 }).ToList();
 
@@ -64,6 +64,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             ;
             garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<saldo awal>>", lastBalance));
             garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<total>>", 0, 0, 0));
+            //garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<saldo akhir>>",lastBalanceAdd,true));
+
+            //garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<saldo akhir>>", 0, 0, 0,true));
+
+
+            return garmentDebtDto.OrderBy(d => d.ArrivalDate).ToList();
+        }
+
+        public List<GarmentDebtBalanceCardDto> GetDebtBalanceCardWithBeforeBalanceAndSaldoAkhirDto(int supplierId, int month, int year)
+        {
+            var garmentDebtBalance = GetData(supplierId, month, year).OrderBy(s => s.ArrivalDate).ToList();
+
+            //get last balance
+            var queryGetAllSaldoBefore = _dbContext.GarmentDebtBalances.Where(s => s.ArrivalDate.Month < month && s.ArrivalDate.Year < year).OrderBy(s => s.ArrivalDate).Select(s => new GarmentDebtBalance.GarmentDebtBalanceCardDto(s)).AsQueryable();
+            var lastMonthAndYearSaldo = queryGetAllSaldoBefore.Select(s => s.ArrivalDate).FirstOrDefault();
+            //filter by last saldo year and month
+            var querySaldoBefore = queryGetAllSaldoBefore.Where(s => s.ArrivalDate.Month < month && s.ArrivalDate.Year <= year).OrderBy(s => s.ArrivalDate).ToList();
+
+            var getLastQueryBefore = querySaldoBefore.FirstOrDefault();
+            var lastBalance = getLastQueryBefore == null ? 0 : querySaldoBefore.Sum(s=> s.TotalInvoice);
+            var lastBalanceAdd = lastBalance;
+
+            List<GarmentDebtBalanceCardDto> garmentDebtDto = garmentDebtBalance.Select(s => {
+
+                var balance = new GarmentDebtBalanceCardDto(s);
+                lastBalanceAdd += balance.TotalInvoice;
+                balance.RemainBalance += lastBalanceAdd;
+                return balance;
+            }).ToList();
+
+            //insert
+            garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<saldo awal>>", lastBalance));
+            garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<saldo akhir>>", lastBalanceAdd, 0, 0));
+            //garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<saldo akhir>>",lastBalanceAdd,true));
+
+            //garmentDebtDto.Add(new GarmentDebtBalanceCardDto("<<saldo akhir>>", 0, 0, 0,true));
+
 
             return garmentDebtDto.OrderBy(d => d.ArrivalDate).ToList();
         }
@@ -95,6 +132,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public GarmentDebtBalanceIndexDto GetDebtBalanceCardWithBalanceBeforeIndex(int supplierId, int month, int year)
         {
             var query = GetDebtBalanceCardWithBeforeBalanceAndTotalDto(supplierId, month, year);
+            var result = new GarmentDebtBalanceIndexDto
+            {
+                Data = query,
+                Count = query.Count,
+                Order = new List<string>(),
+                Selected = new List<string>()
+            };
+            return result;
+        }
+        public GarmentDebtBalanceIndexDto GetDebtBalanceCardWithBalanceBeforeAndRemainBalanceIndex(int supplierId, int month, int year)
+        {
+            var query = GetDebtBalanceCardWithBeforeBalanceAndSaldoAkhirDto(supplierId, month, year);
             var result = new GarmentDebtBalanceIndexDto
             {
                 Data = query,
