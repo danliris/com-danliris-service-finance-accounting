@@ -38,13 +38,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
             reportDataTable.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(string) });
 
+            var reportDataTableOnly = reportDataTable.Clone();
 
             if (result.Data.Count > 0)
             {
                 foreach (var report in result.Data)
                 {
                     reportDataTable.Rows.Add(
-                        report.ArrivalDate.AddHours(timeZone).ToString("dd/MM/yyyy"),
+                        report.ArrivalDate != DateTimeOffset.MaxValue? report.ArrivalDate.AddHours(timeZone).ToString("dd/MM/yyyy"):report.ArrivalDate.ToString("dd/MM/yyyy"),
                         report.ProductNames,
                         report.PurchasingCategoryName,
                         report.BillsNo,
@@ -64,6 +65,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                         report.CurrencyMutationPayment.ToString("N2", ci),
                         report.RemainBalance.ToString("N2", ci)
                         );
+
+                    if(!report.IsInitialBalance && !report.IsTotalBalance)
+                    {
+                        reportDataTableOnly.Rows.Add(
+                        report.ArrivalDate != DateTimeOffset.MaxValue ? report.ArrivalDate.AddHours(timeZone).ToString("dd/MM/yyyy") : report.ArrivalDate.ToString("dd/MM/yyyy"),
+                        report.ProductNames,
+                        report.PurchasingCategoryName,
+                        report.BillsNo,
+                        report.PaymentBills,
+                        report.GarmentDeliveryOrderNo,
+                        report.BankExpenditureNoteNo,
+                        report.InternalNoteNo,
+                        report.InvoiceNo,
+                        report.DPPAmount.ToString("N2", ci),
+                        report.CurrencyDPPAmount.ToString("N2", ci),
+                        report.VATAmount.ToString("N2", ci),
+                        report.IncomeTaxAmount.ToString("N2", ci),
+                        report.TotalInvoice.ToString("N2", ci),
+                        report.MutationPurchase.ToString("N2", ci),
+                        report.CurrencyMutationPurchase.ToString("N2", ci),
+                        report.MutationPayment.ToString("N2", ci),
+                        report.CurrencyMutationPayment.ToString("N2", ci),
+                        report.RemainBalance.ToString("N2", ci)
+                        );
+                    }
                 }
                 
             }
@@ -143,12 +169,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     colStartHeader++;
                 }
                 #endregion
-                worksheet.Cells["A7"].LoadFromDataTable(reportDataTable, false);
+                //worksheet.Cells["A7"].LoadFromDataTable(reportDataTable, false);
+                bool isDataLoaded = false;
                 for (int i = 7; i < result.Data.Count + 7; i++)
                 {
                     for (int j = 1; j <= reportDataTable.Columns.Count; j++)
                     {
-                        worksheet.Cells[i, j].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                        var item = result.Data[i-7];
+                        var checkIfSaldoOrTotal = item.IsInitialBalance|| item.IsTotalBalance;
+                        if (checkIfSaldoOrTotal)
+                        {
+                            var replaceCharacter = item.ProductNames.Replace("<", string.Empty).Replace(">", string.Empty);
+                            var numberCellMerge = reportDataTable.Columns.Count - 1;
+                            worksheet.Cells[i, j].Value = ci.TextInfo.ToTitleCase(replaceCharacter);
+                            worksheet.Cells[i, j, i, numberCellMerge].Merge = true;
+                            worksheet.Cells[i, j, i, numberCellMerge].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+
+                            worksheet.Cells[i, numberCellMerge + 1].Value = item.RemainBalance.ToString("N2",ci);
+                            worksheet.Cells[i, numberCellMerge + 1].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+
+                            j = reportDataTable.Columns.Count + 1; // exit column loop
+                        }
+                        else
+                        {
+                            if (!isDataLoaded)
+                            {
+                                worksheet.Cells[i,j].LoadFromDataTable(reportDataTableOnly, false);
+                                isDataLoaded = true;
+                            }
+                            worksheet.Cells[i, j].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                        }
                     }
                 }
 

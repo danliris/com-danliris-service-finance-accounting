@@ -77,7 +77,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             MutationPayment = model.BankExpenditureNoteInvoiceAmount;
             CurrencyMutationPurchase = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount;
             CurrencyMutationPayment = model.CurrencyBankExpenditureNoteInvoiceAmount;
-            RemainBalance = (model.DPPAmount + model.VATAmount - model.IncomeTaxAmount - model.BankExpenditureNoteInvoiceAmount);
+            //RemainBalance = (model.DPPAmount + model.VATAmount - model.IncomeTaxAmount - model.BankExpenditureNoteInvoiceAmount);
             CurrencyRemainBalance = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount - model.CurrencyBankExpenditureNoteInvoiceAmount;
             ArrivalDate = model.ArrivalDate;
         }
@@ -93,6 +93,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             RemainBalance = remainBalance;
             ArrivalDate = DateTimeOffset.MinValue;
         }
+
+        /// <summary>
+        /// ovveride for saldo awal (pdf)
+        /// </summary>
+        /// <param name="productName"></param>
+        /// <param name="remainBalance"></param>
+        public GarmentDebtBalanceCardDto(string productName, double remainBalance, bool isTotalBalance)
+        {
+            //IsInitialBalance = true;
+            ProductNames = productName;
+            RemainBalance = remainBalance;
+            ArrivalDate = DateTimeOffset.MaxValue;
+            IsTotalBalance = isTotalBalance;
+        }
         /// <summary>
         /// override for total (pdf)
         /// </summary>
@@ -106,6 +120,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             ProductNames = productName;
             RemainBalance = remainBalance;
             ArrivalDate = DateTimeOffset.MaxValue;
+
+        }
+        /// <summary>
+        /// override for total (pdf)
+        /// </summary>
+        /// <param name="productName"></param>
+        /// <param name="remainBalance"></param>
+        /// <param name="mutationPurchase"></param>
+        /// <param name="mutationPayment"></param>
+        /// <param name="isTotalBalance"></param>
+        public GarmentDebtBalanceCardDto(string productName, double remainBalance, double mutationPurchase, double mutationPayment,bool isTotalBalance)
+        {
+            IsTotalBalance = true;
+            ProductNames = productName;
+            RemainBalance = remainBalance;
+            ArrivalDate = DateTimeOffset.MaxValue;
+            IsTotalBalance = isTotalBalance;
 
         }
     }
