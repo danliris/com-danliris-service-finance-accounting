@@ -93,6 +93,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             CreatedDate = createdDate;
         }
 
+        public IndexDto(GarmentDispositionExpeditionModel entity)
+        {
+            Id = entity.Id;
+            DispositionNoteNo = entity.DispositionNoteNo;
+            DispositionNoteDate = entity.DispositionNoteDate;
+            DispositionNoteDueDate = entity.DispositionNoteDueDate;
+            DispositionNoteId = entity.DispositionNoteId;
+            SupplierName = entity.SupplierName;
+            TotalPaid = entity.TotalPaid;
+            CurrencyCode = entity.CurrencyCode;
+            VerificationAcceptedDate = entity.VerificationAcceptedDate;
+            SendToPurchasingRemark = entity.SendToPurchasingRemark;
+            Remark = entity.Remark;
+            DPPAmount = entity.DPPAmount;
+            VATAmount = entity.VATAmount;
+            IncomeTaxAmount = entity.IncomeTaxAmount;
+            Status = entity.Position.ToDescriptionString();
+            Date = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing ? entity.SendToPurchasingDate : entity.VerificationAcceptedDate;
+            VerifiedBy = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing ? entity.SendToPurchasingBy : entity.VerificationAcceptedBy;
+            SentDate = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting || entity.Position == GarmentPurchasingExpeditionPosition.AccountingAccepted ? entity.SendToAccountingDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier || entity.Position == GarmentPurchasingExpeditionPosition.CashierAccepted ? entity.SendToCashierDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing ? entity.SendToPurchasingDate : entity.SendToVerificationDate;
+            AcceptedDate = entity.Position == GarmentPurchasingExpeditionPosition.AccountingAccepted ? entity.AccountingAcceptedDate : entity.Position == GarmentPurchasingExpeditionPosition.CashierAccepted ? entity.CashierAcceptedDate : entity.Position == GarmentPurchasingExpeditionPosition.VerificationAccepted ? entity.VerificationAcceptedDate : null;
+        }
+
         public int Id { get; private set; }
         public string DispositionNoteNo { get; private set; }
         public DateTimeOffset DispositionNoteDate { get; private set; }
@@ -102,6 +125,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public double TotalPaid { get; private set; }
         public int CurrencyId { get; private set; }
         public string CurrencyCode { get; private set; }
+        public DateTimeOffset? VerificationAcceptedDate { get; private set; }
         public double CurrencyRate { get; private set; }
         public string SupplierName { get; private set; }
         public int SupplierId { get; private set; }
@@ -114,6 +138,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public double CurrencyDPPAmount { get; set; }
         public string Remark { get; private set; }
         public string Status { get; private set; }
+        public DateTimeOffset? Date { get; private set; }
+        public string VerifiedBy { get; private set; }
+        public DateTimeOffset? SentDate { get; private set; }
+        public DateTimeOffset? AcceptedDate { get; private set; }
         public string ProformaNo { get; private set; }
         public string CreatedBy { get; private set; }
         public DateTimeOffset VerifiedDateSend { get; set; }

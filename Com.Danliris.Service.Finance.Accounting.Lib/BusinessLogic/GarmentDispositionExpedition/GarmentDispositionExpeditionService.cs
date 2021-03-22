@@ -380,7 +380,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode, entity.SupplierName, entity.Remark, entity.ProformaNo, entity.SendToVerificationBy, entity.CurrencyRate, entity.SupplierId, entity.SupplierCode, entity.VATAmount, entity.CurrencyVATAmount, entity.IncomeTaxAmount, entity.CurrencyIncomeTaxAmount, entity.DPPAmount, entity.CurrencyDPPAmount,entity.VerifiedDateSend,entity.VerifiedDateReceived,entity.SendToPurchasingRemark, entity.CreatedUtc))
+                .Select(entity => new IndexDto(entity))
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
@@ -388,9 +388,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 
         public ReadResponse<IndexDto> GetVerified(string keyword, int page, int size, string order)
         {
-            //var query = _dbContext.GarmentDispositionExpeditions.Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier || entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting || entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing);
-            var query = _dbContext.GarmentDispositionExpeditions.Where(entity => entity.Position != GarmentPurchasingExpeditionPosition.SendToCashier || entity.Position != GarmentPurchasingExpeditionPosition.SendToAccounting || entity.Position != GarmentPurchasingExpeditionPosition.SendToPurchasing);
-
+            var query = _dbContext.GarmentDispositionExpeditions.Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier || entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting || entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing);
 
             if (!string.IsNullOrWhiteSpace(keyword))
                 query = query.Where(entity => entity.DispositionNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
@@ -403,16 +401,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .ToList()
-                .Select(entity => 
-                {
-                    var date = entity.SendToCashierDate;
-
-                    if (entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing)
-                        date = entity.SendToPurchasingDate;
-
-                    return new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteId, entity.SupplierName, entity.Position, entity.TotalPaid, entity.CurrencyCode, entity.Remark,entity.VerifiedDateSend,entity.VerifiedDateReceived,entity.SendToPurchasingRemark,entity.CreatedUtc);
-                })
+                .Select(entity => new IndexDto(entity))
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
