@@ -162,7 +162,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                     table.AddCell(cellRight);
                     cellRight.Phrase = new Phrase(report.Data.Sum(s => s.CurrencyMutationPayment).ToString("N2", CultureInfo.InvariantCulture), _normalFont);
                     table.AddCell(cellRight);
-                    cellRight.Phrase = new Phrase(report.Data.Sum(s => s.RemainBalance).ToString("N2", CultureInfo.InvariantCulture), _normalFont);
+                    cellRight.Phrase = new Phrase(report.Data.Sum(s => s.MutationPurchase).ToString("N2", CultureInfo.InvariantCulture), _normalFont);
                     table.AddCell(cellRight);
                 }
             }
