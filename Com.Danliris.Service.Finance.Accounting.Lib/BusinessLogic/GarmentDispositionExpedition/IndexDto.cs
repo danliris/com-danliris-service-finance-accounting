@@ -114,6 +114,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             VerifiedBy = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting ? entity.SendToAccountingBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier ? entity.SendToCashierBy : entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing ? entity.SendToPurchasingBy : entity.VerificationAcceptedBy;
             SentDate = entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting || entity.Position == GarmentPurchasingExpeditionPosition.AccountingAccepted ? entity.SendToAccountingDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier || entity.Position == GarmentPurchasingExpeditionPosition.CashierAccepted ? entity.SendToCashierDate : entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing ? entity.SendToPurchasingDate : entity.SendToVerificationDate;
             AcceptedDate = entity.Position == GarmentPurchasingExpeditionPosition.AccountingAccepted ? entity.AccountingAcceptedDate : entity.Position == GarmentPurchasingExpeditionPosition.CashierAccepted ? entity.CashierAcceptedDate : entity.Position == GarmentPurchasingExpeditionPosition.VerificationAccepted ? entity.VerificationAcceptedDate : null;
+            CreatedDate = entity.CreatedUtc;
         }
 
         public int Id { get; private set; }
