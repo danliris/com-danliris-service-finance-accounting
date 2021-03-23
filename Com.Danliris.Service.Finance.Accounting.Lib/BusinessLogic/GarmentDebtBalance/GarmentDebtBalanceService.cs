@@ -78,10 +78,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             var garmentDebtBalance = GetData(supplierId, month, year).OrderBy(s => s.ArrivalDate).ToList();
 
             //get last balance
-            var queryGetAllSaldoBefore = _dbContext.GarmentDebtBalances.Where(s => s.ArrivalDate.Month < month && s.ArrivalDate.Year < year).OrderBy(s => s.ArrivalDate).Select(s => new GarmentDebtBalance.GarmentDebtBalanceCardDto(s)).AsQueryable();
+            var queryGetAllSaldoBefore = _dbContext.GarmentDebtBalances.Where(s => s.ArrivalDate.Month < month && s.ArrivalDate.Year <= year && s.SupplierId == supplierId).OrderBy(s => s.ArrivalDate).Select(s => new GarmentDebtBalance.GarmentDebtBalanceCardDto(s)).AsQueryable();
             var lastMonthAndYearSaldo = queryGetAllSaldoBefore.Select(s => s.ArrivalDate).FirstOrDefault();
             //filter by last saldo year and month
-            var querySaldoBefore = queryGetAllSaldoBefore.Where(s => s.ArrivalDate.Month < month && s.ArrivalDate.Year <= year).OrderBy(s => s.ArrivalDate).ToList();
+            var querySaldoBefore = queryGetAllSaldoBefore.Where(s => s.ArrivalDate.Month < month && s.ArrivalDate.Year <= year && s.SupplierId == supplierId).OrderBy(s => s.ArrivalDate).ToList();
 
             var getLastQueryBefore = querySaldoBefore.FirstOrDefault();
             var lastBalance = getLastQueryBefore == null ? 0 : querySaldoBefore.Sum(s=> s.TotalInvoice);
