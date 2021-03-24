@@ -45,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             headerTable_A.SetWidths(new float[] { 10f, 10f });
             headerTable_A.WidthPercentage = 100;
-            headerTable3.SetWidths(new float[] { 5f, 15f, 10f, 25f, 15f, 20f });
+            headerTable3.SetWidths(new float[] { 5f, 15f, 5f, 25f, 15f, 25f });
             headerTable3.WidthPercentage = 110;
             headerTable3a.SetWidths(new float[] { 3f, 15f, 5f, 15f, 62f });
             headerTable3a.WidthPercentage = 110;
