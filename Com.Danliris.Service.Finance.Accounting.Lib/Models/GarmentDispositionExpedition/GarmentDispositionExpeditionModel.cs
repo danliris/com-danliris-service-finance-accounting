@@ -100,6 +100,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionE
         /// Tanggal Pembelian Terima
         /// </summary>
         public DateTimeOffset VerifiedDateReceived { get; private set; }
+        [MaxLength(64)]
+        public string VerifiedBy { get; private set; }
+        public DateTimeOffset? VerifiedDate { get; private set; }
 
         public void SendToVerification(string username)
         {
@@ -121,6 +124,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionE
             Position = GarmentPurchasingExpeditionPosition.SendToCashier;
             SendToCashierBy = username;
             SendToCashierDate = DateTimeOffset.Now;
+            VerifiedBy = username;
+            VerifiedDate = DateTimeOffset.Now;
         }
 
         public void SendToPurchasing(string username)
@@ -159,12 +164,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionE
             VerificationAcceptedBy = null;
             VerificationAcceptedDate = null;
             Position = GarmentPurchasingExpeditionPosition.SendToVerification;
+            VerifiedBy = null;
+            VerifiedDate = null;
         }
 
         public void VoidCashier(string username)
         {
             SendToCashierBy = null;
             SendToCashierDate = null;
+            VerifiedBy = null;
+            VerifiedDate = null;
             CashierAcceptedBy = null;
             CashierAcceptedDate = null;
             Position = GarmentPurchasingExpeditionPosition.VerificationAccepted;
@@ -203,6 +212,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionE
             SendToPurchasingBy = username;
             SendToPurchasingDate = DateTimeOffset.Now;
             SendToPurchasingRemark = remark;
+            VerifiedBy = username;
+            VerifiedDate = DateTimeOffset.Now;
         }
 
         public void PurchasingAccepted(string username)
