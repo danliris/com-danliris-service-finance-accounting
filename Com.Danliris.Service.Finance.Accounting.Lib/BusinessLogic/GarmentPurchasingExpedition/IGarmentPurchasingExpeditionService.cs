@@ -15,6 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         Task<int> SendToCashier(int id);
         Task<int> SendToPurchasing(int id);
         Task<int> SendToPurchasingRejected(int id, string remark);
+        Task<int> SendToPurchasingRejected(List<int> id, string remark);
         ReadResponse<IndexDto> GetSendToVerificationOrAccounting(string keyword, int page, int size, string order);
         ReadResponse<IndexDto> GetByPosition(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int internalNoteId, int supplierId);
         ReadResponse<IndexDto> GetVerified(string keyword, int page, int size, string order);

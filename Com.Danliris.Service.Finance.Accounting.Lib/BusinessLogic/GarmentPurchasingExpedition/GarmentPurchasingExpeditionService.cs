@@ -399,6 +399,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             return _dbContext.SaveChanges();
         }
 
+        public async Task<int> SendToPurchasingRejected(List<int> ids, string remark)
+        {
+            var modelsaved = 0;
+            var modelList = _dbContext.GarmentPurchasingExpeditions.Where(entity => ids.Contains( entity.Id));
+            foreach (var model in modelList)
+            {
+                model.SendToPurchasingRejected(_identityService.Username, remark);
+                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+                _dbContext.GarmentPurchasingExpeditions.Update(model);
+          
+                modelsaved = _dbContext.SaveChanges();
+            }
+            var httpClient = _serviceProvider.GetService<IHttpClientService>();
+            var updateInternalNotePositionData = new
+            {
+                //Ids = new List<int>() { model.InternalNoteId },
+                Ids = modelList.Select(s=> s.InternalNoteId).ToList(),
+                Position = GarmentPurchasingExpeditionPosition.SendToPurchasing
+            };
+
+            await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/internal-notes/position", new StringContent(JsonConvert.SerializeObject(updateInternalNotePositionData), Encoding.UTF8, General.JsonMediaType));
+            return modelsaved;
+        }
+
         public IndexDto GetById(int id)
         {
             return _dbContext.GarmentPurchasingExpeditions.Select(entity => new IndexDto(entity)).FirstOrDefault(entity => entity.Id == id);
