@@ -212,6 +212,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
+        [HttpPut("accounting-disposition-not-ok")]
+        public async Task<IActionResult> AccountingAccepted([FromBody] RejectionForm form)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.SendToPurchasingRejected(form.ids,form.Remark);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
 
         [HttpPut("purchasing-accepted")]
         public async Task<IActionResult> PurchasingAccepted([FromBody] List<int> ids)
@@ -478,5 +497,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
     public class RejectionForm
     {
         public string Remark { get; set; }
+        public List<int> ids { get; set; }
     }
 }
