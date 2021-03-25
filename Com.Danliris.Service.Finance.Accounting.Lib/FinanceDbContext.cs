@@ -17,6 +17,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPphBankExpenditureNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Moonlay.Data.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -102,6 +103,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<GarmentPurchasingPphBankExpenditureNoteItemModel> GarmentPurchasingPphBankExpenditureNoteItems { get; set; }
         public DbSet<GarmentPurchasingPphBankExpenditureNoteInvoiceModel> GarmentPurchasingPphBankExpenditureNoteInvoices { get; set; }
 
+        public DbSet<GarmentInvoicePurchasingDispositionModel> GarmentInvoicePurchasingDispositions { get; set; }
+        public DbSet<GarmentInvoicePurchasingDispositionItemModel> GarmentInvoicePurchasingDispositionItems { get; set; }
         public DbSet<GarmentDebtBalanceModel> GarmentDebtBalances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
