@@ -402,7 +402,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         public async Task<int> SendToPurchasingRejected(List<int> ids, string remark)
         {
             var modelsaved = 0;
-            var modelList = _dbContext.GarmentPurchasingExpeditions.Where(entity => ids.Contains( entity.Id));
+            var modelList = _dbContext.GarmentPurchasingExpeditions.Where(entity => ids.Contains( entity.Id)).ToList();
             foreach (var model in modelList)
             {
                 model.SendToPurchasingRejected(_identityService.Username, remark);
