@@ -17,15 +17,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurch
         public string Category { get; private set; }
         public double VATAmount { get; private set; }
         public double TotalAmount { get; private set; }
-        public double TotalPaid { get; set; }
+        public double TotalPaid { get; private set; }
         /// <summary>
         /// Sum of Total Paid With same Disposistion ID
         /// </summary>
-        public double TotalPaidBefore { get; set; }
-        public int CurrencyId { get; set; }
-        public string CurrencyCode { get; set; }
-        public double CurrencyRate { get; set; }
+        public double TotalPaidBefore { get; private set; }
+        public int CurrencyId { get; private set; }
+        public string CurrencyCode { get; private set; }
+        public double CurrencyRate { get; private set; }
         public int GarmentInvoicePurchasingDisposistionId { get; set; }
+        public int PurchasingDispositionExpeditionId { get; private set; }
         [ForeignKey("GarmentInvoicePurchasingDisposistionId")]
         public virtual GarmentInvoicePurchasingDispositionModel GarmentInvoicePurchasingDisposition { get; set; }
     }

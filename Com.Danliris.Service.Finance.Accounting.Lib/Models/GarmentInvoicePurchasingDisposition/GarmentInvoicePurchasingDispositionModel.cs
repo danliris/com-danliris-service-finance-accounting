@@ -7,23 +7,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurch
 {
     public class GarmentInvoicePurchasingDispositionModel: StandardEntity
     {
-        public string InvoiceNo { get; private set; }
-        public DateTimeOffset InvoiceDate { get; private set; }
-        public int BankId { get; private set; }
-        public string BankName { get; private set; }
-        public string BankCode { get; private set; }
-        public int BankAccount { get; private set; }
-        public int CurrencyId { get; private set; }
-        public string CurrencyCode { get; private set; }
-        public double CurrencyRate { get; private set; }
-        public DateTimeOffset CurrencyDate { get; private set; }
-        public int SupplierId { get; private set; }
-        public string SupplierName { get; private set; }
-        public string SupplierCode { get; private set; }
-        public bool IsImportSupplier { get; private set; }
-        public string ChequeNo { get; private set; }
-        public string PaymentType { get; private set; }
+        /// <summary>
+        /// as Expenditure No
+        /// </summary>
+        public string InvoiceNo { get; set; }
+        /// <summary>
+        /// as Expenditure Date
+        /// </summary>
+        public DateTimeOffset InvoiceDate { get; set; }
+        public int BankId { get;  set; }
+        public string BankName { get;  set; }
+        public string BankCode { get;  set; }
+        public int BankCurrencyId { get; set; }
+        public string BankCurrencyCode { get; set; }
+        public string BankAccountNo { get;  set; }
+        public string BankAccountName { get;  set; }
+        public string BankSwiftCode { get; set; }
+        public int CurrencyId { get;  set; }
+        public string CurrencyCode { get;  set; }
+        public double CurrencyRate { get;  set; }
+        public string CurrencySymbol { get; set; }
+        public DateTimeOffset CurrencyDate { get;  set; }
+        public int SupplierId { get;  set; }
+        public string SupplierName { get;  set; }
+        public string SupplierCode { get;  set; }
+        public bool IsImportSupplier { get;  set; }
+        public string ChequeNo { get;  set; }
+        public string PaymentType { get;  set; }
+        public bool IsPosted { get; set; }
         public virtual List<GarmentInvoicePurchasingDispositionItemModel> Items { get; set; }
+        public void SetIsPosted(string username, string userAgent)
+        {
+            IsPosted = true;
+            this.FlagForUpdate(username, userAgent);
+        }
 
     }
 }
