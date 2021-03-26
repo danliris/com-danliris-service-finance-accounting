@@ -104,6 +104,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionE
         public string VerifiedBy { get; private set; }
         public DateTimeOffset? VerifiedDate { get; private set; }
 
+        public bool IsPaid { get; set; }
+        public string BankExpenditureNoteNo { get; set; }
+        public DateTimeOffset BankExpenditureNoteDate { get; set; }
+
         public void SendToVerification(string username)
         {
             SendToVerificationBy = username;

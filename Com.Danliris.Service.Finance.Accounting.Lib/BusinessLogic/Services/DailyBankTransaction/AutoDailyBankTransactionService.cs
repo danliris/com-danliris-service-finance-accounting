@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -23,6 +24,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         {
             _serviceProvider = serviceProvider;
             _dailyBankTransactionService = serviceProvider.GetService<IDailyBankTransactionService>();
+        }
+
+
+        public Task<int> AutoCreateFromGarmentInvoicePurchasingDisposition(GarmentInvoicePurchasingDispositionModel model)
+        {
+            var nominal = model.Items.Sum(item => (decimal)item.TotalPaid * (decimal)model.CurrencyRate);
+            var dailyBankTransactionModel = new DailyBankTransactionModel()
+            {
+                AccountBankAccountName = model.BankAccountName,
+                AccountBankAccountNumber = model.BankAccountNo,
+                AccountBankCode = model.BankCode,
+                AccountBankCurrencyCode = model.CurrencyCode,
+                AccountBankCurrencyId = model.CurrencyId,
+                AccountBankCurrencySymbol = model.CurrencySymbol,
+                AccountBankId = model.BankId,
+                AccountBankName = model.BankName,
+                Date = model.InvoiceDate,
+                Nominal = nominal,
+                CurrencyRate = (decimal)model.CurrencyRate,
+                ReferenceNo = model.InvoiceNo,
+                ReferenceType = "Bukti Pembayaran Disposisi Job Garment",
+                Remark = model.CurrencyCode != "IDR" ? $"Pembayaran atas {model.BankCurrencyCode} dengan nominal {string.Format("{0:n}", nominal)} dan kurs {model.CurrencyCode}" : "",
+                SourceType = model.PaymentType,
+                SupplierCode = model.SupplierCode,
+                SupplierId = model.SupplierId,
+                SupplierName = model.SupplierName,
+                Status = "OUT",
+                IsPosted = true
+            };
+
+            if (model.BankCurrencyCode != "IDR")
+            {
+                dailyBankTransactionModel.Nominal = model.Items.Sum(item => (decimal)item.TotalPaid);
+                dailyBankTransactionModel.NominalValas = nominal;
+            }
+
+            return _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
+        }
+
+        public Task<int> AutoRevertFromGarmentInvoicePurchasingDisposition(GarmentInvoicePurchasingDispositionModel model)
+        {
+            return _dailyBankTransactionService.DeleteByReferenceNoAsync(model.InvoiceNo);
         }
 
         public Task<int> AutoCreateFromPaymentDisposition(PaymentDispositionNoteModel model)
