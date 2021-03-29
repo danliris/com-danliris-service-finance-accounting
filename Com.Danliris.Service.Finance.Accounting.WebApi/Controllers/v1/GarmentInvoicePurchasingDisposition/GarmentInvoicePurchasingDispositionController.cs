@@ -130,16 +130,16 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentI
                 }
                 else
                 {
-                    //int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
+                    int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
 
-                    //PaymentDispositionNotePDFTemplate PdfTemplate = new PaymentDispositionNotePDFTemplate();
-                    //MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, clientTimeZoneOffset);
+                    GarmentInvoicePurchasingDispositionPdfTemplate PdfTemplate = new GarmentInvoicePurchasingDispositionPdfTemplate();
+                    MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, clientTimeZoneOffset);
 
-                    //return new FileStreamResult(stream, "application/pdf")
-                    //{
-                    //    FileDownloadName = $"Bukti Pembayaran Disposisi {viewModel.PaymentDispositionNo}.pdf"
-                    //};
-                    return Ok("link pdf");
+                    return new FileStreamResult(stream, "application/pdf")
+                    {
+                        FileDownloadName = $"Bukti Pembayaran Disposisi {viewModel.PaymentDispositionNo}.pdf"
+                    };
+                    //return Ok("link pdf");
                 }
             }
             catch (Exception e)

@@ -42,11 +42,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
         public void CreateModel(GarmentInvoicePurchasingDispositionModel model)
         {
             EntityExtension.FlagForCreate(model, IdentityService.Username, UserAgent);
+            //get last Paid
+            var dispositionIds = model.Items.Select(s => s.DispositionId).ToList();
+            //var getLastDiposition = DbContext.GarmentInvoicePurchasingDispositions.Where(s => dispositionIds.Contains(s.DispositionNoteId));
+
             foreach (var item in model.Items)
             {
                 GarmentDispositionExpeditionModel expedition = DbContext.GarmentDispositionExpeditions.FirstOrDefault(ex => ex.Id.Equals(item.PurchasingDispositionExpeditionId));
+                //var getLastDipositionPaidAmount = getLastDiposition.Where(s=> s.DispositionNoteId == expedition.DispositionNoteId)
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
-                expedition.IsPaid = true;
+                if (item.TotalPaidBefore + item.TotalPaid >= item.TotalAmount)
+                {
+                    expedition.IsPaid = true;
+                }else
+                {
+                    expedition.IsPaid = false;
+                }
                 expedition.BankExpenditureNoteNo = model.InvoiceNo;
                 expedition.BankExpenditureNoteDate = model.InvoiceDate;
             }
@@ -193,6 +204,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
                 }
                 else
                 {
+                    item.SetTotalPaid(itemModel.TotalPaid);
                     EntityExtension.FlagForUpdate(item, IdentityService.Username, UserAgent);
 
                 }
@@ -239,7 +251,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
         private async Task SetTrueDisposition(string dispositionNo)
         {
             var http = ServiceProvider.GetService<IHttpClientService>();
-            await http.PutAsync(APIEndpoint.Purchasing + $"purchasing-dispositions/update/is-paid-true/{dispositionNo}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType));
+            await http.PutAsync(APIEndpoint.Purchasing + $"garment-disposition-purchase/update/is-paid-true/{dispositionNo}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType));
         }
 
         public async Task<int> Post(GarmentInvoicePurchasingDispositionPostingViewModel form)
