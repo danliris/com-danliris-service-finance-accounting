@@ -195,11 +195,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
                 {
                     EntityExtension.FlagForUpdate(item, IdentityService.Username, UserAgent);
 
-                    foreach (var detail in DbContext.PaymentDispositionNoteDetails.AsNoTracking().Where(p => p.PaymentDispositionNoteItemId == item.Id))
-                    {
-                        EntityExtension.FlagForUpdate(detail, IdentityService.Username, UserAgent);
-
-                    }
                 }
             }
 

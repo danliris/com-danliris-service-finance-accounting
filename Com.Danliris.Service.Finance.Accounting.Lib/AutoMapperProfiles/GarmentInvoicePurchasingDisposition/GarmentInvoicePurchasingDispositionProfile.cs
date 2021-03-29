@@ -33,6 +33,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                 .ForPath(d => d.SupplierCode, opt => opt.MapFrom(s => s.Supplier.Code))
                 .ForPath(d => d.SupplierId, opt => opt.MapFrom(s => s.Supplier.Id))
                 .ForPath(d => d.SupplierName, opt => opt.MapFrom(s => s.Supplier.Name))
+                .ForPath(d => d.SupplierName, opt => opt.MapFrom(s => s.Supplier.Name))
+                .ForPath(d => d.InvoiceNo, opt => opt.MapFrom(s => s.PaymentDispositionNo))
                 .ReverseMap()
                 ;
 
