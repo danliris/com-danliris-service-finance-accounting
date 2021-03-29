@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionPaymentReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
@@ -22,14 +23,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
     {
         private readonly IIdentityService _identityService;
         private readonly IGarmentDispositionExpeditionService _service;
-        //private readonly IGarmentDispositionExpeditionReportService _reportService;
+        private readonly IGarmentDispositionPaymentReportService _reportService;
         private readonly IValidateService _validateService;
         private const string ApiVersion = "1.0";
         public GarmentDispositionExpeditionController(IServiceProvider serviceProvider)
         {
             _identityService = serviceProvider.GetService<IIdentityService>();
             _service = serviceProvider.GetService<IGarmentDispositionExpeditionService>();
-            //_reportService = serviceProvider.GetService<IGarmentPurchasingExpeditionReportService>();
+            _reportService = serviceProvider.GetService<IGarmentDispositionPaymentReportService>();
             _validateService = serviceProvider.GetService<IValidateService>();
         }
 
@@ -499,29 +500,51 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        //[HttpGet("report")]
-        //public IActionResult GetReport(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset? startDate, DateTimeOffset? endDate)
-        //{
-        //    try
-        //    {
-        //        VerifyUser();
-        //        endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
-        //        startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
+        [HttpGet("report")]
+        public IActionResult GetReport([FromQuery] int dispositionNoteId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string purchasingStaff, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                VerifyUser();
+                endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
+                startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
 
-        //        var result = _reportService.GetReport(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
-        //        return Ok(new
-        //        {
-        //            apiVersion = ApiVersion,
-        //            statusCode = General.OK_STATUS_CODE,
-        //            message = General.OK_MESSAGE,
-        //            data = result
-        //        });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
-        //    }
-        //}
+                var result = _reportService.GetReport(dispositionNoteId, supplierId,position, purchasingStaff, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
+        [HttpGet("report/position-options")]
+        public IActionResult GetPositions()
+        {
+            try
+            {
+                VerifyUser();
+
+                var result = _reportService.GetPositionOptions();
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
 
         //[HttpGet("report/xls")]
         //public IActionResult GetReportXls(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset? startDate, DateTimeOffset? endDate)
