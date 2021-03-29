@@ -116,6 +116,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             AcceptedDate = entity.Position == GarmentPurchasingExpeditionPosition.AccountingAccepted ? entity.AccountingAcceptedDate : entity.Position == GarmentPurchasingExpeditionPosition.CashierAccepted ? entity.CashierAcceptedDate : entity.Position == GarmentPurchasingExpeditionPosition.VerificationAccepted ? entity.VerificationAcceptedDate : null;
             CreatedDate = entity.CreatedUtc;
             ProformaNo = entity.ProformaNo;
+            Amount = entity.DPPAmount + VATAmount - IncomeTaxAmount;
         }
 
         public int Id { get; private set; }
@@ -150,5 +151,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public DateTimeOffset VerifiedDateReceived { get; set; }
         public string SendToPurchasingRemark { get; private set; }
         public DateTimeOffset CreatedDate { get; private set; }
+        public string Category { get; set; }
+        public double Amount { get; set; }
     }
 }

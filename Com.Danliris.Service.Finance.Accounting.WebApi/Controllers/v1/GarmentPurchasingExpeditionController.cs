@@ -128,11 +128,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] string keyword, [FromQuery] int internalNoteId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string order = "{}", [FromQuery] int page = 1, [FromQuery] int size = 10)
+        public IActionResult Get([FromQuery] string keyword, [FromQuery] int internalNoteId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string order = "{}", [FromQuery] int page = 1, [FromQuery] int size = 10,[FromQuery]string currencyCode = null)
         {
             try
             {
-                var result = _service.GetByPosition(keyword, page, size, order, position, internalNoteId, supplierId);
+                var result = _service.GetByPosition(keyword, page, size, order, position, internalNoteId, supplierId,currencyCode);
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
