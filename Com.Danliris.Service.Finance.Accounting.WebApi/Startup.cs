@@ -72,6 +72,7 @@ using System.Linq;
 using System.Text;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoicePurchasingDisposition;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -150,7 +151,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IBudgetCashflowService, BudgetCashflowService>()
                 .AddTransient<IDPPVATBankExpenditureNoteService, DPPVATBankExpenditureNoteService>()
                 .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>()
-                .AddTransient<IGarmentDebtBalanceService, GarmentDebtBalanceService>();
+                .AddTransient<IGarmentDebtBalanceService, GarmentDebtBalanceService>()
+                .AddTransient<IGarmentInvoicePurchasingDispositionService, GarmentInvocePurchasingDispositionService>();
         }
 
 

@@ -30,7 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             _serviceProvider = serviceProvider;
         }
 
-        public ReadResponse<IndexDto> GetByPosition(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int internalNoteId, int supplierId)
+        public ReadResponse<IndexDto> GetByPosition(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int internalNoteId, int supplierId,string currencyCode = null)
         {
             var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == position);
 
@@ -42,6 +42,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
             if (supplierId > 0)
                 query = query.Where(entity => entity.SupplierId == supplierId);
+
+            if (!string.IsNullOrEmpty(currencyCode))
+                query = query.Where(entity => entity.CurrencyCode == currencyCode);
 
             if (position == GarmentPurchasingExpeditionPosition.Purchasing)
             {
