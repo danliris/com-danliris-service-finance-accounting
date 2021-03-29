@@ -56,7 +56,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var models = new List<GarmentDispositionExpeditionModel>();
             foreach (var item in form.Items)
             {
-                var model = new GarmentDispositionExpeditionModel(item.DispositionNote.Id, item.DispositionNote.DocumentNo, item.DispositionNote.Date, item.DispositionNote.DueDate, item.DispositionNote.SupplierId, item.DispositionNote.SupplierName, item.DispositionNote.VATAmount, item.DispositionNote.CurrencyVATAmount, item.DispositionNote.IncomeTaxAmount, item.DispositionNote.CurrencyIncomeTaxAmount, item.DispositionNote.TotalPaid, item.DispositionNote.CurrencyTotalPaid, item.DispositionNote.CurrencyId, item.DispositionNote.CurrencyCode, item.Remark, item.DispositionNote.DPPAmount, item.DispositionNote.CurrencyDPPAmount, item.DispositionNote.SupplierCode, item.DispositionNote.CurrencyRate, item.DispositionNote.ProformaNo);
+                var model = new GarmentDispositionExpeditionModel(item.DispositionNote.Id, item.DispositionNote.DocumentNo, item.DispositionNote.Date, item.DispositionNote.DueDate, item.DispositionNote.SupplierId, item.DispositionNote.SupplierName, item.DispositionNote.VATAmount, item.DispositionNote.CurrencyVATAmount, item.DispositionNote.IncomeTaxAmount, item.DispositionNote.CurrencyIncomeTaxAmount, item.DispositionNote.TotalPaid, item.DispositionNote.CurrencyTotalPaid, item.DispositionNote.CurrencyId, item.DispositionNote.CurrencyCode, item.Remark, item.DispositionNote.DPPAmount, item.DispositionNote.CurrencyDPPAmount, item.DispositionNote.SupplierCode, item.DispositionNote.CurrencyRate, item.DispositionNote.ProformaNo, item.DispositionNote.Category);
                 model.SendToAccounting(_identityService.Username);
 
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -113,7 +113,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var models = new List<GarmentDispositionExpeditionModel>();
             foreach (var item in form.Items)
             {
-                var model = new GarmentDispositionExpeditionModel(item.DispositionNote.Id, item.DispositionNote.DocumentNo, item.DispositionNote.Date, item.DispositionNote.DueDate, item.DispositionNote.SupplierId, item.DispositionNote.SupplierName, item.DispositionNote.VATAmount, item.DispositionNote.CurrencyVATAmount, item.DispositionNote.IncomeTaxAmount, item.DispositionNote.CurrencyIncomeTaxAmount, item.DispositionNote.TotalPaid, item.DispositionNote.CurrencyTotalPaid, item.DispositionNote.CurrencyId, item.DispositionNote.CurrencyCode, item.Remark, item.DispositionNote.DPPAmount, item.DispositionNote.CurrencyDPPAmount, item.DispositionNote.SupplierCode, item.DispositionNote.CurrencyRate,item.DispositionNote.ProformaNo);
+                var model = new GarmentDispositionExpeditionModel(item.DispositionNote.Id, item.DispositionNote.DocumentNo, item.DispositionNote.Date, item.DispositionNote.DueDate, item.DispositionNote.SupplierId, item.DispositionNote.SupplierName, item.DispositionNote.VATAmount, item.DispositionNote.CurrencyVATAmount, item.DispositionNote.IncomeTaxAmount, item.DispositionNote.CurrencyIncomeTaxAmount, item.DispositionNote.TotalPaid, item.DispositionNote.CurrencyTotalPaid, item.DispositionNote.CurrencyId, item.DispositionNote.CurrencyCode, item.Remark, item.DispositionNote.DPPAmount, item.DispositionNote.CurrencyDPPAmount, item.DispositionNote.SupplierCode, item.DispositionNote.CurrencyRate,item.DispositionNote.ProformaNo,item.DispositionNote.Category);
                 model.SendToVerification(_identityService.Username);
 
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -385,6 +385,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 .Take(size)
                 .Select(entity => new IndexDto(entity))
                 .ToList();
+
+            var dataDispositionIds = data.Select(t => t.DispositionNoteId);
+
+            var lastAmountPayment = _dbContext.GarmentInvoicePurchasingDispositionItems.Where(s => dataDispositionIds.Contains(s.DispositionId)).ToList();
+
+            data.ForEach(entity =>
+            {
+                entity.TotalPaidPaymentBefore = lastAmountPayment.Where(t => t.DispositionId == entity.DispositionNoteId).Sum(t => t.TotalPaid);
+            });
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
         }

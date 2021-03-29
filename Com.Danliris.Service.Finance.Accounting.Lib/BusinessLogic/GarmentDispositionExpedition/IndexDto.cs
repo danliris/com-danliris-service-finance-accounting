@@ -153,5 +153,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public DateTimeOffset CreatedDate { get; private set; }
         public string Category { get; set; }
         public double Amount { get; set; }
+        public double TotalPaidPaymentBefore { get; set; }
     }
 }

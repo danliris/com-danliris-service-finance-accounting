@@ -25,5 +25,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public double DPPAmount { get; set; }
         public double CurrencyDPPAmount { get; set; }
         public string ProformaNo { get; set; }
+        public string Category { get; set; }
     }
 }
