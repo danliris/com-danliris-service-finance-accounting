@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
@@ -194,6 +195,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 ReferenceNo = model.DocumentNo,
                 Remark = "Pembayaran Lain - lain",
                 SourceType = model.Type,
+                Status = "IN"
+            };
+            return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
+        }
+
+        public async Task<int> AutoCreateFromGarmentBankExpenditureDPPVAT(DPPVATBankExpenditureNoteModel model)
+        {
+            var accountBank = await GetAccountBank(model.BankAccountId);
+            var dailyBankTransactionModel = new DailyBankTransactionModel()
+            {
+                AccountBankAccountName = accountBank.AccountName,
+                AccountBankAccountNumber = accountBank.AccountNumber,
+                AccountBankCode = accountBank.BankCode,
+                AccountBankCurrencyCode = accountBank.Currency.Code,
+                AccountBankCurrencyId = accountBank.Currency.Id,
+                AccountBankCurrencySymbol = accountBank.Currency.Symbol,
+                AccountBankId = accountBank.Id,
+                AccountBankName = accountBank.BankName,
+                Date = model.Date,
+                Nominal = (decimal)model.Amount,
+                ReferenceNo = model.DocumentNo,
+                Remark = "Pembayaran Lain - lain",
+                SourceType = "OPERASIONAL",
                 Status = "IN"
             };
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
