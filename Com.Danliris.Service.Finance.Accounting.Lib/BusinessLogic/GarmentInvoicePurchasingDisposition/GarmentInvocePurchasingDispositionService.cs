@@ -55,13 +55,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 
         public async Task<int> CreateAsync(GarmentInvoicePurchasingDispositionModel model)
         {
-            model.InvoiceNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username);
+            model.InvoiceNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username,model.InvoiceDate);
 
-            if (model.CurrencyCode != "IDR")
-            {
-                var garmentCurrency = await GetGarmentCurrency(model.CurrencyCode);
-                model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
-            }
+            //if (model.CurrencyCode != "IDR")
+            //{
+                //var garmentCurrency = await GetGarmentCurrency(model.CurrencyCode);
+                //model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
+                model.CurrencyRate = model.CurrencyRate;
+            //}
 
             CreateModel(model);
             //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
@@ -77,6 +78,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 
             var http = ServiceProvider.GetService<IHttpClientService>();
             var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
+        }
+
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username,DateTimeOffset dispositionDate)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = ServiceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no-date?type={type}&bankCode={bankCode}&username={username}&date={dispositionDate.ToString("yyyy-MM-dd")}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<string>();
