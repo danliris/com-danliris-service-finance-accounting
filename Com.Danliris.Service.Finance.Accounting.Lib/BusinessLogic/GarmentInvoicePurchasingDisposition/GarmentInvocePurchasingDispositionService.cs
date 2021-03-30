@@ -205,6 +205,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
                 else
                 {
                     item.SetTotalPaid(itemModel.TotalPaid);
+                    GarmentDispositionExpeditionModel expedition = DbContext.GarmentDispositionExpeditions.FirstOrDefault(ex => ex.Id.Equals(item.PurchasingDispositionExpeditionId));
+                    if(itemModel.TotalPaidBefore+itemModel.TotalPaid >= itemModel.TotalAmount)
+                    {
+                        expedition.IsPaid = true;
+                    }
+                    else
+                    {
+                        expedition.IsPaid = false;
+                    }
+
                     EntityExtension.FlagForUpdate(item, IdentityService.Username, UserAgent);
 
                 }
