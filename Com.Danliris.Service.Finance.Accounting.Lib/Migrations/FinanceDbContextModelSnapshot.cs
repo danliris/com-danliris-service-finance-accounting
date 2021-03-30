@@ -2573,65 +2573,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.ToTable("MemoDetailGarmentPurchasingDetails");
                 });
 
-            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing.MemoGarmentPurchasingDetailModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<int>("COAId");
-
-                    b.Property<string>("COAName");
-
-                    b.Property<string>("COANo");
-
-                    b.Property<string>("CreatedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<int>("CreditNominal");
-
-                    b.Property<int>("DebitNominal");
-
-                    b.Property<string>("DeletedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("DeletedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<string>("LastModifiedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("LastModifiedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<int>("MemoId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MemoId");
-
-                    b.ToTable("MemoGarmentPurchasingDetailModel");
-                });
-
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing.MemoGarmentPurchasingModel", b =>
                 {
                     b.Property<int>("Id")
@@ -4722,14 +4663,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                 {
                     b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.Memo.MemoModel", "Memo")
                         .WithMany("Items")
-                        .HasForeignKey("MemoId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing.MemoGarmentPurchasingDetailModel", b =>
-                {
-                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing.MemoGarmentPurchasingModel", "MemoGarmentPurchasing")
-                        .WithMany("MemoDetailGarmentPurchasings")
                         .HasForeignKey("MemoId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
