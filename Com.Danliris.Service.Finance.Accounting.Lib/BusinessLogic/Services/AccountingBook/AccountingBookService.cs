@@ -100,8 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Acc
             {                                             
                 var models = _dbContext.AccountingBooks.Where(entity => entity.Id.Equals(id)).FirstOrDefault();
                 
-                models.AccountingBookType = model.AccountingBookType;
-                models.Active = model.Active;
+                models.AccountingBookType = model.AccountingBookType;                
                 models.Code = model.Code;
                 models.Remarks = model.Remarks;
 
