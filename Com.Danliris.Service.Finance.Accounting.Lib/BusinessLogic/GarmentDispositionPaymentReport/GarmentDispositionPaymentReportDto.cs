@@ -5,6 +5,50 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 {
     public class GarmentDispositionPaymentReportDto
     {
+        public GarmentDispositionPaymentReportDto(int dispositionId, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, DateTimeOffset dispositionNoteDueDate, string proformaNo, int supplierId, string supplierCode, string supplierName, int currencyId, string currencyCode, double currencyRate, double dPPAmount, double currencyDPPAmount, double vATAmount, double currencyVATAmount, double incomeTaxAmount, double currencyIncomeTaxAmount, double othersExpenditureAmount, double totalAmount, int categoryId, string categoryCode, string categoryName, GarmentPurchasingExpeditionPosition position, int externalPurchaseOrderId, string externalPurchaseOrderNo, double dispositionQuantity, int deliveryOrderId, string deliveryOrderNo, double deliveryOrderQuantity, string paymentBillsNo, string billsNo, int customsNoteId, string customsNoteNo, DateTimeOffset? customsNoteDate, int unitReceiptNoteId, string unitReceiptNoteNo, int internalNoteId, string internalNoteNo, DateTimeOffset? internalNoteDate)
+        {
+            DispositionId = dispositionId;
+            DispositionNoteNo = dispositionNoteNo;
+            DispositionNoteDate = dispositionNoteDate;
+            DispositionNoteDueDate = dispositionNoteDueDate;
+            ProformaNo = proformaNo;
+            SupplierId = supplierId;
+            SupplierCode = supplierCode;
+            SupplierName = supplierName;
+            CurrencyId = currencyId;
+            CurrencyCode = currencyCode;
+            CurrencyRate = currencyRate;
+            DPPAmount = dPPAmount;
+            CurrencyDPPAmount = currencyDPPAmount;
+            VATAmount = vATAmount;
+            CurrencyVATAmount = currencyVATAmount;
+            IncomeTaxAmount = incomeTaxAmount;
+            CurrencyIncomeTaxAmount = currencyIncomeTaxAmount;
+            OthersExpenditureAmount = othersExpenditureAmount;
+            TotalAmount = totalAmount;
+            CategoryId = categoryId;
+            CategoryCode = categoryCode;
+            CategoryName = categoryName;
+            Position = position;
+            PositionDescription = position.ToDescriptionString();
+            ExternalPurchaseOrderId = externalPurchaseOrderId;
+            ExternalPurchaseOrderNo = externalPurchaseOrderNo;
+            DispositionQuantity = dispositionQuantity;
+            DeliveryOrderId = deliveryOrderId;
+            DeliveryOrderNo = deliveryOrderNo;
+            DeliveryOrderQuantity = deliveryOrderQuantity;
+            PaymentBillsNo = paymentBillsNo;
+            BillsNo = billsNo;
+            CustomsNoteId = customsNoteId;
+            CustomsNoteNo = customsNoteNo;
+            CustomsNoteDate = customsNoteDate;
+            UnitReceiptNoteId = unitReceiptNoteId;
+            UnitReceiptNoteNo = unitReceiptNoteNo;
+            InternalNoteId = internalNoteId;
+            InternalNoteNo = internalNoteNo;
+            InternalNoteDate = internalNoteDate;
+        }
+
         public GarmentDispositionPaymentReportDto(int dispositionId, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, DateTimeOffset dispositionNoteDueDate, string proformaNo, int supplierId, string supplierCode, string supplierName, int currencyId, string currencyCode, double currencyRate, double dPPAmount, double currencyDPPAmount, double vATAmount, double currencyVATAmount, double incomeTaxAmount, double currencyIncomeTaxAmount, double othersExpenditureAmount, double totalAmount, int categoryId, string categoryCode, string categoryName, GarmentPurchasingExpeditionPosition position, string sendToPurchasingRemark, DateTimeOffset? sendToVerificationDate, DateTimeOffset? verificationAcceptedDate, string verifiedBy, DateTimeOffset? cashierAcceptedDate, DateTimeOffset? bankExpenditureNoteDate, string bankExpenditureNoteNo, double paidAmount, int externalPurchaseOrderId, string externalPurchaseOrderNo, double dispositionQuantity, int deliveryOrderId, string deliveryOrderNo, double deliveryOrderQuantity, string paymentBillsNo, string billsNo, int customsNoteId, string customsNoteNo, DateTimeOffset? customsNoteDate, int unitReceiptNoteId, string unitReceiptNoteNo, int internalNoteId, string internalNoteNo, DateTimeOffset? internalNoteDate, string sendToVerificationBy)
         {
             DispositionId = dispositionId;
