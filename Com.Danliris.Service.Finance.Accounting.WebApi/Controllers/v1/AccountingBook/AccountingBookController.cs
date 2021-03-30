@@ -137,6 +137,38 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Accounti
             }
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] AccountingBookViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                _validateService.Validate(viewModel);
+
+                if (id != viewModel.Id)
+                {
+                    var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail();
+                    return BadRequest(result);
+                }
+
+                var model = _mapper.Map<AccountingBookModel>(viewModel);
+
+                await _service.UpdateAsync(id, model);
+
+                return NoContent();
+            }
+            catch (ServiceValidationException e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail(e);
+                return BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
 
     }
 }
