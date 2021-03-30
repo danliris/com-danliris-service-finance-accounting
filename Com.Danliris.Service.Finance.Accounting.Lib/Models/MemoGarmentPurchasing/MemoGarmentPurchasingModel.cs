@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGamentPurchasing
+namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing
 {
     public class MemoGarmentPurchasingModel : StandardEntity
     {
         public string MemoNo { get; set; }
-        public DateTimeOffset Memodate { get; set; }
+        public DateTimeOffset MemoDate { get; set; }
         public int AccountingBookId { get; set; }
         public string AccountingBookType { get; set; }
         public int GarmentCurrenciesId { get; set; }
