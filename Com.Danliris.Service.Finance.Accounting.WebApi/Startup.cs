@@ -75,6 +75,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositi
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionPaymentReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.AccountingBook;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.MemoGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoGarmentPurchasing;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
