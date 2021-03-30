@@ -6,10 +6,9 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBVerif
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
-using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBNonPO;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.RealizationVBWIthPO;
@@ -17,7 +16,6 @@ using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbVerification;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
-using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.RealizationVBWIthPO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -100,30 +98,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             return DbContex;
         }
 
-        private RealizationVbWithPODataUtil _realizationVbWithPODataUtil(RealizationVbWithPOService service)
-        {
-            return new RealizationVbWithPODataUtil(service);
-        }
-
-        private RealizationVBNonPODataUtil _realizationVBNonPODataUtil(RealizationVbNonPOService service)
-        {
-            return new RealizationVBNonPODataUtil(service);
-        }
-
-        private CashierApprovalDataUtil _cashierApprovalDataUtil(CashierApprovalService service)
-        {
-            return new CashierApprovalDataUtil(service);
-        }
+        
 
         private VbVerificationDataUtil _vbVerificationDataUtil(VbVerificationService service, FinanceDbContext dbContext)
         {
             return new VbVerificationDataUtil(service,dbContext);
         }
 
-        private VbNonPORequestDataUtil _dataUtil3(VbNonPORequestService service)
-        {
-            return new VbNonPORequestDataUtil(service);
-        }
+      
 
 
 
@@ -242,113 +224,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VbVerification
             Assert.NotNull(result);
         }
 
-        internal class RealizationVbServiceHelper : IVBRealizationDocumentExpeditionService
-        {
-            public RealizationVbServiceHelper()
-            {
-            }
-
-            public Task<int> CashierDelete(int vbRealizationId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> CashierReceipt(List<int> vbRealizationIds)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, int divisionId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, int divisionId, DateTimeOffset dateStart, DateTimeOffset dateEnd, string status, int page = 1, int size = 25)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> InitializeExpedition(int vbRealizationId)
-            {
-                //throw new NotImplementedException();
-
-                return Task.FromResult(1);
-            }
-
-            public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position)
-            {
-                throw new NotImplementedException();
-            }
-
-            public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, VBRealizationPosition position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public ReadResponse<RealizationVbModel> ReadRealizationToVerification()
-            {
-                throw new NotImplementedException();
-            }
-
-            public ReadResponse<VBRealizationDocumentExpeditionModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public List<RealizationVbModel> ReadRelizationToVerification(int position)
-            {
-                throw new NotImplementedException();
-            }
-
-            public ReadResponse<VBRealizationDocumentExpeditionModel> ReadVerification(int page, int size, string order, string keyword, VBRealizationPosition position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> Reject(int vbRealizationId, string reason)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> SubmitToVerification(List<int> vbRealizationIds)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> UpdateExpeditionByRealizationId(int vbRealizationId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> VerificationDocumentReceipt(List<int> vbRealizationIds)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> VerifiedToCashier(List<int> vbRealizationIds)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> VerifiedToCashier(int vbRealizationId)
-            {
-                throw new NotImplementedException();
-            }
-
-            ReadResponse<VBRealizationDocumentModel> IVBRealizationDocumentExpeditionService.ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
-            {
-                throw new NotImplementedException();
-            }
-        }
+       
     }
 }

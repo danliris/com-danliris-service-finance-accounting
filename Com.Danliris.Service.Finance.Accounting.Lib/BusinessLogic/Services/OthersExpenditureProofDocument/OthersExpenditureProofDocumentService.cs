@@ -250,6 +250,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             {
                 if (item.Id <= 0)
                 {
+                    item.OthersExpenditureProofDocumentId = model.Id;
                     EntityExtension.FlagForCreate(item, _identityService.Username, _userAgent);
                     _itemDbSet.Add(item);
                 }

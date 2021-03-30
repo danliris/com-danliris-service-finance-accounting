@@ -111,7 +111,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 .FirstOrDefault();
             var documentNo = GetDocumentNo(form, existingData);
 
-            var amount = form.Items.Sum(element => 
+            var amount = form.Items.Sum(element =>
             {
                 var nominal = element.UnitPaymentOrder.Amount.GetValueOrDefault();
                 if (element.UnitPaymentOrder.UseVat.GetValueOrDefault())
@@ -126,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             });
 
             if (form.Type == "Tanpa Nomor VB")
-                model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo, (decimal)amount);
+                model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo, (decimal)amount, form.Remark);
             else
             {
                 var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
@@ -137,7 +137,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                     _dbContext.VBRequestDocuments.Update(vbRequest);
                 }
 
-                model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, (decimal)amount);
+                model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, (decimal)amount, form.Remark);
             }
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -231,7 +231,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
         public ReadResponse<VBRealizationDocumentModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.Set<VBRealizationDocumentModel>().AsQueryable(); ;
+            var query = _dbContext.Set<VBRealizationDocumentModel>().AsQueryable();
+
+            List<string> searchAttributes = new List<string>()
+            {
+                "DocumentNo", "SuppliantUnitName"
+            };
+
+            query = QueryHelper<VBRealizationDocumentModel>.Search(query, searchAttributes, keyword);
+
+            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            query = QueryHelper<VBRealizationDocumentModel>.Filter(query, filterDictionary);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<VBRealizationDocumentModel>.Order(query, orderDictionary);
+
+            var pageable = new Pageable<VBRealizationDocumentModel>(query, page - 1, size);
+            var data = pageable.Data.ToList();
+
+            int TotalData = pageable.TotalCount;
+
+            return new ReadResponse<VBRealizationDocumentModel>(data, TotalData, orderDictionary, new List<string>());
+        }
+
+        public ReadResponse<VBRealizationDocumentModel> ReadByUser(int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            var query = _dbContext.Set<VBRealizationDocumentModel>().AsQueryable();
+
+            query = query.Where(entity => entity.CreatedBy == _identityService.Username);
 
             List<string> searchAttributes = new List<string>()
             {

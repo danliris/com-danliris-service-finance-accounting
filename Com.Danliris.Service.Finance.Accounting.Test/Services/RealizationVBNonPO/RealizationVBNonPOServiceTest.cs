@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDoc
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -196,55 +197,74 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         [Fact]
         public async Task Should_Success_Create_Model_New()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock.Setup(s => s.InitializeExpedition(It.IsAny<int>())).ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
 
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
 
             var dataUtil = new RealizationVBNonPODataUtil(service);
-
             var model = dataUtil.GetNewData();
-            var dataRequestVb = dataUtil.GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-
             var viewmodel = dataUtil.GetNewViewModel();
 
+            //Act
             var result = await service.CreateAsync(model, viewmodel);
+
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Success_Create_Model_New_2()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+                .Setup(s => s.InitializeExpedition(It.IsAny<int>()))
+                .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
 
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
-
             var dataUtil = new RealizationVBNonPODataUtil(service);
 
             var model = dataUtil.GetNewData();
-            var dataRequestVb = dataUtil.GetDataRequestVB();
+            var viewmodel = dataUtil.GetNewViewModel2();
+
+            var dataRequestVb = dataUtil.GetNewData_RequestVB();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
 
-            var viewmodel = dataUtil.GetNewViewModel2();
-
+            //Act
             var result = await service.CreateAsync(model, viewmodel);
+
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Success_Create_Model_New_3()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+               .Setup(s => s.InitializeExpedition(It.IsAny<int>()))
+               .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
 
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
@@ -252,22 +272,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var dataUtil = new RealizationVBNonPODataUtil(service);
 
             var model = dataUtil.GetNewData();
-            var dataRequestVb = dataUtil.GetDataRequestVB();
+            var dataRequestVb = dataUtil.GetNewData_RequestVB();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
 
             var viewmodel = dataUtil.GetNewViewModel3();
 
+            //Act
             var result = await service.CreateAsync(model, viewmodel);
+
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Success_Create_Model_New_4()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+               .Setup(s => s.InitializeExpedition(It.IsAny<int>()))
+               .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
 
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
@@ -275,22 +305,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var dataUtil = new RealizationVBNonPODataUtil(service);
 
             var model = dataUtil.GetNewData();
-            var dataRequestVb = dataUtil.GetDataRequestVB();
+            var dataRequestVb = dataUtil.GetNewData_RequestVB();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
 
             var viewmodel = dataUtil.GetNewViewModel4();
 
+            //Act
             var result = await service.CreateAsync(model, viewmodel);
+
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Success_Create_Model_New_5()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+               .Setup(s => s.InitializeExpedition(It.IsAny<int>()))
+               .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
 
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
@@ -298,22 +338,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var dataUtil = new RealizationVBNonPODataUtil(service);
 
             var model = dataUtil.GetNewData();
-            var dataRequestVb = dataUtil.GetDataRequestVB();
+            var dataRequestVb = dataUtil.GetNewData_RequestVB();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
 
             var viewmodel = dataUtil.GetNewViewModel5();
 
+            //Act
             var result = await service.CreateAsync(model, viewmodel);
+
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Success_Create_Model_New_6()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+               .Setup(s => s.InitializeExpedition(It.IsAny<int>()))
+               .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
 
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
@@ -321,22 +371,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             var dataUtil = new RealizationVBNonPODataUtil(service);
 
             var model = dataUtil.GetNewData();
-            var dataRequestVb = dataUtil.GetDataRequestVB();
+            var dataRequestVb = dataUtil.GetNewData_RequestVB();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
 
             var viewmodel = dataUtil.GetNewViewModel6();
 
+            //Act
             var result = await service.CreateAsync(model, viewmodel);
+
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Success_Update_Model()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+               .Setup(s => s.UpdateExpeditionByRealizationId(It.IsAny<int>()))
+               .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
 
             var dataUtil = new RealizationVBNonPODataUtil(service);
@@ -357,21 +417,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 IncomeTaxBy = "income"
             });
 
-            var dataRequestVb = dataUtil.GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
+            var dataRequestVb = dataUtil.GetNewData_RequestVB();
+            
 
+            //Act
             var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
 
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Success_Update_Model2()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+               .Setup(s => s.UpdateExpeditionByRealizationId(It.IsAny<int>()))
+               .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var viewmodel = dataUtil.GetNewViewModel();
@@ -390,21 +458,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 IncomeTaxBy = "income"
             });
 
-            var dataRequestVb = dataUtil.GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
 
+            //Act
             var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
 
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Success_Update_Model3()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+               .Setup(s => s.UpdateExpeditionByRealizationId(It.IsAny<int>()))
+               .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var viewmodel = dataUtil.GetNewViewModelNew();
@@ -423,24 +497,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 IncomeTaxBy = "income"
             });
 
-            var dataRequestVb = dataUtil.GetDataRequestVB();
+            var dataRequestVb = dataUtil.GetNewData_RequestVB();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
 
+            //Act
             var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
 
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Success_Update_Model4()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+              .Setup(s => s.UpdateExpeditionByRealizationId(It.IsAny<int>()))
+              .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var viewmodel = dataUtil.GetNewViewModelNew();
+        
             viewmodel.Items.Add(new VbNonPORequestDetailViewModel()
             {
                 DateDetail = DateTimeOffset.Now,
@@ -456,22 +540,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 IncomeTaxBy = "income"
             });
 
-            var dataRequestVb = dataUtil.GetDataRequestVB();
+            var dataRequestVb = dataUtil.GetNewData_RequestVB();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
 
+            //Act
             var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
 
+            //Assert
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Success_Update_Model5()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
 
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+             .Setup(s => s.UpdateExpeditionByRealizationId(It.IsAny<int>()))
+             .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var viewmodel = dataUtil.GetNewViewModelNew();
@@ -491,7 +583,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
                 IncomeTaxBy = "income"
             });
 
-            var dataRequestVb = dataUtil.GetDataRequestVB();
+            var dataRequestVb = dataUtil.GetNewData_RequestVB();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
 
@@ -499,53 +591,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
 
             await service.MappingData(viewmodel1);
 
+            //Act
             var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
 
+            //Assert
             Assert.NotEqual(0, result);
         }
 
-        //[Fact]
-        //public async Task Should_Success_Update_Model6()
-        //{
-        //    var dbContext = GetDbContext(GetCurrentMethod());
-        //    var serviceProviderMock = GetServiceProviderMock();
-        //    var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
-        //    var dataUtil = new RealizationVBNonPODataUtil(service);
-        //    var viewmodel = dataUtil.GetNewViewModelNew();
-        //    viewmodel.Items.Add(new VbNonPORequestDetailViewModel()
-        //    {
-        //        DateDetail = DateTimeOffset.Now,
-        //        Amount = 1000,
-        //        Remark = "Remark",
-        //        isGetPPn = false
-        //    });
-
-        //    var dataRequestVb = dataUtil.GetDataRequestVB();
-        //    dbContext.VbRequests.Add(dataRequestVb);
-        //    dbContext.SaveChanges();
-
-        //    var viewmodel1 = dataUtil.GetNewViewModel6();
-
-        //    await service.MappingData(viewmodel1);
-
-        //    var result = await service.UpdateAsync(viewmodel.Id, viewmodel);
-
-        //    Assert.NotEqual(0, result);
-        //}
+       
 
         [Fact]
         public async Task Should_Success_UpdateAsync_When_Data_Exist()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            IVBRealizationDocumentExpeditionServiceMock
+             .Setup(s => s.UpdateExpeditionByRealizationId(It.IsAny<int>()))
+             .ReturnsAsync(1);
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
             var modelToCreate = dataUtil.GetNewData();
-            var dataRequestVb = dataUtil.GetDataRequestVB();
+            var dataRequestVb = dataUtil.GetNewData_RequestVB();
             dbContext.VbRequests.Add(dataRequestVb);
             dbContext.SaveChanges();
+
             var viewmodel = dataUtil.GetNewViewModel5();
 
             var viewmodelnew = dataUtil.GetNewViewModelNew1();
@@ -569,99 +644,78 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
             await service.CreateAsync(modelToCreate, viewmodel);
 
             await service.MappingData(viewmodel1);
+
+            //Act
             var result = await service.UpdateAsync(modelToCreate.Id, viewmodelnew);
 
+            //Assert
             Assert.NotEqual(0, result);
         }
 
-        //[Fact]
-        //public async Task Should_Success_UpdateAsync_When_Data_NoExist()
-        //{
-        //    var dbContext = GetDbContext(GetCurrentMethod());
-        //    var serviceProviderMock = GetServiceProviderMock();
-        //    var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
-        //    var dataUtil = new RealizationVBNonPODataUtil(service);
-        //    var modelToCreate = dataUtil.GetNewData();
-        //    var dataRequestVb = dataUtil.GetDataRequestVB();
-        //    dbContext.VbRequests.Add(dataRequestVb);
-        //    dbContext.SaveChanges();
-        //    dbContext.VbRequestsDetails.Add(new VbRequestDetailModel());
-        //    dbContext.SaveChanges();
-        //    var viewmodel = dataUtil.GetNewViewModel5();
-
-        //    var viewmodelnew = dataUtil.GetNewViewModelNew1();
-        //    viewmodelnew.Items.Add(new VbNonPORequestDetailViewModel()
-        //    {
-        //        DateDetail = DateTimeOffset.Now,
-        //        Amount = 1000,
-        //        Remark = "Remark",
-        //        isGetPPn = false
-        //    });
-
-        //    var viewmodel1 = dataUtil.GetNewViewModel6();
-        //    await service.CreateAsync(modelToCreate, viewmodel);
-
-        //    await service.MappingData(viewmodel1);
-        //    viewmodel.Id = 1;
-        //    var result = await service.UpdateAsync(modelToCreate.Id, viewmodel);
-
-        //    Assert.NotEqual(0, result);
-        //}
-
+       
 
         [Fact]
         public async Task Should_Success_Read_Data()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
-            await dataUtil.GetCreatedData();
+            await dataUtil.GetTestData();
 
-            var dataRequestVb = dataUtil.GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-
+            //Act
             var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
 
+            //Assert
             Assert.NotEmpty(result.Data);
         }
 
         [Fact]
         public async Task Should_Success_Read_ById()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
-            var dataRequestVb = dataUtil.GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-            var data = await dataUtil.GetCreatedData();
+           
+            var data = await dataUtil.GetTestData();
+
+            //Act
             var result = await service.ReadByIdAsync2(data.Id);
 
+            //Assert
             Assert.NotNull(result);
         }
 
         [Fact]
         public async Task Should_Success_Delete_ById()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+            
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
-            var data = await dataUtil.GetCreatedData();
+            var data = await dataUtil.GetTestData();
 
-            var dataRequestVb = dataUtil.GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-
+            //Act
             var result = await service.DeleteAsync(data.Id);
 
             Assert.NotEqual(0, result);
@@ -670,129 +724,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.RealizationVBNon
         [Fact]
         public async Task Should_Success_Delete_ById2()
         {
+            //Arrange
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProviderMock();
-            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(new RealizationVbNonPOServiceHelper());
+            
+            var IVBRealizationDocumentExpeditionServiceMock = new Mock<IVBRealizationDocumentExpeditionService>();
+            serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService))).Returns(IVBRealizationDocumentExpeditionServiceMock.Object);
             serviceProviderMock.Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService))).Returns(new HttpClientOthersExpenditureServiceHelper());
+           
             var service = new RealizationVbNonPOService(dbContext, serviceProviderMock.Object);
             var dataUtil = new RealizationVBNonPODataUtil(service);
-            var data = await dataUtil.GetCreatedData2();
+            var data = await dataUtil.GetTestData2();
 
-            var dataRequestVb = dataUtil.GetDataRequestVB();
-            dbContext.VbRequests.Add(dataRequestVb);
-            dbContext.SaveChanges();
-
+            //Act
             var result = await service.DeleteAsync(data.Id);
 
+            //Assert
             Assert.NotEqual(0, result);
         }
 
-        internal class RealizationVbNonPOServiceHelper : IVBRealizationDocumentExpeditionService
-        {
-            public RealizationVbNonPOServiceHelper()
-            {
-            }
-
-            public Task<int> CashierDelete(int vbRealizationId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> CashierReceipt(List<int> vbRealizationIds)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, int divisionId, DateTimeOffset dateStart, DateTimeOffset dateEnd, int page = 1, int size = 25)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, int divisionId, DateTimeOffset dateStart, DateTimeOffset dateEnd, string status, int page = 1, int size = 25)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> InitializeExpedition(int vbRealizationId)
-            {
-                //throw new NotImplementedException();
-                return Task.FromResult(1);
-            }
-
-            public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position)
-            {
-                throw new NotImplementedException();
-            }
-
-            public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, int position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public ReadResponse<VBRealizationDocumentExpeditionModel> Read(int page, int size, string order, string keyword, VBRealizationPosition position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public ReadResponse<RealizationVbModel> ReadRealizationToVerification()
-            {
-                throw new NotImplementedException();
-            }
-
-            public ReadResponse<VBRealizationDocumentExpeditionModel> ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public List<RealizationVbModel> ReadRelizationToVerification(int position)
-            {
-                throw new NotImplementedException();
-            }
-
-            public ReadResponse<VBRealizationDocumentExpeditionModel> ReadVerification(int page, int size, string order, string keyword, VBRealizationPosition position, int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> Reject(int vbRealizationId, string reason)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> SubmitToVerification(List<int> vbRealizationIds)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> UpdateExpeditionByRealizationId(int vbRealizationId)
-            {
-                return Task.FromResult(1);
-            }
-
-            public Task<int> VerificationDocumentReceipt(List<int> vbRealizationIds)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> VerifiedToCashier(List<int> vbRealizationIds)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<int> VerifiedToCashier(int vbRealizationId)
-            {
-                throw new NotImplementedException();
-            }
-
-            ReadResponse<VBRealizationDocumentModel> IVBRealizationDocumentExpeditionService.ReadRealizationToVerification(int vbId, int vbRealizationId, DateTimeOffset? realizationDate, string vbRealizationRequestPerson, int unitId)
-            {
-                throw new NotImplementedException();
-            }
-        }
+        
     }
 }

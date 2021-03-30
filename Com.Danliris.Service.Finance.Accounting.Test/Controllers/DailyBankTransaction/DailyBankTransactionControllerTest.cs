@@ -190,6 +190,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         }
 
         [Fact]
+        public void GetReport_Return_InternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service
+                .Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Throws(new Exception());
+
+            var response = GetController(mocks).GetReport(1, 1, 2018);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public void GetReportExcel_ReturnFile()
         {
             var mocks = GetMocks();

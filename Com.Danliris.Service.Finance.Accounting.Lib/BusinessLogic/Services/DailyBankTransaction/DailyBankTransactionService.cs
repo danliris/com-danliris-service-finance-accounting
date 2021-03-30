@@ -67,8 +67,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             _DbSet.Add(model);
             return await _DbContext.SaveChangesAsync();
         }
-
-        private async Task<string> GetDocumentNo(string type, string bankCode, string username)
+        //TODO : (Enhancement) Get Nomor Urut By bank untuk enhancement API Create PPH Bank, {type = K}, {bankCode = BankCode sesuai dipilih dari depan}, {username = dari identityService}
+        public async Task<string> GetDocumentNo(string type, string bankCode, string username)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
             {
@@ -473,6 +473,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (Query.ToArray().Count() > 0)
             {
                 var BalanceByMonthAndYear = GetBalanceMonthAndYear(bankId, month, year, clientTimeZoneOffset);
+                if (BalanceByMonthAndYear == null)
+                    BalanceByMonthAndYear = new BankTransactionMonthlyBalanceModel();
                 var beforeBalance = BalanceByMonthAndYear.InitialBalance;
 
                 foreach (var item in Result)

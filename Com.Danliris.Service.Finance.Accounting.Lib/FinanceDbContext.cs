@@ -1,6 +1,9 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePayment;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.LockTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
@@ -13,11 +16,15 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.VbNonPORequest;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPphBankExpenditureNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Moonlay.Data.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -76,6 +83,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<VBRealizationDocumentModel> VBRealizationDocuments { get; set; }
         public DbSet<VBRealizationDocumentExpenditureItemModel> VBRealizationDocumentExpenditureItems { get; set; }
         public DbSet<VBRealizationDocumentUnitCostsItemModel> VBRealizationDocumentUnitCostsItems { get; set; }
+
+        public DbSet<GarmentPurchasingExpeditionModel> GarmentPurchasingExpeditions { get; set; }
+        public DbSet<GarmentDispositionExpeditionModel> GarmentDispositionExpeditions { get; set; }
+
+        public DbSet<BudgetCashflowTypeModel> BudgetCashflowTypes { get; set; }
+        public DbSet<BudgetCashflowCategoryModel> BudgetCashflowCategories { get; set; }
+        public DbSet<BudgetCashflowSubCategoryModel> BudgetCashflowSubCategories { get; set; }
+        public DbSet<BudgetCashflowUnitModel> BudgetCashflowUnits { get; set; }
+        public DbSet<InitialCashBalanceModel> InitialCashBalances { get; set; }
+        public DbSet<RealCashBalanceModel> RealCashBalances { get; set; }
+        
+        public DbSet<DPPVATBankExpenditureNoteModel> DPPVATBankExpenditureNotes { get; set; }
+        public DbSet<DPPVATBankExpenditureNoteItemModel> DPPVATBankExpenditureNoteItems { get; set; }
+        public DbSet<DPPVATBankExpenditureNoteDetailModel> DPPVATBankExpenditureNoteDetails { get; set; }
+
+
+        public DbSet<GarmentPurchasingPphBankExpenditureNoteModel> GarmentPurchasingPphBankExpenditureNotes { get; set; }
+        public DbSet<GarmentPurchasingPphBankExpenditureNoteItemModel> GarmentPurchasingPphBankExpenditureNoteItems { get; set; }
+        public DbSet<GarmentPurchasingPphBankExpenditureNoteInvoiceModel> GarmentPurchasingPphBankExpenditureNoteInvoices { get; set; }
+
+        public DbSet<GarmentInvoicePurchasingDispositionModel> GarmentInvoicePurchasingDispositions { get; set; }
+        public DbSet<GarmentInvoicePurchasingDispositionItemModel> GarmentInvoicePurchasingDispositionItems { get; set; }
+        public DbSet<GarmentDebtBalanceModel> GarmentDebtBalances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

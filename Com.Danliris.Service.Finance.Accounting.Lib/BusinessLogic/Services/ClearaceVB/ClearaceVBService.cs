@@ -1,28 +1,26 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using Com.Moonlay.Models;
-using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Moonlay.NetCore.Lib;
-using Newtonsoft.Json;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB;
-using System.Linq.Dynamic.Core;
-using System.Globalization;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
-using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
-using System.Net.Http;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
-using Com.Danliris.Service.Finance.Accounting.Lib.Migrations;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB;
+using Com.Moonlay.Models;
+using Com.Moonlay.NetCore.Lib;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB
 {
@@ -187,12 +185,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                     if (model.Type == VBType.WithPO)
                     {
                         var epoIds = _DbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == model.Id).Select(entity => (long)entity.UnitPaymentOrderId).ToList();
-                        var upoIds = _DbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == model.Id).Select(entity => new UPOAndAmountDto() { UPOId = entity.UnitPaymentOrderId, Amount = (double)entity.Amount}).ToList();
+                        var upoIds = _DbContext.VBRealizationDocumentExpenditureItems.Where(entity => entity.VBRealizationDocumentId == model.Id).Select(entity => new UPOAndAmountDto() { UPOId = entity.UnitPaymentOrderId, Amount = (double)entity.Amount }).ToList();
                         if (epoIds.Count > 0)
                         {
                             var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                            var body = new VBAutoJournalFormDto()
+                            var body = new VBAutoJournalFormDtoOld()
                             {
                                 Date = DateTimeOffset.UtcNow,
                                 DocumentNo = model.DocumentNo,
@@ -408,7 +406,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
                         {
                             var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 
-                            var body = new VBAutoJournalFormDto()
+                            var body = new VBAutoJournalFormDtoOld()
                             {
                                 Date = DateTimeOffset.UtcNow,
                                 DocumentNo = model.DocumentNo,

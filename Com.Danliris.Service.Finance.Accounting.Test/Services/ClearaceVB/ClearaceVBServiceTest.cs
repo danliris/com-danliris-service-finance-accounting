@@ -1,10 +1,20 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.ClearaceVB;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBRealizationDocumentNonPO;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.ClearaceVB;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDocumentNonPO;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
+using Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,6 +64,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.ClearaceVB
             return new ClearaceVBDataUtil(service);
         }
 
+        public VBRealizationDocumentNonPODataUtil _dataUtil(VBRealizationDocumentNonPOService service)
+        {
+            return new VBRealizationDocumentNonPODataUtil(service);
+        }
+
+        private VBRealizationDocumentExpeditionDataUtil _dataUtil(VBRealizationDocumentExpeditionService service, FinanceDbContext financeDbContext)
+        {
+            return new VBRealizationDocumentExpeditionDataUtil(service, financeDbContext);
+        }
+
         private Mock<IServiceProvider> GetServiceProvider()
         {
             var serviceProvider = new Mock<IServiceProvider>();
@@ -66,8 +86,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.ClearaceVB
                 .Setup(x => x.GetService(typeof(IIdentityService)))
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
 
+            serviceProvider.Setup(s => s.GetService(typeof(IAutoJournalService))).Returns(new AutoJournalServiceTestHelper());
 
             return serviceProvider;
+        }
+
+        [Fact]
+        public  void Should_Success_Filter()
+        {
+            //Arrange
+            var dbContext = _dbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProvider();
+            var service = new ClearaceVBService(serviceProviderMock.Object, dbContext);
+            var clearaceVBViewModel =  _dataUtil(service).GetNewData_ClearaceVBViewModel();
+            var data = new List<ClearaceVBViewModel>()
+            {
+                clearaceVBViewModel
+            }.AsQueryable();
+
+            var filterDictionary = new Dictionary<string, object>();
+            filterDictionary.Add("Appliciant", "Appliciant");
+
+            //Act
+            var result = ClearaceVBService.Filter(data, filterDictionary);
+
+            ////Assert
+            Assert.NotNull(result);
         }
 
         [Fact]
@@ -83,7 +127,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.ClearaceVB
             Assert.NotNull(result);
         }
 
-      
+
+
+        [Fact]
+        public async Task Success_Success_ClearanceVBPost()
+        {
+            var dbContext = _dbContext(GetCurrentMethod());
+            var serviceProvider = GetServiceProvider().Object;
+            var service = new ClearaceVBService(serviceProvider, dbContext);
+
+            var data = await _dataUtil(service).GetTestData();
+
+            var vBRealizationDocumentNonPOService = new VBRealizationDocumentNonPOService(serviceProvider, dbContext);
+            var vm = await _dataUtil(vBRealizationDocumentNonPOService).GetTestData();
+
+            var VBRealizationDocumentExpedition = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+            var model = _dataUtil(VBRealizationDocumentExpedition, dbContext).GetTestData_VBRealizationDocumentExpedition();
+
+
+            var dto = _dataUtil(service).GetNewData_ClearenceFormDto();
+
+            var Response = await service.ClearanceVBPost(dto);
+            Assert.NotEqual(0, Response);
+        }
+
 
         [Fact]
         public async void PreSalesPost_Success()

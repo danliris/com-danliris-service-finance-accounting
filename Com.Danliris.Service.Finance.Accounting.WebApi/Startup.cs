@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.BudgetCashflow;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition.Reports;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierApproval;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditBalance;
@@ -43,6 +47,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDoc
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VbWIthPORequest;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingPphBankExpenditureNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.CacheService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditureProofDocument;
@@ -64,6 +70,10 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoicePurchasingDisposition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionPaymentReport;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -132,10 +142,19 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVbVerificationService, VbVerificationService>()
                 .AddTransient<IVBRequestDocumentService, VBRequestDocumentService>()
                 .AddTransient<IGarmentInvoicePaymentService, GarmentInvoicePaymentService>()
+                .AddTransient<IGarmentPurchasingExpeditionService, GarmentPurchasingExpeditionService>()
+                .AddTransient<IGarmentDispositionExpeditionService, GarmentDispositionExpeditionService>()
+                .AddTransient<IGarmentPurchasingExpeditionReportService, GarmentPurchasingExpeditionReportService>()
                 .AddTransient<IVBRealizationDocumentNonPOService, VBRealizationDocumentNonPOService>()
                 .AddTransient<IVBRealizationWithPOService, VBRealizationWithPOService>()
                 .AddTransient<IVBRealizationService, VBRealizationService>()
-                .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>();
+                .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>()
+                .AddTransient<IBudgetCashflowService, BudgetCashflowService>()
+                .AddTransient<IDPPVATBankExpenditureNoteService, DPPVATBankExpenditureNoteService>()
+                .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>()
+                .AddTransient<IGarmentDebtBalanceService, GarmentDebtBalanceService>()
+                .AddTransient<IGarmentDispositionPaymentReportService, GarmentDispositionPaymentReportService>()
+                .AddTransient<IGarmentInvoicePurchasingDispositionService, GarmentInvocePurchasingDispositionService>();
         }
 
 
@@ -187,6 +206,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
 
             #endregion
 
+            services.AddDistributedRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetValue<string>("RedisConnection") ?? Configuration["RedisConnection"];
+                options.InstanceName = Configuration.GetValue<string>("RedisConnectionName") ?? Configuration["RedisConnectionName"];
+            });
+            services.AddSingleton<ICacheService, CacheService>();
+
             #region API
 
             services
@@ -236,6 +262,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 var context = serviceScope.ServiceProvider.GetService<FinanceDbContext>();
                 context.Database.Migrate();
             }
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

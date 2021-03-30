@@ -17,6 +17,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBa
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using System.Net.Http;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote
 {
@@ -94,8 +96,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
         {
-            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
-            string queryString = $"code={codeCurrency}&stringDate={date}";
+            var date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+            var queryString = $"code={codeCurrency}&stringDate={date}";
 
             var http = ServiceProvider.GetService<IHttpClientService>();
             var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
@@ -262,6 +264,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return new ReadResponse<PaymentDispositionNoteItemModel>(paymentDispositionNoteDetails, TotalData, OrderDictionary, new List<string>());
         }
 
+        private async Task SetTrueDisposition(string dispositionNo)
+        {
+            var http = ServiceProvider.GetService<IHttpClientService>();
+            await http.PutAsync(APIEndpoint.Purchasing + $"purchasing-dispositions/update/is-paid-true/{dispositionNo}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType) );
+        }
+
         public async Task<int> Post(PaymentDispositionNotePostDto form)
         {
             List<int> listIds = form.ListIds.Select(x => x.Id).ToList();
@@ -271,9 +279,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                 var model = await ReadByIdAsync(id);
 
                 if (model != null)
+                {
                     model.SetIsPosted(IdentityService.Username, UserAgent);
 
-                await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+                    foreach (var item in model.Items)
+                    {
+                        await SetTrueDisposition(item.DispositionNo);
+                    }
+
+                    await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+                }
             }
 
             var result = await DbContext.SaveChangesAsync();

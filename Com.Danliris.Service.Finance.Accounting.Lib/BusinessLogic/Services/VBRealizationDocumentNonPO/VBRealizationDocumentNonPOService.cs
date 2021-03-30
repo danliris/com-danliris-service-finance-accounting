@@ -224,6 +224,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
 
             return new ReadResponse<VBRealizationDocumentModel>(data, totalData, orderDictionary, new List<string>());
         }
+        
+        public ReadResponse<VBRealizationDocumentModel> ReadByUser(int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            var query = _dbContext.VBRealizationDocuments.Where(entity => entity.Type == VBType.NonPO).AsQueryable();
+
+            query = query.Where(entity => entity.CreatedBy == _identityService.Username);
+
+            var searchAttributes = new List<string>()
+            {
+                "DocumentNo",
+                "VBRequestDocumentNo",
+                "VBRequestDocumentCreatedBy"
+            };
+
+            query = QueryHelper<VBRealizationDocumentModel>.Search(query, searchAttributes, keyword);
+
+            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            query = QueryHelper<VBRealizationDocumentModel>.Filter(query, filterDictionary);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<VBRealizationDocumentModel>.Order(query, orderDictionary);
+
+            var pageable = new Pageable<VBRealizationDocumentModel>(query, page - 1, size);
+            var data = pageable.Data.ToList();
+
+            int totalData = pageable.TotalCount;
+
+            return new ReadResponse<VBRealizationDocumentModel>(data, totalData, orderDictionary, new List<string>());
+        }
 
         private VBRealizationDocumentNonPOViewModel MaptoVM(VBRealizationDocumentModel model, List<VBRealizationDocumentExpenditureItemModel> items, List<VBRealizationDocumentUnitCostsItemModel> unitCosts)
         {
@@ -278,6 +307,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                     Purpose = model.VBRequestDocumentPurpose
                 },
                 VBNonPOType = model.VBNonPoType,
+                Remark = model.Remark,
                 Items = items.Select(s => new VBRealizationDocumentNonPOExpenditureItemViewModel()
                 {
                     Active = s.Active,
@@ -355,6 +385,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
             var data = _dbContext.VBRealizationDocuments.FirstOrDefault(s => s.Id == id);
 
             model.Amount = model.Items.Sum(s => s.Total);
+            data.SetRemark(model.Remark);
             data.SetAmount(model.Amount, _identityService.Username, UserAgent);
             if(data.VBRequestDocumentId != model.VBDocument.Id)
             {
