@@ -81,6 +81,12 @@
     <Compile Remove="Migrations\20200727131715_UpdateVbRequestAndVbRequestDetail.Designer.cs" />
     <Compile Remove="Migrations\20200804165237_test.cs" />
     <Compile Remove="Migrations\20200804165237_test.Designer.cs" />
+    <Compile Remove="Migrations\20210330042935_AddAccountingBookTable.cs" />
+    <Compile Remove="Migrations\20210330042935_AddAccountingBookTable.Designer.cs" />
+    <Compile Remove="Migrations\20210330051422_AddAccountingBookTable.cs" />
+    <Compile Remove="Migrations\20210330051422_AddAccountingBookTable.Designer.cs" />
+    <Compile Remove="Migrations\20210330052428_AddAccountingBookTable.cs" />
+    <Compile Remove="Migrations\20210330052428_AddAccountingBookTable.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,6 +103,10 @@
     <PackageReference Include="MongoDB.Driver" Version="2.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.8.18" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="BusinessLogic\GarmentDispositionPaymentReport\ExcelGenerator\" />
   </ItemGroup>
 
 </Project>
