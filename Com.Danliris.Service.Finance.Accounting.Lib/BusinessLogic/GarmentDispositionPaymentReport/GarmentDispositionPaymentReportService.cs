@@ -154,7 +154,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             };
 
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"garment-purchasing-expeditions/report/disposition-payment?startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}dispositionIds={JsonConvert.SerializeObject(dispositionIds)}";
+            var uri = APIEndpoint.Purchasing + $"garment-purchasing-expeditions/report/disposition-payment?startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}&dispositionIds={JsonConvert.SerializeObject(dispositionIds)}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<List<GarmentDispositionDto>>();
