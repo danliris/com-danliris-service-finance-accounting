@@ -162,7 +162,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+                result = JsonConvert.DeserializeObject<BaseResponse<List<GarmentDispositionDto>>>(responseContent, jsonSerializerSettings);
             }
 
             return result.data;
