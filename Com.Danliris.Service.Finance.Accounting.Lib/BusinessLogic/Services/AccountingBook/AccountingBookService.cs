@@ -21,32 +21,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Acc
 
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
-        private readonly IDistributedCache _cache;
+        
         private readonly IServiceProvider _serviceProvider;
 
         public AccountingBookService(IServiceProvider serviceProvider)
         {
             _dbContext = serviceProvider.GetService<FinanceDbContext>();
             _identityService = serviceProvider.GetService<IIdentityService>();
-            _cache = serviceProvider.GetService<IDistributedCache>();
+            
 
             _serviceProvider = serviceProvider;
 
         }
 
-        private void SetCache()
-        {
-            var data = _dbContext.AccountingBooks.ToList();
-            _cache.SetString("AccountingBook", JsonConvert.SerializeObject(data));
-        }
+        
 
         public async Task<int> CreateAsync(AccountingBookModel model)
         {
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.AccountingBooks.Add(model);
 
-            await _dbContext.SaveChangesAsync();
-            SetCache();
+            await _dbContext.SaveChangesAsync(); 
+            
             return model.Id;
         }
 
@@ -56,8 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Acc
             EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent);
             _dbContext.AccountingBooks.Update(model);
 
-            await _dbContext.SaveChangesAsync();
-            SetCache();
+            await _dbContext.SaveChangesAsync();            
             return model.Id;
         }
 
@@ -101,10 +96,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Acc
 
         public Task<int> UpdateAsync(int id, AccountingBookModel model)
         {
-            EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
-            _dbContext.AccountingBooks.Update(model);
+            try
+            {                                             
+                var models = _dbContext.AccountingBooks.Where(entity => entity.Id.Equals(id)).FirstOrDefault();
+                
+                models.AccountingBookType = model.AccountingBookType;
+                models.Active = model.Active;
+                models.Code = model.Code;
+                models.Remarks = model.Remarks;
 
-            return _dbContext.SaveChangesAsync();
+                EntityExtension.FlagForUpdate(models, _identityService.Username, UserAgent);
+                _dbContext.AccountingBooks.Update(models);
+
+                return _dbContext.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            
         }
     }
 }
