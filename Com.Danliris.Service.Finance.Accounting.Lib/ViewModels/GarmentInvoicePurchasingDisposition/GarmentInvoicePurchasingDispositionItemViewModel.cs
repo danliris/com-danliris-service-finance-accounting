@@ -1,11 +1,12 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentInvoicePurchasingDisposition
 {
-    public class GarmentInvoicePurchasingDispositionItemViewModel
+    public class GarmentInvoicePurchasingDispositionItemViewModel: IValidatableObject
     {
         public int Id { get; set; }
         public string DispositionNoteNo { get; set; }
@@ -44,6 +45,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentInvoiceP
         public int purchasingDispositionExpeditionId { get; set; }
         public double TotalPaidPayment { get; set; }
         public double TotalPaidPaymentBefore { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) 
+        {
+            if (this.TotalPaidPaymentBefore + this.TotalPaidPayment >= this.TotalPaid)
+            {
+                yield return new ValidationResult("Total Bayar tidak boleh ", new List<string> { "Supplier" });
+            }
+
+        }
 
     }
 }
