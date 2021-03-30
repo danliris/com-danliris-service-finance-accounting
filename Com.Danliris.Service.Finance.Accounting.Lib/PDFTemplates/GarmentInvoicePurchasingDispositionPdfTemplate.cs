@@ -168,10 +168,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
 
                     bodyNonIDRCell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                    bodyNonIDRCell.Phrase = new Phrase(string.Format("{0:n4}", item.TotalPaid), normal_font);
+                    bodyNonIDRCell.Phrase = new Phrase(string.Format("{0:n4}", item.TotalPaidPayment), normal_font);
                     bodyNonIDRTable.AddCell(bodyNonIDRCell);
 
-                    total += item.TotalPaid;
+                    total += item.TotalPaidPayment;
 
                     //foreach (var detail in details)
                     //{
