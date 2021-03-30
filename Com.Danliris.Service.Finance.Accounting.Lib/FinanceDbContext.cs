@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGamentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -109,6 +109,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<GarmentDebtBalanceModel> GarmentDebtBalances { get; set; }
 
         public DbSet<MemoGarmentPurchasingModel> MemoGarmentPurchasings { get; set; }
+        public DbSet<MemoDetailGarmentPurchasing> MemoDetailGarmentPurchasings { get; set; }
+        public DbSet<MemoDetailGarmentPurchasingDetail> MemoDetailGarmentPurchasingDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
