@@ -117,6 +117,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             CreatedDate = entity.CreatedUtc;
             ProformaNo = entity.ProformaNo;
             Amount = entity.DPPAmount + VATAmount - IncomeTaxAmount;
+            Category = entity.Category;
         }
 
         public int Id { get; private set; }
