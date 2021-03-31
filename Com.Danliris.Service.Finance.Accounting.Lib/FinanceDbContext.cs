@@ -111,8 +111,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
         public DbSet<MemoGarmentPurchasingModel> MemoGarmentPurchasings { get; set; }
         public DbSet<MemoGarmentPurchasingDetailModel> MemoGarmentDetailPurchasings { get; set; }
-        public DbSet<MemoDetailGarmentPurchasing> MemoGarmentPurchasingDetails { get; set; }
-        public DbSet<MemoDetailGarmentPurchasingDetail> MemoDetailGarmentPurchasingDetails { get; set; }
+        public DbSet<MemoDetailGarmentPurchasingModel> MemoGarmentPurchasingDetails { get; set; }
+        public DbSet<MemoDetailGarmentPurchasingDetailModel> MemoDetailGarmentPurchasingDetails { get; set; }
 
         public DbSet<AccountingBookModel> AccountingBooks { get; set; }
 
