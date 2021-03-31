@@ -12,6 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.MemoGar
         public MemoGarmentPurchasingProfile()
         {
             CreateMap<MemoGarmentPurchasingModel, MemoGarmentPurchasingViewModel>()
+                .ForPath(d => d.Id, opt => opt.MapFrom(s => s.Id))
                 .ForPath(d => d.MemoNo, opt => opt.MapFrom(s => s.MemoNo))
                 .ForPath(d => d.MemoDate, opt => opt.MapFrom(s => s.MemoDate))
 

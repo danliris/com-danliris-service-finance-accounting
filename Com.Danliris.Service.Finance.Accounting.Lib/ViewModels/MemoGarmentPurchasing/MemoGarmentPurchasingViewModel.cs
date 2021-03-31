@@ -7,6 +7,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoGarmentPurc
 {
     public class MemoGarmentPurchasingViewModel
     {
+        public int Id { get; set; }
         public string MemoNo { get; set; }
         public DateTimeOffset? MemoDate { get; set; }
         public AccountingBookViewModel AccountingBook { get; set; }
