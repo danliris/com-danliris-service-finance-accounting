@@ -23,7 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             _identityService = serviceProvider.GetService<IIdentityService>();
         }
 
-        public Task<int> CreateAsync(MemoGarmentPurchasingModel model)
+        public async Task<int> CreateAsync(MemoGarmentPurchasingModel model)
         {
             var transaction = _context.Database.BeginTransaction();
             try
@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                     EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
 
                 _context.Add(model);
-                var result = _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync();
 
                 transaction.Commit();
                 return result;
@@ -70,7 +70,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         private string GetMemoNo(MemoGarmentPurchasingModel model)
         {
             var date = DateTime.Now;
-            var count = _context.MemoGarmentPurchasings.Count(x => x.CreatedUtc.Year.Equals(date.Year) && x.CreatedUtc.Month.Equals(date.Month));
+            var count = 1 + _context.MemoGarmentPurchasings.Count(x => x.CreatedUtc.Year.Equals(date.Year) && x.CreatedUtc.Month.Equals(date.Month));
 
             var generatedNo = $"{date.ToString("yy")}{date.ToString("MM")}.MG.{count.ToString("0000")}";
 

@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoGarmentPurc
         public GarmentCurrencyViewModel Currency { get; set; }
         public string Remarks { get; set; }
         public bool IsPosted { get; set; }
-        public ICollection<MemoGarmentPurchasingDetailViewModel> MemoGarmentPurchasingDetails { get; set; }
+        public List<MemoGarmentPurchasingDetailViewModel> MemoGarmentPurchasingDetails { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
