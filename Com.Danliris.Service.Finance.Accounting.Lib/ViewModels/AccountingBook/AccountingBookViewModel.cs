@@ -13,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.AccountingBook
         public string Remarks { get; set; }
         public string AccountingBookType { get; set; }
 
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (string.IsNullOrWhiteSpace(AccountingBookType))
@@ -27,5 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.AccountingBook
                     yield return new ValidationResult("Kode tidak boleh lebih dari 10 karakter", new List<string> { "Code" });
             }
         }
+
+
     }
 }
