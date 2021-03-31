@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,7 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 {
     public static class DispositionPaymentReportExcelGenerator
     {
-        public static MemoryStream GenerateExcel(List<GarmentDispositionPaymentReportDto> data, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset)
+        public static MemoryStream GenerateExcel(List<GarmentDispositionPaymentReportDto> data, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset, GarmentPurchasingExpeditionPosition position)
         {
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Disposisi", DataType = typeof(string) });
@@ -62,8 +63,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 {
                     dt.Rows.Add(
                         item.DispositionNoteNo,
-                        item.DispositionNoteDate.AddHours(timezoneOffset),
-                        item.DispositionNoteDueDate.AddHours(timezoneOffset),
+                        item.DispositionNoteDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy"),
+                        item.DispositionNoteDueDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy"),
                         item.ProformaNo,
                         item.SupplierName,
                         item.CurrencyCode,
@@ -75,12 +76,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                         item.CategoryName,
                         item.PositionDescription,
                         item.SendToPurchasingRemark,
-                        item.SendToVerificationDate,
-                        item.VerificationAcceptedDate,
-                        item.VerifiedDate,
+                        item.SendToVerificationDate != null ? item.SendToVerificationDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.VerificationAcceptedDate != null ? item.VerificationAcceptedDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.VerifiedDate != null ? item.VerifiedDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
                         item.VerifiedBy,
-                        item.CashierAcceptedDate,
-                        item.BankExpenditureNoteDate,
+                        item.CashierAcceptedDate != null ? item.CashierAcceptedDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.BankExpenditureNoteDate != null ? item.BankExpenditureNoteDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
                         item.BankExpenditureNoteNo,
                         item.PaidAmount,
                         item.CurrencyCode,
@@ -88,19 +89,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                         item.DispositionQuantity,
                         item.DeliveryOrderNo,
                         item.DeliveryOrderQuantity,
+                        item.DeliveryOrderNo,
                         item.BillsNo,
                         item.PaymentBillsNo,
                         item.CustomsNoteNo,
-                        item.CustomsNoteDate,
+                        item.CustomsNoteDate != null ? item.CustomsNoteDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
                         item.UnitReceiptNoteNo,
                         item.InternalNoteNo,
-                        item.InternalNoteDate,
+                        item.InternalNoteDate != null ? item.InternalNoteDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
                         item.SendToVerificationby
                         );
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Laporan Ekspedisi Garment") }, true);
+            return Excel.CreateExcelDispositionreport(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Laporan Ekspedisi Garment") }, startDate, endDate, timezoneOffset, position, true);
         }
     }
 }
