@@ -128,13 +128,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             modelBuilder.Entity<VBRealizationDocumentModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
             //AccountingBook
             modelBuilder.Entity<AccountingBookModel>().HasKey(x => x.Id);
-            modelBuilder.Entity<AccountingBookModel>()
-                .HasIndex(x => x.Code)
-                .IsUnique();
-
-            modelBuilder.Entity<AccountingBookModel>()
-                .HasIndex(x => x.AccountingBookType)
-                .IsUnique();
+            
             base.OnModelCreating(modelBuilder);
         }
     }
