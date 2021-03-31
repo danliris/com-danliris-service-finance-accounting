@@ -25,6 +25,8 @@ using System.Collections.Generic;
 using System.Text;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.AccountingBook;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -107,6 +109,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<GarmentInvoicePurchasingDispositionItemModel> GarmentInvoicePurchasingDispositionItems { get; set; }
         public DbSet<GarmentDebtBalanceModel> GarmentDebtBalances { get; set; }
 
+        public DbSet<MemoGarmentPurchasingModel> MemoGarmentPurchasings { get; set; }
+        public DbSet<MemoGarmentPurchasingDetailModel> MemoGarmentPurchasingDetails { get; set; }
+        public DbSet<MemoDetailGarmentPurchasingModel> MemoDetailGarmentPurchasings { get; set; }
+        public DbSet<MemoDetailGarmentPurchasingDetailModel> MemoDetailGarmentPurchasingDetails { get; set; }
+
+        public DbSet<AccountingBookModel> AccountingBooks { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<JournalTransactionItemModel>().Property(x => x.Debit).HasColumnType("decimal(18,2)");
@@ -117,6 +126,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             modelBuilder.Entity<VBRealizationDocumentUnitCostsItemModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<VBRequestDocumentModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<VBRealizationDocumentModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
+            //AccountingBook
+            modelBuilder.Entity<AccountingBookModel>().HasKey(x => x.Id);
+            
             base.OnModelCreating(modelBuilder);
         }
     }
