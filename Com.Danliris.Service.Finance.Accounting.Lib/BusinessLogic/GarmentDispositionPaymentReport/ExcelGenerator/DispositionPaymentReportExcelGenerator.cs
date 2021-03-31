@@ -60,33 +60,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 data = data.OrderByDescending(s => s.DispositionNoteDate).ToList();
                 foreach (var item in data)
                 {
-                    //dt.Rows.Add(
-                    //    item.InternalNoteNo,
-                    //    item.InternalNoteDate.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.SupplierName,
-                    //    item.InternalNoteDueDate.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.InvoicesNo,
-                    //    item.DPP,
-                    //    item.VAT,
-                    //    item.IncomeTax,
-                    //    item.TotalPaid,
-                    //    item.PaymentType,
-                    //    item.PaymentMethod,
-                    //    item.PaymentDueDays.ToString(),
-                    //    item.Position.ToDescriptionString(),
-                    //    item.SendToVerificationDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.SendToVerificationBy,
-                    //    item.VerificationAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.SendToVerificationDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.VerificationAcceptedBy,
-                    //    item.CashierAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    null,
-                    //    item.SendToPurchasingDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.SendToPurchasingBy,
-                    //    item.SendToPurchasingRemark,
-                    //    item.AccountingAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.AccountingAcceptedBy
-                    //    );
+                    dt.Rows.Add(
+                        item.DispositionNoteNo,
+                        item.DispositionNoteDate.AddHours(timezoneOffset),
+                        item.DispositionNoteDueDate.AddHours(timezoneOffset),
+                        item.ProformaNo,
+                        item.SupplierName,
+                        item.CurrencyCode,
+                        item.DPPAmount,
+                        item.VATAmount,
+                        item.IncomeTaxAmount,
+                        item.OthersExpenditureAmount,
+                        item.TotalAmount,
+                        item.CategoryName,
+                        item.PositionDescription,
+                        item.SendToPurchasingRemark,
+                        item.SendToVerificationDate,
+                        item.VerifiedDate,
+                        item.CashierAcceptedDate,
+                        item.BankExpenditureNoteDate,
+                        item.BankExpenditureNoteNo,
+                        item.PaidAmount,
+                        item.CurrencyCode,
+                        item.ExternalPurchaseOrderNo,
+                        item.DispositionQuantity,
+                        item.DeliveryOrderNo,
+                        item.DeliveryOrderQuantity,
+                        item.BillsNo,
+                        item.PaymentBillsNo,
+                        item.CustomsNoteNo,
+                        item.CustomsNoteDate,
+                        item.UnitReceiptNoteNo,
+                        item.InternalNoteNo,
+                        item.InternalNoteDate,
+                        item.SendToVerificationby
+                        );
                 }
             }
 
