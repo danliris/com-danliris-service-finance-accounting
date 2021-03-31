@@ -64,12 +64,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
         public ReadResponse<MemoDetailGarmentPurchasingModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            var query = _dbContext.MemoGarmentPurchasingDetails.AsQueryable();
+            var query = _dbContext.MemoDetailGarmentPurchasings.AsQueryable();
 
             var searchAttributes = new List<string>
             {
-               "Code",
-               "AccountingBookType"
+               "MemoId"
             };
 
             query = QueryHelper<MemoDetailGarmentPurchasingModel>.Search(query, searchAttributes, keyword);
@@ -98,22 +97,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         public DetailRincian GetDetailById(int memoId)
         {
             var memoGarments = _dbContext.MemoGarmentPurchasings.AsQueryable();
-            var memoDetailsGarments = _dbContext.MemoGarmentPurchasingDetails.AsQueryable();
+            var memoDetailsGarments = _dbContext.MemoDetailGarmentPurchasings.AsQueryable();
             var memoDetailsGarmentsDetails = _dbContext.MemoDetailGarmentPurchasingDetails.AsQueryable();
             var garmentDebts = _dbContext.GarmentDebtBalances.AsQueryable();
 
+            var memoDetail = memoDetailsGarments.FirstOrDefault(s => s.MemoId == memoId);
+
             var listDataDetails = from memoDetailsGarmentDetail in memoDetailsGarmentsDetails
-                           join garmentDebt in garmentDebts on memoDetailsGarmentDetail.MemoDetailId equals memoId
-                           select new {
-                               memoDetailsGarmentDetail.MemoDetailId,
-                               memoDetailsGarmentDetail.GarmentDeliveryOrderNo,
-                               memoDetailsGarmentDetail.GarmentDeliveryOrderId,
-                               memoDetailsGarmentDetail.RemarksDetail,
-                               memoDetailsGarmentDetail.PaymentRate,
-                               memoDetailsGarmentDetail.PurchasingRate,
-                               memoDetailsGarmentDetail.MemoAmount,
-                               memoDetailsGarmentDetail.MemoIdrAmount
-                           };
+                                  join garmentDebt in garmentDebts on memoDetailsGarmentDetail.MemoDetailId equals memoDetail.Id
+                                  select new
+                                  {
+                                      memoDetailsGarmentDetail.MemoDetailId,
+                                      memoDetailsGarmentDetail.GarmentDeliveryOrderNo,
+                                      memoDetailsGarmentDetail.GarmentDeliveryOrderId,
+                                      memoDetailsGarmentDetail.RemarksDetail,
+                                      memoDetailsGarmentDetail.PaymentRate,
+                                      memoDetailsGarmentDetail.PurchasingRate,
+                                      memoDetailsGarmentDetail.MemoAmount,
+                                      memoDetailsGarmentDetail.MemoIdrAmount
+                                  };
 
             var listData = from listDataDetail in listDataDetails
                            join garmentDebt in garmentDebts on listDataDetail.GarmentDeliveryOrderId equals garmentDebt.GarmentDeliveryOrderId
