@@ -67,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                     var selectedExpeditions = expeditions.Where(element => element.DispositionNoteId == disposition.DispositionId).ToList();
                     if (selectedExpeditions.Count > 0)
                     {
-                        foreach (var expedition in expeditions)
+                        foreach (var expedition in selectedExpeditions)
                         {
                             var paymentItem = dispositionPaymentItems.FirstOrDefault(element => element.DispositionId == disposition.DispositionId);
                             if (paymentItem != null)
@@ -137,7 +137,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                     foreach (var disposition in dispositions)
                     {
                         var selectedExpeditions = expeditions.Where(element => element.DispositionNoteId == disposition.DispositionId).ToList();
-                        foreach (var expedition in expeditions)
+                        foreach (var expedition in selectedExpeditions)
                         {
                             var paymentItem = dispositionPaymentItems.FirstOrDefault(element => element.DispositionId == disposition.DispositionId);
                             if (paymentItem != null)
@@ -175,7 +175,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                     foreach (var disposition in dispositions)
                     {
                         var selectedExpeditions = expeditions.Where(element => element.DispositionNoteId == disposition.DispositionId).ToList();
-                        foreach (var expedition in expeditions)
+                        foreach (var expedition in selectedExpeditions)
                         {
                             var paymentItem = dispositionPaymentItems.FirstOrDefault(element => element.DispositionId == disposition.DispositionId);
                             if (paymentItem != null)
