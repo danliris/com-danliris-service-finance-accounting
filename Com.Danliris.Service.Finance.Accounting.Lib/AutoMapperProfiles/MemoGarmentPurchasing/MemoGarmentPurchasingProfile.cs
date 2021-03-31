@@ -12,10 +12,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.MemoGar
         public MemoGarmentPurchasingProfile()
         {
             CreateMap<MemoGarmentPurchasingModel, MemoGarmentPurchasingViewModel>()
+                .ForPath(d => d.Id, opt => opt.MapFrom(s => s.Id))
                 .ForPath(d => d.MemoNo, opt => opt.MapFrom(s => s.MemoNo))
                 .ForPath(d => d.MemoDate, opt => opt.MapFrom(s => s.MemoDate))
 
                 .ForPath(d => d.AccountingBook.Id, opt => opt.MapFrom(s => s.AccountingBookId))
+                .ForPath(d => d.AccountingBook.Code, opt => opt.MapFrom(s => s.AccountingBookCode))
                 .ForPath(d => d.AccountingBook.Type, opt => opt.MapFrom(s => s.AccountingBookType))
 
                 .ForPath(d => d.Currency.Id, opt => opt.MapFrom(s => s.GarmentCurrenciesId))

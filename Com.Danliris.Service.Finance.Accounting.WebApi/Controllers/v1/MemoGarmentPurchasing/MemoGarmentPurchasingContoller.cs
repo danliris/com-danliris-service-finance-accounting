@@ -117,11 +117,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
                 VerifyUser();
                 _validateService.Validate(viewModel);
 
-                //if (id != viewModel.Id)
-                //{
-                //    var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail();
-                //    return BadRequest(result);
-                //}
+                if (id != viewModel.Id)
+                {
+                    var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail();
+                    return BadRequest(result);
+                }
 
                 var model = _mapper.Map<MemoGarmentPurchasingModel>(viewModel);
                 await _service.UpdateAsync(id, model);

@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210331091041_Add_AccountingBookCode_MemoGarmentPurchasing")]
+    partial class Add_AccountingBookCode_MemoGarmentPurchasing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2566,7 +2568,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MemoDetailGarmentPurchasings");
+                    b.ToTable("MemoGarmentPurchasingDetails");
                 });
 
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing.MemoGarmentPurchasingDetailModel", b =>
@@ -2625,7 +2627,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.HasIndex("MemoId");
 
-                    b.ToTable("MemoGarmentPurchasingDetails");
+                    b.ToTable("MemoGarmentDetailPurchasings");
                 });
 
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing.MemoGarmentPurchasingModel", b =>

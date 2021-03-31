@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionPaymentReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionPaymentReport.ExcelGenerator;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
@@ -546,26 +547,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        //[HttpGet("report/xls")]
-        //public IActionResult GetReportXls(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset? startDate, DateTimeOffset? endDate)
-        //{
-        //    try
-        //    {
-        //        VerifyUser();
-        //        endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
-        //        startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
+        [HttpGet("report/xls")]
+        public async Task<IActionResult> GetReportXls([FromQuery] int dispositionId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string purchasingStaff, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                VerifyUser();
+                endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
+                startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
 
-        //        var stream = _reportService.GenerateExcel(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                var result = await _reportService.GetReport(dispositionId, supplierId, position, purchasingStaff, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
 
-        //        var bytes = stream.ToArray();
-        //        var filename = "Laporan Ekspedisi Garment.xlsx";
-        //        var file = File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
-        //        return file;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
-        //    }
-        //}
+                var stream = DispositionPaymentReportExcelGenerator.GenerateExcel(result, startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), _identityService.TimezoneOffset);
+
+                var bytes = stream.ToArray();
+                var filename = "Laporan Ekspedisi Disposisi Garment.xlsx";
+                var file = File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
     }
 }
