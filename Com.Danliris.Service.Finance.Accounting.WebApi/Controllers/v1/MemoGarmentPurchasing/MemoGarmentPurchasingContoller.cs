@@ -49,10 +49,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
             try
             {
                 var queryResult = _service.Read(page, size, order, select, keyword, filter);
+                var dataViewModel = _mapper.Map<List<MemoGarmentPurchasingModel>, List<MemoGarmentPurchasingViewModel>>(queryResult.Data);
 
                 var result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
-                    .Ok(_mapper, queryResult.Data, page, size, queryResult.Count, queryResult.Data.Count, queryResult.Order, select);
+                    .Ok(_mapper, dataViewModel, page, size, queryResult.Count, queryResult.Data.Count, queryResult.Order, select);
                 return Ok(result);
             }
             catch (Exception e)
@@ -97,17 +98,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
             {
                 var model = await _service.ReadByIdAsync(id);
 
-                if (model == null)
-                {
-                    var result = new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE).Fail();
-                    return NotFound(result);
-                }
-                else
-                {
-                    var viewModel = _mapper.Map<MemoGarmentPurchasingViewModel>(model);
-                    var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Ok<MemoGarmentPurchasingViewModel>(_mapper, viewModel);
-                    return Ok(result);
-                }
+                var viewModel = _mapper.Map<MemoGarmentPurchasingViewModel>(model);
+                var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Ok<MemoGarmentPurchasingViewModel>(_mapper, viewModel);
+                return Ok(result);
             }
             catch (Exception e)
             {
