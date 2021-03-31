@@ -31,6 +31,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 
             foreach (var position in positions)
             {
+                if (position == GarmentPurchasingExpeditionPosition.AccountingAccepted || position == GarmentPurchasingExpeditionPosition.SendToAccounting)
+                    continue;
                 result.Add(new PositionOption(position));
             }
 
@@ -46,7 +48,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 
                 if (dispositionId > 0)
                     dispositions = dispositions.Where(element => element.DispositionId == dispositionId).ToList();
-                var dispositionIds = dispositions.Select(element => element.DispositionId).ToList();
 
 
                 if (supplierId > 0)
@@ -55,76 +56,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 if (!string.IsNullOrWhiteSpace(purchasingStaff))
                     dispositions = dispositions.Where(entity => entity.DispositionCreatedBy == purchasingStaff).ToList();
 
-                foreach (var disposition in dispositions)
-                {
-                    result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, disposition.CategoryId, disposition.CategoryCode, disposition.CategoryName, position, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate));
-                }
-            }
-            else
-            {
-                
-
-                var expeditionQuery = _dbContext.GarmentDispositionExpeditions.AsQueryable();
-                var expenditureQuery = _dbContext.PaymentDispositionNotes.AsQueryable();
-
-                switch (position)
-                {
-                    case GarmentPurchasingExpeditionPosition.SendToVerification:
-                        expeditionQuery = expeditionQuery.Where(entity => entity.SendToVerificationDate.HasValue && entity.SendToVerificationDate.GetValueOrDefault() >= startDate && entity.SendToVerificationDate.GetValueOrDefault() <= endDate);
-                        break;
-                    case GarmentPurchasingExpeditionPosition.VerificationAccepted:
-                        expeditionQuery = expeditionQuery.Where(entity => entity.VerificationAcceptedDate.HasValue && entity.VerificationAcceptedDate.GetValueOrDefault() >= startDate && entity.VerificationAcceptedDate.GetValueOrDefault() <= endDate);
-                        break;
-                    case GarmentPurchasingExpeditionPosition.SendToCashier:
-                        expeditionQuery = expeditionQuery.Where(entity => entity.SendToCashierDate.HasValue && entity.SendToCashierDate.GetValueOrDefault() >= startDate && entity.SendToCashierDate.GetValueOrDefault() <= endDate);
-                        break;
-                    case GarmentPurchasingExpeditionPosition.CashierAccepted:
-                        expeditionQuery = expeditionQuery.Where(entity => entity.CashierAcceptedDate.HasValue && entity.CashierAcceptedDate.GetValueOrDefault() >= startDate && entity.CashierAcceptedDate.GetValueOrDefault() <= endDate);
-                        break;
-                    case GarmentPurchasingExpeditionPosition.SendToPurchasing:
-                        expeditionQuery = expeditionQuery.Where(entity => entity.SendToPurchasingDate.HasValue && entity.SendToPurchasingDate.GetValueOrDefault() >= startDate && entity.SendToPurchasingDate.GetValueOrDefault() <= endDate);
-                        break;
-                    case GarmentPurchasingExpeditionPosition.DispositionPayment:
-                        expenditureQuery = expenditureQuery.Where(entity =>  entity.PaymentDate >= startDate && entity.PaymentDate <= endDate);
-                        break;
-                }
-
-                var dispositions = await GetDispositions(startDate, endDate, new List<int>());
-
-                if (dispositionId > 0)
-                    dispositions = dispositions.Where(element => element.DispositionId == dispositionId).ToList();
                 var dispositionIds = dispositions.Select(element => element.DispositionId).ToList();
-
-                if (supplierId > 0)
-                    expeditionQuery = expeditionQuery.Where(entity => entity.SupplierId == supplierId);
-
-                if (!string.IsNullOrWhiteSpace(purchasingStaff))
-                    expeditionQuery = expeditionQuery.Where(entity => entity.SendToVerificationBy == purchasingStaff);
-
-                var expeditionQueryResult = expeditionQuery.ToList();
-
-                var expenditureItemQuery = _dbContext.PaymentDispositionNoteItems.Where(entity => dispositionIds.Contains(entity.DispositionId));
-                var expenditureQueryIds = expenditureItemQuery.Select(entity => entity.PaymentDispositionNoteId).ToList();
-                var expenditureItemQueryResult = expenditureItemQuery.ToList();
-                var expenditureQueryResult = expenditureQuery.ToList();
+                var expeditions = _dbContext.GarmentDispositionExpeditions.Where(entity => dispositionIds.Contains(entity.DispositionNoteId)).ToList();
+                var dispositionPaymentItems = _dbContext.PaymentDispositionNoteItems.Where(entity => dispositionIds.Contains(entity.DispositionId)).ToList();
+                var dispositionPaymentIds = dispositionPaymentItems.Select(element => element.PaymentDispositionNoteId).ToList();
+                var dispositionPayments = _dbContext.PaymentDispositionNotes.Where(entity => dispositionPaymentIds.Contains(entity.Id)).ToList();
 
                 foreach (var disposition in dispositions)
                 {
-                    var expeditions = expeditionQueryResult.Where(element => disposition.DispositionId == element.DispositionNoteId).ToList();
-                    var expenditureItems = expenditureItemQueryResult.Where(element => element.DispositionId == disposition.DispositionId).ToList();
-                    var expenditureIds = expenditureItems.Select(element => element.DispositionId).ToList();
-                    var expenditures = expenditureQueryResult.Where(element => expenditureIds.Contains(element.Id)).ToList();
-
-                    if (expeditions.Count > 0)
+                    var selectedExpeditions = expeditions.Where(element => element.DispositionNoteId == disposition.DispositionId).ToList();
+                    if (selectedExpeditions.Count > 0)
                     {
                         foreach (var expedition in expeditions)
                         {
-                            if (expenditures.Count > 0)
+                            var paymentItem = dispositionPaymentItems.FirstOrDefault(element => element.DispositionId == disposition.DispositionId);
+                            if (paymentItem != null)
                             {
-                                foreach (var expenditure in expenditures)
-                                {
-                                    result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, disposition.CategoryId, disposition.CategoryCode, disposition.CategoryName, expedition.Position, expedition.SendToPurchasingRemark, expedition.SendToVerificationDate, expedition.VerificationAcceptedDate, expedition.VerifiedBy, expedition.CashierAcceptedDate, expenditure.PaymentDate, expenditure.PaymentDispositionNo, expenditure.Amount, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, expedition.SendToVerificationBy));
-                                }
+                                var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.PaymentDispositionNoteId);
+                                result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, disposition.CategoryId, disposition.CategoryCode, disposition.CategoryName, GarmentPurchasingExpeditionPosition.DispositionPayment, expedition.SendToPurchasingRemark, expedition.SendToVerificationDate, expedition.VerificationAcceptedDate, expedition.VerifiedBy, expedition.CashierAcceptedDate, payment.PaymentDate, payment.PaymentDispositionNo, payment.Amount, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, expedition.SendToVerificationBy));
                             }
                             else
                             {
@@ -134,7 +83,111 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                     }
                     else
                     {
-                        result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, disposition.CategoryId, disposition.CategoryCode, disposition.CategoryName, position, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate));
+                        result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, disposition.CategoryId, disposition.CategoryCode, disposition.CategoryName, GarmentPurchasingExpeditionPosition.Purchasing, null, null, null, null, null, null, null, 0, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, null));
+                    }
+                }
+            }
+            else
+            {
+                var expeditionQuery = _dbContext.GarmentDispositionExpeditions.AsQueryable();
+                var expenditureQuery = _dbContext.PaymentDispositionNotes.AsQueryable();
+
+                switch (position)
+                {
+                    case GarmentPurchasingExpeditionPosition.SendToVerification:
+                        expeditionQuery = expeditionQuery.Where(entity => entity.SendToVerificationDate.HasValue && entity.SendToVerificationDate.GetValueOrDefault() >= startDate && entity.SendToVerificationDate.GetValueOrDefault() <= endDate && entity.Position == GarmentPurchasingExpeditionPosition.SendToVerification);
+                        break;
+                    case GarmentPurchasingExpeditionPosition.VerificationAccepted:
+                        expeditionQuery = expeditionQuery.Where(entity => entity.VerificationAcceptedDate.HasValue && entity.VerificationAcceptedDate.GetValueOrDefault() >= startDate && entity.VerificationAcceptedDate.GetValueOrDefault() <= endDate && entity.Position == GarmentPurchasingExpeditionPosition.VerificationAccepted);
+                        break;
+                    case GarmentPurchasingExpeditionPosition.SendToCashier:
+                        expeditionQuery = expeditionQuery.Where(entity => entity.SendToCashierDate.HasValue && entity.SendToCashierDate.GetValueOrDefault() >= startDate && entity.SendToCashierDate.GetValueOrDefault() <= endDate && entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier);
+                        break;
+                    case GarmentPurchasingExpeditionPosition.CashierAccepted:
+                        expeditionQuery = expeditionQuery.Where(entity => entity.CashierAcceptedDate.HasValue && entity.CashierAcceptedDate.GetValueOrDefault() >= startDate && entity.CashierAcceptedDate.GetValueOrDefault() <= endDate && entity.Position == GarmentPurchasingExpeditionPosition.CashierAccepted);
+                        break;
+                    case GarmentPurchasingExpeditionPosition.SendToPurchasing:
+                        expeditionQuery = expeditionQuery.Where(entity => entity.SendToPurchasingDate.HasValue && entity.SendToPurchasingDate.GetValueOrDefault() >= startDate && entity.SendToPurchasingDate.GetValueOrDefault() <= endDate && entity.Position == GarmentPurchasingExpeditionPosition.SendToPurchasing);
+                        break;
+                    case GarmentPurchasingExpeditionPosition.DispositionPayment:
+                        expenditureQuery = expenditureQuery.Where(entity => entity.PaymentDate >= startDate && entity.PaymentDate <= endDate);
+                        break;
+                }
+
+                if (position == GarmentPurchasingExpeditionPosition.DispositionPayment)
+                {
+                    var dispositionPayments = expenditureQuery.ToList();
+                    var dispositionPaymentIds = dispositionPayments.Select(element => element.Id).ToList();
+                    var dispositionPaymentItems = _dbContext.PaymentDispositionNoteItems.Where(entity => dispositionPaymentIds.Contains(entity.PaymentDispositionNoteId)).ToList();
+                    var dispositionIds = dispositionPaymentItems.Select(element => element.DispositionId).ToList();
+                    var dispositions = await GetDispositions(startDate, endDate, dispositionIds);
+
+                    if (dispositionId > 0)
+                        dispositions = dispositions.Where(element => element.DispositionId == dispositionId).ToList();
+
+
+                    if (supplierId > 0)
+                        dispositions = dispositions.Where(entity => entity.SupplierId == supplierId).ToList();
+
+                    if (!string.IsNullOrWhiteSpace(purchasingStaff))
+                        dispositions = dispositions.Where(entity => entity.DispositionCreatedBy == purchasingStaff).ToList();
+
+                    var expeditions = _dbContext.GarmentDispositionExpeditions.Where(entity => dispositionIds.Contains(entity.DispositionNoteId) && entity.Position >= GarmentPurchasingExpeditionPosition.CashierAccepted).ToList();
+
+                    foreach (var disposition in dispositions)
+                    {
+                        var selectedExpeditions = expeditions.Where(element => element.DispositionNoteId == disposition.DispositionId).ToList();
+                        foreach (var expedition in expeditions)
+                        {
+                            var paymentItem = dispositionPaymentItems.FirstOrDefault(element => element.DispositionId == disposition.DispositionId);
+                            if (paymentItem != null)
+                            {
+                                var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.PaymentDispositionNoteId);
+                                result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, disposition.CategoryId, disposition.CategoryCode, disposition.CategoryName, GarmentPurchasingExpeditionPosition.DispositionPayment, expedition.SendToPurchasingRemark, expedition.SendToVerificationDate, expedition.VerificationAcceptedDate, expedition.VerifiedBy, expedition.CashierAcceptedDate, payment.PaymentDate, payment.PaymentDispositionNo, payment.Amount, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, expedition.SendToVerificationBy));
+                            }
+                            else
+                            {
+                                result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, disposition.CategoryId, disposition.CategoryCode, disposition.CategoryName, expedition.Position, expedition.SendToPurchasingRemark, expedition.SendToVerificationDate, expedition.VerificationAcceptedDate, expedition.VerifiedBy, expedition.CashierAcceptedDate, null, null, 0, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, expedition.SendToVerificationBy));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var expeditions = expeditionQuery.ToList();
+                    var dispositionIds = expeditions.Select(element => element.DispositionNoteId).ToList();
+                    var dispositions = await GetDispositions(startDate, endDate, dispositionIds);
+
+                    if (dispositionId > 0)
+                        dispositions = dispositions.Where(element => element.DispositionId == dispositionId).ToList();
+
+
+                    if (supplierId > 0)
+                        dispositions = dispositions.Where(entity => entity.SupplierId == supplierId).ToList();
+
+                    if (!string.IsNullOrWhiteSpace(purchasingStaff))
+                        dispositions = dispositions.Where(entity => entity.DispositionCreatedBy == purchasingStaff).ToList();
+
+                    var dispositionPaymentItems = _dbContext.PaymentDispositionNoteItems.Where(entity => dispositionIds.Contains(entity.DispositionId)).ToList();
+                    var dispositionPaymentIds = dispositionPaymentItems.Select(element => element.PaymentDispositionNoteId).ToList();
+                    var dispositionPayments = _dbContext.PaymentDispositionNotes.Where(entity => dispositionPaymentIds.Contains(entity.Id)).ToList();
+
+                    foreach (var disposition in dispositions)
+                    {
+                        var selectedExpeditions = expeditions.Where(element => element.DispositionNoteId == disposition.DispositionId).ToList();
+                        foreach (var expedition in expeditions)
+                        {
+                            var paymentItem = dispositionPaymentItems.FirstOrDefault(element => element.DispositionId == disposition.DispositionId);
+                            if (paymentItem != null)
+                            {
+                                var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.PaymentDispositionNoteId);
+                                result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, disposition.CategoryId, disposition.CategoryCode, disposition.CategoryName, GarmentPurchasingExpeditionPosition.DispositionPayment, expedition.SendToPurchasingRemark, expedition.SendToVerificationDate, expedition.VerificationAcceptedDate, expedition.VerifiedBy, expedition.CashierAcceptedDate, payment.PaymentDate, payment.PaymentDispositionNo, payment.Amount, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, expedition.SendToVerificationBy));
+                            }
+                            else
+                            {
+                                result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, disposition.CategoryId, disposition.CategoryCode, disposition.CategoryName, expedition.Position, expedition.SendToPurchasingRemark, expedition.SendToVerificationDate, expedition.VerificationAcceptedDate, expedition.VerifiedBy, expedition.CashierAcceptedDate, null, null, 0, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, expedition.SendToVerificationBy));
+                            }
+                        }
                     }
                 }
             }
@@ -154,7 +207,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             };
 
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"garment-purchasing-expeditions/report/disposition-payment?startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}dispositionIds={JsonConvert.SerializeObject(dispositionIds)}";
+            var uri = APIEndpoint.Purchasing + $"garment-purchasing-expeditions/report/disposition-payment?startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}&dispositionIds={JsonConvert.SerializeObject(dispositionIds)}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<List<GarmentDispositionDto>>();

@@ -6,11 +6,11 @@ using System.Collections.Generic;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing
 {
-    public class MemoDetailGarmentPurchasing: StandardEntity
+    public class MemoDetailGarmentPurchasingModel: StandardEntity
     {
         public int MemoId { get; set; }
         public bool IsPosted { get; set; }
         public string Remarks { get; set; }
-        public virtual List<MemoDetailGarmentPurchasingDetail> Items { get; set; }
+        public ICollection<MemoDetailGarmentPurchasingDetailModel> MemoDetailGarmentPurchasingDetail { get; set; }
     }
 }
