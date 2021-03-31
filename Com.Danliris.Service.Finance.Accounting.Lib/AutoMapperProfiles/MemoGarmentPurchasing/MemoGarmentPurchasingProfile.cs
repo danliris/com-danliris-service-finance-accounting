@@ -25,6 +25,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.MemoGar
                 .ForPath(d => d.Remarks, opt => opt.MapFrom(s => s.Remarks))
                 .ForPath(d => d.IsPosted, opt => opt.MapFrom(s => s.IsPosted))
 
+                .ForPath(d => d.MemoGarmentPurchasingDetails, opt => opt.MapFrom(s => s.MemoDetailGarmentPurchasings))
+
                 .ReverseMap();
 
             CreateMap<MemoGarmentPurchasingDetailModel, MemoGarmentPurchasingDetailViewModel>()
