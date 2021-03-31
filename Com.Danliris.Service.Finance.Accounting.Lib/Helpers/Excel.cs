@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             {
                 var sheet = package.Workbook.Worksheets.Add(item.Value);
                 sheet.Cells["A1"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+            }
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
+        public static MemoryStream CreateExcelDispositionreport(List<KeyValuePair<DataTable, string>> dtSourceList, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset, GarmentPurchasingExpeditionPosition position, bool styling = false)
+        {
+            ExcelPackage package = new ExcelPackage();
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            {
+                var sheet = package.Workbook.Worksheets.Add(item.Value);
+
+                sheet.Cells["A1"].Value = "PT.Dan Liris";
+
+                sheet.Cells["A2"].Value = "LAPORAN EKSPEDISI BUKTI PEMBAYARAN DISPOSISI";
+
+                var positionDescription = "SEMUA";
+                if (position > GarmentPurchasingExpeditionPosition.Invalid)
+                    positionDescription = position.ToDescriptionString();
+
+                sheet.Cells["A3"].Value = $"PEMBELIAN {positionDescription}";
+
+                sheet.Cells["A4"].Value = $"PERIODE : {startDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy")} sampai dengan {endDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy")}";
+
+                sheet.Cells["A5"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
                 sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
             }
             MemoryStream stream = new MemoryStream();
