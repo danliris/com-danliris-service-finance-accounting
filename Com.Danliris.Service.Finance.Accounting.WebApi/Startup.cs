@@ -77,6 +77,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositi
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.AccountingBook;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.MemoGarmentPurchasing;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoDetailGarmentPurchasing;
+using Microsoft.ApplicationInsights.AspNetCore;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -86,7 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
         private readonly string FINANCE_POLICY = "FinancePolicy";
 
         public IConfiguration Configuration { get; }
-
+        public bool HasAppInsight => !string.IsNullOrEmpty(Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY") ?? Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey"));
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -160,6 +162,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IGarmentInvoicePurchasingDispositionService, GarmentInvocePurchasingDispositionService>()
                 .AddTransient<IAccountingBookService, AccountingBookService>()
                 .AddTransient<IMemoGarmentPurchasingService, MemoGarmentPurchasingService>()
+                .AddTransient<IMemoDetailGarmentPurchasingService, MemoDetailGarmentPurchasingService>()
 ;
         }
 
@@ -252,7 +255,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 c.OperationFilter<ResponseHeaderFilter>();
                 c.CustomSchemaIds(i => i.FullName);
             });
+            services.AddApplicationInsightsTelemetry();
             #endregion
+
+            // App Insight
+            if (HasAppInsight)
+            {
+                services.AddApplicationInsightsTelemetry();
+                services.AddAppInsightRequestBodyLogging();
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -277,6 +288,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             app.UseAuthentication();
             app.UseCors(FINANCE_POLICY);
             app.UseMvc();
+
+            if (HasAppInsight)
+            {
+                app.UseAppInsightRequestBodyLogging();
+                app.UseAppInsightResponseBodyLogging();
+            }
         }
     }
 

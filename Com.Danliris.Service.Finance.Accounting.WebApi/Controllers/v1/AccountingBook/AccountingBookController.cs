@@ -132,8 +132,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Accounti
             }
             catch (Exception e)
             {
-                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, e.Message).Fail();
+                return StatusCode(General.BAD_REQUEST_STATUS_CODE, result);
             }
         }
 
@@ -164,8 +164,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Accounti
             }
             catch (Exception e)
             {
-                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+                var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, e.Message).Fail();
+                return StatusCode(General.BAD_REQUEST_STATUS_CODE, result);
             }
         }
 
