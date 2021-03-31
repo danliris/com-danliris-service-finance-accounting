@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasi
         public string MemoNo { get; set; }
         public DateTimeOffset MemoDate { get; set; }
         public int AccountingBookId { get; set; }
+        public string AccountingBookCode { get; set; }
         public string AccountingBookType { get; set; }
         public int GarmentCurrenciesId { get; set; }
         public string GarmentCurrenciesCode { get; set; }
