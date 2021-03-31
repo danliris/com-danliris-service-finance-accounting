@@ -94,17 +94,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             return new ReadResponse<MemoDetailGarmentPurchasingModel>(data, totalData, orderDictionary, new List<string>());
         }
 
-        public DetailRincian GetDetailById(int memoId)
+        public DetailRincian GetDetailById(int Id)
         {
             var memoGarments = _dbContext.MemoGarmentPurchasings.AsQueryable();
             var memoDetailsGarments = _dbContext.MemoDetailGarmentPurchasings.AsQueryable();
             var memoDetailsGarmentsDetails = _dbContext.MemoDetailGarmentPurchasingDetails.AsQueryable();
             var garmentDebts = _dbContext.GarmentDebtBalances.AsQueryable();
 
-            var memoDetail = memoDetailsGarments.FirstOrDefault(s => s.MemoId == memoId);
+            var memoDetail = memoDetailsGarments.FirstOrDefault(s => s.Id == Id);
 
             var listDataDetails = from memoDetailsGarmentDetail in memoDetailsGarmentsDetails
-                                  join garmentDebt in garmentDebts on memoDetailsGarmentDetail.MemoDetailId equals memoDetail.Id
+                                  join garmentDebt in garmentDebts on memoDetailsGarmentDetail.MemoDetailId equals Id
                                   select new
                                   {
                                       memoDetailsGarmentDetail.MemoDetailId,
@@ -135,7 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                            };
 
             var queryJoin = from memoGarment in memoGarments
-                            join memoDetailsGarment in memoDetailsGarments on memoGarment.Id equals memoId
+                            join memoDetailsGarment in memoDetailsGarments on memoGarment.Id equals memoDetail.MemoId
 
                             select new DetailRincian
                             {
@@ -149,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                                 Items = listData.ToList()
                             };
 
-            return queryJoin.FirstOrDefault(s => s.MemoId == memoId);
+            return queryJoin.FirstOrDefault(s => s.MemoId == memoDetail.MemoId);
         }
 
         public Task<int> UpdateAsync(int id, MemoDetailGarmentPurchasingModel model)

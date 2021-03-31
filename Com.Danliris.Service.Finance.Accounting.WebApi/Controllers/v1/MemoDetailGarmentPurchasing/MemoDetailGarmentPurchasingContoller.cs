@@ -92,12 +92,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
             }
         }
 
-        [HttpGet("{memoId}")]
-        public IActionResult GetById([FromRoute] int memoId)
+        [HttpGet("{Id}")]
+        public IActionResult GetById([FromRoute] int Id)
         {
             try
             {
-                var viewModel = _service.GetDetailById(memoId);
+                var viewModel = _service.GetDetailById(Id);
 
                 if (viewModel == null)
                 {
