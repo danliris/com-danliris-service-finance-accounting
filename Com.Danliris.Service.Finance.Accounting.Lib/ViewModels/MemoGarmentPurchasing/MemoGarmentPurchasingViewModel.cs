@@ -41,15 +41,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoGarmentPurc
                     if (string.IsNullOrWhiteSpace(memoDetail.COA.Name) || string.IsNullOrWhiteSpace(memoDetail.COA.No) || memoDetail.COA.Id <= 0)
                     {
                         CountItemsError++;
-                        ItemsError += "'COANo': 'Nomor COA harus diisi', ";
+                        ItemsError += "'COA': 'Nomor COA harus diisi', ";
                     }
 
-                    if (memoDetail.DebitNominal <= 0 || memoDetail.CreditNominal <= 0)
+                    if (memoDetail.DebitNominal <= 0 && memoDetail.CreditNominal <= 0)
                     {
                         CountItemsError++;
-                        ItemsError += "'Debit': 'Jumlah debit / kredit harus lebih besar dari 0', ";
+                        ItemsError += "'DebitNominal': 'Debit harus lebih besar dari 0', ";
+                        ItemsError += "'CreditNominal': 'Kredit harus lebih besar dari 0', ";
                     }
-
+                    else if (memoDetail.DebitNominal > 0 && memoDetail.CreditNominal > 0)
+                    {
+                        CountItemsError++;
+                        ItemsError += "'DebitNominal': 'Isi salah satu', ";
+                        ItemsError += "'CreditNominal': 'Isi salah satu', ";
+                    }
                     ItemsError += "}, ";
                 }
 
