@@ -15,6 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public DateTimeOffset InvoiceDate { get; private set; }
         public string InvoiceNo { get; private set; }
         public int SupplierId { get; private set; }
+        public string SupplierCode { get; private set; }
         public string SupplierName { get; private set; }
         public int CurrencyId { get; private set; }
         public string CurrencyCode { get; private set; }
@@ -56,6 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             InvoiceDate = model.InvoiceDate;
             InvoiceNo = model.InvoiceNo;
             SupplierId = model.SupplierId;
+            SupplierCode = model.SupplierCode;
             SupplierName = model.SupplierName;
             CurrencyId = model.CurrencyId;
             CurrencyCode = model.CurrencyCode;
