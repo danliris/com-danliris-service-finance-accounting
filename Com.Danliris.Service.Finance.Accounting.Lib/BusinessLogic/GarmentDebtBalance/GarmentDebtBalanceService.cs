@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Moonlay.NetCore.Lib;
+using Newtonsoft.Json;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance
 {
@@ -153,6 +156,46 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
                 Selected = new List<string>()
             };
             return result;
+        }
+
+        public GarmentDebtBalanceIndexDto GetDebtBalanceCardWithBalanceBeforeAndRemainBalanceIndex(int page = 1, int size = 25, string order = "{}", List<string> select = null, string keyword = null, string filter = "{}")
+        {
+            var query = GetDebtBalanceCardWithBeforeBalanceAndSaldoAkhirDto(page,size,order,select,keyword,filter);
+            var data = query.Data.Select(s => new GarmentDebtBalanceCardDto(s)).ToList();
+            var result = new GarmentDebtBalanceIndexDto
+            {
+                Data = data,
+                Count = query.Count,
+                Order = new List<string>(),
+                Selected = new List<string>()
+            };
+            return result;
+        }
+
+        private ReadResponse<GarmentDebtBalanceModel> GetDebtBalanceCardWithBeforeBalanceAndSaldoAkhirDto(int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            IQueryable<GarmentDebtBalanceModel> Query = _dbContext.GarmentDebtBalances;
+            List<string> searchAttributes = new List<string>()
+            {
+                "GarmentDeliveryOrderNo"
+            };
+
+            Query = QueryHelper<GarmentDebtBalanceModel>.Search(Query, searchAttributes, keyword);
+            var testDict = new Dictionary<string, object>() {
+                { "GarmentDeliveryOrderno","asc" },
+                { "SupplierName","desc"}
+            };
+            Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            Query = QueryHelper<GarmentDebtBalanceModel>.Filter(Query, FilterDictionary);
+
+            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            Query = QueryHelper<GarmentDebtBalanceModel>.Order(Query, OrderDictionary);
+
+            Pageable<GarmentDebtBalanceModel> pageable = new Pageable<GarmentDebtBalanceModel>(Query, page - 1, size);
+            List<GarmentDebtBalanceModel> Data = pageable.Data.ToList();
+            int TotalData = pageable.TotalCount;
+
+            return new ReadResponse<GarmentDebtBalanceModel>(Data, TotalData, OrderDictionary, new List<string>());
         }
 
         private IQueryable<GarmentDebtBalanceModel> GetData(int supplierId, int month, int year)
