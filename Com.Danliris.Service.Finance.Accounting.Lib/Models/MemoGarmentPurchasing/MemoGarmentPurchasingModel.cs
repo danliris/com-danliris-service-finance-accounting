@@ -16,6 +16,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasi
         public int GarmentCurrenciesRate { get; set; }
         public string Remarks { get; set; }
         public bool IsPosted { get; set; }
-        public ICollection<MemoGarmentPurchasingDetailModel> MemoDetailGarmentPurchasings { get; set; }
+        public ICollection<MemoGarmentPurchasingDetailModel> MemoGarmentPurchasingDetails { get; set; }
     }
 }
