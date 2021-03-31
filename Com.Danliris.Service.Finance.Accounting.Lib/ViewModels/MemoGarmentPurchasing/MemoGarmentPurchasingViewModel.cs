@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoGarmentPurchasing
 {
-    public class MemoGarmentPurchasingViewModel
+    public class MemoGarmentPurchasingViewModel : IValidatableObject
     {
         public int Id { get; set; }
         public string MemoNo { get; set; }
@@ -22,10 +22,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoGarmentPurc
                 yield return new ValidationResult("Tanggal harus diisi", new List<string> { "MemoDate" });
 
             if (string.IsNullOrWhiteSpace(Currency.Code) || Currency.Id <= 0)
-                yield return new ValidationResult("Mata uang harus diisi", new List<string> { "GarmentCurrenciesCode" });
+                yield return new ValidationResult("Mata uang harus diisi", new List<string> { "Currency" });
 
-            if (string.IsNullOrWhiteSpace(AccountingBook.Type) || AccountingBook.Id <= 0)
-                yield return new ValidationResult("Jenis buku harus diisi", new List<string> { "AccountingBookType" });
+            if (AccountingBook == null || string.IsNullOrWhiteSpace(AccountingBook.Type) || AccountingBook.Id <= 0)
+                yield return new ValidationResult("Jenis buku harus diisi", new List<string> { "AccountingBook" });
 
             if (MemoGarmentPurchasingDetails == null || MemoGarmentPurchasingDetails.Count.Equals(0))
                 yield return new ValidationResult("Detail pembelian harus diisi", new List<string> { "MemoDetailGarmentPurchasings" });
