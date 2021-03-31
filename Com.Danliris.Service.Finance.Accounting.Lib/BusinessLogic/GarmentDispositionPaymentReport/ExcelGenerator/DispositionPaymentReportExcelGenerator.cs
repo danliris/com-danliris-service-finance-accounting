@@ -41,7 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             dt.Columns.Add(new DataColumn() { ColumnName = "Qty Disposisi", DataType = typeof(double) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Surat Jalan", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Qty Surat Jalan", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Surat Jalan", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor SJ", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor BP Kecil", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor BP Besar", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor BeaCukai", DataType = typeof(string) });
@@ -76,7 +76,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                         item.PositionDescription,
                         item.SendToPurchasingRemark,
                         item.SendToVerificationDate,
+                        item.VerificationAcceptedDate,
                         item.VerifiedDate,
+                        item.VerifiedBy,
                         item.CashierAcceptedDate,
                         item.BankExpenditureNoteDate,
                         item.BankExpenditureNoteNo,

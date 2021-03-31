@@ -12,7 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public SupplierDto Supplier { get; set; }
         public string BGCheckNo { get; set; }
         public double Amount { get; set; }
-        public DateTimeOffset Date { get; set; }
+        public DateTimeOffset? Date { get; set; }
         public List<FormItemDto> Items { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
