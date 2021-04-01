@@ -6,6 +6,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarme
 {
     public class DetailRincian
     {
+        public int Id { get; set; }
         public int MemoId { get; set; }
         public DateTimeOffset? MemoDate { get; set; }
         public string MemoNo { get; set; }

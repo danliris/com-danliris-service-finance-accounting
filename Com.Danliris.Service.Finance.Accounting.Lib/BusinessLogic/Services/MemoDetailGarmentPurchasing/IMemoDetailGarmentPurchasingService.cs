@@ -12,5 +12,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         DetailRincian GetDetailById(int memoId);
         Task<int> CreateAsync(MemoDetailGarmentPurchasingModel model);
         ReadResponse<MemoDetailGarmentPurchasingModel> Read(int page, int size, string order, List<string> select, string keyword, string filter);
+        Task<int> UpdateAsync(int id, EditDetailRincian viewModel);
     }
 }
