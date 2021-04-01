@@ -57,11 +57,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             }
         }
 
-        public Task<int> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public ReadResponse<MemoDetailGarmentPurchasingModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
             var query = _dbContext.MemoDetailGarmentPurchasings.AsQueryable();
@@ -158,7 +153,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         {
             UpdateModel(id, viewModel);
             return await _dbContext.SaveChangesAsync();
-            //throw new NotImplementedException();
         }
 
         public void UpdateModel(int id, EditDetailRincian viewModel)
@@ -199,9 +193,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             //DbSet.Update(exist);
         }
 
-        public Task<MemoDetailGarmentPurchasingModel> ReadByIdAsync(int id)
+        public async Task<MemoDetailGarmentPurchasingModel> ReadByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await DbSet.Include(m => m.MemoDetailGarmentPurchasingDetail)
+                .FirstOrDefaultAsync(d => d.Id.Equals(id) && !d.IsDeleted);
+        }
+
+        public async Task DeleteModel(int id)
+        {
+            MemoDetailGarmentPurchasingModel model = await ReadByIdAsync(id);
+            foreach (var item in model.MemoDetailGarmentPurchasingDetail)
+            {
+                EntityExtension.FlagForDelete(item, _identityService.Username, UserAgent, true);
+            }
+            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent, true);
+            DbSet.Update(model);
+        }
+
+        public async Task<int> DeleteAsync(int id)
+        {
+            await DeleteModel(id);
+            return await _dbContext.SaveChangesAsync();
         }
     }
 }
