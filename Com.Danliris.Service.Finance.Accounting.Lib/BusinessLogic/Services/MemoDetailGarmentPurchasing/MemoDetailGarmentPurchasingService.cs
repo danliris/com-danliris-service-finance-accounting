@@ -102,21 +102,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             var garmentDebts = _dbContext.GarmentDebtBalances.AsQueryable();
 
             var memoDetail = memoDetailsGarments.FirstOrDefault(s => s.Id == Id);
-
-            var listDataDetails = from memoDetailsGarmentDetail in memoDetailsGarmentsDetails
-                                  join garmentDebt in garmentDebts on memoDetailsGarmentDetail.MemoDetailId equals Id
-                                  select new
-                                  {
-                                      memoDetailsGarmentDetail.Id,
-                                      memoDetailsGarmentDetail.MemoDetailId,
-                                      memoDetailsGarmentDetail.GarmentDeliveryOrderNo,
-                                      memoDetailsGarmentDetail.GarmentDeliveryOrderId,
-                                      memoDetailsGarmentDetail.RemarksDetail,
-                                      memoDetailsGarmentDetail.PaymentRate,
-                                      memoDetailsGarmentDetail.PurchasingRate,
-                                      memoDetailsGarmentDetail.MemoAmount,
-                                      memoDetailsGarmentDetail.MemoIdrAmount
-                                  };
+            var listDataDetails = memoDetailsGarmentsDetails.Where(m => m.MemoDetailId == Id).Select(m => new
+            {
+                m.Id,
+                m.MemoDetailId,
+                m.GarmentDeliveryOrderNo,
+                m.GarmentDeliveryOrderId,
+                m.RemarksDetail,
+                m.PaymentRate,
+                m.PurchasingRate,
+                m.MemoAmount,
+                m.MemoIdrAmount
+            });
 
             var listData = from listDataDetail in listDataDetails
                            join garmentDebt in garmentDebts on listDataDetail.GarmentDeliveryOrderId equals garmentDebt.GarmentDeliveryOrderId
@@ -144,11 +141,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                             {
                                 Id = memoDetailsGarment.Id,
                                 MemoId = memoDetailsGarment.MemoId,
-                                MemoDate = memoGarment.MemoDate,
-                                MemoNo = memoGarment.MemoNo,
-                                AccountingBookType = memoGarment.AccountingBookType,
-                                GarmentCurrenciesCode = memoGarment.GarmentCurrenciesCode,
-                                GarmentCurrenciesRate = memoGarment.GarmentCurrenciesRate,
+                                MemoDate = memoDetailsGarment.MemoDate,
+                                MemoNo = memoDetailsGarment.MemoNo,
+                                AccountingBookType = memoDetailsGarment.AccountingBookType,
+                                GarmentCurrenciesId = memoDetailsGarment.GarmentCurrenciesId,
+                                GarmentCurrenciesCode = memoDetailsGarment.GarmentCurrenciesCode,
+                                GarmentCurrenciesRate = memoDetailsGarment.GarmentCurrenciesRate,
                                 Remarks = memoDetailsGarment.Remarks,
                                 Items = listData.ToList()
                             };
