@@ -284,5 +284,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
             return _dbContext.SaveChanges();
         }
+
+
+        public ReportDto ExpenditureFromInvoice( long InvoiceId)
+        {
+            var detailQuery = _dbContext.DPPVATBankExpenditureNoteDetails.AsQueryable();
+            var itemQuery = _dbContext.DPPVATBankExpenditureNoteItems.AsQueryable();
+            var query = _dbContext.DPPVATBankExpenditureNotes.AsQueryable();
+
+            var reportQuery = from detail in detailQuery
+
+                              join item in itemQuery on detail.DPPVATBankExpenditureNoteItemId equals item.Id into itemDetails
+                              from itemDetail in itemDetails.DefaultIfEmpty()
+
+                              join document in query on itemDetail.DPPVATBankExpenditureNoteId equals document.Id into documentItems
+                              from documentItem in documentItems.DefaultIfEmpty()
+
+                              where detail.InvoiceId == InvoiceId
+
+                              select new ReportDto(detail, itemDetail, documentItem);
+
+            
+
+            return reportQuery.FirstOrDefault();
+        }
     }
 }
