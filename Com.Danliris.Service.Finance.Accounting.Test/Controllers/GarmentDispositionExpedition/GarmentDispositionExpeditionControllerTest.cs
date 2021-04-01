@@ -101,9 +101,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDispos
         //    Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
         //    var service = new Mock<IGarmentDispositionExpeditionService>();
 
-        //    service
-        //        .Setup(s => s.GetByPosition(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
-        //        .Throws(new Exception());
+            //service
+            //    .Setup(s => s.GetByPosition(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<int>(), It.IsAny<int>(),It.IsAny<string>()))
+            //    .Throws(new Exception());
 
         //    serviceProviderMock
         //       .Setup(serviceProvider => serviceProvider.GetService(typeof(IGarmentDispositionExpeditionService)))

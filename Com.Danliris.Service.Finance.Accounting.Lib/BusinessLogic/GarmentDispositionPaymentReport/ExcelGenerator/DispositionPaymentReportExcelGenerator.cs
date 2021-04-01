@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,7 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 {
     public static class DispositionPaymentReportExcelGenerator
     {
-        public static MemoryStream GenerateExcel(List<GarmentDispositionPaymentReportDto> data, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset)
+        public static MemoryStream GenerateExcel(List<GarmentDispositionPaymentReportDto> data, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset, GarmentPurchasingExpeditionPosition position)
         {
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Disposisi", DataType = typeof(string) });
@@ -41,7 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             dt.Columns.Add(new DataColumn() { ColumnName = "Qty Disposisi", DataType = typeof(double) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Surat Jalan", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Qty Surat Jalan", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Surat Jalan", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor SJ", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor BP Kecil", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor BP Besar", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor BeaCukai", DataType = typeof(string) });
@@ -60,37 +61,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 data = data.OrderByDescending(s => s.DispositionNoteDate).ToList();
                 foreach (var item in data)
                 {
-                    //dt.Rows.Add(
-                    //    item.InternalNoteNo,
-                    //    item.InternalNoteDate.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.SupplierName,
-                    //    item.InternalNoteDueDate.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.InvoicesNo,
-                    //    item.DPP,
-                    //    item.VAT,
-                    //    item.IncomeTax,
-                    //    item.TotalPaid,
-                    //    item.PaymentType,
-                    //    item.PaymentMethod,
-                    //    item.PaymentDueDays.ToString(),
-                    //    item.Position.ToDescriptionString(),
-                    //    item.SendToVerificationDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.SendToVerificationBy,
-                    //    item.VerificationAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.SendToVerificationDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.VerificationAcceptedBy,
-                    //    item.CashierAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    null,
-                    //    item.SendToPurchasingDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.SendToPurchasingBy,
-                    //    item.SendToPurchasingRemark,
-                    //    item.AccountingAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                    //    item.AccountingAcceptedBy
-                    //    );
+                    dt.Rows.Add(
+                        item.DispositionNoteNo,
+                        item.DispositionNoteDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy"),
+                        item.DispositionNoteDueDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy"),
+                        item.ProformaNo,
+                        item.SupplierName,
+                        item.CurrencyCode,
+                        item.DPPAmount,
+                        item.VATAmount,
+                        item.IncomeTaxAmount,
+                        item.OthersExpenditureAmount,
+                        item.TotalAmount,
+                        item.CategoryName,
+                        item.PositionDescription,
+                        item.SendToPurchasingRemark,
+                        item.SendToVerificationDate != null ? item.SendToVerificationDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.VerificationAcceptedDate != null ? item.VerificationAcceptedDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.VerifiedDate != null ? item.VerifiedDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.VerifiedBy,
+                        item.CashierAcceptedDate != null ? item.CashierAcceptedDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.BankExpenditureNoteDate != null ? item.BankExpenditureNoteDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.BankExpenditureNoteNo,
+                        item.PaidAmount,
+                        item.CurrencyCode,
+                        item.ExternalPurchaseOrderNo,
+                        item.DispositionQuantity,
+                        item.DeliveryOrderNo,
+                        item.DeliveryOrderQuantity,
+                        item.DeliveryOrderNo,
+                        item.BillsNo,
+                        item.PaymentBillsNo,
+                        item.CustomsNoteNo,
+                        item.CustomsNoteDate != null ? item.CustomsNoteDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.UnitReceiptNoteNo,
+                        item.InternalNoteNo,
+                        item.InternalNoteDate != null ? item.InternalNoteDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.SendToVerificationby
+                        );
                 }
             }
 
-            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Laporan Ekspedisi Garment") }, true);
+            return Excel.CreateExcelDispositionreport(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Laporan Ekspedisi Garment") }, startDate, endDate, timezoneOffset, position, true);
         }
     }
 }
