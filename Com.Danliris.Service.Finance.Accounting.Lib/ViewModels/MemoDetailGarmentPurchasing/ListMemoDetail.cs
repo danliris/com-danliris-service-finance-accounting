@@ -1,13 +1,9 @@
 ﻿using System;
-using Com.Moonlay.Models;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
-
-namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing
+namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarmentPurchasing
 {
-    public class MemoDetailGarmentPurchasingModel: StandardEntity
+    public class ListMemoDetail
     {
+        public int Id { get; set; }
         public int MemoId { get; set; }
         public string MemoNo { get; set; }
         public DateTimeOffset MemoDate { get; set; }
@@ -18,6 +14,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasi
         public int GarmentCurrenciesRate { get; set; }
         public string Remarks { get; set; }
         public bool IsPosted { get; set; }
-        public ICollection<MemoDetailGarmentPurchasingDetailModel> MemoDetailGarmentPurchasingDetail { get; set; }
     }
 }
