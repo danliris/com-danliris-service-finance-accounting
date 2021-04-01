@@ -107,6 +107,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                                   join garmentDebt in garmentDebts on memoDetailsGarmentDetail.MemoDetailId equals Id
                                   select new
                                   {
+                                      memoDetailsGarmentDetail.Id,
                                       memoDetailsGarmentDetail.MemoDetailId,
                                       memoDetailsGarmentDetail.GarmentDeliveryOrderNo,
                                       memoDetailsGarmentDetail.GarmentDeliveryOrderId,
@@ -120,6 +121,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             var listData = from listDataDetail in listDataDetails
                            join garmentDebt in garmentDebts on listDataDetail.GarmentDeliveryOrderId equals garmentDebt.GarmentDeliveryOrderId
                            select new DetailRincianItems {
+                               Id = listDataDetail.Id,
+                               GarmentDeliveryOrderId = listDataDetail.GarmentDeliveryOrderId,
                                GarmentDeliveryOrderNo =  listDataDetail.GarmentDeliveryOrderNo,
                                InternalNoteNo = garmentDebt.InternalNoteNo,
                                BillsNo = garmentDebt.BillsNo,
@@ -139,7 +142,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
                             select new DetailRincian
                             {
-                                MemoId = memoGarment.Id,
+                                Id = memoDetailsGarment.Id,
+                                MemoId = memoDetailsGarment.MemoId,
                                 MemoDate = memoGarment.MemoDate,
                                 MemoNo = memoGarment.MemoNo,
                                 AccountingBookType = memoGarment.AccountingBookType,
@@ -152,9 +156,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             return queryJoin.FirstOrDefault(s => s.MemoId == memoDetail.MemoId);
         }
 
-        public Task<int> UpdateAsync(int id, MemoDetailGarmentPurchasingModel model)
+        public async Task<int> UpdateAsync(int id, EditDetailRincian viewModel)
         {
-            throw new NotImplementedException();
+            UpdateModel(id, viewModel);
+            return await _dbContext.SaveChangesAsync();
+            //throw new NotImplementedException();
+        }
+
+        public void UpdateModel(int id, EditDetailRincian viewModel)
+        {
+            MemoDetailGarmentPurchasingModel existDb = DbSet
+                        .Include(d => d.MemoDetailGarmentPurchasingDetail)
+                        .Single(memoDetail => memoDetail.Id == id && !memoDetail.IsDeleted);
+
+
+            existDb.MemoId = viewModel.MemoId;
+            existDb.Remarks = viewModel.Remarks;
+
+            foreach (var existRow in existDb.MemoDetailGarmentPurchasingDetail)
+            {
+                EditDetailRincianItems itemModel = viewModel.Items.FirstOrDefault(p => p.Id.Equals(existRow.Id));
+
+                existRow.GarmentDeliveryOrderId = itemModel.GarmentDeliveryOrderId;
+                existRow.GarmentDeliveryOrderNo = itemModel.GarmentDeliveryOrderNo;
+                existRow.RemarksDetail = itemModel.RemarksDetail;
+                existRow.PaymentRate = itemModel.PaymentRate;
+                existRow.PurchasingRate = itemModel.PurchasingRate;
+                existRow.MemoAmount = itemModel.MemoAmount;
+                existRow.MemoIdrAmount = itemModel.MemoIdrAmount;
+
+
+                EntityExtension.FlagForUpdate(existRow, _identityService.Username, UserAgent);
+            }
+
+            EntityExtension.FlagForUpdate(existDb, _identityService.Username, UserAgent);
+            //DbSet.Update(exist);
         }
 
         public Task<MemoDetailGarmentPurchasingModel> ReadByIdAsync(int id)
