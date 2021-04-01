@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarme
         public int MemoId { get; set; }
         public DateTimeOffset? MemoDate { get; set; }
         public string MemoNo { get; set; }
+        public int AccountingBookId { get; set; }
         public string AccountingBookType { get; set; }
         public int GarmentCurrenciesId { get; set; }
         public string GarmentCurrenciesCode { get; set; }
