@@ -44,11 +44,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
 
                 sheet.Cells["A2"].Value = "LAPORAN EKSPEDISI BUKTI PEMBAYARAN DISPOSISI";
 
-                var positionDescription = "SEMUA";
+                var positionDescription = "";
                 if (position > GarmentPurchasingExpeditionPosition.Invalid)
                     positionDescription = position.ToDescriptionString();
 
-                sheet.Cells["A3"].Value = $"PEMBELIAN {positionDescription}";
+                sheet.Cells["A3"].Value = $"{positionDescription}";
 
                 sheet.Cells["A4"].Value = $"PERIODE : {startDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy")} sampai dengan {endDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy")}";
 
