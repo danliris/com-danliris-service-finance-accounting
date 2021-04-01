@@ -22,7 +22,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         private readonly IIdentityService _identityService;
         private readonly IServiceProvider _serviceProvider;
         protected DbSet<MemoDetailGarmentPurchasingModel> DbSet;
-        
+        protected DbSet<MemoDetailGarmentPurchasingDetailModel> DbSetDetail;
+
         public MemoDetailGarmentPurchasingService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -30,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             _serviceProvider = serviceProvider;
 
             DbSet = _dbContext.Set<MemoDetailGarmentPurchasingModel>();
+            DbSetDetail = _dbContext.Set<MemoDetailGarmentPurchasingDetailModel>();
         }
 
         public void CreateModel(MemoDetailGarmentPurchasingModel model)
@@ -149,6 +151,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 MemoId = memoDetailsGarment.MemoId,
                 MemoDate = memoDetailsGarment.MemoDate,
                 MemoNo = memoDetailsGarment.MemoNo,
+                AccountingBookId = memoDetailsGarment.AccountingBookId,
                 AccountingBookType = memoDetailsGarment.AccountingBookType,
                 GarmentCurrenciesId = memoDetailsGarment.GarmentCurrenciesId,
                 GarmentCurrenciesCode = memoDetailsGarment.GarmentCurrenciesCode,
@@ -184,12 +187,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             existDb.GarmentCurrenciesRate = viewModel.GarmentCurrenciesRate;
             existDb.IsPosted = viewModel.IsPosted;
 
-            if(viewModel.Items.Count > 0)
-            {
-                foreach (var existRow in existDb.MemoDetailGarmentPurchasingDetail)
-                {
-                    EditDetailRincianItems itemModel = viewModel.Items.FirstOrDefault(p => p.Id.Equals(existRow.Id));
+            EntityExtension.FlagForUpdate(existDb, _identityService.Username, UserAgent);
+            DbSet.Update(existDb);
 
+            foreach (var existRow in existDb.MemoDetailGarmentPurchasingDetail)
+            {
+                EditDetailRincianItems itemModel = viewModel.Items.FirstOrDefault(p => p.Id.Equals(existRow.Id));
+                if (itemModel == null)
+                {
+                    EntityExtension.FlagForDelete(existRow, _identityService.Username, UserAgent);
+                }
+                else
+                {
                     existRow.GarmentDeliveryOrderId = itemModel.GarmentDeliveryOrderId;
                     existRow.GarmentDeliveryOrderNo = itemModel.GarmentDeliveryOrderNo;
                     existRow.RemarksDetail = itemModel.RemarksDetail;
@@ -198,13 +207,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                     existRow.MemoAmount = itemModel.MemoAmount;
                     existRow.MemoIdrAmount = itemModel.MemoIdrAmount;
 
-
                     EntityExtension.FlagForUpdate(existRow, _identityService.Username, UserAgent);
                 }
+
             }
 
-            EntityExtension.FlagForUpdate(existDb, _identityService.Username, UserAgent);
-            //DbSet.Update(exist);
+            _dbContext.MemoDetailGarmentPurchasingDetails.UpdateRange(existDb.MemoDetailGarmentPurchasingDetail);
+
+            foreach (var item in viewModel.Items)
+            {
+                if (item.Id == 0)
+                {
+                    MemoDetailGarmentPurchasingDetailModel model = new MemoDetailGarmentPurchasingDetailModel();
+
+                    model.GarmentDeliveryOrderId = item.GarmentDeliveryOrderId;
+                    model.GarmentDeliveryOrderNo = item.GarmentDeliveryOrderNo;
+                    model.RemarksDetail = item.RemarksDetail;
+                    model.PaymentRate = item.PaymentRate;
+                    model.PurchasingRate = item.PurchasingRate;
+                    model.MemoAmount = item.MemoAmount;
+                    model.MemoIdrAmount = item.MemoIdrAmount;
+                    model.MemoDetailId = id;
+
+                    EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                    DbSetDetail.Add(model);
+                }
+            }
         }
 
         public async Task<MemoDetailGarmentPurchasingModel> ReadByIdAsync(int id)
