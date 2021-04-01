@@ -201,6 +201,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 }
             }
 
+            //override filter position
+            if (position != GarmentPurchasingExpeditionPosition.Invalid)
+                result = result.Where(s => s.Position == position).ToList();
+
             return result;
         }
 
