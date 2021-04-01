@@ -172,6 +172,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
             existDb.MemoId = viewModel.MemoId;
             existDb.Remarks = viewModel.Remarks;
+            existDb.MemoNo = viewModel.MemoNo;
+            existDb.MemoDate = viewModel.MemoDate;
+            existDb.AccountingBookId = viewModel.AccountingBookId;
+            existDb.AccountingBookType = viewModel.AccountingBookType;
+            existDb.GarmentCurrenciesId = viewModel.GarmentCurrenciesId;
+            existDb.GarmentCurrenciesCode = viewModel.GarmentCurrenciesCode;
+            existDb.GarmentCurrenciesRate = viewModel.GarmentCurrenciesRate;
+            existDb.IsPosted = viewModel.IsPosted;
 
             foreach (var existRow in existDb.MemoDetailGarmentPurchasingDetail)
             {
