@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -68,6 +69,50 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
                 var result =
                     new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
                     .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Get(int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        {
+            try
+            {
+                var queryResult = _service.Read(page, size, order, select, keyword, filter);
+
+                var result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(_mapper, queryResult.Data, page, size, queryResult.Count, queryResult.Data.Count, queryResult.Order, select);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, ex.Message).Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("{Id}")]
+        public IActionResult GetById([FromRoute] int Id)
+        {
+            try
+            {
+                var viewModel = _service.GetDetailById(Id);
+
+                if (viewModel == null)
+                {
+                    var result = new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE).Fail();
+                    return NotFound(result);
+                }
+                else
+                {
+                    var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Ok<DetailRincian>(_mapper, viewModel);
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
