@@ -117,6 +117,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                     .Include(x => x.MemoGarmentPurchasingDetails)
                     .Where(x => x.Id.Equals(id)).FirstOrDefaultAsync();
 
+                if (result == null)
+                    throw new Exception("Data was not found.");
+
                 return result;
             }
             catch (Exception e)
@@ -131,22 +134,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             try
             {
                 var modelToUpdate = await ReadByIdAsync(id);
-                modelToUpdate.MemoNo = model.MemoNo;
-                modelToUpdate.MemoDate = model.MemoDate;
-                modelToUpdate.AccountingBookId = model.AccountingBookId;
-                modelToUpdate.AccountingBookType = model.AccountingBookType;
-                modelToUpdate.GarmentCurrenciesId = model.GarmentCurrenciesId;
-                modelToUpdate.GarmentCurrenciesCode = model.GarmentCurrenciesCode;
-                modelToUpdate.GarmentCurrenciesRate = model.GarmentCurrenciesRate;
-                modelToUpdate.Remarks = model.Remarks;
-                modelToUpdate.MemoGarmentPurchasingDetails = model.MemoGarmentPurchasingDetails;
 
-                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+                modelToUpdate.Remarks = model.Remarks;
+                EntityExtension.FlagForUpdate(modelToUpdate, _identityService.Username, UserAgent);
+                _context.Update(modelToUpdate);
 
                 foreach (var detail in modelToUpdate.MemoGarmentPurchasingDetails)
-                    EntityExtension.FlagForUpdate(detail, _identityService.Username, UserAgent);
+                {
+                    if (model.MemoGarmentPurchasingDetails.Any(x => x.Id.Equals(detail.Id)))
+                        EntityExtension.FlagForUpdate(detail, _identityService.Username, UserAgent);
+                    else
+                        EntityExtension.FlagForDelete(detail, _identityService.Username, UserAgent);
+                }
+                _context.MemoGarmentPurchasingDetails.UpdateRange(modelToUpdate.MemoGarmentPurchasingDetails.Where(x => x.Id > 0));
 
-                _context.Update(modelToUpdate);
+                if (model.MemoGarmentPurchasingDetails.Any(x => x.Id < 1))
+                    foreach (var detail in model.MemoGarmentPurchasingDetails.Where(x => x.Id < 1))
+                        EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
+                _context.MemoGarmentPurchasingDetails.AddRange(model.MemoGarmentPurchasingDetails.Where(x => x.Id < 1));
+
                 var result = await _context.SaveChangesAsync();
 
                 transaction.Commit();
