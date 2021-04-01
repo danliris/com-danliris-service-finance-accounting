@@ -24,7 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Acc
 
         private readonly IServiceProvider _serviceProvider;
 
-        public AccountingBookService(IServiceProvider serviceProvider)
+        public AccountingBookService(FinanceDbContext context,IServiceProvider serviceProvider)
         {
             _dbContext = serviceProvider.GetService<FinanceDbContext>();
             _identityService = serviceProvider.GetService<IIdentityService>();
@@ -153,7 +153,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Acc
             try
             {
                 var result = await _dbContext.AccountingBooks
-                    .Where(x => id > 0 ? x.Code.Contains(code) && !x.Id.Equals(id) && x.IsDeleted == false : x.Code.Contains(code)).FirstOrDefaultAsync();
+                    .Where(x => id > 0 ? x.Code.Equals(code) && !x.Id.Equals(id) && x.IsDeleted == false : x.Code.Equals(code)).FirstOrDefaultAsync();
 
                 return result;
             }
@@ -198,7 +198,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Acc
             try
             {
                 var result = await _dbContext.AccountingBooks
-                    .Where(x => id > 0 ? x.AccountingBookType.Contains(name) && !x.Id.Equals(id) && x.IsDeleted == false : x.AccountingBookType.Contains(name)).FirstOrDefaultAsync();
+                    .Where(x => id > 0 ? x.AccountingBookType.Equals(name) && !x.Id.Equals(id) && x.IsDeleted == false : x.AccountingBookType.Equals(name)).FirstOrDefaultAsync();
 
                 return result;
             }

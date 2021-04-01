@@ -558,7 +558,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
                 var result = await _reportService.GetReport(dispositionId, supplierId, position, purchasingStaff, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
 
-                var stream = DispositionPaymentReportExcelGenerator.GenerateExcel(result, startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), _identityService.TimezoneOffset);
+                var stream = DispositionPaymentReportExcelGenerator.GenerateExcel(result, startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), _identityService.TimezoneOffset, position);
 
                 var bytes = stream.ToArray();
                 var filename = "Laporan Ekspedisi Disposisi Garment.xlsx";

@@ -1,12 +1,10 @@
 ﻿using System;
-using Com.Moonlay.Models;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing
+namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarmentPurchasing
 {
-    public class MemoDetailGarmentPurchasingModel: StandardEntity
+    public class EditDetailRincian : IValidatableObject
     {
         public int MemoId { get; set; }
         public string MemoNo { get; set; }
@@ -18,6 +16,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasi
         public int GarmentCurrenciesRate { get; set; }
         public string Remarks { get; set; }
         public bool IsPosted { get; set; }
-        public ICollection<MemoDetailGarmentPurchasingDetailModel> MemoDetailGarmentPurchasingDetail { get; set; }
+        public ICollection<EditDetailRincianItems> Items { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Items.Count <= 0)
+            {
+                yield return new ValidationResult("Data rincian harus diisi", new List<string> { "Items" });
+            }
+        }
     }
 }
