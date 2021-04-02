@@ -249,7 +249,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             table.AddCell(cell);
             cell.Phrase = new Phrase();
             table.AddCell(cell);
-            cell.Phrase = new Phrase("(..................)", _smallFont);
+            cell.Phrase = new Phrase($"( {data.CreatedBy} )", _smallFont);
             table.AddCell(cell);
 
             document.Add(table);
