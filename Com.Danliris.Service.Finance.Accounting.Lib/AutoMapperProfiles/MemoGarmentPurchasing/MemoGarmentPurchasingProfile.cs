@@ -32,6 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.MemoGar
                 .ReverseMap();
 
             CreateMap<MemoGarmentPurchasingDetailModel, MemoGarmentPurchasingDetailViewModel>()
+                .ForPath(d => d.Id, opt => opt.MapFrom(s => s.Id))
                 .ForPath(d => d.COA.Id, opt => opt.MapFrom(s => s.COAId))
                 .ForPath(d => d.COA.Name, opt => opt.MapFrom(s => s.COAName))
                 .ForPath(d => d.COA.No, opt => opt.MapFrom(s => s.COANo))

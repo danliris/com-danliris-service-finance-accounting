@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarmentPurchasing
 {
-    public class EditDetailRincian
+    public class EditDetailRincian : IValidatableObject
     {
         public int MemoId { get; set; }
         public string MemoNo { get; set; }
@@ -16,5 +17,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarme
         public string Remarks { get; set; }
         public bool IsPosted { get; set; }
         public ICollection<EditDetailRincianItems> Items { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Items.Count <= 0)
+            {
+                yield return new ValidationResult("Data rincian harus diisi", new List<string> { "Items" });
+            }
+        }
     }
 }
