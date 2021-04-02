@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoGarmentPurchasing;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
+using System.IO;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarmentPurchasing
 {
@@ -154,6 +156,38 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
             {
                 var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("pdf/{Id}")]
+        public async Task<IActionResult> GetPdf([FromRoute] int Id)
+        {
+            try
+            {
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                int timeOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+                MemoGarmentPurchasingModel model = await _service.ReadByIdAsync(Id);
+                if (model == null)
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                        .Fail();
+                    return NotFound(Result);
+                }
+
+                MemoryStream stream = MemoGarmentPurchasingPdfTemplate.GeneratePdfTemplate(model, timeOffset);
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = $"Bukti Memorial - {model.MemoNo}.pdf"
+                };
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
     }
