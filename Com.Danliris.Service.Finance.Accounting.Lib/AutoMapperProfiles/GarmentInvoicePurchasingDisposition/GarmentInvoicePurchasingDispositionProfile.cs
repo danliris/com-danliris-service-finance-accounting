@@ -55,6 +55,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                 .ForPath(d => d.TotalPaidBefore, opt => opt.MapFrom(s => s.TotalPaidPaymentBefore))
                 .ForPath(d => d.TotalPaid, opt => opt.MapFrom(s => s.TotalPaidPayment))
                 .ForPath(d => d.VATAmount, opt => opt.MapFrom(s => s.VATAmount))
+                //.ForPath(d=> d.TotalAmount-(d.TotalPaid+d.TotalPaidBefore), opt=> opt.MapFrom(s=> s.DiffTotalPaidPayment))
                 .ReverseMap();
 
 

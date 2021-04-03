@@ -45,6 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentInvoiceP
         public int purchasingDispositionExpeditionId { get; set; }
         public double TotalPaidPayment { get; set; }
         public double TotalPaidPaymentBefore { get; set; }
+        public double DiffTotalPaidPayment { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) 
         {
