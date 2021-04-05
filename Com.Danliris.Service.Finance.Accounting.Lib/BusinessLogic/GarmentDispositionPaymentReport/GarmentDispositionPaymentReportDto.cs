@@ -5,7 +5,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 {
     public class GarmentDispositionPaymentReportDto
     {
-        public GarmentDispositionPaymentReportDto(int dispositionId, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, DateTimeOffset dispositionNoteDueDate, string proformaNo, int supplierId, string supplierCode, string supplierName, int currencyId, string currencyCode, double currencyRate, double dPPAmount, double currencyDPPAmount, double vATAmount, double currencyVATAmount, double incomeTaxAmount, double currencyIncomeTaxAmount, double othersExpenditureAmount, double totalAmount, int categoryId, string categoryCode, string categoryName, GarmentPurchasingExpeditionPosition position, string sendToPurchasingRemark, DateTimeOffset? sendToVerificationDate, DateTimeOffset? verificationAcceptedDate, string verifiedBy, DateTimeOffset? cashierAcceptedDate, DateTimeOffset? bankExpenditureNoteDate, string bankExpenditureNoteNo, double paidAmount, int externalPurchaseOrderId, string externalPurchaseOrderNo, double dispositionQuantity, int deliveryOrderId, string deliveryOrderNo, double deliveryOrderQuantity, string paymentBillsNo, string billsNo, int customsNoteId, string customsNoteNo, DateTimeOffset? customsNoteDate, int unitReceiptNoteId, string unitReceiptNoteNo, int internalNoteId, string internalNoteNo, DateTimeOffset? internalNoteDate, string sendToVerificationBy, DateTimeOffset? verifiedDate)
+        public GarmentDispositionPaymentReportDto(int dispositionId, string dispositionNoteNo, DateTimeOffset dispositionNoteDate, DateTimeOffset dispositionNoteDueDate, string proformaNo, int supplierId, string supplierCode, string supplierName, int currencyId, string currencyCode, double currencyRate, double dPPAmount, double currencyDPPAmount, double vATAmount, double currencyVATAmount, double incomeTaxAmount, double currencyIncomeTaxAmount, double othersExpenditureAmount, double totalAmount, int categoryId, string categoryCode, string categoryName, GarmentPurchasingExpeditionPosition position, string sendToPurchasingRemark, DateTimeOffset? sendToVerificationDate, DateTimeOffset? verificationAcceptedDate, string verifiedBy, DateTimeOffset? cashierAcceptedDate, string bankExpenditureNoteDate, string bankExpenditureNoteNo, string paidAmount, int externalPurchaseOrderId, string externalPurchaseOrderNo, double dispositionQuantity, int deliveryOrderId, string deliveryOrderNo, double deliveryOrderQuantity, string paymentBillsNo, string billsNo, int customsNoteId, string customsNoteNo, DateTimeOffset? customsNoteDate, int unitReceiptNoteId, string unitReceiptNoteNo, int internalNoteId, string internalNoteNo, DateTimeOffset? internalNoteDate, string sendToVerificationBy, DateTimeOffset? verifiedDate)
         {
             DispositionId = dispositionId;
             DispositionNoteNo = dispositionNoteNo;
@@ -89,9 +89,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public DateTimeOffset? VerifiedDate { get; private set; }
         public string VerifiedBy { get; private set; }
         public DateTimeOffset? CashierAcceptedDate { get; private set; }
-        public DateTimeOffset? BankExpenditureNoteDate { get; private set; }
+        public string BankExpenditureNoteDate { get; private set; }
         public string BankExpenditureNoteNo { get; private set; }
-        public double PaidAmount { get; private set; }
+        public string PaidAmount { get; private set; }
         public int ExternalPurchaseOrderId { get; private set; }
         public string ExternalPurchaseOrderNo { get; private set; }
         public double DispositionQuantity { get; private set; }
