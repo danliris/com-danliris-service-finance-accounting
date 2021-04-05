@@ -139,22 +139,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 EntityExtension.FlagForUpdate(modelToUpdate, _identityService.Username, UserAgent);
                 _context.Update(modelToUpdate);
 
-                foreach (var detail in modelToUpdate.MemoGarmentPurchasingDetails)
-                {
-                    if (model.MemoGarmentPurchasingDetails.Any(x => x.Id.Equals(detail.Id)))
-                        EntityExtension.FlagForUpdate(detail, _identityService.Username, UserAgent);
-                    else
-                        EntityExtension.FlagForDelete(detail, _identityService.Username, UserAgent);
-                }
-                _context.MemoGarmentPurchasingDetails.UpdateRange(modelToUpdate.MemoGarmentPurchasingDetails.Where(x => x.Id > 0));
+                var modelIds = model.MemoGarmentPurchasingDetails.Select(x => x.Id).ToList();
+                var detailToUpdate = modelToUpdate.MemoGarmentPurchasingDetails.Select(x => {
+                    var dat = model.MemoGarmentPurchasingDetails.Where(y => y.Id.Equals(x.Id)).FirstOrDefault();
+                    if(dat != null)
+                    {
+                        x.COAId = dat.COAId;
+                        x.COAName = dat.COAName;
+                        x.COANo = dat.COANo;
+                        x.DebitNominal = dat.DebitNominal;
+                        x.CreditNominal = dat.CreditNominal;
+                        EntityExtension.FlagForUpdate(x, _identityService.Username, UserAgent);
+                        return x;
+                    }
+                    
+                    EntityExtension.FlagForDelete(x, _identityService.Username, UserAgent);
+                    return x;
+                });
+                _context.MemoGarmentPurchasingDetails.UpdateRange(detailToUpdate);
 
                 if (model.MemoGarmentPurchasingDetails.Any(x => x.Id < 1))
-                    foreach (var detail in model.MemoGarmentPurchasingDetails.Where(x => x.Id < 1))
-                        EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
-                _context.MemoGarmentPurchasingDetails.AddRange(model.MemoGarmentPurchasingDetails.Where(x => x.Id < 1));
+                {
+                    var detailToCreate = model.MemoGarmentPurchasingDetails.Where(x => x.Id < 1).Select(x => {
+                        x.MemoId = modelToUpdate.Id;
+                        EntityExtension.FlagForCreate(x, _identityService.Username, UserAgent);
+                        return x;
+                    });
+                    _context.MemoGarmentPurchasingDetails.AddRange(detailToCreate);
+                }
 
                 var result = await _context.SaveChangesAsync();
-
                 transaction.Commit();
                 return result;
             }
@@ -170,7 +184,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             var date = DateTime.Now;
             var count = 1 + _context.MemoGarmentPurchasings.Count(x => x.CreatedUtc.Year.Equals(date.Year) && x.CreatedUtc.Month.Equals(date.Month));
 
-            var generatedNo = $"{date.ToString("yy")}{date.ToString("MM")}.MG.{count.ToString("0000")}";
+            var generatedNo = $"{date.ToString("MM")}{date.ToString("yy")}.MG.{count.ToString("0000")}";
 
             return generatedNo;
         }

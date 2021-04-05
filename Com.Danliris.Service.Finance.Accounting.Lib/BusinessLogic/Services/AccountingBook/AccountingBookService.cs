@@ -24,7 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Acc
 
         private readonly IServiceProvider _serviceProvider;
 
-        public AccountingBookService(IServiceProvider serviceProvider)
+        public AccountingBookService(FinanceDbContext context,IServiceProvider serviceProvider)
         {
             _dbContext = serviceProvider.GetService<FinanceDbContext>();
             _identityService = serviceProvider.GetService<IIdentityService>();
