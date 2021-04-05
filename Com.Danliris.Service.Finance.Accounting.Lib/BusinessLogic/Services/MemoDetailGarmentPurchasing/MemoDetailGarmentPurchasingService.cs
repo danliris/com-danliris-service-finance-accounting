@@ -105,6 +105,79 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             }
         }
 
+        public ReadResponse<ReportRincian> GetReport(DateTimeOffset date, int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            try
+            {
+                var memoDetailsGarments = _dbContext.MemoDetailGarmentPurchasings.AsQueryable();
+                var memoDetailsGarmentsDetails = _dbContext.MemoDetailGarmentPurchasingDetails.AsQueryable();
+                var garmentDebts = _dbContext.GarmentDebtBalances.AsQueryable();
+
+                var searchAttributes = new List<string>
+                {
+                    "AccountingBookType"
+                };
+
+                memoDetailsGarments = QueryHelper<MemoDetailGarmentPurchasingModel>.Search(memoDetailsGarments, searchAttributes, keyword);
+
+                var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+                memoDetailsGarments = QueryHelper<MemoDetailGarmentPurchasingModel>.Filter(memoDetailsGarments, filterDictionary);
+
+                var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+                memoDetailsGarments = QueryHelper<MemoDetailGarmentPurchasingModel>.Order(memoDetailsGarments, orderDictionary);
+
+                var pageable = new Pageable<MemoDetailGarmentPurchasingModel>(memoDetailsGarments, page - 1, size);
+
+                var memoDetails = pageable.Data.Where(s => s.MemoDate.Date.Year == date.Date.Year & s.MemoDate.Date.Month == date.Date.Month);
+
+                var memoDetailDetails = from memoDetail in memoDetails
+                                        join memoDetailsGarmentsDetail in memoDetailsGarmentsDetails
+                           on memoDetail.Id equals memoDetailsGarmentsDetail.MemoDetailId
+                           select new {
+                               memoDetail.Id,
+                               memoDetail.MemoId,
+                               memoDetail.MemoNo,
+                               memoDetail.MemoDate,
+                               memoDetail.AccountingBookType,
+                               memoDetailsGarmentsDetail.MemoDetailId,
+                               memoDetailsGarmentsDetail.GarmentDeliveryOrderNo,
+                               memoDetailsGarmentsDetail.GarmentDeliveryOrderId,
+                               memoDetailsGarmentsDetail.RemarksDetail,
+                               memoDetailsGarmentsDetail.PaymentRate,
+                               memoDetailsGarmentsDetail.PurchasingRate,
+                               memoDetailsGarmentsDetail.MemoAmount,
+                               memoDetailsGarmentsDetail.MemoIdrAmount
+                           };
+
+                var reports = from memoDetailDetail in memoDetailDetails
+                              join garmentDebt in garmentDebts
+                              on memoDetailDetail.GarmentDeliveryOrderId equals garmentDebt.GarmentDeliveryOrderId
+                              select new ReportRincian
+                              {
+                                  Id = memoDetailDetail.Id,
+                                  MemoId = memoDetailDetail.MemoId,
+                                  MemoNo = memoDetailDetail.MemoNo,
+                                  MemoDate = memoDetailDetail.MemoDate,
+                                  InternalNoteNo = garmentDebt.InternalNoteNo,
+                                  BillsNo = garmentDebt.BillsNo,
+                                  PaymentBills = garmentDebt.PaymentBills,
+                                  GarmentDeliveryOrderNo = memoDetailDetail.GarmentDeliveryOrderNo,
+                                  RemarksDetail = memoDetailDetail.RemarksDetail,
+                                  CurrencyCode = garmentDebt.CurrencyCode,
+                                  MemoAmount = memoDetailDetail.MemoAmount,
+                                  MemoIdrAmount = memoDetailDetail.MemoIdrAmount,
+                                  AccountingBookType = memoDetailDetail.AccountingBookType,
+                              };
+
+                int totalData = pageable.TotalCount;
+                return new ReadResponse<ReportRincian>(reports.ToList(), totalData, orderDictionary, new List<string>());
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public DetailRincian GetDetailById(int Id)
         {
             var memoGarments = _dbContext.MemoGarmentPurchasings.AsQueryable();
