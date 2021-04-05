@@ -37,7 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Terima", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Bayar", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Bukti Pengeluaran Bank", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal yang Dibayar", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal yang Dibayar", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "PO External", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Qty Disposisi", DataType = typeof(double) });
@@ -55,7 +55,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", "", 0, "", "", 0, "", "", "","", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", "", "", "", "", 0, "", "", "","", "", "", "", "", "", "", "");
             }
             else
             {
