@@ -396,6 +396,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             data.ForEach(entity =>
             {
                 entity.TotalPaidPaymentBefore = lastAmountPayment.Where(t => t.DispositionId == entity.DispositionNoteId).Sum(t => t.TotalPaid);
+                entity.DiffTotalPaidPayment = entity.TotalPaid - entity.TotalPaidPaymentBefore;
             });
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
