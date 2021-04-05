@@ -79,9 +79,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                                 foreach (var paymentItem in paymentItems)
                                 {
                                     var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.GarmentInvoicePurchasingDisposistionId);
-                                    invoicesDate += $"- {payment.InvoiceDate:dd/MM/yyyy}/n";
-                                    paymentInvoicesNo += $"- {payment.InvoiceNo}/n";
-                                    paymentTotalPaid += $"- {paymentItem.TotalPaid:N2}/n";
+                                    invoicesDate += $"- {payment.InvoiceDate:dd/MM/yyyy}\n";
+                                    paymentInvoicesNo += $"- {payment.InvoiceNo}\n";
+                                    paymentTotalPaid += $"- {paymentItem.TotalPaid:N2}\n";
                                 }
 
                                 result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, 0, disposition.CategoryCode, disposition.CategoryName, GarmentPurchasingExpeditionPosition.DispositionPayment, expedition.SendToPurchasingRemark, expedition.SendToVerificationDate, expedition.VerificationAcceptedDate, expedition.VerifiedBy, expedition.CashierAcceptedDate, invoicesDate, paymentInvoicesNo, paymentTotalPaid, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, expedition.SendToVerificationBy, expedition.VerifiedDate));
@@ -207,9 +207,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                                 foreach (var paymentItem in paymentItems)
                                 {
                                     var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.GarmentInvoicePurchasingDisposistionId);
-                                    invoicesDate += $"- {payment.InvoiceDate:dd/MM/yyyy}/n";
-                                    paymentInvoicesNo += $"- {payment.InvoiceNo}/n";
-                                    paymentTotalPaid += $"- {paymentItem.TotalPaid:N2}/n";
+                                    invoicesDate += $"- {payment.InvoiceDate:dd/MM/yyyy}\n";
+                                    paymentInvoicesNo += $"- {payment.InvoiceNo}\n";
+                                    paymentTotalPaid += $"- {paymentItem.TotalPaid:N2}\n";
                                 }
 
                                 result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, 0, disposition.CategoryCode, disposition.CategoryName, GarmentPurchasingExpeditionPosition.DispositionPayment, expedition.SendToPurchasingRemark, expedition.SendToVerificationDate, expedition.VerificationAcceptedDate, expedition.VerifiedBy, expedition.CashierAcceptedDate, invoicesDate, paymentInvoicesNo, paymentTotalPaid, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, expedition.SendToVerificationBy, expedition.VerifiedDate));
