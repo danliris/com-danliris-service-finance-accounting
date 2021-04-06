@@ -279,9 +279,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
                 var monthName = _months.FirstOrDefault(element => element.Key == month);
 
                 MemoryStream result = new MemoryStream();
-                var filename = $"Laporan Rincian Memorial {monthName.Value} {year}";
+                var filename = $"Laporan Rincian Memorial";
                 result = MemoDetailGarmentExcelGenerator.GenerateExcel(queryResult, filename, month, year);
-                filename += ".xlsx";
+                filename += $" {monthName.Value} {year}.xlsx";
 
                 var bytes = result.ToArray();
 

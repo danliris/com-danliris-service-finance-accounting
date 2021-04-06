@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             var monthName = _months.FirstOrDefault(element => element.Key == month);
             worksheet.Cells["A2"].Value = $"Periode {monthName.Value} {year}";
             worksheet.Cells["A2"].Style.Font.Size = 18;
-            worksheet.Cells["A2:C2"].Merge = true;
+            worksheet.Cells["A2:B2"].Merge = true;
 
             worksheet.Cells["A4"].Value = "Nomor Memo";
             worksheet.Cells["A4"].Style.Font.Size = 14;
@@ -90,11 +90,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 
                 foreach (var item in data.Data)
                 {
-                    DateTimeOffset date = (DateTimeOffset)item.MemoDate;
+                    //DateTimeOffset date = (DateTimeOffset)item.MemoDate;
 
                     worksheet.Cells[$"A{currentRow}"].Value = item.MemoNo;
                     worksheet.Cells[$"A{currentRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"B{currentRow}"].Value = date.ToString("dd-MMMM-yyyy");
+                    worksheet.Cells[$"B{currentRow}"].Value = item.MemoDate.Value.ToString("dd-MMM-yyyy");
                     worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
                     worksheet.Cells[$"B{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     worksheet.Cells[$"C{currentRow}"].Value = item.BillsNo;
