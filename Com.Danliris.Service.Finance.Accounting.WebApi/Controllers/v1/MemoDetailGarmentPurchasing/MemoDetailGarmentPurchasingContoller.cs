@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoDetailGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoDetailGarmentPurchasing.ExcelGenerator;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing;
 using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -257,6 +258,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
                 {
                     FileDownloadName = string.Format(fileName)
                 };
+
             }
             catch (Exception ex)
             {
@@ -264,5 +266,48 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
+
+        [HttpGet("reports/downloads/xls")]
+        public IActionResult GetXls([FromQuery] DateTimeOffset date, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        {
+            try
+            {
+                var queryResult = _service.GetReport(date, page, size, order, select, keyword, filter);
+
+                int month = date.Date.Month;
+                int year = date.Date.Year;
+                var monthName = _months.FirstOrDefault(element => element.Key == month);
+
+                MemoryStream result = new MemoryStream();
+                var filename = $"Laporan Rincian Memorial";
+                result = MemoDetailGarmentExcelGenerator.GenerateExcel(queryResult, filename, month, year);
+                filename += $" {monthName.Value} {year}.xlsx";
+
+                var bytes = result.ToArray();
+
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+            }
+            catch (Exception e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        private static readonly List<MonthName> _months = new List<MonthName>()
+        {
+            new MonthName(1, "Januari"),
+            new MonthName(2, "Februari"),
+            new MonthName(3, "Maret"),
+            new MonthName(4, "April"),
+            new MonthName(5, "Mei"),
+            new MonthName(6, "Juni"),
+            new MonthName(7, "Juli"),
+            new MonthName(8, "Agustus"),
+            new MonthName(9, "September"),
+            new MonthName(10, "Oktober"),
+            new MonthName(11, "November"),
+            new MonthName(12, "Desember"),
+        };
     }
 }
