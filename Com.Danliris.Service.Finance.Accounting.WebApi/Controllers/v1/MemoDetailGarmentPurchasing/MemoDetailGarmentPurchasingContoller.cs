@@ -7,6 +7,7 @@ using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoDetailGarmentPurchasing;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoDetailGarmentPurchasing.ExcelGenerator;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -184,7 +185,89 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
             }
         }
 
-        [HttpGet("downloads/xls")]
+        [HttpGet("reports/downloads/pdf")]
+        public IActionResult GetPdf([FromQuery] DateTimeOffset date, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        {
+            try
+            {
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+                MemoryStream stream;
+
+                var queryResult = _service.GetPDF(date, page, size, order, select, keyword, filter);
+
+                var month = date.Month;
+                var year = date.Year;
+                string monthString = "";
+
+                if (month == 1)
+                {
+                    monthString = "Januari";
+                }
+                else if (month == 2)
+                {
+                    monthString = "Februari";
+                }
+                else if (month == 3)
+                {
+                    monthString = "Maret";
+                }
+                else if (month == 4)
+                {
+                    monthString = "April";
+                }
+                else if (month == 5)
+                {
+                    monthString = "Mei";
+                }
+                else if (month == 6)
+                {
+                    monthString = "Juni";
+                }
+                else if (month == 7)
+                {
+                    monthString = "Juli";
+                }
+                else if (month == 8)
+                {
+                    monthString = "Agustus";
+                }
+                else if (month == 9)
+                {
+                    monthString = "September";
+                }
+                else if (month == 10)
+                {
+                    monthString = "Oktober";
+                }
+                else if (month == 11)
+                {
+                    monthString = "November";
+                }
+                else if (month == 12)
+                {
+                    monthString = "Desember";
+                }
+
+                stream = MemorialJobGarmentDetailPDFTemplate.GeneratePdfTemplate(queryResult.Data, monthString, year);
+
+                string fileName = "Laporan Rincian Memorial "+monthString+ " " +year;
+
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = string.Format(fileName)
+                };
+
+            }
+            catch (Exception ex)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, ex.Message).Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("reports/downloads/xls")]
         public IActionResult GetXls([FromQuery] DateTimeOffset date, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
         {
             try
@@ -204,9 +287,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
 
                 return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, ex.Message).Fail();
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
@@ -226,6 +309,5 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
             new MonthName(11, "November"),
             new MonthName(12, "Desember"),
         };
-
     }
 }
