@@ -33,11 +33,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             VerificationAcceptedDate = verificationAcceptedDate;
         }
 
-        public IndexDto(int id, string internalNoteNo, DateTimeOffset internalNoteDate, DateTimeOffset internalNoteDueDate, string supplierName, double amount, string currencyCode, string remark, GarmentPurchasingExpeditionPosition position, string sendToPurchasingRemark) : this(id, internalNoteNo, internalNoteDate, internalNoteDueDate, supplierName, amount, currencyCode, remark, position)
-        {
-            SendToPurchasingRemark = sendToPurchasingRemark;
-        }
-
         public IndexDto(GarmentPurchasingExpeditionModel entity)
         {
             Id = entity.Id;

@@ -265,7 +265,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
             var service = new Mock<IGarmentPurchasingExpeditionService>();
 
             service
-                .Setup(s => s.GetByPosition(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetByPosition(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<int>(), It.IsAny<int>(),It.IsAny<string>()))
                 .Returns(new ReadResponse<IndexDto>(new List<IndexDto>(), 1, new Dictionary<string, string>(), new List<string>()));
 
             serviceProviderMock
@@ -288,7 +288,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
             var service = new Mock<IGarmentPurchasingExpeditionService>();
 
             service
-                .Setup(s => s.GetByPosition(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetByPosition(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
                 .Throws(new Exception());
 
             serviceProviderMock

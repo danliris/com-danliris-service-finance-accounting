@@ -128,11 +128,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] string keyword, [FromQuery] int internalNoteId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string order = "{}", [FromQuery] int page = 1, [FromQuery] int size = 10)
+        public IActionResult Get([FromQuery] string keyword, [FromQuery] int internalNoteId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string order = "{}", [FromQuery] int page = 1, [FromQuery] int size = 10,[FromQuery]string currencyCode = null)
         {
             try
             {
-                var result = _service.GetByPosition(keyword, page, size, order, position, internalNoteId, supplierId);
+                var result = _service.GetByPosition(keyword, page, size, order, position, internalNoteId, supplierId,currencyCode);
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
@@ -201,6 +201,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 VerifyUser();
 
                 await _service.AccountingAccepted(ids);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+        [HttpPut("accounting-disposition-not-ok")]
+        public async Task<IActionResult> AccountingAccepted([FromBody] RejectionForm form)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.SendToPurchasingRejected(form.ids,form.Remark);
 
                 return NoContent();
             }
@@ -478,5 +497,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
     public class RejectionForm
     {
         public string Remark { get; set; }
+        public List<int> ids { get; set; }
     }
 }

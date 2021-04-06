@@ -71,7 +71,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoicePurchasingDisposition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispositionPaymentReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.AccountingBook;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.MemoGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoDetailGarmentPurchasing;
 using Microsoft.ApplicationInsights.AspNetCore;
+
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
     public class Startup
@@ -140,6 +148,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRequestDocumentService, VBRequestDocumentService>()
                 .AddTransient<IGarmentInvoicePaymentService, GarmentInvoicePaymentService>()
                 .AddTransient<IGarmentPurchasingExpeditionService, GarmentPurchasingExpeditionService>()
+                .AddTransient<IGarmentDispositionExpeditionService, GarmentDispositionExpeditionService>()
                 .AddTransient<IGarmentPurchasingExpeditionReportService, GarmentPurchasingExpeditionReportService>()
                 .AddTransient<IVBRealizationDocumentNonPOService, VBRealizationDocumentNonPOService>()
                 .AddTransient<IVBRealizationWithPOService, VBRealizationWithPOService>()
@@ -147,8 +156,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IVBRealizationDocumentExpeditionService, VBRealizationDocumentExpeditionService>()
                 .AddTransient<IBudgetCashflowService, BudgetCashflowService>()
                 .AddTransient<IDPPVATBankExpenditureNoteService, DPPVATBankExpenditureNoteService>()
-                .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>();
-                
+                .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>()
+                .AddTransient<IGarmentDebtBalanceService, GarmentDebtBalanceService>()
+                .AddTransient<IGarmentDispositionPaymentReportService, GarmentDispositionPaymentReportService>()
+                .AddTransient<IGarmentInvoicePurchasingDispositionService, GarmentInvocePurchasingDispositionService>()
+                .AddTransient<IAccountingBookService, AccountingBookService>()
+                .AddTransient<IMemoGarmentPurchasingService, MemoGarmentPurchasingService>()
+                .AddTransient<IMemoDetailGarmentPurchasingService, MemoDetailGarmentPurchasingService>();
         }
 
 

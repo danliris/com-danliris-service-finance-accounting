@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Migrations;
+using System;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance
 {
@@ -14,6 +15,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public DateTimeOffset InvoiceDate { get; private set; }
         public string InvoiceNo { get; private set; }
         public int SupplierId { get; private set; }
+        public string SupplierCode { get; private set; }
         public string SupplierName { get; private set; }
         public int CurrencyId { get; private set; }
         public string CurrencyCode { get; private set; }
@@ -29,13 +31,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         public double BankExpenditureNoteInvoiceAmount { get; private set; }
         public int InternalNoteId { get; private set; }
         public string InternalNoteNo { get; private set; }
+        public bool IsInitialBalance { get; private set; }
+        public bool IsTotalBalance { get; private set; }
         public string ProductNames { get; private set; }
         public double CurrencyRate { get; set; }
 
         public double TotalInvoice { get; set; }
         public double MutationPurchase { get; set; }
         public double MutationPayment { get; set; }
+        public double CurrencyMutationPurchase { get; set; }
+        public double CurrencyMutationPayment { get; set; }
         public double RemainBalance { get; set; }
+        public double CurrencyRemainBalance { get; private set; }
+        public DateTimeOffset ArrivalDate { get; private set; }
 
         public GarmentDebtBalanceCardDto(Models.GarmentDebtBalance.GarmentDebtBalanceModel model)
         {
@@ -49,6 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             InvoiceDate = model.InvoiceDate;
             InvoiceNo = model.InvoiceNo;
             SupplierId = model.SupplierId;
+            SupplierCode = model.SupplierCode;
             SupplierName = model.SupplierName;
             CurrencyId = model.CurrencyId;
             CurrencyCode = model.CurrencyCode;
@@ -65,10 +74,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             InternalNoteNo = model.InternalNoteNo;
             ProductNames = model.ProductNames;
             CurrencyRate = model.CurrencyRate;
-            TotalInvoice = model.CurrencyDPPAmount + model.VATAmount - model.IncomeTaxAmount;
-            MutationPurchase = (model.CurrencyDPPAmount + model.VATAmount - model.IncomeTaxAmount) * model.CurrencyRate;
+            TotalInvoice = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount;
+            MutationPurchase = model.DPPAmount + model.VATAmount - model.IncomeTaxAmount;
             MutationPayment = model.BankExpenditureNoteInvoiceAmount;
-            RemainBalance = ((model.CurrencyDPPAmount + model.VATAmount - model.IncomeTaxAmount) * model.CurrencyRate) - model.BankExpenditureNoteInvoiceAmount;
+            CurrencyMutationPurchase = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount;
+            CurrencyMutationPayment = model.CurrencyBankExpenditureNoteInvoiceAmount;
+            //RemainBalance = (model.DPPAmount + model.VATAmount - model.IncomeTaxAmount - model.BankExpenditureNoteInvoiceAmount);
+            CurrencyRemainBalance = model.CurrencyDPPAmount + model.CurrencyVATAmount - model.CurrencyIncomeTaxAmount - model.CurrencyBankExpenditureNoteInvoiceAmount;
+            ArrivalDate = model.ArrivalDate;
         }
         /// <summary>
         /// ovveride for saldo awal (pdf)
@@ -77,9 +90,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         /// <param name="remainBalance"></param>
         public GarmentDebtBalanceCardDto(string productName, double remainBalance)
         {
+            IsInitialBalance = true;
             ProductNames = productName;
             RemainBalance = remainBalance;
-            InvoiceDate = DateTimeOffset.MaxValue;
+            ArrivalDate = DateTimeOffset.MinValue;
+        }
+
+        /// <summary>
+        /// ovveride for saldo awal (pdf)
+        /// </summary>
+        /// <param name="productName"></param>
+        /// <param name="remainBalance"></param>
+        public GarmentDebtBalanceCardDto(string productName, double remainBalance, bool isTotalBalance)
+        {
+            //IsInitialBalance = true;
+            ProductNames = productName;
+            RemainBalance = remainBalance;
+            ArrivalDate = DateTimeOffset.MaxValue;
+            IsTotalBalance = isTotalBalance;
         }
         /// <summary>
         /// override for total (pdf)
@@ -90,9 +118,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
         /// <param name="mutationPayment"></param>
         public GarmentDebtBalanceCardDto(string productName, double remainBalance,double mutationPurchase, double mutationPayment)
         {
+            IsTotalBalance = true;
             ProductNames = productName;
             RemainBalance = remainBalance;
-            InvoiceDate = DateTimeOffset.MinValue;
+            ArrivalDate = DateTimeOffset.MaxValue;
+
+        }
+        /// <summary>
+        /// override for total (pdf)
+        /// </summary>
+        /// <param name="productName"></param>
+        /// <param name="remainBalance"></param>
+        /// <param name="mutationPurchase"></param>
+        /// <param name="mutationPayment"></param>
+        /// <param name="isTotalBalance"></param>
+        public GarmentDebtBalanceCardDto(string productName, double remainBalance, double mutationPurchase, double mutationPayment,bool isTotalBalance)
+        {
+            IsTotalBalance = true;
+            ProductNames = productName;
+            RemainBalance = remainBalance;
+            ArrivalDate = DateTimeOffset.MaxValue;
+            IsTotalBalance = isTotalBalance;
 
         }
     }
