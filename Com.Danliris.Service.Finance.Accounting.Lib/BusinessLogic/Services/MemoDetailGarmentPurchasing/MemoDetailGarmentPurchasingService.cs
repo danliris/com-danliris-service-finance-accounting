@@ -146,7 +146,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                                memoDetailsGarmentsDetail.PaymentRate,
                                memoDetailsGarmentsDetail.PurchasingRate,
                                memoDetailsGarmentsDetail.MemoAmount,
-                               memoDetailsGarmentsDetail.MemoIdrAmount
+                               memoDetailsGarmentsDetail.MemoIdrAmount,
                            };
 
                 var reports = from memoDetailDetail in memoDetailDetails
@@ -167,6 +167,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                                   MemoAmount = memoDetailDetail.MemoAmount,
                                   MemoIdrAmount = memoDetailDetail.MemoIdrAmount,
                                   AccountingBookType = memoDetailDetail.AccountingBookType,
+                                  PaymentRate = memoDetailDetail.PaymentRate,
+                                  PurchasingRate = memoDetailDetail.PurchasingRate,
                               };
 
                 int totalData = pageable.TotalCount;
