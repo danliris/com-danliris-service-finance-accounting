@@ -111,47 +111,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
         }
 
-        public ReadResponse<MemoGarmentPurchasingDetailModel> ReadReport(int page, int size, string filter)
-        {
-            try
-            {
-                var query = _context.MemoGarmentPurchasingDetails.Include(x => x.MemoGarmentPurchasing).AsQueryable();
-
-                var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(filter);
-                //query = QueryHelper<MemoGarmentPurchasingDetailModel>.Filter(query, filterDictionary);
-                foreach (var fil in filterDictionary)
-                {
-                    switch (fil.Key.ToLower())
-                    {
-                        case "accountingbookid":
-                            query = query.Where(x => x.MemoGarmentPurchasing.AccountingBookId.Equals(int.Parse(fil.Value)));
-                            break;
-                        case "year":
-                            DateTime dt;
-                            if (DateTime.TryParseExact(fil.Value, "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
-                                query = query.Where(x => x.MemoGarmentPurchasing.MemoDate.Year.Equals(dt.Year));
-                            break;
-                        case "month":
-                            DateTime dtm;
-                            if (DateTime.TryParseExact(fil.Value, "MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out dtm))
-                                query = query.Where(x => x.MemoGarmentPurchasing.MemoDate.Month.Equals(dtm.Month));
-                            break;
-                    }
-                }
-
-                var pageable = new Pageable<MemoGarmentPurchasingDetailModel>(query, page - 1, size);
-                var data = pageable.Data.ToList();
-
-                int totalData = pageable.TotalCount;
-
-                return new ReadResponse<MemoGarmentPurchasingDetailModel>(data, totalData, new Dictionary<string, string>(), new List<string>());
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
         public async Task<MemoGarmentPurchasingModel> ReadByIdAsync(int id)
         {
             try

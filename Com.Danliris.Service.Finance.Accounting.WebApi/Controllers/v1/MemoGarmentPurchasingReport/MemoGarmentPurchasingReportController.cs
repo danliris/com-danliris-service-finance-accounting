@@ -12,6 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.MemoGarmentPurchasingReport;
+using System.Globalization;
+using System.IO;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarmentPurchasingReport
 {
@@ -23,7 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
     {
         private readonly IIdentityService _identityService;
         //private readonly IValidateService _validateService;
-        private readonly IMemoGarmentPurchasingService _service;
+        private readonly IMemoGarmentPurchasingReportService _service;
         private readonly IMapper _mapper;
         private const string ApiVersion = "1.0";
 
@@ -31,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
         {
             _identityService = serviceProvider.GetService<IIdentityService>();
             //_validateService = serviceProvider.GetService<IValidateService>();
-            _service = serviceProvider.GetService<IMemoGarmentPurchasingService>();
+            _service = serviceProvider.GetService<IMemoGarmentPurchasingReportService>();
             _mapper = serviceProvider.GetService<IMapper>();
         }
 
@@ -47,18 +51,74 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
         {
             try
             {
-                var queryResult = _service.ReadReport(page, size, filter);
+                var queryResult = _service.ReadReportDetailBased(page, size, filter);
                 var dataViewModel = _mapper.Map<List<MemoGarmentPurchasingDetailModel>, List<MemoGarmentPurchasingReportViewModel>>(queryResult.Data);
 
                 var result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
-                    .Ok(_mapper, dataViewModel, page, size, queryResult.Count, queryResult.Data.Count, queryResult.Order, null);
+                    .Ok(_mapper, dataViewModel, page, size, queryResult.Count, queryResult.Data.Count, queryResult.Order, queryResult.Selected);
                 return Ok(result);
             }
             catch (Exception e)
             {
                 var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("xls")]
+        public IActionResult GetXlsHistoryReport(int year, int month, int accountingBookId)
+        {
+
+            try
+            {
+                byte[] xlsInBytes;
+                var xls = _service.GenerateExcel(year, month, accountingBookId);
+                string fileName = $"Laporan Data Memorail - {new DateTime(year, month, 1).ToString("MMMM yyyy", new CultureInfo("id-ID"))}.xlsx";
+
+                xlsInBytes = xls.ToArray();
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                return file;
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("pdf")]
+        public async Task<IActionResult> GetPdf(int year, int month, int accountingBookId)
+        {
+            try
+            {
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                int timeOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                string date = new DateTime(year, month, 1).ToString("MMMM yyyy", new CultureInfo("id-ID"));
+
+                var report = _service.GetReportPdfData(year, month, accountingBookId);
+                if (report.Count <= 0)
+                {
+                    Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                        .Fail();
+                    return NotFound(Result);
+                }
+
+                MemoryStream stream = MemoGarmentPurchasingReportPdfTemplate.GeneratePdfTemplate(report.Data, date);
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = $"Laporan Data Memorail - {date}.pdf"
+                };
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
     }

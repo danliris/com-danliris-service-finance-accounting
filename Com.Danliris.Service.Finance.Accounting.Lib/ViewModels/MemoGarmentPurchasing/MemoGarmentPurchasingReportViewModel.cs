@@ -11,6 +11,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoGarmentPurc
         public COAViewModel COA { get; set; }
         public int DebitNominal { get; set; }
         public int CreditNominal { get; set; }
-        public virtual MemoGarmentPurchasingModel MemoGarmentPurchasing { get; set; }
+        public virtual MemoGarmentPurchasingViewModel MemoGarmentPurchasing { get; set; }
     }
 }

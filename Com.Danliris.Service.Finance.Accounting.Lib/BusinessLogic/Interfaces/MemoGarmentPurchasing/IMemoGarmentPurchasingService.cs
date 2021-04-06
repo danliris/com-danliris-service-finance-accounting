@@ -9,6 +9,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.M
 {
     public interface IMemoGarmentPurchasingService : IBaseService<MemoGarmentPurchasingModel>
     {
-        ReadResponse<MemoGarmentPurchasingDetailModel> ReadReport(int page, int size, string filter);
     }
 }
