@@ -280,7 +280,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
 
                 MemoryStream result = new MemoryStream();
                 var filename = $"Laporan Rincian Memorial";
-                result = MemoDetailGarmentExcelGenerator.GenerateExcel(queryResult, filename, month, year);
+                result = MemoDetailGarmentExcelGenerator.GenerateExcel(queryResult, "Laporan Rincian Data Memorial", month, year);
                 filename += $" {monthName.Value} {year}.xlsx";
 
                 var bytes = result.ToArray();
