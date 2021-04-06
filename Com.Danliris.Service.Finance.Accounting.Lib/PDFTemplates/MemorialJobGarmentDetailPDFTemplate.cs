@@ -195,8 +195,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 table.AddCell(cellItemRight);
 
                 int differencTotal = item.MemoIdrAmount - buyTotal;
-                cellItemRight.Phrase = new Phrase(differencTotal.ToString("#,##0.#0"), _header3Font);
-                table.AddCell(cellItemRight);
+
+                if(differencTotal == 0)
+                {
+                    cellItemRight.Phrase = new Phrase("", _header3Font);
+                    table.AddCell(cellItemRight);
+                } else
+                {
+                    cellItemRight.Phrase = new Phrase(differencTotal.ToString("#,##0.#0"), _header3Font);
+                    table.AddCell(cellItemRight);
+                }
+                
             }
 
             document.Add(table);
