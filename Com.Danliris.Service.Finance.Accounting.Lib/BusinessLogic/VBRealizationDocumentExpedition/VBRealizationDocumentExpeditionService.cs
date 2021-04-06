@@ -117,7 +117,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             VBRealizationDate = realization.Date,
                             VBRealizationId = realization.Id,
                             VBRealizationNo = realization.DocumentNo,
-                            VBRequestName = realization.VBRequestDocumentCreatedBy,
+                            VBRequestName = !string.IsNullOrWhiteSpace(realization.VBRequestDocumentCreatedBy) ? realization.VBRequestDocumentCreatedBy : realization.CreatedBy,
                             VBType = realization.Type,
                             VerificationReceiptBy = realizationExpedition != null ? realizationExpedition.VerificationReceiptBy : null,
                             VerificationReceiptDate = realizationExpedition != null ? realizationExpedition.VerificationReceiptDate : null,
