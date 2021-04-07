@@ -109,7 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentI
                 var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
                 var model = await Service.ReadByIdAsync(id);
                 GarmentInvoicePurchasingDispositionViewModel viewModel = Mapper.Map<GarmentInvoicePurchasingDispositionViewModel>(model);
-
+                viewModel.Items.ForEach(s => s.DiffTotalPaidPayment = s.TotalPaid - (s.TotalPaidPayment + s.TotalPaidPaymentBefore));
                 if (model == null)
                 {
                     Dictionary<string, object> Result =

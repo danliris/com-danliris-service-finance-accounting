@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
-        public static MemoryStream CreateExcelDispositionreport(List<KeyValuePair<DataTable, string>> dtSourceList, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset, GarmentPurchasingExpeditionPosition position, bool styling = false)
+        public static MemoryStream CreateExcelDispositionReport(List<KeyValuePair<DataTable, string>> dtSourceList, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset, GarmentPurchasingExpeditionPosition position, bool styling = false)
         {
             ExcelPackage package = new ExcelPackage();
             foreach (KeyValuePair<DataTable, string> item in dtSourceList)
@@ -44,7 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
 
                 sheet.Cells["A2"].Value = "LAPORAN EKSPEDISI BUKTI PEMBAYARAN DISPOSISI";
 
-                var positionDescription = "";
+                var positionDescription = "SEMUA POSISI";
                 if (position > GarmentPurchasingExpeditionPosition.Invalid)
                     positionDescription = position.ToDescriptionString();
 

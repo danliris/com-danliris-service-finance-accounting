@@ -22,7 +22,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         private readonly IIdentityService _identityService;
         private readonly IServiceProvider _serviceProvider;
         protected DbSet<MemoDetailGarmentPurchasingModel> DbSet;
-        
+        protected DbSet<MemoDetailGarmentPurchasingDetailModel> DbSetDetail;
+
         public MemoDetailGarmentPurchasingService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -30,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             _serviceProvider = serviceProvider;
 
             DbSet = _dbContext.Set<MemoDetailGarmentPurchasingModel>();
+            DbSetDetail = _dbContext.Set<MemoDetailGarmentPurchasingDetailModel>();
         }
 
         public void CreateModel(MemoDetailGarmentPurchasingModel model)
@@ -103,6 +105,81 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             }
         }
 
+        public ReadResponse<ReportRincian> GetReport(DateTimeOffset date, int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            try
+            {
+                var memoDetailsGarments = _dbContext.MemoDetailGarmentPurchasings.AsQueryable();
+                var memoDetailsGarmentsDetails = _dbContext.MemoDetailGarmentPurchasingDetails.AsQueryable();
+                var garmentDebts = _dbContext.GarmentDebtBalances.AsQueryable();
+
+                var searchAttributes = new List<string>
+                {
+                    "AccountingBookType"
+                };
+
+                memoDetailsGarments = QueryHelper<MemoDetailGarmentPurchasingModel>.Search(memoDetailsGarments, searchAttributes, keyword);
+
+                var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+                memoDetailsGarments = QueryHelper<MemoDetailGarmentPurchasingModel>.Filter(memoDetailsGarments, filterDictionary);
+
+                var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+                memoDetailsGarments = QueryHelper<MemoDetailGarmentPurchasingModel>.Order(memoDetailsGarments, orderDictionary);
+
+                var pageable = new Pageable<MemoDetailGarmentPurchasingModel>(memoDetailsGarments, page - 1, size);
+
+                var memoDetails = pageable.Data.Where(s => s.MemoDate.Date.Year == date.Date.Year & s.MemoDate.Date.Month == date.Date.Month);
+
+                var memoDetailDetails = from memoDetail in memoDetails
+                                        join memoDetailsGarmentsDetail in memoDetailsGarmentsDetails
+                           on memoDetail.Id equals memoDetailsGarmentsDetail.MemoDetailId
+                           select new {
+                               memoDetail.Id,
+                               memoDetail.MemoId,
+                               memoDetail.MemoNo,
+                               memoDetail.MemoDate,
+                               memoDetail.AccountingBookType,
+                               memoDetailsGarmentsDetail.MemoDetailId,
+                               memoDetailsGarmentsDetail.GarmentDeliveryOrderNo,
+                               memoDetailsGarmentsDetail.GarmentDeliveryOrderId,
+                               memoDetailsGarmentsDetail.RemarksDetail,
+                               memoDetailsGarmentsDetail.PaymentRate,
+                               memoDetailsGarmentsDetail.PurchasingRate,
+                               memoDetailsGarmentsDetail.MemoAmount,
+                               memoDetailsGarmentsDetail.MemoIdrAmount,
+                           };
+
+                var reports = from memoDetailDetail in memoDetailDetails
+                              join garmentDebt in garmentDebts
+                              on memoDetailDetail.GarmentDeliveryOrderId equals garmentDebt.GarmentDeliveryOrderId
+                              select new ReportRincian
+                              {
+                                  Id = memoDetailDetail.Id,
+                                  MemoId = memoDetailDetail.MemoId,
+                                  MemoNo = memoDetailDetail.MemoNo,
+                                  MemoDate = memoDetailDetail.MemoDate,
+                                  InternalNoteNo = garmentDebt.InternalNoteNo,
+                                  BillsNo = garmentDebt.BillsNo,
+                                  PaymentBills = garmentDebt.PaymentBills,
+                                  GarmentDeliveryOrderNo = memoDetailDetail.GarmentDeliveryOrderNo,
+                                  RemarksDetail = memoDetailDetail.RemarksDetail,
+                                  CurrencyCode = garmentDebt.CurrencyCode,
+                                  MemoAmount = memoDetailDetail.MemoAmount,
+                                  MemoIdrAmount = memoDetailDetail.MemoIdrAmount,
+                                  AccountingBookType = memoDetailDetail.AccountingBookType,
+                                  PaymentRate = memoDetailDetail.PaymentRate,
+                                  PurchasingRate = memoDetailDetail.PurchasingRate,
+                              };
+
+                int totalData = pageable.TotalCount;
+                return new ReadResponse<ReportRincian>(reports.ToList(), totalData, orderDictionary, new List<string>());
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public DetailRincian GetDetailById(int Id)
         {
             var memoGarments = _dbContext.MemoGarmentPurchasings.AsQueryable();
@@ -149,6 +226,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 MemoId = memoDetailsGarment.MemoId,
                 MemoDate = memoDetailsGarment.MemoDate,
                 MemoNo = memoDetailsGarment.MemoNo,
+                AccountingBookId = memoDetailsGarment.AccountingBookId,
                 AccountingBookType = memoDetailsGarment.AccountingBookType,
                 GarmentCurrenciesId = memoDetailsGarment.GarmentCurrenciesId,
                 GarmentCurrenciesCode = memoDetailsGarment.GarmentCurrenciesCode,
@@ -184,12 +262,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             existDb.GarmentCurrenciesRate = viewModel.GarmentCurrenciesRate;
             existDb.IsPosted = viewModel.IsPosted;
 
-            if(viewModel.Items.Count > 0)
-            {
-                foreach (var existRow in existDb.MemoDetailGarmentPurchasingDetail)
-                {
-                    EditDetailRincianItems itemModel = viewModel.Items.FirstOrDefault(p => p.Id.Equals(existRow.Id));
+            EntityExtension.FlagForUpdate(existDb, _identityService.Username, UserAgent);
+            DbSet.Update(existDb);
 
+            foreach (var existRow in existDb.MemoDetailGarmentPurchasingDetail)
+            {
+                EditDetailRincianItems itemModel = viewModel.Items.FirstOrDefault(p => p.Id.Equals(existRow.Id));
+                if (itemModel == null)
+                {
+                    EntityExtension.FlagForDelete(existRow, _identityService.Username, UserAgent);
+                }
+                else
+                {
                     existRow.GarmentDeliveryOrderId = itemModel.GarmentDeliveryOrderId;
                     existRow.GarmentDeliveryOrderNo = itemModel.GarmentDeliveryOrderNo;
                     existRow.RemarksDetail = itemModel.RemarksDetail;
@@ -198,13 +282,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                     existRow.MemoAmount = itemModel.MemoAmount;
                     existRow.MemoIdrAmount = itemModel.MemoIdrAmount;
 
-
                     EntityExtension.FlagForUpdate(existRow, _identityService.Username, UserAgent);
                 }
+
             }
 
-            EntityExtension.FlagForUpdate(existDb, _identityService.Username, UserAgent);
-            //DbSet.Update(exist);
+            _dbContext.MemoDetailGarmentPurchasingDetails.UpdateRange(existDb.MemoDetailGarmentPurchasingDetail);
+
+            foreach (var item in viewModel.Items)
+            {
+                if (item.Id == 0)
+                {
+                    MemoDetailGarmentPurchasingDetailModel model = new MemoDetailGarmentPurchasingDetailModel();
+
+                    model.GarmentDeliveryOrderId = item.GarmentDeliveryOrderId;
+                    model.GarmentDeliveryOrderNo = item.GarmentDeliveryOrderNo;
+                    model.RemarksDetail = item.RemarksDetail;
+                    model.PaymentRate = item.PaymentRate;
+                    model.PurchasingRate = item.PurchasingRate;
+                    model.MemoAmount = item.MemoAmount;
+                    model.MemoIdrAmount = item.MemoIdrAmount;
+                    model.MemoDetailId = id;
+
+                    EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                    DbSetDetail.Add(model);
+                }
+            }
         }
 
         public async Task<MemoDetailGarmentPurchasingModel> ReadByIdAsync(int id)
@@ -228,6 +331,81 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         {
             await DeleteModel(id);
             return await _dbContext.SaveChangesAsync();
+        }
+
+        public ReadResponse<ReportPDF> GetPDF(DateTimeOffset date, int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+            try
+            {
+                var memoDetailsGarments = _dbContext.MemoDetailGarmentPurchasings.AsQueryable();
+                var memoDetailsGarmentsDetails = _dbContext.MemoDetailGarmentPurchasingDetails.AsQueryable();
+                var garmentDebts = _dbContext.GarmentDebtBalances.AsQueryable();
+
+                var searchAttributes = new List<string>
+                {
+                    "AccountingBookType"
+                };
+
+                memoDetailsGarments = QueryHelper<MemoDetailGarmentPurchasingModel>.Search(memoDetailsGarments, searchAttributes, keyword);
+
+                var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+                memoDetailsGarments = QueryHelper<MemoDetailGarmentPurchasingModel>.Filter(memoDetailsGarments, filterDictionary);
+
+                var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+                memoDetailsGarments = QueryHelper<MemoDetailGarmentPurchasingModel>.Order(memoDetailsGarments, orderDictionary);
+
+                var pageable = new Pageable<MemoDetailGarmentPurchasingModel>(memoDetailsGarments, page - 1, size);
+
+                var memoDetails = pageable.Data.Where(s => s.MemoDate.Date.Year == date.Date.Year & s.MemoDate.Date.Month == date.Date.Month);
+
+                var memoDetailDetails = from memoDetail in memoDetails
+                                        join memoDetailsGarmentsDetail in memoDetailsGarmentsDetails
+                           on memoDetail.Id equals memoDetailsGarmentsDetail.MemoDetailId
+                                        select new
+                                        {
+                                            memoDetail.Id,
+                                            memoDetail.MemoId,
+                                            memoDetail.MemoNo,
+                                            memoDetail.MemoDate,
+                                            memoDetail.AccountingBookType,
+                                            memoDetailsGarmentsDetail.MemoDetailId,
+                                            memoDetailsGarmentsDetail.GarmentDeliveryOrderNo,
+                                            memoDetailsGarmentsDetail.GarmentDeliveryOrderId,
+                                            memoDetailsGarmentsDetail.RemarksDetail,
+                                            memoDetailsGarmentsDetail.PaymentRate,
+                                            memoDetailsGarmentsDetail.PurchasingRate,
+                                            memoDetailsGarmentsDetail.MemoAmount,
+                                            memoDetailsGarmentsDetail.MemoIdrAmount
+                                        };
+
+                var reports = from memoDetailDetail in memoDetailDetails
+                              join garmentDebt in garmentDebts
+                              on memoDetailDetail.GarmentDeliveryOrderId equals garmentDebt.GarmentDeliveryOrderId
+                              select new ReportPDF
+                              {
+                                  Id = memoDetailDetail.Id,
+                                  MemoId = memoDetailDetail.MemoId,
+                                  MemoNo = memoDetailDetail.MemoNo,
+                                  MemoDate = memoDetailDetail.MemoDate,
+                                  InternalNoteNo = garmentDebt.InternalNoteNo,
+                                  BillsNo = garmentDebt.BillsNo,
+                                  PaymentBills = garmentDebt.PaymentBills,
+                                  GarmentDeliveryOrderNo = memoDetailDetail.GarmentDeliveryOrderNo,
+                                  RemarksDetail = memoDetailDetail.RemarksDetail,
+                                  CurrencyCode = garmentDebt.CurrencyCode,
+                                  MemoAmount = memoDetailDetail.MemoAmount,
+                                  MemoIdrAmount = memoDetailDetail.MemoIdrAmount,
+                                  AccountingBookType = memoDetailDetail.AccountingBookType,
+                                  PurchasingRate = memoDetailDetail.PurchasingRate,
+                              };
+
+                int totalData = pageable.TotalCount;
+                return new ReadResponse<ReportPDF>(reports.ToList(), totalData, orderDictionary, new List<string>());
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
     }
 }

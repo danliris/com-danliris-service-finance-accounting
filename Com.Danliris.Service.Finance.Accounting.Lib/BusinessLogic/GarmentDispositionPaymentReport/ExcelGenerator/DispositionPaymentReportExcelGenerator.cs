@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -36,7 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Terima", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Bayar", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Bukti Pengeluaran Bank", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal yang Dibayar", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nominal yang Dibayar", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "PO External", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Qty Disposisi", DataType = typeof(double) });
@@ -54,7 +55,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", "", 0, "", "", 0, "", "", "","", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", "", "", "", "", 0, "", "", "","", "", "", "", "", "", "", "");
             }
             else
             {
@@ -81,7 +82,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                         item.VerifiedDate != null ? item.VerifiedDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
                         item.VerifiedBy,
                         item.CashierAcceptedDate != null ? item.CashierAcceptedDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
-                        item.BankExpenditureNoteDate != null ? item.BankExpenditureNoteDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.BankExpenditureNoteDate,
                         item.BankExpenditureNoteNo,
                         item.PaidAmount,
                         item.CurrencyCode,
@@ -102,7 +103,48 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 }
             }
 
-            return Excel.CreateExcelDispositionreport(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Laporan Ekspedisi Garment") }, startDate, endDate, timezoneOffset, position, true);
+            return Excel.CreateExcelDispositionReport(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Laporan Ekspedisi Garment") }, startDate, endDate, timezoneOffset, position, true);
+        }
+
+        public static MemoryStream GenerateExcel2(List<GarmentDispositionPaymentReportDto> data, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset, GarmentPurchasingExpeditionPosition position)
+        {
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Sheet 1");
+
+                SetTitle(worksheet, startDate, endDate, timezoneOffset, position);
+                //SetTableHeader(worksheet, timezoneOffset);
+                //SetData(worksheet, data, timezoneOffset);
+
+                worksheet.Cells[worksheet.Cells.Address].AutoFitColumns();
+
+                var stream = new MemoryStream();
+                package.SaveAs(stream);
+
+                return stream;
+            }
+        }
+
+        private static void SetTitle(ExcelWorksheet worksheet, DateTimeOffset startDate, DateTimeOffset endDate, int timezoneOffset, GarmentPurchasingExpeditionPosition position)
+        {
+            var company = "PT DAN LIRIS";
+            var title = "LAPORAN BUKTI PENGELUARAN BANK DPP + PPN";
+
+            var cultureInfo = new CultureInfo("id-ID");
+            var date = $"PERIODE: {startDate.DateTime.AddHours(timezoneOffset).ToString("dd MMMM yyyy", cultureInfo)} sampai dengan {endDate.DateTime.AddHours(timezoneOffset).ToString("dd MMMM yyyy", cultureInfo)}";
+
+            worksheet.Cells["A1"].Value = company;
+            worksheet.Cells["A1:AC1"].Merge = true;
+            worksheet.Cells["A1:AC1"].Style.Font.Size = 20;
+            worksheet.Cells["A1:AC1"].Style.Font.Bold = true;
+            worksheet.Cells["A2"].Value = title;
+            worksheet.Cells["A2:AC2"].Merge = true;
+            worksheet.Cells["A2:AC2"].Style.Font.Size = 20;
+            worksheet.Cells["A2:AC2"].Style.Font.Bold = true;
+            worksheet.Cells["A3"].Value = date;
+            worksheet.Cells["A3:AC3"].Merge = true;
+            worksheet.Cells["A3:AC3"].Style.Font.Size = 20;
+            worksheet.Cells["A3:AC3"].Style.Font.Bold = true;
         }
     }
 }
