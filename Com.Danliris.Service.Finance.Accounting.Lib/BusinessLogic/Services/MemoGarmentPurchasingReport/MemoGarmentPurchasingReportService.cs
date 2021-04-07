@@ -53,6 +53,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                         case "month":
                             query = query.Where(x => x.MemoGarmentPurchasing.MemoDate.Month.Equals(int.Parse(fil.Value)));
                             break;
+                        case "valas":
+                            if (Boolean.Parse(fil.Value).Equals(true)) {
+                                query = query.Where(x => x.MemoGarmentPurchasing.GarmentCurrenciesCode != "IDR");
+                            }
+                            else
+                            {
+                                query = query.Where(x => x.MemoGarmentPurchasing.GarmentCurrenciesCode.Equals("IDR"));
+                            }
+                            break;
                     }
                 }
 
@@ -92,6 +101,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                         case "month":
                             query = query.Where(x => x.MemoDate.Month.Equals(int.Parse(fil.Value)));
                             break;
+                        case "valas":
+                            if (Boolean.Parse(fil.Value).Equals(true))
+                            {
+                                query = query.Where(x => x.GarmentCurrenciesCode != "IDR");
+                            }
+                            else
+                            {
+                                query = query.Where(x => x.GarmentCurrenciesCode.Equals("IDR"));
+                            }
+                            break;
                     }
                 }
 
@@ -108,11 +127,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             }
         }
 
-        public MemoryStream GenerateExcel(int year, int month, int accountingBookId)
+        public MemoryStream GenerateExcel(int year, int month, int accountingBookId, string accountingBookType, bool valas)
         {
             string title = "LAPORAN DATA MEMORIAL",
                 date = new DateTime(year, month, 1).ToString("MMMM yyyy", new CultureInfo("id-ID"));
-            var query = GetReportXlsData(year, month, accountingBookId);
+            var query = GetReportXlsData(year, month, accountingBookId, accountingBookType, valas);
 
             DataTable result = new DataTable();
             result.Columns.Add(new DataColumn() { ColumnName = "Nomor Memo", DataType = typeof(String) });
@@ -140,17 +159,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Memorial") }, title, date, true, 10);
         }
 
-        public ReadResponse<MemoGarmentPurchasingModel> GetReportPdfData(int year, int month, int accountingBookId, int page = 1, int size = 25)
+        public ReadResponse<MemoGarmentPurchasingModel> GetReportPdfData(int year, int month, int accountingBookId, string accountingBookType, bool valas, int page = 1, int size = 25)
         {
             object filter;
 
             if (accountingBookId > 0)
-                filter = new
+            {
+                if (accountingBookType.ToLower().Equals("pembelian lokal"))
                 {
-                    Year = year,
-                    Month = month,
-                    AccountingBookId = accountingBookId
-                };
+                    filter = new
+                    {
+                        Year = year,
+                        Month = month,
+                        AccountingBookId = accountingBookId,
+                        Valas = valas
+                    };
+                }
+                else
+                {
+                    filter = new
+                    {
+                        Year = year,
+                        Month = month,
+                        AccountingBookId = accountingBookId
+                    };
+                }
+            }
             else
                 filter = new
                 {
@@ -163,17 +197,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             return ReadReport(page, size, filterJson);
         }
 
-        private ReadResponse<MemoGarmentPurchasingDetailModel> GetReportXlsData(int year, int month, int accountingBookId, int page = 1, int size = 25)
+        private ReadResponse<MemoGarmentPurchasingDetailModel> GetReportXlsData(int year, int month, int accountingBookId, string accountingBookType, bool valas, int page = 1, int size = 25)
         {
             object filter;
 
-            if (accountingBookId > 0)
-                filter = new
+            if (accountingBookId > 0) {
+                if(accountingBookType.ToLower().Equals("pembelian lokal"))
                 {
-                    Year = year,
-                    Month = month,
-                    AccountingBookId = accountingBookId
-                };
+                    filter = new
+                    {
+                        Year = year,
+                        Month = month,
+                        AccountingBookId = accountingBookId,
+                        Valas = valas
+                    };
+                }
+                else
+                {
+                    filter = new
+                    {
+                        Year = year,
+                        Month = month,
+                        AccountingBookId = accountingBookId
+                    };
+                }
+            }
+                
             else
                 filter = new
                 {

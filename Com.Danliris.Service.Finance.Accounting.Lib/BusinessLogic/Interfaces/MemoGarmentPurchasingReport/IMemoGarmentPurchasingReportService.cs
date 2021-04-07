@@ -10,7 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.M
     public interface IMemoGarmentPurchasingReportService
     {
         ReadResponse<MemoGarmentPurchasingDetailModel> ReadReportDetailBased(int page, int size, string filter);
-        MemoryStream GenerateExcel(int year, int month, int accountingBookId);
-        ReadResponse<MemoGarmentPurchasingModel> GetReportPdfData(int year, int month, int accountingBookId, int page = 1, int size = 25);
+        MemoryStream GenerateExcel(int year, int month, int accountingBookId, string accountingBookType, bool valas);
+        ReadResponse<MemoGarmentPurchasingModel> GetReportPdfData(int year, int month, int accountingBookId, string accountingBookType, bool valas, int page = 1, int size = 25);
     }
 }
