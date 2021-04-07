@@ -21,7 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
         public static MemoryStream GeneratePdfTemplate(MemoGarmentPurchasingModel data, int offSet)
         {
-            var document = new Document(PageSize.A4.Rotate(), 25, 25, 25, 25);
+            var document = new Document(PageSize.A4, 25, 25, 25, 25);
             var stream = new MemoryStream();
             PdfWriter.GetInstance(document, stream);
             document.Open();
