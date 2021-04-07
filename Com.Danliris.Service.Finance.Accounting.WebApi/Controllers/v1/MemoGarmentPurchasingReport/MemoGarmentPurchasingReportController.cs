@@ -67,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
         }
 
         [HttpGet("xls")]
-        public IActionResult GetXlsHistoryReport(int year, int month, int accountingBookId, string accountingBookType, bool valas)
+        public async Task<IActionResult> GetXls(int year, int month, int accountingBookId, string accountingBookType, bool valas)
         {
 
             try
@@ -90,7 +90,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
         }
 
         [HttpGet("pdf")]
-        public IActionResult GetPdf(int year, int month, int accountingBookId, string accountingBookType, bool valas)
+        public async Task<IActionResult> GetPdf(int year, int month, int accountingBookId, string accountingBookType, bool valas)
         {
             try
             {

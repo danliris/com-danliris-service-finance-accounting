@@ -208,6 +208,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellAlignRight.Phrase = new Phrase(totalCredit.ToString("#,##0.#0"), _smallBoldFont);
             table.AddCell(cellAlignRight);
 
+            cell.Phrase = new Phrase();
+            table.AddCell(cell);
+
             document.Add(table);
         }
 
