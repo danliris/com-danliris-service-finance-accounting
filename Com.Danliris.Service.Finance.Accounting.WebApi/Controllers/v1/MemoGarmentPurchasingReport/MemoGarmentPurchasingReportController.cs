@@ -67,13 +67,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
         }
 
         [HttpGet("xls")]
-        public async Task<IActionResult> GetXls(int year, int month, int accountingBookId)
+        public async Task<IActionResult> GetXls(int year, int month, int accountingBookId, string accountingBookType, bool valas)
         {
 
             try
             {
                 byte[] xlsInBytes;
-                var xls = _service.GenerateExcel(year, month, accountingBookId);
+                var xls = _service.GenerateExcel(year, month, accountingBookId, accountingBookType, valas);
                 string fileName = $"Laporan Data Memorail - {new DateTime(year, month, 1).ToString("MMMM yyyy", new CultureInfo("id-ID"))}.xlsx";
 
                 xlsInBytes = xls.ToArray();
@@ -90,7 +90,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
         }
 
         [HttpGet("pdf")]
-        public async Task<IActionResult> GetPdf(int year, int month, int accountingBookId)
+        public async Task<IActionResult> GetPdf(int year, int month, int accountingBookId, string accountingBookType, bool valas)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
                 int timeOffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 string date = new DateTime(year, month, 1).ToString("MMMM yyyy", new CultureInfo("id-ID"));
 
-                var report = _service.GetReportPdfData(year, month, accountingBookId);
+                var report = _service.GetReportPdfData(year, month, accountingBookId, accountingBookType, valas);
                 if (report.Count <= 0)
                 {
                     Dictionary<string, object> Result =
