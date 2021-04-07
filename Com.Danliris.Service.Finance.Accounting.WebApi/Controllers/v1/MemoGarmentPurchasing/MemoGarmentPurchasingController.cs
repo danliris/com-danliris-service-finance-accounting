@@ -22,7 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
     [ApiVersion("1.0")]
     [Route("v{version:apiVersion}/garment-purchasing/memo")]
     [Authorize]
-    public class MemoGarmentPurchasingContoller : Controller
+    public class MemoGarmentPurchasingController : Controller
     {
         private readonly IIdentityService _identityService;
         private readonly IValidateService _validateService;
@@ -30,7 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
         private readonly IMapper _mapper;
         private const string ApiVersion = "1.0";
 
-        public MemoGarmentPurchasingContoller(IServiceProvider serviceProvider)
+        public MemoGarmentPurchasingController(IServiceProvider serviceProvider)
         {
             _identityService = serviceProvider.GetService<IIdentityService>();
             _validateService = serviceProvider.GetService<IValidateService>();

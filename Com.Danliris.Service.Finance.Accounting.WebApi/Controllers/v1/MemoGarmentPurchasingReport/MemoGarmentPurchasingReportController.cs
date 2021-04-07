@@ -67,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
         }
 
         [HttpGet("xls")]
-        public IActionResult GetXlsHistoryReport(int year, int month, int accountingBookId)
+        public async Task<IActionResult> GetXls(int year, int month, int accountingBookId)
         {
 
             try
