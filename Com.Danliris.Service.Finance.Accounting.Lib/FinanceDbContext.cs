@@ -17,12 +17,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingPphBankExpenditureNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Moonlay.Data.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.AccountingBook;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -83,6 +87,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<VBRealizationDocumentUnitCostsItemModel> VBRealizationDocumentUnitCostsItems { get; set; }
 
         public DbSet<GarmentPurchasingExpeditionModel> GarmentPurchasingExpeditions { get; set; }
+        public DbSet<GarmentDispositionExpeditionModel> GarmentDispositionExpeditions { get; set; }
 
         public DbSet<BudgetCashflowTypeModel> BudgetCashflowTypes { get; set; }
         public DbSet<BudgetCashflowCategoryModel> BudgetCashflowCategories { get; set; }
@@ -100,7 +105,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<GarmentPurchasingPphBankExpenditureNoteItemModel> GarmentPurchasingPphBankExpenditureNoteItems { get; set; }
         public DbSet<GarmentPurchasingPphBankExpenditureNoteInvoiceModel> GarmentPurchasingPphBankExpenditureNoteInvoices { get; set; }
 
+        public DbSet<GarmentInvoicePurchasingDispositionModel> GarmentInvoicePurchasingDispositions { get; set; }
+        public DbSet<GarmentInvoicePurchasingDispositionItemModel> GarmentInvoicePurchasingDispositionItems { get; set; }
         public DbSet<GarmentDebtBalanceModel> GarmentDebtBalances { get; set; }
+
+        public DbSet<MemoGarmentPurchasingModel> MemoGarmentPurchasings { get; set; }
+        public DbSet<MemoGarmentPurchasingDetailModel> MemoGarmentPurchasingDetails { get; set; }
+        public DbSet<MemoDetailGarmentPurchasingModel> MemoDetailGarmentPurchasings { get; set; }
+        public DbSet<MemoDetailGarmentPurchasingDetailModel> MemoDetailGarmentPurchasingDetails { get; set; }
+
+        public DbSet<AccountingBookModel> AccountingBooks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -112,6 +126,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
             modelBuilder.Entity<VBRealizationDocumentUnitCostsItemModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<VBRequestDocumentModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<VBRealizationDocumentModel>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
+            //AccountingBook
+            modelBuilder.Entity<AccountingBookModel>().HasKey(x => x.Id);
+            
             base.OnModelCreating(modelBuilder);
         }
     }

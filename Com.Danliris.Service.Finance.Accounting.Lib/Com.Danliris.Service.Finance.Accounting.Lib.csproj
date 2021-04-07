@@ -81,6 +81,12 @@
     <Compile Remove="Migrations\20200727131715_UpdateVbRequestAndVbRequestDetail.Designer.cs" />
     <Compile Remove="Migrations\20200804165237_test.cs" />
     <Compile Remove="Migrations\20200804165237_test.Designer.cs" />
+    <Compile Remove="Migrations\20210330042935_AddAccountingBookTable.cs" />
+    <Compile Remove="Migrations\20210330042935_AddAccountingBookTable.Designer.cs" />
+    <Compile Remove="Migrations\20210330051422_AddAccountingBookTable.cs" />
+    <Compile Remove="Migrations\20210330051422_AddAccountingBookTable.Designer.cs" />
+    <Compile Remove="Migrations\20210330052428_AddAccountingBookTable.cs" />
+    <Compile Remove="Migrations\20210330052428_AddAccountingBookTable.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -87,5 +87,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         public int statusCode { get; set; }
         public string message { get; set; }
         public T data { get; set; }
+
+        public static implicit operator BaseResponse<T>(BaseResponse<string> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -128,13 +128,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPut("posting")]
-        public IActionResult Posting([FromBody] List<int> ids)
+        public async Task<IActionResult> Posting([FromBody] List<int> ids)
         {
             try
             {
                 VerifyUser();
 
-                var note = _service.Posting(ids);
+                var note = await _service.Posting(ids);
 
                 return NoContent();
             }
@@ -260,6 +260,29 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 var bytes = stream.ToArray();
 
                 return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Laporan Pengeluaran Bank DPP+PPN.xlsx");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
+
+
+        [HttpGet("invoice/{InvoiceId}")]
+        public IActionResult GetFromInvoice([FromRoute] long InvoiceId)
+        {
+            try
+            {
+
+                var result = _service.ExpenditureFromInvoice(InvoiceId);
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
             }
             catch (Exception e)
             {

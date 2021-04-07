@@ -5,5 +5,6 @@
         public int BankExpenditureNoteId { get;  set; }
         public string BankExpenditureNoteNo { get;  set; }
         public double BankExpenditureNoteInvoiceAmount { get;  set; }
+        public double CurrencyBankExpenditureNoteInvoiceAmount { get; set; }
     }
 }

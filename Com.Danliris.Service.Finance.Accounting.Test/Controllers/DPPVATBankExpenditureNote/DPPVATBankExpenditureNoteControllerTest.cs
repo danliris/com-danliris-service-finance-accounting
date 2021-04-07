@@ -111,7 +111,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
                .Returns(service.Object);
 
             //Act
-            
+
             IActionResult response = await GetController(serviceProviderMock).Post(form);
 
             //Assert
@@ -155,7 +155,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             service
                 .Setup(s => s.Read(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
-                .Returns(new ReadResponse<DPPVATBankExpenditureNoteIndexDto>(new List<DPPVATBankExpenditureNoteIndexDto>(),1,new Dictionary<string, string>(),new List<string>()) );
+                .Returns(new ReadResponse<DPPVATBankExpenditureNoteIndexDto>(new List<DPPVATBankExpenditureNoteIndexDto>(), 1, new Dictionary<string, string>(), new List<string>()));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IDPPVATBankExpenditureNoteService)))
@@ -163,7 +163,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             //Act
             FormDto form = new FormDto();
-            IActionResult response =  GetController(serviceProviderMock).Get("",1,10,"{}");
+            IActionResult response = GetController(serviceProviderMock).Get("", 1, 10, "{}");
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -221,7 +221,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             //Act
             FormDto form = new FormDto();
-            IActionResult response = await GetController(serviceProviderMock).Put(1,form);
+            IActionResult response = await GetController(serviceProviderMock).Put(1, form);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -254,7 +254,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
                .Returns(service.Object);
 
             //Act
-            
+
             IActionResult response = await GetController(serviceProviderMock).Put(1, form);
 
             //Assert
@@ -271,7 +271,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             service
                 .Setup(s => s.Read(It.IsAny<int>()))
-                .Returns(()=>null);
+                .Returns(() => null);
 
             FormDto form = new FormDto();
             service
@@ -326,15 +326,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
 
         [Fact]
-        public  void Posting_Succes_Return_NoContent()
+        public async Task Posting_Succes_Return_NoContent()
         {
             //Setup
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IDPPVATBankExpenditureNoteService>();
-            
+
             service
                 .Setup(s => s.Posting(It.IsAny<List<int>>()))
-                .Returns(1);
+                .ReturnsAsync(1);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IDPPVATBankExpenditureNoteService)))
@@ -342,7 +342,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             //Act
             FormDto form = new FormDto();
-            IActionResult response =  GetController(serviceProviderMock).Posting(new List<int>());
+            IActionResult response = await GetController(serviceProviderMock).Posting(new List<int>());
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -350,7 +350,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
         }
 
         [Fact]
-        public void Posting_Throws_ValidationException()
+        public async Task Posting_Throws_ValidationException()
         {
             //Setup
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
@@ -366,7 +366,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             //Act
             FormDto form = new FormDto();
-            IActionResult response = GetController(serviceProviderMock).Posting(new List<int>());
+            IActionResult response = await GetController(serviceProviderMock).Posting(new List<int>());
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -374,7 +374,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
         }
 
         [Fact]
-        public void Posting_Return_InternalServerError()
+        public async Task Posting_Return_InternalServerError()
         {
             //Setup
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
@@ -390,7 +390,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             //Act
             FormDto form = new FormDto();
-            IActionResult response = GetController(serviceProviderMock).Posting(new List<int>());
+            IActionResult response = await GetController(serviceProviderMock).Posting(new List<int>());
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -423,7 +423,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             //Act
             FormDto form = new FormDto();
-            IActionResult response =await GetController(serviceProviderMock).Delete(1);
+            IActionResult response = await GetController(serviceProviderMock).Delete(1);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -443,7 +443,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             service
                 .Setup(s => s.Read(It.IsAny<int>()))
-                .Returns(()=>null);
+                .Returns(() => null);
 
 
             service
@@ -519,7 +519,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             //Act
             FormDto form = new FormDto();
-            IActionResult response =  GetController(serviceProviderMock).Get(1);
+            IActionResult response = GetController(serviceProviderMock).Get(1);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -561,7 +561,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
 
             service
                 .Setup(s => s.Read(It.IsAny<int>()))
-                .Returns(()=>null);
+                .Returns(() => null);
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IDPPVATBankExpenditureNoteService)))
@@ -625,7 +625,75 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DPPVATBankExp
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
 
+        [Fact]
+        public void GeneratePdf_Succes_Return_OK()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IDPPVATBankExpenditureNoteService>();
+            // , List< DPPVATBankExpenditureNoteItemModel > items, List<DPPVATBankExpenditureNoteDetailModel> details
 
+            DPPVATBankExpenditureNoteModel model = new DPPVATBankExpenditureNoteModel("documentNo", 1, "bankAcountNumber", "bankName", "bankAccountingCode", 1, "IDR", 1, 1, "supplierName", false, "bgCheckNo", 1, DateTimeOffset.Now, "IDR", 1, 1);
+            List<DPPVATBankExpenditureNoteItemModel> items = new List<DPPVATBankExpenditureNoteItemModel>()
+            {
+
+            };
+
+            List<DPPVATBankExpenditureNoteDetailModel> details = new List<DPPVATBankExpenditureNoteDetailModel>()
+            {
+
+            };
+            service
+                .Setup(s => s.Read( It.IsAny<int>()))
+                .Returns(new DPPVATBankExpenditureNoteDto(model, items, details));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IDPPVATBankExpenditureNoteService)))
+               .Returns(service.Object);
+
+            //Act
+            FormDto form = new FormDto();
+            IActionResult response = GetController(serviceProviderMock).GeneratePdf(1);
+
+            //Assert
+            //Assert
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+           
+        }
+        [Fact]
+        public void GeneratePdf_Succes_Return_InternalServerError()
+        {
+            //Setup
+            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+            var service = new Mock<IDPPVATBankExpenditureNoteService>();
+            // , List< DPPVATBankExpenditureNoteItemModel > items, List<DPPVATBankExpenditureNoteDetailModel> details
+
+            DPPVATBankExpenditureNoteModel model = new DPPVATBankExpenditureNoteModel("documentNo", 1, "bankAcountNumber", "bankName", "bankAccountingCode", 1, "IDR", 1, 1, "supplierName", false, "bgCheckNo", 1, DateTimeOffset.Now, "IDR", 1, 1);
+            List<DPPVATBankExpenditureNoteItemModel> items = new List<DPPVATBankExpenditureNoteItemModel>()
+            {
+
+            };
+
+            List<DPPVATBankExpenditureNoteDetailModel> details = new List<DPPVATBankExpenditureNoteDetailModel>()
+            {
+
+            };
+            service
+                .Setup(s => s.Read(It.IsAny<int>()))
+                .Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IDPPVATBankExpenditureNoteService)))
+               .Returns(service.Object);
+
+            //Act
+            FormDto form = new FormDto();
+            IActionResult response = GetController(serviceProviderMock).GeneratePdf(1);
+
+            //Assert
+            int statusCode = this.GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
     }
 
 
