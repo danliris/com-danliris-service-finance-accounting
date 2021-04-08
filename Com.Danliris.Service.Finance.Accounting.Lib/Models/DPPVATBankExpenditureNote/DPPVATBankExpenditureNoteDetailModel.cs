@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
         public int DPPVATBankExpenditureNoteId { get; private set; }
         public int DPPVATBankExpenditureNoteItemId { get; private set; }
         public int InvoiceId { get; private set; }
-        [MaxLength(32)]
+        [MaxLength(4000)]
         public string InvoiceNo { get; private set; }
         public DateTimeOffset InvoiceDate { get; private set; }
         public string ProductNames { get; private set; }
