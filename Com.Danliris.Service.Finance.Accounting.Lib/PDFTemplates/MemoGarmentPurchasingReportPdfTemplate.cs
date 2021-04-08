@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 {
-    public class MemoGarmentPurchasingPdfTemplate
+    public class MemoGarmentPurchasingReportPdfTemplate
     {
         private static readonly Font _headerFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 18);
         private static readonly Font _normalFont = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 9);
@@ -19,18 +19,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
         private static readonly Font _smallBoldFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 8);
         private static readonly Font _smallerBoldFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 7);
 
-        public static MemoryStream GeneratePdfTemplate(MemoGarmentPurchasingModel data, int offSet)
+        public static MemoryStream GeneratePdfTemplate(List<MemoGarmentPurchasingModel> data, string date)
         {
             var document = new Document(PageSize.A4, 25, 25, 25, 25);
             var stream = new MemoryStream();
             PdfWriter.GetInstance(document, stream);
             document.Open();
 
-            SetHeader(document);
+            SetHeader(document, date);
 
-            SetReportTable(document, data);
+            foreach (var model in data)
+                SetReportTable(document, model);
 
-            SetFooter(document, data, offSet);
+            //SetFooter(document, data, offSet);
 
             document.Close();
             byte[] byteInfo = stream.ToArray();
@@ -40,7 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             return stream;
         }
 
-        private static void SetHeader(Document document)
+        private static void SetHeader(Document document, string date)
         {
             var table = new PdfPTable(1)
             {
@@ -54,26 +55,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
-            var centeredCell = new PdfPCell()
+            var cellAlignRight = new PdfPCell()
             {
                 Border = Rectangle.NO_BORDER,
-                HorizontalAlignment = Element.ALIGN_CENTER,
+                HorizontalAlignment = Element.ALIGN_RIGHT,
                 VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
             cell.Phrase = new Phrase("PT. DANLIRIS", _headerFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("Kel. Banaran (Sel. Laweyan) Telp. 714400", _smallFont);
+            cell.Phrase = new Phrase("Kel. Banaran, Kec. Grogol, Kab. Sukoharjo 57193", _smallFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("PO. Box. 166 Solo-57100 Indonesia", _smallFont);
+            cell.Phrase = new Phrase("Jawa Tengah Indonesia", _smallFont);
             table.AddCell(cell);
-
-            centeredCell.Phrase = new Phrase("BUKTI MEMORIAL", _normalFont);
-            table.AddCell(centeredCell);
 
             document.Add(table);
+
+            var table2 = new PdfPTable(2)
+            {
+                WidthPercentage = 100
+            };
+            table2.SetWidths(new float[] { 10f, 10f });
+
+            cell.Phrase = new Phrase($" PERIODE : {date}", _normalFont);
+            table2.AddCell(cell);
+
+            cellAlignRight.Phrase = new Phrase("LAPORAN DATA MEMORIAL    ", _normalFont);
+            table2.AddCell(cellAlignRight);
+
+            document.Add(table2);
         }
 
         private static void SetReportTableHeader(PdfPTable table)
@@ -85,10 +97,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             };
 
             cell.Rowspan = 2;
+            cell.Phrase = new Phrase("No.", _smallBoldFont);
+            table.AddCell(cell);
+
             cell.Phrase = new Phrase("No. Memo", _smallBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("No. Perk", _smallBoldFont);
+            cell.Phrase = new Phrase("Tanggal", _smallBoldFont);
+            table.AddCell(cell);
+
+            cell.Phrase = new Phrase("Nomor Akun", _smallBoldFont);
             table.AddCell(cell);
 
             cell.Phrase = new Phrase("Perkiraan", _smallBoldFont);
@@ -104,11 +122,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
         private static void SetReportTable(Document document, MemoGarmentPurchasingModel data)
         {
-            var table = new PdfPTable(5)
+            var table = new PdfPTable(7)
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 10f, 10f, 20f, 15f, 15f });
+            table.SetWidths(new float[] { 5f, 10f, 10f, 10f, 20f, 10f, 10f });
 
             SetReportTableHeader(table);
 
@@ -118,11 +136,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
-            var cellColspan3 = new PdfPCell()
+            var cellColspan5 = new PdfPCell()
             {
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
-                Colspan = 3
+                Colspan = 5
             };
 
             var cellAlignRight = new PdfPCell()
@@ -139,8 +157,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             int totalDebit = 0;
             int totalCredit = 0;
+            int index = 1;
 
-            cell.Phrase = new Phrase(data.MemoNo, _smallerFont);
+            cell.Phrase = new Phrase(index.ToString(), _smallerFont);
+            table.AddCell(cell);
+
+            cell.Phrase = new Phrase(index.Equals(1) ? data.MemoNo : "", _smallerFont);
+            table.AddCell(cell);
+
+            cell.Phrase = new Phrase(index.Equals(1) ? data.MemoDate.ToString("dd/MM/yy") : "", _smallerFont);
             table.AddCell(cell);
 
             bool isFirstDetail = false;
@@ -148,6 +173,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             {
                 if (isFirstDetail)
                 {
+                    cell.Phrase = new Phrase(index.ToString(), _smallerFont);
+                    table.AddCell(cell);
+                    cell.Phrase = new Phrase();
+                    table.AddCell(cell);
                     cell.Phrase = new Phrase();
                     table.AddCell(cell);
                 }
@@ -167,16 +196,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 totalDebit += detail.DebitNominal;
                 totalCredit += detail.CreditNominal;
                 isFirstDetail = true;
+                index++;
             }
 
-            cellColspan3.Phrase = new Phrase("Jumlah Total", _smallBoldFont);
-            table.AddCell(cellColspan3);
+            cellColspan5.Phrase = new Phrase("Jumlah ", _smallBoldFont);
+            table.AddCell(cellColspan5);
 
             cellAlignRight.Phrase = new Phrase(totalDebit.ToString("#,##0.#0"), _smallBoldFont);
             table.AddCell(cellAlignRight);
 
             cellAlignRight.Phrase = new Phrase(totalCredit.ToString("#,##0.#0"), _smallBoldFont);
             table.AddCell(cellAlignRight);
+
+            cell.Phrase = new Phrase();
+            table.AddCell(cell);
 
             document.Add(table);
         }
