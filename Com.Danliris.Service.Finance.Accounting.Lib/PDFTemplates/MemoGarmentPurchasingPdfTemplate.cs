@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
     {
         private static readonly Font _headerFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 18);
         private static readonly Font _normalFont = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 9);
-        private static readonly Font _biggerFont = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 13);
+        private static readonly Font _biggerFont = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 12);
         private static readonly Font _smallFont = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 8);
         private static readonly Font _smallerFont = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 7);
         private static readonly Font _normalBoldFont = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 9);
@@ -48,19 +48,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 WidthPercentage = 100
             };
 
-            var table2 = new PdfPTable(3)
-            {
-                WidthPercentage = 100
-            };
-
             var cell = new PdfPCell()
-            {
-                Border = Rectangle.NO_BORDER,
-                HorizontalAlignment = Element.ALIGN_LEFT,
-                VerticalAlignment = Element.ALIGN_MIDDLE
-            };
-
-            var leftCell = new PdfPCell()
             {
                 Border = Rectangle.NO_BORDER,
                 HorizontalAlignment = Element.ALIGN_LEFT,
@@ -91,21 +79,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cell.Phrase = new Phrase("PO. Box. 166 Solo-57100 Indonesia", _smallFont);
             table.AddCell(cell);
 
-            leftCell.Phrase = new Phrase("", _smallFont);
-            leftCell.PaddingTop = 5;
-            table2.AddCell(leftCell);
-
             centeredCell.Phrase = new Phrase("BUKTI MEMORIAL", _biggerFont);
             centeredCell.PaddingTop = 5;
-            centeredCell.PaddingBottom = 10;
-            table2.AddCell(centeredCell);
+            table.AddCell(centeredCell);
 
             rightCell.Phrase = new Phrase($"No. Memo: {data.MemoNo}", _smallFont);
-            leftCell.PaddingTop = 5;
-            table2.AddCell(rightCell);
+            rightCell.PaddingBottom = 10;
+            table.AddCell(rightCell);
 
             document.Add(table);
-            document.Add(table2);
         }
 
         private static void SetReportTableHeader(PdfPTable table)
@@ -116,6 +98,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 VerticalAlignment = Element.ALIGN_MIDDLE,
             };
 
+            cell.PaddingTop = 10;
             cell.Rowspan = 2;
             cell.Phrase = new Phrase("No", _smallBoldFont);
             table.AddCell(cell);
@@ -140,7 +123,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 10f, 10f, 20f, 15f, 15f });
+            table.SetWidths(new float[] { 5f, 12f, 23f, 15f, 15f });
 
             SetReportTableHeader(table);
 
