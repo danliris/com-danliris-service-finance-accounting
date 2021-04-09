@@ -51,8 +51,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
             try
             {
                 var queryResult = _service.Read(page, size, order, select, keyword, filter);
-                var dataViewModel = _mapper.Map<List<MemoGarmentPurchasingModel>, List<MemoGarmentPurchasingViewModel>>(queryResult.Data);
-
+                var dataViewModel = _mapper.Map<List<MemoGarmentPurchasingModel>, List<ListMemoGarmentPurchasingViewModel>>(queryResult.Data);
+                
                 var result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                     .Ok(_mapper, dataViewModel, page, size, queryResult.Count, queryResult.Data.Count, queryResult.Order, select);
