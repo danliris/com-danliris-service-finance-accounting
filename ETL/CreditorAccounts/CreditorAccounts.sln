@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1433
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "CreditorAccounts", "CreditorAccounts\CreditorAccounts.dtproj", "{DE4B8B92-7372-4084-8D2C-8E13D7B1730E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE4B8B92-7372-4084-8D2C-8E13D7B1730E}.Development|Default.ActiveCfg = Development
+		{DE4B8B92-7372-4084-8D2C-8E13D7B1730E}.Development|Default.Build.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {24004F3F-E6BA-4FC8-9590-F9E2EA69CA18}
+	EndGlobalSection
+EndGlobal

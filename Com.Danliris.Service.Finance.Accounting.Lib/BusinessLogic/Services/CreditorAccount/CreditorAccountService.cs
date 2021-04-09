@@ -255,14 +255,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     Total = item.UnitReceiptMutation,
                     Mutation = item.CurrencyRate != 1 ? item.UnitReceiptMutation * item.CurrencyRate : item.UnitReceiptMutation,
                     PaymentDuration = item.PaymentDuration,
-                    MemoNo = item.MemoNo,
-                    BankExpenditureNoteNo = item.BankExpenditureNoteNo,
-
+                    MemoNo = item.MemoNo
                 };
                 //unitReceiptMutation = vm.Mutation.GetValueOrDefault();
 
                 if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo))
                 {
+                    vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
                     vm.Date = item.BankExpenditureNoteDate.Value;
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.BankExpenditureNoteDPP;
