@@ -235,15 +235,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             foreach (var item in currentQuery.OrderBy(x => x.UnitReceiptNoteDate.GetValueOrDefault()).ToList())
             {
-                //decimal unitReceiptMutation = 0;
-                //decimal bankExpenditureMutation = 0;
-                var vm = new CreditorAccountViewModel();
+                decimal unitReceiptMutation = 0;
+                decimal bankExpenditureMutation = 0;
                 //decimal memoMutation = 0;
-                var unitReceiptMutation = item.CurrencyRate != 1 ? item.UnitReceiptMutation * item.CurrencyRate : item.UnitReceiptMutation;
-                var bankExpenditureMutation = item.BankExpenditureNoteMutation;
-
-                var mutation = unitReceiptMutation - bankExpenditureMutation;
-                vm = new CreditorAccountViewModel
+                //if (!string.IsNullOrEmpty(item.UnitReceiptNoteNo))
+                //{
+                CreditorAccountViewModel vm = new CreditorAccountViewModel
                 {
                     UnitReceiptNoteNo = item.UnitReceiptNoteNo,
                     Products = item.Products,
@@ -255,15 +252,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     Total = item.UnitReceiptMutation,
                     Mutation = item.CurrencyRate != 1 ? item.UnitReceiptMutation * item.CurrencyRate : item.UnitReceiptMutation,
                     PaymentDuration = item.PaymentDuration,
-                    MemoNo = item.MemoNo,
-                    BankExpenditureNoteNo = item.BankExpenditureNoteNo,
-
+                    MemoNo = item.MemoNo
                 };
-                //unitReceiptMutation = vm.Mutation.GetValueOrDefault();
+                unitReceiptMutation = vm.Mutation.GetValueOrDefault();
+                //result.Add(vm);
+                //}
 
                 if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo))
                 {
-                    vm.Date = item.BankExpenditureNoteDate.Value;
+                    //if (item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.Value.Month == month && item.BankExpenditureNoteDate.Value.Year == year)
+                    //{
+                    //CreditorAccountViewModel vm = new CreditorAccountViewModel
+                    //{
+                    vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
+                    //Date = item.BankExpenditureNoteDate.Value;
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.BankExpenditureNoteDPP;
                     vm.PPN = item.BankExpenditureNotePPN;
@@ -272,26 +274,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     vm.MemoNo = item.MemoNo;
                     vm.PaymentDuration = item.PaymentDuration;
                     vm.Products = item.Products;
-                    //if (item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.Value.Month == month && item.BankExpenditureNoteDate.Value.Year == year)
-                    //{
-                    //    CreditorAccountViewModel vm = new CreditorAccountViewModel
-                    //    {
-                    //        BankExpenditureNoteNo = item.BankExpenditureNoteNo,
-                    //        Date = item.BankExpenditureNoteDate.Value,
-                    //        InvoiceNo = item.InvoiceNo,
-                    //        DPP = item.BankExpenditureNoteDPP,
-                    //        PPN = item.BankExpenditureNotePPN,
-                    //        Total = item.BankExpenditureNoteMutation,
-                    //        Mutation = item.BankExpenditureNoteMutation * -1,
-                    //        MemoNo = item.MemoNo,
-                    //        PaymentDuration = item.PaymentDuration,
-                    //        Products = item.Products
-                    //    };
-                    //    bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
-                    //    result.Add(vm);
+                    //};
+                    bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
+                    result.Add(vm);
                     //}
                 }
-                result.Add(vm);
 
                 //if (!string.IsNullOrEmpty(item.MemoNo))
                 //{
