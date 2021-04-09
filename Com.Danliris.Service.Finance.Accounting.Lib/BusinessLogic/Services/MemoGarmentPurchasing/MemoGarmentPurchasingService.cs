@@ -34,6 +34,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             try
             {
                 model.MemoNo = GetMemoNo(model);
+                model.TotalAmount = GetTotalAmount(model.MemoGarmentPurchasingDetails);
+
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
 
                 foreach (var detail in model.MemoGarmentPurchasingDetails)
@@ -191,6 +193,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             var generatedNo = $"{date.ToString("MM")}{date.ToString("yy")}.MG.{count.ToString("0000")}";
 
             return generatedNo;
+        }
+
+        private int GetTotalAmount(ICollection<MemoGarmentPurchasingDetailModel> model)
+        {
+            var total = 0;
+            foreach(var detail in model)
+            {
+                total += detail.DebitNominal;
+            }
+
+            return total;
         }
     }
 }
