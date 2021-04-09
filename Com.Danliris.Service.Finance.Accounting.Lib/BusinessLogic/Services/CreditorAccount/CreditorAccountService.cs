@@ -278,8 +278,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
                     result.Add(vm);
                     //}
-
                 }
+
                 //if (!string.IsNullOrEmpty(item.MemoNo))
                 //{
                 //    if (item.MemoDate.HasValue && item.MemoDate.Value.Month == month && item.MemoDate.Value.Year == year)
@@ -304,8 +304,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 CreditorAccountViewModel resultVM = new CreditorAccountViewModel()
                 {
                     InvoiceNo = item.InvoiceNo,
-                    Mutation = unitReceiptMutation + bankExpenditureMutation,
-                    FinalBalance = unitReceiptMutation + bankExpenditureMutation,
+                    Mutation = unitReceiptMutation - bankExpenditureMutation,
+                    FinalBalance = unitReceiptMutation - bankExpenditureMutation,
                     Currency = item.CurrencyCode,
                     CurrencyRate = item.CurrencyRate,
                     DPPCurrency = item.DPPCurrency

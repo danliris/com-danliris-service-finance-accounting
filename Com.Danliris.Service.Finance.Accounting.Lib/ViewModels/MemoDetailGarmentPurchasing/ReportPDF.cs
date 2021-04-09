@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarmentPurchasing
 {
-    public class ReportRincian
+    public class ReportPDF
     {
         public int Id { get; set; }
         public int MemoId { get; set; }
@@ -16,7 +18,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarme
         public int MemoAmount { get; set; }
         public int MemoIdrAmount { get; set; }
         public string AccountingBookType { get; set; }
-        public int PaymentRate { get; set; }
         public int PurchasingRate { get; set; }
     }
 }

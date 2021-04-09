@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoDetailGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoDetailGarmentPurchasing.ExcelGenerator;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -118,11 +121,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
         }
 
         [HttpGet("report")]
-        public IActionResult GetReport([FromQuery] DateTimeOffset date, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        public IActionResult GetReport([FromQuery] DateTimeOffset date, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}", int valas = -1)
         {
             try
             {
-                var queryResult = _service.GetReport(date, page, size, order, select, keyword, filter);
+                var queryResult = _service.GetReport(date, page, size, order, select, keyword, filter, valas);
 
                 var result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
@@ -181,5 +184,130 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
             }
         }
+
+        [HttpGet("reports/downloads/pdf")]
+        public IActionResult GetPdf([FromQuery] DateTimeOffset date, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}", int valas = -1)
+        {
+            try
+            {
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+                MemoryStream stream;
+
+                var queryResult = _service.GetPDF(date, page, size, order, select, keyword, filter, valas);
+
+                var month = date.Month;
+                var year = date.Year;
+                string monthString = "";
+
+                if (month == 1)
+                {
+                    monthString = "Januari";
+                }
+                else if (month == 2)
+                {
+                    monthString = "Februari";
+                }
+                else if (month == 3)
+                {
+                    monthString = "Maret";
+                }
+                else if (month == 4)
+                {
+                    monthString = "April";
+                }
+                else if (month == 5)
+                {
+                    monthString = "Mei";
+                }
+                else if (month == 6)
+                {
+                    monthString = "Juni";
+                }
+                else if (month == 7)
+                {
+                    monthString = "Juli";
+                }
+                else if (month == 8)
+                {
+                    monthString = "Agustus";
+                }
+                else if (month == 9)
+                {
+                    monthString = "September";
+                }
+                else if (month == 10)
+                {
+                    monthString = "Oktober";
+                }
+                else if (month == 11)
+                {
+                    monthString = "November";
+                }
+                else if (month == 12)
+                {
+                    monthString = "Desember";
+                }
+
+                stream = MemorialJobGarmentDetailPDFTemplate.GeneratePdfTemplate(queryResult.Data, monthString, year);
+
+                string fileName = "Laporan Rincian Memorial "+monthString+ " " +year;
+
+                return new FileStreamResult(stream, "application/pdf")
+                {
+                    FileDownloadName = string.Format(fileName)
+                };
+
+            }
+            catch (Exception ex)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, ex.Message).Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("reports/downloads/xls")]
+        public IActionResult GetXls([FromQuery] DateTimeOffset date, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}", int valas = -1)
+        {
+            try
+            {
+                var queryResult = _service.GetReport(date, page, size, order, select, keyword, filter, valas);
+
+                int month = date.Date.Month;
+                int year = date.Date.Year;
+                var monthName = _months.FirstOrDefault(element => element.Key == month);
+
+                MemoryStream result = new MemoryStream();
+                var filename = $"Laporan Rincian Memorial";
+                result = MemoDetailGarmentExcelGenerator.GenerateExcel(queryResult, "Laporan Rincian Data Memorial", month, year);
+                filename += $" {monthName.Value} {year}.xlsx";
+
+                var bytes = result.ToArray();
+
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+            }
+            catch (Exception e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        private static readonly List<MonthName> _months = new List<MonthName>()
+        {
+            new MonthName(1, "Januari"),
+            new MonthName(2, "Februari"),
+            new MonthName(3, "Maret"),
+            new MonthName(4, "April"),
+            new MonthName(5, "Mei"),
+            new MonthName(6, "Juni"),
+            new MonthName(7, "Juli"),
+            new MonthName(8, "Agustus"),
+            new MonthName(9, "September"),
+            new MonthName(10, "Oktober"),
+            new MonthName(11, "November"),
+            new MonthName(12, "Desember"),
+        };
     }
 }
