@@ -87,6 +87,10 @@
     <Compile Remove="Migrations\20210330051422_AddAccountingBookTable.Designer.cs" />
     <Compile Remove="Migrations\20210330052428_AddAccountingBookTable.cs" />
     <Compile Remove="Migrations\20210330052428_AddAccountingBookTable.Designer.cs" />
+    <Compile Remove="Migrations\20210407071230_InvoicesSize.cs" />
+    <Compile Remove="Migrations\20210407071230_InvoicesSize.Designer.cs" />
+    <Compile Remove="Migrations\20210407071532_InvoicesSizeMax.cs" />
+    <Compile Remove="Migrations\20210407071532_InvoicesSizeMax.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
