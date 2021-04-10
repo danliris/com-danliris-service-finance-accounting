@@ -148,7 +148,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.MemoGarmentPu
             model.MemoGarmentPurchasingDetails = new List<MemoGarmentPurchasingDetailModel>();
             var serviceMock = new Mock<IMemoGarmentPurchasingReportService>();
             serviceMock
-                .Setup(service => service.GetReportPdfData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(service => service.GetReportPdfData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Returns(new ReadResponse<MemoGarmentPurchasingModel>(new List<MemoGarmentPurchasingModel>(), 1, new Dictionary<string, string>(), new List<string>()));
 
             serviceProviderMock
@@ -160,7 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.MemoGarmentPu
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = await controller.GetPdf(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            var response = await controller.GetPdf(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>());
             Assert.NotNull(response);
         }
 
@@ -171,7 +171,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.MemoGarmentPu
 
             var serviceMock = new Mock<IMemoGarmentPurchasingReportService>();
             serviceMock
-                .Setup(service => service.GetReportPdfData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(service => service.GetReportPdfData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Throws(new Exception());
 
             serviceProviderMock
@@ -183,7 +183,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.MemoGarmentPu
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = await controller.GetPdf(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            var response = await controller.GetPdf(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>());
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
@@ -196,7 +196,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.MemoGarmentPu
 
             var serviceMock = new Mock<IMemoGarmentPurchasingReportService>();
             serviceMock
-                .Setup(service => service.GetReportPdfData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(service => service.GetReportPdfData(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Throws(new Exception());
 
             serviceProviderMock
@@ -208,7 +208,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.MemoGarmentPu
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = await controller.GetPdf(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            var response = await controller.GetPdf(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>());
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
@@ -223,7 +223,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.MemoGarmentPu
             model.MemoGarmentPurchasingDetails = new List<MemoGarmentPurchasingDetailModel>();
             var serviceMock = new Mock<IMemoGarmentPurchasingReportService>();
             serviceMock
-                .Setup(service => service.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(service => service.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .Returns(new MemoryStream());
 
             serviceProviderMock
@@ -235,7 +235,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.MemoGarmentPu
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = await controller.GetXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            var response = await controller.GetXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>());
             Assert.NotNull(response);
         }
 
@@ -246,7 +246,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.MemoGarmentPu
 
             var serviceMock = new Mock<IMemoGarmentPurchasingReportService>();
             serviceMock
-                .Setup(service => service.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(service => service.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>()))
                 .Throws(new Exception());
 
             serviceProviderMock
@@ -258,7 +258,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.MemoGarmentPu
 
             var controller = GetController(serviceProviderMock.Object);
 
-            var response = await controller.GetPdf(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            var response = await controller.GetPdf(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>());
             var statusCode = GetStatusCode(response);
 
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
