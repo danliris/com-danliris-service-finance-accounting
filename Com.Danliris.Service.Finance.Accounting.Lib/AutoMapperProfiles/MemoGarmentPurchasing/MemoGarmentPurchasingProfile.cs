@@ -51,6 +51,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.MemoGar
                 .ForPath(d => d.MemoGarmentPurchasing, opt => opt.MapFrom(s => s.MemoGarmentPurchasing))
 
                 .ReverseMap();
+
+            CreateMap<MemoGarmentPurchasingModel, ListMemoGarmentPurchasingViewModel>()
+                .ForPath(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                .ForPath(d => d.MemoNo, opt => opt.MapFrom(s => s.MemoNo))
+                .ForPath(d => d.MemoDate, opt => opt.MapFrom(s => s.MemoDate))
+
+                .ForPath(d => d.AccountingBook.Id, opt => opt.MapFrom(s => s.AccountingBookId))
+                .ForPath(d => d.AccountingBook.Code, opt => opt.MapFrom(s => s.AccountingBookCode))
+                .ForPath(d => d.AccountingBook.Type, opt => opt.MapFrom(s => s.AccountingBookType))
+
+                .ForPath(d => d.Currency.Id, opt => opt.MapFrom(s => s.GarmentCurrenciesId))
+                .ForPath(d => d.Currency.Code, opt => opt.MapFrom(s => s.GarmentCurrenciesCode))
+                .ForPath(d => d.Currency.Rate, opt => opt.MapFrom(s => s.GarmentCurrenciesRate))
+
+                .ForPath(d => d.Remarks, opt => opt.MapFrom(s => s.Remarks))
+                .ForPath(d => d.IsPosted, opt => opt.MapFrom(s => s.IsPosted))
+                .ForPath(d => d.TotalAmount, opt => opt.MapFrom(s => s.TotalAmount))
+
+                .ForPath(d => d.MemoGarmentPurchasingDetails, opt => opt.MapFrom(s => s.MemoGarmentPurchasingDetails))
+
+                .ReverseMap();
         }
     }
 }
