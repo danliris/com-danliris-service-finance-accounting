@@ -189,10 +189,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 cellItemCenter.Phrase = new Phrase(item.BillsNo.ToString(), _header3Font);
                 table.AddCell(cellItemCenter);
 
-                cellItemLeft.Phrase = new Phrase(GetSupplierCode(item.RemarksDetail), _header3Font);
+                cellItemLeft.Phrase = new Phrase(item.SupplierCode != null ? item.SupplierCode : "", _header3Font);
                 table.AddCell(cellItemLeft);
 
-                cellItemLeft.Phrase = new Phrase(GetSupplierName(item.RemarksDetail), _header3Font);
+                cellItemLeft.Phrase = new Phrase(item.SupplierName != null ? item.SupplierName: "", _header3Font);
                 table.AddCell(cellItemLeft);
 
                 if (item.CurrencyCode != "IDR")
@@ -250,30 +250,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             }
 
             document.Add(table);
-        }
-
-        private static string GetSupplierCode(string remarksDetail)
-        {
-            
-            if (remarksDetail.Contains("-"))
-            {
-                string[] arrStr = remarksDetail.Split("-");
-                return arrStr[0];
-            }
-
-            return remarksDetail;
-            
-        }
-
-        private static string GetSupplierName(string remarksDetail)
-        {
-            if (remarksDetail.Contains("-"))
-            {
-                string[] arrStr = remarksDetail.Split("-");
-                return arrStr[1];
-            }
-
-            return remarksDetail;
         }
     }
 }

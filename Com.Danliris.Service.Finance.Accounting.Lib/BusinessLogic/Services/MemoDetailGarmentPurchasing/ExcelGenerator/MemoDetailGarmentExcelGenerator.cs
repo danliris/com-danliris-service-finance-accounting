@@ -109,9 +109,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                     worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
                     worksheet.Cells[$"F{currentRow}"].Value = item.GarmentDeliveryOrderNo;
                     worksheet.Cells[$"F{currentRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"G{currentRow}"].Value = GetSupplierCode(item.RemarksDetail);
+                    worksheet.Cells[$"G{currentRow}"].Value = item.SupplierCode != null ? item.SupplierCode : "";
                     worksheet.Cells[$"G{currentRow}"].Style.Font.Size = 14;
-                    worksheet.Cells[$"H{currentRow}"].Value = GetSupplierName(item.RemarksDetail);
+                    worksheet.Cells[$"H{currentRow}"].Value = item.SupplierName != null ? item.SupplierName : "";
                     worksheet.Cells[$"H{currentRow}"].Style.Font.Size = 14;
                     worksheet.Cells[$"I{currentRow}"].Value = item.CurrencyCode;
                     worksheet.Cells[$"I{currentRow}"].Style.Font.Size = 14;
@@ -153,30 +153,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 worksheet.Cells[$"L{currentRow}:M{currentRow }"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 worksheet.Cells[$"L{currentRow}:M{currentRow }"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
             }
-        }
-
-        private static string GetSupplierCode(string remarksDetail)
-        {
-
-            if (remarksDetail.Contains("-"))
-            {
-                string[] arrStr = remarksDetail.Split("-");
-                return arrStr[0];
-            }
-
-            return remarksDetail;
-
-        }
-
-        private static string GetSupplierName(string remarksDetail)
-        {
-            if (remarksDetail.Contains("-"))
-            {
-                string[] arrStr = remarksDetail.Split("-");
-                return arrStr[1];
-            }
-
-            return remarksDetail;
         }
     }
 
