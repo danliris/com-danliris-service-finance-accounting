@@ -138,6 +138,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             result.Columns.Add(new DataColumn() { ColumnName = "Tanggal Memo", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "No. Akun", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Nama Perkiraan", DataType = typeof(String) });
+            result.Columns.Add(new DataColumn() { ColumnName = "Keterangan", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(String) });
 
@@ -152,11 +153,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 foreach (var item in query.Data)
                 {
                     index++;
-                    result.Rows.Add(item.MemoGarmentPurchasing.MemoNo, item.MemoGarmentPurchasing.MemoDate.ToString("dd-MMM-yyyy", new CultureInfo("id-ID")), item.COANo, item.COAName, item.DebitNominal.ToString("#,##0.#0"), item.CreditNominal.ToString("#,##0.#0"));
+                    result.Rows.Add(item.MemoGarmentPurchasing.MemoNo, item.MemoGarmentPurchasing.MemoDate.ToString("dd-MMM-yyyy", new CultureInfo("id-ID")), item.COANo, item.COAName, item.MemoGarmentPurchasing.Remarks ,item.DebitNominal.ToString("#,##0.#0"), item.CreditNominal.ToString("#,##0.#0"));
                 }
             }
-
-            return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Memorial") }, title, date, true, 10);
+            if (string.IsNullOrEmpty(accountingBookType))
+            {
+                return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Memorial") }, title, date, true, 10);
+            }
+            else{
+                return Excel.CreateExcelWithTitleNonDateFilterMemoReport(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Memorial") }, title, date,accountingBookType, true, 10);
+            }
         }
 
         public ReadResponse<MemoGarmentPurchasingModel> GetReportPdfData(int year, int month, int accountingBookId, string accountingBookType, bool valas, int page = 1, int size = 25)
@@ -172,7 +178,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                         Year = year,
                         Month = month,
                         AccountingBookId = accountingBookId,
-                        Valas = valas
+                        Valas = valas,
+                        AccountingBookType = accountingBookType
                     };
                 }
                 else
@@ -181,7 +188,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                     {
                         Year = year,
                         Month = month,
-                        AccountingBookId = accountingBookId
+                        AccountingBookId = accountingBookId,
+                        AccountingBookType = accountingBookType
                     };
                 }
             }
@@ -209,7 +217,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                         Year = year,
                         Month = month,
                         AccountingBookId = accountingBookId,
-                        Valas = valas
+                        Valas = valas,
+                        AccountingBookType = accountingBookType
                     };
                 }
                 else
@@ -218,11 +227,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                     {
                         Year = year,
                         Month = month,
-                        AccountingBookId = accountingBookId
+                        AccountingBookId = accountingBookId,
+                        AccountingBooktype = accountingBookType
                     };
                 }
-            }
-                
+            }                
             else
                 filter = new
                 {

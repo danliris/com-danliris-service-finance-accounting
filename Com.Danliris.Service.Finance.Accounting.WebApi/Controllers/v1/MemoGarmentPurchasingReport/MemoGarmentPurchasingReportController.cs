@@ -107,7 +107,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
                     return NotFound(Result);
                 }
 
-                MemoryStream stream = MemoGarmentPurchasingReportPdfTemplate.GeneratePdfTemplate(report.Data, date);
+                MemoryStream stream = MemoGarmentPurchasingReportPdfTemplate.GeneratePdfTemplate(report.Data, date, accountingBookType);
                 return new FileStreamResult(stream, "application/pdf")
                 {
                     FileDownloadName = $"Laporan Data Memorail - {date}.pdf"
