@@ -147,6 +147,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                                memoDetailsGarmentsDetail.PurchasingRate,
                                memoDetailsGarmentsDetail.MemoAmount,
                                memoDetailsGarmentsDetail.MemoIdrAmount,
+                               memoDetailsGarmentsDetail.SupplierCode,
+                               memoDetailsGarmentsDetail.SupplierName
                            };
 
                 var reports = from memoDetailDetail in memoDetailDetails
@@ -169,6 +171,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                                   AccountingBookType = memoDetailDetail.AccountingBookType,
                                   PaymentRate = memoDetailDetail.PaymentRate,
                                   PurchasingRate = memoDetailDetail.PurchasingRate,
+                                  SupplierCode = memoDetailDetail.SupplierCode,
+                                  SupplierName = memoDetailDetail.SupplierName
                               };
 
                 if(valas > -1)
@@ -387,7 +391,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                                             memoDetailsGarmentsDetail.PaymentRate,
                                             memoDetailsGarmentsDetail.PurchasingRate,
                                             memoDetailsGarmentsDetail.MemoAmount,
-                                            memoDetailsGarmentsDetail.MemoIdrAmount
+                                            memoDetailsGarmentsDetail.MemoIdrAmount,
+                                            memoDetailsGarmentsDetail.SupplierCode,
+                                            memoDetailsGarmentsDetail.SupplierName,
                                         };
 
                 var reports = from memoDetailDetail in memoDetailDetails
@@ -409,6 +415,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                                   MemoIdrAmount = memoDetailDetail.MemoIdrAmount,
                                   AccountingBookType = memoDetailDetail.AccountingBookType,
                                   PurchasingRate = memoDetailDetail.PurchasingRate,
+                                  SupplierCode = memoDetailDetail.SupplierCode,
+                                  SupplierName = memoDetailDetail.SupplierName
                               };
 
                 if (valas > -1)
