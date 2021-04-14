@@ -334,7 +334,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody1);
 
                 // Jumlah
-                cellHeaderBody1.Phrase = new Phrase(viewModel.VBDocument?.Amount.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody1.Phrase = new Phrase($"{viewModel.VBDocument?.Amount.GetValueOrDefault().ToString("#,##0.00", new CultureInfo("id-ID"))}", normal_font);
                 cellHeaderBody1.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody1);
             }
@@ -370,7 +370,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody5a);
 
                 // Jumlah
-                cellHeaderBody5a.Phrase = new Phrase((res * -1).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody5a.Phrase = new Phrase($"({(res * -1).ToString("#,##0.00", new CultureInfo("id-ID"))}", normal_font);
                 cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody5a);
             }

@@ -186,7 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 // Mata Uang
                 cellHeaderBody1.Phrase = new Phrase(currencyCode, normal_font);
                 headerTable3.AddCell(cellHeaderBody1);
-                
+
                 // Jumlah
                 cellHeaderBody1.Phrase = new Phrase(itm.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
                 cellHeaderBody1.HorizontalAlignment = Element.ALIGN_RIGHT;
@@ -201,7 +201,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody1a.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a.Phrase = new Phrase("Jumlah Realisasi", normal_font);
             headerTable3.AddCell(cellHeaderBody1a);
-            
+
             // Mata Uang
             cellHeaderBody1b.Phrase = new Phrase(currencyCode, normal_font);
             headerTable3.AddCell(cellHeaderBody1b);
@@ -216,7 +216,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a1.Phrase = new Phrase("PPN", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
-            
+
             // Mata Uang
             cellHeaderBody1b1.Phrase = new Phrase(currencyCode, normal_font);
             headerTable3.AddCell(cellHeaderBody1b1);
@@ -231,7 +231,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a1.Phrase = new Phrase("PPh ditanggung Supplier", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
-            
+
             // Mata Uang
             cellHeaderBody1b1.Phrase = new Phrase(currencyCode, normal_font);
             headerTable3.AddCell(cellHeaderBody1b1);
@@ -246,7 +246,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody1a1.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody1a1.Phrase = new Phrase("PPh ditanggung Dan Liris", normal_font);
             headerTable3.AddCell(cellHeaderBody1a1);
-            
+
             // Mata Uang
             cellHeaderBody1b1.Phrase = new Phrase(currencyCode, normal_font);
             headerTable3.AddCell(cellHeaderBody1b1);
@@ -283,7 +283,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody6.Colspan = 3;
             cellHeaderBody6.Phrase = new Phrase($"Tanggal VB: {vbDate}", normal_font);
             headerTable3.AddCell(cellHeaderBody6);
-            
+
             // No VB
             cellHeaderBody1.Colspan = 2;
             cellHeaderBody1.Phrase = new Phrase($"No.VB: {viewModel.Header.VBRequestDocumentNo}", normal_font);
@@ -349,7 +349,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody5a);
 
                 // Jumlah
-                cellHeaderBody5a.Phrase = new Phrase((res * -1).ToString("#,##0.00", new CultureInfo("id-ID")), normal_font);
+                cellHeaderBody5a.Phrase = new Phrase($"({res * -1:#,##0.00})", normal_font);
+
                 cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody5a);
             }

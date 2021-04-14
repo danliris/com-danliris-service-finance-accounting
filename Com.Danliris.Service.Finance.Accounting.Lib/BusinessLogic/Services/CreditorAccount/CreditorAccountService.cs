@@ -263,12 +263,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                 if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo))
                 {
-                    //if (item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.Value.Month == month && item.BankExpenditureNoteDate.Value.Year == year)
-                    //{
-                    //CreditorAccountViewModel vm = new CreditorAccountViewModel
-                    //{
                     vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
-                    //Date = item.BankExpenditureNoteDate.Value;
+                    vm.Date = item.BankExpenditureNoteDate.Value;
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.BankExpenditureNoteDPP;
                     vm.PPN = item.BankExpenditureNotePPN;
