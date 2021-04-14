@@ -229,6 +229,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             {
                 sheet.Cells["A4"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
                 sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+                var count = item.Key.Rows.Count;
+
+                sheet.Cells[$"I5:J{4 + count}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
             }
             MemoryStream stream = new MemoryStream();
             package.SaveAs(stream);
