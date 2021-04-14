@@ -11,8 +11,8 @@
   DTS:LocaleID="14345"
   DTS:ObjectName="Package"
   DTS:PackageType="5"
-  DTS:VersionBuild="1"
-  DTS:VersionGUID="{6E59542C-D640-4B07-8EFC-DB05B14875C4}">
+  DTS:VersionBuild="3"
+  DTS:VersionGUID="{C9811B38-A542-4C6F-8345-694F76B3A3EB}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,22 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAs75JG4iZJkenlMb+ZRjbYwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADQJjYEciPfJsw/h7hk3MECwyBdJBeeS7YcCOZyxnTv1QAAAAAOgAAAAAIAACAAAADrm4fW44W0/nhLQxR3DlRzZiS0tsLko11FXe9uj7T0SSAAAADQWU1+prrdzrHJIBti177iwsP6LWjhcwEReqfBNsH1u0AAAABR5XYlOpSPR/F0eTtEVVX2sxAQ7F7RIKMaPV0x4Rju3iQexNJfGWbjZvkyHW1JGIttt2paFUg5ywNDQ5CWx6L7</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAs75JG4iZJkenlMb+ZRjbYwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADOxoW3wtn4+kQcB17nmpC3F5X0oqyV1OIFd4tRu+ZVmQAAAAAOgAAAAAIAACAAAAAsHDpPjERnRB41pCy3aOZ79cf2plikbnEIWxNu8Ru5NCAAAADS+e35a+M2J3iNtsbo3eGsYCqjggd0IVYHfX6ByhCKFUAAAACbo7vwT9IhsoSg2XZ7FXZRapiz2VxluTqMNRV4N611QkPvUrjY3bx1ltHb44zfIk9UfvZiLuRaZ7Ll5v0e/Yqg</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DEV]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{fc72b49e-6c27-4975-85c8-5ada29e16555}"
+      DTS:ObjectName="DEV">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=com-danliris-sqlserver-dev.database.windows.net;User ID=danliris;Initial Catalog=com-danliris-db-dev;Provider=MSOLEDBSQL.1;Auto Translate=False;Application Name=SSIS-Package-{fc72b49e-6c27-4975-85c8-5ada29e16555}PURCHASING 1;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAs75JG4iZJkenlMb+ZRjbYwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACGzEjlsmazTE3LtExUCYKjoo3dHPoDscrpeCOXf+8hiQAAAAAOgAAAAAIAACAAAACaYnbRP75gw0360vdIIwkpXOfd4Tf0pu88uJrQgzbrTiAAAAAbvpVeuoKnOXD+d6ZS3d1rODJXf027Us6LZgJypYpB8kAAAAAJKYO8RaItX1N9gj3esCetSOnrpTmHTYSK/No4ToQM0y6E/c9GAT1pqDGTXPwtadiYG/g05BPasBqAr1gRwPdj</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -42,7 +57,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAs75JG4iZJkenlMb+ZRjbYwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADF1pfn+kbP+VIDr7LxDLRlCfhvAcH4rTUqDSOm5xJBswAAAAAOgAAAAAIAACAAAABcuZ+gj9wUFrM7afvoUrygjm8XH5EOPzIY6dtKuJ31aSAAAAAtuaxAaq3TnC6i5n6+0WIXLBe2Tg5wa28hBmyKp/0ANEAAAAAL7439Wo9Q6fy/8obF4qGyv+FO7SRATF37VZ2mfXuqof+GJ7zom7VpvTcErziEr2W4kkAmxEppR3gz3HIXp9aq</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAs75JG4iZJkenlMb+ZRjbYwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADuGffsaP0MzDafrKS55Z5fikUzmqRRkKNYHqzcE2d7aAAAAAAOgAAAAAIAACAAAAB169MpyZz3iilW+4fD/X5rwmPVvUgoA106vGLQ6dhefCAAAAC/4kJRuJ/c030l7qGEaUfZJZtTCx2d7I/PqF2zSD8uJ0AAAABK5GuMOeH9/Qs3qJcNr07OPiEcfRZPamLj9J0K8nd9B8VorgOkE+cdxXvajNiVtEmb+5PW3gc9BtLP1z879pZo</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -57,7 +72,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAs75JG4iZJkenlMb+ZRjbYwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADWT/XlAnFOunqxV/t1AkmS8Ylt0NerrAqWL4kqvYoaqAAAAAAOgAAAAAIAACAAAAC94/Au6QipaS8zMSINp1kXAGXP7f25XmieiBuzHs+RPCAAAADCXKPupNoLDt+ynTEFng3E6kcuXTNKbetfkbW51NGhJ0AAAAB1vm2ByT1WSLOK+GKCmydlz6FpBaHcV6ZF+hHAQ80HdjJmRxNNrVru8ix8NlQEfD6EIQHr0yWt+UXPUZj+2ESM</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAs75JG4iZJkenlMb+ZRjbYwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADS2fe8EtyAVVWSLMq4WVCVVZ646E8tZJA+TCJKqMjL4QAAAAAOgAAAAAIAACAAAAC4RQfEh83K+yW3XRqv7BXPlygUx8JoRXg6o+P074ffUCAAAACD9Uja0U6YQlhB4vcCFkeueFxc80Fr8shXJda5peFQr0AAAACfr63FHm+I3g4ZytkCy4dcGJ4de0dgswjlraWCzTc0apiJDI4Jajs+4xJOKkFQnZv/MLCBReIqyQV5k+DpwIhv</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -78,55 +93,6 @@
         <pipeline
           version="1">
           <components>
-            <component
-              refId="Package\UnitReceiptNotes\Derived Column"
-              componentClassID="Microsoft.DerivedColumn"
-              contactInfo="Derived Column;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
-              description="Creates new column values by applying expressions to transformation input columns. Create new columns or overwrite existing ones. For example, concatenate the values from the 'first name' and 'last name' column to make a 'full name' column."
-              name="Derived Column"
-              usesDispositions="true">
-              <inputs>
-                <input
-                  refId="Package\UnitReceiptNotes\Derived Column.Inputs[Derived Column Input]"
-                  description="Input to the Derived Column Transformation"
-                  name="Derived Column Input">
-                  <externalMetadataColumns />
-                </input>
-              </inputs>
-              <outputs>
-                <output
-                  refId="Package\UnitReceiptNotes\Derived Column.Outputs[Derived Column Output]"
-                  description="Default Output of the Derived Column Transformation"
-                  exclusionGroup="1"
-                  name="Derived Column Output"
-                  synchronousInputId="Package\UnitReceiptNotes\Derived Column.Inputs[Derived Column Input]">
-                  <externalMetadataColumns />
-                </output>
-                <output
-                  refId="Package\UnitReceiptNotes\Derived Column.Outputs[Derived Column Error Output]"
-                  description="Error Output of the Derived Column Transformation"
-                  exclusionGroup="1"
-                  isErrorOut="true"
-                  name="Derived Column Error Output"
-                  synchronousInputId="Package\UnitReceiptNotes\Derived Column.Inputs[Derived Column Input]">
-                  <outputColumns>
-                    <outputColumn
-                      refId="Package\UnitReceiptNotes\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
-                      dataType="i4"
-                      lineageId="Package\UnitReceiptNotes\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
-                      name="ErrorCode"
-                      specialFlags="1" />
-                    <outputColumn
-                      refId="Package\UnitReceiptNotes\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
-                      dataType="i4"
-                      lineageId="Package\UnitReceiptNotes\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
-                      name="ErrorColumn"
-                      specialFlags="2" />
-                  </outputColumns>
-                  <externalMetadataColumns />
-                </output>
-              </outputs>
-            </component>
             <component
               refId="Package\UnitReceiptNotes\Lookup Existing"
               componentClassID="Microsoft.Lookup"
@@ -197,8 +163,8 @@ where [refTable].[UnitReceiptNoteNo] = ?</property>
               <connections>
                 <connection
                   refId="Package\UnitReceiptNotes\Lookup Existing.Connections[OleDbConnection]"
-                  connectionManagerID="Package.ConnectionManagers[FINANCE]"
-                  connectionManagerRefId="Package.ConnectionManagers[FINANCE]"
+                  connectionManagerID="Package.ConnectionManagers[DEV]"
+                  connectionManagerRefId="Package.ConnectionManagers[DEV]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -339,8 +305,8 @@ where [refTable].[Code] = ?</property>
               <connections>
                 <connection
                   refId="Package\UnitReceiptNotes\Lookup Garment Currency.Connections[OleDbConnection]"
-                  connectionManagerID="Package.ConnectionManagers[CORE]"
-                  connectionManagerRefId="Package.ConnectionManagers[CORE]"
+                  connectionManagerID="Package.ConnectionManagers[DEV]"
+                  connectionManagerRefId="Package.ConnectionManagers[DEV]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -486,8 +452,8 @@ where [refTable].[Code] = ?</property>
               <connections>
                 <connection
                   refId="Package\UnitReceiptNotes\OLE DB Destination.Connections[OleDbConnection]"
-                  connectionManagerID="Package.ConnectionManagers[FINANCE]"
-                  connectionManagerRefId="Package.ConnectionManagers[FINANCE]"
+                  connectionManagerID="Package.ConnectionManagers[DEV]"
+                  connectionManagerRefId="Package.ConnectionManagers[DEV]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -499,14 +465,6 @@ where [refTable].[Code] = ?</property>
                   hasSideEffects="true"
                   name="OLE DB Destination Input">
                   <inputColumns>
-                    <inputColumn
-                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Products]"
-                      cachedCodepage="1252"
-                      cachedDataType="str"
-                      cachedLength="1"
-                      cachedName="Products"
-                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Products]"
-                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[Products]" />
                     <inputColumn
                       refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[SupplierCode]"
                       cachedDataType="wstr"
@@ -590,9 +548,8 @@ where [refTable].[Code] = ?</property>
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[CreatedBy]" />
                     <inputColumn
                       refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CreatedUtc]"
-                      cachedDataType="dbTimeStamp2"
+                      cachedDataType="dbTimeStampOffset"
                       cachedName="CreatedUtc"
-                      cachedScale="7"
                       externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CreatedUtc]"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[CreatedUtc]" />
                     <inputColumn
@@ -618,34 +575,134 @@ where [refTable].[Code] = ?</property>
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[LastModifiedUtc]" />
                     <inputColumn
                       refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[DeletedAgent]"
-                      cachedCodepage="1252"
-                      cachedDataType="str"
-                      cachedLength="1"
+                      cachedDataType="wstr"
+                      cachedLength="255"
                       cachedName="DeletedAgent"
                       externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DeletedAgent]"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DeletedAgent]" />
                     <inputColumn
                       refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[DeletedBy]"
-                      cachedCodepage="1252"
-                      cachedDataType="str"
-                      cachedLength="1"
+                      cachedDataType="wstr"
+                      cachedLength="255"
                       cachedName="DeletedBy"
                       externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DeletedBy]"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DeletedBy]" />
                     <inputColumn
                       refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[DeletedUtc]"
-                      cachedCodepage="1252"
-                      cachedDataType="str"
-                      cachedLength="10"
+                      cachedDataType="dbTimeStampOffset"
                       cachedName="DeletedUtc"
                       externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DeletedUtc]"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DeletedUtc]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[IsDeleted]"
+                      cachedDataType="bool"
+                      cachedName="IsDeleted"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[IsDeleted]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[IsDeleted]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[BankExpenditureNoteId]"
+                      cachedDataType="i4"
+                      cachedName="BankExpenditureNoteId"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BankExpenditureNoteId]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteId]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[BankExpenditureNoteNo]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="BankExpenditureNoteNo"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BankExpenditureNoteNo]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteNo]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[BankExpenditureNoteDate]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="BankExpenditureNoteDate"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BankExpenditureNoteDate]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteDate]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[BankExpenditureNoteDPP]"
+                      cachedDataType="i4"
+                      cachedName="BankExpenditureNoteDPP"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BankExpenditureNoteDPP]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteDPP]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[BankExpenditureNotePPN]"
+                      cachedDataType="i4"
+                      cachedName="BankExpenditureNotePPN"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BankExpenditureNotePPN]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNotePPN]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[BankExpenditureNoteMutation]"
+                      cachedDataType="numeric"
+                      cachedName="BankExpenditureNoteMutation"
+                      cachedPrecision="18"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BankExpenditureNoteMutation]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteMutation]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MemoNo]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="MemoNo"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MemoNo]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoNo]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MemoDate]"
+                      cachedDataType="dbTimeStamp"
+                      cachedName="MemoDate"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MemoDate]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoDate]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MemoDPP]"
+                      cachedDataType="i4"
+                      cachedName="MemoDPP"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MemoDPP]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoDPP]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MemoPPN]"
+                      cachedDataType="i4"
+                      cachedName="MemoPPN"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MemoPPN]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoPPN]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MemoMutation]"
+                      cachedDataType="numeric"
+                      cachedName="MemoMutation"
+                      cachedPrecision="18"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MemoMutation]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoMutation]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[InvoiceNo]"
+                      cachedDataType="wstr"
+                      cachedLength="30"
+                      cachedName="InvoiceNo"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[InvoiceNo]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[InvoiceNo]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[DPPCurrency]"
+                      cachedDataType="numeric"
+                      cachedName="DPPCurrency"
+                      cachedPrecision="18"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DPPCurrency]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DPPCurrency]" />
                     <inputColumn
                       refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CurrencyRate]"
                       cachedDataType="r8"
                       cachedName="CurrencyRate"
                       externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CurrencyRate]"
                       lineageId="Package\UnitReceiptNotes\Lookup Garment Currency.Outputs[Lookup Match Output].Columns[CurrencyRate]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Currency]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="Currency"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CurrencyCode]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[Currency]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FinalBalance]"
+                      cachedDataType="numeric"
+                      cachedName="FinalBalance"
+                      cachedPrecision="18"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FinalBalance]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[FinalBalance]" />
                     <inputColumn
                       refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Code]"
                       cachedDataType="wstr"
@@ -672,6 +729,25 @@ where [refTable].[Code] = ?</property>
                       cachedName="PPN"
                       externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[UnitReceiptNotePPN]"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[PPN]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[UnitReceiptNoteMutation]"
+                      cachedDataType="r8"
+                      cachedName="UnitReceiptNoteMutation"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[UnitReceiptMutation]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[UnitReceiptNoteMutation]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Active]"
+                      cachedDataType="bool"
+                      cachedName="Active"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Active]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[Active]" />
+                    <inputColumn
+                      refId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ Products]"
+                      cachedDataType="wstr"
+                      cachedLength="4000"
+                      cachedName=" Products"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Products]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[ Products]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -948,12 +1024,29 @@ where [refTable].[Code] = ?</property>
                   dataType="System.String"
                   description="The SQL command to be executed."
                   name="SqlCommand"
-                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT 
+	*,
+	PPN + DPP AS UnitReceiptNoteMutation,
+	CAST(0 AS INT) AS BankExpenditureNoteId,
+	CAST(NULL AS nvarchar) AS BankExpenditureNoteNo,
+	CAST(NULL AS datetime2) AS BankExpenditureNoteDate,
+	CAST(0 AS INT) AS BankExpenditureNoteDPP,
+	CAST(0 AS INT) AS BankExpenditureNotePPN,
+	CAST(0 AS numeric) AS BankExpenditureNoteMutation,
+	CAST(NULL AS nvarchar) AS MemoNo,
+	CAST(NULL AS datetime2) AS MemoDate,
+	CAST(0 AS INT) AS MemoDPP,
+	CAST(0 AS INT) AS MemoPPN,
+	CAST(0 AS numeric) AS MemoMutation,
+	CAST(NULL AS nvarchar) AS InvoiceNo,
+	CAST(0 AS numeric) AS DPPCurrency,
+	CAST(0 AS numeric) AS FinalBalance
+FROM (SELECT
 	URNId,
 	MAX(Code) AS Code,
 	CASE WHEN MAX(UseIncomeTax) = 1 THEN SUM(ReceiptQuantity * PricePerDealUnit) * 0.1 ELSE 0 END AS PPN,
 	SUM(ReceiptQuantity * PricePerDealUnit) AS DPP,
-	'' AS Products,
+	STRING_AGG('- ' + ProductName, CHAR(13)) AS Products,
 	MAX(SupplierCode) AS SupplierCode,
 	MAX(SupplierName) AS SupplierName,
 	MAX(SupplierId) AS SupplierId,
@@ -973,9 +1066,11 @@ where [refTable].[Code] = ?</property>
 	MAX(CreatedAgent) AS LastModifiedAgent,
 	MAX(CreatedBy) AS LastModifiedBy,
 	MAX(CreatedUtc) AS LastModifiedUtc,
-	'' AS DeletedAgent,
-	'' AS DeletedBy,
-	'0001-01-01' AS DeletedUtc
+	CAST('' AS nvarchar) AS DeletedAgent,
+	CAST('' AS nvarchar) AS DeletedBy,
+	CAST('0001-01-01' AS datetime2) AS DeletedUtc,
+	CAST(1 AS BIT) AS Active,
+	CAST(0 AS BIT) AS IsDeleted
 FROM (SELECT 
 	URNId,
 	URNItemId,
@@ -1043,7 +1138,7 @@ ON EPOItem.EPOId = EPO.Id
 WHERE URN.IsDeleted = 0) A
 WHERE EPODetailId IS NOT NULL) B
 GROUP BY URNId, URNItemId) C
-GROUP BY URNId</property>
+GROUP BY URNId) D</property>
                 <property
                   dataType="System.String"
                   description="The variable that contains the SQL command to be executed."
@@ -1069,8 +1164,8 @@ GROUP BY URNId</property>
               <connections>
                 <connection
                   refId="Package\UnitReceiptNotes\UnitReceiptQuery.Connections[OleDbConnection]"
-                  connectionManagerID="Package.ConnectionManagers[PURCHASING]"
-                  connectionManagerRefId="Package.ConnectionManagers[PURCHASING]"
+                  connectionManagerID="Package.ConnectionManagers[DEV]"
+                  connectionManagerRefId="Package.ConnectionManagers[DEV]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -1117,15 +1212,14 @@ GROUP BY URNId</property>
                       name="DPP"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
-                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[Products]"
-                      codePage="1252"
-                      dataType="str"
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[ Products]"
+                      dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[Products]"
-                      length="1"
-                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[Products]"
-                      name="Products"
+                      length="4000"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[ Products]"
+                      name=" Products"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[SupplierCode]"
@@ -1276,13 +1370,12 @@ GROUP BY URNId</property>
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[CreatedUtc]"
-                      dataType="dbTimeStamp2"
+                      dataType="dbTimeStampOffset"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[CreatedUtc]"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[CreatedUtc]"
                       name="CreatedUtc"
-                      scale="7"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[LastModifiedAgent]"
@@ -1316,36 +1409,192 @@ GROUP BY URNId</property>
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DeletedAgent]"
-                      codePage="1252"
-                      dataType="str"
+                      dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[DeletedAgent]"
-                      length="1"
+                      length="255"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DeletedAgent]"
                       name="DeletedAgent"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DeletedBy]"
-                      codePage="1252"
-                      dataType="str"
+                      dataType="wstr"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[DeletedBy]"
-                      length="1"
+                      length="255"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DeletedBy]"
                       name="DeletedBy"
                       truncationRowDisposition="FailComponent" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DeletedUtc]"
-                      codePage="1252"
-                      dataType="str"
+                      dataType="dbTimeStampOffset"
                       errorOrTruncationOperation="Conversion"
                       errorRowDisposition="FailComponent"
                       externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[DeletedUtc]"
-                      length="10"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DeletedUtc]"
                       name="DeletedUtc"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[IsDeleted]"
+                      dataType="bool"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[IsDeleted]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[IsDeleted]"
+                      name="IsDeleted"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[UnitReceiptNoteMutation]"
+                      dataType="r8"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[UnitReceiptNoteMutation]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[UnitReceiptNoteMutation]"
+                      name="UnitReceiptNoteMutation"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteId]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNoteId]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteId]"
+                      name="BankExpenditureNoteId"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteNo]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNoteNo]"
+                      length="30"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteNo]"
+                      name="BankExpenditureNoteNo"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteDate]"
+                      dataType="dbTimeStamp"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNoteDate]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteDate]"
+                      name="BankExpenditureNoteDate"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteDPP]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNoteDPP]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteDPP]"
+                      name="BankExpenditureNoteDPP"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNotePPN]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNotePPN]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNotePPN]"
+                      name="BankExpenditureNotePPN"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteMutation]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNoteMutation]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[BankExpenditureNoteMutation]"
+                      name="BankExpenditureNoteMutation"
+                      precision="18"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoNo]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[MemoNo]"
+                      length="30"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoNo]"
+                      name="MemoNo"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoDate]"
+                      dataType="dbTimeStamp"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[MemoDate]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoDate]"
+                      name="MemoDate"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoDPP]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[MemoDPP]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoDPP]"
+                      name="MemoDPP"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoPPN]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[MemoPPN]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoPPN]"
+                      name="MemoPPN"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoMutation]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[MemoMutation]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[MemoMutation]"
+                      name="MemoMutation"
+                      precision="18"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[InvoiceNo]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[InvoiceNo]"
+                      length="30"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[InvoiceNo]"
+                      name="InvoiceNo"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DPPCurrency]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[DPPCurrency]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[DPPCurrency]"
+                      name="DPPCurrency"
+                      precision="18"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[FinalBalance]"
+                      dataType="numeric"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[FinalBalance]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[FinalBalance]"
+                      name="FinalBalance"
+                      precision="18"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[Active]"
+                      dataType="bool"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[Active]"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].Columns[Active]"
+                      name="Active"
                       truncationRowDisposition="FailComponent" />
                   </outputColumns>
                   <externalMetadataColumns
@@ -1369,9 +1618,8 @@ GROUP BY URNId</property>
                       name="DPP" />
                     <externalMetadataColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[Products]"
-                      codePage="1252"
-                      dataType="str"
-                      length="1"
+                      dataType="wstr"
+                      length="4000"
                       name="Products" />
                     <externalMetadataColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[SupplierCode]"
@@ -1467,22 +1715,96 @@ GROUP BY URNId</property>
                       scale="7" />
                     <externalMetadataColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[DeletedAgent]"
-                      codePage="1252"
-                      dataType="str"
-                      length="1"
+                      dataType="wstr"
+                      length="30"
                       name="DeletedAgent" />
                     <externalMetadataColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[DeletedBy]"
-                      codePage="1252"
-                      dataType="str"
-                      length="1"
+                      dataType="wstr"
+                      length="30"
                       name="DeletedBy" />
                     <externalMetadataColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[DeletedUtc]"
-                      codePage="1252"
-                      dataType="str"
-                      length="10"
-                      name="DeletedUtc" />
+                      dataType="dbTimeStamp2"
+                      name="DeletedUtc"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[IsDeleted]"
+                      dataType="bool"
+                      name="IsDeleted" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[UnitReceiptNoteMutation]"
+                      dataType="r8"
+                      name="UnitReceiptNoteMutation" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNoteId]"
+                      dataType="i4"
+                      name="BankExpenditureNoteId" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNoteNo]"
+                      dataType="wstr"
+                      length="30"
+                      name="BankExpenditureNoteNo" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNoteDate]"
+                      dataType="dbTimeStamp2"
+                      name="BankExpenditureNoteDate"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNoteDPP]"
+                      dataType="i4"
+                      name="BankExpenditureNoteDPP" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNotePPN]"
+                      dataType="i4"
+                      name="BankExpenditureNotePPN" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[BankExpenditureNoteMutation]"
+                      dataType="numeric"
+                      name="BankExpenditureNoteMutation"
+                      precision="18" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[MemoNo]"
+                      dataType="wstr"
+                      length="30"
+                      name="MemoNo" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[MemoDate]"
+                      dataType="dbTimeStamp2"
+                      name="MemoDate"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[MemoDPP]"
+                      dataType="i4"
+                      name="MemoDPP" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[MemoPPN]"
+                      dataType="i4"
+                      name="MemoPPN" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[MemoMutation]"
+                      dataType="numeric"
+                      name="MemoMutation"
+                      precision="18" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[InvoiceNo]"
+                      dataType="wstr"
+                      length="30"
+                      name="InvoiceNo" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[DPPCurrency]"
+                      dataType="numeric"
+                      name="DPPCurrency"
+                      precision="18" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[FinalBalance]"
+                      dataType="numeric"
+                      name="FinalBalance"
+                      precision="18" />
+                    <externalMetadataColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Output].ExternalColumns[Active]"
+                      dataType="bool"
+                      name="Active" />
                   </externalMetadataColumns>
                 </output>
                 <output
@@ -1513,9 +1835,8 @@ GROUP BY URNId</property>
                       name="DPP" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[Products]"
-                      codePage="1252"
-                      dataType="str"
-                      length="1"
+                      dataType="wstr"
+                      length="4000"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[Products]"
                       name="Products" />
                     <outputColumn
@@ -1631,25 +1952,116 @@ GROUP BY URNId</property>
                       scale="7" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[DeletedAgent]"
-                      codePage="1252"
-                      dataType="str"
-                      length="1"
+                      dataType="wstr"
+                      length="30"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[DeletedAgent]"
                       name="DeletedAgent" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[DeletedBy]"
-                      codePage="1252"
-                      dataType="str"
-                      length="1"
+                      dataType="wstr"
+                      length="30"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[DeletedBy]"
                       name="DeletedBy" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[DeletedUtc]"
-                      codePage="1252"
-                      dataType="str"
-                      length="10"
+                      dataType="dbTimeStamp2"
                       lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[DeletedUtc]"
-                      name="DeletedUtc" />
+                      name="DeletedUtc"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[Active]"
+                      dataType="bool"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[Active]"
+                      name="Active" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[IsDeleted]"
+                      dataType="bool"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[IsDeleted]"
+                      name="IsDeleted" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[UnitReceiptNoteMutation]"
+                      dataType="r8"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[UnitReceiptNoteMutation]"
+                      name="UnitReceiptNoteMutation" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNoteId]"
+                      dataType="i4"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNoteId]"
+                      name="BankExpenditureNoteId" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNoteNo]"
+                      dataType="wstr"
+                      length="30"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNoteNo]"
+                      name="BankExpenditureNoteNo" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNoteDate]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNoteDate]"
+                      name="BankExpenditureNoteDate"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNoteDPP]"
+                      dataType="i4"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNoteDPP]"
+                      name="BankExpenditureNoteDPP" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNotePPN]"
+                      dataType="i4"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNotePPN]"
+                      name="BankExpenditureNotePPN" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNoteMutation]"
+                      dataType="numeric"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[BankExpenditureNoteMutation]"
+                      name="BankExpenditureNoteMutation"
+                      precision="18" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[MemoNo]"
+                      dataType="wstr"
+                      length="30"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[MemoNo]"
+                      name="MemoNo" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[MemoDate]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[MemoDate]"
+                      name="MemoDate"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[MemoDPP]"
+                      dataType="i4"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[MemoDPP]"
+                      name="MemoDPP" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[MemoPPN]"
+                      dataType="i4"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[MemoPPN]"
+                      name="MemoPPN" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[MemoMutation]"
+                      dataType="numeric"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[MemoMutation]"
+                      name="MemoMutation"
+                      precision="18" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[InvoiceNo]"
+                      dataType="wstr"
+                      length="30"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[InvoiceNo]"
+                      name="InvoiceNo" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[DPPCurrency]"
+                      dataType="numeric"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[DPPCurrency]"
+                      name="DPPCurrency"
+                      precision="18" />
+                    <outputColumn
+                      refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[FinalBalance]"
+                      dataType="numeric"
+                      lineageId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[FinalBalance]"
+                      name="FinalBalance"
+                      precision="18" />
                     <outputColumn
                       refId="Package\UnitReceiptNotes\UnitReceiptQuery.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
                       dataType="i4"
@@ -1670,18 +2082,13 @@ GROUP BY URNId</property>
           </components>
           <paths>
             <path
-              refId="Package\UnitReceiptNotes.Paths[Derived Column Output]"
-              endId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input]"
-              name="Derived Column Output"
-              startId="Package\UnitReceiptNotes\Derived Column.Outputs[Derived Column Output]" />
-            <path
               refId="Package\UnitReceiptNotes.Paths[Lookup Match Output]"
               endId="Package\UnitReceiptNotes\Lookup Existing.Inputs[Lookup Input]"
               name="Lookup Match Output"
               startId="Package\UnitReceiptNotes\Lookup Garment Currency.Outputs[Lookup Match Output]" />
             <path
               refId="Package\UnitReceiptNotes.Paths[Lookup No Match Output]"
-              endId="Package\UnitReceiptNotes\Derived Column.Inputs[Derived Column Input]"
+              endId="Package\UnitReceiptNotes\OLE DB Destination.Inputs[OLE DB Destination Input]"
               name="Lookup No Match Output"
               startId="Package\UnitReceiptNotes\Lookup Existing.Outputs[Lookup No Match Output]" />
             <path
@@ -1717,29 +2124,33 @@ GROUP BY URNId</property>
     design-time-name="Package\UnitReceiptNotes">
     <LayoutInfo>
       <GraphLayout
-        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
-        <NodeLayout
-          Size="161.333333333334,42.6666666666667"
-          Id="Package\UnitReceiptNotes\UnitReceiptQuery"
-          TopLeft="109.374998370186,55.249999012053" />
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="202.666666666667,42.6666666666667"
           Id="Package\UnitReceiptNotes\Lookup Garment Currency"
           TopLeft="390.624994179234,59.7999989306926" />
+        <NodeLayout
+          Size="153.333333333334,42.6666666666667"
+          Id="Package\UnitReceiptNotes\Lookup Existing"
+          TopLeft="413.124993843958,165.099997047782" />
+        <NodeLayout
+          Size="161.333333333334,42.6666666666667"
+          Id="Package\UnitReceiptNotes\UnitReceiptQuery"
+          TopLeft="103.749998454005,55.249999012053" />
         <EdgeLayout
           Id="Package\UnitReceiptNotes.Paths[OLE DB Source Output]"
-          TopLeft="270.708331703519,78.8583323047062">
+          TopLeft="265.083331787338,78.8583323047061">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="119.916662475715,0"
+              EndConnector="125.541662391896,0"
               Start="0,0"
-              End="112.416662475715,0">
+              End="118.041662391896,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="112.416662475715,0" />
+                    End="118.041662391896,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -1748,10 +2159,6 @@ GROUP BY URNId</property>
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="153.333333333334,42.6666666666667"
-          Id="Package\UnitReceiptNotes\Lookup Existing"
-          TopLeft="413.124993843958,165.099997047782" />
         <EdgeLayout
           Id="Package\UnitReceiptNotes.Paths[Lookup Match Output]"
           TopLeft="490.874994011596,102.466665597359">
@@ -1777,57 +2184,43 @@ GROUP BY URNId</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <NodeLayout
-          Size="154.666666666667,42.6666666666667"
-          Id="Package\UnitReceiptNotes\Derived Column"
-          TopLeft="168.124997494742,159.899997140765" />
+          Size="172,42.6666666666667"
+          Id="Package\UnitReceiptNotes\OLE DB Destination"
+          TopLeft="156.87499766238,249.03333079954" />
         <EdgeLayout
           Id="Package\UnitReceiptNotes.Paths[Lookup No Match Output]"
-          TopLeft="413.124993843958,183.833330427607">
+          TopLeft="489.791660510625,207.766663714449">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-90.3333296825489,0"
+              EndConnector="-246.916662848244,41.2666670850911"
               Start="0,0"
-              End="-82.8333296825489,0">
+              End="-246.916662848244,33.7666670850911">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="-82.8333296825489,0" />
+                    End="0,16.6333335425455" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,16.6333335425455"
+                    Point2="0,20.6333335425455"
+                    Point3="-4,20.6333335425455" />
+                  <mssgle:LineSegment
+                    End="-242.916662848244,20.6333335425455" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-242.916662848244,20.6333335425455"
+                    Point2="-246.916662848244,20.6333335425455"
+                    Point3="-246.916662848244,24.6333335425455" />
+                  <mssgle:LineSegment
+                    End="-246.916662848244,33.7666670850911" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-97.2230515600245,5,111.6127734375,11.609375"
+              BoundingBox="-179.264718142872,25.6333335425455,111.6127734375,11.609375"
               RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <NodeLayout
-          Size="172,42.6666666666667"
-          Id="Package\UnitReceiptNotes\OLE DB Destination"
-          TopLeft="159.374997625127,275.616661750178" />
-        <EdgeLayout
-          Id="Package\UnitReceiptNotes.Paths[Derived Column Output]"
-          TopLeft="245.416664226602,202.566663807432">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,73.0499979427457"
-              Start="0,0"
-              End="0,65.5499979427457">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,65.5499979427457" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>

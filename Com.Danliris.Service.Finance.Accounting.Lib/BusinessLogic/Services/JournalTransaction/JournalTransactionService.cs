@@ -564,7 +564,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
                 var reversingJournalTransaction = new JournalTransactionModel()
                 {
-                    Date = DateTimeOffset.Now,
+                    Date = transactionToReverse.Date,
                     Items = reversingItems,
                     ReferenceNo = transactionToReverse.ReferenceNo,
                     Status = transactionToReverse.Status,
