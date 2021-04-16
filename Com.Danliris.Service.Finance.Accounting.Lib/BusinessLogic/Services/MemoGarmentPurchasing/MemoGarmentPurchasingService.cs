@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoGarmentPurchasing;
 using System.Globalization;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoGarmentPurchasing
 {
@@ -204,6 +205,54 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             }
 
             return total;
+        }
+
+        public async Task<int> Posting(List<JournalTransactionModel> models)
+        {
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                int no = 1;
+                foreach (var model in models)
+                {
+                    model.DocumentNo = GetDocumentNo(no);
+                    model.Description = "Auto Journal Memo Pembelian Job Garment";
+                    model.Status = "Draft";
+                    model.IsReverser = false;
+                    model.IsReversed = false;
+
+                    EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                    foreach (var item in model.Items)
+                    {
+                        item.Remark = "";
+                        EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
+                    }
+                    no++;
+                }
+
+                _context.JournalTransactions.AddRange(models);
+
+                var result = await _context.SaveChangesAsync();
+
+                transaction.Commit();
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                throw e;
+            }
+        }
+
+        private string GetDocumentNo(int no)
+        {
+            var date = DateTime.Now;
+            var count = no + _context.JournalTransactions.Count(x => x.CreatedUtc.Year.Equals(date.Year) && x.CreatedUtc.Month.Equals(date.Month));
+            
+            var generatedNo = $"G{date.ToString("MM")}{date.ToString("yyyy")}{count.ToString("0000")}";
+
+            return generatedNo;
         }
     }
 }
