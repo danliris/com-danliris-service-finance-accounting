@@ -444,7 +444,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                          //&& transaction.Date.Month == month
                          && transaction.Date.ToOffset(offset).Month == month
                          && transaction.Date.Year == year
-                         orderby transaction.Date, transaction.CreatedUtc
+                         orderby transaction.ReferenceNo
                          select new DailyBankTransactionModel
                          {
                              Id = transaction.Id,

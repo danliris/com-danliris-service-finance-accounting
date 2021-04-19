@@ -114,15 +114,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var amount = form.Items.Sum(element =>
             {
                 var nominal = element.UnitPaymentOrder.Amount.GetValueOrDefault();
+                var vatNominal = (decimal)0.0;
+                var incomeTaxNominal = (decimal)0.0;
                 if (element.UnitPaymentOrder.UseVat.GetValueOrDefault())
-                    nominal += element.UnitPaymentOrder.Amount.GetValueOrDefault() * (decimal)0.1;
+                    vatNominal = element.UnitPaymentOrder.Amount.GetValueOrDefault() * (decimal)0.1;
 
 
                 if (element.UnitPaymentOrder.UseIncomeTax.GetValueOrDefault() && element.UnitPaymentOrder.IncomeTaxBy.ToUpper() == "SUPPLIER")
-                    nominal -= element.UnitPaymentOrder.Amount.GetValueOrDefault() * (decimal)element.UnitPaymentOrder.IncomeTax.Rate.GetValueOrDefault();
+                    incomeTaxNominal = element.UnitPaymentOrder.Amount.GetValueOrDefault() * (decimal)element.UnitPaymentOrder.IncomeTax.Rate.GetValueOrDefault() / 100;
 
 
-                return nominal;
+                return nominal + vatNominal - incomeTaxNominal;
             });
 
             if (form.Type == "Tanpa Nomor VB")
