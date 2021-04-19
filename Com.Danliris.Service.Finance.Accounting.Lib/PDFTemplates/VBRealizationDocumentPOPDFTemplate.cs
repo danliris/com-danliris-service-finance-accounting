@@ -175,7 +175,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 if (itm.UseVat)
                 {
-                    var temp = itm.Amount * 0.1m;
+                    var temp = itm.Amount * (decimal)0.1;
                     total_all = itm.Amount + temp;
                 }
                 else
@@ -333,7 +333,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody5a);
 
                 // Jumlah
-                cellHeaderBody5a.Phrase = new Phrase(res.ToString("#,##0.00", new CultureInfo("id-ID")) + ")", normal_font);
+                cellHeaderBody5a.Phrase = new Phrase($"({res.ToString("#,##0.00", new CultureInfo("id-ID"))})", normal_font);
                 cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody5a);
             }
@@ -349,7 +349,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody5a);
 
                 // Jumlah
-                cellHeaderBody5a.Phrase = new Phrase($"({res * -1:#,##0.00})", normal_font);
+                cellHeaderBody5a.Phrase = new Phrase($"{res * -1:#,##0.00}", normal_font);
 
                 cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody5a);
