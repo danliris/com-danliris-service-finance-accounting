@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasingExpedition;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -104,6 +105,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
         {
             var query = GetQuery(internalNoteId, supplierId, position, startDate, endDate);
             return query.ToList();
+        }
+        public List<GarmentPurchasingExpeditionReportViewModel> GetReportViewModel(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            var query = GetQuery(internalNoteId, supplierId, position, startDate, endDate);
+            var queryViewModel = query.Select(entity => new GarmentPurchasingExpeditionReportViewModel(entity));
+            return queryViewModel.ToList();
         }
 
         private IQueryable<GarmentPurchasingExpeditionModel> GetQuery(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset startDate, DateTimeOffset endDate)
