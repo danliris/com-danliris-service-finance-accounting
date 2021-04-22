@@ -99,7 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 result.Add(creditBalance);
             }
 
-            return result.OrderBy(x => x.Currency).ThenBy(x => x.Products).ThenBy(x => x.SupplierName).ToList();
+            return result.OrderBy(x => x.SupplierName).ToList();
         }
 
         public List<CreditBalanceViewModel> GetReportv2(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
@@ -196,7 +196,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
         public MemoryStream GenerateExcel(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
         {
-            var data = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency, divisionId);
+            var data = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency, divisionId).OrderBy(element => element.SupplierName).ToList();
 
             var divisionName = "SEMUA DIVISI";
 
@@ -281,7 +281,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
         public List<CreditBalanceViewModel> GeneratePdf(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
         {
-            var data = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency, divisionId).ToList();
+            var data = GetReport(isImport, suplierName, month, year, offSet, isForeignCurrency, divisionId).OrderBy(element => element.SupplierName).ToList();
 
             return data;
         }
@@ -293,7 +293,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             Pageable<CreditBalanceViewModel> pageable = new Pageable<CreditBalanceViewModel>(queries, page - 1, size);
             List<CreditBalanceViewModel> data = pageable.Data.ToList();
 
-            return new ReadResponse<CreditBalanceViewModel>(queries, pageable.TotalCount, new Dictionary<string, string>(), new List<string>());
+            return new ReadResponse<CreditBalanceViewModel>(queries.OrderBy(element => element.SupplierName).ToList(), pageable.TotalCount, new Dictionary<string, string>(), new List<string>());
         }
 
         private MemoryStream CreateExcel(bool isImport, int month, int year, string divisionName, List<KeyValuePair<DataTable, string>> dtSourceList, bool styling = false, int index = 0)
