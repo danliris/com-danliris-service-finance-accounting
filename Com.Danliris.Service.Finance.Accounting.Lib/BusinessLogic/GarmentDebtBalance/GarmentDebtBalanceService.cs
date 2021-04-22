@@ -138,7 +138,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             var query = GetDebtBalanceCardWithBeforeBalanceAndTotalDto(supplierId, month, year);
             var result = new GarmentDebtBalanceIndexDto
             {
-                Data = query,
+                Data = query.OrderBy(element => element.SupplierName).ToList(),
                 Count = query.Count,
                 Order = new List<string>(),
                 Selected = new List<string>()
@@ -150,7 +150,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             var query = GetDebtBalanceCardWithBeforeBalanceAndSaldoAkhirDto(supplierId, month, year);
             var result = new GarmentDebtBalanceIndexDto
             {
-                Data = query,
+                Data = query.OrderBy(element => element.SupplierName).ToList(),
                 Count = query.Count,
                 Order = new List<string>(),
                 Selected = new List<string>()
