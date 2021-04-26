@@ -16,6 +16,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         Task<int> UpdateAsync(int id, EditDetailRincian viewModel);
         Task<int> DeleteAsync(int id);
         ReadResponse<ReportPDF> GetPDF(DateTimeOffset date, int page, int size, string order, List<string> select, string keyword, string filter, int valas);
+        int Posting(List<int> ids);
 
     }
 }

@@ -161,7 +161,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IGarmentPurchasingPphBankExpenditureNoteService, GarmentPurchasingPphBankExpenditureNoteService>()
                 .AddTransient<IGarmentDebtBalanceService, GarmentDebtBalanceService>()
                 .AddTransient<IGarmentDispositionPaymentReportService, GarmentDispositionPaymentReportService>()
-                .AddTransient<IGarmentInvoicePurchasingDispositionService, GarmentInvocePurchasingDispositionService>()
+                .AddTransient<IGarmentInvoicePurchasingDispositionService, GarmentInvoicePurchasingDispositionService>()
                 .AddTransient<IAccountingBookService, AccountingBookService>()
                 .AddTransient<IMemoGarmentPurchasingService, MemoGarmentPurchasingService>()
                 .AddTransient<IMemoGarmentPurchasingReportService, MemoGarmentPurchasingReportService>()

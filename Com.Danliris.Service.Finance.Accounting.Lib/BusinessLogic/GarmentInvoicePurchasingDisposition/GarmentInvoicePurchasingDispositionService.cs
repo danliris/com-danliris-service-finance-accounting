@@ -21,7 +21,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentInvoicePurch
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoicePurchasingDisposition
 {
-    public class GarmentInvocePurchasingDispositionService : IGarmentInvoicePurchasingDispositionService
+    public class GarmentInvoicePurchasingDispositionService : IGarmentInvoicePurchasingDispositionService
     {
         private const string UserAgent = "finance-service";
         protected DbSet<GarmentInvoicePurchasingDispositionModel> DbSet;
@@ -30,7 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
         public readonly IServiceProvider ServiceProvider;
         public FinanceDbContext DbContext;
 
-        public GarmentInvocePurchasingDispositionService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
+        public GarmentInvoicePurchasingDispositionService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
             DbContext = dbContext;
             ServiceProvider = serviceProvider;
@@ -54,7 +54,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
                 if (item.TotalPaidBefore + item.TotalPaid >= item.TotalAmount)
                 {
                     expedition.IsPaid = true;
-                }else
+                }
+                else
                 {
                     expedition.IsPaid = false;
                 }
@@ -66,13 +67,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 
         public async Task<int> CreateAsync(GarmentInvoicePurchasingDispositionModel model)
         {
-            model.InvoiceNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username,model.InvoiceDate);
+            model.InvoiceNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username, model.InvoiceDate);
 
             //if (model.CurrencyCode != "IDR")
             //{
-                //var garmentCurrency = await GetGarmentCurrency(model.CurrencyCode);
-                //model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
-                model.CurrencyRate = model.CurrencyRate;
+            //var garmentCurrency = await GetGarmentCurrency(model.CurrencyCode);
+            //model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
+            model.CurrencyRate = model.CurrencyRate;
             //}
 
             CreateModel(model);
@@ -101,7 +102,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
             return result.data;
         }
 
-        private async Task<string> GetDocumentNo(string type, string bankCode, string username,DateTimeOffset dispositionDate)
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username, DateTimeOffset dispositionDate)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
             {
@@ -206,7 +207,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
                 {
                     item.SetTotalPaid(itemModel.TotalPaid);
                     GarmentDispositionExpeditionModel expedition = DbContext.GarmentDispositionExpeditions.FirstOrDefault(ex => ex.Id.Equals(item.PurchasingDispositionExpeditionId));
-                    if(itemModel.TotalPaidBefore+itemModel.TotalPaid >= itemModel.TotalAmount)
+                    if (itemModel.TotalPaidBefore + itemModel.TotalPaid >= itemModel.TotalAmount)
                     {
                         expedition.IsPaid = true;
                     }

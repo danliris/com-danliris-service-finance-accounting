@@ -115,5 +115,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance
             IsPayIncomeTax = isPayIncomeTax;
             VATNo = vatNo;
         }
+
+        public void SetMemo(int memoDetailId, string memoNo, double memoAmount, double paymentRate)
+        {
+            MemoDetailId = memoDetailId;
+            MemoNo = memoNo;
+            MemoAmount = memoAmount;
+            PaymentRate = paymentRate;
+        }
     }
 }
