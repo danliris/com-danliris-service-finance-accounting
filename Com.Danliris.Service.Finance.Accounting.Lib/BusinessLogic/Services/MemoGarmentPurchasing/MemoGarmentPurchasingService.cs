@@ -189,7 +189,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         private string GetMemoNo(MemoGarmentPurchasingModel model)
         {
             var date = DateTime.Now;
-            var count = 1 + _context.MemoGarmentPurchasings.Count(x => x.CreatedUtc.Year.Equals(date.Year) && x.CreatedUtc.Month.Equals(date.Month));
+            //var count = 1 + _context.MemoGarmentPurchasings.Count(x => x.CreatedUtc.Year.Equals(date.Year) && x.CreatedUtc.Month.Equals(date.Month));
+            var count = 1 + _context.MemoGarmentPurchasings.Count(x => x.MemoDate.Year.Equals(date.Year) && x.MemoDate.Month.Equals(date.Month));
+
 
             var generatedNo = $"{date.ToString("MM")}{date.ToString("yy")}.MG.{count.ToString("0000")}";
 
@@ -215,11 +217,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 int no = 1;
                 foreach (var model in models)
                 {
+                    var modelId = model.Id;
                     model.DocumentNo = GetDocumentNo(no);
                     model.Description = "Auto Journal Memo Pembelian Job Garment";
                     model.Status = "Draft";
                     model.IsReverser = false;
                     model.IsReversed = false;
+                    model.Id = 0;
 
                     EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                     foreach (var item in model.Items)
@@ -228,6 +232,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                         EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
                     }
                     no++;
+
+                    ///update posting data
+                    var getDataById = _context.MemoGarmentPurchasings.FirstOrDefault(s => s.Id == modelId);
+                    if(getDataById != null)
+                    {
+                        getDataById.IsPosted = true;
+                        EntityExtension.FlagForUpdate(getDataById, _identityService.Username, UserAgent);
+                        var resultUpdateFlag = _context.SaveChanges();
+                    }
+
                 }
 
                 _context.JournalTransactions.AddRange(models);
