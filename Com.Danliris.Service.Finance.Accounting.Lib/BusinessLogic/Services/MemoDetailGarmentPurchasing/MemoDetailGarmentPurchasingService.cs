@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -23,6 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         private readonly IServiceProvider _serviceProvider;
         protected DbSet<MemoDetailGarmentPurchasingModel> DbSet;
         protected DbSet<MemoDetailGarmentPurchasingDetailModel> DbSetDetail;
+        private readonly IGarmentDebtBalanceService _debtBalance;
 
         public MemoDetailGarmentPurchasingService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
@@ -32,6 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
             DbSet = _dbContext.Set<MemoDetailGarmentPurchasingModel>();
             DbSetDetail = _dbContext.Set<MemoDetailGarmentPurchasingDetailModel>();
+            _debtBalance = serviceProvider.GetService<IGarmentDebtBalanceService>();
         }
 
         public void CreateModel(MemoDetailGarmentPurchasingModel model)
@@ -438,6 +441,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             {
                 throw e;
             }
+        }
+
+        public int Posting(List<int> memoIds)
+        {
+            if (memoIds.Count > 0)
+            {
+                var memoDocuments = _dbContext.MemoDetailGarmentPurchasings.Where(entity => memoIds.Contains(entity.Id)).Select(entity => new { entity.Id, entity.MemoNo, entity.GarmentCurrenciesRate }).ToList();
+                var memoDetails = _dbContext.MemoDetailGarmentPurchasingDetails.Where(entity => memoIds.Contains(entity.MemoDetailId)).Select(entity => new { entity.Id, entity.MemoDetailId, entity.MemoAmount, entity.GarmentDeliveryOrderId }).ToList();
+
+                foreach (var detail in memoDetails)
+                {
+                    var memoDocument = memoDocuments.FirstOrDefault(element => element.Id == detail.MemoDetailId);
+                    _debtBalance.UpdateFromMemo(detail.GarmentDeliveryOrderId, detail.Id, memoDocument.MemoNo, detail.MemoAmount, memoDocument.GarmentCurrenciesRate);
+                }
+            }
+
+            return memoIds.Count;
         }
     }
 }

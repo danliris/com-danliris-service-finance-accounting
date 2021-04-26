@@ -14,6 +14,7 @@ using Com.Moonlay.NetCore.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoGarmentPurchasing;
 using System.Globalization;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtBalance;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoGarmentPurchasing
 {
@@ -21,12 +22,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
     {
         private readonly FinanceDbContext _context;
         private readonly IIdentityService _identityService;
+        private readonly IGarmentDebtBalanceService _debtBalance;
         private const string UserAgent = "finance-service";
 
         public MemoGarmentPurchasingService(FinanceDbContext context, IServiceProvider serviceProvider)
         {
             _context = context;
             _identityService = serviceProvider.GetService<IIdentityService>();
+            _debtBalance = serviceProvider.GetService<IGarmentDebtBalanceService>();
         }
 
         public async Task<int> CreateAsync(MemoGarmentPurchasingModel model)
@@ -201,7 +204,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         private int GetTotalAmount(ICollection<MemoGarmentPurchasingDetailModel> model)
         {
             var total = 0;
-            foreach(var detail in model)
+            foreach (var detail in model)
             {
                 total += detail.DebitNominal;
             }
@@ -235,7 +238,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
                     ///update posting data
                     var getDataById = _context.MemoGarmentPurchasings.FirstOrDefault(s => s.Id == modelId);
-                    if(getDataById != null)
+                    if (getDataById != null)
                     {
                         getDataById.IsPosted = true;
                         EntityExtension.FlagForUpdate(getDataById, _identityService.Username, UserAgent);
@@ -257,13 +260,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 transaction.Rollback();
                 throw e;
             }
+
         }
 
         private string GetDocumentNo(int no)
         {
             var date = DateTime.Now;
             var count = no + _context.JournalTransactions.Count(x => x.CreatedUtc.Year.Equals(date.Year) && x.CreatedUtc.Month.Equals(date.Month));
-            
+
             var generatedNo = $"G{date.ToString("MM")}{date.ToString("yyyy")}{count.ToString("0000")}";
 
             return generatedNo;

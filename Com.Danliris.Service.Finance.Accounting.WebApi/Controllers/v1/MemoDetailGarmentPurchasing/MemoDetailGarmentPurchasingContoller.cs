@@ -185,6 +185,23 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
             }
         }
 
+        [HttpPut("posting")]
+        public IActionResult Posting([FromBody] PostingFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+                _service.Posting(form.Ids);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message).Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
         [HttpGet("reports/downloads/pdf")]
         public IActionResult GetPdf([FromQuery] DateTimeOffset date, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}", int valas = -1)
         {
@@ -309,5 +326,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
             new MonthName(11, "November"),
             new MonthName(12, "Desember"),
         };
+    }
+
+    public class PostingFormDto
+    {
+        public PostingFormDto()
+        {
+
+        }
+
+        public List<int> Ids { get; set; }
     }
 }
