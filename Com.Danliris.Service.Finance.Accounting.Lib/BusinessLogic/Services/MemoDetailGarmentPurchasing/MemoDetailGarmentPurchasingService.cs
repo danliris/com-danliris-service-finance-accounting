@@ -447,13 +447,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         {
             if (memoIds.Count > 0)
             {
-                var memoDocuments = _dbContext.MemoDetailGarmentPurchasings.Where(entity => memoIds.Contains(entity.Id)).Select(entity => new { entity.Id, entity.MemoNo, entity.GarmentCurrenciesRate }).ToList();
+                var memoDocuments = _dbContext.MemoDetailGarmentPurchasings.Where(entity => memoIds.Contains(entity.Id)).ToList();
                 var memoDetails = _dbContext.MemoDetailGarmentPurchasingDetails.Where(entity => memoIds.Contains(entity.MemoDetailId)).Select(entity => new { entity.Id, entity.MemoDetailId, entity.MemoAmount, entity.GarmentDeliveryOrderId }).ToList();
 
                 foreach (var detail in memoDetails)
                 {
                     var memoDocument = memoDocuments.FirstOrDefault(element => element.Id == detail.MemoDetailId);
+                    
+                    
                     _debtBalance.UpdateFromMemo(detail.GarmentDeliveryOrderId, detail.Id, memoDocument.MemoNo, detail.MemoAmount, memoDocument.GarmentCurrenciesRate);
+
+                    memoDocument.IsPosted = true;
+                    EntityExtension.FlagForUpdate(memoDocument, _identityService.Username, UserAgent);
+                    _dbContext.SaveChanges();
                 }
             }
 
