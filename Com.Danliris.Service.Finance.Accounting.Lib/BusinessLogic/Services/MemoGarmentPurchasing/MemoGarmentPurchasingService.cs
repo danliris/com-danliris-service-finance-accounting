@@ -188,7 +188,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
         private string GetMemoNo(MemoGarmentPurchasingModel model)
         {
-            var date = DateTime.Now;
+            var date = model.MemoDate;
             //var count = 1 + _context.MemoGarmentPurchasings.Count(x => x.CreatedUtc.Year.Equals(date.Year) && x.CreatedUtc.Month.Equals(date.Month));
             var count = 1 + _context.MemoGarmentPurchasings.Count(x => x.MemoDate.Year.Equals(date.Year) && x.MemoDate.Month.Equals(date.Month));
 
