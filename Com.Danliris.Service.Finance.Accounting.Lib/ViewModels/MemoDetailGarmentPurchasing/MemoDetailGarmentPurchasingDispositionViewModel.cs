@@ -4,8 +4,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarme
 {
     public class MemoDetailGarmentPurchasingDispositionViewModel
     {
-        public int DispositionId { get; set; }
-        public string DispositionNo { get; set; }
-        public List<MemoDetail> MemoDetails { get; set; }
+        public DispositionDto Disposition { get; set; }
     }
 }
