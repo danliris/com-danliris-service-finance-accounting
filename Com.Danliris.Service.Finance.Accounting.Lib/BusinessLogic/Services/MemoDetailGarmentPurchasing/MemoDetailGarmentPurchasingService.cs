@@ -37,23 +37,68 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             _debtBalance = serviceProvider.GetService<IGarmentDebtBalanceService>();
         }
 
-        public void CreateModel(MemoDetailGarmentPurchasingModel model)
-        {
-            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+        //public void CreateModel(MemoDetailGarmentPurchasingModel model)
+        //{
+        //    EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
            
 
-            foreach (var item in model.MemoDetailGarmentPurchasingDetail)
-            {
-                EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
-            }
-            DbSet.Add(model);
-        }
+        //    foreach (var item in model.MemoDetailGarmentPurchasingDetail)
+        //    {
+        //        EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
+        //    }
+        //    DbSet.Add(model);
+        //}
 
-        public async Task<int> CreateAsync(MemoDetailGarmentPurchasingModel model)
+        public async Task<int> CreateAsync(MemoDetailGarmentPurchasingViewModel viewModel)
         {
             try
             {
-                CreateModel(model);
+                var model = new MemoDetailGarmentPurchasingModel()
+                {
+                    AccountingBookId = viewModel.AccountingBookId,
+                    AccountingBookType = viewModel.AccountingBookType,
+                    GarmentCurrenciesCode = viewModel.GarmentCurrenciesCode,
+                    GarmentCurrenciesId = viewModel.GarmentCurrenciesId,
+                    GarmentCurrenciesRate = viewModel.GarmentCurrenciesRate,
+                    MemoDate = viewModel.MemoDate,
+                    MemoId = viewModel.MemoId,
+                    MemoNo = viewModel.MemoNo,
+                    Remarks = viewModel.Remarks
+                };
+                EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
+                _dbContext.MemoDetailGarmentPurchasings.Add(model);
+                await _dbContext.SaveChangesAsync();
+
+                foreach (var item in viewModel.MemoDetailGarmentPurchasingDispositions)
+                {
+                    var memoItem = new MemoDetailGarmentPurchasingDispositionModel()
+                    {
+                        DispositionId = item.DispositionId,
+                        DispositionNo = item.DispositionNo,
+                        MemoDetailGarmentPurchasingId = model.Id
+                    };
+                    EntityExtension.FlagForCreate(memoItem, _identityService.Username, UserAgent);
+                    _dbContext.MemoDetailGarmentPurchasingDispositions.Add(memoItem);
+                    await _dbContext.SaveChangesAsync();
+
+                    foreach (var detail in item.MemoDetails)
+                    {
+                        var memoDetail = new MemoDetailGarmentPurchasingDetailModel()
+                        {
+                            GarmentDeliveryOrderId = detail.GarmentDeliveryOrderId,
+                            GarmentDeliveryOrderNo = detail.GarmentDeliveryOrderNo,
+                            MemoAmount = detail.MemoAmount,
+                            MemoDispositionId = memoItem.Id,
+                            RemarksDetail = detail.RemarksDetail,
+                            MemoDetailId = memoItem.Id,
+                            MemoId = model.Id
+                        };
+
+                        EntityExtension.FlagForCreate(memoDetail, _identityService.Username, UserAgent);
+                        _dbContext.MemoDetailGarmentPurchasingDetails.Add(memoDetail);
+                        await _dbContext.SaveChangesAsync();
+                    }
+                }
                 return await _dbContext.SaveChangesAsync();
             }
             catch (Exception e)
@@ -266,9 +311,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
         public void UpdateModel(int id, EditDetailRincian viewModel)
         {
-            MemoDetailGarmentPurchasingModel existDb = DbSet
-                        .Include(d => d.MemoDetailGarmentPurchasingDetail)
-                        .Single(memoDetail => memoDetail.Id == id && !memoDetail.IsDeleted);
+            MemoDetailGarmentPurchasingModel existDb = DbSet.FirstOrDefault(entity => entity.Id == id);
 
 
             existDb.MemoId = viewModel.MemoId;
@@ -285,7 +328,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             EntityExtension.FlagForUpdate(existDb, _identityService.Username, UserAgent);
             DbSet.Update(existDb);
 
-            foreach (var existRow in existDb.MemoDetailGarmentPurchasingDetail)
+            var details = _dbContext.MemoDetailGarmentPurchasingDetails.Where(entity => entity.MemoId == id).ToList();
+            foreach (var existRow in details)
             {
                 EditDetailRincianItems itemModel = viewModel.Items.FirstOrDefault(p => p.Id.Equals(existRow.Id));
                 if (itemModel == null)
@@ -307,7 +351,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
             }
 
-            _dbContext.MemoDetailGarmentPurchasingDetails.UpdateRange(existDb.MemoDetailGarmentPurchasingDetail);
+            _dbContext.MemoDetailGarmentPurchasingDetails.UpdateRange(details);
 
             foreach (var item in viewModel.Items)
             {
@@ -332,14 +376,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
         public async Task<MemoDetailGarmentPurchasingModel> ReadByIdAsync(int id)
         {
-            return await DbSet.Include(m => m.MemoDetailGarmentPurchasingDetail)
+            return await DbSet
                 .FirstOrDefaultAsync(d => d.Id.Equals(id) && !d.IsDeleted);
         }
 
         public async Task DeleteModel(int id)
         {
             MemoDetailGarmentPurchasingModel model = await ReadByIdAsync(id);
-            foreach (var item in model.MemoDetailGarmentPurchasingDetail)
+
+            var details = _dbContext.MemoDetailGarmentPurchasingDetails.Where(entity => entity.MemoId == id).ToList();
+            foreach (var item in details)
             {
                 EntityExtension.FlagForDelete(item, _identityService.Username, UserAgent, true);
             }

@@ -10,7 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
     public interface IMemoDetailGarmentPurchasingService
     {
         DetailRincian GetDetailById(int memoId);
-        Task<int> CreateAsync(MemoDetailGarmentPurchasingModel model);
+        Task<int> CreateAsync(MemoDetailGarmentPurchasingViewModel viewModel);
         ReadResponse<ListMemoDetail> Read(int page, int size, string order, List<string> select, string keyword, string filter);
         ReadResponse<ReportRincian> GetReport(DateTimeOffset date, int page, int size, string order, List<string> select, string keyword, string filter, int valas);
         Task<int> UpdateAsync(int id, EditDetailRincian viewModel);

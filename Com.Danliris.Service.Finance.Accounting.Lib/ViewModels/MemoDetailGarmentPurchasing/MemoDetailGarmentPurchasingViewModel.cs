@@ -19,7 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarme
         public int GarmentCurrenciesRate { get; set; }
         public string Remarks { get; set; }
         public bool IsPosted { get; set; }
-        public ICollection<MemoDetailGarmentPurchasingDetailViewModel> MemoDetailGarmentPurchasingDetail { get; set; }
+        public ICollection<MemoDetailGarmentPurchasingDispositionViewModel> MemoDetailGarmentPurchasingDispositions { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -36,36 +36,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarme
             if (string.IsNullOrWhiteSpace(AccountingBookType) || AccountingBookId <= 0)
                 yield return new ValidationResult("Jenis buku harus diisi", new List<string> { "AccountingBookType" });
 
-            if (MemoDetailGarmentPurchasingDetail.Count > 0)
+            if (MemoDetailGarmentPurchasingDispositions.Count > 0)
             {
                 int CountItemsError = 0;
                 string ItemsError = "[";
 
-                foreach (var memoDetail in MemoDetailGarmentPurchasingDetail)
+                foreach (var memoDetail in MemoDetailGarmentPurchasingDispositions)
                 {
                     ItemsError += "{ ";
-                    if (memoDetail.GarmentDeliveryOrderId <= 0 || string.IsNullOrWhiteSpace(memoDetail.GarmentDeliveryOrderNo))
+                    if (memoDetail.DispositionId <= 0)
                     {
                         CountItemsError++;
-                        ItemsError += "'GarmentDeliveryOrderNo': 'No. Surat Jalan harus diisi', ";
-                    }
-
-                    if (string.IsNullOrWhiteSpace(memoDetail.RemarksDetail))
-                    {
-                        CountItemsError++;
-                        ItemsError += "'RemarksDetail': 'Keterangan harus diisi', ";
-                    }
-
-                    if (memoDetail.PaymentRate <= 0)
-                    {
-                        CountItemsError++;
-                        ItemsError += "'PaymentRate': 'Rate Bayar harus diisi', ";
-                    }
-
-                    if (memoDetail.MemoAmount <= 0)
-                    {
-                        CountItemsError++;
-                        ItemsError += "'MemoAmount': 'Jumlah harus diisi', ";
+                        ItemsError += "'DispositionId': 'No. Disposisi harus diisi', ";
                     }
 
                     ItemsError += "}, ";
