@@ -95,7 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                     GarmentCurrenciesCode = entity.GarmentCurrenciesCode,
                     GarmentCurrenciesRate = entity.GarmentCurrenciesRate,
                     Remarks = entity.Remarks,
-                    IsPosted = entity.IsPosted,
+                    IsPosted = entity.IsPosted
                 }).ToList();
                 //var data = pageable.Data.ToList();
 
@@ -217,7 +217,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 m.PaymentRate,
                 m.PurchasingRate,
                 m.MemoAmount,
-                m.MemoIdrAmount
+                m.MemoIdrAmount,
             });
 
             var listData = from listDataDetail in listDataDetails
@@ -243,6 +243,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             {
                 Id = memoDetailsGarment.Id,
                 MemoId = memoDetailsGarment.MemoId,
+                IsPosted = memoDetailsGarment.IsPosted,
                 MemoDate = memoDetailsGarment.MemoDate,
                 MemoNo = memoDetailsGarment.MemoNo,
                 AccountingBookId = memoDetailsGarment.AccountingBookId,
