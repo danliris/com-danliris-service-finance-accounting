@@ -55,9 +55,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
                 VerifyUser();
                 _validateService.Validate(viewModel);
 
-                MemoDetailGarmentPurchasingModel model = _mapper.Map<MemoDetailGarmentPurchasingModel>(viewModel);
                 
-                await _service.CreateAsync(model);
+                await _service.CreateAsync(viewModel);
                 
                 var result = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok();
                 return Created(String.Concat(Request.Path, "/", 0), result);
