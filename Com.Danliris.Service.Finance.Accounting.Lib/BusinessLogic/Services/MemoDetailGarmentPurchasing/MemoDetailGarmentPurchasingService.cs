@@ -53,16 +53,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
         {
             try
             {
+                var memo = _dbContext.MemoGarmentPurchasings.FirstOrDefault(entity => entity.Id == viewModel.MemoId);
                 var model = new MemoDetailGarmentPurchasingModel()
                 {
-                    AccountingBookId = viewModel.AccountingBookId,
-                    AccountingBookType = viewModel.AccountingBookType,
-                    GarmentCurrenciesCode = viewModel.GarmentCurrenciesCode,
-                    GarmentCurrenciesId = viewModel.GarmentCurrenciesId,
-                    GarmentCurrenciesRate = viewModel.GarmentCurrenciesRate,
-                    MemoDate = viewModel.MemoDate,
+                    AccountingBookId = memo.AccountingBookId,
+                    AccountingBookType = memo.AccountingBookType,
+                    GarmentCurrenciesCode = memo.GarmentCurrenciesCode,
+                    GarmentCurrenciesId = memo.GarmentCurrenciesId,
+                    GarmentCurrenciesRate = memo.GarmentCurrenciesRate,
+                    MemoDate = memo.MemoDate,
                     MemoId = viewModel.MemoId,
-                    MemoNo = viewModel.MemoNo,
+                    MemoNo = memo.MemoNo,
                     Remarks = viewModel.Remarks
                 };
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -73,15 +74,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 {
                     var memoItem = new MemoDetailGarmentPurchasingDispositionModel()
                     {
-                        DispositionId = item.DispositionId,
-                        DispositionNo = item.DispositionNo,
+                        DispositionId = item.Disposition.DispositionId,
+                        DispositionNo = item.Disposition.DispositionNo,
                         MemoDetailGarmentPurchasingId = model.Id
                     };
                     EntityExtension.FlagForCreate(memoItem, _identityService.Username, UserAgent);
                     _dbContext.MemoDetailGarmentPurchasingDispositions.Add(memoItem);
                     await _dbContext.SaveChangesAsync();
 
-                    foreach (var detail in item.MemoDetails)
+                    foreach (var detail in item.Disposition.MemoDetails)
                     {
                         var memoDetail = new MemoDetailGarmentPurchasingDetailModel()
                         {
