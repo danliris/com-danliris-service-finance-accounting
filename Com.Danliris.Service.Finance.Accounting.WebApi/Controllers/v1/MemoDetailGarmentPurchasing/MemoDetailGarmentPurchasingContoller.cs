@@ -95,11 +95,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
         }
 
         [HttpGet("{Id}")]
-        public IActionResult GetById([FromRoute] int Id)
+        public async Task<IActionResult> GetById([FromRoute] int Id)
         {
             try
             {
-                var viewModel = _service.GetDetailById(Id);
+                var viewModel = await _service.ReadByIdAsync(Id);
 
                 if (viewModel == null)
                 {
@@ -108,7 +108,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
                 }
                 else
                 {
-                    var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Ok<DetailRincian>(_mapper, viewModel);
+                    var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE).Ok<MemoDetailGarmentPurchasingViewModel>(_mapper, viewModel);
                     return Ok(result);
                 }
             }
@@ -139,7 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoDeta
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] EditDetailRincian viewModel)
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] MemoDetailGarmentPurchasingViewModel viewModel)
         {
             try
             {
