@@ -9,6 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MemoDetailGarme
 {
     public class MemoDetailGarmentPurchasingViewModel : IValidatableObject
     {
+        public int Id { get; set; }
         public int MemoId { get; set; }
         public string Remarks { get; set; }
         public bool IsPosted { get; set; }
