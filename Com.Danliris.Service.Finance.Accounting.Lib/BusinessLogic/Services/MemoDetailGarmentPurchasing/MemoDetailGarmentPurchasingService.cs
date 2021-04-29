@@ -357,7 +357,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                         MemoAmount = detail.MemoAmount,
                         MemoDispositionId = memoItem.Id,
                         RemarksDetail = detail.RemarksDetail,
-                        MemoDetailId = memoItem.Id,
+                        MemoDetailId = model.Id,
                         MemoId = memo.Id,
                         PaymentRate = detail.PaymentRate,
                         PurchasingRate = detail.PurchasingRate,
