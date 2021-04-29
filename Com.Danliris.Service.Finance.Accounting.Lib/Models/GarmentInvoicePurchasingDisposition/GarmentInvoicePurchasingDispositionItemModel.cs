@@ -25,7 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurch
         public int CurrencyId { get; private set; }
         public string CurrencyCode { get; private set; }
         public double CurrencyRate { get; private set; }
-        public int GarmentInvoicePurchasingDisposistionId { get; set; }
+        public int GarmentInvoicePurchasingDispositionId { get; set; }
         public int PurchasingDispositionExpeditionId { get; private set; }
         [ForeignKey("GarmentInvoicePurchasingDisposistionId")]
         public virtual GarmentInvoicePurchasingDispositionModel GarmentInvoicePurchasingDisposition { get; set; }
