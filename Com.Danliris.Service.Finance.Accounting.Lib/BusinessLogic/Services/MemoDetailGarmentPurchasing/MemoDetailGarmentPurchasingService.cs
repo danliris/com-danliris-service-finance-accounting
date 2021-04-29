@@ -91,8 +91,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                             MemoAmount = detail.MemoAmount,
                             MemoDispositionId = memoItem.Id,
                             RemarksDetail = detail.RemarksDetail,
-                            MemoDetailId = memoItem.Id,
-                            MemoId = model.Id,
+                            MemoDetailId = model.Id,
+                            MemoId = memo.Id,
                             PaymentRate = detail.PaymentRate,
                             PurchasingRate = detail.PurchasingRate,
                             SupplierCode = detail.SupplierCode,
@@ -333,7 +333,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             model.Remarks = viewModel.Remarks;
 
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
-            _dbContext.MemoDetailGarmentPurchasings.Add(model);
+            _dbContext.MemoDetailGarmentPurchasings.Update(model);
             await _dbContext.SaveChangesAsync();
 
             foreach (var item in viewModel.MemoDetailGarmentPurchasingDispositions)
@@ -459,7 +459,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 };
 
                 var memoDispositions = _dbContext.MemoDetailGarmentPurchasingDispositions.Where(entity => entity.MemoDetailGarmentPurchasingId == id).ToList();
-                var memoDetails = _dbContext.MemoDetailGarmentPurchasingDetails.Where(entity => entity.MemoId == id);
+                var dispositionIds = memoDispositions.Select(element => element.Id).ToList();
+                var memoDetails = _dbContext.MemoDetailGarmentPurchasingDetails.Where(entity => dispositionIds.Contains(entity.MemoDispositionId));
                 var deliveryOrderIds = memoDetails.Select(element => element.GarmentDeliveryOrderId).ToList();
                 //var debtBalances = _dbContext.GarmentDebtBalances.Where(entity => deliveryOrderIds.Contains(entity.GarmentDeliveryOrderId)).ToList();
 
@@ -505,18 +506,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
         private void DeleteDetails(int memoId)
         {
-            var details = _dbContext.MemoDetailGarmentPurchasingDetails.Where(entity => entity.MemoId == memoId).ToList();
-            foreach (var item in details)
-            {
-                EntityExtension.FlagForDelete(item, _identityService.Username, UserAgent, true);
-                _dbContext.MemoDetailGarmentPurchasingDetails.Update(item);
-            }
+            
 
             var dispositions = _dbContext.MemoDetailGarmentPurchasingDispositions.Where(entity => entity.MemoDetailGarmentPurchasingId == memoId).ToList();
             foreach (var disposition in dispositions)
             {
                 EntityExtension.FlagForDelete(disposition, _identityService.Username, UserAgent, true);
                 _dbContext.MemoDetailGarmentPurchasingDispositions.Update(disposition);
+            }
+
+            var dispositionIds = dispositions.Select(entity => entity.Id).ToList();
+            var details = _dbContext.MemoDetailGarmentPurchasingDetails.Where(entity => dispositionIds.Contains(entity.MemoDispositionId)).ToList();
+            foreach (var item in details)
+            {
+                EntityExtension.FlagForDelete(item, _identityService.Username, UserAgent, true);
+                _dbContext.MemoDetailGarmentPurchasingDetails.Update(item);
             }
 
             _dbContext.SaveChanges();
