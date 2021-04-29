@@ -41,6 +41,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             _serviceProvider = serviceProvider;
         }
 
+        private async Task<GarmentCurrency> GetCurrencyByCurrencyCodeDate(string currencyCode, DateTimeOffset date)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
+
+            var currencyUri = APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?code={currencyCode}&stringDate={date.DateTime.ToString("yyyy-MM-dd")}";
+            var currencyResponse = await httpClient.GetAsync(currencyUri);
+
+            var currencyResult = new BaseResponse<GarmentCurrency>()
+            {
+                data = new GarmentCurrency()
+            };
+
+            if (currencyResponse.IsSuccessStatusCode)
+            {
+                currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
+            }
+
+            return currencyResult.data;
+        }
+
         public async Task<int> CreateAsync(DailyBankTransactionModel model)
         {
             do
@@ -48,6 +73,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 model.Code = CodeGenerator.Generate();
             }
             while (_DbSet.Any(d => d.Code.Equals(model.Code)));
+
+            var currency = await GetCurrencyByCurrencyCodeDate(model.AccountBankCurrencyCode, model.Date);
+            model.CurrencyRate = (decimal)currency.Rate.GetValueOrDefault();
+            if (model.CurrencyRate <= 0)
+                model.CurrencyRate = 1;
 
             model.Date = model.Date.AddHours(_IdentityService.TimezoneOffset);
 
@@ -583,6 +613,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             //while (_DbSet.Any(d => d.Code.Equals(model.Code)));
 
             //model.Date = model.Date.AddHours(_IdentityService.TimezoneOffset);
+            var currency = await GetCurrencyByCurrencyCodeDate(model.AccountBankCurrencyCode, model.Date);
+            model.CurrencyRate = (decimal)currency.Rate.GetValueOrDefault();
+            if (model.CurrencyRate <= 0)
+                model.CurrencyRate = 1;
 
             if (!model.IsPosted)
             {
