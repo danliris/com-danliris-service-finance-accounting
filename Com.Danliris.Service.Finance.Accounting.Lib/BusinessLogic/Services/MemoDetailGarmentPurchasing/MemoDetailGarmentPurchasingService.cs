@@ -92,7 +92,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                             MemoDispositionId = memoItem.Id,
                             RemarksDetail = detail.RemarksDetail,
                             MemoDetailId = memoItem.Id,
-                            MemoId = model.Id
+                            MemoId = model.Id,
+                            PaymentRate = detail.PaymentRate,
+                            PurchasingRate = detail.PurchasingRate,
+                            SupplierCode = detail.SupplierCode,
+                            SupplierName = detail.SupplierName,
+                            BillsNo = detail.BillsNo,
+                            InternalNoteNo = detail.InternalNoteNo,
+                            CurrencyCode = detail.CurrencyCode,
+                            PaymentBills = detail.PaymentBills,
+                            PurchaseAmount = detail.PurchaseAmount
                         };
 
                         EntityExtension.FlagForCreate(memoDetail, _identityService.Username, UserAgent);
@@ -349,7 +358,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                         MemoDispositionId = memoItem.Id,
                         RemarksDetail = detail.RemarksDetail,
                         MemoDetailId = memoItem.Id,
-                        MemoId = model.Id
+                        MemoId = memo.Id,
+                        PaymentRate = detail.PaymentRate,
+                        PurchasingRate = detail.PurchasingRate,
+                        SupplierCode = detail.SupplierCode,
+                        SupplierName = detail.SupplierName,
+                        BillsNo = detail.BillsNo,
+                        InternalNoteNo = detail.InternalNoteNo,
+                        CurrencyCode = detail.CurrencyCode,
+                        PaymentBills = detail.PaymentBills,
+                        PurchaseAmount = detail.PurchaseAmount
                     };
 
                     EntityExtension.FlagForCreate(memoDetail, _identityService.Username, UserAgent);
@@ -443,7 +461,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                 var memoDispositions = _dbContext.MemoDetailGarmentPurchasingDispositions.Where(entity => entity.MemoDetailGarmentPurchasingId == id).ToList();
                 var memoDetails = _dbContext.MemoDetailGarmentPurchasingDetails.Where(entity => entity.MemoId == id);
                 var deliveryOrderIds = memoDetails.Select(element => element.GarmentDeliveryOrderId).ToList();
-                var debtBalances = _dbContext.GarmentDebtBalances.Where(entity => deliveryOrderIds.Contains(entity.GarmentDeliveryOrderId)).ToList();
+                //var debtBalances = _dbContext.GarmentDebtBalances.Where(entity => deliveryOrderIds.Contains(entity.GarmentDeliveryOrderId)).ToList();
 
                 result.MemoDetailGarmentPurchasingDispositions = memoDispositions.Select(disposition =>
                 {
@@ -451,7 +469,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
 
                     var mDetails = details.Select(detail =>
                     {
-                        var debtBalance = debtBalances.FirstOrDefault(element => element.GarmentDeliveryOrderId == detail.GarmentDeliveryOrderId);
+                        //var debtBalance = debtBalances.FirstOrDefault(element => element.GarmentDeliveryOrderId == detail.GarmentDeliveryOrderId);
                         return new MemoDetail()
                         {
                             GarmentDeliveryOrderId = detail.GarmentDeliveryOrderId,
@@ -461,12 +479,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                             PurchasingRate = detail.PurchasingRate,
                             MemoAmount = detail.MemoAmount,
                             MemoIdrAmount = detail.MemoIdrAmount,
-                            BillsNo = debtBalance.BillsNo,
-                            CurrencyCode = debtBalance.CurrencyCode,
-                            InternalNoteNo = debtBalance.InternalNoteNo,
-                            PaymentBills = debtBalance.PaymentBills,
-                            SupplierCode = debtBalance.SupplierCode,
-                            SupplierName = debtBalance.SupplierName
+                            BillsNo = detail.BillsNo,
+                            CurrencyCode = detail.CurrencyCode,
+                            InternalNoteNo = detail.InternalNoteNo,
+                            PaymentBills = detail.PaymentBills,
+                            SupplierCode = detail.SupplierCode,
+                            SupplierName = detail.SupplierName,
+                            PurchaseAmount = detail.PurchaseAmount
                         };
                     }).ToList();
 

@@ -12,8 +12,9 @@
         public string BillsNo { get; set; }
         public string PaymentBills { get; set; }
         public string CurrencyCode { get; set; }
+        public double PurchaseAmount { get; set; }
 
-        public int PaymentRate { get; set; }
+        public double PaymentRate { get; set; }
         public int MemoAmount { get; set; }
         public int MemoIdrAmount { get; set; }
     }
