@@ -81,6 +81,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoDet
 using Microsoft.ApplicationInsights.AspNetCore;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.MemoGarmentPurchasingReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoGarmentPurchasingReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownPaymentReport;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -165,7 +166,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IAccountingBookService, AccountingBookService>()
                 .AddTransient<IMemoGarmentPurchasingService, MemoGarmentPurchasingService>()
                 .AddTransient<IMemoGarmentPurchasingReportService, MemoGarmentPurchasingReportService>()
-                .AddTransient<IMemoDetailGarmentPurchasingService, MemoDetailGarmentPurchasingService>();
+                .AddTransient<IMemoDetailGarmentPurchasingService, MemoDetailGarmentPurchasingService>()
+                .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>();
         }
 
 
