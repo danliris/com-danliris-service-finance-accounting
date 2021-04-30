@@ -5,22 +5,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownP
 {
     public class GarmentDownPaymentReportDto
     {
-        public GarmentDownPaymentReportDto(int dispositionId, string dispositionNo, DateTimeOffset dispositionDueDate, List<int> expenditureIds)
+        public GarmentDownPaymentReportDto(int dispositionId, string dispositionNo, DateTimeOffset dispositionDueDate, List<int> dispositionPaymentIds)
         {
             DispositionId = dispositionId;
             DispositionNo = dispositionNo;
             DispositionDueDate = dispositionDueDate;
-            DispositionExpenditures = new List<DispositionExpenditureDto>();
+            DispositionPayments = new List<DispositionPaymentDto>();
             MemoDocuments = new List<MemoDocumentDto>();
-            ExpenditureIds = expenditureIds;
+            DispositionPaymentIds = dispositionPaymentIds;
         }
 
         public int DispositionId { get; private set; }
         public string DispositionNo { get; private set; }
         public DateTimeOffset DispositionDueDate { get; private set; }
-        public List<DispositionExpenditureDto> DispositionExpenditures { get; private set; }
+        public List<DispositionPaymentDto> DispositionPayments { get; private set; }
         public List<MemoDocumentDto> MemoDocuments { get; private set; }
-        public List<int> ExpenditureIds { get; private set; }
+        public List<int> DispositionPaymentIds { get; private set; }
         public List<int> MemoIds { get; private set; }
     }
 }
