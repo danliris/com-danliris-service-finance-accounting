@@ -8,5 +8,6 @@
         public static string Purchasing { get; set; }
         public static string Finishing { get; set; }
         public static string Finance { get; set; }
+        public static string Sales { get; set; }
     }
 }

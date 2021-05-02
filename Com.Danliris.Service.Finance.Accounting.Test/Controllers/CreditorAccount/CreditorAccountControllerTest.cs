@@ -109,6 +109,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
         }
 
         [Fact]
+        public void GetReportExcelNull_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).GetXls("code", 8, 2030);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public async Task GetByUnitReceiptNote_ReturnOK()
         {
             var mocks = GetMocks();
@@ -213,6 +223,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             mocks.Service.Setup(f => f.UpdateFromUnitReceiptNoteAsync(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Throws(new Exception());
 
             var response = await GetController(mocks).UnitReceiptNotePut(new CreditorAccountUnitReceiptNotePostedViewModel());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutDeleteByUnitReceiptNote_ReturnNoContent()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.DeleteFromUnitReceiptNoteAsync(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).UnitReceiptNotePutDelete(new CreditorAccountUnitReceiptNotePostedViewModel());
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutDeleteByUnitReceiptNote_ThrowNotFound()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.DeleteFromUnitReceiptNoteAsync(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Throws(new NotFoundException());
+
+            var response = await GetController(mocks).UnitReceiptNotePutDelete(new CreditorAccountUnitReceiptNotePostedViewModel());
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task PutDeleteByUnitReceiptNote_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.DeleteFromUnitReceiptNoteAsync(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Throws(new Exception());
+
+            var response = await GetController(mocks).UnitReceiptNotePutDelete(new CreditorAccountUnitReceiptNotePostedViewModel());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
@@ -507,6 +553,60 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             mocks.Service.Setup(f => f.DeleteFromBankExpenditureNoteListAsync(It.IsAny<string>())).Throws(new Exception());
 
             var response = await GetController(mocks).BankExpenditureNoteDeleteList("code");
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        List<CreditorAccountViewModel> CreditorAccountViewModels
+        {
+            get
+            {
+                return new List<CreditorAccountViewModel>()
+                {
+                    new CreditorAccountViewModel()
+                    {
+                        BankExpenditureNoteNo="BankExpenditureNoteNo",
+                        Currency="Currency",
+                        CurrencyRate=1,
+                        Date=DateTimeOffset.Now,
+                        DPP=1,
+                        DPPCurrency=1,
+                        FinalBalance=1,
+                        InvoiceNo="InvoiceNo",
+                        MemoNo="MemoNo",
+                        Mutation=1,
+                        PaymentDuration="PaymentDuration",
+                        PPN=1,
+                        Products="Products",
+                        Total=1,
+                        UnitReceiptNoteNo="UnitReceiptNoteNo"
+                    }
+                };
+            }
+        }
+
+        [Fact]
+        public void GetPdf_Return_Success()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(CreditorAccountViewModels);
+            mocks.Service.Setup(f => f.GetFinalBalance(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(0);
+
+            var response =  GetController(mocks).GetPdf("",1,2020);
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void GetPdf_Return_InternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(vs => vs.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
+
+            mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GetFinalBalance(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).GetPdf("", 1, 2020);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }

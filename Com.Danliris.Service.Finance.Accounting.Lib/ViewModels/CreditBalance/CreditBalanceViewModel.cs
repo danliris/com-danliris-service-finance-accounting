@@ -8,12 +8,16 @@
 
         public string SupplierName { get; set; }
 
-        public double StartBalance { get; set; }
+        public decimal StartBalance { get; set; }
 
-        public double Purchase { get; set; }
+        public decimal Purchase { get; set; }
 
-        public double Payment { get; set; }
+        public decimal Payment { get; set; }
 
-        public double FinalBalance { get; set; }
+        public decimal FinalBalance { get; set; }
+
+        public decimal CurrencyRate { get; set; }
+
+        public string DivisionName { get; set; }
     }
 }

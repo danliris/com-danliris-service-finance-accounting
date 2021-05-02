@@ -13,6 +13,12 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using System.Net.Http;
+using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote
 {
@@ -21,6 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
         private const string UserAgent = "finance-service";
         protected DbSet<PaymentDispositionNoteModel> DbSet;
         public IIdentityService IdentityService;
+        private readonly IAutoDailyBankTransactionService _autoDailyBankTransactionService;
         public readonly IServiceProvider ServiceProvider;
         public FinanceDbContext DbContext;
 
@@ -30,12 +37,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             ServiceProvider = serviceProvider;
             DbSet = dbContext.Set<PaymentDispositionNoteModel>();
             IdentityService = serviceProvider.GetService<IIdentityService>();
+            _autoDailyBankTransactionService = serviceProvider.GetService<IAutoDailyBankTransactionService>();
         }
 
         public void CreateModel(PaymentDispositionNoteModel model)
         {
             EntityExtension.FlagForCreate(model, IdentityService.Username, UserAgent);
-            foreach(var item in model.Items)
+            foreach (var item in model.Items)
             {
                 PurchasingDispositionExpeditionModel expedition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(ex => ex.Id.Equals(item.PurchasingDispositionExpeditionId));
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
@@ -52,34 +60,79 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public async Task<int> CreateAsync(PaymentDispositionNoteModel model)
         {
-            model.PaymentDispositionNo = await GenerateNo(model, 7);
+            model.PaymentDispositionNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username);
+
+            if (model.BankCurrencyCode != "IDR")
+            {
+                var garmentCurrency = await GetGarmentCurrency(model.BankCurrencyCode);
+                model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
+            }
+
             CreateModel(model);
+            //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
         }
 
-        async Task<string> GenerateNo(PaymentDispositionNoteModel model, int clientTimeZoneOffset)
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username)
         {
-            DateTimeOffset Now = model.PaymentDate;
-            string Year = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("yy"); 
-            string Month = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("MM");
-            string Day = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd");
-            //PD + 2 digit tahun + 2 digit bulan + 2 digit tgl + 3 digit urut
-            string no = $"PD-{Year}-{Month}-{Day}-";
-            int Padding = 3;
-
-            var lastNo = await this.DbSet.Where(w => w.PaymentDispositionNo.StartsWith(no) && !w.IsDeleted).OrderByDescending(o => o.PaymentDispositionNo).FirstOrDefaultAsync();
-            no = $"{no}";
-
-            if (lastNo == null)
+            var jsonSerializerSettings = new JsonSerializerSettings
             {
-                return no + "1".PadLeft(Padding, '0');
-            }
-            else
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = ServiceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
             {
-                int lastNoNumber = Int32.Parse(lastNo.PaymentDispositionNo.Replace(no, "")) + 1;
-                return no + lastNoNumber.ToString().PadLeft(Padding, '0');
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
             }
+            return result.data;
         }
+
+        private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        {
+            var date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+            var queryString = $"code={codeCurrency}&stringDate={date}";
+
+            var http = ServiceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+            return result.data;
+        }
+
+        //async Task<string> GenerateNo(PaymentDispositionNoteModel model, int clientTimeZoneOffset)
+        //{
+        //    DateTimeOffset Now = model.PaymentDate;
+        //    string Year = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("yy");
+        //    string Month = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("MM");
+        //    string Day = Now.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd");
+        //    //PD + 2 digit tahun + 2 digit bulan + 2 digit tgl + 3 digit urut
+        //    string no = $"PD-{Year}-{Month}-{Day}-";
+        //    int Padding = 3;
+
+        //    var lastNo = await this.DbSet.Where(w => w.PaymentDispositionNo.StartsWith(no) && !w.IsDeleted).OrderByDescending(o => o.PaymentDispositionNo).FirstOrDefaultAsync();
+        //    no = $"{no}";
+
+        //    if (lastNo == null)
+        //    {
+        //        return no + "1".PadLeft(Padding, '0');
+        //    }
+        //    else
+        //    {
+        //        int lastNoNumber = int.Parse(lastNo.PaymentDispositionNo.Replace(no, "")) + 1;
+        //        return no + lastNoNumber.ToString().PadLeft(Padding, '0');
+        //    }
+        //}
 
         public async Task DeleteModel(int id)
         {
@@ -102,18 +155,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public async Task<int> DeleteAsync(int id)
         {
+            var existingModel = DbSet
+                        .Include(d => d.Items)
+                        .ThenInclude(d => d.Details)
+                        .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
+
+            //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(existingModel);
             await DeleteModel(id);
             return await DbContext.SaveChangesAsync();
         }
 
         public Task<PaymentDispositionNoteModel> ReadByIdAsync(int id)
         {
-            return DbSet.Include(m => m.Items).ThenInclude(m=>m.Details).FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
+            return DbSet.Include(m => m.Items).ThenInclude(m => m.Details).FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
         }
 
         public async Task<int> UpdateAsync(int id, PaymentDispositionNoteModel model)
         {
+            var existingModel = DbSet
+                        .Include(d => d.Items)
+                        .ThenInclude(d => d.Details)
+                        .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
             UpdateModel(id, model);
+            //await _autoDailyBankTransactionService.AutoRevertFromPaymentDisposition(existingModel);
+            //await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
             return await DbContext.SaveChangesAsync();
         }
 
@@ -123,6 +188,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         .Include(d => d.Items)
                         .ThenInclude(d => d.Details)
                         .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
+
 
             exist.BGCheckNumber = model.BGCheckNumber;
             exist.PaymentDate = model.PaymentDate;
@@ -166,7 +232,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public ReadResponse<PaymentDispositionNoteModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            IQueryable<PaymentDispositionNoteModel> Query = this.DbSet.Include(m => m.Items).ThenInclude(m=>m.Details);
+            IQueryable<PaymentDispositionNoteModel> Query = this.DbSet.Include(m => m.Items).ThenInclude(m => m.Details);
             List<string> searchAttributes = new List<string>()
             {
                 "PaymentDispositionNo", "Items.DispositionNo",  "SupplierName", "BankCurrencyCode","BankName"
@@ -187,15 +253,47 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return new ReadResponse<PaymentDispositionNoteModel>(Data, TotalData, OrderDictionary, new List<string>());
         }
 
-        public ReadResponse<PaymentDispositionNoteDetailModel> ReadDetailsByEPOId(string epoId)
+        public ReadResponse<PaymentDispositionNoteItemModel> ReadDetailsByEPOId(string epoId)
         {
-            List<PaymentDispositionNoteDetailModel> paymentDispositionNoteDetails = DbContext.PaymentDispositionNoteDetails.Where(a => a.EPOId == epoId).ToList();
-            
+            List<PaymentDispositionNoteItemModel> paymentDispositionNoteDetails = DbContext.PaymentDispositionNoteItems.Where(a => a.Details.Any(b => b.EPOId == epoId)).Distinct().ToList();
+
             Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>("{ }");
-            
+
             int TotalData = paymentDispositionNoteDetails.Count;
 
-            return new ReadResponse<PaymentDispositionNoteDetailModel>(paymentDispositionNoteDetails, TotalData, OrderDictionary, new List<string>());
+            return new ReadResponse<PaymentDispositionNoteItemModel>(paymentDispositionNoteDetails, TotalData, OrderDictionary, new List<string>());
+        }
+
+        private async Task SetTrueDisposition(string dispositionNo)
+        {
+            var http = ServiceProvider.GetService<IHttpClientService>();
+            await http.PutAsync(APIEndpoint.Purchasing + $"purchasing-dispositions/update/is-paid-true/{dispositionNo}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType) );
+        }
+
+        public async Task<int> Post(PaymentDispositionNotePostDto form)
+        {
+            List<int> listIds = form.ListIds.Select(x => x.Id).ToList();
+
+            foreach (int id in listIds)
+            {
+                var model = await ReadByIdAsync(id);
+
+                if (model != null)
+                {
+                    model.SetIsPosted(IdentityService.Username, UserAgent);
+
+                    foreach (var item in model.Items)
+                    {
+                        await SetTrueDisposition(item.DispositionNo);
+                    }
+
+                    await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+                }
+            }
+
+            var result = await DbContext.SaveChangesAsync();
+
+            return result;
         }
     }
 }

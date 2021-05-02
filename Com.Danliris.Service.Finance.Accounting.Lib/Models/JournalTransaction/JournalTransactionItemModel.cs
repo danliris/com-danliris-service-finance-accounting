@@ -12,8 +12,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction
         public int COAId { get; set; }
         public virtual COAModel COA { get; set; }
         public string Remark { get; set; }
-        public double Debit { get; set; }
-        public double Credit { get; set; }
+        public decimal Debit { get; set; }
+        public decimal Credit { get; set; }
         public int JournalTransactionId { get; set; }
         [ForeignKey("JournalTransactionId")]
         public virtual JournalTransactionModel JournalTransaction { get; set; }

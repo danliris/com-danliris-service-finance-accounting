@@ -17,10 +17,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
     public class JournalTransactionControllerTest : BaseControllerTest<JournalTransactionController, JournalTransactionModel, JournalTransactionViewModel, IJournalTransactionService>
     {
         [Fact]
+        public void GetTransaction_ReturnOK()
+        {
+            var mocks = GetMocks();
+
+            Dictionary<string, string> order = new Dictionary<string, string>();
+
+            mocks.Service
+                .Setup(f => f.ReadByDate(It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new ReadResponse<JournalTransactionModel>(new List<JournalTransactionModel>(), 1, order, new List<string>()));
+
+            var response = GetController(mocks).GetTransaction(DateTimeOffset.UtcNow.AddDays(-7), DateTimeOffset.UtcNow, 1, 25, "{}", null, null, "{}");
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetTransaction_ReturnInternalServerEror()
+        {
+            var mocks = GetMocks();
+
+            mocks.Service
+                .Setup(f => f.ReadByDate(It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception());
+
+            var response = GetController(mocks).GetTransaction(DateTimeOffset.UtcNow.AddDays(-7), DateTimeOffset.UtcNow, 1, 25, "{}", null, null, "{}");
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public void GetReport_ReturnOK()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).Returns((new ReadResponse<JournalTransactionReportViewModel>(new List<JournalTransactionReportViewModel>(), 1, new Dictionary<string, string>(), new List<string>()), 0, 0));
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).Returns((new ReadResponse<JournalTransactionReportHeaderViewModel>(new List<JournalTransactionReportHeaderViewModel>(), 1, new Dictionary<string, string>(), new List<string>()), 0, 0));
 
             var response = GetController(mocks).GetReport();
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
@@ -37,12 +65,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         }
 
         [Fact]
+        public void Get_Unposted_Return_Ok()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadUnPostedTransactionsByPeriod(It.IsAny<int>(), It.IsAny<int>())).Returns(new List<JournalTransactionModel>());
+
+            var response = GetController(mocks).GetUnPosted(0, 0);
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void Get_Unposted_Throws_Exception()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadUnPostedTransactionsByPeriod(It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).GetUnPosted();
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public void GetReportExcel_ReturnFile()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<int>())).Returns(new MemoryStream());
 
-            var response =  GetController(mocks).GetXls();
+            var response = GetController(mocks).GetXls();
             Assert.NotNull(response);
 
             var response2 = GetController(mocks).GetXls(DateTimeOffset.UtcNow);
@@ -109,7 +157,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public async Task Should_Success_Get_SubLedger_Reports_Xls()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetSubLedgerReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new SubLedgerXlsFormat());
+            mocks.Service.Setup(f => f.GetSubLedgerReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new SubLedgerXlsFormat()
+            {
+                Filename = "aa",
+                Result = new MemoryStream()
+            });
 
             var response = await GetController(mocks).GetSubLedgerReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
             Assert.NotNull(response);
@@ -155,6 +207,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         }
 
         [Fact]
+        public async Task Should_Succes_PostTransactionById()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.PostTransactionAsync(It.IsAny<int>(), It.IsAny<JournalTransactionModel>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).PostingTransationById(It.IsAny<int>(), It.IsAny<JournalTransactionViewModel>());
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Throw_Exception_PostTransactionById()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.PostTransactionAsync(It.IsAny<int>(), It.IsAny<JournalTransactionModel>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).PostingTransationById(It.IsAny<int>(), It.IsAny<JournalTransactionViewModel>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
         public async Task Post_Many_WithoutException_ReturnCreated()
         {
             var mocks = GetMocks();
@@ -187,6 +259,46 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
             var response = await GetController(mocks).PostMany(It.IsAny<List<JournalTransactionViewModel>>());
             int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public async Task GetGeneralLedger_ReturnOk()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetGeneralLedgerReport(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>())).ReturnsAsync(new List<GeneralLedgerWrapperReportViewModel>());
+
+            var response = await GetController(mocks).GetGeneralLedger(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task GetGeneralLedger_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetGeneralLedgerReport(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).GetGeneralLedger(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_GeneralLedger_Reports_Xls()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetGeneralLedgerReportXls(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>())).ReturnsAsync(new MemoryStream());
+
+            var response = await GetController(mocks).GetGeneralLedgerXls(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Should_ThrowException_Get_GeneralLedger_Reports_Xls()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetGeneralLedgerReportXls(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+
+            var response = await GetController(mocks).GetGeneralLedgerXls(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
 }

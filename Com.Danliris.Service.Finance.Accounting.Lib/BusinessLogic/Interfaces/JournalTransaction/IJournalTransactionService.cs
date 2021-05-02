@@ -11,12 +11,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.J
 {
     public interface IJournalTransactionService : IBaseService<JournalTransactionModel>
     {
-        (ReadResponse<JournalTransactionReportViewModel>, double, double) GetReport(int page, int size, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet);
+        (ReadResponse<JournalTransactionReportHeaderViewModel>, decimal, decimal) GetReport(int page, int size, DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet);
         MemoryStream GenerateExcel(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet);
         Task<int> ReverseJournalTransactionByReferenceNo(string referenceNo);
-        Task<SubLedgerReportViewModel> GetSubLedgerReport(int coaId, int month, int year, int timeoffset);
-        Task<SubLedgerXlsFormat> GetSubLedgerReportXls(int coaId, int month, int year, int timeoffset);
+        Task<SubLedgerReportViewModel> GetSubLedgerReport(int? coaId, int month, int year, int timeoffset);
+        Task<SubLedgerXlsFormat> GetSubLedgerReportXls(int? coaId, int? month, int? year, int timeoffset);
         Task<int> PostTransactionAsync(int id);
+        Task<int> PostTransactionAsync(int id, JournalTransactionModel model);
         Task<int> CreateManyAsync(List<JournalTransactionModel> models);
+        List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year);
+        Task<List<GeneralLedgerWrapperReportViewModel>> GetGeneralLedgerReport(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset);
+        Task<MemoryStream> GetGeneralLedgerReportXls(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset);
+        ReadResponse<JournalTransactionModel> ReadByDate(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet, int page, int size, string order, List<string> select, string keyword, string filter);
     }
 }

@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
         private readonly List<string> Header = new List<string>()
         {
-            "Name", "Nature", "ReportType", "Code"
+            "Kode", "Nama", "Report Type", "Nature", "Balance"
         };
         public List<string> CsvHeader => Header;
 
@@ -44,10 +44,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
         {
             public COAMap()
             {
-                Map(x => x.Code).Index(3);
-                Map(x => x.Name).Index(0);
+                Map(x => x.Code).Index(0);
+                Map(x => x.Name).Index(1);
                 Map(x => x.ReportType).Index(2);
-                Map(x => x.Nature).Index(1);
+                Map(x => x.Nature).Index(3);
+                Map(x => x.Balance).Index(4);
             }
         }
 
@@ -76,7 +77,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
             List<string> searchAttributes = new List<string>()
             {
-                "Code", "Name", "Nature", "ReportType"
+                "Code", "Name"
             };
 
             query = QueryHelper<COAModel>.Search(query, searchAttributes, keyword);
@@ -86,7 +87,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
             List<string> selectedFields = new List<string>()
                 {
-                    "Id", "Name", "Code","Path", "Nature", "CashAccount", "ReportType", "LastModifiedUtc"
+                    "Id", "Name", "Code","Path", "Nature", "CashAccount", "ReportType", "LastModifiedUtc", "Balance"
                 };
 
             Dictionary<string, string> orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
@@ -107,6 +108,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                 CashAccount = x.CashAccount,
                 Nature = x.Nature,
                 ReportType = x.ReportType,
+                Balance = x.Balance,
                 LastModifiedUtc = x.LastModifiedUtc
             });
 
@@ -177,7 +179,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                         DbSet.AddRange(batch);
                         var result = await DbContext.SaveChangesAsync();
                         processed += batch.Count();
-                        offset = pageSize;
+                        offset += pageSize;
                     };
                     transaction.Commit();
                 }
@@ -283,10 +285,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
 
                     Error.Add("Kode", coaVM.Code);
                     Error.Add("Nama", coaVM.Name);
-                    Error.Add("Path", coaVM.Path);
                     Error.Add("Report Type", coaVM.ReportType);
                     Error.Add("Nature", coaVM.Nature);
-                    Error.Add("Cash Account", coaVM.CashAccount);
                     Error.Add("Error", ErrorMessage);
 
                     ErrorList.Add(Error);
@@ -338,11 +338,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mas
                 CashAccount = x.CashAccount,
                 Nature = x.Nature,
                 ReportType = x.ReportType,
+                Balance = x.Balance,
                 LastModifiedUtc = x.LastModifiedUtc
             });
-            
 
-            return query.ToList();
+
+            return query.OrderBy(x => x.Code).ToList();
+        }
+
+        public Task<List<COAModel>> GetEmptyNames()
+        {
+            return DbSet.Where(x => string.IsNullOrEmpty(x.Name) || string.IsNullOrWhiteSpace(x.Name)).ToListAsync();
+        }
+
+        public async Task<int> ReviseEmptyNamesCoa(List<COAModel> data)
+        {
+            var updatedData = data.Where(x => !string.IsNullOrEmpty(x.Name) && !string.IsNullOrWhiteSpace(x.Name));
+
+            foreach(var item in updatedData)
+            {
+                var model = await ReadModelById(item.Id);
+                model.Name = item.Name;
+                UpdateModelAsync(model.Id, model);
+            }
+            return await DbContext.SaveChangesAsync();
         }
     }
 }

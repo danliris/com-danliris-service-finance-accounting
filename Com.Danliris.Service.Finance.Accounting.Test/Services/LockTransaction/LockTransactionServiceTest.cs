@@ -84,7 +84,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.LockTransaction
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_By_Type()
+        public async Task Should_Success_Get_Data_By_Type()
         {
             var service = new LockTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = await _dataUtil(service).GetTestData();
@@ -131,6 +131,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.LockTransaction
 
             Assert.True(vm.Validate(null).Count() > 0);
         }
+
+        [Fact]
+        public void Should_Success_Validate_LockDateNull()
+        {
+            var vm = new LockTransactionViewModel
+            {
+                LockDate = null
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
 
         [Fact]
         public async Task Should_Success_Update_Data()

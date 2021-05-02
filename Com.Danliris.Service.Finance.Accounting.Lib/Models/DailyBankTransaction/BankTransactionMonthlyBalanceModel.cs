@@ -9,9 +9,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         public int Month { get; set; }
         public int Year { get; set; }
         public double InitialBalance { get; set; }
+        public double InitialBalanceValas { get; set; }
         public double RemainingBalance { get; set; }
+        public double RemainingBalanceValas { get; set; }
         [MaxLength(50)]
-        public string AccountBankId { get; set; }
+        public int AccountBankId { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             throw new System.NotImplementedException();

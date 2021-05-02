@@ -1,19 +1,24 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
+using Com.Moonlay.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransaction
@@ -56,7 +61,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(new HttpClientTestService());
+                .Returns(new DailyBankTransactionIHttpService());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -67,7 +72,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_In()
+        public async Task Should_Success_Get_Data_In()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestDataIn();
@@ -76,7 +81,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async void Should_Success_Get_Report()
+        public async Task Should_Success_GenerateExcel()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var Response = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+            Assert.NotNull(Response);
+
+            data.AccountBankId = 2;
+            var Response2 = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+            Assert.NotNull(Response2);
+        }
+
+        [Fact]
+        public void Should_Success_GenerateExcel_when_dataEmpty()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+           
+            var Response = service.GetExcel(0, 7, 1001, 0);
+            Assert.NotNull(Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_Report()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestDataIn();
@@ -85,7 +112,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_Out()
+        public async Task Should_Success_Get_Data_Out()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             await _dataUtil(service).GetTestDataOut();
@@ -94,7 +121,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async void Should_Success_Get_Data_By_Id()
+        public async Task Should_Success_Get_Data_By_Id()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = await _dataUtil(service).GetTestDataIn();
@@ -103,7 +130,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async void Should_Success_Create_Data()
+        public async Task Should_Success_Create_Data()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = _dataUtil(service).GetNewData();
@@ -143,17 +170,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public void Should_Success_Validate_With_Invalid_Input_Data_In_Receiver_Null_Others()
+        {
+            DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
+            {
+                Date = DateTime.Now.AddYears(1),
+                Status = "IN",
+                SourceType = "Lain - lain"
+            };
+
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
         public void Should_Success_Validate_With_Invalid_Input_Data_In_Buyer_NotNull_NonOperasional()
         {
             DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
             {
                 Bank = new AccountBankViewModel()
                 {
-                    _id = ""
+                    Id = 0
                 },
-                Buyer = new BuyerViewModel()
+                Buyer = new NewBuyerViewModel()
                 {
-                    _id = ""
+                    Id = 0
                 },
                 Date = DateTime.Now.AddYears(1),
                 Nominal = 0,
@@ -180,20 +221,111 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public void Should_Success_Instatiate_New_Buyer()
+        {
+            var buyer = new NewBuyerViewModel()
+            {
+                Id = 1,
+                Code = "Code",
+                Name = "Name"
+            };
+
+
+            Assert.True(buyer != null);
+        }
+
+        [Fact]
+        public void Should_Success_Instatiate_New_Supplier()
+        {
+            var supplier = new NewSupplierViewModel()
+            {
+                _id = 1,
+                code = "Code",
+                name = "Name",
+                import = false
+            };
+
+
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
+        public void Should_Success_Instatiate_Buyer()
+        {
+            var supplier = new Lib.ViewModels.IntegrationViewModel.BuyerViewModel()
+            {
+                _id = "",
+                code = "Code",
+                name = "Name",
+            };
+
+            Assert.Equal("Code", supplier.code);
+            Assert.Equal("Name", supplier.name);
+            Assert.Equal("", supplier._id);
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
+        public void Should_Success_Instatiate_Supplier()
+        {
+            var supplier = new Lib.ViewModels.IntegrationViewModel.SupplierViewModel()
+            {
+                _id = "",
+                code = "Code",
+                name = "Name"
+            };
+
+
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
+        public void Should_Success_Instatiate_AccountBank()
+        {
+            var supplier = new Lib.ViewModels.IntegrationViewModel.AccountBankViewModel()
+            {
+                _id = "",
+                code = "Code",
+                accountName = "accountName",
+                bankName = "bankName",
+                accountCurrencyId= "123",
+                accountNumber= "123",
+                bankCode = "bankCode",
+                currency = new Lib.ViewModels.IntegrationViewModel.CurrencyViewModel()
+                {
+                    code = "",
+                    description = "",
+                    rate = 0,
+                    symbol = "",
+                    _id = ""
+                }
+            };
+
+            Assert.Equal("Code", supplier.code);
+            Assert.Equal("accountName", supplier.accountName);
+            Assert.Equal("bankName", supplier.bankName);
+            Assert.Equal("bankCode", supplier.bankCode);
+            Assert.Equal("123", supplier.accountCurrencyId);
+            Assert.Equal("123", supplier.accountNumber);
+            Assert.NotNull(supplier.currency);
+            Assert.True(supplier != null);
+        }
+
+        [Fact]
         public void Should_Success_Validate_With_Invalid_Input_Data_Out_Supplier_NotNull_NonOperasional()
         {
             DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
             {
                 Bank = new AccountBankViewModel()
                 {
-                    _id = ""
+                    Id = 0
                 },
                 Date = DateTime.Now.AddYears(1),
                 Status = "OUT",
                 SourceType = "Investasi",
-                Supplier = new SupplierViewModel()
+                Supplier = new NewSupplierViewModel()
                 {
-                    _id = ""
+                    _id = 0
                 }
             };
 
@@ -202,20 +334,75 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async void Should_Success_Update_Data()
+        public void Should_Success_Validate_With_Invalid_Input_Data_Out_Supplier_NotNull_Pendanaan()
+        {
+            DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
+            {
+                Bank = new AccountBankViewModel()
+                {
+                    Id = 0
+                },
+                Date = DateTime.Now.AddYears(1),
+                Status = "OUT",
+                SourceType = "Pendanaan",
+                Supplier = new NewSupplierViewModel()
+                {
+                    _id = 0
+                },
+                OutputBank = new AccountBankViewModel()
+                {
+                    Id = 0
+                },
+                TransactionNominal = 0
+            };
+
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_With_Invalid_Input_Data_Out_Supplier_NotNull_Pendanaan_Internal()
+        {
+            DailyBankTransactionViewModel vm = new DailyBankTransactionViewModel
+            {
+                Bank = new AccountBankViewModel()
+                {
+                    Id = 0
+                },
+                Date = DateTime.Now.AddYears(1),
+                Status = "OUT",
+                SourceType = "Pendanaan",
+                SourceFundingType = "Internal",
+                Supplier = new NewSupplierViewModel()
+                {
+                    _id = 0
+                },
+                OutputBank = new AccountBankViewModel()
+                {
+                    Id = 0
+                },
+                TransactionNominal = 0
+            };
+
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async Task Should_Success_Update_Data()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataOut();
+            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataNotPosted();
             var newModel = await service.ReadByIdAsync(model.Id);
             var Response = await service.UpdateAsync(newModel.Id, newModel);
             Assert.NotEqual(0, Response);
         }
 
         [Fact]
-        public async void Should_Success_Delete_Data()
+        public async Task Should_Success_Delete_Data()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataIn();
+            DailyBankTransactionModel model = await _dataUtil(service).GetTestDataNotPosted();
             var newModel = await service.ReadByIdAsync(model.Id);
 
             var Response = await service.DeleteAsync(newModel.Id);
@@ -223,7 +410,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async void Should_Succes_When_Create_New_Data_With_Non_Exist_Next_Month_Or_Previous_Month_Balance()
+        public async Task Should_Succes_When_Create_New_Data_With_Non_Exist_Next_Month_Or_Previous_Month_Balance()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = _dataUtil(service).GetNewData();
@@ -242,7 +429,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async void Should_Success_Create_December()
+        public async Task Should_Success_Create_December()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = _dataUtil(service).GetNewData();
@@ -256,7 +443,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async void Should_Success_Delete_By_ReferenceNo()
+        public async Task Should_Success_Delete_By_ReferenceNo()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = _dataUtil(service).GetNewData();
@@ -269,7 +456,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async void Should_Success_Delete_By_ReferenceNo_NextMonth_Exist()
+        public async Task Should_Success_Delete_By_ReferenceNo_NextMonth_Exist()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = _dataUtil(service).GetNewData();
@@ -284,6 +471,218 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             var Response = await service.DeleteByReferenceNoAsync(model.ReferenceNo);
             Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_CreateInOut_Data()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            var Response = await service.CreateInOutTransactionAsync(model); 
+            Assert.NotEqual(0, Response);
+            var vm = _dataUtil(service).GetDataToValidate();
+            vm.Status = "OUT";
+            vm.SourceType = "Pendanaan";
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async Task Should_Fail_CreateInOut_Data()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = null;
+            model.IsPosted = true;
+            model.SourceType = "Pendanaan";
+            //var Response = await service.CreateInOutTransactionAsync(model);
+            await Assert.ThrowsAnyAsync<Exception>(() => service.CreateInOutTransactionAsync(model));
+        }
+
+        [Fact]
+        public async Task Should_Success_ReportDailyBalance_Data()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            await service.CreateInOutTransactionAsync(model);
+
+            var data = service.GetDailyBalanceReport(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now, "G");
+            Assert.NotNull(data);
+        }
+
+        [Fact]
+        public async Task Should_Success_ReportDailyBalance_Excel()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            await service.CreateInOutTransactionAsync(model);
+
+            var data = service.GenerateExcelDailyBalance(model.AccountBankId, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), "G", 1);
+            Assert.NotNull(data);
+        }
+
+        [Fact]
+        public void Should_Success_ReportDailyBalance_Excel_When_DataNoExist()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            
+            var result = service.GenerateExcelDailyBalance(1, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), "G", 1);
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Should_Success_CreateInOut_Data_Empty_Remark()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            model.Remark = "";
+            var Response = await service.CreateInOutTransactionAsync(model);
+            Assert.NotEqual(0, Response);
+            var vm = _dataUtil(service).GetDataToValidate();
+            vm.Status = "OUT";
+            vm.SourceType = "Pendanaan";
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async Task Should_Success_Posting_Transaction()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewData();
+            await service.CreateInOutTransactionAsync(model);
+            var response = await service.Posting(new List<int>() { model.Id });
+            Assert.True(response > 0);
+        }
+
+        [Fact]
+        public async Task Should_Success_CreateInOut_Data_Not_Empty_Remark()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            DailyBankTransactionModel model = _dataUtil(service).GetNewData();
+            model.Status = "OUT";
+            model.SourceType = "Pendanaan";
+            model.Remark = "any remark";
+            var Response = await service.CreateInOutTransactionAsync(model);
+            Assert.NotEqual(0, Response);
+            var vm = _dataUtil(service).GetDataToValidate();
+            vm.Status = "OUT";
+            vm.SourceType = "Pendanaan";
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async Task Should_Success_GeneratePdf()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var response = service.GeneratePdf(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+            Assert.NotEmpty(response);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetBeforeBalance()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var response = service.GetBeforeBalance(data.AccountBankId, data.Date.Month, data.Date.Year, 7);
+         
+            //Assert.NotEqual(0,response);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetDataAccountBank()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var response = service.GetDataAccountBank(data.AccountBankId);
+            Assert.NotEmpty( response);
+        }
+
+        [Fact]
+        public async Task Should_Success_IsPosted_Transaction()
+        {
+            var dbContext = _dbContext(GetCurrentMethod());
+            var service = new DailyBankTransactionService(GetServiceProvider().Object, dbContext);
+            var model = _dataUtil(service).GetNewData();
+
+            var monthlyBalance = new List<BankTransactionMonthlyBalanceModel>()
+            {
+                new BankTransactionMonthlyBalanceModel()
+                {
+                    Month = 10,
+                    Year = 2019,
+                    AccountBankId = model.AccountBankId
+                },
+                new BankTransactionMonthlyBalanceModel()
+                {
+                    Month = 8,
+                    Year = 2019,
+                    AccountBankId = model.AccountBankId
+                },
+                new BankTransactionMonthlyBalanceModel()
+                {
+                    Month = 12,
+                    Year = 2019,
+                    AccountBankId = model.AccountBankId
+                }
+            };
+
+            foreach (var datum in monthlyBalance)
+            {
+                EntityExtension.FlagForCreate(datum, "Test", "Test");
+            }
+
+            dbContext.BankTransactionMonthlyBalances.AddRange(monthlyBalance);
+            dbContext.SaveChanges();
+
+            model.IsPosted = true;
+            var response = await service.CreateAsync(model);
+            Assert.NotEqual(0, response);
+        }
+
+        [Fact]
+        public async Task Should_Success_IsPosted_Transaction_SameYear()
+        {
+            var dbContext = _dbContext(GetCurrentMethod());
+            var service = new DailyBankTransactionService(GetServiceProvider().Object, dbContext);
+            var model = _dataUtil(service).GetNewData();
+
+            var monthlyBalance = new List<BankTransactionMonthlyBalanceModel>()
+            {
+                new BankTransactionMonthlyBalanceModel()
+                {
+                    Month = 10,
+                    Year = 2019,
+                    AccountBankId = model.AccountBankId
+                },
+                new BankTransactionMonthlyBalanceModel()
+                {
+                    Month = 8,
+                    Year = 2020,
+                    AccountBankId = model.AccountBankId
+                },
+                new BankTransactionMonthlyBalanceModel()
+                {
+                    Month = 12,
+                    Year = 2020,
+                    AccountBankId = model.AccountBankId
+                }
+            };
+
+            foreach (var datum in monthlyBalance)
+            {
+                EntityExtension.FlagForCreate(datum, "Test", "Test");
+            }
+
+            dbContext.BankTransactionMonthlyBalances.AddRange(monthlyBalance);
+            dbContext.SaveChanges();
         }
     }
 }

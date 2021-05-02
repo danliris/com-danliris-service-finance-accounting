@@ -1,7 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransaction;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.IntegrationViewModel;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using System;
 using System.Threading.Tasks;
 
@@ -24,25 +24,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
                 AccountBankAccountNumber = "AccountNumber",
                 AccountBankCode = "BankCode",
                 AccountBankCurrencyCode = "CurrencyCode",
-                AccountBankCurrencyId = "CurrencyId",
+                AccountBankCurrencyId = 1,
                 AccountBankCurrencySymbol = "CurrencySymbol",
-                AccountBankId = "BankId",
+                AccountBankId = 1,
                 AccountBankName = "BankName",
                 AfterNominal = 0,
                 BeforeNominal = 0,
                 BuyerCode = "BuyerCode",
-                BuyerId = "BuyerId",
+                BuyerId = 1,
                 BuyerName = "BuyerName",
                 Date = DateTimeOffset.UtcNow,
                 Nominal = 1000,
-                ReferenceNo = "ReferenceNo",
+                ReferenceNo = "",
                 ReferenceType = "ReferenceType",
                 Remark = "Remark",
                 SourceType = "Operasional",
                 Status = "IN",
                 SupplierCode = "SupplierCode",
                 SupplierName = "SupplierName",
-                SupplierId = "SupplierId"
+                SupplierId = 1,
+                DestinationBankAccountName = "AccountName",
+                DestinationBankAccountNumber = "AccountNumber",
+                DestinationBankCode = "BankCode",
+                DestinationBankCurrencyCode = "CurrencyCode",
+                DestinationBankCurrencyId = 1,
+                DestinationBankCurrencySymbol = "CurrencySymbol",
+                DestinationBankId = 1,
+                DestinationBankName = "BankName",
+                IsPosted = true ,
+                AfterNominalValas=1,
+                BeforeNominalValas=1,
+                TransactionNominal=1,
+                NominalValas=1,
+                Receiver= "Receiver",
+                
+
             };
 
             return TestData;
@@ -54,43 +70,60 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
             {
                 Bank = new AccountBankViewModel()
                 {
-                    _id = "BankId",
-                    accountCurrencyId = "CurrencyId",
-                    accountName = "AccountName",
-                    accountNumber = "AccountNumber",
-                    bankCode = "BankCode",
-                    bankName = "Name",
-                    code = "Code",
-                    currency = new CurrencyViewModel()
+                    Id = 1,
+                    AccountName = "AccountName",
+                    AccountNumber = "AccountNumber",
+                    BankCode = "BankCode",
+                    BankName = "Name",
+                    Code = "Code",
+                    Currency = new CurrencyViewModel()
                     {
-                        _id = "CurrencyId",
-                        code = "Code",
-                        description = "Description",
-                        rate = 1,
-                        symbol = "Symbol"
+                        Id = 1,
+                        Code = "Code",
+                        Description = "Description",
+                        Rate = 1,
+                        Symbol = "Symbol"
                     }
                 },
                 AfterNominal = 0,
                 BeforeNominal = 0,
-                Buyer = new BuyerViewModel()
+                Buyer = new NewBuyerViewModel()
                 {
-                   _id = "BuyerId",
-                  code = "BuyerCode",
-                  name = "BuyerName"
+                   Id = 1,
+                  Code = "BuyerCode",
+                  Name = "BuyerName"
                 },
                 Code = "Code",
                 Date = DateTimeOffset.UtcNow,
                 Nominal = 1000,
-                ReferenceNo = "ReferenceNo",
+                ReferenceNo = "",
                 ReferenceType = "ReferenceType",
                 Remark = "Remark",
                 SourceType = "Operasional",
+                SourceFundingType = "Internal",
                 Status = "IN",
-                Supplier = new SupplierViewModel()
+                Supplier = new NewSupplierViewModel()
                 {
-                    _id = "SupplierId",
+                    _id = 1,
                     code = "SupplierCode",
                     name = "SupplierName"
+                },
+                OutputBank = new AccountBankViewModel()
+                {
+                    Id = 1,
+                    AccountName = "AccountName",
+                    AccountNumber = "AccountNumber",
+                    BankCode = "BankCode",
+                    BankName = "Name",
+                    Code = "Code",
+                    Currency = new CurrencyViewModel()
+                    {
+                        Id = 1,
+                        Code = "Code",
+                        Description = "Description",
+                        Rate = 1,
+                        Symbol = "Symbol"
+                    }
                 }
             };
 
@@ -100,6 +133,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
         public async Task<DailyBankTransactionModel> GetTestDataIn()
         {
             DailyBankTransactionModel model = GetNewData();
+            model.IsPosted = true;
             await Service.CreateAsync(model);
             return await Service.ReadByIdAsync(model.Id);
         }
@@ -107,6 +141,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransa
         public async Task<DailyBankTransactionModel> GetTestDataOut()
         {
             DailyBankTransactionModel model = GetNewData();
+            model.IsPosted = true;
+            model.Status = "OUT";
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<DailyBankTransactionModel> GetTestDataNotPosted()
+        {
+            DailyBankTransactionModel model = GetNewData();
+            model.IsPosted = false;
             model.Status = "OUT";
             await Service.CreateAsync(model);
             return await Service.ReadByIdAsync(model.Id);

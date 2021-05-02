@@ -17,7 +17,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
         public SupplierViewModel Supplier { get; set; }
         public DateTimeOffset PaymentDate { get; set; }
         public string BankAccountCOA { get; set; }
+        public string TransactionType { get; set; }
         public List<PaymentDispositionNoteItemViewModel> Items { get; set; }
+        public string CurrencyCode { get; set; }
+        public int CurrencyId { get; set; }
+        public double CurrencyRate { get; set; }
+        public bool IsPosted { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -25,6 +30,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
             {
                 yield return new ValidationResult("Bank harus dipilih", new List<string> { "bank" });
             }
+            else
+            {
+                if (AccountBank.Currency.Code == "IDR")
+                {
+                    if (string.IsNullOrEmpty(CurrencyCode))
+                    {
+                        yield return new ValidationResult("Mata Uang harus dipilih", new List<string> { "Currency" });
+                    }
+
+                    if (CurrencyRate <= 0)
+                    {
+                        yield return new ValidationResult("Rate harus > 0", new List<string> { "CurrencyRate" });
+                    }
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(TransactionType))
+                yield return new ValidationResult("Jenis Transaksi harus dipilih", new List<string> { "TransactionType" });
 
             if (this.Supplier == null || this.Supplier.Id == 0)
             {
@@ -39,10 +62,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
             {
                 yield return new ValidationResult("Tanggal Pembayaran harus kurang dari atau sama dengan hari ini", new List<string> { "PaymentDate" });
             }
-            if (this.Items==null || this.Items.Count == 0)
+            if (this.Items == null || this.Items.Count == 0)
             {
                 yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "Items" });
             }
+
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -17,22 +18,52 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
         public Task<HttpResponseMessage> GetAsync(string url)
         {
-            var datalist = new[] { new { DocumentNo = "ReferenceNo", BankName = "BankName", BGCheckNumber = "CheckNumber" } };
-            var json = new
+            if (url.Contains("master/units") && url.Contains("size"))
             {
-                apiVersion = "1.0.0",
-                data = datalist,
-                message = "Ok",
-                statusCode = "200"
-            };
-            var jsonString = JsonConvert.SerializeObject(json);
-            var jsonContent = new StringContent(jsonString);
-            return Task.Run(() => new HttpResponseMessage() { Content = jsonContent });
+                var defaultresponse = new APIDefaultResponse<List<IdCOAResult>>()
+                {
+                    data = new List<IdCOAResult> ()
+                    {
+                      new IdCOAResult()
+                      {
+                          Id=1,
+                          Code="Code",
+                          COACode= "COACode"
+                      }
+                    }
+                };
+                var result = new HttpResponseMessage()
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(defaultresponse))
+                };
+
+                return Task.FromResult(result);
+            }
+            else
+            {
+                var datalist = new[] { new { DocumentNo = "ReferenceNo", BankName = "BankName", BGCheckNumber = "CheckNumber" } };
+                var json = new
+                {
+                    apiVersion = "1.0.0",
+                    data = datalist,
+                    message = "Ok",
+                    statusCode = "200"
+                };
+                var jsonString = JsonConvert.SerializeObject(json);
+                var jsonContent = new StringContent(jsonString);
+                return Task.Run(() => new HttpResponseMessage() { Content = jsonContent });
+            }
+
+            
         }
 
         public Task<HttpResponseMessage> PostAsync(string url, HttpContent content)
         {
-            return Task.Run(() => new HttpResponseMessage());
+            UnitReceiptNoteResult result = new UnitReceiptNoteResult()
+            {
+                data = new List<UnitReceiptNote>()
+            };
+            return Task.Run(() => new HttpResponseMessage() { Content = new StringContent(JsonConvert.SerializeObject(result))});
         }
     }
 }

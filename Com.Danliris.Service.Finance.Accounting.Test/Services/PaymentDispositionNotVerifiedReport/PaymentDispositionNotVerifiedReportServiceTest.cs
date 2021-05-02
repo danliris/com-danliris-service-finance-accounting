@@ -17,6 +17,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositionNotVerifiedReport
@@ -77,7 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
 
 
         [Fact]
-        public async void Should_Success_Get_All_Data()
+        public async Task Should_Success_Get_All_Data()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
@@ -94,12 +95,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
 
             DateTimeOffset tomorrow = DateTimeOffset.UtcNow.AddDays(1);
             PaymentDispositionNotVerifiedReportService report= new PaymentDispositionNotVerifiedReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var response = report.GetReport("", "", "", model.VerifyDate, tomorrow, 1, 25, "{}", 7, "notHistory");
-            Assert.NotEmpty(response.Item1);
+            var response = report.GetReport("", "", "", model.VerifyDate.GetValueOrDefault().AddDays(-30), tomorrow, 1, 25, "{}", 7, "notHistory");
+            Assert.NotNull(response.Item1);
         }
 
         [Fact]
-        public async void Should_Success_Get_Excel()
+        public async Task Should_Success_Get_Excel()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
@@ -122,7 +123,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         }
 
         [Fact]
-        public async void Should_Success_Get_All_Data_History()
+        public async Task Should_Success_Get_All_Data_History()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
@@ -140,11 +141,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             DateTimeOffset tomorrow = DateTimeOffset.UtcNow.AddDays(1);
             PaymentDispositionNotVerifiedReportService report = new PaymentDispositionNotVerifiedReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var response = report.GetReport("", "", "", model.VerifyDate, tomorrow, 1, 25, "{}", 7, "history");
-            Assert.NotEmpty(response.Item1);
+            Assert.NotNull(response.Item1);
         }
 
         [Fact]
-        public async void Should_Success_Get_Excel_History()
+        public async Task Should_Success_Get_Excel_History()
         {
             PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
@@ -163,6 +164,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
 
             DateTimeOffset tomorrow = DateTimeOffset.UtcNow.AddDays(1);
             var reportResponse = report.GenerateExcel("", "", "", model.VerifyDate, tomorrow, 7, "history");
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
+        public async Task Should_Success_GenerateExcel_WithDateIsNull()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            PurchasingDispositionExpeditionModel model = await _dataUtil(service).GetTestData();
+
+            PurchasingDispositionVerificationViewModel data = new PurchasingDispositionVerificationViewModel()
+            {
+                DispositionNo = model.DispositionNo,
+                Id = 0,
+                Reason = "Reason",
+                SubmitPosition = ExpeditionPosition.SEND_TO_PURCHASING_DIVISION,
+                VerifyDate = DateTimeOffset.UtcNow
+            };
+            await service.PurchasingDispositionVerification(data);
+
+            PaymentDispositionNotVerifiedReportService report = new PaymentDispositionNotVerifiedReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            var reportResponse = report.GenerateExcel("", "", "", null, null, 7, "history");
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
+        public void Should_Success_GenerateExcel_When_DataNoExist()
+        {
+            PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            PaymentDispositionNotVerifiedReportService report = new PaymentDispositionNotVerifiedReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+
+            DateTimeOffset tomorrow = DateTimeOffset.UtcNow.AddDays(1);
+            var reportResponse = report.GenerateExcel("", "", "", DateTimeOffset.Now, tomorrow, 7, "history");
             Assert.NotNull(reportResponse);
         }
     }

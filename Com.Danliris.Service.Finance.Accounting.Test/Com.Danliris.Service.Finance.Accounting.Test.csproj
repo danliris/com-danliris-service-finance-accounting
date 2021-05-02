@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
@@ -23,6 +23,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Com.Danliris.Service.Finance.Accounting.Lib\Com.Danliris.Service.Finance.Accounting.Lib.csproj" />
     <ProjectReference Include="..\Com.Danliris.Service.Finance.Accounting.WebApi\Com.Danliris.Service.Finance.Accounting.WebApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\NewFolder\" />
   </ItemGroup>
 
 </Project>

@@ -26,6 +26,31 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         {
         }
 
+        [HttpGet("transaction")]
+        public IActionResult GetTransaction([FromQuery] DateTimeOffset? datefrom = null, [FromQuery] DateTimeOffset? dateto = null, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")]List<string> select = null, string keyword = null, string filter = "{}")
+        {
+            try
+            {
+                VerifyUser();
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                //int offSet = 7;
+
+                ReadResponse<JournalTransactionModel> read = Service.ReadByDate(datefrom, dateto, offSet, page, size, order, select, keyword, filter);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(null, read.Data, page, size, read.Count, read.Data.Count, read.Order, read.Selected);
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                   new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                   .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpPost("many")]
         public async Task<ActionResult> PostMany([FromBody] List<JournalTransactionViewModel> viewModels)
         {
@@ -148,7 +173,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("report/sub-ledgers")]
-        public async Task<ActionResult> GetSubLedgerReport([FromQuery] int coaId, [FromQuery] int month, [FromQuery] int year)
+        public async Task<ActionResult> GetSubLedgerReport([FromQuery] int? coaId, [FromQuery] int month, [FromQuery] int year)
         {
             try
             {
@@ -172,7 +197,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("report/sub-ledgers/download/xls")]
-        public async Task<ActionResult> GetSubLedgerReportXls([FromQuery] int coaId, [FromQuery] int month, [FromQuery] int year)
+        public async Task<ActionResult> GetSubLedgerReportXls([FromQuery] int? coaId, [FromQuery] int? month, [FromQuery] int? year)
         {
             try
             {
@@ -218,6 +243,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
             }
         }
 
+        [HttpPut("posting-transaction-update-coa/{id}")]
+        public async Task<ActionResult> PostingTransationById([FromRoute] int id, [FromBody] JournalTransactionViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+
+                var model = Mapper.Map<JournalTransactionModel>(viewModel);
+
+                await Service.PostTransactionAsync(id, model);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("report/sub-ledgers/options/months")]
         public IActionResult GetMonthOptions()
         {
@@ -240,6 +287,87 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                 new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                 .Ok(Mapper, monthOptions);
             return Ok(Result);
+        }
+
+        [HttpGet("unposted-transactions")]
+        public IActionResult GetUnPosted(int month = 0, int year = 0)
+        {
+            try
+            {
+                if (month.Equals(0))
+                    month = DateTime.Now.Month;
+                if (year.Equals(0))
+                    year = DateTime.Now.Year;
+
+                List<JournalTransactionModel> result = Service.ReadUnPostedTransactionsByPeriod(month, year);
+
+                List<JournalTransactionViewModel> dataVM = Mapper.Map<List<JournalTransactionViewModel>>(result);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, dataVM);
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("general-ledgers")]
+        public async Task<IActionResult> GetGeneralLedger([FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                VerifyUser();
+                int timeoffset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+
+                var result = await Service.GetGeneralLedgerReport(startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), timeoffset);
+
+                return Ok(new
+                {
+                    apiVersion = "1.0.0",
+                    statusCode = 200,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("general-ledgers/download/xls")]
+        public async Task<ActionResult> GetGeneralLedgerXls([FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                VerifyUser();
+
+                byte[] xlsInBytes;
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                var filestream = await Service.GetGeneralLedgerReportXls(startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), offSet);
+
+                string fileName = $"Laporan General Ledger Periode {startDate.GetValueOrDefault().ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)} - {endDate.GetValueOrDefault().ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)}.xlsx";
+
+                xlsInBytes = filestream.ToArray();
+
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                return file;
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
         }
     }
 }

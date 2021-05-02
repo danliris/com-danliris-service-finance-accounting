@@ -77,6 +77,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
                 
                 ValidateService.Validate(viewModel);
                 PaymentDispositionNoteModel model = Mapper.Map<PaymentDispositionNoteModel>(viewModel);
+                model.FixFailAutoMapper(viewModel.AccountBank.BankCode);
                 await Service.CreateAsync(model);
 
                 Dictionary<string, object> Result =
@@ -204,9 +205,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
         {
             try
             {
-                ReadResponse<PaymentDispositionNoteDetailModel> read = Service.ReadDetailsByEPOId(epoId);
+                ReadResponse<PaymentDispositionNoteItemModel> read = Service.ReadDetailsByEPOId(epoId);
 
-                List<PaymentDispositionNoteDetailViewModel> dataVM = Mapper.Map<List<PaymentDispositionNoteDetailViewModel>>(read.Data);
+                List<PaymentDispositionNoteItemViewModel> dataVM = Mapper.Map<List<PaymentDispositionNoteItemViewModel>>(read.Data);
 
                 //Dictionary<string, object> Result =
                 //    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
@@ -218,6 +219,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
                     message = General.OK_MESSAGE,
                     statusCode = General.OK_STATUS_CODE
                 });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpPut("post")]
+        public async Task<IActionResult> PaymentDispositionNotePost([FromBody] PaymentDispositionNotePostDto form)
+        {
+            try
+            {
+                VerifyUser();
+                var result = await Service.Post(form);
+
+                return Ok(result);
             }
             catch (Exception e)
             {

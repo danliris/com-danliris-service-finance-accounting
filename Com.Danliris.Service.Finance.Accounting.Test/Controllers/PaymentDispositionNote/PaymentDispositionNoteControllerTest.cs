@@ -32,21 +32,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                 {
                     Supplier = new SupplierViewModel
                     {
-                        Name= It.IsAny<string>()
+                        Name = It.IsAny<string>()
                     },
-                    AccountBank=new AccountBankViewModel
+                    AccountBank = new AccountBankViewModel
                     {
-                        Currency=new CurrencyViewModel
+                        Currency = new CurrencyViewModel
                         {
-                            Code= It.IsAny<string>()
+                            Code = It.IsAny<string>()
                         }
                     },
-                    BGCheckNumber= It.IsAny<string>(),
-                    BankAccountCOA= It.IsAny<string>(),
+                    BGCheckNumber = It.IsAny<string>(),
+                    BankAccountCOA = It.IsAny<string>(),
                     PaymentDispositionNo = It.IsAny<string>(),
                     PaymentDate = It.IsAny<DateTimeOffset>(),
                     Amount = It.IsAny<double>(),
-                    
+                    TransactionType = "any",
+
                     Items = new List<PaymentDispositionNoteItemViewModel>
                     {
                         new PaymentDispositionNoteItemViewModel()
@@ -110,6 +111,112 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                 };
             }
         }
+
+        private PaymentDispositionNoteViewModel ViewModel1
+        {
+            get
+            {
+                return new PaymentDispositionNoteViewModel
+                {
+                    Supplier = new SupplierViewModel
+                    {
+                        Name = It.IsAny<string>()
+                    },
+                    AccountBank = new AccountBankViewModel
+                    {
+                        BankCode = "MDTR",
+                        Currency = new CurrencyViewModel
+                        {
+                            Code = "IDR"
+                        }
+                    },
+                    BGCheckNumber = It.IsAny<string>(),
+                    BankAccountCOA = It.IsAny<string>(),
+                    PaymentDispositionNo = It.IsAny<string>(),
+                    PaymentDate = It.IsAny<DateTimeOffset>(),
+                    Amount = It.IsAny<double>(),
+                    CurrencyCode = "USD",
+                    CurrencyId = 1,
+                    CurrencyRate = 2,
+
+                    Items = new List<PaymentDispositionNoteItemViewModel>
+                    {
+                        new PaymentDispositionNoteItemViewModel()
+                        {
+                            category=new Lib.ViewModels.IntegrationViewModel.CategoryViewModel(),
+                            division=new Lib.ViewModels.IntegrationViewModel.DivisionViewModel(),
+                            dispositionDate= It.IsAny<DateTimeOffset>(),
+                            dispositionNo=It.IsAny<string>(),
+                            dispositionId=It.IsAny<string>(),
+                            incomeTaxValue=It.IsAny<double>(),
+                            dpp=It.IsAny<double>(),
+                            vatValue=It.IsAny<double>(),
+                            totalPaid=It.IsAny<double>(),
+                            proformaNo=It.IsAny<string>(),
+                            paymentDueDate=It.IsAny<DateTimeOffset>(),
+                            payToSupplier=It.IsAny<double>(),
+                            Details =new List<PaymentDispositionNoteDetailViewModel>()
+                            {
+                                new PaymentDispositionNoteDetailViewModel()
+                                {
+                                    uom=new Lib.ViewModels.IntegrationViewModel.UomViewModel(),
+                                    price=It.IsAny<double>(),
+                                    quantity=It.IsAny<double>(),
+                                    product = new Lib.ViewModels.IntegrationViewModel.ProductViewModel(),
+                                    unit = new Lib.ViewModels.IntegrationViewModel.UnitViewModel
+                                    {
+                                        code="Test",
+                                        name="Test"
+                                    },
+                                    epoId="test"
+                                },
+                                new PaymentDispositionNoteDetailViewModel()
+                                {
+                                    uom=new Lib.ViewModels.IntegrationViewModel.UomViewModel(),
+                                    price=It.IsAny<double>(),
+                                    quantity=It.IsAny<double>(),
+                                    product = new Lib.ViewModels.IntegrationViewModel.ProductViewModel(),
+                                    unit = new Lib.ViewModels.IntegrationViewModel.UnitViewModel
+                                    {
+                                        code="Test1",
+                                        name="Test1"
+                                    },
+                                    epoId="test"
+                                },
+                                new PaymentDispositionNoteDetailViewModel()
+                                {
+                                    uom=new Lib.ViewModels.IntegrationViewModel.UomViewModel(),
+                                    price=It.IsAny<double>(),
+                                    quantity=It.IsAny<double>(),
+                                    product = new Lib.ViewModels.IntegrationViewModel.ProductViewModel(),
+                                    unit = new Lib.ViewModels.IntegrationViewModel.UnitViewModel
+                                    {
+                                        code="Test",
+                                        name="Test"
+                                    },
+                                    epoId="test"
+                                },
+                            }
+                        }
+                    }
+                };
+            }
+        }
+
+        private PaymentDispositionNotePostDto Dto
+        {
+            get
+            {
+                return new PaymentDispositionNotePostDto
+                {
+                    ListIds = new List<PaymentDispositionNotePostIdDto>
+                    {
+                        new PaymentDispositionNotePostIdDto{ Id = 1 }
+                    }
+                };
+            }
+        }
+
         public (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPaymentDispositionNoteService> Service, Mock<IMapper> Mapper) GetMocks()
         {
             return (IdentityService: new Mock<IIdentityService>(), ValidateService: new Mock<IValidateService>(), Service: new Mock<IPaymentDispositionNoteService>(), Mapper: new Mock<IMapper>());
@@ -185,7 +292,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
         private async Task<int> GetStatusCodePost((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPaymentDispositionNoteService> Service, Mock<IMapper> Mapper) mocks)
         {
             PaymentDispositionNoteController controller = GetController(mocks);
-            IActionResult response = await controller.Post(ViewModel);
+            IActionResult response = await controller.Post(ViewModel1);
 
             return GetStatusCode(response);
         }
@@ -196,6 +303,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             var mocks = GetMocks();
             mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Verifiable();
             mocks.Service.Setup(s => s.CreateAsync(It.IsAny<PaymentDispositionNoteModel>())).ReturnsAsync(1);
+            mocks.Mapper.Setup(s => s.Map<PaymentDispositionNoteModel>(It.IsAny<PaymentDispositionNoteViewModel>())).Returns(new PaymentDispositionNoteModel());
 
             int statusCode = await GetStatusCodePost(mocks);
             Assert.Equal((int)HttpStatusCode.Created, statusCode);
@@ -381,15 +489,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
         }
 
         [Fact]
+        public void Should_Success_Get_PDF_By_Id1()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new PaymentDispositionNoteModel());
+            mocks.Mapper.Setup(f => f.Map<PaymentDispositionNoteViewModel>(It.IsAny<PaymentDispositionNoteModel>())).Returns(ViewModel1);
+
+            PaymentDispositionNoteController controller = new PaymentDispositionNoteController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Mapper.Object, mocks.Service.Object);
+            controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
+
+            var response = controller.GetById(It.IsAny<int>()).Result;
+            Assert.NotNull(response.GetType().GetProperty("FileStream"));
+        }
+
+        [Fact]
         public void GetByEPOId_WithoutException_ReturnOK()
         {
             var mocks = GetMocks();
             mocks.Service
                 .Setup(f => f.ReadDetailsByEPOId( It.IsAny<string>()))
-                .Returns(new ReadResponse<PaymentDispositionNoteDetailModel>(new List<PaymentDispositionNoteDetailModel>() { new PaymentDispositionNoteDetailModel() }, 0, new Dictionary<string, string>(), new List<string>()));
+                .Returns(new ReadResponse<PaymentDispositionNoteItemModel>(new List<PaymentDispositionNoteItemModel>() { new PaymentDispositionNoteItemModel() }, 0, new Dictionary<string, string>(), new List<string>()));
             mocks.Mapper
-                .Setup(f => f.Map<List<PaymentDispositionNoteDetailViewModel>>(It.IsAny<List<PaymentDispositionNoteDetailModel>>()))
-                .Returns(new List<PaymentDispositionNoteDetailViewModel>());
+                .Setup(f => f.Map<List<PaymentDispositionNoteItemViewModel>>(It.IsAny<List<PaymentDispositionNoteItemModel>>()))
+                .Returns(new List<PaymentDispositionNoteItemViewModel>());
 
             var response = GetController(mocks).GetDetailsByEpoId(It.IsAny<string>());
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
@@ -402,6 +530,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             mocks.Service.Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
 
             var response = GetController(mocks).GetDetailsByEpoId("");
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void PaymentDispositionNotePost_ReturnOk()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.Post(It.IsAny<PaymentDispositionNotePostDto>())).ReturnsAsync(1);
+
+            var Dto = this.Dto;
+
+            var response = GetController(mocks).PaymentDispositionNotePost(Dto).Result;
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void PaymentDispositionNotePost_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<PaymentDispositionNoteViewModel>())).Verifiable();
+            mocks.Service.Setup(f => f.Post(It.IsAny<PaymentDispositionNotePostDto>())).Throws(new Exception());
+
+            var Dto = this.Dto;
+
+            var response = GetController(mocks).PaymentDispositionNotePost(Dto).Result;
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }

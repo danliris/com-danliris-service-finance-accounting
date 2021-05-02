@@ -18,6 +18,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.MasterCOA
 
         public string CashAccount { get; set; }
 
+        public decimal Balance { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (string.IsNullOrWhiteSpace(Code))

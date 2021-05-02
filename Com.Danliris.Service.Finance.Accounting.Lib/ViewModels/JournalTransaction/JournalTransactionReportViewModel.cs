@@ -13,9 +13,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.JournalTransact
         public string COACode { get; set; }
 
         public string Remark { get; set; }
+        public string HeaderRemark { get; set; }
 
-        public double? Debit { get; set; }
+        public decimal? Debit { get; set; }
 
-        public double? Credit { get; set; }
+        public decimal? Credit { get; set; }
+
+        public string ReferenceNo { get; set; }
+
+        public string Description { get; set; }
+        public bool IsReverser { get; set; }
+        public bool IsReversed { get; set; }
     }
 }

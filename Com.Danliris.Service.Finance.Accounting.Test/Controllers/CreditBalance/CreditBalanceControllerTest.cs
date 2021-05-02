@@ -54,9 +54,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
         public void GetReport_ReturnOK()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new ReadResponse<CreditBalanceViewModel>(new List<CreditBalanceViewModel>(), 1, new Dictionary<string, string>(), new List<string>()));
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<bool>(),It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(new ReadResponse<CreditBalanceViewModel>(new List<CreditBalanceViewModel>(), 1, new Dictionary<string, string>(), new List<string>()));
 
-            var response = GetController(mocks).GetReport(1, 2018);
+            var response = GetController(mocks).GetReport(false, 1, 2018);
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
@@ -64,19 +64,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
         public void GetReport_ThrowException()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>())).Throws(new Exception());
 
-            var response = GetController(mocks).GetReport(1, 2018);
+            var response = GetController(mocks).GetReport(false, 1, 2018);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
         [Fact]
-        public void GetReportExcel_ReturnFile()
+        public void GetReportExcelLokal_ReturnFile()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new MemoryStream());
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(new MemoryStream());
 
-            var response = GetController(mocks).GetXls(1, 2018);
+            var response = GetController(mocks).GetXls(false, 1, 2018);
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void GetReportExcelImpor_ReturnFile()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(new MemoryStream());
+
+            var response = GetController(mocks).GetXls(true, 1, 2018);
             Assert.NotNull(response);
         }
 
@@ -84,9 +94,98 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditBalance
         public void GetReportExcel_ThrowException()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>())).Throws(new Exception());
 
-            var response = GetController(mocks).GetXls(1, 2018);
+            var response = GetController(mocks).GetXls(false, 1, 2018);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetReportExcelNull_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>())).Throws(new Exception());
+
+            var response = GetController(mocks).GetXls(false, 8, 2030);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        List<CreditBalanceViewModel> CreditBalanceViewModels
+        {
+            get
+            {
+                return new List<CreditBalanceViewModel>()
+                {
+                    new CreditBalanceViewModel()
+                    {
+                        Currency="Currency",
+                        CurrencyRate=1,
+                        FinalBalance=1,
+                        Payment=1,
+                        Products="Products",
+                        Purchase=1,
+                        StartBalance=1,
+                        SupplierName="",
+                        
+                    }
+                };
+            }
+        }
+
+        [Fact]
+        public void GetPdf_ReturnFile()
+        {
+            //Arrange
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(CreditBalanceViewModels);
+
+            //Act
+            var response = GetController(mocks).GetPdf(true, 1, 2018);
+
+            //Assert
+            Assert.NotNull(response);
+        }
+
+
+        [Fact]
+        public void GetPdf_When_ForeignCurrency_Return_Success()
+        {
+            //Arrange
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(CreditBalanceViewModels);
+
+            //Act
+            var response = GetController(mocks).GetPdf(false, 1, 2018,"",true);
+
+            //Assert
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void GetPdf_When_Import_Return_Success()
+        {
+            //Arrange
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(CreditBalanceViewModels);
+
+            //Act
+            var response = GetController(mocks).GetPdf(false, 1, 2018);
+
+            //Assert
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void GetPdf_Return_InternalServerError()
+        {
+            //Arrange
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GeneratePdf(It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>())).Throws(new Exception());
+
+            //Act
+            var response = GetController(mocks).GetPdf(true, 1, 2018);
+
+            //Assert
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }

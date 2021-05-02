@@ -17,7 +17,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
             Service = service;
         }
 
-        public CreditorAccountUnitReceiptNotePostedViewModel GetUnitReceiptNotePostedViewModel()
+        public async Task<CreditorAccountModel> GetTestData_CreditorAccountModel()
+        {
+            var data = GetNewData_CreditorAccountModel();
+            await Service.CreateAsync(data);
+            var result = Service.ReadModelById(data.Id);
+            return await result;
+        }
+
+        public  CreditorAccountModel GetNewData_CreditorAccountModel()
+        {
+            return new CreditorAccountModel()
+            {
+                SupplierName = "SupplierName"
+            };
+
+
+        }
+        public CreditorAccountUnitReceiptNotePostedViewModel GetNewData_UnitReceiptNotePostedViewModel()
         {
             return new CreditorAccountUnitReceiptNotePostedViewModel()
             {
@@ -30,7 +47,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 SupplierCode = "SupplierCode",
                 SupplierName = "SupplierName",
                 Products = "- Product 1\n- Product 2",
-                Currency = "Currency"
+                Currency = "IDR",
+                CurrencyRate = 1,
+                SupplierIsImport = true,
+                DPPCurrency = 1,
+                PaymentDuration = "1",
+                UseIncomeTax = true,
+                MemoDPP = 1,
+                MemoMutation = 1,
+                MemoPPN = 0,
+                DivisionId=1
             };
         }
 
@@ -46,7 +72,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.CreditorAccount
                 Mutation = 5500,
                 InvoiceNo = "InvoiceNo",
                 SupplierCode = "SupplierCode",
-                SupplierName = "SupplierName"
+                SupplierName = "SupplierName",
+                CurrencyRate=1,
+                DPPCurrency=1,
+                MemoDPP=1,
+                MemoMutation=1,
+                MemoPPN=1,
+                PaymentDuration= "PaymentDuration",
+                
+
             };
         }
 
