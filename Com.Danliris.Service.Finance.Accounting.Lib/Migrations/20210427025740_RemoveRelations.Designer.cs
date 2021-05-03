@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210427025740_RemoveRelations")]
+    partial class RemoveRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1528,7 +1530,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("DispositionNo");
 
-                    b.Property<int>("GarmentInvoicePurchasingDispositionId");
+                    b.Property<int>("GarmentInvoicePurchasingDisposistionId");
 
                     b.Property<bool>("IsDeleted");
 
@@ -1558,7 +1560,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GarmentInvoicePurchasingDispositionId");
+                    b.HasIndex("GarmentInvoicePurchasingDisposistionId");
 
                     b.ToTable("GarmentInvoicePurchasingDispositionItems");
                 });
@@ -2473,8 +2475,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<string>("BillsNo");
-
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
                         .HasMaxLength(255);
@@ -2484,8 +2484,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(255);
 
                     b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<string>("CurrencyCode");
 
                     b.Property<string>("DeletedAgent")
                         .IsRequired()
@@ -2500,8 +2498,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<int>("GarmentDeliveryOrderId");
 
                     b.Property<string>("GarmentDeliveryOrderNo");
-
-                    b.Property<string>("InternalNoteNo");
 
                     b.Property<bool>("IsDeleted");
 
@@ -2525,13 +2521,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<int>("MemoIdrAmount");
 
-                    b.Property<string>("PaymentBills");
+                    b.Property<int>("PaymentRate");
 
-                    b.Property<double>("PaymentRate");
-
-                    b.Property<double>("PurchaseAmount");
-
-                    b.Property<double>("PurchasingRate");
+                    b.Property<int>("PurchasingRate");
 
                     b.Property<string>("RemarksDetail");
 
@@ -4777,7 +4769,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                 {
                     b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition.GarmentInvoicePurchasingDispositionModel", "GarmentInvoicePurchasingDisposition")
                         .WithMany("Items")
-                        .HasForeignKey("GarmentInvoicePurchasingDispositionId")
+                        .HasForeignKey("GarmentInvoicePurchasingDisposistionId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210429003700_MemoDetailDeliveryOrder")]
+    partial class MemoDetailDeliveryOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1528,7 +1530,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("DispositionNo");
 
-                    b.Property<int>("GarmentInvoicePurchasingDispositionId");
+                    b.Property<int>("GarmentInvoicePurchasingDisposistionId");
 
                     b.Property<bool>("IsDeleted");
 
@@ -1558,7 +1560,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GarmentInvoicePurchasingDispositionId");
+                    b.HasIndex("GarmentInvoicePurchasingDisposistionId");
 
                     b.ToTable("GarmentInvoicePurchasingDispositionItems");
                 });
@@ -4777,7 +4779,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                 {
                     b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition.GarmentInvoicePurchasingDispositionModel", "GarmentInvoicePurchasingDisposition")
                         .WithMany("Items")
-                        .HasForeignKey("GarmentInvoicePurchasingDispositionId")
+                        .HasForeignKey("GarmentInvoicePurchasingDisposistionId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
