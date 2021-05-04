@@ -34,13 +34,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
         }
 
         [HttpGet("reports")]
-        public IActionResult GetReport([FromQuery] bool isImport, [FromQuery]int month, [FromQuery]int year, [FromQuery] string supplierName = null, int page = 1, int size = 25, bool isForeignCurrency = false, int divisionId = 0)
+        public IActionResult GetReport([FromQuery] bool isImport, [FromQuery] int month, [FromQuery] int year, [FromQuery] string supplierName = null, int page = 1, int size = 25, bool isForeignCurrency = false, int divisionId = 0)
         {
             try
             {
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                var data = Service.GetReport(isImport,page, size, supplierName, month, year, offSet, isForeignCurrency, divisionId);
+                var data = Service.GetReport(isImport, page, size, supplierName, month, year, offSet, isForeignCurrency, divisionId);
 
                 return Ok(new
                 {
@@ -66,7 +66,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
         }
 
         [HttpGet("reports/downloads/xls")]
-        public IActionResult GetXls([FromQuery] bool isImport, [FromQuery]int month, [FromQuery]int year, [FromQuery]string supplierName = null, bool isForeignCurrency = false, int divisionId = 0)
+        public IActionResult GetXls([FromQuery] bool isImport, [FromQuery] int month, [FromQuery] int year, [FromQuery] string supplierName = null, bool isForeignCurrency = false, int divisionId = 0)
         {
             try
             {
@@ -82,9 +82,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
                 }
                 else
                 {
-                    fileName = string.Format("Saldo Hutang Lokal Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                    if (isForeignCurrency)
+                        fileName = string.Format("Saldo Hutang Lokal Valas Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                    else
+                        fileName = string.Format("Saldo Hutang Lokal Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
                 }
-                
+
 
                 xlsInBytes = xls.ToArray();
 
@@ -118,11 +121,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
                 {
                     stream = ImportCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year, divisionId);
                     fileName = string.Format("Saldo Hutang Impor Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
-                } else if (isForeignCurrency)
+                }
+                else if (isForeignCurrency)
                 {
                     stream = LocalValasCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year, divisionId);
                     fileName = string.Format("Saldo Hutang Lokal Valas Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
-                } else
+                }
+                else
                 {
                     stream = LocalCreditBalanceReportPDFTemplate.GeneratePdfTemplate(data, month, year, divisionId);
                     fileName = string.Format("Saldo Hutang Lokal Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
