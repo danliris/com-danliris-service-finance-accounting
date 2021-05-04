@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownPaymentReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownPaymentReport.Excel;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
@@ -67,25 +68,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
-        //[HttpGet("xls")]
-        //public IActionResult GetReportXls([FromQuery] SupplierType supplierType, [FromQuery] DateTimeOffset date)
-        //{
-        //    try
-        //    {
-        //        VerifyUser();
+        [HttpGet("xls")]
+        public IActionResult GetReportXls([FromQuery] SupplierType supplierType, [FromQuery] DateTimeOffset date)
+        {
+            try
+            {
+                VerifyUser();
 
-        //        var data = _service.GetReport(supplierType, date);
-        //        //var stream = DPPVATBankExpenditureNoteExcelGenerator.Generate(result, startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), _identityService.TimezoneOffset);
+                var data = _service.GetReport(supplierType, date);
+                var stream = GarmentDownPaymentExcelGenerator.Generate(data, date, _identityService.TimezoneOffset);
 
-        //        var bytes = stream.ToArray();
+                var bytes = stream.ToArray();
 
-        //        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Laporan Uang Muka.xlsx");
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
-        //    }
-        //}
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Laporan Uang Muka.xlsx");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
 
     }
 }
