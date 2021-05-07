@@ -51,6 +51,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                 int row = 6;
                 int col = 1;
                 int maxDate = 1;
+                double totalNilaiBayarPPH = 0;
+                double totalNilaiNotaPPH = 0;
                 #region HeaderTable
                 var ListHeader = new List<string> {
                     "No",
@@ -163,7 +165,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     #endregion
 
                     #region NilaiBayarPPH
-                    worksheet.Cells[row, col, row + dataCount, col].Value = item.Data.Items.Sum(s => (s.IncomeTaxTotal / 100) * s.TotalPaid);
+                    var nilaiBayarPph= item.Data.Items.Sum(s => (s.IncomeTaxTotal / 100) * s.TotalPaid);
+                    worksheet.Cells[row, col, row + dataCount, col].Value = nilaiBayarPph;
                     worksheet.Cells[row, col, row + dataCount, col].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                     worksheet.Cells[row, col, row + dataCount, col].Style.Border.Left.Style = ExcelBorderStyle.Thin;
                     worksheet.Cells[row, col, row + dataCount, col].Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -176,6 +179,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     worksheet.Cells[row, col, row + dataCount, col].Style.WrapText = true;
 
                     worksheet.Cells[row, col, row + dataCount, col].Merge = true;
+
+                    totalNilaiBayarPPH += nilaiBayarPph;
                     col++;
                     #endregion
 
@@ -311,7 +316,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                             #endregion
 
                             #region Nilai NotaPPh
-                            worksheet.Cells[row, col, row + dataCountNoDO, col].Value = invoice.TotalPaid * (invoice.IncomeTaxTotal / 100);
+                            var nilaiNotaPPh = invoice.TotalPaid * (invoice.IncomeTaxTotal / 100);
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Value = nilaiNotaPPh;
                             worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                             worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Border.Left.Style = ExcelBorderStyle.Thin;
                             worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -324,6 +330,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                             worksheet.Cells[row, col, row + dataCountNoDO, col].Style.WrapText = true;
                             worksheet.Cells[row, col, row + dataCountNoDO, col].Merge = true;
                             col++;
+                            totalNilaiNotaPPH += nilaiNotaPPh;
                             #endregion
 
                             foreach (var deliveryOrderItems in invoiceGrp.Grp)
@@ -385,6 +392,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     col = 1;
                 }
 
+                #endregion
+
+                #region TotalSection
+                foreach(var i in ListHeader)
+                {
+                    //worksheet.Cells[row, col].Value = i;
+                    if(i == "Category")
+                    {
+                        worksheet.Cells[row, col].Value = "Total";
+                    }else if(i == "Nilai Bayar PPH")
+                    {
+                        worksheet.Cells[row, col].Value = totalNilaiBayarPPH;
+                    }else if (i == "No Nota Pajak PPH")
+                    {
+                        worksheet.Cells[row, col].Value = "Total";
+                    }
+                    else if (i == "Nilai Nota PPH")
+                    {
+                        worksheet.Cells[row, col].Value = totalNilaiNotaPPH;
+                    }
+                    worksheet.Cells[row, col].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, col].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, col].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, col].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[row, col].Style.Font.Bold = true;
+                    worksheet.Cells[row, col].Style.Font.Name = "Calibri";
+                    worksheet.Cells[row, col].Style.Font.Size = 12f;
+                    worksheet.Cells[row, col].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                    worksheet.Cells[row, col].Style.HorizontalAlignment = ExcelHorizontalAlignment.CenterContinuous;
+                    worksheet.Cells[row, col].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                }
                 #endregion
                 #endregion
                 worksheet.Cells.AutoFitColumns();
