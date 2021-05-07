@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
                     foreach(var detailDo in formDetail.Invoice.DetailDO)
                     {
-                        var detailDoDd = new DPPVATBankExpenditureNoteDetailDoModel(detailDo.DONo,detailDo.TotalAmount,detailDo.PaymentBill,detailDo.BillNo,detailDo.DOId,detailDo.CurrencyRate);
+                        var detailDoDd = new DPPVATBankExpenditureNoteDetailDoModel(detailDo.DONo,detailDo.TotalAmount,detailDo.PaymentBill,detailDo.BillNo,detailDo.DOId,detailDo.CurrencyRate,model.Id,item.Id,detail.Id);
                         EntityExtension.FlagForCreate(detailDoDd, _identityService.Username, UserAgent);
                         _dbContext.DPPVATBankExpenditureNoteDetailDos.Add(detailDoDd);
                         _dbContext.SaveChanges();

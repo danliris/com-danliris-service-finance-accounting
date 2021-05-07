@@ -3,6 +3,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -166,7 +167,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
                     #region NilaiBayarPPH
                     var nilaiBayarPph= item.Data.Items.Sum(s => (s.IncomeTaxTotal / 100) * s.TotalPaid);
-                    worksheet.Cells[row, col, row + dataCount, col].Value = nilaiBayarPph;
+                    worksheet.Cells[row, col, row + dataCount, col].Value = nilaiBayarPph.ToString("N2", new CultureInfo("en-US"));
                     worksheet.Cells[row, col, row + dataCount, col].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                     worksheet.Cells[row, col, row + dataCount, col].Style.Border.Left.Style = ExcelBorderStyle.Thin;
                     worksheet.Cells[row, col, row + dataCount, col].Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -317,7 +318,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
                             #region Nilai NotaPPh
                             var nilaiNotaPPh = invoice.TotalPaid * (invoice.IncomeTaxTotal / 100);
-                            worksheet.Cells[row, col, row + dataCountNoDO, col].Value = nilaiNotaPPh;
+                            worksheet.Cells[row, col, row + dataCountNoDO, col].Value = nilaiNotaPPh.ToString("N2", new CultureInfo("en-US"));
                             worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                             worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Border.Left.Style = ExcelBorderStyle.Thin;
                             worksheet.Cells[row, col, row + dataCountNoDO, col].Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -403,14 +404,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                         worksheet.Cells[row, col].Value = "Total";
                     }else if(i == "Nilai Bayar PPH")
                     {
-                        worksheet.Cells[row, col].Value = totalNilaiBayarPPH;
+                        worksheet.Cells[row, col].Value = totalNilaiBayarPPH.ToString("N2",new CultureInfo("en-US"));
                     }else if (i == "No Nota Pajak PPH")
                     {
                         worksheet.Cells[row, col].Value = "Total";
                     }
                     else if (i == "Nilai Nota PPH")
                     {
-                        worksheet.Cells[row, col].Value = totalNilaiNotaPPH;
+                        worksheet.Cells[row, col].Value = totalNilaiNotaPPH.ToString("N2", new CultureInfo("en-US"));
+                    }
+                    else
+                    {
+                        worksheet.Cells[row, col].Value = "";
                     }
                     worksheet.Cells[row, col].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                     worksheet.Cells[row, col].Style.Border.Left.Style = ExcelBorderStyle.Thin;
@@ -420,9 +425,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     worksheet.Cells[row, col].Style.Font.Bold = true;
                     worksheet.Cells[row, col].Style.Font.Name = "Calibri";
                     worksheet.Cells[row, col].Style.Font.Size = 12f;
-                    worksheet.Cells[row, col].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
-                    worksheet.Cells[row, col].Style.HorizontalAlignment = ExcelHorizontalAlignment.CenterContinuous;
+                    worksheet.Cells[row, col].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.White);
+                    worksheet.Cells[row, col].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     worksheet.Cells[row, col].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    col++;
                 }
                 #endregion
                 #endregion
