@@ -345,10 +345,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
             var reportQuery = from detail in detailQuery 
                               join item in itemQuery on detail.DPPVATBankExpenditureNoteItemId equals item.Id into itemDetails
-                              from itemDetail in itemDetails.DefaultIfEmpty()
+                              from itemDetail in itemDetails
 
                               join document in query on itemDetail.DPPVATBankExpenditureNoteId equals document.Id into documentItems
-                              from documentItem in documentItems.DefaultIfEmpty()
+                              from documentItem in documentItems
 
                               select new ReportDto(detail, itemDetail, documentItem, detail.DPPVATBankExpenditureNoteDetailDos.Select(s=> new ReportDoDetailDto(s.DONo,s.DOId,s.PaymentBill,s.BillNo,s.TotalAmount,s.CurrencyRate)).ToList());
 
