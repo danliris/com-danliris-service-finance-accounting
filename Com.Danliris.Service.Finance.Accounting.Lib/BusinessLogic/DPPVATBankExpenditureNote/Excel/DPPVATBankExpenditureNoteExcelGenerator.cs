@@ -36,7 +36,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             var index = 1;
             foreach (var datum in data)
             {
-                var totalDo = datum.DetailDO.Count <= 1?0:datum.DetailDO.Count ;
+                var totalDo = datum.DetailDO.Count-1 < 0?0:datum.DetailDO.Count-1 ;
                 worksheet.Cells[$"A{currentRow}"].Value = index;
                 worksheet.Cells[$"A{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"A{currentRow}:A{currentRow + totalDo}"].Merge = true;
@@ -164,11 +164,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                     worksheet.Cells[$"AC{currentRow}"].Style.Font.Size = 14;
                     worksheet.Cells[$"AC{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     //worksheet.Cells[$"AC{currentRow}:AC{currentRow + totalDo}"].Merge = true;
+                    currentRow++;
+
                 }
 
 
                 index++;
-                currentRow+= currentRow + datum.DetailDO.Count;
+                //currentRow+= currentRow + datum.DetailDO.Count;
             }
 
             worksheet.Cells[$"A6:AC{currentRow}"].AutoFitColumns();
