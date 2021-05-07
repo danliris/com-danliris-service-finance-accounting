@@ -46,6 +46,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
         public int DPPVATBankExpenditureNoteDetailId { get; set; }
 
         [ForeignKey("DPPVATBankExpenditureNoteDetailId")]
-        public virtual DPPVATBankExpenditureNoteDetailDoModel DPPVATBankExpenditureNoteDetailDo { get; set; }
+        public virtual DPPVATBankExpenditureNoteDetailModel DPPVATBankExpenditureNoteDetail { get; set; }
     }
 }
