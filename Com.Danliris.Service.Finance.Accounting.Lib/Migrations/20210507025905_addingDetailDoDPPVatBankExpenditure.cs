@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
-    public partial class AddingDetailDoInDPPVATBankExpenditure : Migration
+    public partial class addingDetailDoDPPVatBankExpenditure : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -38,35 +38,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     CurrencyRate = table.Column<double>(nullable: false),
                     DPPVATBankExpenditureNoteId = table.Column<int>(nullable: false),
                     DPPVATBankExpenditureNoteItemId = table.Column<int>(nullable: false),
-                    DPPVATBankExpenditureNoteDetailId = table.Column<int>(nullable: false),
-                    DPPVATBankExpenditureNoteDetailModelId = table.Column<int>(nullable: true)
+                    DPPVATBankExpenditureNoteDetailId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DPPVATBankExpenditureNoteDetailDos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DPPVATBankExpenditureNoteDetailDos_DPPVATBankExpenditureNoteDetailDos_DPPVATBankExpenditureNoteDetailId",
+                        name: "FK_DPPVATBankExpenditureNoteDetailDos_DPPVATBankExpenditureNoteDetails_DPPVATBankExpenditureNoteDetailId",
                         column: x => x.DPPVATBankExpenditureNoteDetailId,
-                        principalTable: "DPPVATBankExpenditureNoteDetailDos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DPPVATBankExpenditureNoteDetailDos_DPPVATBankExpenditureNoteDetails_DPPVATBankExpenditureNoteDetailModelId",
-                        column: x => x.DPPVATBankExpenditureNoteDetailModelId,
                         principalTable: "DPPVATBankExpenditureNoteDetails",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DPPVATBankExpenditureNoteDetailDos_DPPVATBankExpenditureNoteDetailId",
                 table: "DPPVATBankExpenditureNoteDetailDos",
                 column: "DPPVATBankExpenditureNoteDetailId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DPPVATBankExpenditureNoteDetailDos_DPPVATBankExpenditureNoteDetailModelId",
-                table: "DPPVATBankExpenditureNoteDetailDos",
-                column: "DPPVATBankExpenditureNoteDetailModelId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

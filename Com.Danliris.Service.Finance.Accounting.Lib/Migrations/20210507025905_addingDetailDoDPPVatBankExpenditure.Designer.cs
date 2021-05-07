@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    [Migration("20210507002710_AddingDetailDoInDPPVATBankExpenditure")]
-    partial class AddingDetailDoInDPPVATBankExpenditure
+    [Migration("20210507025905_addingDetailDoDPPVatBankExpenditure")]
+    partial class addingDetailDoDPPVatBankExpenditure
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -865,8 +865,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<int>("DPPVATBankExpenditureNoteDetailId");
 
-                    b.Property<int?>("DPPVATBankExpenditureNoteDetailModelId");
-
                     b.Property<int>("DPPVATBankExpenditureNoteId");
 
                     b.Property<int>("DPPVATBankExpenditureNoteItemId");
@@ -900,8 +898,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DPPVATBankExpenditureNoteDetailId");
-
-                    b.HasIndex("DPPVATBankExpenditureNoteDetailModelId");
 
                     b.ToTable("DPPVATBankExpenditureNoteDetailDos");
                 });
@@ -4840,14 +4836,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote.DPPVATBankExpenditureNoteDetailDoModel", b =>
                 {
-                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote.DPPVATBankExpenditureNoteDetailDoModel", "DPPVATBankExpenditureNoteDetailDo")
-                        .WithMany()
+                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote.DPPVATBankExpenditureNoteDetailModel", "DPPVATBankExpenditureNoteDetail")
+                        .WithMany("DPPVATBankExpenditureNoteDetailDos")
                         .HasForeignKey("DPPVATBankExpenditureNoteDetailId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote.DPPVATBankExpenditureNoteDetailModel")
-                        .WithMany("DPPVATBankExpenditureNoteDetailDos")
-                        .HasForeignKey("DPPVATBankExpenditureNoteDetailModelId");
                 });
 
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePayment.GarmentInvoicePaymentItemModel", b =>
