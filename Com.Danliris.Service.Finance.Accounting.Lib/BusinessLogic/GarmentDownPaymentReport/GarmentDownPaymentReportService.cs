@@ -84,8 +84,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownP
             }
             else
             {
+                var isImportIds = _dbContext.GarmentInvoicePurchasingDispositions.Where(entity => entity.IsImportSupplier).Select(entity => entity.Id).ToList();
                 var dispositions = _dbContext.GarmentInvoicePurchasingDispositionItems
-                        .Where(entity => entity.DispositionDate <= date)
+                        .Where(entity => entity.DispositionDate <= date && isImportIds.Contains(entity.Id))
                         .GroupBy(entity => entity.DispositionId)
                         .Select(group => new GarmentDownPaymentReportDto(group.Key, group.FirstOrDefault().DispositionNo, group.FirstOrDefault().DipositionDueDate, group.Select(entity => entity.GarmentInvoicePurchasingDispositionId).ToList()))
                         .ToList();
@@ -94,7 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownP
 
                 var dispositionPaymentIds = dispositions.SelectMany(element => element.DispositionPaymentIds).Distinct().ToList();
 
-                var dispositionPayments = _dbContext.GarmentInvoicePurchasingDispositions.Where(entity => dispositionPaymentIds.Contains(entity.Id)).Select(entity => new { entity.Id, entity.InvoiceNo, entity.InvoiceDate }).ToList();
+                var dispositionPayments = _dbContext.GarmentInvoicePurchasingDispositions.Where(entity => dispositionPaymentIds.Contains(entity.Id)).Select(entity => new { entity.Id, entity.InvoiceNo, entity.InvoiceDate, entity.SupplierName, entity.IsImportSupplier, entity.SupplierCode, entity.SupplierId }).ToList();
 
                 var memoDetailDocumentDispositionItems = _dbContext.MemoDetailGarmentPurchasingDispositions.Where(entity => dispositionIds.Contains(entity.DispositionId)).Select(entity => new { entity.DispositionId, entity.MemoDetailGarmentPurchasingId }).ToList();
                 var memoDetailDocumentIds = memoDetailDocumentDispositionItems.Select(entity => entity.MemoDetailGarmentPurchasingId).ToList();
@@ -109,6 +110,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownP
                     var selectedDispositionPayments = dispositionPayments.Where(entity => disposition.DispositionPaymentIds.Contains(entity.Id)).ToList();
                     //var selectedMemoDocuments = memoDetailDocumentDetails
                     disposition.DispositionPayments.AddRange(selectedDispositionPayments.Select(element => new DispositionPaymentDto(element.Id, element.InvoiceNo, element.InvoiceDate)).ToList());
+                    var selectedMemoDispositionItems = memoDetailDocumentDispositionItems.Where(element => element.DispositionId == disposition.DispositionId).ToList();
+                    var memoDocumentDetailIds = selectedMemoDispositionItems.Select(element => element.MemoDetailGarmentPurchasingId).ToList();
+                    var memoIds = memoDetailDocuments.Where(element => memoDocumentDetailIds.Contains(element.Id)).Select(element => element.MemoId).ToList();
+                    //disposition.MemoDocuments
                 }
 
                 return dispositions;
