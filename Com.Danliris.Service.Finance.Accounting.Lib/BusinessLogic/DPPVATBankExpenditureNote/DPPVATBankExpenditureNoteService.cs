@@ -338,7 +338,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 detailQuery = detailQuery.Where(entity => entity.InvoiceId == invoiceId);
 
             if (supplierId > 0)
-                itemQuery = itemQuery.Where(entity => entity.SupplierId == supplierId);
+                itemQuery = itemQuery.Where(entity => entity.SupplierId == supplierId); ;
 
             query = query.Where(entity => entity.Date >= startDate && entity.Date <= endDate);
 
