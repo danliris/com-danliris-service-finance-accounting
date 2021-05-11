@@ -5,6 +5,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
@@ -32,7 +33,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
         public async Task<int> Create(FormDto form)
         {
-            var documentNo = await GetDocumentNo("K", form.Bank.BankCode, _identityService.Username);
+            var timeOffset = new TimeSpan(_identityService.TimezoneOffset, 0, 0);
+            var documentNo = await GetDocumentNo("K", form.Bank.BankCode, _identityService.Username, form.Date.GetValueOrDefault().ToOffset(timeOffset).Date);
             var model = new DPPVATBankExpenditureNoteModel(documentNo, form.Bank.Id, form.Bank.AccountNumber, form.Bank.BankName, form.Bank.BankCode, form.Currency.Id, form.Currency.Code, form.Currency.Rate, form.Supplier.Id, form.Supplier.Name, form.Supplier.IsImport, form.BGCheckNo, form.Amount, form.Date.GetValueOrDefault(), form.Bank.Currency.Code, form.Bank.Currency.Id, form.Bank.Currency.Rate);
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.DPPVATBankExpenditureNotes.Add(model);
@@ -47,10 +49,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
                 foreach (var formDetail in formItem.InternalNote.Items.Where(element => element.SelectInvoice))
                 {
-                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod, formDetail.Invoice.DeliveryOrdersNo, formDetail.Invoice.PaymentBills, formDetail.Invoice.BillsNo);
+                    var detailDOString = JsonConvert.SerializeObject(formDetail.Invoice.DetailDO);
+                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod, formDetail.Invoice.DeliveryOrdersNo, formDetail.Invoice.PaymentBills, formDetail.Invoice.BillsNo, detailDOString);
                     EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
                     _dbContext.DPPVATBankExpenditureNoteDetails.Add(detail);
                     _dbContext.SaveChanges();
+
+                    foreach(var detailDo in formDetail.Invoice.DetailDO)
+                    {
+                        var detailDoDd = new DPPVATBankExpenditureNoteDetailDoModel(detailDo.DONo,detailDo.TotalAmount,detailDo.PaymentBill,detailDo.BillNo,detailDo.DOId,detailDo.CurrencyRate,model.Id,item.Id,detail.Id);
+                        EntityExtension.FlagForCreate(detailDoDd, _identityService.Username, UserAgent);
+                        _dbContext.DPPVATBankExpenditureNoteDetailDos.Add(detailDoDd);
+                        _dbContext.SaveChanges();
+                    }
                 }
             }
 
@@ -71,6 +82,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
             var http = _serviceProvider.GetService<IHttpClientService>();
             var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+            }
+
+            return result.data;
+        }
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username,DateTime date)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no-date?type={type}&bankCode={bankCode}&username={username}&date={date}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<string>();
@@ -120,6 +152,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 })
                 .ToList();
             _dbContext.DPPVATBankExpenditureNoteDetails.UpdateRange(details);
+
+            var detailDos = _dbContext.DPPVATBankExpenditureNoteDetailDos
+                .Where(entity => entity.DPPVATBankExpenditureNoteId == id)
+                .ToList()
+                .Select(element =>
+                {
+                    EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                    return element;
+                })
+                .ToList();
+            _dbContext.DPPVATBankExpenditureNoteDetailDos.UpdateRange(detailDos);
 
             var internalNoteIds = items.Select(element => element.InternalNoteId).ToList();
             var invoiceNoteIds = details.Select(element => element.InvoiceId).ToList();
@@ -196,6 +239,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 .ToList();
             _dbContext.DPPVATBankExpenditureNoteDetails.UpdateRange(details);
 
+            var detailsDo = _dbContext.DPPVATBankExpenditureNoteDetailDos
+                .Where(entity => entity.DPPVATBankExpenditureNoteId == id)
+                .ToList()
+                .Select(element =>
+                {
+                    EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                    return element;
+                })
+                .ToList();
+            _dbContext.DPPVATBankExpenditureNoteDetailDos.UpdateRange(detailsDo);
+
             var existingInternalNoteIds = items.Select(element => element.InternalNoteId).ToList();
             var existingInvoiceNoteIds = details.Select(element => element.InvoiceId).ToList();
 
@@ -210,10 +264,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
                 foreach (var formDetail in formItem.InternalNote.Items.Where(invoiceItem => invoiceItem.SelectInvoice))
                 {
-                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod, formDetail.Invoice.DeliveryOrdersNo, formDetail.Invoice.PaymentBills, formDetail.Invoice.BillsNo);
+                    var detailDoJson = JsonConvert.SerializeObject(formDetail.Invoice.DetailDO);
+                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod, formDetail.Invoice.DeliveryOrdersNo, formDetail.Invoice.PaymentBills, formDetail.Invoice.BillsNo,detailDoJson);
                     EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
                     _dbContext.DPPVATBankExpenditureNoteDetails.Add(detail);
                     _dbContext.SaveChanges();
+
+                    foreach (var detailDo in formDetail.Invoice.DetailDO)
+                    {
+                        var detailDoDd = new DPPVATBankExpenditureNoteDetailDoModel(detailDo.DONo, detailDo.TotalAmount, detailDo.PaymentBill, detailDo.BillNo, detailDo.DOId, detailDo.CurrencyRate);
+                        EntityExtension.FlagForCreate(detailDoDd, _identityService.Username, UserAgent);
+                        _dbContext.DPPVATBankExpenditureNoteDetailDos.Add(detailDoDd);
+                        _dbContext.SaveChanges();
+                    }
                 }
             }
 
@@ -254,6 +317,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
             if (supplierId > 0)
                 reportQuery = reportQuery.Where(entity => entity.SupplierId == supplierId);
+
+            return reportQuery.ToList();
+        }
+
+        public List<ReportDto> ExpenditureReportDetailDO(int expenditureId, int internalNoteId, int invoiceId, int supplierId, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            var detailQuery = _dbContext.DPPVATBankExpenditureNoteDetails.Include(s=> s.DPPVATBankExpenditureNoteDetailDos).AsQueryable();
+            var itemQuery = _dbContext.DPPVATBankExpenditureNoteItems.AsQueryable();
+            var query = _dbContext.DPPVATBankExpenditureNotes.AsQueryable();
+            //var detailDoQuery = _dbContext.DPPVATBankExpenditureNoteDetailDos.AsQueryable();
+
+            if (expenditureId > 0)
+                query = query.Where(entity => entity.Id == expenditureId);
+
+            if (internalNoteId > 0)
+                itemQuery = itemQuery.Where(entity => entity.InternalNoteId == internalNoteId);
+
+            if (invoiceId > 0)
+                detailQuery = detailQuery.Where(entity => entity.InvoiceId == invoiceId);
+
+            if (supplierId > 0)
+                itemQuery = itemQuery.Where(entity => entity.SupplierId == supplierId); ;
+
+            query = query.Where(entity => entity.Date >= startDate && entity.Date <= endDate);
+
+
+            var reportQuery = from detail in detailQuery 
+                              join item in itemQuery on detail.DPPVATBankExpenditureNoteItemId equals item.Id into itemDetails
+                              from itemDetail in itemDetails
+
+                              join document in query on itemDetail.DPPVATBankExpenditureNoteId equals document.Id into documentItems
+                              from documentItem in documentItems
+
+                              select new ReportDto(detail, itemDetail, documentItem, detail.DPPVATBankExpenditureNoteDetailDos.Select(s=> new ReportDoDetailDto(s.DONo,s.DOId,s.PaymentBill,s.BillNo,s.TotalAmount,s.CurrencyRate)).ToList());
 
             return reportQuery.ToList();
         }

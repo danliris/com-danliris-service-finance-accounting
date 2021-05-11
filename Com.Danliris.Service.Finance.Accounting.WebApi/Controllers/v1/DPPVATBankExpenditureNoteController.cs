@@ -254,7 +254,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 VerifyUser();
                 startDate = startDate.HasValue ? startDate : DateTimeOffset.MinValue;
                 endDate = endDate.HasValue ? endDate : DateTimeOffset.MaxValue;
-                var result = _service.ExpenditureReport(expenditureId, internalNoteId, invoiceId, supplierId, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                //var result = _service.ExpenditureReport(expenditureId, internalNoteId, invoiceId, supplierId, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                var result = _service.ExpenditureReportDetailDO(expenditureId, internalNoteId, invoiceId, supplierId, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+
                 var stream = DPPVATBankExpenditureNoteExcelGenerator.Generate(result, startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), _identityService.TimezoneOffset);
 
                 var bytes = stream.ToArray();
