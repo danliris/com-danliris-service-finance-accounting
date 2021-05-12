@@ -54,10 +54,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 worksheet.Cells[$"D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 worksheet.Cells[$"D{currentRow}:D{currentRow + totalDo}"].Merge = true;
 
-                worksheet.Cells[$"E{currentRow}"].Value = datum.Amount.ToString("N2", cultureInfo);
-                worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells[$"E{currentRow}:E{currentRow + totalDo}"].Merge = true;
+                if (datum.CurrencyCode != "IDR")
+                {
+                    worksheet.Cells[$"E{currentRow}"].Value = datum.Amount.ToString("N2", cultureInfo);
+                    worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    worksheet.Cells[$"E{currentRow}:E{currentRow + totalDo}"].Merge = true;
+                }
+                else
+                {
+                    worksheet.Cells[$"E{currentRow}"].Value = 0.0.ToString("N2", cultureInfo);
+                    worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
+                    worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    worksheet.Cells[$"E{currentRow}:E{currentRow + totalDo}"].Merge = true;
+                }
+                
 
                 worksheet.Cells[$"F{currentRow}"].Value = datum.CategoryName;
                 worksheet.Cells[$"F{currentRow}"].Style.Font.Size = 14;
