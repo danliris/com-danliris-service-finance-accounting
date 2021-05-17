@@ -954,29 +954,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentPurcha
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
 
-        [Fact]
-        public void GetReport_Return_InternalServerError()
-        {
-            //Setup
-            Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
-            var service = new Mock<IGarmentPurchasingExpeditionReportService>();
+        //[Fact]
+        //public void GetReport_Return_InternalServerError()
+        //{
+        //    //Setup
+        //    Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
+        //    var service = new Mock<IGarmentPurchasingExpeditionReportService>();
 
-            service
-                .Setup(s => s.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
-                .Throws(new Exception());
+        //    service
+        //        .Setup(s => s.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+        //        .Throws(new Exception());
 
-            serviceProviderMock
-               .Setup(serviceProvider => serviceProvider.GetService(typeof(IGarmentPurchasingExpeditionReportService)))
-               .Returns(service.Object);
+        //    serviceProviderMock
+        //       .Setup(serviceProvider => serviceProvider.GetService(typeof(IGarmentPurchasingExpeditionReportService)))
+        //       .Returns(service.Object);
 
-            //Act
+        //    //Act
 
-            IActionResult response = GetController(serviceProviderMock).GetReport(1, 1, GarmentPurchasingExpeditionPosition.VerificationAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
+        //    IActionResult response = GetController(serviceProviderMock).GetReport(1, 1, GarmentPurchasingExpeditionPosition.VerificationAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
 
-            //Assert
-            int statusCode = this.GetStatusCode(response);
-            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
-        }
+        //    //Assert
+        //    int statusCode = this.GetStatusCode(response);
+        //    Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        //}
 
         [Fact]
         public void GetReportXls_Return_File()
