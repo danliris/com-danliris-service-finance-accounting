@@ -446,26 +446,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             Assert.True(0 < reportResponse.Count());
         }
 
-        [Fact]
-        public async Task Should_Success_GetFinalBalance()
-        {
-            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
-            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
+        //[Fact]
+        //public async Task Should_Success_GetFinalBalance()
+        //{
+        //    CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+        //    var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
+        //    var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
 
-            data.SupplierCode = unitData.SupplierCode;
-            data.SupplierName = unitData.SupplierName;
-            data.InvoiceNo = unitData.InvoiceNo;
-            data.Mutation = unitData.DPP + unitData.PPN;
+        //    data.SupplierCode = unitData.SupplierCode;
+        //    data.SupplierName = unitData.SupplierName;
+        //    data.InvoiceNo = unitData.InvoiceNo;
+        //    data.Mutation = unitData.DPP + unitData.PPN;
 
-            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
-            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+        //    var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
+        //    var Response = await service.CreateFromBankExpenditureNoteAsync(data);
 
 
-            var reportResponse = service.GetFinalBalance(data.SupplierName, data.Date.Month, data.Date.Year, 7);
+        //    var reportResponse = service.GetFinalBalance(data.SupplierName, data.Date.Month, data.Date.Year, 7);
 
-            Assert.True(0 == reportResponse);
-        }
+        //    Assert.True(0 == reportResponse);
+        //}
 
         [Fact]
         public void Should_Success_Get_Excel_Empty()
