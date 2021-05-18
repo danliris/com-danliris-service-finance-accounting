@@ -60,14 +60,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                     worksheet.Cells[$"E{currentRow}"].Value = datum.Amount.ToString("N2", cultureInfo);
                     worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
                     worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                    worksheet.Cells[$"E{currentRow}:E{currentRow + totalDo}"].Merge = true;
+                    worksheet.Cells[$"E{currentRow}:E{currentRow + indexDo}"].Merge = true;
                 }
                 else
                 {
                     worksheet.Cells[$"E{currentRow}"].Value = 0.0.ToString("N2", cultureInfo);
                     worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
                     worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                    worksheet.Cells[$"E{currentRow}:E{currentRow + totalDo}"].Merge = true;
+                    worksheet.Cells[$"E{currentRow}:E{currentRow + indexDo}"].Merge = true;
                 }
 
                 worksheet.Cells[$"F{currentRow}"].Value = datum.CategoryName;
