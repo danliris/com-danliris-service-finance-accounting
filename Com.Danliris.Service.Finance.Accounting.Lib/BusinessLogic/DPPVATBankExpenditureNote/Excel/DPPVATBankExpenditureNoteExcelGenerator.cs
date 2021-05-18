@@ -36,97 +36,98 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             var index = 1;
             foreach (var datum in data)
             {
-                var totalDo = datum.DetailDO.Count-1 < 0?0:datum.DetailDO.Count-1 ;
+                var totalDo = datum.DetailDO.Count;
+                var indexDo = totalDo - 1 < 0?0: totalDo - 1 ;
                 worksheet.Cells[$"A{currentRow}"].Value = index;
                 worksheet.Cells[$"A{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"A{currentRow}:A{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"A{currentRow}:A{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"B{currentRow}"].Value = datum.ExpenditureNoteNo;
                 worksheet.Cells[$"B{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"B{currentRow}:B{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"B{currentRow}:B{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"C{currentRow}"].Value = datum.ExpenditureDate.AddHours(timezoneOffset).ToString("dd/MM/yyyy");
                 worksheet.Cells[$"C{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"C{currentRow}:C{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"C{currentRow}:C{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"D{currentRow}"].Value = (datum.Amount* datum.CurrencyRate).ToString("N2", cultureInfo);
                 worksheet.Cells[$"D{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"D{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells[$"D{currentRow}:D{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"D{currentRow}:D{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"E{currentRow}"].Value = datum.Amount.ToString("N2", cultureInfo);
                 worksheet.Cells[$"E{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"E{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells[$"E{currentRow}:E{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"E{currentRow}:E{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"F{currentRow}"].Value = datum.CategoryName;
                 worksheet.Cells[$"F{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"F{currentRow}:F{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"F{currentRow}:F{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"G{currentRow}"].Value = datum.PaymentMethod;
                 worksheet.Cells[$"G{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"G{currentRow}:G{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"G{currentRow}:G{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"H{currentRow}"].Value = datum.InvoiceAmount.ToString("N2", cultureInfo);
                 worksheet.Cells[$"H{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"H{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells[$"H{currentRow}:H{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"H{currentRow}:H{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"I{currentRow}"].Value = (datum.InvoiceAmount * 0.1).ToString("N2", cultureInfo);
                 worksheet.Cells[$"I{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"I{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells[$"I{currentRow}:I{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"I{currentRow}:I{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"J{currentRow}"].Value = 0.0;
                 worksheet.Cells[$"J{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"J{currentRow}:J{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"J{currentRow}:J{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"K{currentRow}"].Value = (datum.InvoiceAmount + (datum.InvoiceAmount * 0.1)).ToString("N2", cultureInfo);
                 worksheet.Cells[$"K{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"K{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells[$"K{currentRow}:K{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"K{currentRow}:K{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"L{currentRow}"].Value = datum.CurrencyCode;
                 worksheet.Cells[$"L{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"L{currentRow}:L{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"L{currentRow}:L{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"M{currentRow}"].Value = datum.BankName;
                 worksheet.Cells[$"M{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"M{currentRow}:M{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"M{currentRow}:M{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"N{currentRow}"].Value = datum.SupplierCode;
                 worksheet.Cells[$"N{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"N{currentRow}:N{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"N{currentRow}:N{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"O{currentRow}"].Value = datum.SupplierName;
                 worksheet.Cells[$"O{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"O{currentRow}:O{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"O{currentRow}:O{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"P{currentRow}"].Value = datum.InternalNoteNo;
                 worksheet.Cells[$"P{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"P{currentRow}:P{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"P{currentRow}:P{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"Q{currentRow}"].Value = datum.InvoiceNo;
                 worksheet.Cells[$"Q{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"Q{currentRow}:Q{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"Q{currentRow}:Q{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"R{currentRow}"].Value = datum.InvoiceAmount.ToString("N2", cultureInfo);
                 worksheet.Cells[$"R{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"R{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells[$"R{currentRow}:R{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"R{currentRow}:R{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"S{currentRow}"].Value = datum.InvoiceAmount.ToString("N2", cultureInfo);
                 worksheet.Cells[$"S{currentRow}"].Style.Font.Size = 14;
                 worksheet.Cells[$"S{currentRow}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells[$"S{currentRow}:S{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"S{currentRow}:S{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"T{currentRow}"].Value = datum.OutstandingAmount;
                 worksheet.Cells[$"T{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"T{currentRow}:T{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"T{currentRow}:T{currentRow + indexDo}"].Merge = true;
 
                 worksheet.Cells[$"U{currentRow}"].Value = datum.OutstandingAmount;
                 worksheet.Cells[$"U{currentRow}"].Style.Font.Size = 14;
-                worksheet.Cells[$"U{currentRow}:U{currentRow + totalDo}"].Merge = true;
+                worksheet.Cells[$"U{currentRow}:U{currentRow + indexDo}"].Merge = true;
 
                 foreach (var dos in datum.DetailDO)
                 {
@@ -173,6 +174,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
                 }
 
+                if(totalDo < 1)
+                {
+                    currentRow++;
+                }
 
                 index++;
                 //currentRow+= currentRow + datum.DetailDO.Count;
