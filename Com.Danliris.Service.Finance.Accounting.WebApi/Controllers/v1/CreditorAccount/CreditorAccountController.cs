@@ -514,5 +514,40 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+
+        [HttpPut("unit-payment-correction")]
+        public async Task<IActionResult> UnitPaymentCorrectionPut([FromBody] CreditorAccountUnitPaymentCorrectionPostedViewModel viewModel)
+        {
+            try
+            {
+                VerifyUser();
+                //ValidateService.Validate(viewModel);
+
+                await Service.UpdateFromUnitPaymentCorrection(viewModel);
+
+                return NoContent();
+            }
+            catch (NotFoundException)
+            {
+                Dictionary<string, object> Result =
+                       new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                       .Fail();
+                return BadRequest(Result);
+            }
+            catch (ServiceValidationException e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
+                    .Fail(e);
+                return BadRequest(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }

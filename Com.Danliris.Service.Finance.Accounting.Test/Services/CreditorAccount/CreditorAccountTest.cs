@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -181,6 +182,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             var updateResponse = await service.UpdateFromUnitReceiptNoteAsync(newData);
             var updateData = await service.GetByUnitReceiptNote(data.SupplierCode, data.Code, data.InvoiceNo);
             Assert.NotNull(updateData);
+        }
+
+        [Fact]
+        public async Task Should_Success_Put_UnitPaymentOrderCorrection()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetNewData_CreditorAccountModel();
+
+            await service.CreateAsync(data);
+
+            var updateResponse = await service.UpdateFromUnitPaymentCorrection(new CreditorAccountUnitPaymentCorrectionPostedViewModel() { UnitReceiptNoteNo = data.UnitReceiptNoteNo });
+            Assert.NotEqual(0, updateResponse);
         }
 
 

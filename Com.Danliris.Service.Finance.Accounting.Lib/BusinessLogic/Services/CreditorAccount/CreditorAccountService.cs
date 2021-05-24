@@ -600,5 +600,61 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             else
                 return 0;
         }
+
+        public async Task<int> UpdateFromUnitPaymentCorrection(CreditorAccountUnitPaymentCorrectionPostedViewModel viewModel)
+        {
+            var model = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.UnitReceiptNoteNo == viewModel.UnitReceiptNoteNo);
+
+            var result = 0;
+
+            if (model != null)
+            {
+                var correction = new CreditorAccountModel(
+                    model.SupplierName,
+                    model.SupplierCode,
+                    model.SupplierIsImport,
+                    model.DivisionId,
+                    model.DivisionCode,
+                    model.DivisionName,
+                    model.UnitId,
+                    model.UnitCode,
+                    model.UnitName,
+                    viewModel.UnitPaymentCorrectionId,
+                    viewModel.UnitPaymentCorrectionNo,
+                    viewModel.UnitPaymentCorrectionDPP,
+                    viewModel.UnitPaymentCorrectionPPN,
+                    viewModel.UnitPaymentCorrectionMutation,
+                    model.UnitReceiptNoteNo,
+                    model.Products,
+                    model.UnitReceiptNoteDate,
+                    model.UnitReceiptNoteDPP,
+                    model.UnitReceiptNotePPN,
+                    model.UnitReceiptMutation,
+                    model.BankExpenditureNoteId,
+                    model.BankExpenditureNoteNo,
+                    model.BankExpenditureNoteDate,
+                    model.BankExpenditureNoteDPP,
+                    model.BankExpenditureNotePPN,
+                    model.BankExpenditureNoteMutation,
+                    model.MemoNo,
+                    model.MemoDate,
+                    model.MemoDPP,
+                    model.MemoPPN,
+                    model.MemoMutation,
+                    model.PaymentDuration,
+                    model.InvoiceNo,
+                    model.FinalBalance,
+                    model.CurrencyCode,
+                    model.DPPCurrency,
+                    model.CurrencyRate
+                    );
+
+                EntityExtension.FlagForCreate(correction, IdentityService.Username, UserAgent);
+                DbSet.Add(correction);
+                result = await DbContext.SaveChangesAsync();
+            }
+
+            return result;
+        }
     }
 }
