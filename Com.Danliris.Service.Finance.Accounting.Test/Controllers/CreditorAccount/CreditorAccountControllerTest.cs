@@ -556,6 +556,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
+        [Fact]
+        public async Task CreateFromCorrection_NoContent()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.CreateFromUnitPaymentCorrection(It.IsAny<CreditorAccountUnitPaymentCorrectionPostedViewModel>())).ReturnsAsync(1);
+
+            var response = await GetController(mocks).UnitPaymentCorrectionPost(It.IsAny<CreditorAccountUnitPaymentCorrectionPostedViewModel>());
+            Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task CreateFromCorrection_ThrowsException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.CreateFromUnitPaymentCorrection(It.IsAny<CreditorAccountUnitPaymentCorrectionPostedViewModel>())).Throws(new Exception());
+
+            var response = await GetController(mocks).UnitPaymentCorrectionPost(It.IsAny<CreditorAccountUnitPaymentCorrectionPostedViewModel>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
         List<CreditorAccountViewModel> CreditorAccountViewModels
         {
             get
