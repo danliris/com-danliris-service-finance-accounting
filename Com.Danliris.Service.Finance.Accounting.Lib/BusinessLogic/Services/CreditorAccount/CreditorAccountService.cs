@@ -601,7 +601,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 return 0;
         }
 
-        public async Task<int> UpdateFromUnitPaymentCorrection(CreditorAccountUnitPaymentCorrectionPostedViewModel viewModel)
+        public async Task<int> CreateFromUnitPaymentCorrection(CreditorAccountUnitPaymentCorrectionPostedViewModel viewModel)
         {
             var model = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.UnitReceiptNoteNo == viewModel.UnitReceiptNoteNo);
 

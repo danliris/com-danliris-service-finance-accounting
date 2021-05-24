@@ -515,31 +515,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
             }
         }
 
-        [HttpPut("unit-payment-correction")]
-        public async Task<IActionResult> UnitPaymentCorrectionPut([FromBody] CreditorAccountUnitPaymentCorrectionPostedViewModel viewModel)
+        [HttpPost("unit-payment-correction")]
+        public async Task<IActionResult> UnitPaymentCorrectionPost([FromBody] CreditorAccountUnitPaymentCorrectionPostedViewModel viewModel)
         {
             try
             {
                 VerifyUser();
                 //ValidateService.Validate(viewModel);
 
-                await Service.UpdateFromUnitPaymentCorrection(viewModel);
+                await Service.CreateFromUnitPaymentCorrection(viewModel);
 
                 return NoContent();
-            }
-            catch (NotFoundException)
-            {
-                Dictionary<string, object> Result =
-                       new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
-                       .Fail();
-                return BadRequest(Result);
-            }
-            catch (ServiceValidationException e)
-            {
-                Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE)
-                    .Fail(e);
-                return BadRequest(Result);
             }
             catch (Exception e)
             {

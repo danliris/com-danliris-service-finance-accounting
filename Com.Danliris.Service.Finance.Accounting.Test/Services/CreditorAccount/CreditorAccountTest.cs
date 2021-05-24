@@ -192,7 +192,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
 
             await service.CreateAsync(data);
 
-            var updateResponse = await service.UpdateFromUnitPaymentCorrection(new CreditorAccountUnitPaymentCorrectionPostedViewModel() { UnitReceiptNoteNo = data.UnitReceiptNoteNo });
+            var updateResponse = await service.CreateFromUnitPaymentCorrection(new CreditorAccountUnitPaymentCorrectionPostedViewModel() { UnitReceiptNoteNo = data.UnitReceiptNoteNo });
             Assert.NotEqual(0, updateResponse);
         }
 
