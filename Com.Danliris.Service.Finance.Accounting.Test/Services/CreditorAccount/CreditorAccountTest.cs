@@ -106,9 +106,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
             {
                 InvoiceNo = "InvoiceNo",
                 CreditorAccounts = null,
-                MemoDate =DateTimeOffset.Now,
-                MemoNo ="1",
-                PaymentDuration= "PaymentDuration"
+                MemoDate = DateTimeOffset.Now,
+                MemoNo = "1",
+                PaymentDuration = "PaymentDuration"
             };
             var updateResponse = await service.UpdateFromUnitPaymentOrderAsync(postedData);
 
@@ -131,9 +131,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = _dataUtil(service).GetNewData_CreditorAccountModel();
-            
+
             var result = await service.CreateAsync(data);
-            Assert.NotEqual(0,result);
+            Assert.NotEqual(0, result);
         }
 
         [Fact]
@@ -368,6 +368,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
         }
 
         [Fact]
+        public async Task Should_Success_Get_Report_Correction()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
+            data.SupplierCode = unitData.SupplierCode;
+            data.SupplierName = unitData.SupplierName;
+            data.InvoiceNo = unitData.InvoiceNo;
+            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
+            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+
+
+            var reportResponse = service.GetReport(1, 25, data.SupplierName, data.Date.Month, data.Date.Year, 7);
+
+            var test = reportResponse.Item1.Data.FirstOrDefault();
+            await service.CreateFromUnitPaymentCorrection(new CreditorAccountUnitPaymentCorrectionPostedViewModel() { UnitReceiptNoteNo = test.UnitReceiptNoteNo, UnitPaymentCorrectionNo = "test" });
+            service.GetReport(1, 25, data.SupplierName, data.Date.Month, data.Date.Year, 7);
+            Assert.NotEmpty(reportResponse.Item1.Data);
+        }
+
+        [Fact]
         public async Task Should_Success_Get_Report_NoRate()
         {
             CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
@@ -455,7 +476,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditorAccount
 
 
             var reportResponse = service.GeneratePdf(data.SupplierName, data.Date.Month, data.Date.Year, 7);
-          
+
             Assert.True(0 < reportResponse.Count());
         }
 
