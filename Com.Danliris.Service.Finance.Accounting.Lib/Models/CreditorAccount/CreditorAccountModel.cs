@@ -7,6 +7,51 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
 {
     public class CreditorAccountModel : StandardEntity, IValidatableObject
     {
+        public CreditorAccountModel()
+        {
+
+        }
+
+        public CreditorAccountModel(string supplierName, string supplierCode, bool supplierIsImport, int divisionId, string divisionCode, string divisionName, int unitId, string unitCode, string unitName, int unitPaymentCorrectionId, string unitPaymentCorrectionNo, decimal unitPaymentCorrectionDPP, decimal unitPaymentCorrectionPPN, decimal unitPaymentCorrectionMutation, string unitReceiptNoteNo, string products, DateTimeOffset? unitReceiptNoteDate, decimal unitReceiptNoteDPP, decimal unitReceiptNotePPN, decimal unitReceiptMutation, int bankExpenditureNoteId, string bankExpenditureNoteNo, DateTimeOffset? bankExpenditureNoteDate, decimal bankExpenditureNoteDPP, decimal bankExpenditureNotePPN, decimal bankExpenditureNoteMutation, string memoNo, DateTimeOffset? memoDate, decimal memoDPP, decimal memoPPN, decimal memoMutation, string paymentDuration, string invoiceNo, decimal finalBalance, string currencyCode, decimal dPPCurrency, decimal currencyRate)
+        {
+            SupplierName = supplierName;
+            SupplierCode = supplierCode;
+            SupplierIsImport = supplierIsImport;
+            DivisionId = divisionId;
+            DivisionCode = divisionCode;
+            DivisionName = divisionName;
+            UnitId = unitId;
+            UnitCode = unitCode;
+            UnitName = unitName;
+            UnitPaymentCorrectionId = unitPaymentCorrectionId;
+            UnitPaymentCorrectionNo = unitPaymentCorrectionNo;
+            UnitPaymentCorrectionDPP = unitPaymentCorrectionDPP;
+            UnitPaymentCorrectionPPN = unitPaymentCorrectionPPN;
+            UnitPaymentCorrectionMutation = unitPaymentCorrectionMutation;
+            UnitReceiptNoteNo = unitReceiptNoteNo;
+            Products = products;
+            UnitReceiptNoteDate = unitReceiptNoteDate;
+            UnitReceiptNoteDPP = unitReceiptNoteDPP;
+            UnitReceiptNotePPN = unitReceiptNotePPN;
+            UnitReceiptMutation = unitReceiptMutation;
+            BankExpenditureNoteId = bankExpenditureNoteId;
+            BankExpenditureNoteNo = bankExpenditureNoteNo;
+            BankExpenditureNoteDate = bankExpenditureNoteDate;
+            BankExpenditureNoteDPP = bankExpenditureNoteDPP;
+            BankExpenditureNotePPN = bankExpenditureNotePPN;
+            BankExpenditureNoteMutation = bankExpenditureNoteMutation;
+            MemoNo = memoNo;
+            MemoDate = memoDate;
+            MemoDPP = memoDPP;
+            MemoPPN = memoPPN;
+            MemoMutation = memoMutation;
+            PaymentDuration = paymentDuration;
+            InvoiceNo = invoiceNo;
+            FinalBalance = finalBalance;
+            CurrencyCode = currencyCode;
+            DPPCurrency = dPPCurrency;
+            CurrencyRate = currencyRate;
+        }
         #region Supplier
         [MaxLength(512)]
         public string SupplierName { get; set; }
@@ -32,6 +77,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         public string UnitName { get; set; }
         #endregion
 
+        #region Unit Payment Correction
+        public int UnitPaymentCorrectionId { get; set; }
+        [MaxLength(128)]
+        public string UnitPaymentCorrectionNo { get; set; }
+        public decimal UnitPaymentCorrectionDPP { get; set; }
+        public decimal UnitPaymentCorrectionPPN { get; set; }
+        public decimal UnitPaymentCorrectionMutation { get; set; }
+        #endregion
 
         #region UnitReceiptNote
         [MaxLength(128)]

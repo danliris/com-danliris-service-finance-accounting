@@ -327,6 +327,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             var itemQuery = _dbContext.DPPVATBankExpenditureNoteItems.AsQueryable();
             var query = _dbContext.DPPVATBankExpenditureNotes.AsQueryable();
             //var detailDoQuery = _dbContext.DPPVATBankExpenditureNoteDetailDos.AsQueryable();
+            var offset = new TimeSpan(_identityService.TimezoneOffset, 0, 0);
 
             if (expenditureId > 0)
                 query = query.Where(entity => entity.Id == expenditureId);
@@ -340,7 +341,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             if (supplierId > 0)
                 itemQuery = itemQuery.Where(entity => entity.SupplierId == supplierId); ;
 
-            query = query.Where(entity => entity.Date >= startDate && entity.Date <= endDate);
+            query = query.Where(entity => entity.Date.ToOffset(offset) >= startDate.ToOffset(offset) && entity.Date.ToOffset(offset) <= endDate.ToOffset(offset));
 
 
             var reportQuery = from detail in detailQuery 
@@ -353,6 +354,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                               select new ReportDto(detail, itemDetail, documentItem, detail.DPPVATBankExpenditureNoteDetailDos.Select(s=> new ReportDoDetailDto(s.DONo,s.DOId,s.PaymentBill,s.BillNo,s.TotalAmount,s.CurrencyRate)).ToList());
 
             return reportQuery.ToList();
+        }
+
+        public List<ReportDto> ExpenditureReportDetailDOPagination(int page, int size,int expenditureId, int internalNoteId, int invoiceId, int supplierId, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            var detailQuery = _dbContext.DPPVATBankExpenditureNoteDetails.Include(s => s.DPPVATBankExpenditureNoteDetailDos).AsQueryable();
+            var itemQuery = _dbContext.DPPVATBankExpenditureNoteItems.AsQueryable();
+            var query = _dbContext.DPPVATBankExpenditureNotes.AsQueryable();
+            //var detailDoQuery = _dbContext.DPPVATBankExpenditureNoteDetailDos.AsQueryable();
+            var offset = new TimeSpan(_identityService.TimezoneOffset, 0, 0);
+
+            if (expenditureId > 0)
+                query = query.Where(entity => entity.Id == expenditureId);
+
+            if (internalNoteId > 0)
+                itemQuery = itemQuery.Where(entity => entity.InternalNoteId == internalNoteId);
+
+            if (invoiceId > 0)
+                detailQuery = detailQuery.Where(entity => entity.InvoiceId == invoiceId);
+
+            if (supplierId > 0)
+                itemQuery = itemQuery.Where(entity => entity.SupplierId == supplierId); ;
+
+            //query = query.Where(entity => entity.Date >= startDate && entity.Date <= endDate);
+            query = query.Where(entity => entity.Date.ToOffset(offset) >= startDate.ToOffset(offset) && entity.Date.ToOffset(offset) <= endDate.ToOffset(offset));
+
+            var reportQuery = from detail in detailQuery
+                              join item in itemQuery on detail.DPPVATBankExpenditureNoteItemId equals item.Id into itemDetails
+                              from itemDetail in itemDetails
+
+                              join document in query on itemDetail.DPPVATBankExpenditureNoteId equals document.Id into documentItems
+                              from documentItem in documentItems
+
+                              select new ReportDto(detail, itemDetail, documentItem, detail.DPPVATBankExpenditureNoteDetailDos.Select(s => new ReportDoDetailDto(s.DONo, s.DOId, s.PaymentBill, s.BillNo, s.TotalAmount, s.CurrencyRate)).ToList());
+
+            var paged = reportQuery.Skip((page - 1) * size).Take(size).ToList();
+
+            return paged;
         }
 
         public async Task<int> Posting(List<int> ids)
