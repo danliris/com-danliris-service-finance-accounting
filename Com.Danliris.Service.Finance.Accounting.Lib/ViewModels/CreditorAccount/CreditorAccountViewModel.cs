@@ -16,6 +16,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
         public string BankExpenditureNoteNo { get; set; }
 
         public string MemoNo { get; set; }
+        public string CorrectionNo { get; set; }
 
         public string InvoiceNo { get; set; }
 
