@@ -4,11 +4,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownP
 {
     public class DispositionPaymentDto
     {
-        public DispositionPaymentDto(int dispositionPaymentId, string dispositionPaymentNo, DateTimeOffset dispositionPaymentDate)
+        public DispositionPaymentDto(int dispositionPaymentId, string dispositionPaymentNo, DateTimeOffset dispositionPaymentDate, DateTimeOffset bankExpenditureDate, string bankExpenditureNo, string dispositionNo, string supplierName, int downPaymentDuration, double initialBalanceDispositionAmount, double initialBalancePaymentAmount, double initialBalanceCurrencyRate, double initialBalanceCurrencyAmount, double downPaymentDispositionAmount, double downPaymentDispositionPaymentAmount, double downPaymentCurrencyRate, double downPaymentCurrencyAmount, string lastBalanceCurrencyCode, double lastBalanceCurrencyRate, double lastBalanceCurrencyAmount)
         {
             DispositionPaymentId = dispositionPaymentId;
             DispositionPaymentNo = dispositionPaymentNo;
             DispositionPaymentDate = dispositionPaymentDate;
+            BankExpenditureDate = bankExpenditureDate;
+            BankExpenditureNo = bankExpenditureNo;
+            DispositionNo = dispositionNo;
+            SupplierName = supplierName;
+            DownPaymentDuration = downPaymentDuration;
+            InitialBalanceDispositionAmount = initialBalanceDispositionAmount;
+            InitialBalancePaymentAmount = initialBalancePaymentAmount;
+            InitialBalanceCurrencyRate = initialBalanceCurrencyRate;
+            InitialBalanceCurrencyAmount = initialBalanceCurrencyAmount;
+            DownPaymentDispositionAmount = downPaymentDispositionAmount;
+            DownPaymentDispositionPaymentAmount = downPaymentDispositionPaymentAmount;
+            DownPaymentCurrencyRate = downPaymentCurrencyRate;
+            DownPaymentCurrencyAmount = downPaymentCurrencyAmount;
+            LastBalanceCurrencyCode = lastBalanceCurrencyCode;
+            LastBalanceCurrencyRate = lastBalanceCurrencyRate;
+            LastBalanceCurrencyAmount = lastBalanceCurrencyAmount;
         }
 
         public int DispositionPaymentId { get; private set; }
