@@ -376,7 +376,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 transaction.Items = transactionItems.Where(w => w.JournalTransactionId.Equals(transaction.Id)).ToList();
             }
 
-            return result;
+
+
+            return result.OrderBy(element => element.Date).ToList();
         }
 
         public async Task<int> UpdateAsync(int id, JournalTransactionModel model)
