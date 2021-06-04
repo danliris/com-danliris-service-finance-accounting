@@ -340,9 +340,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return new ReadResponse<JournalTransactionModel>(list, TotalData, OrderDictionary, new List<string>());
         }
 
-        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year)
+        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year, string referenceNo, string referenceType)
         {
-            var result = _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.Status.Equals("DRAFT")).ToList();
+            var query = _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.Status.Equals("DRAFT"));
+
+            if (!string.IsNullOrWhiteSpace(referenceNo))
+                query = query.Where(entity => entity.ReferenceNo.Contains(referenceNo));
+
+            if (!string.IsNullOrWhiteSpace(referenceType))
+                query = query.Where(entity => entity.Description.Contains(referenceType));
+
+            var result = query.ToList();
             var transactionIds = result.Select(s => s.Id).ToList();
 
             var transactionItems = (from transactionItem in _ItemDbSet
@@ -1157,6 +1165,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             }
 
+        }
+
+        public List<string> GetAllReferenceNo(string keyword)
+        {
+            return _DbContext.JournalTransactions.Select(entity => entity.ReferenceNo).Distinct().Where(entity => entity.Contains(keyword)).Take(10).ToList();
+        }
+
+        public List<string> GetAllReferenceType(string keyword)
+        {
+            return _DbContext.JournalTransactions.Select(entity => entity.Description).Distinct().Where(entity => entity.Contains(keyword)).Take(10).ToList();
         }
     }
 
