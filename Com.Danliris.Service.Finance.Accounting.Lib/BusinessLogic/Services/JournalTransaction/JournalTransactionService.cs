@@ -1169,12 +1169,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         public List<string> GetAllReferenceNo(string keyword)
         {
-            return _DbContext.JournalTransactions.Select(entity => entity.ReferenceNo).Distinct().Where(entity => entity.Contains(keyword)).Take(10).ToList();
+            return _DbContext.JournalTransactions.Select(entity => entity.ReferenceNo).Distinct().Where(entity => !string.IsNullOrWhiteSpace(entity) && entity.Contains(keyword)).Take(10).ToList();
         }
 
         public List<string> GetAllReferenceType(string keyword)
         {
-            return _DbContext.JournalTransactions.Select(entity => entity.Description).Distinct().Where(entity => entity.Contains(keyword)).Take(10).ToList();
+            return _DbContext.JournalTransactions.Select(entity => entity.Description).Distinct().Where(entity => !string.IsNullOrWhiteSpace(entity) && entity.Contains(keyword)).Take(10).ToList();
         }
     }
 
