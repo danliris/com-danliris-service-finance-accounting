@@ -500,7 +500,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             model.Status = "DRAFT";
             var createdData = await service.CreateAsync(model);
 
-            var response = service.GetAllReferenceNo(model.Description);
+            var response = service.GetAllReferenceType(model.Description);
 
             Assert.NotEmpty(response);
         }
