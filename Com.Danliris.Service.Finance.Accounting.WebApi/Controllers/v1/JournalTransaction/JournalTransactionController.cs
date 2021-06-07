@@ -290,7 +290,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("unposted-transactions")]
-        public IActionResult GetUnPosted([FromRoute] string referenceNo, [FromRoute] string referenceType, [FromRoute] int month = 0, [FromRoute] int year = 0)
+        public IActionResult GetUnPosted([FromQuery] string referenceNo, [FromQuery] string referenceType, [FromQuery] int month = 0, [FromQuery] int year = 0)
         {
             try
             {
@@ -318,7 +318,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("reference-no")]
-        public IActionResult GetReferenceNo([FromRoute] string keyword)
+        public IActionResult GetReferenceNo([FromQuery] string keyword)
         {
             try
             {
@@ -340,7 +340,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("reference-type")]
-        public IActionResult GetReferenceType([FromRoute] string keyword)
+        public IActionResult GetReferenceType([FromQuery] string keyword)
         {
             try
             {
