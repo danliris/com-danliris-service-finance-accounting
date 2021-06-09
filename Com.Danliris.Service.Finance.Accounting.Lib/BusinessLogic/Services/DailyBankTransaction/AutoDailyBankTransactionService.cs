@@ -217,7 +217,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Date = model.Date,
                 Nominal = (decimal)model.Amount,
                 ReferenceNo = model.DocumentNo,
-                Remark = "Pembayaran Lain - lain",
+                Remark = "Bayar Hutang Garment",
                 SourceType = "OPERASIONAL",
                 Status = "IN"
             };
