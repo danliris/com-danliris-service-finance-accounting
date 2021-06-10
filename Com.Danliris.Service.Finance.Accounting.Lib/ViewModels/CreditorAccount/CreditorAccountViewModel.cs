@@ -20,17 +20,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
 
         public string InvoiceNo { get; set; }
 
-        public decimal? DPP { get; set; }
+        public decimal DPP { get; set; }
 
-        public decimal? PPN { get; set; }
+        public decimal PPN { get; set; }
 
-        public decimal? Total { get; set; }
+        public decimal Total { get; set; }
 
-        public decimal? Mutation { get; set; }
+        public decimal Mutation { get; set; }
 
-        public decimal? FinalBalance { get; set; }
-        public decimal? DPPCurrency { get; set; }
-        public decimal? CurrencyRate { get; set; }
+        public decimal FinalBalance { get; set; }
+        public decimal DPPCurrency { get; set; }
+        public decimal CurrencyRate { get; set; }
 
         public string Currency { get; set; }
         public string PaymentDuration { get; set; }
