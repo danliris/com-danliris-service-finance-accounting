@@ -30,7 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             return await Task.FromResult(1);
         }
 
-        public Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos)
+        public async Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos)
         {
             await Task.Delay(1000);
             return await Task.FromResult(1);
