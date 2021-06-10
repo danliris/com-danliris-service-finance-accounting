@@ -1,5 +1,6 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
@@ -24,6 +25,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         public async Task<int> AutoCreateFromPaymentDisposition(PaymentDispositionNoteModel model)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
+        }
+
+        public Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos)
         {
             await Task.Delay(1000);
             return await Task.FromResult(1);
