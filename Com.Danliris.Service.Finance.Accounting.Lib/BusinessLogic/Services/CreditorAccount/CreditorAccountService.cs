@@ -100,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "TOTAL", "", "", "IDR", 0.ToString("#,##0.#0"));
+                dt.Rows.Add("","","", "", "", "", "", "", "", "TOTAL", "", "", "IDR", 0.ToString("#,##0.#0"));
                 index++;
             }
             else
@@ -109,12 +109,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 foreach (var item in data)
                 {
                     totalBalance += item.FinalBalance;
-                    dt.Rows.Add(item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null, item.UnitReceiptNoteNo, item.BankExpenditureNoteNo, item.MemoNo, item.CorrectionNo, item.InvoiceNo, item.PaymentDuration, item.DPP.ToString("#,##0.#0"), item.DPPCurrency.ToString("#,##0.#0"),
-                        item.PPN.ToString("#,##0.#0"), item.Total.ToString("#,##0.#0"), item.Mutation.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"));
+                    dt.Rows.Add(
+                        item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null,
+                        item.UnitReceiptNoteNo,
+                        item.BankExpenditureNoteNo,
+                        item.MemoNo,
+                        item.MemoNo,
+                        item.InvoiceNo,
+                        item.CorrectionNo,
+                        item.PaymentDuration,
+                        item.DPP.ToString("#,##0.#0"),
+                        item.DPPCurrency.ToString("#,##0.#0"),
+                        item.PPN.ToString("#,##0.#0"),
+                        item.Total.ToString("#,##0.#0"),
+                        item.Mutation.ToString("#,##0.#0"), 
+                        item.FinalBalance.ToString("#,##0.#0"));
                     index++;
                 }
 
-                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0.#0"));
+                dt.Rows.Add("", "", "", "", "", "","", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0.#0"));
                 index++;
             }
             return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, title, date, true, index);
@@ -269,7 +282,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo))
                 {
                     vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
-                    vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
+                    //vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.BankExpenditureNoteDPP;
                     vm.PPN = item.BankExpenditureNotePPN;
@@ -286,7 +299,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 if (!string.IsNullOrEmpty(item.UnitPaymentCorrectionNo))
                 {
                     vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
-                    vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
+                    //vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.UnitPaymentCorrectionDPP;
                     vm.PPN = item.UnitPaymentCorrectionPPN;
