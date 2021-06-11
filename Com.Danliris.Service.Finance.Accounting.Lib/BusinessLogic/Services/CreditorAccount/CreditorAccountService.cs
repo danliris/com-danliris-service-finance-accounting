@@ -251,7 +251,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     UnitReceiptNoteNo = item.UnitReceiptNoteNo,
                     Products = item.Products,
-                    Date = item.UnitReceiptNoteDate.Value,
+                    Date = item.UnitReceiptNoteDate.GetValueOrDefault(),
                     InvoiceNo = item.InvoiceNo,
                     DPP = item.CurrencyRate == 1 ? item.UnitReceiptNoteDPP : 0,
                     DPPCurrency = item.CurrencyRate != 1 ? item.UnitReceiptNoteDPP : 0,
@@ -269,7 +269,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo))
                 {
                     vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
-                    vm.Date = item.BankExpenditureNoteDate.Value;
+                    vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.BankExpenditureNoteDPP;
                     vm.PPN = item.BankExpenditureNotePPN;
@@ -286,7 +286,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 if (!string.IsNullOrEmpty(item.UnitPaymentCorrectionNo))
                 {
                     vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
-                    vm.Date = item.BankExpenditureNoteDate.Value;
+                    vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.UnitPaymentCorrectionDPP;
                     vm.PPN = item.UnitPaymentCorrectionPPN;
