@@ -86,7 +86,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Bon Terima Unit", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Bukti Pengeluaran Bank", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor NI/SPB", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Memo", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Invoice", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Koreksi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tempo Pembayaran", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nilai Invoice DPP", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nilai Invoice DPP Valas", DataType = typeof(string) });
@@ -98,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", 0.ToString("#,##0.#0"));
+                dt.Rows.Add("", "", "", "", "", "", "", "TOTAL", "", "", "IDR", 0.ToString("#,##0.#0"));
                 index++;
             }
             else
@@ -107,7 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 foreach (var item in data)
                 {
                     totalBalance += item.FinalBalance.GetValueOrDefault();
-                    dt.Rows.Add(item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null, item.UnitReceiptNoteNo, item.BankExpenditureNoteNo, item.MemoNo, item.InvoiceNo, item.PaymentDuration, item.DPP.GetValueOrDefault().ToString("#,##0.#0"), item.DPPCurrency.GetValueOrDefault().ToString("#,##0.#0"),
+                    dt.Rows.Add(item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null, item.UnitReceiptNoteNo, item.BankExpenditureNoteNo, item.MemoNo, item.CorrectionNo, item.InvoiceNo, item.PaymentDuration, item.DPP.GetValueOrDefault().ToString("#,##0.#0"), item.DPPCurrency.GetValueOrDefault().ToString("#,##0.#0"),
                         item.PPN.GetValueOrDefault().ToString("#,##0.#0"), item.Total.GetValueOrDefault().ToString("#,##0.#0"), item.Mutation.GetValueOrDefault().ToString("#,##0.#0"), item.FinalBalance.GetValueOrDefault().ToString("#,##0.#0"));
                     index++;
                 }
@@ -255,7 +257,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     Total = item.UnitReceiptMutation,
                     Mutation = item.CurrencyRate != 1 ? item.UnitReceiptMutation * item.CurrencyRate : item.UnitReceiptMutation,
                     PaymentDuration = item.PaymentDuration,
-                    MemoNo = item.MemoNo
+                    MemoNo = item.MemoNo,
+                    CorrectionNo = item.UnitPaymentCorrectionNo
                 };
                 unitReceiptMutation = vm.Mutation.GetValueOrDefault();
                 //result.Add(vm);
@@ -275,6 +278,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     vm.Products = item.Products;
                     //};
                     bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
+                    //}
+                }
+
+                if (!string.IsNullOrEmpty(item.UnitPaymentCorrectionNo))
+                {
+                    vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
+                    vm.Date = item.BankExpenditureNoteDate.Value;
+                    vm.InvoiceNo = item.InvoiceNo;
+                    vm.DPP = item.UnitPaymentCorrectionDPP;
+                    vm.PPN = item.UnitPaymentCorrectionPPN;
+                    vm.Total = item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN;
+                    vm.Mutation = item.UnitPaymentCorrectionMutation;
+                    vm.MemoNo = item.MemoNo;
+                    vm.PaymentDuration = item.PaymentDuration;
+                    vm.Products = item.Products;
+                    //};
+                    //bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
                     //}
                 }
                 result.Add(vm);
@@ -599,6 +619,62 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 return await DeleteAsync(model.Id);
             else
                 return 0;
+        }
+
+        public async Task<int> CreateFromUnitPaymentCorrection(CreditorAccountUnitPaymentCorrectionPostedViewModel viewModel)
+        {
+            var model = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.UnitReceiptNoteNo == viewModel.UnitReceiptNoteNo);
+
+            var result = 0;
+
+            if (model != null)
+            {
+                var correction = new CreditorAccountModel(
+                    model.SupplierName,
+                    model.SupplierCode,
+                    model.SupplierIsImport,
+                    model.DivisionId,
+                    model.DivisionCode,
+                    model.DivisionName,
+                    model.UnitId,
+                    model.UnitCode,
+                    model.UnitName,
+                    viewModel.UnitPaymentCorrectionId,
+                    viewModel.UnitPaymentCorrectionNo,
+                    viewModel.UnitPaymentCorrectionDPP,
+                    viewModel.UnitPaymentCorrectionPPN,
+                    viewModel.UnitPaymentCorrectionMutation,
+                    model.UnitReceiptNoteNo,
+                    model.Products,
+                    model.UnitReceiptNoteDate,
+                    model.UnitReceiptNoteDPP,
+                    model.UnitReceiptNotePPN,
+                    model.UnitReceiptMutation,
+                    model.BankExpenditureNoteId,
+                    model.BankExpenditureNoteNo,
+                    model.BankExpenditureNoteDate,
+                    model.BankExpenditureNoteDPP,
+                    model.BankExpenditureNotePPN,
+                    model.BankExpenditureNoteMutation,
+                    model.MemoNo,
+                    model.MemoDate,
+                    model.MemoDPP,
+                    model.MemoPPN,
+                    model.MemoMutation,
+                    model.PaymentDuration,
+                    model.InvoiceNo,
+                    model.FinalBalance,
+                    model.CurrencyCode,
+                    model.DPPCurrency,
+                    model.CurrencyRate
+                    );
+
+                EntityExtension.FlagForCreate(correction, IdentityService.Username, UserAgent);
+                DbSet.Add(correction);
+                result = await DbContext.SaveChangesAsync();
+            }
+
+            return result;
         }
     }
 }

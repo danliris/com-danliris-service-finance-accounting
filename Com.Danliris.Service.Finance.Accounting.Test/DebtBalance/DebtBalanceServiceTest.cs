@@ -264,16 +264,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
             Assert.NotEqual(0, result);
         }
 
-        [Fact]
-        public void Should_Success_EmptyInvoiceValue()
-        {
-            var dbContext = GetDbContext(GetCurrentMethod());
-            var data = GenerateDataUtil(dbContext);
-            var form = GetValidBankExpenditureNoteForm();
-            var service = GetService(GetCurrentMethod());
-            var result = service.EmptyInvoiceValue(data.GarmentDeliveryOrderId);
-            Assert.NotEqual(0, result);
-        }
+        //[Fact]
+        //public void Should_Success_EmptyInvoiceValue()
+        //{
+        //    var dbContext = GetDbContext(GetCurrentMethod());
+        //    var data = GenerateDataUtil(dbContext);
+        //    var form = GetValidBankExpenditureNoteForm();
+        //    var service = GetService(GetCurrentMethod());
+        //    var result = service.EmptyInvoiceValue(data.GarmentDeliveryOrderId);
+        //    Assert.NotEqual(0, result);
+        //}
 
         [Fact]
         public void Should_Success_EmptyBankExpenditureNoteValue()

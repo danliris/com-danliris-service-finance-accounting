@@ -59,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 var dispositionIds = dispositions.Select(element => element.DispositionId).ToList();
                 var expeditions = _dbContext.GarmentDispositionExpeditions.Where(entity => dispositionIds.Contains(entity.DispositionNoteId)).ToList();
                 var dispositionPaymentItems = _dbContext.GarmentInvoicePurchasingDispositionItems.Where(entity => dispositionIds.Contains(entity.DispositionId)).ToList();
-                var dispositionPaymentIds = dispositionPaymentItems.Select(element => element.GarmentInvoicePurchasingDisposistionId).ToList();
+                var dispositionPaymentIds = dispositionPaymentItems.Select(element => element.GarmentInvoicePurchasingDispositionId).ToList();
                 var dispositionPayments = _dbContext.GarmentInvoicePurchasingDispositions.Where(entity => dispositionPaymentIds.Contains(entity.Id)).ToList();
 
                 foreach (var disposition in dispositions)
@@ -78,7 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                                 var paymentTotalPaid = "";
                                 foreach (var paymentItem in paymentItems)
                                 {
-                                    var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.GarmentInvoicePurchasingDisposistionId);
+                                    var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.GarmentInvoicePurchasingDispositionId);
                                     invoicesDate += $"- {payment.InvoiceDate:dd/MM/yyyy}\n";
                                     paymentInvoicesNo += $"- {payment.InvoiceNo}\n";
                                     paymentTotalPaid += $"- {paymentItem.TotalPaid:N2}\n";
@@ -129,7 +129,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 {
                     var dispositionPayments = expenditureQuery.ToList();
                     var dispositionPaymentIds = dispositionPayments.Select(element => element.Id).ToList();
-                    var dispositionPaymentItems = _dbContext.GarmentInvoicePurchasingDispositionItems.Where(entity => dispositionPaymentIds.Contains(entity.GarmentInvoicePurchasingDisposistionId)).ToList();
+                    var dispositionPaymentItems = _dbContext.GarmentInvoicePurchasingDispositionItems.Where(entity => dispositionPaymentIds.Contains(entity.GarmentInvoicePurchasingDispositionId)).ToList();
                     var dispositionIds = dispositionPaymentItems.Select(element => element.DispositionId).ToList();
                     var dispositions = await GetDispositions(startDate, endDate, dispositionIds);
 
@@ -158,7 +158,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                                 var paymentTotalPaid = "";
                                 foreach (var paymentItem in paymentItems)
                                 {
-                                    var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.GarmentInvoicePurchasingDisposistionId);
+                                    var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.GarmentInvoicePurchasingDispositionId);
                                     invoicesDate += $"- {payment.InvoiceDate:dd/MM/yyyy}\n";
                                     paymentInvoicesNo += $"- {payment.InvoiceNo}\n";
                                     paymentTotalPaid += $"- {paymentItem.TotalPaid:N2}\n";
@@ -190,7 +190,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                         dispositions = dispositions.Where(entity => entity.DispositionCreatedBy == purchasingStaff).ToList();
 
                     var dispositionPaymentItems = _dbContext.GarmentInvoicePurchasingDispositionItems.Where(entity => dispositionIds.Contains(entity.DispositionId)).ToList();
-                    var dispositionPaymentIds = dispositionPaymentItems.Select(element => element.GarmentInvoicePurchasingDisposistionId).ToList();
+                    var dispositionPaymentIds = dispositionPaymentItems.Select(element => element.GarmentInvoicePurchasingDispositionId).ToList();
                     var dispositionPayments = _dbContext.GarmentInvoicePurchasingDispositions.Where(entity => dispositionPaymentIds.Contains(entity.Id)).ToList();
 
                     foreach (var disposition in dispositions)
@@ -206,7 +206,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                                 var paymentTotalPaid = "";
                                 foreach (var paymentItem in paymentItems)
                                 {
-                                    var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.GarmentInvoicePurchasingDisposistionId);
+                                    var payment = dispositionPayments.FirstOrDefault(element => element.Id == paymentItem.GarmentInvoicePurchasingDispositionId);
                                     invoicesDate += $"- {payment.InvoiceDate:dd/MM/yyyy}\n";
                                     paymentInvoicesNo += $"- {payment.InvoiceNo}\n";
                                     paymentTotalPaid += $"- {paymentItem.TotalPaid:N2}\n";
