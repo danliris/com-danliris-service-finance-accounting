@@ -30,13 +30,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels
             {
                 AccountBank = new AccountBankViewModel()
                 {
+                    Id = 1,
                     Currency = new CurrencyViewModel()
                     {
                         Code = "IDR"
                     }
                 },
                 Supplier = new SupplierViewModel(),
-                Items = new List<GarmentInvoicePurchasingDispositionItemViewModel>(),
+                Items = new List<GarmentInvoicePurchasingDispositionItemViewModel>() { new GarmentInvoicePurchasingDispositionItemViewModel() },
                 PaymentDate = DateTimeOffset.Now.AddMonths(1)
             };
 
