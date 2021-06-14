@@ -59,9 +59,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels
         [Fact]
         public void Shoul_Success_Build_Garment_Invoice_Disposition_Posting_Id()
         {
-            var vm = new GarmentInvoicePurchasingDispositionPostingIdViewModel();
+            var vm = new GarmentInvoicePurchasingDispositionPostingIdViewModel()
+            {
+                Id = 1
+            };
 
-            Assert.NotNull(vm);
+            Assert.NotEqual(0, vm.Id);
 
         }
 
