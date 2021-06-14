@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
@@ -29,6 +30,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             _dbContext = serviceProvider.GetService<FinanceDbContext>();
         }
 
+        public async Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos) 
+        {
+            var result = 0;
+            foreach(var dto in dtos)
+            {
+                result += await AutoCreateVbApproval(dto);
+            }
+            return result;
+        }
+        public async Task<int> AutoCreateVbApproval(ApprovalVBAutoJournalDto dto)
+        {
+            var dailyBankTransactionModel = new DailyBankTransactionModel()
+            {
+                AccountBankAccountName = dto.Bank.AccountName,
+                AccountBankAccountNumber = dto.Bank.AccountNumber,
+                AccountBankCode = dto.Bank.BankCode,
+                AccountBankCurrencyCode = dto.Bank.Currency.Code,
+                AccountBankCurrencyId = (int)dto.Bank.Currency.Id,
+                AccountBankCurrencySymbol = dto.Bank.Currency.Symbol,
+                AccountBankId = dto.Bank.Id,
+                AccountBankName = dto.Bank.BankName,
+                Date = dto.VbRequestDocument.Date,
+                Nominal = dto.VbRequestDocument.Amount,
+                CurrencyRate = (decimal)dto.VbRequestDocument.CurrencyRate,
+                ReferenceNo = dto.VbRequestDocument.DocumentNo,
+                ReferenceType = "Approval VB Inklaring",
+                SourceType = "Approval VB Inklaring",
+                SupplierCode = dto.VbRequestDocument.SuppliantUnitCode,
+                SupplierId = dto.VbRequestDocument.SuppliantUnitId,
+                SupplierName = dto.VbRequestDocument.SuppliantUnitName,
+                Status = "Operasional",
+                IsPosted = true
+            };
+            return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
+        }
 
         public Task<int> AutoCreateFromGarmentInvoicePurchasingDisposition(GarmentInvoicePurchasingDispositionModel model)
         {
