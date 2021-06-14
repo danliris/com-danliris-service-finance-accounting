@@ -118,34 +118,68 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
             dbContext.GarmentDispositionExpeditions.Add(expedition);
             dbContext.SaveChanges();
 
-            var result = await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, expedition.Id, "Test") } });
+            var result = await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(-1, expedition.Id, "Test") } });
             Assert.NotEqual(0, result);
         }
 
         [Fact]
         public async Task Should_Not_Empty_Read_Created_Data()
         {
-            try
-            {
-                var serviceProviderMock = GetServiceProvider();
-                var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProvider();
+            var dbContext = GetDbContext(GetCurrentMethod());
 
-                var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+            var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
 
-                var expedition = new GarmentDispositionExpeditionModel();
-                EntityExtension.FlagForCreate(expedition, "Test", "Test");
-                dbContext.GarmentDispositionExpeditions.Add(expedition);
-                dbContext.SaveChanges();
+            var expedition = new GarmentDispositionExpeditionModel();
+            EntityExtension.FlagForCreate(expedition, "Test", "Test");
+            dbContext.GarmentDispositionExpeditions.Add(expedition);
+            dbContext.SaveChanges();
 
-                await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, expedition.Id, "Test") } });
-                var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
+            await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, expedition.Id, "Test") } });
+            var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
 
-                Assert.NotEmpty(result.Data);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            Assert.NotEmpty(result.Data);
+
+        }
+
+        [Fact]
+        public async Task Should_Success_Delete_Created_Data()
+        {
+            var serviceProviderMock = GetServiceProvider();
+            var dbContext = GetDbContext(GetCurrentMethod());
+
+            var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+            var expedition = new GarmentDispositionExpeditionModel();
+            EntityExtension.FlagForCreate(expedition, "Test", "Test");
+            dbContext.GarmentDispositionExpeditions.Add(expedition);
+            dbContext.SaveChanges();
+
+            var model = new GarmentInvoicePurchasingDispositionModel() { InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, expedition.Id, "Test") } };
+            await service.CreateAsync(model);
+
+            var result = await service.DeleteAsync(model.Id);
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Update_Created_Data()
+        {
+            var serviceProviderMock = GetServiceProvider();
+            var dbContext = GetDbContext(GetCurrentMethod());
+
+            var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+            var expedition = new GarmentDispositionExpeditionModel();
+            EntityExtension.FlagForCreate(expedition, "Test", "Test");
+            dbContext.GarmentDispositionExpeditions.Add(expedition);
+            dbContext.SaveChanges();
+
+            var model = new GarmentInvoicePurchasingDispositionModel() { InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, expedition.Id, "Test") } };
+            await service.CreateAsync(model);
+
+            var result = await service.UpdateAsync(model.Id, model);
+            Assert.NotEqual(0, result);
         }
 
     }
