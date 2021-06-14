@@ -116,6 +116,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownP
                         .Select(group => new GarmentDownPaymentReportDto(group.Key, group.FirstOrDefault().DispositionNo, group.FirstOrDefault().DipositionDueDate, group.Select(entity => entity.GarmentInvoicePurchasingDispositionId).ToList()))
                         .ToList();
 
+
                 var dispositionIds = dispositions.Select(element => element.DispositionId).ToList();
 
                 var dispositionPaymentIds = dispositions.SelectMany(element => element.DispositionPaymentIds).Distinct().ToList();

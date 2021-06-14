@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewModels\NewFolder\**" />
+    <EmbeddedResource Remove="ViewModels\NewFolder\**" />
+    <None Remove="ViewModels\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="2.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -23,10 +29,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Com.Danliris.Service.Finance.Accounting.Lib\Com.Danliris.Service.Finance.Accounting.Lib.csproj" />
     <ProjectReference Include="..\Com.Danliris.Service.Finance.Accounting.WebApi\Com.Danliris.Service.Finance.Accounting.WebApi.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModels\NewFolder\" />
   </ItemGroup>
 
 </Project>
