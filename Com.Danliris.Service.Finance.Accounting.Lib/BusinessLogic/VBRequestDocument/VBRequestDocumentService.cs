@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
@@ -29,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         private readonly IIdentityService _identityService;
         private readonly IAutoJournalService _autoJournalTransactionService;
         private readonly IJournalTransactionService _journalTransactionService;
+        private readonly IAutoDailyBankTransactionService _dailyBankTransactionService;
         private readonly IServiceProvider _serviceProvider;
 
         public VBRequestDocumentService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
@@ -37,6 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             _identityService = serviceProvider.GetService<IIdentityService>();
             _autoJournalTransactionService = serviceProvider.GetService<IAutoJournalService>();
             _journalTransactionService = serviceProvider.GetService<IJournalTransactionService>();
+            _dailyBankTransactionService = serviceProvider.GetService<IAutoDailyBankTransactionService>();
             _serviceProvider = serviceProvider;
         }
 
@@ -743,6 +747,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             var vbDocuments = _dbContext.VBRequestDocuments.Where(s => data.Ids.Contains(s.Id));
 
             var vbRequestIdJournals = new List<int>();
+            var vbRequestsList = new List<ApprovalVBAutoJournalDto>();
             foreach (var item in vbDocuments)
             {
                 item.SetIsApproved(_identityService.Username, UserAgent);
@@ -754,7 +759,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 //}
 
                 if (item.IsInklaring)
+                {
                     vbRequestIdJournals.Add(item.Id);
+                    vbRequestsList.Add(new ApprovalVBAutoJournalDto { VbRequestDocument = item, Bank = data.Bank });
+                }
 
                 //if (item.Type == VBType.WithPO)
                 //{
@@ -777,7 +785,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             var result = await _dbContext.SaveChangesAsync();
 
             await _autoJournalTransactionService.AutoJournalInklaring(vbRequestIdJournals, data.Bank);
-
+            await _dailyBankTransactionService.AutoCreateVbApproval(vbRequestsList);
             return result;
         }
 
