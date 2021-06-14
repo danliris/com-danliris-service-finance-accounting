@@ -14,9 +14,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurch
 
         }
 
-        public GarmentInvoicePurchasingDispositionItemModel(double totalPaid)
+        public GarmentInvoicePurchasingDispositionItemModel(double totalPaid, int expeditionId, string dispositionNo)
         {
             TotalPaid = totalPaid;
+            PurchasingDispositionExpeditionId = expeditionId;
+            DispositionNo = dispositionNo;
         }
 
 

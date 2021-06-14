@@ -2,11 +2,13 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
+using Com.Moonlay.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,7 +96,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 
             var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
 
-            var result = await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(1) } });
+            var expedition = new GarmentDispositionExpeditionModel();
+            EntityExtension.FlagForCreate(expedition, "Test", "Test");
+            dbContext.GarmentDispositionExpeditions.Add(expedition);
+            dbContext.SaveChanges();
+
+            var result = await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(1, expedition.Id, "Test") } });
             Assert.NotEqual(0, result);
         }
 
@@ -106,8 +113,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 
             var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
 
-            var result = await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel() } });
+            var expedition = new GarmentDispositionExpeditionModel();
+            EntityExtension.FlagForCreate(expedition, "Test", "Test");
+            dbContext.GarmentDispositionExpeditions.Add(expedition);
+            dbContext.SaveChanges();
+
+            var result = await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, expedition.Id, "Test") } });
             Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Not_Empty_Read_Created_Data()
+        {
+            try
+            {
+                var serviceProviderMock = GetServiceProvider();
+                var dbContext = GetDbContext(GetCurrentMethod());
+
+                var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+                var expedition = new GarmentDispositionExpeditionModel();
+                EntityExtension.FlagForCreate(expedition, "Test", "Test");
+                dbContext.GarmentDispositionExpeditions.Add(expedition);
+                dbContext.SaveChanges();
+
+                await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, expedition.Id, "Test") } });
+                var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
+
+                Assert.NotEmpty(result.Data);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
     }
