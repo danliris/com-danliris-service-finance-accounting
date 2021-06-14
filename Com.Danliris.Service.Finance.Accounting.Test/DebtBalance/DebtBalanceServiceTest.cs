@@ -363,9 +363,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DebtBalance
             var form = GetValidBankExpenditureNoteForm();
             var service = GetService(GetCurrentMethod());
             var result = service.UpdateFromMemo(data.GarmentDeliveryOrderId, 1, "", 1, 1);
-            Assert.NotNull(result);
+            Assert.True(result > 0);
         }
 
+        //[Fact]
+        //public void Should_Success_GenerateExcel()
+        //{
 
+        //}
     }
 }
