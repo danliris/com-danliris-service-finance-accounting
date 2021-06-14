@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
@@ -70,6 +71,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             serviceProvider
                 .Setup(x => x.GetService(typeof(IAutoJournalService)))
                 .Returns(new AutoJournalServiceTestHelper());
+
+            var mockAutoDailyBankTransaction = new Mock<IAutoDailyBankTransactionService>();
+            mockAutoDailyBankTransaction
+                .Setup(x => x.AutoCreateVbApproval(It.IsAny<List<ApprovalVBAutoJournalDto>>()))
+                .ReturnsAsync(1);
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IAutoDailyBankTransactionService)))
+                .Returns(mockAutoDailyBankTransaction.Object);
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
