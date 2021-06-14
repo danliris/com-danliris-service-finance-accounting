@@ -6,6 +6,7 @@ ignore:
   - "Com.Danliris.Service.Finance.Accounting.Lib/BusinessLogic/GarmentDispositionPaymentReport"
   - "Com.Danliris.Service.Finance.Accounting.Lib/BusinessLogic/GarmentDownPaymentReport"
   - "Com.Danliris.Service.Finance.Accounting.Lib/BusinessLogic/GarmentPurchasingPphBankExpenditureNote"
+  - "Com.Danliris.Service.Finance.Accounting.Lib/ViewModels/MemoGarmentPurchasing"
   - "Com.Danliris.Service.Finance.Accounting.Lib/Helpers"
   - "Com.Danliris.Service.Finance.Accounting.Lib/Enums"
   - "Com.Danliris.Service.Finance.Accounting.WebApi/Program.cs"
