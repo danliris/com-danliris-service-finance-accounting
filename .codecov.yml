@@ -1,7 +1,8 @@
 ignore:
+  - "Com.Danliris.Service.Finance.Accounting.Lib/AutoMapperProfiles"
   - "Com.Danliris.Service.Finance.Accounting.Lib/Migrations"
   - "Com.Danliris.Service.Finance.Accounting.Lib/Helpers"
   - "Com.Danliris.Service.Finance.Accounting.Lib/Enums"
   - "Com.Danliris.Service.Finance.Accounting.WebApi/Program.cs"
-  - "Com.Danliris.Service.Finance.Accounting.WebApi/Tools/"
+  - "Com.Danliris.Service.Finance.Accounting.WebApi/Tools"
   - "Com.Danliris.Service.Finance.Accounting.WebApi/Startup.cs"
