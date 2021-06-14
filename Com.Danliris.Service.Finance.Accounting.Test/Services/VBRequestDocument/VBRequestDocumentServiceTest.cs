@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
@@ -70,6 +71,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             serviceProvider
                 .Setup(x => x.GetService(typeof(IAutoJournalService)))
                 .Returns(new AutoJournalServiceTestHelper());
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IAutoDailyBankTransactionService)))
+                .Returns(new AutoDailyBankTransactionServiceTestHelper());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
