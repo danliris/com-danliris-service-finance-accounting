@@ -94,7 +94,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 
             var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
 
-            var result = await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { Items = new List<GarmentInvoicePurchasingDispositionItemModel>() });
+            var result = await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(1) } });
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Paid_Before_Empty()
+        {
+            var serviceProviderMock = GetServiceProvider();
+            var dbContext = GetDbContext(GetCurrentMethod());
+
+            var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+            var result = await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel() } });
             Assert.NotEqual(0, result);
         }
 

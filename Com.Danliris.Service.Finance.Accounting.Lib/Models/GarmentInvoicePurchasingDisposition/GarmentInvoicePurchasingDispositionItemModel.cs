@@ -6,8 +6,20 @@ using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition
 {
-    public class GarmentInvoicePurchasingDispositionItemModel:StandardEntity
+    public class GarmentInvoicePurchasingDispositionItemModel : StandardEntity
     {
+
+        public GarmentInvoicePurchasingDispositionItemModel()
+        {
+
+        }
+
+        public GarmentInvoicePurchasingDispositionItemModel(double totalPaid)
+        {
+            TotalPaid = totalPaid;
+        }
+
+
         public int DispositionId { get; private set; }
         public string DispositionNo { get; private set; }
         public DateTimeOffset DispositionDate { get; private set; }
