@@ -15,7 +15,7 @@
         public double PurchaseAmount { get; set; }
 
         public double PaymentRate { get; set; }
-        public int MemoAmount { get; set; }
-        public int MemoIdrAmount { get; set; }
+        public double MemoAmount { get; set; }
+        public double MemoIdrAmount { get; set; }
     }
 }
