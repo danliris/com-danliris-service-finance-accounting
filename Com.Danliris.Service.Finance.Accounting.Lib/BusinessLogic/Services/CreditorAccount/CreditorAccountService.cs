@@ -100,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "TOTAL", "", "", "IDR", 0.ToString("#,##0.#0"));
+                dt.Rows.Add("","","", "", "", "", "", "", "", "TOTAL", "", "", "IDR", 0.ToString("#,##0.#0"));
                 index++;
             }
             else
@@ -108,13 +108,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 decimal totalBalance = 0;
                 foreach (var item in data)
                 {
-                    totalBalance += item.FinalBalance.GetValueOrDefault();
-                    dt.Rows.Add(item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null, item.UnitReceiptNoteNo, item.BankExpenditureNoteNo, item.MemoNo, item.CorrectionNo, item.InvoiceNo, item.PaymentDuration, item.DPP.GetValueOrDefault().ToString("#,##0.#0"), item.DPPCurrency.GetValueOrDefault().ToString("#,##0.#0"),
-                        item.PPN.GetValueOrDefault().ToString("#,##0.#0"), item.Total.GetValueOrDefault().ToString("#,##0.#0"), item.Mutation.GetValueOrDefault().ToString("#,##0.#0"), item.FinalBalance.GetValueOrDefault().ToString("#,##0.#0"));
+                    totalBalance += item.FinalBalance;
+                    dt.Rows.Add(
+                        item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null,
+                        item.UnitReceiptNoteNo,
+                        item.BankExpenditureNoteNo,
+                        item.MemoNo,
+                        item.MemoNo,
+                        item.InvoiceNo,
+                        item.CorrectionNo,
+                        item.PaymentDuration,
+                        item.DPP.ToString("#,##0.#0"),
+                        item.DPPCurrency.ToString("#,##0.#0"),
+                        item.PPN.ToString("#,##0.#0"),
+                        item.Total.ToString("#,##0.#0"),
+                        item.Mutation.ToString("#,##0.#0"), 
+                        item.FinalBalance.ToString("#,##0.#0"));
                     index++;
                 }
 
-                dt.Rows.Add("", "", "", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0.#0"));
+                dt.Rows.Add("", "", "", "", "", "","", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0.#0"));
                 index++;
             }
             return Excel.CreateExcelWithTitleNonDateFilter(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, title, date, true, index);
@@ -148,8 +161,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         {
             List<CreditorAccountViewModel> result = new List<CreditorAccountViewModel>();
             List<CreditorAccountModel> previousMonthCreditorAccount = new List<CreditorAccountModel>();
-            var debtQuery = supplierQuery.Where(x => x.FinalBalance > 0 && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value < new DateTimeOffset(year, month, 1, 0, 0, 0, x.UnitReceiptNoteDate.Value.Offset)).ToList();
-            var paidQuery = supplierQuery.Where(x => x.FinalBalance == 0 && x.BankExpenditureNoteDate.HasValue && x.BankExpenditureNoteDate.Value.Month == month && x.BankExpenditureNoteDate.Value.Year == year && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value < new DateTimeOffset(year, month, 1, 0, 0, 0, x.UnitReceiptNoteDate.Value.Offset)).ToList();
+            var timeOffset = new TimeSpan(IdentityService.TimezoneOffset, 0, 0);
+            var dateSearch = new DateTimeOffset(year, month, 1, 0, 0, 0, timeOffset);
+            var debtQuery = supplierQuery.Where(x => x.FinalBalance > 0 && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value < dateSearch).ToList();
+            var paidQuery = supplierQuery.Where(x => x.FinalBalance == 0 && x.BankExpenditureNoteDate.HasValue && x.BankExpenditureNoteDate.Value.Month == month && x.BankExpenditureNoteDate.Value.Year == year && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value < dateSearch).ToList();
 
             previousMonthCreditorAccount.AddRange(debtQuery);
             previousMonthCreditorAccount.AddRange(paidQuery);
@@ -172,7 +187,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     Mutation = item.UnitReceiptMutation,
 
                 };
-                unitReceiptMutaion = vm.Mutation.GetValueOrDefault();
+                unitReceiptMutaion = vm.Mutation;
                 //}
 
                 if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo))
@@ -188,25 +203,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     vm.Mutation = item.BankExpenditureNoteMutation * -1;
 
                     //};
-                    bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
+                    bankExpenditureMutation = vm.Mutation;
                     //result.Add(vm);
                 }
-                if (!string.IsNullOrEmpty(item.MemoNo))
-                {
-                    //CreditorAccountViewModel vm = new CreditorAccountViewModel
-                    //{
-                    vm.MemoNo = item.MemoNo;
-                    vm.Date = item.MemoDate.Value;
-                    vm.InvoiceNo = item.InvoiceNo;
-                    vm.DPP = item.MemoDPP;
-                    vm.PPN = item.MemoPPN;
-                    vm.Total = item.MemoMutation;
-                    vm.Mutation = item.MemoMutation;
+                //if (!string.IsNullOrEmpty(item.MemoNo))
+                //{
+                //    //CreditorAccountViewModel vm = new CreditorAccountViewModel
+                //    //{
+                //    vm.MemoNo = item.MemoNo;
+                //    vm.Date = item.MemoDate.Value;
+                //    vm.InvoiceNo = item.InvoiceNo;
+                //    vm.DPP = item.MemoDPP;
+                //    vm.PPN = item.MemoPPN;
+                //    vm.Total = item.MemoMutation;
+                //    vm.Mutation = item.MemoMutation;
 
-                    //};
-                    memoMutation = vm.Mutation.GetValueOrDefault();
-                    //result.Add(vm);
-                }
+                //    //};
+                //    memoMutation = vm.Mutation;
+                //    //result.Add(vm);
+                //}
 
                 result.Add(vm);
             }
@@ -249,7 +264,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     UnitReceiptNoteNo = item.UnitReceiptNoteNo,
                     Products = item.Products,
-                    Date = item.UnitReceiptNoteDate.Value,
+                    Date = item.UnitReceiptNoteDate.GetValueOrDefault(),
                     InvoiceNo = item.InvoiceNo,
                     DPP = item.CurrencyRate == 1 ? item.UnitReceiptNoteDPP : 0,
                     DPPCurrency = item.CurrencyRate != 1 ? item.UnitReceiptNoteDPP : 0,
@@ -260,14 +275,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     MemoNo = item.MemoNo,
                     CorrectionNo = item.UnitPaymentCorrectionNo
                 };
-                unitReceiptMutation = vm.Mutation.GetValueOrDefault();
+                unitReceiptMutation = vm.Mutation;
                 //result.Add(vm);
                 //}
 
                 if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo))
                 {
                     vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
-                    vm.Date = item.BankExpenditureNoteDate.Value;
+                    //vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.BankExpenditureNoteDPP;
                     vm.PPN = item.BankExpenditureNotePPN;
@@ -277,14 +292,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     vm.PaymentDuration = item.PaymentDuration;
                     vm.Products = item.Products;
                     //};
-                    bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
+                    bankExpenditureMutation = vm.Mutation;
                     //}
                 }
 
                 if (!string.IsNullOrEmpty(item.UnitPaymentCorrectionNo))
                 {
                     vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
-                    vm.Date = item.BankExpenditureNoteDate.Value;
+                    //vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.UnitPaymentCorrectionDPP;
                     vm.PPN = item.UnitPaymentCorrectionPPN;
@@ -332,7 +347,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 result.Add(resultVM);
             }
 
-            return (result, result.Sum(x => x.FinalBalance).GetValueOrDefault());
+            return (result, result.Sum(x => x.FinalBalance));
         }
 
         public async Task<int> UpdateFromUnitReceiptNoteAsync(CreditorAccountUnitReceiptNotePostedViewModel viewModel)

@@ -4,11 +4,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownP
 {
     public class MemoDocumentDto
     {
-        public MemoDocumentDto(int memoId, string memoNo, DateTimeOffset memoDate)
+        public MemoDocumentDto(int memoId, string memoNo, DateTimeOffset memoDate, double realizationDownPaymentCurrencyTotal, double realizationDownPaymentCurrencyRate, double realizationDownPaymentCurrencyAmount, DateTimeOffset internNoteDate, string internNoteNo, DateTimeOffset deliveryOrderDate, string deliveryOrderNo, string paymentNo, string paymentDescription, string paymentCurrencyCode, double paymentCurrencyRate, double paymentCurrencyAmount, double differenceCurrencyRate)
         {
             MemoId = memoId;
             MemoNo = memoNo;
             MemoDate = memoDate;
+            RealizationDownPaymentCurrencyTotal = realizationDownPaymentCurrencyTotal;
+            RealizationDownPaymentCurrencyRate = realizationDownPaymentCurrencyRate;
+            RealizationDownPaymentCurrencyAmount = realizationDownPaymentCurrencyAmount;
+            InternNoteDate = internNoteDate;
+            InternNoteNo = internNoteNo;
+            DeliveryOrderDate = deliveryOrderDate;
+            DeliveryOrderNo = deliveryOrderNo;
+            PaymentNo = paymentNo;
+            PaymentDescription = paymentDescription;
+            PaymentCurrencyCode = paymentCurrencyCode;
+            PaymentCurrencyRate = paymentCurrencyRate;
+            PaymentCurrencyAmount = paymentCurrencyAmount;
+            DifferenceCurrencyRate = differenceCurrencyRate;
         }
 
         public int MemoId { get; private set; }
