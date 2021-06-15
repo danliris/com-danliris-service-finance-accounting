@@ -2,7 +2,6 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocument;
@@ -18,13 +17,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocument
 {
-  public  class VBRequestDocumentServiceTest
+    public  class VBRequestDocumentServiceTest
     {
         private const string ENTITY = "VBRequestDocuments";
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -71,6 +69,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             serviceProvider
                 .Setup(x => x.GetService(typeof(IAutoJournalService)))
                 .Returns(new AutoJournalServiceTestHelper());
+
+            var mockAutoDailyBankTransaction = new Mock<IAutoDailyBankTransactionService>();
+            mockAutoDailyBankTransaction
+                .Setup(x => x.AutoCreateVbApproval(It.IsAny<List<ApprovalVBAutoJournalDto>>()))
+                .ReturnsAsync(1);
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IAutoDailyBankTransactionService)))
+                .Returns(mockAutoDailyBankTransaction.Object);
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IAutoDailyBankTransactionService)))

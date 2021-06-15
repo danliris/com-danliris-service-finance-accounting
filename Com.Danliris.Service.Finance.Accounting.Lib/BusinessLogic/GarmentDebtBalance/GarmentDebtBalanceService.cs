@@ -520,10 +520,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
             return result;
         }
 
-        public int UpdateFromMemo(int memoDetailId, string memoNo, double memoAmount, double paymentRate)
-        {
-            throw new NotImplementedException();
-        }
+        //public int UpdateFromMemo(int memoDetailId, string memoNo, double memoAmount, double paymentRate)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public int UpdateFromMemo(int deliveryOrderId, int memoDetailId, string memoNo, double memoAmount, double paymentRate)
         {
