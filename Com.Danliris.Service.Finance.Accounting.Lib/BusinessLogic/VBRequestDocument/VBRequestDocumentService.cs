@@ -760,12 +760,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 if (item.IsInklaring)
                 {
                     vbRequestIdJournals.Add(item.Id);
+                    var bankDocumentNo = _autoJournalTransactionService.DocumentNoGenerator(data.Bank);
+                    item.SetBankDocumentNo(bankDocumentNo,_identityService.Username,UserAgent);
                     vbRequestsList.Add(new ApprovalVBAutoJournalDto { VbRequestDocument = item, Bank = data.Bank });
                 }
 
                 //if (item.Type == VBType.WithPO)
                 //{
-                    
+
                 //    //var epoIds = _dbContext.VBRequestDocumentEPODetails.Where(entity => entity.VBRequestDocumentId == item.Id).Select(entity => (long)entity.EPOId).ToList();
                 //    //var autoJournalEPOUri = "vb-request-po-external/auto-journal-epo";
 

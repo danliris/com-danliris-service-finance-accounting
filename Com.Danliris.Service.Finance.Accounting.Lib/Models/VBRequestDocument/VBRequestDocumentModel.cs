@@ -131,6 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public string NoBL { get; private set; }
         public string NoPO { get; private set; }
         public string TypePurchasing { get; private set; }
+        public string BankDocumentNo { get; private set; }
 
         public void SetDate(DateTimeOffset newDate, string user, string userAgent)
         {
@@ -297,6 +298,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         {
             NoBL = noBl;
             NoPO = noPo;
+        }
+        public void SetBankDocumentNo(string bankDocumentNo, string username, string userAgent)
+        {
+            BankDocumentNo = bankDocumentNo;
+            this.FlagForUpdate(username, userAgent);
         }
     }
 }

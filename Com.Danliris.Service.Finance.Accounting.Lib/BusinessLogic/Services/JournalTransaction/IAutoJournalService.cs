@@ -16,5 +16,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds, AccountBankViewModel bank);
         //Task<int> AutoJournalInklaring(List<int> vbRequestIds);
         Task<int> AutoJournalInklaring(List<int> vbRequestIds, AccountBankViewModel bank);
+        string DocumentNoGenerator(AccountBankViewModel bank);
     }
 }
