@@ -45,7 +45,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         public async Task<int> CreateAsync(OthersExpenditureProofDocumentCreateUpdateViewModel viewModel)
         {
             var model = viewModel.MapToModel();
-            model.DocumentNo = await GetDocumentNo("K", viewModel.AccountBankCode, _identityService.Username);
+            var timeOffset = new TimeSpan(_identityService.TimezoneOffset, 0, 0);
+            model.DocumentNo = await GetDocumentNo("K", viewModel.AccountBankCode, _identityService.Username, viewModel.Date.GetValueOrDefault().ToOffset(timeOffset).Date);
 
             model.CurrencyRate = 1;
             var accountBank = await GetAccountBank(viewModel.AccountBankId.GetValueOrDefault());
@@ -83,6 +84,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
             var http = _serviceProvider.GetService<IHttpClientService>();
             var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
+        }
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username,DateTime date)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no-date?type={type}&bankCode={bankCode}&username={username}&date={date}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<string>();

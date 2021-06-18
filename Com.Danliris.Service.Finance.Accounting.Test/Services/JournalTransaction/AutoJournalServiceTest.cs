@@ -480,6 +480,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             throw new NotImplementedException();
         }
 
+        public List<string> GetAllReferenceNo(string keyword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetAllReferenceType(string keyword)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<GeneralLedgerWrapperReportViewModel>> GetGeneralLedgerReport(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset)
         {
             throw new NotImplementedException();
@@ -530,7 +540,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             throw new NotImplementedException();
         }
 
-        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year)
+        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year, string referenceNo, string referenceType)
         {
             throw new NotImplementedException();
         }

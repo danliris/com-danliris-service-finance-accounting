@@ -456,7 +456,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
                 startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
 
-                var result = _reportService.GetReport(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                var result = _reportService.GetReportViewModel(internalNoteId, supplierId, position, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
                 return Ok(new
                 {
                     apiVersion = ApiVersion,

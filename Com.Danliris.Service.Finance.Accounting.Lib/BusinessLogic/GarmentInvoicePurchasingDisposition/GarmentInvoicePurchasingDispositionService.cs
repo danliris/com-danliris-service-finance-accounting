@@ -21,7 +21,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentInvoicePurch
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoicePurchasingDisposition
 {
-    public class GarmentInvocePurchasingDispositionService : IGarmentInvoicePurchasingDispositionService
+    public class GarmentInvoicePurchasingDispositionService : IGarmentInvoicePurchasingDispositionService
     {
         private const string UserAgent = "finance-service";
         protected DbSet<GarmentInvoicePurchasingDispositionModel> DbSet;
@@ -30,7 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
         public readonly IServiceProvider ServiceProvider;
         public FinanceDbContext DbContext;
 
-        public GarmentInvocePurchasingDispositionService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
+        public GarmentInvoicePurchasingDispositionService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
             DbContext = dbContext;
             ServiceProvider = serviceProvider;
@@ -54,7 +54,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
                 if (item.TotalPaidBefore + item.TotalPaid >= item.TotalAmount)
                 {
                     expedition.IsPaid = true;
-                }else
+                }
+                else
                 {
                     expedition.IsPaid = false;
                 }
@@ -66,13 +67,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 
         public async Task<int> CreateAsync(GarmentInvoicePurchasingDispositionModel model)
         {
-            model.InvoiceNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username,model.InvoiceDate);
+            model.InvoiceNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username, model.InvoiceDate);
 
             //if (model.CurrencyCode != "IDR")
             //{
-                //var garmentCurrency = await GetGarmentCurrency(model.CurrencyCode);
-                //model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
-                model.CurrencyRate = model.CurrencyRate;
+            //var garmentCurrency = await GetGarmentCurrency(model.CurrencyCode);
+            //model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
+            model.CurrencyRate = model.CurrencyRate;
             //}
 
             CreateModel(model);
@@ -80,28 +81,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
             return await DbContext.SaveChangesAsync();
         }
 
-        private async Task<string> GetDocumentNo(string type, string bankCode, string username)
-        {
-            var jsonSerializerSettings = new JsonSerializerSettings
-            {
-                MissingMemberHandling = MissingMemberHandling.Ignore
-            };
-
-            var http = ServiceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
-            var response = await http.GetAsync(uri);
-
-            var result = new BaseResponse<string>();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
-            }
-            return result.data;
-        }
-
-        private async Task<string> GetDocumentNo(string type, string bankCode, string username,DateTimeOffset dispositionDate)
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username, DateTimeOffset dispositionDate)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
             {
@@ -122,21 +102,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
             return result.data;
         }
 
-        private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
-        {
-            var date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
-            var queryString = $"code={codeCurrency}&stringDate={date}";
+        //private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        //{
+        //    var date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+        //    var queryString = $"code={codeCurrency}&stringDate={date}";
 
-            var http = ServiceProvider.GetService<IHttpClientService>();
-            var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+        //    var http = ServiceProvider.GetService<IHttpClientService>();
+        //    var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
 
-            var responseString = await response.Content.ReadAsStringAsync();
-            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+        //    var responseString = await response.Content.ReadAsStringAsync();
+        //    var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
 
-            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+        //    var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
 
-            return result.data;
-        }
+        //    return result.data;
+        //}
 
         public async Task DeleteModel(int id)
         {
@@ -206,7 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
                 {
                     item.SetTotalPaid(itemModel.TotalPaid);
                     GarmentDispositionExpeditionModel expedition = DbContext.GarmentDispositionExpeditions.FirstOrDefault(ex => ex.Id.Equals(item.PurchasingDispositionExpeditionId));
-                    if(itemModel.TotalPaidBefore+itemModel.TotalPaid >= itemModel.TotalAmount)
+                    if (itemModel.TotalPaidBefore + itemModel.TotalPaid >= itemModel.TotalAmount)
                     {
                         expedition.IsPaid = true;
                     }
@@ -229,10 +209,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
             IQueryable<GarmentInvoicePurchasingDispositionModel> Query = this.DbSet.Include(m => m.Items);
             List<string> searchAttributes = new List<string>()
             {
-                "InvoiceNo", "Items.DispositionNo",  "SupplierName", "CurrencyCode","BankName"
+                "InvoiceNo",  "SupplierName", "CurrencyCode", "BankName"
             };
 
-            Query = QueryHelper<GarmentInvoicePurchasingDispositionModel>.Search(Query, searchAttributes, keyword);
+            //Query = QueryHelper<GarmentInvoicePurchasingDispositionModel>.Search(Query, searchAttributes, keyword);
 
             Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
             Query = QueryHelper<GarmentInvoicePurchasingDispositionModel>.Filter(Query, FilterDictionary);
@@ -240,9 +220,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
             Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
             Query = QueryHelper<GarmentInvoicePurchasingDispositionModel>.Order(Query, OrderDictionary);
 
-            Pageable<GarmentInvoicePurchasingDispositionModel> pageable = new Pageable<GarmentInvoicePurchasingDispositionModel>(Query, page - 1, size);
-            List<GarmentInvoicePurchasingDispositionModel> Data = pageable.Data.ToList();
-            int TotalData = pageable.TotalCount;
+            //Pageable<GarmentInvoicePurchasingDispositionModel> pageable = new Pageable<GarmentInvoicePurchasingDispositionModel>(Query, page - 1, size);
+
+
+            var Data = Query.Skip((page - 1) * size).Take(size).ToList();
+            int TotalData = Query.Count();
 
             return new ReadResponse<GarmentInvoicePurchasingDispositionModel>(Data, TotalData, OrderDictionary, new List<string>());
         }

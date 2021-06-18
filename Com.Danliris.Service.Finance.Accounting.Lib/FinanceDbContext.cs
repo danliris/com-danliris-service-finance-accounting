@@ -99,6 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<DPPVATBankExpenditureNoteModel> DPPVATBankExpenditureNotes { get; set; }
         public DbSet<DPPVATBankExpenditureNoteItemModel> DPPVATBankExpenditureNoteItems { get; set; }
         public DbSet<DPPVATBankExpenditureNoteDetailModel> DPPVATBankExpenditureNoteDetails { get; set; }
+        public DbSet<DPPVATBankExpenditureNoteDetailDoModel> DPPVATBankExpenditureNoteDetailDos { get; set; }
 
 
         public DbSet<GarmentPurchasingPphBankExpenditureNoteModel> GarmentPurchasingPphBankExpenditureNotes { get; set; }
@@ -112,6 +113,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<MemoGarmentPurchasingModel> MemoGarmentPurchasings { get; set; }
         public DbSet<MemoGarmentPurchasingDetailModel> MemoGarmentPurchasingDetails { get; set; }
         public DbSet<MemoDetailGarmentPurchasingModel> MemoDetailGarmentPurchasings { get; set; }
+        public DbSet<MemoDetailGarmentPurchasingDispositionModel> MemoDetailGarmentPurchasingDispositions { get; set; }
         public DbSet<MemoDetailGarmentPurchasingDetailModel> MemoDetailGarmentPurchasingDetails { get; set; }
 
         public DbSet<AccountingBookModel> AccountingBooks { get; set; }

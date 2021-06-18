@@ -155,11 +155,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 if (item.BankExpenditureNoteNo != null)
                 {
-                    purchase = item.Mutation.GetValueOrDefault();
-                    payment = item.Mutation.GetValueOrDefault();
+                    purchase = item.Mutation;
+                    payment = item.Mutation;
                 } else
                 {
-                    purchase = item.Mutation.GetValueOrDefault();
+                    purchase = item.Mutation;
                 }
 
                 eachBalance = purchase - payment;
@@ -231,12 +231,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 decimal eachBalance = 0;
                 if (item.BankExpenditureNoteNo != null)
                 {
-                    purchase = item.Mutation.GetValueOrDefault();
-                    payment = item.Mutation.GetValueOrDefault();
+                    purchase = item.Mutation;
+                    payment = item.Mutation;
                 }
                 else
                 {
-                    purchase = item.Mutation.GetValueOrDefault();
+                    purchase = item.Mutation;
                 }
                 eachBalance = purchase - payment;
 
