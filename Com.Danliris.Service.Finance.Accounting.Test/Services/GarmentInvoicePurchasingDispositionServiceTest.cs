@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -69,6 +70,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
             serviceProvider
                 .Setup(x => x.GetService(typeof(IAutoDailyBankTransactionService)))
                 .Returns(mockAutoDailyBankTransaction.Object);
+
+            mockAutoDailyBankTransaction
+                .Setup(x => x.AutoCreateVbApproval(It.IsAny<List<ApprovalVBAutoJournalDto>>()))
+                .ReturnsAsync(1);
 
             var documentNoContentResult = new BaseResponse<string>();
 
