@@ -41,13 +41,44 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             _serviceProvider = serviceProvider;
         }
 
+        private async Task<GarmentCurrency> GetCurrencyByCurrencyCodeDate(string currencyCode, DateTimeOffset date)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
+
+            var currencyUri = APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?code={currencyCode}&stringDate={date.DateTime.ToString("yyyy-MM-dd")}";
+            var currencyResponse = await httpClient.GetAsync(currencyUri);
+
+            var currencyResult = new BaseResponse<GarmentCurrency>()
+            {
+                data = new GarmentCurrency()
+            };
+
+            if (currencyResponse.IsSuccessStatusCode)
+            {
+                currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
+            }
+
+            return currencyResult.data;
+        }
+
         public async Task<int> CreateAsync(DailyBankTransactionModel model)
         {
+            var timeOffset = new TimeSpan(_IdentityService.TimezoneOffset, 0, 0);
             do
             {
                 model.Code = CodeGenerator.Generate();
             }
             while (_DbSet.Any(d => d.Code.Equals(model.Code)));
+
+            var currency = await GetCurrencyByCurrencyCodeDate(model.AccountBankCurrencyCode, model.Date);
+            model.CurrencyRate = (decimal)currency.Rate.GetValueOrDefault();
+            if (model.CurrencyRate <= 0)
+                model.CurrencyRate = 1;
 
             model.Date = model.Date.AddHours(_IdentityService.TimezoneOffset);
 
@@ -57,9 +88,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (string.IsNullOrWhiteSpace(model.ReferenceNo))
             {
                 if (model.Status == "OUT")
-                    model.ReferenceNo = await GetDocumentNo("K", model.AccountBankCode, _IdentityService.Username);
+                    model.ReferenceNo = await GetDocumentNo("K", model.AccountBankCode, _IdentityService.Username,model.Date.ToOffset(timeOffset).Date);
                 else if (model.Status == "IN")
-                    model.ReferenceNo = await GetDocumentNo("M", model.AccountBankCode, _IdentityService.Username);
+                    model.ReferenceNo = await GetDocumentNo("M", model.AccountBankCode, _IdentityService.Username,model.Date.ToOffset(timeOffset).Date);
             }
 
             EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
@@ -77,6 +108,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             var http = _serviceProvider.GetService<IHttpClientService>();
             var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+            }
+            return result.data;
+        }
+        public async Task<string> GetDocumentNo(string type, string bankCode, string username,DateTime date)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no-date?type={type}&bankCode={bankCode}&username={username}&date={date}";
             var response = await http.GetAsync(uri);
 
             var result = new BaseResponse<string>();
@@ -583,6 +634,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             //while (_DbSet.Any(d => d.Code.Equals(model.Code)));
 
             //model.Date = model.Date.AddHours(_IdentityService.TimezoneOffset);
+            var currency = await GetCurrencyByCurrencyCodeDate(model.AccountBankCurrencyCode, model.Date);
+            model.CurrencyRate = (decimal)currency.Rate.GetValueOrDefault();
+            if (model.CurrencyRate <= 0)
+                model.CurrencyRate = 1;
 
             if (!model.IsPosted)
             {

@@ -528,6 +528,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             }
             #endregion
 
+            #region Keterangan
+            cellHeaderBody4a.Colspan = 7;
+            cellHeaderBody4a.HorizontalAlignment = Element.ALIGN_LEFT;
+            cellHeaderBody4a.Phrase = new Phrase("Keterangan: " + viewModel.Remark, normal_font);
+            headerTable3.AddCell(cellHeaderBody4a);
+            #endregion
+
             #region Footer
             PdfPTable table = new PdfPTable(5)
             {
