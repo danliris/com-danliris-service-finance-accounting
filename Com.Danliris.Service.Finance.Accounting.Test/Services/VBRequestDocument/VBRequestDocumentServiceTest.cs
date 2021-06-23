@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
@@ -81,6 +82,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             serviceProvider
                 .Setup(x => x.GetService(typeof(IAutoDailyBankTransactionService)))
                 .Returns(new AutoDailyBankTransactionServiceTestHelper());
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IDPPVATBankExpenditureNoteService)))
+                .Returns(new DPPVATBankExpenditureNoteServiceTest());
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
