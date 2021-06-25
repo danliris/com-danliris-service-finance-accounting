@@ -244,7 +244,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             var supplierQuery = DbContext.CreditorAccounts.AsQueryable().Where(x => x.SupplierName == suplierName);
             var result = GetPreviousMonthReport(supplierQuery, month, year, offSet);
 
-            var currentQuery = supplierQuery.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
+            //var currentQuery = supplierQuery.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
+            var currentQuery = supplierQuery.Where(x => (x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year) || (x.UnitPaymentCorrectionDate.HasValue && x.UnitPaymentCorrectionDate.Value.Month == month && x.UnitPaymentCorrectionDate.Value.Year == year));
 
             //if (currentQuery.Count() == 0)
             //{
@@ -659,6 +660,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     viewModel.UnitPaymentCorrectionDPP,
                     viewModel.UnitPaymentCorrectionPPN,
                     viewModel.UnitPaymentCorrectionMutation,
+                    viewModel.UnitPaymentCorrectionDate,
                     model.UnitReceiptNoteNo,
                     model.Products,
                     model.UnitReceiptNoteDate,
