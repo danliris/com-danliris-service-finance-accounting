@@ -67,9 +67,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentInvoiceP
             {
                 yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "Items" });
             }
-            var hasPaymentLessTotatlPaid = this.Items.Where(s => s.TotalPaidPaymentBefore + s.TotalPaidPayment > s.TotalPaid);
+            //var hasPaymentLessTotatlPaid = this.Items.Where(s => s.TotalPaidPaymentBefore + s.TotalPaidPayment > s.TotalPaid);
+            var hasPaymentLessTotatlPaid = this.Items.Where(s => s.PrecisionDiffTotalPaidPayment > 0.00001);
 
-            if(hasPaymentLessTotatlPaid.Count()>0)
+
+            if (hasPaymentLessTotatlPaid.Count()>0)
             {
                 yield return new ValidationResult("Total yang dibayar tidak boleh melebihi Total Pembayaran", new List<string> { "Items" });
             }
