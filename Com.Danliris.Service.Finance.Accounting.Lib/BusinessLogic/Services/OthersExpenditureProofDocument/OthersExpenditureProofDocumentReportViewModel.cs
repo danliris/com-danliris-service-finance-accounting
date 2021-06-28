@@ -12,6 +12,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Oth
         public string BankName { get; set; }
         public string BankCOANo { get; set; }
         public int BankCOAId { get; set; }
+        public string AccountName { get; set; }
+        public string AccountNumber { get; set; }
         public string CurrencyCode { get; set; }
         //public double Total { get; set; }
         public string Type { get; set; }

@@ -198,9 +198,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         public async Task<List<AccountBank>> GetAccountBanks(List<int> Ids)
         {
             var resultAccountBanks = new List<AccountBank>();
-            var http = _serviceProvider.GetService<IHttpClientService>();
             foreach (var id in Ids)
             {
+                var http = _serviceProvider.GetService<IHttpClientService>();
+
                 var response = await http.GetAsync(APIEndpoint.Core + $"master/account-banks/{id}");
 
                 var responseString = await response.Content.ReadAsStringAsync();
@@ -304,7 +305,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             if (endDate.HasValue)
                 query = query.Where(document => document.Date.Date <= endDate.GetValueOrDefault().Date);
 
-            if (string.IsNullOrEmpty(bankExpenditureNo))
+            if(dateExpenditure.HasValue)
+                query = query.Where(document => document.Date.Date == dateExpenditure.GetValueOrDefault().Date);
+
+            if (!string.IsNullOrEmpty(bankExpenditureNo))
                 query = query.Where(document => document.DocumentNo==bankExpenditureNo);
 
             //Todo: OtherExpenditureDocument filter search for division
@@ -333,9 +337,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 Total = decimal.Zero,
             }).ToList();
 
-            var queryIds = query.Select(s => s.Id).ToList();
-            var queryItems = _itemDbSet.Where(item => queryIds.Contains(item.OthersExpenditureProofDocumentId)).ToList();
-            var itemAccountBanks = queryItems.Select(s => s.COAId).Distinct().ToList();
+            //var queryIds = query.Select(s => s.Id).ToList();
+            //var queryItems = _itemDbSet.Where(item => queryIds.Contains(item.OthersExpenditureProofDocumentId)).ToList();
+            var itemAccountBanks = query.Select(s => s.AccountBankId).Distinct().ToList();
             var accountBanks = await GetAccountBanks(itemAccountBanks);
 
             data = data.Select(element =>
@@ -360,7 +364,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                              Remark = dt.Remark,
                              Total = dt.Total,
                              IsPosted = dt.IsPosted,
-                             Type = dt.Type
+                             Type = dt.Type,
+                             AccountName = dtAccBank.AccountName,
+                             AccountBankId = dtAccBank.Id,
+                             AccountNumber = dtAccBank.AccountNumber
+
                          }).ToList();
 
             return new OthersExpenditureProofDocumentReportListViewModel()

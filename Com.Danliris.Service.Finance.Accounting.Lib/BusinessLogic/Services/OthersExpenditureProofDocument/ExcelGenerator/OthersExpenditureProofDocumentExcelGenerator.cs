@@ -65,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Oth
                     worksheet.Cells[row, col, row, countHeader].Merge = true;
                     row++;
                 }
-                row += 3;
+                row += 2;
                 #endregion
 
                 #region Table
@@ -77,25 +77,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Oth
                     if (index > 0 && index < 3)
                     {
                         worksheet.Cells[row, col].Value = "Bukti Pengeluaran Lain - Lain";
-                        SetFormatHeaderTable(worksheet.Cells[row, col]);
+                        SetFormatHeaderTable(worksheet.Cells[row, col, row, col + 1]);
                         worksheet.Cells[row, col, row, col + 1].Merge = true;
 
                         dataTable.Columns.Add(new DataColumn(listHeaderTable[index]));
                         worksheet.Cells[row + 1, col].Value = listHeaderTable[index];
-                        SetFormatHeaderTable(worksheet.Cells[row + 1, col]);
+                        SetFormatHeaderTable(worksheet.Cells[row, col,row+1,col]);
                         index++;
                         col++;
 
                         dataTable.Columns.Add(new DataColumn(listHeaderTable[index]));
                         worksheet.Cells[row + 1, col].Value = listHeaderTable[index];
-                        SetFormatHeaderTable(worksheet.Cells[row + 1, col]);
+                        SetFormatHeaderTable(worksheet.Cells[row, col,row+1,col]);
                         col++;
                     }
                     else
                     {
                         dataTable.Columns.Add(new DataColumn(text));
                         worksheet.Cells[row, col].Value = text;
-                        SetFormatHeaderTable(worksheet.Cells[row, col]);
+                        SetFormatHeaderTable(worksheet.Cells[row, col, row + 1, col]);
                         worksheet.Cells[row, col, row + 1, col].Merge = true;
                         col++;
                     }
@@ -108,7 +108,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Oth
                 var dataWithIndex = results.Select((item, index) => new { item, Index = index + 1 });
                 foreach (var data in dataWithIndex)
                 {
-                    dataTable.Rows.Add(data.Index, data.item.DocumentNo, data.item.Date, data.item.BankName, data.item.CurrencyCode, data.item.Total, data.item.Type, data.item.CekBgNo, data.item.Remark);
+                    dataTable.Rows.Add(data.Index, data.item.DocumentNo, data.item.Date.ToString("dd/MM/yyyy"), data.item.AccountName +" "+data.item.AccountNumber, data.item.CurrencyCode, data.item.Total.ToString("N2"), data.item.Type, data.item.CekBgNo, data.item.Remark);
                 }
                 worksheet.Cells[row, col].LoadFromDataTable(dataTable, false);
                 worksheet.Cells[row, col, row + countData, listHeaderTable.Count].AutoFitColumns();
@@ -130,14 +130,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Oth
                 worksheet.Cells[row, col, row, col + 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 worksheet.Cells[row, col, row, col + 4].Style.Font.Bold = true;
 
-                worksheet.Cells[row, col].Value = totalStr;
-                worksheet.Cells[row, col + 4, row, col + 9].Merge = true;
-                worksheet.Cells[row, col + 4, row, col + 9].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells[row, col + 4, row, col + 9].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells[row, col + 4, row, col + 9].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells[row, col + 4, row, col + 9].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells[row, col + 4, row, col + 9].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                worksheet.Cells[row, col + 4, row, col + 9].Style.Font.Bold = true;
+                worksheet.Cells[row, col+5 ].Value = totalStr;
+                worksheet.Cells[row, col + 5, row, col + 8].Merge = true;
+                worksheet.Cells[row, col + 5, row, col + 8].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, col + 5, row, col + 8].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, col + 5, row, col + 8].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, col + 5, row, col + 8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, col + 5, row, col + 8].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                worksheet.Cells[row, col + 5, row, col + 8].Style.Font.Bold = true;
                 #endregion
 
                 #endregion
