@@ -79,6 +79,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
                 .Returns(mockAutoDailyBankTransaction.Object);
 
             serviceProvider
+                .Setup(x => x.GetService(typeof(IAutoDailyBankTransactionService)))
+                .Returns(new AutoDailyBankTransactionServiceTestHelper());
+
+            serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
                 .Returns(new HttpClientTestService());
 
@@ -366,7 +370,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             ApprovalVBFormDto approvalVBFormDto = new ApprovalVBFormDto()
             {
                 IsApproved=true,
-                Ids = new List<int>() { data.Id }
+                Ids = new List<int>() { data.Id },
+                Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel { 
+                    Id = 1, 
+                    Code="BankTest",
+                    AccountCOA="BankCoaTest",
+                    AccountName="BankAccountNameTest",
+                    AccountNumber= "BankAccountNumberTest",
+                    BankCode = "BankBankCodeTest",
+                    BankName = "BankBankNameTestst",
+                    Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                    {
+                        Code = "CurrencyCodeTest",
+                        Id = 1,
+                        Description="CurrencyDescriptionTEst",
+                        Rate =1,
+                        Symbol = "Sy"
+                    }
+                }
             };
             //Act
             int result = await service.ApprovalData(approvalVBFormDto);
