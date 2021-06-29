@@ -236,7 +236,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("report")]
-        public IActionResult GetReportAll(string referenceNo, int accountBankId, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        public IActionResult GetReportAll(string referenceNo, int accountBankId, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int page = 0, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
         {
             try
             {
@@ -259,7 +259,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("loader")]
-        public IActionResult GetReportAll( string keyword = null, string filter = "{}")
+        public IActionResult GetLoader( string keyword = null, string filter = "{}")
         {
             try
             {
@@ -282,7 +282,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("report/xls-in")]
-        public IActionResult GetReportAllXlsIn(string referenceNo, int accountBankId,string accountBankName, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        public IActionResult GetReportAllXlsIn(string referenceNo, int accountBankId,string accountBankName, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int page = 0, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
         {
             try
             {
@@ -307,7 +307,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("report/xls-out")]
-        public IActionResult GetReportAllXlsOut(string referenceNo, int accountBankId, string accountBankName, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        public IActionResult GetReportAllXlsOut(string referenceNo, int accountBankId, string accountBankName, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int page = 0, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
         {
             try
             {

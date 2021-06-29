@@ -336,6 +336,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
         [Fact]
+        public void GetLoader_Return_Ok()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetLoader(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new ReadResponse<DailyBankTransactionModel>(new List<DailyBankTransactionModel>(), 1, new Dictionary<string, string>(), new List<string>()));
+
+            var response = GetController(mocks).GetLoader(It.IsAny<string>(), It.IsAny<string>());
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetLoader_Return_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetLoader(It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception("test failed"));
+
+            var response = GetController(mocks).GetLoader(It.IsAny<string>(), It.IsAny<string>());
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+        [Fact]
         public void GetReportAllXlsIn_Return_Ok()
         {
             var mocks = GetMocks();

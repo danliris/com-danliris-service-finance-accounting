@@ -240,5 +240,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         {
             throw new NotImplementedException();
         }
+
+        public ReadResponse<DailyBankTransactionModel> GetLoader(string keyword = null, string filter = "{}")
+        {
+            throw new NotImplementedException();
+        }
     }
 }
