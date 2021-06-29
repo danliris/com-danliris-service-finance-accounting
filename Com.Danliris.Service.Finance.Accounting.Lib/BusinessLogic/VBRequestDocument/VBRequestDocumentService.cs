@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankExpenditureNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
@@ -33,6 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         private readonly IJournalTransactionService _journalTransactionService;
         private readonly IAutoDailyBankTransactionService _dailyBankTransactionService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IDPPVATBankExpenditureNoteService _dppVatBankExpenditureNoteService;
 
         public VBRequestDocumentService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
         {
@@ -41,6 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             _autoJournalTransactionService = serviceProvider.GetService<IAutoJournalService>();
             _journalTransactionService = serviceProvider.GetService<IJournalTransactionService>();
             _dailyBankTransactionService = serviceProvider.GetService<IAutoDailyBankTransactionService>();
+            _dppVatBankExpenditureNoteService = serviceProvider.GetService<IDPPVATBankExpenditureNoteService>();
             _serviceProvider = serviceProvider;
         }
 
@@ -761,7 +764,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 if (item.IsInklaring)
                 {
                     vbRequestIdJournals.Add(item.Id);
-                    var bankDocumentNo = _autoJournalTransactionService.DocumentNoGenerator(data.Bank);
+                    var bankDocumentNo = await _dppVatBankExpenditureNoteService.GetDocumentNo("K",data.Bank.BankCode,_identityService.Username,item.Date.Date);
                     item.SetBankDocumentNo(bankDocumentNo,_identityService.Username,UserAgent);
                     vbRequestsList.Add(new ApprovalVBAutoJournalDto { VbRequestDocument = item, Bank = data.Bank });
                 }
