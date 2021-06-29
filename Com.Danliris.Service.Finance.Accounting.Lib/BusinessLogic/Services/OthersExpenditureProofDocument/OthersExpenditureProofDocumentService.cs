@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -189,6 +190,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             return result.data.Select(accountBank => accountBank.Id).ToList();
         }
 
+        /// <summary>
+        /// used list id accountbank with no duplication for enhance perform
+        /// </summary>
+        /// <param name="Ids"></param>
+        /// <returns></returns>
+        public async Task<List<AccountBank>> GetAccountBanks(List<int> Ids)
+        {
+            var resultAccountBanks = new List<AccountBank>();
+            foreach (var id in Ids)
+            {
+                var http = _serviceProvider.GetService<IHttpClientService>();
+
+                var response = await http.GetAsync(APIEndpoint.Core + $"master/account-banks/{id}");
+
+                var responseString = await response.Content.ReadAsStringAsync();
+                var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+                var result = JsonConvert.DeserializeObject<APIDefaultResponse<AccountBank>>(responseString, jsonSerializationSetting);
+                resultAccountBanks.Add(result.data);
+            }
+
+            return resultAccountBanks;
+        }
+
         public async Task<OthersExpenditureProofPagedListViewModel> GetPagedListAsync(int page, int size, string order, string keyword, string filter)
         {
             var query = _dbSet.AsNoTracking().AsQueryable();
@@ -230,6 +255,129 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
                 Size = size,
                 Total = total,
                 Count = data.Count
+            };
+        }
+
+
+        public async Task<OthersExpenditureProofPagedListViewModel> GetLoaderAsync(string keyword, string filter)
+        {
+            var query = _dbSet.AsNoTracking().AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                query = query.Where(document => document.DocumentNo.Contains(keyword));
+            }
+
+            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            query = QueryHelper<OthersExpenditureProofDocumentModel>.Filter(query, filterDictionary);
+
+            var total = await query.CountAsync();
+            var data = query.Select(document => new OthersExpenditureProofListViewModel()
+            {
+                DocumentNo = document.DocumentNo,
+                Id = document.Id
+            }).ToList();
+
+            return new OthersExpenditureProofPagedListViewModel()
+            {
+                Data = data,
+                Page = 1,
+                Size = data.Count,
+                Total = total,
+                Count = data.Count
+            };
+        }
+
+
+        public async Task<OthersExpenditureProofDocumentReportListViewModel> GetReportList(DateTimeOffset? startDate, DateTimeOffset? endDate, DateTimeOffset? dateExpenditure, string bankExpenditureNo, string division, int page, int size, string order, string keyword, string filter) 
+        {
+            var query = _dbSet.AsNoTracking().AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                var accountBankIds = await GetAccountBankIds(keyword);
+                query = query.Where(document => document.Type.Contains(keyword) || document.DocumentNo.Contains(keyword) || accountBankIds.Contains(document.AccountBankId));
+            }
+
+            if (startDate.HasValue)
+                query = query.Where(document => document.Date.Date >= startDate.GetValueOrDefault().Date);
+
+            if (endDate.HasValue)
+                query = query.Where(document => document.Date.Date <= endDate.GetValueOrDefault().Date);
+
+            if(dateExpenditure.HasValue)
+                query = query.Where(document => document.Date.Date == dateExpenditure.GetValueOrDefault().Date);
+
+            if (!string.IsNullOrEmpty(bankExpenditureNo))
+                query = query.Where(document => document.DocumentNo==bankExpenditureNo);
+
+            //Todo: OtherExpenditureDocument filter search for division
+
+            var filterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            query = QueryHelper<OthersExpenditureProofDocumentModel>.Filter(query, filterDictionary);
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<OthersExpenditureProofDocumentModel>.Order(query, orderDictionary);
+
+
+            var total = await query.CountAsync();
+            if (page > 0)
+                query = query.Skip((page - 1) * size).Take(size);
+
+            var data = query.Select(document => new OthersExpenditureProofDocumentReportViewModel
+            {
+                AccountBankId = document.AccountBankId,
+                DocumentNo = document.DocumentNo,
+                Type = document.Type,
+                Id = document.Id,
+                Date = document.Date,
+                IsPosted = document.IsPosted,
+                CekBgNo = document.CekBgNo,
+                Remark = document.Remark,
+                Total = decimal.Zero,
+            }).ToList();
+
+            //var queryIds = query.Select(s => s.Id).ToList();
+            //var queryItems = _itemDbSet.Where(item => queryIds.Contains(item.OthersExpenditureProofDocumentId)).ToList();
+            var itemAccountBanks = query.Select(s => s.AccountBankId).Distinct().ToList();
+            var accountBanks = await GetAccountBanks(itemAccountBanks);
+
+            data = data.Select(element =>
+            {
+                element.Total = _itemDbSet.Where(item => item.OthersExpenditureProofDocumentId == element.Id).Sum(item => item.Debit);
+                return element;
+            }).ToList();
+
+            var result = (from dt in data
+                         join accBank in accountBanks on dt.AccountBankId equals accBank.Id into dtAccBanks
+                         from dtAccBank in dtAccBanks
+                         select new OthersExpenditureProofDocumentReportViewModel
+                         {
+                             BankCOAId = dt.AccountBankId,
+                             BankCOANo = dtAccBank.AccountCOA,
+                             BankName = dtAccBank.BankName,
+                             CekBgNo = dt.CekBgNo,
+                             CurrencyCode = dtAccBank.Currency.Code,
+                             Date = dt.Date,
+                             DocumentNo = dt.DocumentNo,
+                             Id = dt.Id,
+                             Remark = dt.Remark,
+                             Total = dt.Total,
+                             IsPosted = dt.IsPosted,
+                             Type = dt.Type,
+                             AccountName = dtAccBank.AccountName,
+                             AccountBankId = dtAccBank.Id,
+                             AccountNumber = dtAccBank.AccountNumber
+
+                         }).ToList();
+
+            return new OthersExpenditureProofDocumentReportListViewModel()
+            {
+                Data = result,
+                Page = page,
+                Size = size,
+                Total = total,
+                Count = result.Count()
             };
         }
 
