@@ -88,7 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                         {
                             GarmentDeliveryOrderId = detail.GarmentDeliveryOrderId,
                             GarmentDeliveryOrderNo = detail.GarmentDeliveryOrderNo,
-                            MemoAmount = detail.MemoAmount,
+                            MemoAmount = (int)detail.MemoAmount,
                             MemoDispositionId = memoItem.Id,
                             RemarksDetail = detail.RemarksDetail,
                             MemoDetailId = model.Id,
@@ -354,7 +354,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
                     {
                         GarmentDeliveryOrderId = detail.GarmentDeliveryOrderId,
                         GarmentDeliveryOrderNo = detail.GarmentDeliveryOrderNo,
-                        MemoAmount = detail.MemoAmount,
+                        MemoAmount = (int)detail.MemoAmount,
                         MemoDispositionId = memoItem.Id,
                         RemarksDetail = detail.RemarksDetail,
                         MemoDetailId = model.Id,
