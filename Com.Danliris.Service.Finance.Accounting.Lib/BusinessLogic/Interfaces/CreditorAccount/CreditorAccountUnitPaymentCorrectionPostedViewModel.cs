@@ -1,4 +1,6 @@
-﻿namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount
+﻿using System;
+
+namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount
 {
     public class CreditorAccountUnitPaymentCorrectionPostedViewModel
     {
@@ -8,5 +10,6 @@
         public decimal UnitPaymentCorrectionDPP { get; set; }
         public decimal UnitPaymentCorrectionPPN { get; set; }
         public decimal UnitPaymentCorrectionMutation { get; set; }
+        public DateTimeOffset UnitPaymentCorrectionDate { get; set; }
     }
 }

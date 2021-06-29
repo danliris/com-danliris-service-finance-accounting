@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210624060458_CorrectionDate")]
+    partial class CorrectionDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4377,32 +4379,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("ApprovedBy")
                         .HasMaxLength(256);
-
-                    b.Property<string>("BankDocumentNo");
-
-                    b.Property<string>("BankAccountCOA");
-
-                    b.Property<string>("BankAccountName");
-
-                    b.Property<string>("BankAccountNumber");
-
-                    b.Property<string>("BankBankCode");
-
-                    b.Property<string>("BankBankName");
-
-                    b.Property<string>("BankCode");
-
-                    b.Property<string>("BankCurrencyCode");
-
-                    b.Property<string>("BankCurrencyDescription");
-
-                    b.Property<long>("BankCurrencyId");
-
-                    b.Property<double>("BankCurrencyRate");
-
-                    b.Property<string>("BankCurrencySymbol");
-
-                    b.Property<int>("BankId");
 
                     b.Property<string>("CanceledBy")
                         .HasMaxLength(256);

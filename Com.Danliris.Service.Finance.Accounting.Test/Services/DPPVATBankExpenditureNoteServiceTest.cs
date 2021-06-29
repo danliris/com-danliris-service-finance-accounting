@@ -5,6 +5,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Journal
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -24,7 +25,7 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 {
-    public class DPPVATBankExpenditureNoteServiceTest
+    public class DPPVATBankExpenditureNoteServiceTest : IDPPVATBankExpenditureNoteService
     {
         private const string ENTITY = "DPPVATBankExpenditureNoteServiceTest";
         private const int Offset = 7;
@@ -353,6 +354,61 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
             
             var result = service.ExpenditureFromInvoice(invoiceId);
             Assert.NotNull(result);
+        }
+
+        public async Task<int> Create(FormDto form)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
+        }
+
+        public DPPVATBankExpenditureNoteDto Read(int id)
+        {
+            return new DPPVATBankExpenditureNoteDto(new Lib.Models.DPPVATBankExpenditureNote.DPPVATBankExpenditureNoteModel(),new List<Lib.Models.DPPVATBankExpenditureNote.DPPVATBankExpenditureNoteItemModel>(),new List<Lib.Models.DPPVATBankExpenditureNote.DPPVATBankExpenditureNoteDetailModel>());
+        }
+
+        public ReadResponse<DPPVATBankExpenditureNoteIndexDto> Read(string keyword, int page = 1, int size = 25, string order = "{}")
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<int> Update(int id, FormDto form)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
+        }
+
+        public async Task<int> Delete(int id)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
+        }
+
+        public List<ReportDto> ExpenditureReport(int expenditureId, int internalNoteId, int invoiceId, int supplierId, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<ReportDto> ExpenditureReportDetailDO(int expenditureId, int internalNoteId, int invoiceId, int supplierId, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ReportDto ExpenditureFromInvoice(long InvoiceId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<int> Posting(List<int> ids)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
+        }
+
+        public async Task<string> GetDocumentNo(string type, string bankCode, string username, DateTime date)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(string.Empty);
         }
     }
 }

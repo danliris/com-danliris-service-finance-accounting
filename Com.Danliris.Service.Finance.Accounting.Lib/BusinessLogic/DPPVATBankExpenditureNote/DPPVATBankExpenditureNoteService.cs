@@ -95,7 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         //    return result.data;
         //}
 
-        private async Task<string> GetDocumentNo(string type, string bankCode, string username,DateTime date)
+        public async Task<string> GetDocumentNo(string type, string bankCode, string username,DateTime date)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
             {
