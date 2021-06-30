@@ -91,6 +91,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public async Task Should_Success_GetLoader()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+
+            var Response = service.GetLoader(data.Code, "{\"Status\":\"IN\"}");
+            Assert.NotEmpty(Response.Data);
+        }
+
+        [Fact]
         public async Task Should_Success_GetReportAll_Out()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
