@@ -361,7 +361,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetReportAll(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(new ReadResponse<DailyBankTransactionModel>(new List<DailyBankTransactionModel>(), 1, new Dictionary<string, string>(), new List<string>()));
+                .Returns(new ReadResponse<DailyBankTransactionModel>(new List<DailyBankTransactionModel> { new DailyBankTransactionModel() { AccountBankAccountName="test"} }, 1, new Dictionary<string, string>(), new List<string>()));
 
             var response = GetController(mocks).GetReportAllXlsIn(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>());
             //Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
@@ -383,7 +383,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetReportAll(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(new ReadResponse<DailyBankTransactionModel>(new List<DailyBankTransactionModel>(), 1, new Dictionary<string, string>(), new List<string>()));
+                .Returns(new ReadResponse<DailyBankTransactionModel>(new List<DailyBankTransactionModel> { new DailyBankTransactionModel() { AccountBankAccountName = "test" } }, 1, new Dictionary<string, string>(), new List<string>()));
 
             var response = GetController(mocks).GetReportAllXlsOut(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>());
             //Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
