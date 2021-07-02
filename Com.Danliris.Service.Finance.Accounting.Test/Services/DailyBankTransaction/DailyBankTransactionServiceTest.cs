@@ -111,6 +111,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public async Task Should_Success_GetDocumentNo()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataOut();
+
+            var Response = await service.GetDocumentNo("K","test","test");
+            Assert.NotEmpty(Response);
+        }
+
+        [Fact]
         public async Task Should_Success_GenerateExcel()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
