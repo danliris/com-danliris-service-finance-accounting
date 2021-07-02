@@ -300,13 +300,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             }
 
             if (startDate.HasValue)
-                query = query.Where(document => document.Date.Date >= startDate.GetValueOrDefault().Date);
+                query = query.Where(document => document.Date >= startDate.GetValueOrDefault());
 
             if (endDate.HasValue)
-                query = query.Where(document => document.Date.Date <= endDate.GetValueOrDefault().Date);
+                query = query.Where(document => document.Date <= endDate.GetValueOrDefault());
 
             if(dateExpenditure.HasValue)
-                query = query.Where(document => document.Date.Date == dateExpenditure.GetValueOrDefault().Date);
+                query = query.Where(document => document.Date == dateExpenditure.GetValueOrDefault());
 
             if (!string.IsNullOrEmpty(bankExpenditureNo))
                 query = query.Where(document => document.DocumentNo==bankExpenditureNo);
