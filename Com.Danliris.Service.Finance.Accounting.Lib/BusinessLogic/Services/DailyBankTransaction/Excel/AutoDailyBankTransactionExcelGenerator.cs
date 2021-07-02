@@ -15,8 +15,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public static MemoryStream CreateIn(string filename, List<DailyBankTransactionModel> results, string referenceNo, int accountBankId, string accountBankName, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int timezoneOffset)
         {
             var memoryStream = new MemoryStream();
-            var startDateStr = startDate.HasValue ? "-" : startDate.GetValueOrDefault().ToString("dd-MM-yyyy");
-            var endDateStr = endDate.HasValue ? "-" : endDate.GetValueOrDefault().ToString("dd-MM-yyyy");
+            var startDateStr = !startDate.HasValue ? "-" : startDate.GetValueOrDefault().ToString("dd-MM-yyyy");
+            var endDateStr = !endDate.HasValue ? "-" : endDate.GetValueOrDefault().ToString("dd-MM-yyyy");
             var countData = results.Count;
             var dataTable = new DataTable();
 
@@ -110,8 +110,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public static MemoryStream CreateOut(string filename, List<DailyBankTransactionModel> results, string referenceNo, int accountBankId, string accountBankName, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int timezoneOffset)
         {
             var memoryStream = new MemoryStream();
-            var startDateStr = startDate.HasValue ? "-" : startDate.GetValueOrDefault().ToString("dd-MM-yyyy");
-            var endDateStr = endDate.HasValue ? "-" : endDate.GetValueOrDefault().ToString("dd-MM-yyyy");
+            var startDateStr = !startDate.HasValue ? "-" : startDate.GetValueOrDefault().ToString("dd-MM-yyyy");
+            var endDateStr = !endDate.HasValue ? "-" : endDate.GetValueOrDefault().ToString("dd-MM-yyyy");
             var countData = results.Count;
             var dataTable = new DataTable();
 
