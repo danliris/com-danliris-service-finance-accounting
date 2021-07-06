@@ -220,16 +220,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PaymentDispositionNoteModel model = _dataUtil(service, GetCurrentMethod()).GetNewData();
-            await service.CreateAsync(model);
 
-            var item = model.Items.FirstOrDefault();
-            var result = service.GetReport(model.Id, item.DispositionId, model.SupplierId, item.DivisionId, DateTimeOffset.MinValue, DateTimeOffset.MaxValue);
-            var xls = service.GetXls(result);
+            var xls = service.GetXls(new List<ReportDto>() { new ReportDto(1, "", DateTimeOffset.Now, 1, "", DateTimeOffset.Now, DateTimeOffset.Now, 1, "", 1, "", 1, "", false, "", 1, "", 1, "", 1, 1, "") });
             Assert.NotNull(xls);
         }
 
         [Fact]
-        public async Task Should_Success_Get_Report_Xls_Empty()
+        public void Should_Success_Get_Report_Xls_Empty()
         {
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var xls = service.GetXls(new List<ReportDto>());

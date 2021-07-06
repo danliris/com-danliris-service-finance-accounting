@@ -320,8 +320,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public List<ReportDto> GetReport(int bankExpenditureId, int dispositionId, int supplierId, int divisionId, DateTimeOffset startDate, DateTimeOffset endDate)
         {
-            var query = from expenditure in DbContext.PaymentDispositionNotes
-                        join expenditureItem in DbContext.PaymentDispositionNoteItems on expenditure.Id equals expenditureItem.PaymentDispositionNoteId into items
+            var expenditureQuery = DbContext.PaymentDispositionNotes.AsQueryable();
+            var expenditureItemQuery = DbContext.PaymentDispositionNoteItems.AsQueryable();
+            var query = from expenditure in expenditureQuery
+                        join expenditureItem in expenditureItemQuery on expenditure.Id equals expenditureItem.PaymentDispositionNoteId into items
                         from item in items.DefaultIfEmpty()
                         select new ReportDto(expenditure.Id, expenditure.PaymentDispositionNo, expenditure.PaymentDate, item.DispositionId, item.DispositionNo, item.DispositionDate, item.PaymentDueDate, expenditure.BankId, expenditure.BankName, expenditure.CurrencyId, expenditure.CurrencyCode, expenditure.SupplierId, expenditure.SupplierName, expenditure.SupplierImport, item.ProformaNo, item.CategoryId, item.CategoryName, item.DivisionId, item.DivisionName, item.VatValue, item.DPP, expenditure.TransactionType);
 
