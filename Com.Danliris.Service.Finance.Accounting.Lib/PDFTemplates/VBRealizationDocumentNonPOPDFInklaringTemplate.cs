@@ -370,7 +370,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3.AddCell(cellHeaderBody5a);
 
                 // Jumlah
-                cellHeaderBody5a.Phrase = new Phrase($"({(res * -1).ToString("#,##0.00", new CultureInfo("id-ID"))}", normal_font);
+                cellHeaderBody5a.Phrase = new Phrase($"{(res * -1).ToString("#,##0.00", new CultureInfo("id-ID"))}", normal_font);
                 cellHeaderBody5a.HorizontalAlignment = Element.ALIGN_RIGHT; // Override default to center
                 headerTable3.AddCell(cellHeaderBody5a);
             }

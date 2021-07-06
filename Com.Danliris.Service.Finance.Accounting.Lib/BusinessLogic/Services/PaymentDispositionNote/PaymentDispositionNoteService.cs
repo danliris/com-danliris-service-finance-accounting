@@ -19,6 +19,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using System.Net.Http;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
+using System.IO;
+using System.Data;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote
 {
@@ -74,26 +76,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return await DbContext.SaveChangesAsync();
         }
 
-        private async Task<string> GetDocumentNo(string type, string bankCode, string username)
-        {
-            var jsonSerializerSettings = new JsonSerializerSettings
-            {
-                MissingMemberHandling = MissingMemberHandling.Ignore
-            };
+        //private async Task<string> GetDocumentNo(string type, string bankCode, string username)
+        //{
+        //    var jsonSerializerSettings = new JsonSerializerSettings
+        //    {
+        //        MissingMemberHandling = MissingMemberHandling.Ignore
+        //    };
 
-            var http = ServiceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
-            var response = await http.GetAsync(uri);
+        //    var http = ServiceProvider.GetService<IHttpClientService>();
+        //    var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+        //    var response = await http.GetAsync(uri);
 
-            var result = new BaseResponse<string>();
+        //    var result = new BaseResponse<string>();
 
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
-            }
-            return result.data;
-        }
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var responseContent = await response.Content.ReadAsStringAsync();
+        //        result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+        //    }
+        //    return result.data;
+        //}
         private async Task<string> GetDocumentNo(string type, string bankCode, string username,DateTime date)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
@@ -314,6 +316,80 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             var result = await DbContext.SaveChangesAsync();
 
             return result;
+        }
+
+        public List<ReportDto> GetReport(int bankExpenditureId, int dispositionId, int supplierId, int divisionId, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            var expenditureQuery = DbContext.PaymentDispositionNotes.AsQueryable();
+            var expenditureItemQuery = DbContext.PaymentDispositionNoteItems.AsQueryable();
+            var query = from expenditure in expenditureQuery
+                        join expenditureItem in expenditureItemQuery on expenditure.Id equals expenditureItem.PaymentDispositionNoteId into items
+                        from item in items.DefaultIfEmpty()
+                        select new ReportDto(expenditure.Id, expenditure.PaymentDispositionNo, expenditure.PaymentDate, item.DispositionId, item.DispositionNo, item.DispositionDate, item.PaymentDueDate, expenditure.BankId, expenditure.BankName, expenditure.CurrencyId, expenditure.CurrencyCode, expenditure.SupplierId, expenditure.SupplierName, expenditure.SupplierImport, item.ProformaNo, item.CategoryId, item.CategoryName, item.DivisionId, item.DivisionName, item.VatValue, item.DPP, expenditure.TransactionType);
+
+            query = query.Where(entity => entity.ExpenditureDate >= startDate && entity.ExpenditureDate <= endDate);
+            if (bankExpenditureId > 0)
+                query = query.Where(entity => entity.ExpenditureId == bankExpenditureId);
+
+            if (dispositionId > 0)
+                query = query.Where(entity => entity.DispositionId == dispositionId);
+
+            if (supplierId > 0)
+                query = query.Where(entity => entity.SupplierId == supplierId);
+
+            if (divisionId > 0)
+                query = query.Where(entity => entity.DivisionId == divisionId);
+
+
+            return query.OrderBy(entity => entity.ExpenditureDate).ToList();
+        }
+
+        public MemoryStream GetXls(List<ReportDto> data)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add(new DataColumn() { ColumnName = "No. Bukti Pembayaran Disposisi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Bayar Disposisi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No. Disposisi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Disposisi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Jatuh Tempo", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Bank Bayar", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Proforma Invoice", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Kategori", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Divisi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah dibayar ke Supplier", DataType = typeof(double) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Jenis Transaksi", DataType = typeof(string) });
+
+            if (data.Count() == 0)
+            {
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", 0, 0, "");
+            }
+            else
+            {
+                foreach (var item in data)
+                {
+                    dt.Rows.Add(
+                        item.ExpenditureNo,
+                        item.ExpenditureDate,
+                        item.DispositionNo,
+                        item.DispositionDate,
+                        item.DispositionDueDate,
+                        item.BankName,
+                        item.CurrencyCode,
+                        item.SupplierName,
+                        item.ProformaNo,
+                        item.CategoryName,
+                        item.DivisionName,
+                        item.VATAmount,
+                        item.PaidAmount,
+                        item.TransactionType
+                        );
+                }
+            }
+
+            return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Laporan Pembayaran Disposisi") }, true);
         }
     }
 }
