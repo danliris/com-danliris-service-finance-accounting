@@ -229,6 +229,61 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
             }
         }
 
+        [HttpGet("report")]
+        public IActionResult GetReport([FromQuery] int bankExpenditureId, [FromQuery] int dispositionId, [FromQuery] int supplierId, [FromQuery] int divisionId, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                startDate = startDate == null ? new DateTime(1970, 1, 1).ToUniversalTime() : startDate;
+                endDate = endDate == null ? DateTime.Now.ToUniversalTime() : endDate;
+                var result = Service.GetReport(bankExpenditureId, dispositionId, supplierId, divisionId, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+
+                //Dictionary<string, object> Result =
+                //    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                //    .Ok(Mapper, dataVM, 1, size, read.Count, dataVM.Count, read.Order, read.Selected);
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data = result,
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("report/xls")]
+        public IActionResult GetReportXls([FromQuery] int bankExpenditureId, [FromQuery] int dispositionId, [FromQuery] int supplierId, [FromQuery] int divisionId, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            try
+            {
+                startDate = startDate == null ? new DateTime(1970, 1, 1).ToUniversalTime() : startDate;
+                endDate = endDate == null ? DateTime.Now.ToUniversalTime() : endDate;
+                var result = Service.GetReport(bankExpenditureId, dispositionId, supplierId, divisionId, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                var xls = Service.GetXls(result);
+
+
+                var filename = string.Format("Laporan Disposisi Pembayaran - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+
+                var xlsInBytes = xls.ToArray();
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpPut("post")]
         public async Task<IActionResult> PaymentDispositionNotePost([FromBody] PaymentDispositionNotePostDto form)
         {
