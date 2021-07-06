@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocumen
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,6 +13,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 {
     public class AutoDailyBankTransactionServiceTestHelper : IAutoDailyBankTransactionService
     {
+        public Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel bank)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public async Task<int> AutoCreateFromGarmentInvoicePurchasingDisposition(GarmentInvoicePurchasingDispositionModel model)
         {
             await Task.Delay(1000);
