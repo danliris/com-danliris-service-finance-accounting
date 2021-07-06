@@ -399,7 +399,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             foreach (var vbRequest in vbRequests)
             {
-                var bankDocumentNo = DocumentNoGenerator(bank);
+                var bankDocumentNo = vbRequest.BankDocumentNo;
 
                 var coaUnit = "00";
                 var unit = units.FirstOrDefault(element => vbRequest.SuppliantUnitId == element.Id);
@@ -458,7 +458,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return vbRequests.Count;
         }
 
-        private string DocumentNoGenerator(AccountBankViewModel bank)
+        public string DocumentNoGenerator(AccountBankViewModel bank)
         {
             var latestDocumentNo = _dbContext.OthersExpenditureProofDocuments.IgnoreQueryFilters().Where(document => document.DocumentNo.Contains(bank.BankCode)).OrderByDescending(document => document.Id).Select(document => new { document.DocumentNo, document.CreatedUtc }).FirstOrDefault();
 

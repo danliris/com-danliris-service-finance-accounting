@@ -51,13 +51,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Date = dto.VbRequestDocument.Date,
                 Nominal = dto.VbRequestDocument.Amount,
                 CurrencyRate = (decimal)dto.VbRequestDocument.CurrencyRate,
-                ReferenceNo = dto.VbRequestDocument.DocumentNo,
+                ReferenceNo = dto.VbRequestDocument.BankDocumentNo,
                 ReferenceType = "Approval VB Inklaring",
-                SourceType = "Approval VB Inklaring",
+                SourceType = "Operasional",
                 SupplierCode = dto.VbRequestDocument.SuppliantUnitCode,
                 SupplierId = dto.VbRequestDocument.SuppliantUnitId,
                 SupplierName = dto.VbRequestDocument.SuppliantUnitName,
-                Status = "Operasional",
+                Status = "OUT",
                 IsPosted = true
             };
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
@@ -201,6 +201,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Nominal = itemModels.Sum(item => item.Debit),
                 CurrencyRate = (decimal)model.CurrencyRate,
                 ReferenceNo = model.DocumentNo,
+                ReferenceType = "Pembayaran Lain - lain",
                 Remark = $"{model.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", total)}",
                 SourceType = model.Type,
                 Status = "OUT",
@@ -252,7 +253,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Date = model.Date,
                 Nominal = (decimal)model.Amount,
                 ReferenceNo = model.DocumentNo,
-                Remark = "Pembayaran Lain - lain",
+                Remark = "Bayar Hutang Garment",
                 SourceType = "OPERASIONAL",
                 Status = "IN"
             };

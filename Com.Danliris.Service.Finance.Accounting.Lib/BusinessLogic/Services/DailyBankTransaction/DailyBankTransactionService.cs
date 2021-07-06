@@ -491,6 +491,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             var Query = (from transaction in _DbContext.DailyBankTransactions
                          where
                          transaction.IsDeleted == false
+                         && transaction.IsPosted
                          && transaction.AccountBankId == bankId
                          //&& transaction.Date.Month == month
                          && transaction.Date.ToOffset(offset).Month == month

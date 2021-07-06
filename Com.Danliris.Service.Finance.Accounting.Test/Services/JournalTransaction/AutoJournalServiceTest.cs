@@ -28,6 +28,7 @@ using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransaction
 {
@@ -446,6 +447,77 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             //Act
             var result = await service.AutoJournalInklaring(vbRealizationIds);
+
+            //Assert
+            Assert.NotEqual(0, result);
+        }
+        [Fact]
+        public async Task Should_Success_AutoJournalFromOthersExpenditureProof_With_ViewModel()
+        {
+            //Setup
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            serviceProviderMock.Setup(s => s.GetService(typeof(FinanceDbContext))).Returns(dbContext);
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new JournalHttpClientTestService());
+
+            Mock<IJournalTransactionService> journalTransactionServiceMock = new Mock<IJournalTransactionService>();
+
+            journalTransactionServiceMock.Setup(s => s.CreateAsync(It.IsAny<JournalTransactionModel>())).ReturnsAsync(1);
+
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IJournalTransactionService)))
+                .Returns(journalTransactionServiceMock.Object);
+
+            var masterCOAServiceMock = new MasterCOAService(serviceProviderMock.Object);
+            serviceProviderMock
+               .Setup(x => x.GetService(typeof(IMasterCOAService)))
+               .Returns(masterCOAServiceMock);
+
+            var service = new AutoJournalService(dbContext, serviceProviderMock.Object);
+
+            AccountBankViewModel viewModel = new AccountBankViewModel()
+            {
+                AccountCOA = "AccountCOA",
+                AccountName = "AccountName",
+                AccountNumber = "AccountNumber",
+                BankCode = "BankCode",
+                BankName = "BankName",
+                Code = "Code",
+                Currency = new CurrencyViewModel()
+                {
+                    Code = "Rp",
+                    Description = "Description",
+                    Rate = 1,
+                    Symbol = "IDR"
+                },
+
+            };
+
+            List<int> vbRealizationIds = new List<int>()
+            {
+                1
+            };
+
+            var viewModelOtherProof = new OthersExpenditureProofDocumentModel()
+            {
+                Date = DateTime.Now,
+                DocumentNo = "test",
+                AccountBankId = 1
+            };
+            var viewModelOtherProofItems = new List<OthersExpenditureProofDocumentItemModel>()
+            {
+                new OthersExpenditureProofDocumentItemModel
+                {
+                    COAId = 1,
+                    Debit= 10
+                }
+            };
+
+            //Act
+            var result = await service.AutoJournalFromOthersExpenditureProof(viewModelOtherProof, viewModelOtherProofItems);
 
             //Assert
             Assert.NotEqual(0, result);
