@@ -11,6 +11,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofD
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
@@ -20,11 +21,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IDailyBankTransactionService _dailyBankTransactionService;
+        private readonly FinanceDbContext _dbContext;
 
         public AutoDailyBankTransactionService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _dailyBankTransactionService = serviceProvider.GetService<IDailyBankTransactionService>();
+            _dbContext = serviceProvider.GetService<FinanceDbContext>();
         }
 
         public async Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos) 
@@ -51,13 +54,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Date = dto.VbRequestDocument.Date,
                 Nominal = dto.VbRequestDocument.Amount,
                 CurrencyRate = (decimal)dto.VbRequestDocument.CurrencyRate,
-                ReferenceNo = dto.VbRequestDocument.DocumentNo,
+                ReferenceNo = dto.VbRequestDocument.BankDocumentNo,
                 ReferenceType = "Approval VB Inklaring",
-                SourceType = "Approval VB Inklaring",
+                SourceType = "Operasional",
                 SupplierCode = dto.VbRequestDocument.SuppliantUnitCode,
                 SupplierId = dto.VbRequestDocument.SuppliantUnitId,
                 SupplierName = dto.VbRequestDocument.SuppliantUnitName,
-                Status = "Operasional",
+                Status = "OUT",
                 IsPosted = true
             };
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
@@ -201,6 +204,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Nominal = itemModels.Sum(item => item.Debit),
                 CurrencyRate = (decimal)model.CurrencyRate,
                 ReferenceNo = model.DocumentNo,
+                ReferenceType = "Pembayaran Lain - lain",
                 Remark = $"{model.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", total)}",
                 SourceType = model.Type,
                 Status = "OUT",
@@ -252,11 +256,50 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Date = model.Date,
                 Nominal = (decimal)model.Amount,
                 ReferenceNo = model.DocumentNo,
-                Remark = "Pembayaran Lain - lain",
+                Remark = "Bayar Hutang Garment",
                 SourceType = "OPERASIONAL",
                 Status = "IN"
             };
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
+        }
+
+        public async Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel accountBank)
+        {
+            var realizations = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) && entity.Type == VBRequestDocument.VBType.WithPO).ToList();
+
+            var result = 0;
+            foreach (var realization in realizations)
+            {
+                var realizationItems = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => entity.VBRealizationDocumentId == realization.Id).ToList();
+                var dailyBankTransactionModel = new DailyBankTransactionModel()
+                {
+                    AccountBankAccountName = accountBank.AccountName,
+                    AccountBankAccountNumber = accountBank.AccountNumber,
+                    AccountBankCode = accountBank.BankCode,
+                    AccountBankCurrencyCode = accountBank.Currency.Code,
+                    AccountBankCurrencyId = (int)accountBank.Currency.Id,
+                    AccountBankCurrencySymbol = accountBank.Currency.Symbol,
+                    AccountBankId = accountBank.Id,
+                    AccountBankName = accountBank.BankName,
+                    Date = realization.Date,
+                    Nominal = realizationItems.Sum(item => item.Amount),
+                    CurrencyRate = (decimal)realization.CurrencyRate,
+                    ReferenceNo = realization.DocumentNo,
+                    ReferenceType = "Clearence VB",
+                    Remark = $"{realization.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", realizationItems.Sum(item => item.Amount))}",
+                    SourceType = "OPERASIONAL",
+                    Status = "OUT",
+                    IsPosted = true
+                };
+
+                if (accountBank.Currency.Code != "IDR")
+                    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
+
+                result += await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
+            }
+
+
+            return result;
         }
     }
 }

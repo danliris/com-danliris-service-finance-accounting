@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.ClearaceVB;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
@@ -32,6 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
         private readonly IServiceProvider _serviceProvider;
         private readonly IIdentityService _IdentityService;
         private readonly IAutoJournalService _autoJournalService;
+        private readonly IAutoDailyBankTransactionService _autoDailyBankTransactionService;
         private readonly FinanceDbContext _DbContext;
 
         public ClearaceVBService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
@@ -42,6 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             _serviceProvider = serviceProvider;
             _IdentityService = serviceProvider.GetService<IIdentityService>();
             _autoJournalService = serviceProvider.GetService<IAutoJournalService>();
+            _autoDailyBankTransactionService = serviceProvider.GetService<IAutoDailyBankTransactionService>();
         }
         public static IQueryable<ClearaceVBViewModel> Filter(IQueryable<ClearaceVBViewModel> query, Dictionary<string, object> filterDictionary)
         {
@@ -455,6 +458,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cle
             {
                 await _autoJournalService.AutoJournalVBNonPOClearence(vbNonPOIdsToBeAccounted, form.Bank);
             }
+
+            await _autoDailyBankTransactionService.AutoCreateFromClearenceVB(vbRealizationIds, form.Bank);
 
             return result;
         }

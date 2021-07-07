@@ -50,5 +50,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
             await Task.Delay(1000);
             return await Task.FromResult(1);
         }
+
+        public string DocumentNoGenerator(AccountBankViewModel bank)
+        {
+            return string.Empty;
+        }
     }
 }
