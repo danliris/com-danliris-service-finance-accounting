@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocumen
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction
 {
@@ -16,6 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         Task<int> AutoCreateFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels);
         Task<int> AutoRevertFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels);
         //Task<int> AutoCreateFromGarmentDPPVATExpenditureNote();
+        Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel bank);
         Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos);
     }
 }
