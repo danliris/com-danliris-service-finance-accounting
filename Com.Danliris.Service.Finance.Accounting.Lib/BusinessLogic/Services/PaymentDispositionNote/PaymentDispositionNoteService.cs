@@ -325,11 +325,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             var query = from expenditure in expenditureQuery
                         join expenditureItem in expenditureItemQuery on expenditure.Id equals expenditureItem.PaymentDispositionNoteId into items
                         from item in items.DefaultIfEmpty()
-                        select new ReportDto(expenditure.Id, expenditure.PaymentDispositionNo, expenditure.PaymentDate, item.DispositionId, item.DispositionNo, item.DispositionDate, item.PaymentDueDate, expenditure.BankId, expenditure.BankName, expenditure.CurrencyId, expenditure.CurrencyCode, expenditure.SupplierId, expenditure.SupplierName, expenditure.SupplierImport, item.ProformaNo, item.CategoryId, item.CategoryName, item.DivisionId, item.DivisionName, item.VatValue, item.DPP, expenditure.TransactionType);
+                        select new
+                        {
+                            expenditure.Id,
+                            expenditure.PaymentDispositionNo,
+                            expenditure.PaymentDate,
+                            item.DispositionId,
+                            item.DispositionNo,
+                            item.DispositionDate,
+                            item.PaymentDueDate,
+                            expenditure.BankId,
+                            expenditure.BankName,
+                            expenditure.CurrencyId,
+                            expenditure.CurrencyCode,
+                            expenditure.SupplierId,
+                            expenditure.SupplierName,
+                            expenditure.SupplierImport,
+                            item.ProformaNo,
+                            item.CategoryId,
+                            item.CategoryName,
+                            item.DivisionId,
+                            item.DivisionName,
+                            item.VatValue,
+                            item.DPP,
+                            expenditure.TransactionType
+                        };
 
-            query = query.Where(entity => entity.ExpenditureDate >= startDate && entity.ExpenditureDate <= endDate);
+            query = query.Where(entity => entity.PaymentDate >= startDate && entity.PaymentDate <= endDate);
             if (bankExpenditureId > 0)
-                query = query.Where(entity => entity.ExpenditureId == bankExpenditureId);
+                query = query.Where(entity => entity.Id == bankExpenditureId);
 
             if (dispositionId > 0)
                 query = query.Where(entity => entity.DispositionId == dispositionId);
@@ -340,8 +364,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             if (divisionId > 0)
                 query = query.Where(entity => entity.DivisionId == divisionId);
 
-
-            return query.OrderBy(entity => entity.ExpenditureDate).ToList();
+            var result = query.OrderBy(entity => entity.PaymentDate).ToList();
+            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.DPP, element.TransactionType)).ToList();
         }
 
         public MemoryStream GetXls(List<ReportDto> data)
