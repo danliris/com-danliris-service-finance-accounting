@@ -201,16 +201,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                     //col += 4;
                     indexColumn += 4;
                 }
-                else if(indexColumn >15 && indexColumn < 18)
+                else if(indexColumn >16 && indexColumn < 19)
                 {
                     sheet.Cells[row, indexColumn].Value = "Verifikasi";
                     sheet.Cells[row, indexColumn, row, indexColumn + 1].Merge = true;
                     //col += 1;
                     indexColumn += 1;
                 }
-                else if (indexColumn > 18 && indexColumn < 24)
+                else if (indexColumn > 19 && indexColumn < 25)
                 {
-                    sheet.Cells[row, indexColumn].Value = "Verifikasi";
+                    sheet.Cells[row, indexColumn].Value = "Kasir";
                     sheet.Cells[row, indexColumn, row, indexColumn + 4].Merge = true;
                     //col += 4;
                     indexColumn += 4;
