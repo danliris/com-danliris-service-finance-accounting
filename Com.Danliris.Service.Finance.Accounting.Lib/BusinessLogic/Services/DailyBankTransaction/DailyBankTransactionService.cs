@@ -339,7 +339,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 }
             }
 
-            return Excel.DailyMutationReportExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, title, bank, date, true, index);
+            return Helpers.Excel.DailyMutationReportExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Mutasi") }, title, bank, date, true, index);
         }
 
         private MemoryStream GenerateExcelValas(AccountBank dataAccountBank, string title, int month, int year, int clientTimeZoneOffset)
@@ -545,6 +545,130 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             Dictionary<string, string> order = new Dictionary<string, string>();
 
             return new ReadResponse<DailyBankTransactionModel>(Result, Result.Count, order, new List<string>());
+        }
+
+        public ReadResponse<DailyBankTransactionModel> GetReportAll(string referenceNo, int accountBankId, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int page = 1, int size = 25, string order = "{}", List<string> select = null, string keyword = null, string filter = "{}")
+        {
+            IQueryable<DailyBankTransactionModel> Query = _DbSet;
+
+            Query = Query
+                .Select(s => new DailyBankTransactionModel
+                {
+                    Id = s.Id,
+                    CreatedUtc = s.CreatedUtc,
+                    Code = s.Code,
+                    LastModifiedUtc = s.LastModifiedUtc,
+                    AccountBankName = s.AccountBankName,
+                    AccountBankAccountName = s.AccountBankAccountName,
+                    AccountBankAccountNumber = s.AccountBankAccountNumber,
+                    AccountBankCode = s.AccountBankCode,
+                    AccountBankCurrencyCode = s.AccountBankCurrencyCode,
+                    AccountBankCurrencyId = s.AccountBankCurrencyId,
+                    AccountBankCurrencySymbol = s.AccountBankCurrencySymbol,
+                    AccountBankId = s.AccountBankId,
+                    Date = s.Date,
+                    ReferenceNo = s.ReferenceNo,
+                    ReferenceType = s.ReferenceType,
+                    Status = s.Status,
+                    SourceType = s.SourceType,
+                    IsPosted = s.IsPosted,
+                    Remark = s.Remark
+                });
+
+            List<string> searchAttributes = new List<string>()
+            {
+                "Code", "ReferenceNo", "ReferenceType","AccountBankName", "AccountBankCurrencyCode", "Status", "SourceType"
+            };
+
+            Query = QueryHelper<DailyBankTransactionModel>.Search(Query, searchAttributes, keyword);
+
+            Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            Query = QueryHelper<DailyBankTransactionModel>.Filter(Query, FilterDictionary);
+
+            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            Query = QueryHelper<DailyBankTransactionModel>.Order(Query, OrderDictionary);
+
+            //filter
+            if (!string.IsNullOrEmpty(referenceNo))
+                Query = Query.Where(s => s.Code == referenceNo);
+
+            if (accountBankId > 0)
+                Query = Query.Where(s => s.AccountBankId == accountBankId);
+
+            if (startDate.HasValue)
+                Query = Query.Where(s => s.Date >= startDate);
+
+            if (endDate.HasValue)
+                Query = Query.Where(s => s.Date <= endDate);
+
+
+            List<DailyBankTransactionModel> Data = new List<DailyBankTransactionModel>();
+            int TotalData = 0;
+
+            if (page > 0)
+            {
+                Pageable<DailyBankTransactionModel> pageable = new Pageable<DailyBankTransactionModel>(Query, page - 1, size);
+                Data = pageable.Data.ToList();
+                TotalData = pageable.TotalCount;
+            }
+            else
+            {
+                Data = Query.ToList();
+                TotalData = Data.Count;
+            }
+
+            List<DailyBankTransactionModel> list = new List<DailyBankTransactionModel>();
+            list.AddRange(
+               Data.Select(s => new DailyBankTransactionModel
+               {
+                   Id = s.Id,
+                   CreatedUtc = s.CreatedUtc,
+                   Code = s.Code,
+                   LastModifiedUtc = s.LastModifiedUtc,
+                   AccountBankName = s.AccountBankName,
+                   AccountBankAccountName = s.AccountBankAccountName,
+                   AccountBankAccountNumber = s.AccountBankAccountNumber,
+                   AccountBankCode = s.AccountBankCode,
+                   AccountBankCurrencyCode = s.AccountBankCurrencyCode,
+                   AccountBankCurrencyId = s.AccountBankCurrencyId,
+                   AccountBankCurrencySymbol = s.AccountBankCurrencySymbol,
+                   AccountBankId = s.AccountBankId,
+                   Date = s.Date,
+                   ReferenceNo = s.ReferenceNo,
+                   ReferenceType = s.ReferenceType,
+                   Status = s.Status,
+                   SourceType = s.SourceType,
+                   IsPosted = s.IsPosted
+               }).ToList()
+            );
+
+
+            return new ReadResponse<DailyBankTransactionModel>(list, TotalData, OrderDictionary, new List<string>());
+        }
+
+        public ReadResponse<DailyBankTransactionModel> GetLoader(string keyword = null, string filter = "{}")
+        {
+            IQueryable<DailyBankTransactionModel> Query = _DbSet;
+
+            Query = Query
+                .Select(s => new DailyBankTransactionModel
+                {
+                    Id = s.Id,
+                    Code = s.Code,
+                    Status = s.Status
+                });
+
+            List<string> searchAttributes = new List<string>()
+            {
+                "Code"
+            };
+
+            Query = QueryHelper<DailyBankTransactionModel>.Search(Query, searchAttributes, keyword);
+
+            Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            Query = QueryHelper<DailyBankTransactionModel>.Filter(Query, FilterDictionary);
+
+            return new ReadResponse<DailyBankTransactionModel>(Query.ToList(), Query.Count(), new Dictionary<string, string>(), new List<string>());
         }
 
         public ReadResponse<DailyBankTransactionModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
@@ -861,7 +985,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 }
             }
 
-            return Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Saldo Harian"), new KeyValuePair<DataTable, string>(currency, "Saldo Harian Mata Uang") },
+            return Helpers.Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Saldo Harian"), new KeyValuePair<DataTable, string>(currency, "Saldo Harian Mata Uang") },
                 new List<KeyValuePair<string, int>>() { new KeyValuePair<string, int>("Saldo Harian", index1), new KeyValuePair<string, int>("Saldo Harian Mata Uang", index2) },
                 title, dateFrom, dateTo, true);
         }
