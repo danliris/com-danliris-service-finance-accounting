@@ -108,7 +108,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Oth
                 var dataWithIndex = results.Select((item, index) => new { item, Index = index + 1 });
                 foreach (var data in dataWithIndex)
                 {
-                    dataTable.Rows.Add(data.Index, data.item.DocumentNo, data.item.Date.ToString("dd/MM/yyyy"), data.item.AccountName +" "+data.item.AccountNumber, data.item.CurrencyCode, data.item.Total.ToString("N2"), data.item.Type, data.item.CekBgNo, data.item.Remark);
+                    dataTable.Rows.Add(data.Index, data.item.DocumentNo, data.item.Date.AddHours(timezoneOffset).ToString("dd/MM/yyyy"), data.item.AccountName +" "+data.item.AccountNumber, data.item.CurrencyCode, data.item.Total.ToString("N2"), data.item.Type, data.item.CekBgNo, data.item.Remark);
                 }
                 worksheet.Cells[row, col].LoadFromDataTable(dataTable, false);
                 worksheet.Cells[row, col, row + countData, listHeaderTable.Count].AutoFitColumns();
