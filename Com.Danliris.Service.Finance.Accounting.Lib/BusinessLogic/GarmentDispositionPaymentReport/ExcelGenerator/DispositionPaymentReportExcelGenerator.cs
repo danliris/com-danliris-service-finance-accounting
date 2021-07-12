@@ -32,6 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             dt.Columns.Add(new DataColumn() { ColumnName = "Posisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Alasan Retur", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Pembelian Kirim", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Terima", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Kirim", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Verifikator", DataType = typeof(string) });
@@ -56,7 +57,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", 0, 0, 0, 0, 0, "", "", "", "", "", "", "", "", "", "", "", "", "", 0, "", "", "", "", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", 0, 0, 0, 0, 0, "", "", "", "", "","", "", "", "", "", "", "", "", "", 0, "", "", "","", "", "", "", "", "", "", "");
             }
             else
             {
@@ -79,6 +80,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                         item.PositionDescription,
                         item.SendToPurchasingRemark,
                         item.SendToVerificationDate != null ? item.SendToVerificationDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
+                        item.Remark,
                         item.VerificationAcceptedDate != null ? item.VerificationAcceptedDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
                         item.VerifiedDate != null ? item.VerifiedDate.GetValueOrDefault().AddHours(timezoneOffset).ToString("dd/MM/yyyy") : "",
                         item.VerifiedBy,
@@ -199,16 +201,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                     //col += 4;
                     indexColumn += 4;
                 }
-                else if(indexColumn >15 && indexColumn < 18)
+                else if(indexColumn >16 && indexColumn < 19)
                 {
                     sheet.Cells[row, indexColumn].Value = "Verifikasi";
                     sheet.Cells[row, indexColumn, row, indexColumn + 1].Merge = true;
                     //col += 1;
                     indexColumn += 1;
                 }
-                else if (indexColumn > 18 && indexColumn < 24)
+                else if (indexColumn > 19 && indexColumn < 25)
                 {
-                    sheet.Cells[row, indexColumn].Value = "Verifikasi";
+                    sheet.Cells[row, indexColumn].Value = "Kasir";
                     sheet.Cells[row, indexColumn, row, indexColumn + 4].Merge = true;
                     //col += 4;
                     indexColumn += 4;
