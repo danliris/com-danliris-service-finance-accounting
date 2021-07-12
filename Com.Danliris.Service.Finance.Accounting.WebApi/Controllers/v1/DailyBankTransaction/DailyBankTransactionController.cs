@@ -291,7 +291,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
                
                 var filename = "Laporan Bank Harian Masuk";
 
-                var xls = AutoDailyBankTransactionExcelGenerator.CreateIn(filename, Result.Data,referenceNo, accountBankId, accountBankName,division, startDate, endDate, IdentityService.TimezoneOffset);
+                var xls = AutoDailyBankTransactionExcelGenerator.CreateIn(filename, Result.Data,referenceNo, accountBankId, accountBankName,division, startDate, endDate, clientTimeZoneOffset);
 
                 var xlsInBytes = xls.ToArray();
 
@@ -316,7 +316,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
 
                 var filename = "Laporan Bank Harian Keluar";
 
-                var xls = AutoDailyBankTransactionExcelGenerator.CreateOut(filename, Result.Data, referenceNo, accountBankId, accountBankName, division, startDate, endDate, IdentityService.TimezoneOffset);
+                var xls = AutoDailyBankTransactionExcelGenerator.CreateOut(filename, Result.Data, referenceNo, accountBankId, accountBankName, division, startDate, endDate, clientTimeZoneOffset);
 
                 var xlsInBytes = xls.ToArray();
 
