@@ -828,7 +828,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             );
 
 
-            return new ReadResponse<DailyBankTransactionModel>(list, TotalData, OrderDictionary, new List<string>());
+            return new ReadResponse<DailyBankTransactionModel>(list.OrderBy(element => element.Date).ToList(), TotalData, OrderDictionary, new List<string>());
         }
 
         public ReadResponse<DailyBankTransactionModel> GetLoader(string keyword = null, string filter = "{}")
