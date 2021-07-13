@@ -301,7 +301,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     sheet = GenerateExcelPerSheet(bnkId, title, month, year, clientTimeZoneOffset);
                     bank = sheet.Value;
                     dataSheet.Add(sheet);
-                    package = Excel.DailyMutationReportExcelPerSheet(package, dataSheet, title, bank,date);
+                    package = Helpers.Excel.DailyMutationReportExcelPerSheet(package, dataSheet, title, bank,date);
 
                 }
                 else
@@ -309,7 +309,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     sheet = GenerateExcelValasPerSheet(bnkId, title, month, year, clientTimeZoneOffset);
                     bank = sheet.Value;
                     dataSheet.Add(sheet);
-                    package = Excel.DailyMutationReportExcelPerSheet(package, dataSheet, title, bank,date);
+                    package = Helpers.Excel.DailyMutationReportExcelPerSheet(package, dataSheet, title, bank,date);
                 }
             }
             MemoryStream stream = new MemoryStream();
