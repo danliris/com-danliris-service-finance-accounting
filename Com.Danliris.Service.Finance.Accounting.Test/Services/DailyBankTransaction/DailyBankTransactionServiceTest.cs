@@ -120,7 +120,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             Assert.NotEmpty(Response);
         }
 
-        [Fact]
+        //[Fact]
         //public async Task Should_Success_GenerateExcel()
         //{
         //    DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
