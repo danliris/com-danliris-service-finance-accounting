@@ -96,7 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestDataIn();
 
-            var Response = service.GetLoader(data.Code, "{\"Status\":\"IN\"}");
+            var Response = service.GetLoader(data.ReferenceNo, "{\"Status\":\"IN\"}");
             Assert.NotEmpty(Response.Data);
         }
 
