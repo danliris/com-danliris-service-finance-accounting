@@ -755,7 +755,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     Status = s.Status,
                     SourceType = s.SourceType,
                     IsPosted = s.IsPosted,
-                    Remark = s.Remark
+                    Remark = s.Remark,
+                    Nominal = s.Nominal
                 });
 
             List<string> searchAttributes = new List<string>()
@@ -821,7 +822,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                    ReferenceType = s.ReferenceType,
                    Status = s.Status,
                    SourceType = s.SourceType,
-                   IsPosted = s.IsPosted
+                   IsPosted = s.IsPosted,
+                   Nominal = s.Nominal
                }).ToList()
             );
 
