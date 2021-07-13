@@ -846,7 +846,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             List<string> searchAttributes = new List<string>()
             {
-                "Code"
+                "ReferenceNo"
             };
 
             Query = QueryHelper<DailyBankTransactionModel>.Search(Query, searchAttributes, keyword);
