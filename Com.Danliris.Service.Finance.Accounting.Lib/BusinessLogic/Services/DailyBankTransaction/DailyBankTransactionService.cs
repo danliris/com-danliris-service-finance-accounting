@@ -655,6 +655,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 {
                     Id = s.Id,
                     Code = s.Code,
+                    ReferenceNo = s.ReferenceNo,
                     Status = s.Status
                 });
 
