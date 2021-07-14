@@ -81,6 +81,46 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
+        public async Task Should_Success_GetReportAll_In()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+
+            var Response = service.GetReportAll(data.Code,0,string.Empty,data.Date,data.Date ,1, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
+            Assert.NotEmpty(Response.Data);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetLoader()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+
+            var Response = service.GetLoader(data.Code, "{\"Status\":\"IN\"}");
+            Assert.NotEmpty(Response.Data);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetReportAll_Out()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataOut();
+
+            var Response = service.GetReportAll(data.Code, 0, string.Empty, data.Date, data.Date, 1, 25, "{}", null, data.Code, "{\"Status\":\"OUT\"}");
+            Assert.NotEmpty(Response.Data);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetDocumentNo()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataOut();
+
+            var Response = await service.GetDocumentNo("K","test","test");
+            Assert.NotEmpty(Response);
+        }
+
+        [Fact]
         public async Task Should_Success_GenerateExcel()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
