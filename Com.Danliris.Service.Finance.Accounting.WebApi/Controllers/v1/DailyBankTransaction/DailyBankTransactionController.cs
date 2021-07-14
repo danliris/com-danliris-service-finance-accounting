@@ -94,7 +94,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
         }
 
         [HttpGet("mutation/report/download")]
-        public IActionResult GetReportXls(int bankId, int month, int year)
+        public IActionResult GetReportXls(int bankId, int month, int year,string currencyCode)
         {
             try
             {
