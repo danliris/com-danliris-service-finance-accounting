@@ -135,7 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
 
             var controller = GetController(mocks);
-            IActionResult response = controller.GetReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            IActionResult response = controller.GetReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>());
             Assert.NotNull(response);
         }
 
@@ -147,7 +147,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             //mocks.Mapper.Setup(f => f.Map<List<DailyBankTransactionViewModel>>(It.IsAny<List<DailyBankTransactionModel>>())).Returns(ViewModels);
 
             var controller = GetController(mocks);
-            IActionResult response = controller.GetReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
+            IActionResult response = controller.GetReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
@@ -207,7 +207,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new MemoryStream());
 
-            var response = GetController(mocks).GetReportXls(1, 1, 2018);
+            var response = GetController(mocks).GetReportXls(1, 1, 2018, "code");
             Assert.NotNull(response);
         }
 
@@ -217,7 +217,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new MemoryStream());
 
-            var response = GetController(mocks).GetReportXls(1, 1, 2018);
+            var response = GetController(mocks).GetReportXls(1, 1, 2018, "code");
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
@@ -227,7 +227,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.DailyBankTran
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GenerateExcelDailyBalance(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<int>())).Returns(new MemoryStream());
 
-            var response = GetController(mocks).GetReportXls(1, 8, 2030);
+            var response = GetController(mocks).GetReportXls(1, 8, 2030, "code");
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
