@@ -1279,7 +1279,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public string GetDataAccountBank(int bankId)
         {
             var dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
-            string bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
+            var bank = (string)null;
+
+            if (bank != null)
+                bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
 
             return bank;
         }
