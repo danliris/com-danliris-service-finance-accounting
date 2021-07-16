@@ -348,7 +348,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                             item.DivisionName,
                             item.VatValue,
                             item.DPP,
-                            expenditure.TransactionType
+                            expenditure.TransactionType,
+                            expenditure.BankAccountNumber
                         };
 
             query = query.Where(entity => entity.PaymentDate >= startDate && entity.PaymentDate <= endDate);
@@ -365,7 +366,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                 query = query.Where(entity => entity.DivisionId == divisionId);
 
             var result = query.OrderBy(entity => entity.PaymentDate).ToList();
-            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.DPP, element.TransactionType)).ToList();
+            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.DPP, element.TransactionType, element.BankAccountNumber)).ToList();
         }
 
         public MemoryStream GetXls(List<ReportDto> data)
@@ -396,10 +397,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                 {
                     dt.Rows.Add(
                         item.ExpenditureNo,
-                        item.ExpenditureDate,
+                        item.ExpenditureDate.ToString("dd/MM/yyyy"),
                         item.DispositionNo,
-                        item.DispositionDate,
-                        item.DispositionDueDate,
+                        item.DispositionDate.ToString("dd/MM/yyyy"),
+                        item.DispositionDueDate.ToString("dd/MM/yyyy"),
                         item.BankName,
                         item.CurrencyCode,
                         item.SupplierName,
