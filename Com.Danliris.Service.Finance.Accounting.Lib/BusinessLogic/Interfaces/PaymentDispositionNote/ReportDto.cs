@@ -4,7 +4,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
 {
     public class ReportDto
     {
-        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType)
+        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber)
         {
             ExpenditureId = expenditureId;
             ExpenditureNo = expenditureNo;
@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             DispositionDate = dispositionDate;
             DispositionDueDate = dispositionDueDate;
             BankId = bankId;
-            BankName = bankName;
+            BankName = bankName + " - " + currencyCode + " - " + bankAccountNumber;
             CurrencyId = currencyId;
             CurrencyCode = currencyCode;
             SupplierId = supplierId;
@@ -28,6 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             VATAmount = vATAmount;
             PaidAmount = paidAmount;
             TransactionType = transactionType;
+            BankAccountNumber = bankAccountNumber;
         }
 
         public int ExpenditureId { get; private set; }
@@ -39,6 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
         public DateTimeOffset DispositionDueDate { get; private set; }
         public int BankId { get; private set; }
         public string BankName { get; private set; }
+        public string BankAccountNumber { get; private set; }
         public int CurrencyId { get; private set; }
         public string CurrencyCode { get; private set; }
         public int SupplierId { get; private set; }
