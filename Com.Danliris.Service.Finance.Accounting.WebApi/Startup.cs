@@ -84,6 +84,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoGar
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownPaymentReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.GarmentFinance.BankCashReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoDetailTextile;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -171,6 +172,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IMemoDetailGarmentPurchasingService, MemoDetailGarmentPurchasingService>()
                 .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>()
                 .AddTransient<IBankCashReceiptService, BankCashReceiptService>();
+                .AddTransient<IPurchasingMemoDetailTextileService, PurchasingMemoDetailTextileService>()
+                .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>();
         }
 
 
