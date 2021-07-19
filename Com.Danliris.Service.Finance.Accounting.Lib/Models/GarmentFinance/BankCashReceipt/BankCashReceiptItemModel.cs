@@ -13,25 +13,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Bank
         [ForeignKey("BankCashReceiptId")]
         public virtual BankCashReceiptModel BankCashReceiptModel { get; set; }
 
-        public int AccNumberCoaId { get; private set; }
+        public int AccNumberCoaId { get; set; }
         [MaxLength(32)]
         public string AccNumberCoaCode { get; set; }
         [MaxLength(256)]
         public string AccNumberCoaName { get; set; }
 
-        public int AccSubCoaId { get; private set; }
+        public int AccSubCoaId { get; set; }
         [MaxLength(32)]
         public string AccSubCoaCode { get; set; }
         [MaxLength(256)]
         public string AccSubCoaName { get; set; }
 
-        public int AccUnitCoaId { get; private set; }
+        public int AccUnitCoaId { get; set; }
         [MaxLength(32)]
         public string AccUnitCoaCode { get; set; }
         [MaxLength(256)]
         public string AccUnitCoaName { get; set; }
 
-        public int AccAmountCoaId { get; private set; }
+        public int AccAmountCoaId { get; set; }
         [MaxLength(32)]
         public string AccAmountCoaCode { get; set; }
         [MaxLength(256)]

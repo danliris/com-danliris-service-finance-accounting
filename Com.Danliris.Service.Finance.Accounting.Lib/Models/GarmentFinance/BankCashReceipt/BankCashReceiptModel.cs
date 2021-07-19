@@ -18,7 +18,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Bank
         [MaxLength(256)]
         public string BankAccountName { get; set; }
         [MaxLength(256)]
-        public string BankName { get; private set; }
+        public string BankName { get; set; }
         [MaxLength(32)]
         public string BankAccountingCode { get; set; }
         [MaxLength(32)]
