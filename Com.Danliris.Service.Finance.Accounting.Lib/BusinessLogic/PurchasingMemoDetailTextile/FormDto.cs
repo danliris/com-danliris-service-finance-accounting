@@ -16,6 +16,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
         public PurchasingMemoType Type { get; set; }
         public List<FormItemDto> Items { get; set; }
         public List<FormDetailDto> Details { get; set; }
+        public string Remark { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             throw new NotImplementedException();

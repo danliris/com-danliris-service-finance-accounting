@@ -12,7 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoDetai
 
         }
 
-        public PurchasingMemoDetailTextileModel(DateTimeOffset date, int divisionId, string divisionCode, string divisionName, int currencyId, string currencyCode, double currencyRate, bool supplierIsImport, string remark, PurchasingMemoType type)
+        public PurchasingMemoDetailTextileModel(DateTimeOffset date, int divisionId, string divisionCode, string divisionName, int currencyId, string currencyCode, double currencyRate, bool supplierIsImport, string remark, PurchasingMemoType type, string documentNo)
         {
             Date = date;
             DivisionId = divisionId;
@@ -24,6 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoDetai
             SupplierIsImport = supplierIsImport;
             Remark = remark;
             Type = type;
+            DocumentNo = documentNo;
         }
 
         public DateTimeOffset Date { get; private set; }
@@ -40,5 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoDetai
         public bool SupplierIsImport { get; private set; }
         public string Remark { get; private set; }
         public PurchasingMemoType Type { get; private set; }
+        [MaxLength(32)]
+        public string DocumentNo { get; private set; }
     }
 }

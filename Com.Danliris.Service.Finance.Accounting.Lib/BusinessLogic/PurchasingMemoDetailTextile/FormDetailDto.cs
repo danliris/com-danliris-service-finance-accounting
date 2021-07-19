@@ -4,6 +4,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 {
     public class FormDetailDto
     {
+        public FormDetailDto(ExpenditureDto expenditure, SupplierDto supplier, string remark, UnitPaymentOrderDto unitPaymentOder, List<UnitReceiptNoteDto> unitReceiptNotes, double purchaseAmountCurrency, double purchaseAmount, double paymentAmountCurrency, double paymentAmount)
+        {
+            Expenditure = expenditure;
+            Supplier = supplier;
+            Remark = remark;
+            UnitPaymentOder = unitPaymentOder;
+            UnitReceiptNotes = unitReceiptNotes;
+            PurchaseAmountCurrency = purchaseAmountCurrency;
+            PurchaseAmount = purchaseAmount;
+            PaymentAmountCurrency = paymentAmountCurrency;
+            PaymentAmount = paymentAmount;
+        }
+
         public ExpenditureDto Expenditure { get; set; }
         public SupplierDto Supplier { get; set; }
         public string Remark { get; set; }
