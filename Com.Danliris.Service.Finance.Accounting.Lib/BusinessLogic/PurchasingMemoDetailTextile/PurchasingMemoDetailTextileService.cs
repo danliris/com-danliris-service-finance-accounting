@@ -300,9 +300,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             return updatedId;
         }
 
-        public List<FormItemDto> ReadDispositions(string keyword)
+        public List<FormItemDto> ReadDispositions(string keyword, int divisionId, bool supplierIsImport, string currencyCode)
         {
-            var query = _dbContext.PaymentDispositionNoteItems.Select(entity => new { entity.DispositionId, entity.DispositionNo, entity.DispositionDate }).Distinct().AsQueryable();
+            var paymentIds = _dbContext.PaymentDispositionNotes.Where(entity => entity.CurrencyCode == currencyCode && entity.SupplierImport == supplierIsImport).Select(entity => entity.Id).Distinct().ToList();
+            var query = _dbContext.PaymentDispositionNoteItems.Where(entity => paymentIds.Contains(entity.PaymentDispositionNoteId) && entity.DivisionId == divisionId).Select(entity => new { entity.DispositionId, entity.DispositionNo, entity.DispositionDate }).Distinct().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -316,30 +317,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             var paymentDispositionItemIds = paymentDispositionItems.Select(entity => entity.Id).ToList();
             var paymentDispositionIds = paymentDispositionItems.Select(entity => entity.PaymentDispositionNoteId).Distinct().ToList();
             var paymentDispositions = _dbContext.PaymentDispositionNotes.Where(entity => paymentDispositionIds.Contains(entity.Id)).ToList();
+            var paymentDispositionDetails = _dbContext.PaymentDispositionNoteDetails.Where(entity => paymentDispositionItemIds.Contains(entity.PaymentDispositionNoteItemId)).ToList();
+            var purchasingDispositionExpeditionIds = paymentDispositionItems.Select(element => element.PurchasingDispositionExpeditionId).ToList();
+            var purchasingDispositionExpeditions = _dbContext.PurchasingDispositionExpeditions.Where(entity => purchasingDispositionExpeditionIds.Contains(entity.Id)).ToList();
+            var purchasingDispositionExpeditionItems = _dbContext.PurchasingDispositionExpeditionItems.Where(entity => purchasingDispositionExpeditionIds.Contains(entity.PurchasingDispositionExpeditionId)).ToList();
 
-
+            var result = new List<FormItemDto>();
             foreach (var item in queryResult)
             {
                 var disposition = new DispositionDto(item.DispositionId, item.DispositionNo, item.DispositionDate, new List<FormDetailDto>());
 
-                //var itemPaymentDispositions
+                var itemPaymentDispositionNoteIds = paymentDispositionItems.Where(element => element.DispositionId == item.DispositionId).Select(element => element.PaymentDispositionNoteId).ToList();
+                var itemPaymentDispositionNotes = paymentDispositions.Where(element => itemPaymentDispositionNoteIds.Contains(element.Id)).ToList();
+
+                foreach (var itemPaymentDispositionNote in itemPaymentDispositionNotes)
+                {
+                    var expenditure = new ExpenditureDto(itemPaymentDispositionNote.Id, itemPaymentDispositionNote.PaymentDispositionNo, itemPaymentDispositionNote.PaymentDate);
+                    var supplier = new SupplierDto(itemPaymentDispositionNote.SupplierId, itemPaymentDispositionNote.SupplierCode, itemPaymentDispositionNote.SupplierName);
+                    var itemPaymentDispositionNoteItems = paymentDispositionItems.Where(element => element.PaymentDispositionNoteId == itemPaymentDispositionNote.Id).ToList();
+                    
+
+                    foreach (var itemPaymentDispositionNoteItem in itemPaymentDispositionNoteItems)
+                    {
+                        var division = new DivisionDto(itemPaymentDispositionNoteItem.DivisionId, itemPaymentDispositionNoteItem.DivisionCode, itemPaymentDispositionNoteItem.DivisionName);
+
+                        disposition.Details.Add(new FormDetailDto(expenditure, supplier, "", new UnitPaymentOrderDto(0, "", DateTime.MinValue), new List<UnitReceiptNoteDto>(), 0, 0, 0, 0));
+                    }
+                }
+
+                result.Add(new FormItemDto(disposition));
+
             }
-
-            //var dispositionPaymentIds = queryResult.Select(element => element.PaymentDispositionNoteId).ToList();
-            //var dispositionPaymentNotes = _dbContext.PaymentDispositionNotes.Where(entity => dispositionPaymentIds.Contains(entity.Id)).ToList();
-
-            //var grouppedDisposition = queryResult.GroupBy
-
-            var result = new List<FormItemDto>();
-
-
-            //foreach (var item in queryResult)
-            //{
-            //    var disposition = new DispositionDto(item.DispositionId, item.DispositionNo, item.DispositionDate, new List<FormDetailDto>());
-
-            //    var itemDispositionPaymentNotes = dispositionPaymentNotes.Where(entity => entity.Id)
-            //    result.Add(new FormItemDto(disposition));
-            //}
 
             return result;
         }
