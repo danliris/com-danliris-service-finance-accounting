@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210715050102_Add_Table_BankCashReceipt")]
+    partial class Add_Table_BankCashReceipt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1442,13 +1444,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AccAmountCoaCode")
-                        .HasMaxLength(32);
-
                     b.Property<int>("AccAmountCoaId");
 
                     b.Property<string>("AccAmountCoaName")
                         .HasMaxLength(256);
+
+                    b.Property<string>("AccAmountCode")
+                        .HasMaxLength(32);
 
                     b.Property<string>("AccNumberCoaCode")
                         .HasMaxLength(32);
@@ -1458,21 +1460,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("AccNumberCoaName")
                         .HasMaxLength(256);
 
-                    b.Property<string>("AccSubCoaCode")
-                        .HasMaxLength(32);
-
                     b.Property<int>("AccSubCoaId");
 
                     b.Property<string>("AccSubCoaName")
                         .HasMaxLength(256);
 
-                    b.Property<string>("AccUnitCoaCode")
+                    b.Property<string>("AccSubCode")
                         .HasMaxLength(32);
 
                     b.Property<int>("AccUnitCoaId");
 
                     b.Property<string>("AccUnitCoaName")
                         .HasMaxLength(256);
+
+                    b.Property<string>("AccUnitCode")
+                        .HasMaxLength(32);
 
                     b.Property<bool>("Active");
 
@@ -1549,9 +1551,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<int>("BankAccountId");
 
-                    b.Property<string>("BankAccountName")
-                        .HasMaxLength(256);
-
                     b.Property<string>("BankAccountNumber")
                         .HasMaxLength(64);
 
@@ -1619,6 +1618,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("NumberingCode")
                         .HasMaxLength(32);
+
+                    b.Property<decimal>("Rate");
 
                     b.Property<DateTimeOffset>("ReceiptDate");
 
