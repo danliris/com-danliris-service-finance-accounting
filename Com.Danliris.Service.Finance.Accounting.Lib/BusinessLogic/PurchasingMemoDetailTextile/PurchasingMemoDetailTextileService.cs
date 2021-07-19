@@ -299,5 +299,49 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
             return updatedId;
         }
+
+        public List<FormItemDto> ReadDispositions(string keyword)
+        {
+            var query = _dbContext.PaymentDispositionNoteItems.Select(entity => new { entity.DispositionId, entity.DispositionNo, entity.DispositionDate }).Distinct().AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                query = query.Where(entity => entity.DispositionNo.Contains(keyword));
+            }
+
+
+            var queryResult = query.Take(10).ToList();
+            var dispositionIds = queryResult.Select(element => element.DispositionId).ToList();
+            var paymentDispositionItems = _dbContext.PaymentDispositionNoteItems.Where(entity => dispositionIds.Contains(entity.DispositionId)).ToList();
+            var paymentDispositionItemIds = paymentDispositionItems.Select(entity => entity.Id).ToList();
+            var paymentDispositionIds = paymentDispositionItems.Select(entity => entity.PaymentDispositionNoteId).Distinct().ToList();
+            var paymentDispositions = _dbContext.PaymentDispositionNotes.Where(entity => paymentDispositionIds.Contains(entity.Id)).ToList();
+
+
+            foreach (var item in queryResult)
+            {
+                var disposition = new DispositionDto(item.DispositionId, item.DispositionNo, item.DispositionDate, new List<FormDetailDto>());
+
+                //var itemPaymentDispositions
+            }
+
+            //var dispositionPaymentIds = queryResult.Select(element => element.PaymentDispositionNoteId).ToList();
+            //var dispositionPaymentNotes = _dbContext.PaymentDispositionNotes.Where(entity => dispositionPaymentIds.Contains(entity.Id)).ToList();
+
+            //var grouppedDisposition = queryResult.GroupBy
+
+            var result = new List<FormItemDto>();
+
+
+            //foreach (var item in queryResult)
+            //{
+            //    var disposition = new DispositionDto(item.DispositionId, item.DispositionNo, item.DispositionDate, new List<FormDetailDto>());
+
+            //    var itemDispositionPaymentNotes = dispositionPaymentNotes.Where(entity => entity.Id)
+            //    result.Add(new FormItemDto(disposition));
+            //}
+
+            return result;
+        }
     }
 }
