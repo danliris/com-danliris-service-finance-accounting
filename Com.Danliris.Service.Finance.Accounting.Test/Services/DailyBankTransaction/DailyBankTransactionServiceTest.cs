@@ -81,26 +81,66 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         }
 
         [Fact]
-        public async Task Should_Success_GenerateExcel()
+        public async Task Should_Success_GetReportAll_In()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestDataIn();
-            var Response = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
-            Assert.NotNull(Response);
 
-            data.AccountBankId = 2;
-            var Response2 = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
-            Assert.NotNull(Response2);
+            var Response = service.GetReportAll(data.Code,0,string.Empty,data.Date,data.Date ,1, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
+            Assert.NotEmpty(Response.Data);
         }
 
         [Fact]
-        public void Should_Success_GenerateExcel_when_dataEmpty()
+        public async Task Should_Success_GetLoader()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-           
-            var Response = service.GetExcel(0, 7, 1001, 0);
-            Assert.NotNull(Response);
+            var data = await _dataUtil(service).GetTestDataIn();
+
+            var Response = service.GetLoader(data.ReferenceNo, "{\"Status\":\"IN\"}");
+            Assert.NotEmpty(Response.Data);
         }
+
+        [Fact]
+        public async Task Should_Success_GetReportAll_Out()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataOut();
+
+            var Response = service.GetReportAll(data.Code, 0, string.Empty, data.Date, data.Date, 1, 25, "{}", null, data.Code, "{\"Status\":\"OUT\"}");
+            Assert.NotEmpty(Response.Data);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetDocumentNo()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataOut();
+
+            var Response = await service.GetDocumentNo("K","test","test");
+            Assert.NotEmpty(Response);
+        }
+
+        //[Fact]
+        //public async Task Should_Success_GenerateExcel()
+        //{
+        //    DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+        //    var data = await _dataUtil(service).GetTestDataIn();
+        //    var Response = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+        //    Assert.NotNull(Response);
+
+        //    data.AccountBankId = 2;
+        //    var Response2 = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+        //    Assert.NotNull(Response2);
+        //}
+
+        //[Fact]
+        //public void Should_Success_GenerateExcel_when_dataEmpty()
+        //{
+        //    DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+           
+        //    var Response = service.GetExcel(0, 7, 1001, 0);
+        //    Assert.NotNull(Response);
+        //}
 
         [Fact]
         public async Task Should_Success_Get_Report()
