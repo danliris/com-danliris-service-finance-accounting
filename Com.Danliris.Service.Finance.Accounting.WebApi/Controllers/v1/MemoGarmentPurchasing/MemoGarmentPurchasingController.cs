@@ -120,7 +120,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.MemoGarm
                 VerifyUser();
                 _validateService.Validate(viewModel);
 
-                if (id != viewModel.Id)
+                if (id != viewModel.Id.GetValueOrDefault())
                 {
                     var result = new ResultFormatter(ApiVersion, General.BAD_REQUEST_STATUS_CODE, General.BAD_REQUEST_MESSAGE).Fail();
                     return BadRequest(result);
