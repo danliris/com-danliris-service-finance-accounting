@@ -39,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                 NumberingCode = "code",
                 CurrencyId = 1,
                 CurrencyRate = 1,
-                CurrencyCode = "code",
+                CurrencyCode = "IDR",
                 Items = new List<BankCashReceiptItemModel>
                 {
                     new BankCashReceiptItemModel()

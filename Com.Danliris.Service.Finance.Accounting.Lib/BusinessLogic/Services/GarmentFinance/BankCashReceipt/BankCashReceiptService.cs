@@ -17,17 +17,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
     public class BankCashReceiptService : IBankCashReceiptService
     {
         private const string UserAgent = "finance-service";
-        protected DbSet<BankCashReceiptModel> DbSet;
-        public IIdentityService IdentityService;
-        public readonly IServiceProvider ServiceProvider;
-        public FinanceDbContext DbContext;
+        public IIdentityService _identityService;
+        public FinanceDbContext _dbContext;
 
-        public BankCashReceiptService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
+        public BankCashReceiptService(IServiceProvider serviceProvider)
         {
-            ServiceProvider = serviceProvider;
-            DbContext = dbContext;
-            DbSet = dbContext.Set<BankCashReceiptModel>();
-            IdentityService = serviceProvider.GetService<IIdentityService>();
+            _dbContext = serviceProvider.GetService<FinanceDbContext>();
+            _identityService = serviceProvider.GetService<IIdentityService>();
         }
 
         public async Task<int> CreateAsync(BankCashReceiptModel model)
@@ -46,13 +42,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
             }
 
             model.Amount = totalAmount;
-            EntityExtension.FlagForCreate(model, IdentityService.Username, UserAgent);
+            EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             foreach (var item in model.Items)
             {
-                EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
+                EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
             }
-            DbSet.Add(model);
-            return await DbContext.SaveChangesAsync();
+            _dbContext.GarmentFinanceBankCashReceipts.Add(model);
+            return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<string> GenerateNo(BankCashReceiptModel model, int clientTimeZoneOffset)
@@ -63,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
             string no = $"{Year}/{model.NumberingCode}/";
             int Padding = 5;
 
-            var lastNo = await this.DbSet.Where(w => w.ReceiptNo.StartsWith(no) && !w.IsDeleted).OrderByDescending(o => o.CreatedUtc).FirstOrDefaultAsync();
+            var lastNo = await _dbContext.GarmentFinanceBankCashReceipts.Where(w => w.ReceiptNo.StartsWith(no) && !w.IsDeleted).OrderByDescending(o => o.CreatedUtc).FirstOrDefaultAsync();
             no = $"{no}";
 
             if (lastNo == null)
@@ -79,23 +75,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
 
         public async Task<int> DeleteAsync(int id)
         {
-            var existingModel = DbSet
+            var existingModel = _dbContext.GarmentFinanceBankCashReceipts
                                .Include(d => d.Items)
                                .Single(x => x.Id == id && !x.IsDeleted);
             BankCashReceiptModel model = await ReadByIdAsync(id);
             foreach (var item in model.Items)
             {
-                EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
+                EntityExtension.FlagForDelete(item, _identityService.Username, UserAgent, true);
             }
-            EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
-            DbSet.Update(model);
+            EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent, true);
+            _dbContext.GarmentFinanceBankCashReceipts.Update(model);
 
-            return await DbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync();
         }
 
         public ReadResponse<BankCashReceiptModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            IQueryable<BankCashReceiptModel> Query = this.DbSet.Include(m => m.Items);
+            IQueryable<BankCashReceiptModel> Query = _dbContext.GarmentFinanceBankCashReceipts.Include(m => m.Items);
             List<string> searchAttributes = new List<string>()
             {
                 "ReceiptNo",
@@ -118,12 +114,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
 
         public Task<BankCashReceiptModel> ReadByIdAsync(int id)
         {
-            return DbSet.Include(m => m.Items).FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
+            return _dbContext.GarmentFinanceBankCashReceipts.Include(m => m.Items).FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
         }
 
         public async Task<int> UpdateAsync(int id, BankCashReceiptModel model)
         {
-            BankCashReceiptModel exist = DbSet
+            BankCashReceiptModel exist = _dbContext.GarmentFinanceBankCashReceipts
                            .Include(d => d.Items)
                            .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
 
@@ -151,7 +147,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
 
                 if (itemModel == null)
                 {
-                    EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
+                    EntityExtension.FlagForDelete(item, _identityService.Username, UserAgent, true);
 
                 }
                 else
@@ -165,7 +161,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                     item.C1B = itemModel.C1B;
                     item.NoteNumber = itemModel.NoteNumber;
                     item.Remarks = itemModel.Remarks;
-                    EntityExtension.FlagForUpdate(item, IdentityService.Username, UserAgent);
+                    EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
 
                 }
             }
@@ -174,14 +170,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                 if (newItem.Id == 0)
                 {
                     exist.Items.Add(newItem);
-                    EntityExtension.FlagForCreate(newItem, IdentityService.Username, UserAgent);
+                    EntityExtension.FlagForCreate(newItem, _identityService.Username, UserAgent);
                 }
             }
 
 
-            EntityExtension.FlagForUpdate(exist, IdentityService.Username, UserAgent);
+            EntityExtension.FlagForUpdate(exist, _identityService.Username, UserAgent);
 
-            return await DbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync();
         }
     }
 }
