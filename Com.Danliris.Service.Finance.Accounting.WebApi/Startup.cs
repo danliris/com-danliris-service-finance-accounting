@@ -171,7 +171,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IMemoGarmentPurchasingReportService, MemoGarmentPurchasingReportService>()
                 .AddTransient<IMemoDetailGarmentPurchasingService, MemoDetailGarmentPurchasingService>()
                 .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>()
-                .AddTransient<IBankCashReceiptService, BankCashReceiptService>();
+                .AddTransient<IBankCashReceiptService, BankCashReceiptService>()
                 .AddTransient<IPurchasingMemoDetailTextileService, PurchasingMemoDetailTextileService>()
                 .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>();
         }
