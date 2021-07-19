@@ -323,7 +323,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.OthersEx
             {
                 VerifyUser();
 
-                var result = await _service.GetReportList(startDate, endDate, dateExpenditure, bankExpenditureNo, division, page, size, order, keyword, filter);
+                var result = await _service.GetReportList(startDate, endDate, dateExpenditure, bankExpenditureNo, division, 1, int.MaxValue, order, keyword, filter);
 
                 var filename = "Laporan Bukti Pengeluaran Bank Lain - Lain";
                 var xls = OthersExpenditureProofDocumentExcelGenerator.Create(filename, result.Data, bankExpenditureNo, dateExpenditure.GetValueOrDefault(), division, startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), _identityService.TimezoneOffset);

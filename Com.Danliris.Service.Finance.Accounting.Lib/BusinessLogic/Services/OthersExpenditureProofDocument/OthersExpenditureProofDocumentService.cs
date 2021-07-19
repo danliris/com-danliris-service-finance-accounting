@@ -373,7 +373,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
             return new OthersExpenditureProofDocumentReportListViewModel()
             {
-                Data = result,
+                Data = result.OrderBy(element => element.Date).ToList(),
                 Page = page,
                 Size = size,
                 Total = total,
