@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210721061050_PurchasingMemoTextile")]
+    partial class PurchasingMemoTextile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1434,203 +1436,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("GarmentDispositionExpeditions");
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt.BankCashReceiptItemModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AccAmountCoaCode")
-                        .HasMaxLength(32);
-
-                    b.Property<int>("AccAmountCoaId");
-
-                    b.Property<string>("AccAmountCoaName")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("AccNumberCoaCode")
-                        .HasMaxLength(32);
-
-                    b.Property<int>("AccNumberCoaId");
-
-                    b.Property<string>("AccNumberCoaName")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("AccSubCoaCode")
-                        .HasMaxLength(32);
-
-                    b.Property<int>("AccSubCoaId");
-
-                    b.Property<string>("AccSubCoaName")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("AccUnitCoaCode")
-                        .HasMaxLength(32);
-
-                    b.Property<int>("AccUnitCoaId");
-
-                    b.Property<string>("AccUnitCoaName")
-                        .HasMaxLength(256);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<decimal>("Amount");
-
-                    b.Property<int>("BankCashReceiptId");
-
-                    b.Property<decimal>("C1A");
-
-                    b.Property<decimal>("C1B");
-
-                    b.Property<decimal>("C2A");
-
-                    b.Property<decimal>("C2B");
-
-                    b.Property<decimal>("C2C");
-
-                    b.Property<string>("CreatedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<string>("DeletedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("DeletedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<string>("LastModifiedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("LastModifiedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<string>("NoteNumber")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("Remarks")
-                        .HasMaxLength(1024);
-
-                    b.Property<decimal>("Summary");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BankCashReceiptId");
-
-                    b.ToTable("GarmentFinanceBankCashReceiptItems");
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt.BankCashReceiptModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<decimal>("Amount");
-
-                    b.Property<int>("BankAccountId");
-
-                    b.Property<string>("BankAccountName")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("BankAccountNumber")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("BankAccountingCode")
-                        .HasMaxLength(32);
-
-                    b.Property<string>("BankCurrencyCode")
-                        .HasMaxLength(32);
-
-                    b.Property<int>("BankCurrencyId");
-
-                    b.Property<double>("BankCurrencyRate");
-
-                    b.Property<string>("BankName")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("CreatedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("CreatedUtc");
-
-                    b.Property<string>("CurrencyCode");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<decimal>("CurrencyRate");
-
-                    b.Property<string>("DebitCoaCode")
-                        .HasMaxLength(32);
-
-                    b.Property<int>("DebitCoaId");
-
-                    b.Property<string>("DebitCoaName")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("DeletedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("DeletedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<string>("IncomeType")
-                        .HasMaxLength(256);
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<string>("LastModifiedAgent")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<string>("LastModifiedBy")
-                        .IsRequired()
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("LastModifiedUtc");
-
-                    b.Property<string>("NumberingCode")
-                        .HasMaxLength(32);
-
-                    b.Property<DateTimeOffset>("ReceiptDate");
-
-                    b.Property<string>("ReceiptNo")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("Remarks")
-                        .HasMaxLength(1024);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GarmentFinanceBankCashReceipts");
                 });
 
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePayment.GarmentInvoicePaymentItemModel", b =>
@@ -5463,14 +5268,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote.DPPVATBankExpenditureNoteDetailModel", "DPPVATBankExpenditureNoteDetail")
                         .WithMany("DPPVATBankExpenditureNoteDetailDos")
                         .HasForeignKey("DPPVATBankExpenditureNoteDetailId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt.BankCashReceiptItemModel", b =>
-                {
-                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt.BankCashReceiptModel", "BankCashReceiptModel")
-                        .WithMany("Items")
-                        .HasForeignKey("BankCashReceiptId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

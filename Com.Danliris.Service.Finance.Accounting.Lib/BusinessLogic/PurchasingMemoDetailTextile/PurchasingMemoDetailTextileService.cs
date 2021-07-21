@@ -360,5 +360,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
             return result;
         }
+
+        public List<AutoCompleteDto> Read(string keyword)
+        {
+            var query = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.DocumentNo.Contains(keyword));
+
+            return query.Take(10).Select(entity => new AutoCompleteDto(entity.Id, entity.DocumentNo, entity.Date, entity.CurrencyCode, entity.CurrencyId, entity.CurrencyRate)).ToList();
+        }
     }
 }
