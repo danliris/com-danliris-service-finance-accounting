@@ -41,6 +41,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                         Code = "code",
                         Currency = null
                     },
+                    Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                    {
+                        Id = 1,
+                        Code = "IDR",
+                        Rate = 1,
+                        Description = "description",
+                        Symbol = "symbol",
+                    },
                     DebitCoa = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
                     {
                         Id = "1",
@@ -223,6 +231,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public async Task GetById_NotNullModel_ReturnOK()
         {
             var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModel);
             mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new BankCashReceiptModel());
 
             int statusCode = await GetStatusCodeGetById(mocks);
@@ -244,6 +253,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public async Task GetById_ThrowException_ReturnInternalServerError()
         {
             var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModel);
             mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
 
             int statusCode = await GetStatusCodeGetById(mocks);
@@ -332,5 +342,64 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             var response = GetController(mocks).Put(1, It.IsAny<BankCashReceiptViewModel>()).Result;
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
+
+        [Fact]
+        public async void GeneratePdf_Success_Return_OK()
+        {
+            //Setup
+            var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModel);
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new BankCashReceiptModel());
+            BankCashReceiptController controller = GetController(mocks);
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "7";
+
+            var response = await controller.GetById(It.IsAny<int>());
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+
+
+        }
+
+        [Fact]
+        public async void GeneratePdf_Success_Return_NotFound()
+        {
+            //Setup
+            var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModel);
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync((BankCashReceiptModel)null);
+            BankCashReceiptController controller = GetController(mocks);
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "7";
+
+            IActionResult response = await controller.GetById(1);
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+        [Fact]
+        public async void GeneratePdf_Success_Return_Internal_Server_Error()
+        {
+            //Setup
+            var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModel);
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
+            BankCashReceiptController controller = GetController(mocks);
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "7";
+
+            IActionResult response = await controller.GetById(1);
+            int statusCode = GetStatusCode(response);
+            //Assert
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+
+        }
     }
+
+   
 }
