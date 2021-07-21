@@ -332,5 +332,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             var response = GetController(mocks).Put(1, It.IsAny<BankCashReceiptViewModel>()).Result;
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
+
+        [Fact]
+        public async void GeneratePdf_Success_Return_OK()
+        {
+            //Setup
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new BankCashReceiptModel());
+            BankCashReceiptController controller = GetController(mocks);
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "7";
+
+            IActionResult response = await controller.GetById(1);
+
+            //Assert
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+
+        }
     }
+
+   
 }

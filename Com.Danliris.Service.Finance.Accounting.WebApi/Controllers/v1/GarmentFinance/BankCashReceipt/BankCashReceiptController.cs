@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.GarmentFinance.BankCashReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -117,13 +118,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentF
                     return NotFound(Result);
                 }
 
-                return Ok(new
+                if (indexAcceptPdf < 0)
                 {
-                    apiVersion = ApiVersion,
-                    data = viewModel,
-                    message = General.OK_MESSAGE,
-                    statusCode = General.OK_STATUS_CODE
-                });
+                    return Ok(new
+                    {
+                        apiVersion = ApiVersion,
+                        data = viewModel,
+                        message = General.OK_MESSAGE,
+                        statusCode = General.OK_STATUS_CODE
+                    });
+                }
+                else
+                {
+                    int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
+
+                    GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
+                    MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, clientTimeZoneOffset);
+
+                    return new FileStreamResult(stream, "application/pdf")
+                    {
+                        FileDownloadName = $"Bukti Penerimaan Kas Bank {viewModel?.ReceiptNo}.pdf"
+                    };
+                }
             }
             catch (Exception e)
             {
