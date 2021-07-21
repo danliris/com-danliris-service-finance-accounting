@@ -350,6 +350,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
 
         }
+
+        [Fact]
+        public async void GeneratePdf_Success_Return_NotFound()
+        {
+            //Setup
+            var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModel);
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync((BankCashReceiptModel)null);
+            BankCashReceiptController controller = GetController(mocks);
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "7";
+
+            IActionResult response = await controller.GetById(1);
+            int statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+        [Fact]
+        public async void GeneratePdf_Success_Return_Internal_Server_Error()
+        {
+            //Setup
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
+            BankCashReceiptController controller = GetController(mocks);
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "7";
+
+            IActionResult response = await controller.GetById(1);
+            int statusCode = GetStatusCode(response);
+            //Assert
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+
+        }
     }
 
    
