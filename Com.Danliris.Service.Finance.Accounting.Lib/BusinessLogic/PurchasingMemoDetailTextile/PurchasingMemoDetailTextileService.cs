@@ -139,9 +139,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             return deletedId;
         }
 
-        public ReadResponse<IndexDto> Read(string keyword, int page = 1, int size = 25)
+        public ReadResponse<IndexDto> Read(string keyword, PurchasingMemoType type, int page = 1, int size = 25)
         {
-            var query = _dbContext.PurchasingMemoDetailTextiles.AsQueryable();
+            var query = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.Type == type);
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -149,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             }
 
             var count = query.Select(entity => entity.Id).Count();
-            var data = query.Skip((page - 1) * size).Take(size).Select(entity => new IndexDto()).ToList();
+            var data = query.Skip((page - 1) * size).Take(size).Select(entity => new IndexDto(entity.Id, entity.LastModifiedUtc, entity.Date, entity.DivisionName, entity.CurrencyCode, entity.SupplierIsImport, entity.Remark, entity.DocumentNo)).ToList();
             return new ReadResponse<IndexDto>(data, count, new Dictionary<string, string>(), new List<string>());
         }
 
@@ -302,9 +302,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
         public List<FormItemDto> ReadDispositions(string keyword, int divisionId, bool supplierIsImport, string currencyCode)
         {
-            var paymentIds = _dbContext.PaymentDispositionNotes.Where(entity => entity.CurrencyCode == currencyCode && entity.SupplierImport == supplierIsImport).Select(entity => entity.Id).Distinct().ToList();
-            var query = _dbContext.PaymentDispositionNoteItems.Where(entity => paymentIds.Contains(entity.PaymentDispositionNoteId) && entity.DivisionId == divisionId).Select(entity => new { entity.DispositionId, entity.DispositionNo, entity.DispositionDate }).Distinct().AsQueryable();
+            var dispositionQuery = _dbContext.PaymentDispositionNotes.Where(entity => entity.SupplierImport == supplierIsImport);
 
+            if (!string.IsNullOrWhiteSpace(currencyCode))
+                dispositionQuery = dispositionQuery.Where(entity => entity.CurrencyCode == currencyCode);
+
+            var paymentIds = dispositionQuery.Select(entity => entity.Id).Distinct().ToList();
+            var dispositionItemQuery = _dbContext.PaymentDispositionNoteItems.Where(entity => paymentIds.Contains(entity.PaymentDispositionNoteId));
+
+            if (divisionId > 0)
+                dispositionItemQuery = dispositionItemQuery.Where(entity => entity.DivisionId == divisionId);
+
+            var query = dispositionItemQuery.Select(entity => new { entity.DispositionId, entity.DispositionNo, entity.DispositionDate }).Distinct().AsQueryable();
             if (!string.IsNullOrWhiteSpace(keyword))
             {
                 query = query.Where(entity => entity.DispositionNo.Contains(keyword));
@@ -335,13 +344,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                     var expenditure = new ExpenditureDto(itemPaymentDispositionNote.Id, itemPaymentDispositionNote.PaymentDispositionNo, itemPaymentDispositionNote.PaymentDate);
                     var supplier = new SupplierDto(itemPaymentDispositionNote.SupplierId, itemPaymentDispositionNote.SupplierCode, itemPaymentDispositionNote.SupplierName);
                     var itemPaymentDispositionNoteItems = paymentDispositionItems.Where(element => element.PaymentDispositionNoteId == itemPaymentDispositionNote.Id).ToList();
-                    
+
 
                     foreach (var itemPaymentDispositionNoteItem in itemPaymentDispositionNoteItems)
                     {
                         var division = new DivisionDto(itemPaymentDispositionNoteItem.DivisionId, itemPaymentDispositionNoteItem.DivisionCode, itemPaymentDispositionNoteItem.DivisionName);
 
-                        disposition.Details.Add(new FormDetailDto(expenditure, supplier, "", new UnitPaymentOrderDto(0, "", DateTime.MinValue), new List<UnitReceiptNoteDto>(), 0, 0, 0, 0));
+                        disposition.Details.Add(new FormDetailDto(expenditure, supplier, "", new UnitPaymentOrderDto(0, "", DateTimeOffset.MinValue), new List<UnitReceiptNoteDto>(), 0, 0, 0, 0));
                     }
                 }
 
