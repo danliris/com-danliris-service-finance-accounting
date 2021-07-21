@@ -41,14 +41,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                     if (item.DebitAmount <= 0 && item.CreditAmount <= 0)
                     {
                         CountItemsError++;
-                        ItemsError += "'Debit': 'Debit harus lebih besar dari 0', ";
-                        ItemsError += "'Credit': 'Kredit harus lebih besar dari 0', ";
+                        ItemsError += "'DebitAmount': 'Debit harus lebih besar dari 0', ";
+                        ItemsError += "'CreditAmount': 'Kredit harus lebih besar dari 0', ";
                     }
                     else if (item.DebitAmount > 0 && item.CreditAmount > 0)
                     {
                         CountItemsError++;
-                        ItemsError += "'Debit': 'Isi salah satu', ";
-                        ItemsError += "'Credit': 'Isi salah satu', ";
+                        ItemsError += "'DebitAmount': 'Isi salah satu', ";
+                        ItemsError += "'CreditAmount': 'Isi salah satu', ";
                     }
 
                     ItemsError += "}, ";
