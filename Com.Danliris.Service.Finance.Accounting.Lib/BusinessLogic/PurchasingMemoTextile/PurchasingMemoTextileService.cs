@@ -67,7 +67,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
         public ReadResponse<IndexDto> Read(string keyword, int page = 1, int size = 25)
         {
-            var query = _dbContext.PurchasingMemoTextiles.Where(entity => entity.MemoDetailDocumentNo.Contains(keyword));
+            var query = _dbContext.PurchasingMemoTextiles.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(entity => entity.MemoDetailDocumentNo.Contains(keyword));
+
             var count = query.Count();
             var data = query.Skip((page - 1) * size).Take(size).Select(entity => new IndexDto(entity.Id, entity.MemoDetailDocumentNo, entity.MemoDetailDate, entity.AccountingBookType, entity.MemoDetailCurrencyCode, entity.Remark)).ToList();
             return new ReadResponse<IndexDto>(data, count, new Dictionary<string, string>(), new List<string>());
