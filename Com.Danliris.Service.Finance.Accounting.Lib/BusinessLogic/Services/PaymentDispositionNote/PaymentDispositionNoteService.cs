@@ -397,10 +397,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                 {
                     dt.Rows.Add(
                         item.ExpenditureNo,
-                        item.ExpenditureDate.ToString("dd/MM/yyyy"),
+                        item.ExpenditureDate.AddHours(IdentityService.TimezoneOffset).ToString("dd/MM/yyyy"),
                         item.DispositionNo,
-                        item.DispositionDate.ToString("dd/MM/yyyy"),
-                        item.DispositionDueDate.ToString("dd/MM/yyyy"),
+                        item.DispositionDate.AddHours(IdentityService.TimezoneOffset).ToString("dd/MM/yyyy"),
+                        item.DispositionDueDate.AddHours(IdentityService.TimezoneOffset).ToString("dd/MM/yyyy"),
                         item.BankName,
                         item.CurrencyCode,
                         item.SupplierName,
