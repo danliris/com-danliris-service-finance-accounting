@@ -21,7 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                     Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel()
                     {
                         Id = 1,
-                        Code = "code",
+                        Code = "IDR",
                         Description = "description",
                         Rate = 1,
                         Symbol = "symbol",
@@ -110,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                     Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel()
                     {
                         Id = 1,
-                        Code = "code",
+                        Code = "USD",
                         Description = "description",
                         Rate = 1,
                         Symbol = "symbol",
