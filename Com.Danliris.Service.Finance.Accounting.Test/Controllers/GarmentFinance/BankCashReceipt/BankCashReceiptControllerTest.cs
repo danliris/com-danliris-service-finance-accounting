@@ -231,6 +231,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public async Task GetById_NotNullModel_ReturnOK()
         {
             var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModel);
             mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new BankCashReceiptModel());
 
             int statusCode = await GetStatusCodeGetById(mocks);
@@ -252,6 +253,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public async Task GetById_ThrowException_ReturnInternalServerError()
         {
             var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModel);
             mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
 
             int statusCode = await GetStatusCodeGetById(mocks);
@@ -356,6 +358,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             var response = await controller.GetById(It.IsAny<int>());
 
             //Assert
+            Assert.NotNull(response);
             Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
 
 
@@ -383,6 +386,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         {
             //Setup
             var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModel);
             mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ThrowsAsync(new Exception());
             BankCashReceiptController controller = GetController(mocks);
 
