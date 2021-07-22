@@ -29,7 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                 return new BankCashReceiptViewModel
                 {
                     ReceiptNo = "no",
-                    Amount = 1,
+                    Amount = 1.00M,
                     Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
                     {
                         Id = 1,
@@ -45,6 +45,246 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     {
                         Id = 1,
                         Code = "IDR",
+                        Rate = 1,
+                        Description = "description",
+                        Symbol = "symbol",
+                    },
+                    DebitCoa = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                    {
+                        Id = "1",
+                        Code = "code",
+                        Name = "name",
+                    },
+                    IncomeType = "incomeType",
+                    ReceiptDate = DateTimeOffset.Now,
+                    NumberingCode = "numberingCode",
+                    Remarks = "remarks",
+                    Items = new List<BankCashReceiptItemViewModel>
+                    {
+                        new BankCashReceiptItemViewModel()
+                        {
+                            NoteNumber = "noteNumber",
+                            Remarks = "remarks",
+                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            AccSub = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            Amount = 1,
+                            C1A = 1,
+                            C1B = 1,
+                            C2A = 1,
+                            C2B = 1,
+                            C2C = 1,
+                            Summary = 1,
+                        }
+                    }
+                };
+            }
+        }
+
+        private BankCashReceiptViewModel viewModelWithDecimal
+        {
+            get
+            {
+                return new BankCashReceiptViewModel
+                {
+                    ReceiptNo = "no",
+                    Amount = 1.12M,
+                    Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
+                    {
+                        Id = 1,
+                        AccountName = "accountName",
+                        AccountCOA = "accountCOA",
+                        AccountNumber = "accountNumber",
+                        BankCode = "bankCode",
+                        BankName = "bankName",
+                        Code = "code",
+                        Currency = null
+                    },
+                    Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                    {
+                        Id = 1,
+                        Code = "IDR",
+                        Rate = 1,
+                        Description = "description",
+                        Symbol = "symbol",
+                    },
+                    DebitCoa = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                    {
+                        Id = "1",
+                        Code = "code",
+                        Name = "name",
+                    },
+                    IncomeType = "incomeType",
+                    ReceiptDate = DateTimeOffset.Now,
+                    NumberingCode = "numberingCode",
+                    Remarks = "remarks",
+                    Items = new List<BankCashReceiptItemViewModel>
+                    {
+                        new BankCashReceiptItemViewModel()
+                        {
+                            NoteNumber = "noteNumber",
+                            Remarks = "remarks",
+                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            AccSub = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            Amount = 1,
+                            C1A = 1,
+                            C1B = 1,
+                            C2A = 1,
+                            C2B = 1,
+                            C2C = 1,
+                            Summary = 1,
+                        }
+                    }
+                };
+            }
+        }
+
+        private BankCashReceiptViewModel viewModelDollarZeroDecimal
+        {
+            get
+            {
+                return new BankCashReceiptViewModel
+                {
+                    ReceiptNo = "no",
+                    Amount = 1.00M,
+                    Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
+                    {
+                        Id = 1,
+                        AccountName = "accountName",
+                        AccountCOA = "accountCOA",
+                        AccountNumber = "accountNumber",
+                        BankCode = "bankCode",
+                        BankName = "bankName",
+                        Code = "code",
+                        Currency = null
+                    },
+                    Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                    {
+                        Id = 1,
+                        Code = "USD",
+                        Rate = 1,
+                        Description = "description",
+                        Symbol = "symbol",
+                    },
+                    DebitCoa = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                    {
+                        Id = "1",
+                        Code = "code",
+                        Name = "name",
+                    },
+                    IncomeType = "incomeType",
+                    ReceiptDate = DateTimeOffset.Now,
+                    NumberingCode = "numberingCode",
+                    Remarks = "remarks",
+                    Items = new List<BankCashReceiptItemViewModel>
+                    {
+                        new BankCashReceiptItemViewModel()
+                        {
+                            NoteNumber = "noteNumber",
+                            Remarks = "remarks",
+                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            AccSub = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                            },
+                            Amount = 1,
+                            C1A = 1,
+                            C1B = 1,
+                            C2A = 1,
+                            C2B = 1,
+                            C2C = 1,
+                            Summary = 1,
+                        }
+                    }
+                };
+            }
+        }
+
+        private BankCashReceiptViewModel viewModelDollarWithDecimal
+        {
+            get
+            {
+                return new BankCashReceiptViewModel
+                {
+                    ReceiptNo = "no",
+                    Amount = 1.12M,
+                    Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
+                    {
+                        Id = 1,
+                        AccountName = "accountName",
+                        AccountCOA = "accountCOA",
+                        AccountNumber = "accountNumber",
+                        BankCode = "bankCode",
+                        BankName = "bankName",
+                        Code = "code",
+                        Currency = null
+                    },
+                    Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                    {
+                        Id = 1,
+                        Code = "USD",
                         Rate = 1,
                         Description = "description",
                         Symbol = "symbol",
@@ -344,7 +584,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         }
 
         [Fact]
-        public async void GeneratePdf_Success_Return_OK()
+        public async void GeneratePdf_Success_IDR_Return_OK()
         {
             //Setup
             var mocks = GetMocks();
@@ -360,8 +600,63 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             //Assert
             Assert.NotNull(response);
             Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
 
+        [Fact]
+        public async void GeneratePdf_Success_IDR_WithDecimal_Return_OK()
+        {
+            //Setup
+            var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModelWithDecimal);
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new BankCashReceiptModel());
+            BankCashReceiptController controller = GetController(mocks);
 
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "7";
+
+            var response = await controller.GetById(It.IsAny<int>());
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
+
+        [Fact]
+        public async void GeneratePdf_Success_USD_WithDecimal_Return_OK()
+        {
+            //Setup
+            var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModelDollarWithDecimal);
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new BankCashReceiptModel());
+            BankCashReceiptController controller = GetController(mocks);
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "7";
+
+            var response = await controller.GetById(It.IsAny<int>());
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
+        }
+
+        [Fact]
+        public async void GeneratePdf_Success_USD_ZeroDecimal_Return_OK()
+        {
+            //Setup
+            var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptViewModel>(It.IsAny<BankCashReceiptModel>())).Returns(viewModelDollarZeroDecimal);
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new BankCashReceiptModel());
+            BankCashReceiptController controller = GetController(mocks);
+
+            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "7";
+
+            var response = await controller.GetById(It.IsAny<int>());
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("application/pdf", response.GetType().GetProperty("ContentType").GetValue(response, null));
         }
 
         [Fact]

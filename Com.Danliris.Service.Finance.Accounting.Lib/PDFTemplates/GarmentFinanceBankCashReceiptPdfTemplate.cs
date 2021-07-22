@@ -35,13 +35,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             {
                 if(viewModel.Currency.Code == "IDR")
                 {
-                    TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " Rupiah";
+                    if (viewModel.Amount.ToString().EndsWith(",00")){
+                        TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " Rupiah";
+                    } else
+                    {
+                        TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " " + NumberToTextIDN.terbilangKoma((double)viewModel.Amount) + " Rupiah";
+                    }
+                    
                 } else
                 {
-                    TotalPaidString = NumberToTextEN.toWords((double)viewModel.Amount) + " Dollars";
+                    if (viewModel.Amount.ToString().EndsWith(",00"))
+                    {
+                        TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " Dollar";
+                    }
+                    else
+                    {
+                        TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " Dollar " + NumberToTextIDN.terbilangKoma((double)viewModel.Amount) + " Sen";
+                        TotalPaidString = TotalPaidString.Replace("koma", "");
+                    }
                 }
             }
-             
+            var arrayRemarks = new List<string>();
+            foreach(var item in viewModel.Items)
+            {
+                arrayRemarks.Add(item.Remarks);
+            }
+
+            string payment = String.Join(", ", arrayRemarks);
+
 
             #endregion CustomModel
 
@@ -132,14 +153,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellMoney.Phrase = new Phrase(TotalPaidString, bold_font);
+            cellMoney.Phrase = new Phrase(TotalPaidString, normal_font);
             headerTable3.AddCell(cellMoney);
 
             cellHeaderBody.Phrase = new Phrase("UNTUK PEMBAYARAN ", normal_font);
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase("");
+            cellHeaderBody.Phrase = new Phrase(payment);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("", normal_font);
@@ -172,9 +193,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             PdfPCell cellFooterLeft1 = new PdfPCell() { Border = Rectangle.NO_BORDER };
             PdfPCell cellFooterLeft2 = new PdfPCell() { Border = Rectangle.NO_BORDER };
             PdfPCell cellHeaderFooter = new PdfPCell() { Border = Rectangle.NO_BORDER };
+            PdfPCell cellTerbilang = new PdfPCell() { Border = Rectangle.NO_BORDER };
+
 
 
             cellHeaderFooter.HorizontalAlignment = Element.ALIGN_CENTER;
+            cellTerbilang.HorizontalAlignment = Element.ALIGN_CENTER;
 
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
@@ -215,10 +239,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Border = Rectangle.BOX;
-            cellHeaderFooter.Phrase = new Phrase("T E R B I L A N G : " + viewModel?.Currency.Code + " " + viewModel?.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), bold_font);
-            footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Border = Rectangle.NO_BORDER;
+            cellTerbilang.Border = Rectangle.BOX;
+            cellTerbilang.FixedHeight = 30f;
+            cellTerbilang.VerticalAlignment = Element.ALIGN_MIDDLE;
+            cellTerbilang.Phrase = new Phrase("T E R B I L A N G : " + viewModel?.Currency.Code + " " + viewModel?.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), bold_font);
+            footerTable1.AddCell(cellTerbilang);
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
             cellHeaderFooter.Phrase = new Phrase("", note_font);

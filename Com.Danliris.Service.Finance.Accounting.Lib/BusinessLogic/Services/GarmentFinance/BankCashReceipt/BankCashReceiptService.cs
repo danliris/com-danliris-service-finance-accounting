@@ -165,6 +165,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
 
                 }
             }
+
             foreach (var newItem in model.Items)
             {
                 if (newItem.Id == 0)
@@ -172,6 +173,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                     exist.Items.Add(newItem);
                     EntityExtension.FlagForCreate(newItem, _identityService.Username, UserAgent);
                 }
+            }
+
+            decimal totalAmount = 0;
+            foreach (var item in exist.Items)
+            {
+                if (model.CurrencyCode == "IDR")
+                {
+                    totalAmount += item.Summary;
+                }
+                else
+                {
+                    totalAmount += item.Amount;
+                }
+            }
+
+            if (totalAmount != exist.Amount)
+            {
+                exist.Amount = totalAmount;
             }
 
 
