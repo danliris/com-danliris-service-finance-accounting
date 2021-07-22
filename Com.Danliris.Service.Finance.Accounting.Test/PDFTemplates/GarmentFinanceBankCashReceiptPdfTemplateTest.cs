@@ -17,7 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                 return new BankCashReceiptViewModel()
                 {
                     ReceiptNo = "receiptNo",
-                    Amount = 0.00M,
+                    Amount = 1.00M,
                     Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel()
                     {
                         Id = 1,
@@ -106,7 +106,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                 return new BankCashReceiptViewModel()
                 {
                     ReceiptNo = "receiptNo",
-                    Amount = 0.00M,
+                    Amount = 1.00M,
                     Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel()
                     {
                         Id = 1,
