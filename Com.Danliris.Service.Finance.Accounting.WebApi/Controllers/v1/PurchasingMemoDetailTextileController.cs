@@ -40,7 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPost]
-        public IActionResult PostNonPO([FromBody] FormDto form)
+        public IActionResult Post([FromBody] FormDto form)
         {
             try
             {
