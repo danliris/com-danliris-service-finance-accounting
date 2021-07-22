@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoTextile;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoDetailTextile;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Moonlay.Models;
@@ -24,7 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
         public int Create(FormDto form)
         {
-            var model = new PurchasingMemoTextileModel(form.MemoDetail.Id,form.MemoDetail.DocumentNo, form.MemoDetail.Date, form.MemoDetail.Currency.Id, form.MemoDetail.Currency.Code, form.MemoDetail.Currency.Rate, form.AccountingBook.Id, form.AccountingBook.AccountingBookType, form.Remark, form.AccountingBook.Code);
+            var model = new PurchasingMemoTextileModel(form.MemoDetail.Id, form.MemoDetail.DocumentNo, form.MemoDetail.Date, form.MemoDetail.Currency.Id, form.MemoDetail.Currency.Code, form.MemoDetail.Currency.Rate, form.AccountingBook.Id, form.AccountingBook.AccountingBookType, form.Remark, form.AccountingBook.Code);
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.PurchasingMemoTextiles.Add(model);
             _dbContext.SaveChanges();
@@ -79,12 +80,58 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
         public PurchasingTextileDto Read(int id)
         {
-            throw new NotImplementedException();
+            var model = _dbContext.PurchasingMemoTextiles.FirstOrDefault(entity => entity.Id == id);
+
+            if (model != null)
+            {
+                var items = _dbContext.PurchasingMemoTextileItems.Where(entity => entity.PurchasingMemoTextileId == id).ToList();
+
+                var result = new PurchasingTextileDto(model.Id, new AccountingBookDto(model.AccountingBookId, model.AccountingBookCode, model.AccountingBookType), new MemoDetailDto(model.MemoDetailId, model.MemoDetailDocumentNo, model.MemoDetailDate, new CurrencyDto(model.MemoDetailCurrencyId, model.MemoDetailCurrencyCode, model.MemoDetailCurrencyRate)), model.Remark, new List<FormItemDto>());
+
+                foreach (var item in items)
+                {
+                    result.Items.Add(new FormItemDto(new ChartOfAccountDto(item.ChartOfAccountId, item.ChartOfAccountCode, item.ChartOfAccountName), item.DebitAmount, item.CreditAmount));
+                }
+
+                return result;
+            }
+            else
+                return null;
         }
 
         public int Update(int id, FormDto form)
         {
-            throw new NotImplementedException();
+            var updatedId = 0;
+            var model = _dbContext.PurchasingMemoTextiles.FirstOrDefault(entity => entity.Id == id);
+
+            if (model != null)
+            {
+                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+                _dbContext.PurchasingMemoTextiles.Update(model);
+
+                var items = _dbContext.PurchasingMemoTextileItems.Where(entity => entity.PurchasingMemoTextileId == model.Id).ToList();
+
+                items = items.Select(element =>
+                {
+                    EntityExtension.FlagForDelete(element, _identityService.Username, UserAgent);
+                    return element;
+                }).ToList();
+                _dbContext.PurchasingMemoTextileItems.UpdateRange(items);
+
+                _dbContext.SaveChanges();
+
+                foreach (var detail in form.Items)
+                {
+                    var itemModel = new PurchasingMemoTextileItemModel(item.ChartOfAccount.Id, item.ChartOfAccount.Code, item.ChartOfAccount.Name, item.DebitAmount, item.CreditAmount, model.Id);
+                    EntityExtension.FlagForCreate(itemModel, _identityService.Username, UserAgent);
+                    _dbContext.PurchasingMemoTextileItems.Add(itemModel);
+                    _dbContext.SaveChanges();
+                }
+
+                updatedId = model.Id;
+            }
+
+            return updatedId;
         }
     }
 }

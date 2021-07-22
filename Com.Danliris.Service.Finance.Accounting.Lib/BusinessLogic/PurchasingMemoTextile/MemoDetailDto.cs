@@ -5,6 +5,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 {
     public class MemoDetailDto
     {
+        public MemoDetailDto(int id, string documentNo, DateTimeOffset date, CurrencyDto currency)
+        {
+            Id = id;
+            DocumentNo = documentNo;
+            Date = date;
+            Currency = currency;
+        }
+
         public int Id { get; set; }
         public string DocumentNo { get; set; }
         public DateTimeOffset Date { get; set; }
