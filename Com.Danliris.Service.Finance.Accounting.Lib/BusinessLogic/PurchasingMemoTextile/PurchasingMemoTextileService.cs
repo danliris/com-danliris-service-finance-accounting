@@ -120,7 +120,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
                 _dbContext.SaveChanges();
 
-                foreach (var detail in form.Items)
+                foreach (var item in form.Items)
                 {
                     var itemModel = new PurchasingMemoTextileItemModel(item.ChartOfAccount.Id, item.ChartOfAccount.Code, item.ChartOfAccount.Name, item.DebitAmount, item.CreditAmount, model.Id);
                     EntityExtension.FlagForCreate(itemModel, _identityService.Username, UserAgent);
