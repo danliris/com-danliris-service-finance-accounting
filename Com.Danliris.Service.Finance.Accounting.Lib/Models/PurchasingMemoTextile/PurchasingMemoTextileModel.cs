@@ -41,5 +41,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoTexti
         [MaxLength(128)]
         public string AccountingBookCode { get; private set; }
         public string Remark { get; private set; }
+        public bool IsPosted { get; private set; }
+
+        public void SetIsPosted(bool value)
+        {
+            IsPosted = value;
+        }
     }
 }
