@@ -82,6 +82,10 @@ using Microsoft.ApplicationInsights.AspNetCore;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.MemoGarmentPurchasingReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.MemoGarmentPurchasingReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDownPaymentReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.GarmentFinance.BankCashReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoDetailTextile;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoTextile;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -167,6 +171,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IMemoGarmentPurchasingService, MemoGarmentPurchasingService>()
                 .AddTransient<IMemoGarmentPurchasingReportService, MemoGarmentPurchasingReportService>()
                 .AddTransient<IMemoDetailGarmentPurchasingService, MemoDetailGarmentPurchasingService>()
+                .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>()
+                .AddTransient<IBankCashReceiptService, BankCashReceiptService>()
+                .AddTransient<IPurchasingMemoDetailTextileService, PurchasingMemoDetailTextileService>()
+                .AddTransient<IPurchasingMemoTextileService, PurchasingMemoTextileService>()
                 .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>();
         }
 
