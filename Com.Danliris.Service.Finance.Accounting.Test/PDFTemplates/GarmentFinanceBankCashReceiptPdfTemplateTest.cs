@@ -465,7 +465,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
         public void Should_Success_Terbilang_Decimal()
         {
             GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
-            var angka = "123,456"
+            var angka = "123,456";
             var terbilang = PdfTemplate.Terbilang(Convert.ToDouble(angka), "USD");
             Assert.NotNull(terbilang);
         }
