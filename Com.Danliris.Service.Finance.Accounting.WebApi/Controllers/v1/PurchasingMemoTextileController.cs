@@ -162,5 +162,25 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpPut("posting")]
+        public async Task<IActionResult> Post([FromBody] PostingFormDto form)
+        {
+            try
+            {
+                VerifyUser();
+
+                await _service.Posting(form);
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
     }
 }

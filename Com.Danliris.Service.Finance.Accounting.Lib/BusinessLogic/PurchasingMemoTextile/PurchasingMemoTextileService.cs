@@ -1,4 +1,7 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoDetailTextile;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoDetailTextile;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -8,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoTextile
 {
@@ -16,11 +20,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
         private const string UserAgent = "finance-service";
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
+        private readonly IJournalTransactionService _journalTransactionService;
 
         public PurchasingMemoTextileService(IServiceProvider serviceProvider)
         {
             _dbContext = serviceProvider.GetService<FinanceDbContext>();
             _identityService = serviceProvider.GetService<IIdentityService>();
+            _journalTransactionService = serviceProvider.GetService<IJournalTransactionService>();
         }
 
         public int Create(FormDto form)
@@ -64,6 +70,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 deletedId = model.Id;
             }
             return deletedId;
+        }
+
+        public async Task<int> Posting(PostingFormDto form)
+        {
+            var models = _dbContext.PurchasingMemoTextiles.Where(entity => form.Ids.Contains(entity.Id)).ToList();
+
+            models = models.Select(model =>
+            {
+                model.SetIsPosted(true);
+                EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+                return model;
+            }).ToList();
+            _dbContext.SaveChanges();
+
+            foreach (var model in models)
+            {
+                var items = _dbContext.PurchasingMemoTextileItems.Where(entity => entity.PurchasingMemoTextileId == model.Id).ToList();
+                var memoDetail = _dbContext.PurchasingMemoDetailTextiles.FirstOrDefault(entity => entity.Id == model.MemoDetailId);
+
+                var type = memoDetail.Type == PurchasingMemoType.Disposition ? "Disposisi" : "Non Disposisi";
+                var journalTransactionModel = new JournalTransactionModel()
+                {
+                    Date = model.MemoDetailDate,
+                    Description = $"Memo Pembelian {type}",
+                    ReferenceNo = model.MemoDetailDocumentNo,
+                    Status = "POSTED",
+                    Items = new List<JournalTransactionItemModel>()
+                };
+
+                foreach (var item in items)
+                {
+                    journalTransactionModel.Items.Add(new JournalTransactionItemModel()
+                    {
+                        COA = new Models.MasterCOA.COAModel()
+                        {
+                            Id = item.ChartOfAccountId,
+                            Code = item.ChartOfAccountCode,
+                            Name = item.ChartOfAccountName
+                        },
+                        COAId = item.ChartOfAccountId,
+                        Credit = (decimal)item.CreditAmount,
+                        Debit = (decimal)item.DebitAmount
+                    });
+                }
+
+                await _journalTransactionService.CreateAsync(journalTransactionModel);
+
+            }
+
+            return models.Count;
         }
 
         public ReadResponse<IndexDto> Read(string keyword, int page = 1, int size = 25)
