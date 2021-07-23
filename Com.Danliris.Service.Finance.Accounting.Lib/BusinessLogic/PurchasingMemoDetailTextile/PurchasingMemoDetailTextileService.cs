@@ -365,7 +365,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
         {
             var query = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.DocumentNo.Contains(keyword));
 
-            return query.Take(10).Select(entity => new AutoCompleteDto(entity.Id, entity.DocumentNo, entity.Date, entity.CurrencyCode, entity.CurrencyId, entity.CurrencyRate)).ToList();
+            var result = query.Take(10).Select(entity => new AutoCompleteDto(entity.Id, entity.DocumentNo, entity.Date, entity.CurrencyCode, entity.CurrencyId, entity.CurrencyRate)).ToList();
+
+
+            var coa = _dbContext.ChartsOfAccounts.Where(entity => entity.Code.Contains("33")).FirstOrDefault();
+
+            if (coa != null)
+                result = result.Select(element =>
+                {
+                    element = new AutoCompleteDto(element.Id, element.DocumentNo, element.Date, element.Currency, new List<PurchasingMemoTextile.FormItemDto>() { new PurchasingMemoTextile.FormItemDto(new PurchasingMemoTextile.ChartOfAccountDto(coa.Id, coa.Code, coa.Name), 0, 0) });
+                    return element;
+                }).ToList();
+
+            return result;
         }
     }
 }
