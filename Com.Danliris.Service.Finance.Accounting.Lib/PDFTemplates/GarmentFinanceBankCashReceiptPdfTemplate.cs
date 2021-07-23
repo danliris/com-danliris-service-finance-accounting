@@ -35,24 +35,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             {
                 if(viewModel.Currency.Code == "IDR")
                 {
-                    if (viewModel.Amount.ToString().EndsWith(",00")){
-                        TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " Rupiah";
-                    } else
-                    {
-                        TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " " + NumberToTextIDN.terbilangKoma((double)viewModel.Amount) + " Rupiah";
-                    }
+                    //if (viewModel.Amount.ToString().EndsWith(",00")){
+                        TotalPaidString = Terbilang((double)viewModel.Amount, "IDR");
+                    //}
+                    //else
+                    //{
+                      //  TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " " + NumberToTextIDN.terbilangKoma((double)viewModel.Amount) + " Rupiah";
+                        //TotalPaidString = TotalPaidString.Replace("koma", "");
+                    //}
                     
                 } else
                 {
-                    if (viewModel.Amount.ToString().EndsWith(",00"))
-                    {
-                        TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " Dollar";
-                    }
-                    else
-                    {
-                        TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " Dollar " + NumberToTextIDN.terbilangKoma((double)viewModel.Amount) + " Sen";
+                    //if (viewModel.Amount.ToString().EndsWith(",00"))
+                    //{
+                    //    TotalPaidString = NumberToTextIDN.terbilang((double)viewModel.Amount) + " Dollar";
+                    //}
+                    //else
+                    //{
+                        TotalPaidString = Terbilang((double)viewModel.Amount, "USD");
                         TotalPaidString = TotalPaidString.Replace("koma", "");
-                    }
+                    //}
                 }
             }
             var arrayRemarks = new List<string>();
@@ -153,7 +155,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellMoney.Phrase = new Phrase(TotalPaidString, normal_font);
+            cellMoney.Phrase = new Phrase(TotalPaidString.ToUpper(), normal_font);
             headerTable3.AddCell(cellMoney);
 
             cellHeaderBody.Phrase = new Phrase("UNTUK PEMBAYARAN ", normal_font);
@@ -226,8 +228,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             footerTable1.AddCell(cellHeaderFooter);
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
-            cellHeaderFooter.Phrase = new Phrase("", normal_font);
-            footerTable1.AddCell(cellHeaderFooter);
+            cellTerbilang.Border = Rectangle.BOX;
+            cellTerbilang.FixedHeight = 30f;
+            cellTerbilang.VerticalAlignment = Element.ALIGN_MIDDLE;
+            cellTerbilang.Phrase = new Phrase("T E R B I L A N G : " + viewModel?.Currency.Code + " " + viewModel?.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), bold_font);
+            footerTable1.AddCell(cellTerbilang);
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
@@ -239,11 +244,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
-            cellTerbilang.Border = Rectangle.BOX;
-            cellTerbilang.FixedHeight = 30f;
-            cellTerbilang.VerticalAlignment = Element.ALIGN_MIDDLE;
-            cellTerbilang.Phrase = new Phrase("T E R B I L A N G : " + viewModel?.Currency.Code + " " + viewModel?.Amount.ToString("#,##0.00", new CultureInfo("id-ID")), bold_font);
-            footerTable1.AddCell(cellTerbilang);
+
+            cellHeaderFooter.Phrase = new Phrase("", normal_font);
+            footerTable1.AddCell(cellHeaderFooter);
+
             cellHeaderFooter.Phrase = new Phrase("", normal_font);
             footerTable1.AddCell(cellHeaderFooter);
             cellHeaderFooter.Phrase = new Phrase("", note_font);
@@ -329,5 +333,188 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             return stream;
         }
+        string[] satuan = { "Nol", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan" };
+        string[] belasan = { "Sepuluh", "Sebelas", "Dua Belas", "Tiga Belas", "Empat Belas", "Lima Belas", "Enam Belas", "Tujuh Belas", "Delapan Belas", "Sembilan Belas" };
+        string[] puluhan = { "", "", "Dua Puluh", "Tiga Puluh", "Empat Puluh", "Lima Puluh", "Enam Puluh", "Tujuh Puluh", "Delapan Puluh", "Sembilan Puluh" };
+        string[] ribuan = { "", "ribu", "juta", "milyar", "triliyun", "kuadrilyun", "kuintiliun", "sekstiliun", "septiliun", "oktiliun", "noniliun", "desiliun" };
+        public string Terbilang(double d, string code)
+        {
+            
+
+            var strHasil = "";
+            var isNegative = (d) < 0;
+            d = Convert.ToDouble((Math.Round(d * 100) / 100).ToString("N2"));
+            if (isNegative)
+            {
+                d = d * -1;
+            }
+
+            if (d.ToString().IndexOf(".") > -1 || d.ToString().IndexOf(",") > -1)
+            {
+                var a = 0.00;
+                if (d.ToString().IndexOf(",") > -1)
+                {
+                    a = Convert.ToDouble((d.ToString().Substring(d.ToString().IndexOf(",") + 1)));
+                }
+
+                if (d.ToString().IndexOf(".") > -1)
+                {
+                    a = Convert.ToDouble((d.ToString().Substring(d.ToString().IndexOf(".") + 1)));
+                }
+
+                if (a != 0)
+                {
+                    string tambahan = "";
+                    if (code != "IDR")
+                    {
+                        tambahan = " Sen";
+
+                        strHasil = " Dollar " + TerbilangKoma(d) + tambahan;
+                    }
+                    else
+                    {
+                        strHasil = TerbilangKoma(d) + " Rupiah";
+                    }
+                }
+                if (d.ToString().IndexOf(",") > -1)
+                {
+                    d = Convert.ToDouble(d.ToString().Substring(0, d.ToString().IndexOf(",")));
+                }
+
+                if (d.ToString().IndexOf(".") > -1)
+                {
+                    d = Convert.ToDouble(d.ToString().Substring(0, d.ToString().IndexOf(".")));
+                }
+
+            } else
+            {
+                string tambahan = "";
+                if (code != "IDR")
+                {
+
+                    strHasil = strHasil + " Dollar";
+                }
+                else
+                {
+                    strHasil = strHasil + " Rupiah";
+                }
+            }
+
+            var nDigit = 0;
+            var nPosisi = 0;
+
+            var strTemp = Math.Truncate(d).ToString();
+            for (var i = strTemp.Length; i > 0; i--)
+            {
+                var tmpBuff = "";
+                nDigit = Convert.ToInt32(strTemp.Substring(i - 1, 1), 10);
+                nPosisi = (strTemp.Length - i) + 1;
+                switch (nPosisi % 3)
+                {
+                    case 1:
+                        var bAllZeros = false;
+                        if (i == 1)
+                            tmpBuff = satuan[nDigit] + " ";
+                        else if (strTemp.Substring(i - 2, 1) == "1")
+                            tmpBuff = belasan[nDigit] + " ";
+                        else if (nDigit > 0)
+                            tmpBuff = satuan[nDigit] + " ";
+                        else
+                        {
+                            bAllZeros = true;
+                            if (i > 1)
+                                if (strTemp.Substring(i - 2, 1) != "0")
+                                    bAllZeros = false;
+                            if (i > 2)
+                                if (strTemp.Substring(i - 3, 1) != "0")
+                                    bAllZeros = false;
+                            tmpBuff = "";
+                        }
+
+                        if ((!bAllZeros) && (nPosisi > 1))
+                            if ((strTemp.Length == 4) && (strTemp.Substring(0, 1) == "1"))
+                                tmpBuff = "Se" + ribuan[Convert.ToInt32(Math.Round(Convert.ToDecimal(nPosisi) / 3))] + " ";
+                            else
+                                tmpBuff = tmpBuff + ribuan[Convert.ToInt32(Math.Round(Convert.ToDecimal(nPosisi) / 3))] + " ";
+                        strHasil = tmpBuff + strHasil;
+                        break;
+                    case 2:
+                        if (nDigit > 0)
+                            strHasil = (puluhan[nDigit] + " " + strHasil).Trim();
+                        break;
+                    case 0:
+                        if (nDigit > 0)
+                            if (nDigit == 1)
+                                strHasil = "Seratus " + strHasil;
+                            else
+                                strHasil = satuan[nDigit] + " Ratus " + strHasil;
+                        break;
+                }
+
+            }
+
+            
+
+            if (strTemp.Length > 0)
+            {
+                if (isNegative)
+                {
+                    strHasil = $"minus { strHasil}";
+                }
+            }
+
+            strHasil = strHasil.Trim().ToLower();
+            if (strHasil.Length > 0)
+            {
+                strHasil = strHasil.Substring(0, 1).ToUpper() +
+                    strHasil.Substring(1, strHasil.Length - 1);
+            }
+            
+            return strHasil; 
+
+        }
+
+        public string TerbilangKoma(double frac)
+        {
+            var stringFrac = frac.ToString();
+            var a = "";
+
+            if (stringFrac.IndexOf(".") > -1)
+            {
+                a = frac.ToString().Substring(frac.ToString().IndexOf(".") + 1);
+            }
+            else if (stringFrac.IndexOf(",") > -1)
+            {
+                a = frac.ToString().Substring(frac.ToString().IndexOf(",") + 1);
+            }
+
+            string fixNumber = "";
+            if (a.Length > 4)
+            {
+                if (stringFrac.IndexOf(".") > -1)
+                {
+                    fixNumber = (frac.ToString("N4")).ToString().Substring((frac.ToString("N4")).ToString().IndexOf(".") + 1);
+                }
+                else if (stringFrac.IndexOf(",") > -1)
+                {
+                    fixNumber = (frac.ToString("N4")).ToString().Substring((frac.ToString("N4")).ToString().IndexOf(",") + 1);
+                }
+            }
+            else
+            {
+                fixNumber = a;
+            }
+
+            var strHasil = "koma";
+            for (var i = 0; i < fixNumber.Length; i++)
+            {
+                var temp = Convert.ToInt32(fixNumber[i].ToString());
+                strHasil = strHasil + " " + satuan[temp];
+            }
+
+            return strHasil;
+        }
     }
+
+    
 }
