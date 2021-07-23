@@ -4,7 +4,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 {
     public class IndexDto
     {
-        public IndexDto(int id, string memoDetailDocumentNo, DateTimeOffset memoDetailDate, string accountingBookType, string currencyCode, string remark)
+        public IndexDto(int id, string memoDetailDocumentNo, DateTimeOffset memoDetailDate, string accountingBookType, string currencyCode, string remark, bool isPosted, string type)
         {
             Id = id;
             MemoDetailDocumentNo = memoDetailDocumentNo;
@@ -12,6 +12,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             AccountingBookType = accountingBookType;
             CurrencyCode = currencyCode;
             Remark = remark;
+            IsPosted = isPosted;
+            Type = type;
         }
 
         public int Id { get; set; }
@@ -20,5 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
         public string AccountingBookType { get; set; }
         public string CurrencyCode { get; set; }
         public string Remark { get; set; }
+        public bool IsPosted { get; set; }
+        public string Type { get; set; }
     }
 }

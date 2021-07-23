@@ -130,7 +130,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 query = query.Where(entity => entity.MemoDetailDocumentNo.Contains(keyword));
 
             var count = query.Count();
-            var data = query.Skip((page - 1) * size).Take(size).Select(entity => new IndexDto(entity.Id, entity.MemoDetailDocumentNo, entity.MemoDetailDate, entity.AccountingBookType, entity.MemoDetailCurrencyCode, entity.Remark)).ToList();
+            var data = query.Skip((page - 1) * size).Take(size).Select(entity => new IndexDto(entity.Id, entity.MemoDetailDocumentNo, entity.MemoDetailDate, entity.AccountingBookType, entity.MemoDetailCurrencyCode, entity.Remark, entity.IsPosted, "")).ToList();
             return new ReadResponse<IndexDto>(data, count, new Dictionary<string, string>(), new List<string>());
         }
 
