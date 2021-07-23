@@ -29,7 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                 return new BankCashReceiptViewModel
                 {
                     ReceiptNo = "no",
-                    Amount = 1.00M,
+                    Amount = 12345.00M,
                     Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
                     {
                         Id = 1,
@@ -109,7 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                 return new BankCashReceiptViewModel
                 {
                     ReceiptNo = "no",
-                    Amount = 1.12M,
+                    Amount = 12345.12M,
                     Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
                     {
                         Id = 1,
@@ -189,7 +189,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                 return new BankCashReceiptViewModel
                 {
                     ReceiptNo = "no",
-                    Amount = 1.00M,
+                    Amount = 120000.00M,
                     Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
                     {
                         Id = 1,
@@ -269,7 +269,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                 return new BankCashReceiptViewModel
                 {
                     ReceiptNo = "no",
-                    Amount = 1.12M,
+                    Amount = 100.12M,
                     Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
                     {
                         Id = 1,
