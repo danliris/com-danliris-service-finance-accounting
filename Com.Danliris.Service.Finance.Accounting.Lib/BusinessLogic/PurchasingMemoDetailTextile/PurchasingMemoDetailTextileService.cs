@@ -59,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
                     foreach (var detail in item.Disposition.Details)
                     {
-                        var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, itemModel.Id, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmount, detail.PaymentAmountCurrency);
+                        var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, itemModel.Id, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
                         EntityExtension.FlagForCreate(detailModel, _identityService.Username, UserAgent);
                         _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                         _dbContext.SaveChanges();
@@ -149,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             }
 
             var count = query.Select(entity => entity.Id).Count();
-            var data = query.Skip((page - 1) * size).Take(size).Select(entity => new IndexDto(entity.Id, entity.LastModifiedUtc, entity.Date, entity.DivisionName, entity.CurrencyCode, entity.SupplierIsImport, entity.Remark, entity.DocumentNo)).ToList();
+            var data = query.OrderByDescending(entity => entity.LastModifiedUtc).Skip((page - 1) * size).Take(size).Select(entity => new IndexDto(entity.Id, entity.LastModifiedUtc, entity.Date, entity.DivisionName, entity.CurrencyCode, entity.SupplierIsImport, entity.Remark, entity.DocumentNo)).ToList();
             return new ReadResponse<IndexDto>(data, count, new Dictionary<string, string>(), new List<string>());
         }
 
