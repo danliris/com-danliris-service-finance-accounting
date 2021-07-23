@@ -149,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             }
 
             var count = query.Select(entity => entity.Id).Count();
-            var data = query.Skip((page - 1) * size).Take(size).Select(entity => new IndexDto(entity.Id, entity.LastModifiedUtc, entity.Date, entity.DivisionName, entity.CurrencyCode, entity.SupplierIsImport, entity.Remark, entity.DocumentNo)).ToList();
+            var data = query.OrderByDescending(entity => entity.LastModifiedUtc).Skip((page - 1) * size).Take(size).Select(entity => new IndexDto(entity.Id, entity.LastModifiedUtc, entity.Date, entity.DivisionName, entity.CurrencyCode, entity.SupplierIsImport, entity.Remark, entity.DocumentNo)).ToList();
             return new ReadResponse<IndexDto>(data, count, new Dictionary<string, string>(), new List<string>());
         }
 
