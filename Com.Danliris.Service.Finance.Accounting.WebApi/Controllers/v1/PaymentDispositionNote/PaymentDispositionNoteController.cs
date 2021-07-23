@@ -263,6 +263,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
         {
             try
             {
+                VerifyUser();
                 startDate = startDate == null ? new DateTime(1970, 1, 1).ToUniversalTime() : startDate;
                 endDate = endDate == null ? DateTime.Now.ToUniversalTime() : endDate;
                 var result = Service.GetReport(bankExpenditureId, dispositionId, supplierId, divisionId, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
