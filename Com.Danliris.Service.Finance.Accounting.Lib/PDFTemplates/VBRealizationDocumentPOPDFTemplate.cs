@@ -40,14 +40,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             PdfPTable headerTable1 = new PdfPTable(1);
             PdfPTable headerTable2 = new PdfPTable(1);
             PdfPTable headerTable3 = new PdfPTable(7);
-            PdfPTable headerTable3a = new PdfPTable(5);
+            PdfPTable headerTable3a = new PdfPTable(7);
             PdfPTable headerTable4 = new PdfPTable(2);
 
             headerTable_A.SetWidths(new float[] { 10f, 10f });
             headerTable_A.WidthPercentage = 100;
             headerTable3.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f, 20f });
             headerTable3.WidthPercentage = 110;
-            headerTable3a.SetWidths(new float[] { 3f, 15f, 5f, 15f, 62f });
+            headerTable3a.SetWidths(new float[] { 3f, 15f, 5f, 15f, 15f, 15f, 16f });
             headerTable3a.WidthPercentage = 110;
             headerTable4.SetWidths(new float[] { 10f, 40f });
             headerTable4.WidthPercentage = 100;
@@ -145,6 +145,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             decimal count_price = 0;
             decimal total_realization = 0;
             decimal total_all = 0;
+            string ppn_per_item = "";
+            string pph_supplier_per_item = "";
+            string pph_danliris_per_item = "";
 
             var currencyCode = viewModel.Header.CurrencyCode;
             var currencydescription = viewModel.Header.CurrencyDescription;
@@ -177,10 +180,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 {
                     var temp = itm.Amount * (decimal)0.1;
                     total_all = itm.Amount + temp;
+
+                    ppn_per_item += total_all.ToString("#,##0.00", new CultureInfo("id-ID")) + "|";
                 }
                 else
                 {
                     total_all = itm.Amount;
+                }
+
+                if (itm.UseIncomeTax == true)
+                {
+                    if (itm.IncomeTaxBy == "Supplier")
+                    {
+                        pph_supplier_per_item += (itm.Amount * ((decimal)itm.IncomeTaxRate / 100)).ToString("#,##0.00", new CultureInfo("id-ID")) + "|";
+                    }
+                    else
+                    {
+                        pph_danliris_per_item += (itm.Amount * ((decimal)itm.IncomeTaxRate / 100)).ToString("#,##0.00", new CultureInfo("id-ID")) + "|";
+                    }
                 }
 
                 // Mata Uang
@@ -373,23 +390,95 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody4a.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4a);
 
-            // Beban Unit
-            cellHeaderBody4.Colspan = 7;
-            cellHeaderBody4.HorizontalAlignment = Element.ALIGN_LEFT;
-            cellHeaderBody4.Phrase = new Phrase("Beban Unit :", bold_font);
-            headerTable3.AddCell(cellHeaderBody4);
-
             cellHeader3.AddElement(headerTable3);
             headerTable_B.AddCell(cellHeader3);
             cellHeader4.AddElement(headerTable4);
             headerTable_B.AddCell(cellHeader4);
             document.Add(headerTable_B);
+
+            // Beban Unit
+            cellHeaderBody.Colspan = 4;
+            cellHeaderBody.HorizontalAlignment = Element.ALIGN_LEFT;
+            cellHeaderBody.Phrase = new Phrase("Beban Unit:", bold_font);
+            headerTable3a.AddCell(cellHeaderBody);
+
+            var unitCosts = viewModel.UnitCosts.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
+
+            if ((count_price - total_realization) == 0)
+            {
+                ppn_per_item = string.Empty;
+            }
+            else if (unitCosts.ToList().Count == 1)
+            {
+                ppn_per_item = (count_price - total_realization).ToString("#,##0.00", new CultureInfo("id-ID"));
+            }
+
+            if (pph_supplier_per_item != string.Empty || pph_danliris_per_item != string.Empty)
+            {
+                // Header PPH23
+                cellHeaderBody.Colspan = 1;
+                cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                cellHeaderBody.Phrase = new Phrase("PPH 23", normal_font_8);
+                headerTable3a.AddCell(cellHeaderBody);
+
+                if (ppn_per_item != string.Empty)
+                {
+                    // Header PPN
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase("PPN", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+                else
+                {
+                    // Empty space
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+            }
+            else
+            {
+                if (ppn_per_item != string.Empty)
+                {
+                    // Empty space
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+
+                    // Header PPN
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase("PPN", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+
+                    // Empty space
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+                else
+                {
+                    // Empty space
+                    cellHeaderBody.Colspan = 2;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+            }
+
+            // New Line
+            cellHeaderBody.Colspan = 7;
+            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            headerTable3a.AddCell(cellHeaderBody);
             #endregion Header
 
             #region NewCheckbox
-            var unitCosts = viewModel.UnitCosts.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
-
             List<PdfFormField> annotations = new List<PdfFormField>();
+            var loop = 0;
             foreach (var item in unitCosts)
             {
                 PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
@@ -419,6 +508,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3a.AddCell(cellform);
 
                 // Beban Unit Item
+                cellHeaderBody.Colspan = 1;
                 if (item.Key == 0)
                 {
                     cellHeaderBody.Phrase = new Phrase("......", normal_font_8);
@@ -434,6 +524,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 if (!flag)
                 {
+                    cellHeaderBody.Colspan = 2;
                     cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                     headerTable3a.AddCell(cellHeaderBody);
                 }
@@ -442,17 +533,134 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                     var nom = item.Sum(s => s.Amount).ToString("#,##0.00", new CultureInfo("id-ID"));
 
                     // Beban Unit Item Mata Uang
+                    cellHeaderBody.Colspan = 1;
                     cellHeaderBody.Phrase = new Phrase(currencyCode, normal_font_8);
                     cellHeaderBody.HorizontalAlignment = Element.ALIGN_RIGHT;
                     headerTable3a.AddCell(cellHeaderBody);
 
                     // Beban Unit Item Nominal
+                    cellHeaderBody.Colspan = 1;
                     cellHeaderBody.Phrase = new Phrase(nom, normal_font_8);
                     cellHeaderBody.HorizontalAlignment = Element.ALIGN_RIGHT;
                     headerTable3a.AddCell(cellHeaderBody);
                 }
 
+                //PPh
+                if (pph_supplier_per_item != string.Empty && pph_danliris_per_item == string.Empty)
+                {
+                    List<string> pph = pph_supplier_per_item.Split('|').ToList<string>();
+
+                    var pphdata = pph[loop];
+
+                    if (pphdata != string.Empty)
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(pphdata, normal_font_8);
+                        cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                    else
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                }
+                else if (pph_supplier_per_item == string.Empty && pph_danliris_per_item != string.Empty)
+                {
+                    List<string> pph = pph_danliris_per_item.Split('|').ToList<string>();
+
+                    var pphdata = pph[loop];
+
+                    if (pphdata != string.Empty)
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(pphdata, normal_font_8);
+                        cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                    else
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                }
+                else if (pph_supplier_per_item != string.Empty && pph_danliris_per_item != string.Empty)
+                {
+                    List<string> pph1 = pph_danliris_per_item.Split('|').ToList<string>();
+                    List<string> pph2 = pph_supplier_per_item.Split('|').ToList<string>();
+
+                    if(pph1[loop] == string.Empty)
+                    {
+                        pph1[loop] = "0";
+                    }
+
+                    if (pph2[loop] == string.Empty)
+                    {
+                        pph2[loop] = "0";
+                    }
+
+                    var pphdata = Convert.ToDecimal(pph1[loop]) + Convert.ToDecimal(pph2[loop]);
+
+                    if (pphdata != 0)
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(pphdata.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font_8);
+                        cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                    else
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                }
+                else
+                {
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+
+                //PPn
+                if (ppn_per_item != string.Empty)
+                {
+                    List<string> ppn = ppn_per_item.Split('|').ToList<string>();
+
+                    var ppndata = ppn[loop];
+
+                    if (unitCosts.ToList().Count != ppn.Count)
+                    {
+                        ppndata = ((count_price - total_realization) / unitCosts.ToList().Count).ToString("#,##0.00", new CultureInfo("id-ID"));
+                    }
+
+                    if (ppndata != string.Empty)
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(ppndata, normal_font_8);
+                        cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                    else
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                }
+                else
+                {
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+
+                loop++;
+
                 // Empty space
+                cellHeaderBody.Colspan = 1;
                 cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
 
