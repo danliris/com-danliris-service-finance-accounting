@@ -285,5 +285,70 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PurchasingMemoDetailTexti
             var statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
+
+        [Fact]
+        public void GetPDF_ById_Succes_Return_Ok()
+        {
+            //Setup
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new Mock<IPurchasingMemoDetailTextileService>();
+
+            service.Setup(s => s.Read(It.IsAny<int>()))
+                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.Disposition, new List<FormItemDto>(), new List<FormDetailDto>(), "", 1));
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IPurchasingMemoDetailTextileService)))
+               .Returns(service.Object);
+
+            //Act
+            var response = GetController(serviceProviderMock).GetPDFById(It.IsAny<int>());
+
+            //Assert
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void GetPDF_ById_Succes_Return_NotFound()
+        {
+            //Setup
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new Mock<IPurchasingMemoDetailTextileService>();
+
+            service.Setup(s => s.Read(It.IsAny<int>()))
+                .Returns((PurchasingMemoDetailTextileDto)null);
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IPurchasingMemoDetailTextileService)))
+               .Returns(service.Object);
+
+            //Act
+            var response = GetController(serviceProviderMock).GetPDFById(It.IsAny<int>());
+
+            //Assert
+            var statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
+        }
+
+        [Fact]
+        public void GetPDF_ById_Succes_Return_Exception()
+        {
+            //Setup
+            var serviceProviderMock = GetServiceProviderMock();
+            var service = new Mock<IPurchasingMemoDetailTextileService>();
+
+            service.Setup(s => s.Read(It.IsAny<int>()))
+                .Throws(new Exception());
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(IPurchasingMemoDetailTextileService)))
+               .Returns(service.Object);
+
+            //Act
+            var response = GetController(serviceProviderMock).GetPDFById(It.IsAny<int>());
+
+            //Assert
+            var statusCode = GetStatusCode(response);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
     }
 }
