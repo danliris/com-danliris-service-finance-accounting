@@ -300,13 +300,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             }
 
             if (startDate.HasValue)
-                query = query.Where(document => document.Date >= startDate.GetValueOrDefault());
+                query = query.Where(document => document.Date.AddHours(_identityService.TimezoneOffset) >= startDate.GetValueOrDefault());
 
             if (endDate.HasValue)
-                query = query.Where(document => document.Date <= endDate.GetValueOrDefault());
+                query = query.Where(document => document.Date.AddHours(_identityService.TimezoneOffset) <= endDate.GetValueOrDefault());
 
             if(dateExpenditure.HasValue)
-                query = query.Where(document => document.Date == dateExpenditure.GetValueOrDefault());
+                query = query.Where(document => document.Date.AddHours(_identityService.TimezoneOffset) == dateExpenditure.GetValueOrDefault());
 
             if (!string.IsNullOrEmpty(bankExpenditureNo))
                 query = query.Where(document => document.DocumentNo==bankExpenditureNo);
@@ -373,7 +373,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
             return new OthersExpenditureProofDocumentReportListViewModel()
             {
-                Data = result,
+                Data = result.OrderBy(element => element.Date).ToList(),
                 Page = page,
                 Size = size,
                 Total = total,

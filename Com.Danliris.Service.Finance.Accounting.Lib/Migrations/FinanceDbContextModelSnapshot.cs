@@ -1436,6 +1436,203 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.ToTable("GarmentDispositionExpeditions");
                 });
 
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt.BankCashReceiptItemModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AccAmountCoaCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("AccAmountCoaId");
+
+                    b.Property<string>("AccAmountCoaName")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("AccNumberCoaCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("AccNumberCoaId");
+
+                    b.Property<string>("AccNumberCoaName")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("AccSubCoaCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("AccSubCoaId");
+
+                    b.Property<string>("AccSubCoaName")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("AccUnitCoaCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("AccUnitCoaId");
+
+                    b.Property<string>("AccUnitCoaName")
+                        .HasMaxLength(256);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<int>("BankCashReceiptId");
+
+                    b.Property<decimal>("C1A");
+
+                    b.Property<decimal>("C1B");
+
+                    b.Property<decimal>("C2A");
+
+                    b.Property<decimal>("C2B");
+
+                    b.Property<decimal>("C2C");
+
+                    b.Property<string>("CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreatedUtc");
+
+                    b.Property<string>("DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DeletedUtc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("LastModifiedUtc");
+
+                    b.Property<string>("NoteNumber")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(1024);
+
+                    b.Property<decimal>("Summary");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BankCashReceiptId");
+
+                    b.ToTable("GarmentFinanceBankCashReceiptItems");
+                });
+
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt.BankCashReceiptModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<int>("BankAccountId");
+
+                    b.Property<string>("BankAccountName")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("BankAccountNumber")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("BankAccountingCode")
+                        .HasMaxLength(32);
+
+                    b.Property<string>("BankCurrencyCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("BankCurrencyId");
+
+                    b.Property<double>("BankCurrencyRate");
+
+                    b.Property<string>("BankName")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreatedUtc");
+
+                    b.Property<string>("CurrencyCode");
+
+                    b.Property<int>("CurrencyId");
+
+                    b.Property<decimal>("CurrencyRate");
+
+                    b.Property<string>("DebitCoaCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("DebitCoaId");
+
+                    b.Property<string>("DebitCoaName")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DeletedUtc");
+
+                    b.Property<string>("IncomeType")
+                        .HasMaxLength(256);
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("LastModifiedUtc");
+
+                    b.Property<string>("NumberingCode")
+                        .HasMaxLength(32);
+
+                    b.Property<DateTimeOffset>("ReceiptDate");
+
+                    b.Property<string>("ReceiptNo")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(1024);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GarmentFinanceBankCashReceipts");
+                });
+
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePayment.GarmentInvoicePaymentItemModel", b =>
                 {
                     b.Property<int>("Id")
@@ -3477,6 +3674,396 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.ToTable("PurchasingDispositionExpeditions");
                 });
 
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoDetailTextile.PurchasingMemoDetailTextileDetailModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreatedUtc");
+
+                    b.Property<string>("DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DeletedUtc");
+
+                    b.Property<DateTimeOffset>("ExpenditureDate");
+
+                    b.Property<int>("ExpenditureId");
+
+                    b.Property<string>("ExpenditureNo")
+                        .HasMaxLength(64);
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("LastModifiedUtc");
+
+                    b.Property<double>("PaymentAmount");
+
+                    b.Property<double>("PaymentAmountCurrency");
+
+                    b.Property<double>("PurchaseAmount");
+
+                    b.Property<double>("PurchaseAmountCurrency");
+
+                    b.Property<int>("PurchasingMemoDetailTextileId");
+
+                    b.Property<int>("PurchasingMemoDetailTextileItemId");
+
+                    b.Property<string>("Remark");
+
+                    b.Property<string>("SupplierCode")
+                        .HasMaxLength(64);
+
+                    b.Property<int>("SupplierId");
+
+                    b.Property<string>("SupplierName")
+                        .HasMaxLength(512);
+
+                    b.Property<DateTimeOffset>("UnitPaymentOrderDate");
+
+                    b.Property<int>("UnitPaymentOrderId");
+
+                    b.Property<string>("UnitPaymentOrderNo")
+                        .HasMaxLength(64);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PurchasingMemoDetailTextileDetails");
+                });
+
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoDetailTextile.PurchasingMemoDetailTextileItemModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreatedUtc");
+
+                    b.Property<string>("DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DeletedUtc");
+
+                    b.Property<DateTimeOffset>("DispositionDate");
+
+                    b.Property<int>("DispositionId");
+
+                    b.Property<string>("DispositionNo")
+                        .HasMaxLength(64);
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("LastModifiedUtc");
+
+                    b.Property<int>("PurchasingMemoDetailTextileId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PurchasingMemoDetailTextileItems");
+                });
+
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoDetailTextile.PurchasingMemoDetailTextileModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreatedUtc");
+
+                    b.Property<string>("CurrencyCode")
+                        .HasMaxLength(64);
+
+                    b.Property<int>("CurrencyId");
+
+                    b.Property<double>("CurrencyRate");
+
+                    b.Property<DateTimeOffset>("Date");
+
+                    b.Property<string>("DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DeletedUtc");
+
+                    b.Property<string>("DivisionCode")
+                        .HasMaxLength(64);
+
+                    b.Property<int>("DivisionId");
+
+                    b.Property<string>("DivisionName")
+                        .HasMaxLength(128);
+
+                    b.Property<string>("DocumentNo")
+                        .HasMaxLength(32);
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("LastModifiedUtc");
+
+                    b.Property<string>("Remark");
+
+                    b.Property<bool>("SupplierIsImport");
+
+                    b.Property<int>("Type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PurchasingMemoDetailTextiles");
+                });
+
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoDetailTextile.PurchasingMemoDetailTextileUnitReceiptNoteModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreatedUtc");
+
+                    b.Property<string>("DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DeletedUtc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("LastModifiedUtc");
+
+                    b.Property<int>("PurchasingMemoDetailTextileDetailId");
+
+                    b.Property<int>("PurchasingMemoDetailTextileId");
+
+                    b.Property<int>("PurchasingMemoDetailTextileItemId");
+
+                    b.Property<DateTimeOffset>("UnitReceiptNoteDate");
+
+                    b.Property<int>("UnitReceiptNoteId");
+
+                    b.Property<string>("UnitReceiptNoteNo")
+                        .HasMaxLength(64);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PurchasingMemoDetailTextileUnitReceiptNotes");
+                });
+
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoTextile.PurchasingMemoTextileItemModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("ChartOfAccountCode");
+
+                    b.Property<int>("ChartOfAccountId");
+
+                    b.Property<string>("ChartOfAccountName");
+
+                    b.Property<string>("CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreatedUtc");
+
+                    b.Property<double>("CreditAmount");
+
+                    b.Property<double>("DebitAmount");
+
+                    b.Property<string>("DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DeletedUtc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("LastModifiedUtc");
+
+                    b.Property<int>("PurchasingMemoTextileId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PurchasingMemoTextileItems");
+                });
+
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoTextile.PurchasingMemoTextileModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AccountingBookCode")
+                        .HasMaxLength(128);
+
+                    b.Property<int>("AccountingBookId");
+
+                    b.Property<string>("AccountingBookType")
+                        .HasMaxLength(256);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("CreatedUtc");
+
+                    b.Property<string>("DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("DeletedUtc");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("LastModifiedUtc");
+
+                    b.Property<string>("MemoDetailCurrencyCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("MemoDetailCurrencyId");
+
+                    b.Property<double>("MemoDetailCurrencyRate");
+
+                    b.Property<DateTimeOffset>("MemoDetailDate");
+
+                    b.Property<string>("MemoDetailDocumentNo")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("MemoDetailId");
+
+                    b.Property<string>("Remark");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PurchasingMemoTextiles");
+                });
+
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.SalesReceipt.SalesReceiptDetailModel", b =>
                 {
                     b.Property<int>("Id")
@@ -4378,8 +4965,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("ApprovedBy")
                         .HasMaxLength(256);
 
-                    b.Property<string>("BankDocumentNo");
-
                     b.Property<string>("BankAccountCOA");
 
                     b.Property<string>("BankAccountName");
@@ -4401,6 +4986,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<double>("BankCurrencyRate");
 
                     b.Property<string>("BankCurrencySymbol");
+
+                    b.Property<string>("BankDocumentNo");
 
                     b.Property<int>("BankId");
 
@@ -4876,6 +5463,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditureNote.DPPVATBankExpenditureNoteDetailModel", "DPPVATBankExpenditureNoteDetail")
                         .WithMany("DPPVATBankExpenditureNoteDetailDos")
                         .HasForeignKey("DPPVATBankExpenditureNoteDetailId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt.BankCashReceiptItemModel", b =>
+                {
+                    b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt.BankCashReceiptModel", "BankCashReceiptModel")
+                        .WithMany("Items")
+                        .HasForeignKey("BankCashReceiptId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
