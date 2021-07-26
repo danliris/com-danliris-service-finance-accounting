@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoDetailTextile
@@ -125,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             cell.Phrase = new Phrase("VALAS ", _smallBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("JUMLAH (Rp) BAYAR", _smallBoldFont);
+            cell.Phrase = new Phrase("JUMLAH (Rp) BELI", _smallBoldFont);
             table.AddCell(cell);
 
         }
@@ -165,12 +166,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
+            var cellNoBorderAlignRight = new PdfPCell()
+            {
+                HorizontalAlignment = Element.ALIGN_LEFT,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                Border = Rectangle.NO_BORDER
+            };
+
             double totalDebit = 0;
             double totalCredit = 0;
             int no = 1;
 
             if (purchasingMemoDetailTextile.Type == PurchasingMemoType.Disposition)
             {
+                var sumPurchaseAmount = purchasingMemoDetailTextile.Items.SelectMany(element => element.Disposition.Details).Sum(element => element.PurchaseAmount);
+                var sumPaymentAmount = purchasingMemoDetailTextile.Items.SelectMany(element => element.Disposition.Details).Sum(element => element.PaymentAmount);
+                var sumPurchaseAmountCurrency = purchasingMemoDetailTextile.Items.SelectMany(element => element.Disposition.Details).Sum(element => element.PurchaseAmountCurrency);
+                var sumPaymentAmountCurrency = purchasingMemoDetailTextile.Items.SelectMany(element => element.Disposition.Details).Sum(element => element.PaymentAmountCurrency);
+                var difference = sumPaymentAmount - sumPurchaseAmount;
+                var differenceCurrency = sumPaymentAmountCurrency - sumPurchaseAmountCurrency;
                 foreach (var item in purchasingMemoDetailTextile.Items)
                 {
                     foreach (var detail in item.Disposition.Details)
@@ -204,9 +218,46 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                         no++;
                     }
                 }
+
+                cellNoBorderAlignRight.Colspan = 3;
+                cellNoBorderAlignRight.Phrase = new Phrase("Total Bayar", _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Colspan = 1;
+                cellNoBorderAlignRight.Phrase = new Phrase(sumPaymentAmountCurrency.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase(sumPaymentAmount.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase("Total Beli", _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase(sumPurchaseAmountCurrency.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase(sumPurchaseAmount.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Colspan = 6;
+                cellNoBorderAlignRight.Phrase = new Phrase("Selisih", _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase(differenceCurrency.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase(difference.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
             }
             else
             {
+                var sumPurchaseAmount = purchasingMemoDetailTextile.Details.Sum(element => element.PurchaseAmount);
+                var sumPaymentAmount = purchasingMemoDetailTextile.Details.Sum(element => element.PaymentAmount);
+                var sumPurchaseAmountCurrency = purchasingMemoDetailTextile.Details.Sum(element => element.PurchaseAmountCurrency);
+                var sumPaymentAmountCurrency = purchasingMemoDetailTextile.Details.Sum(element => element.PaymentAmountCurrency);
+                var difference = sumPaymentAmount - sumPurchaseAmount;
+                var differenceCurrency = sumPaymentAmountCurrency - sumPurchaseAmountCurrency;
+
                 foreach (var detail in purchasingMemoDetailTextile.Details)
                 {
                     cell.Phrase = new Phrase(no.ToString(), _smallerFont);
@@ -237,6 +288,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                     //totalCredit += detail.CreditAmount;
                     no++;
                 }
+
+                cellNoBorderAlignRight.Colspan = 3;
+                cellNoBorderAlignRight.Phrase = new Phrase("Total Bayar", _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Colspan = 1;
+                cellNoBorderAlignRight.Phrase = new Phrase(sumPaymentAmountCurrency.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase(sumPaymentAmount.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase("Total Beli", _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase(sumPurchaseAmountCurrency.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase(sumPurchaseAmount.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Colspan = 6;
+                cellNoBorderAlignRight.Phrase = new Phrase("Selisih", _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase(differenceCurrency.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
+
+                cellNoBorderAlignRight.Phrase = new Phrase(difference.ToString("#,##0.#0"), _smallFont);
+                table.AddCell(cellNoBorderAlignRight);
             }
 
             //cellColspan3.Phrase = new Phrase("Jumlah Total", _smallBoldFont);
