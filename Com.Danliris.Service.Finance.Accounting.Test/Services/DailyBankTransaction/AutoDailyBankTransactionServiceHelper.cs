@@ -13,10 +13,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 {
     public class AutoDailyBankTransactionServiceHelper : IAutoDailyBankTransactionService
     {
-        public async Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel bank)
+        public Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel bank)
         {
-            await Task.Delay(1000);
-            return await Task.FromResult(1);
+            throw new System.NotImplementedException();
         }
 
         public async Task<int> AutoCreateFromGarmentInvoicePurchasingDisposition(GarmentInvoicePurchasingDispositionModel model)
