@@ -602,6 +602,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                     List<string> pph1 = pph_danliris_per_item.Split('|').ToList<string>();
                     List<string> pph2 = pph_supplier_per_item.Split('|').ToList<string>();
 
+                    if (pph1[loop] == string.Empty)
+                    {
+                        pph1[loop] = "0";
+                    }
+
+                    if (pph2[loop] == string.Empty)
+                    {
+                        pph2[loop] = "0";
+                    }
+
                     var pphdata = Convert.ToDecimal(pph1[loop]) + Convert.ToDecimal(pph2[loop]);
 
                     if (pphdata != 0)

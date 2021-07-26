@@ -174,19 +174,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 {
                     var temp = itm.Amount * 0.1m;
                     total_all = itm.Amount + temp;
+
+                    ppn_per_item += total_all.ToString("#,##0.00", new CultureInfo("id-ID")) + "|";
                 }
                 else
                 {
                     total_all = itm.Amount;
                 }
 
-                if (!(GetPPhValue(viewModel)).Equals(0) && (GetPPhValueDanLiris(viewModel)).Equals(0))
+                if (itm.IsGetPPh == true)
                 {
-                    pph_supplier_per_item += GetPPhValue(viewModel).ToString("#,##0.00", new CultureInfo("id-ID")) + "|";
-                }
-                else if ((GetPPhValue(viewModel)).Equals(0) && !(GetPPhValueDanLiris(viewModel)).Equals(0))
-                {
-                    pph_danliris_per_item += GetPPhValueDanLiris(viewModel).ToString("#,##0.00", new CultureInfo("id-ID")) + "|";
+                    if (itm.IncomeTaxBy == "Supplier")
+                    {
+                        pph_supplier_per_item += (itm.Amount * ((decimal)itm.IncomeTax.Rate.GetValueOrDefault() / 100)).ToString("#,##0.00", new CultureInfo("id-ID")) + "|";
+                    }
+                    else
+                    {
+                        pph_danliris_per_item += (itm.Amount * ((decimal)itm.IncomeTax.Rate.GetValueOrDefault() / 100)).ToString("#,##0.00", new CultureInfo("id-ID")) + "|";
+                    }
                 }
 
                 // Mata Uang
@@ -202,8 +207,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 count_price += total_all;
                 total_realization += itm.Amount;
-
-                ppn_per_item += total_all.ToString("#,##0.00", new CultureInfo("id-ID")) + "|";
             }
 
             // Jumlah Realisasi
@@ -586,6 +589,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 {
                     List<string> pph1 = pph_danliris_per_item.Split('|').ToList<string>();
                     List<string> pph2 = pph_supplier_per_item.Split('|').ToList<string>();
+
+                    if (pph1[loop] == string.Empty)
+                    {
+                        pph1[loop] = "0";
+                    }
+
+                    if (pph2[loop] == string.Empty)
+                    {
+                        pph2[loop] = "0";
+                    }
 
                     var pphdata = Convert.ToDecimal(pph1[loop]) + Convert.ToDecimal(pph2[loop]);
 

@@ -41,7 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         Symbol = "Rp"
                     },
                     DocumentNo = "DocumentNo",
-                    DocumentType = RealizationDocumentType.WithVB,
+                    DocumentType = RealizationDocumentType.NonVB,
                     Type = VBType.WithPO,
                     Unit = new UnitViewModel()
                     {
@@ -149,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         Rate = 1,
                         Symbol = "USD"
                     },
-                    DocumentNo = "DocumentNo",
+                    DocumentNo = "",
                     DocumentType = RealizationDocumentType.NonVB,
                     Type = VBType.WithPO,
                     Unit = new UnitViewModel()
@@ -167,7 +167,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                     {
                         Id = 1,
                         Amount = 1,
-                        DocumentNo = "DocumentNo",
+                        DocumentNo = "",
                         Currency = new CurrencyDto()
                         {
                             Code = "IDR",
@@ -203,7 +203,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                                     Name="Name",
                                 },
                                 Name="Name",
-                                VBDocumentLayoutOrder=12
+                                VBDocumentLayoutOrder=12,
+                                Id = 1
+                            }
+                        },
+                        new VBRealizationDocumentNonPOUnitCostViewModel()
+                        {
+                            Amount=1,
+                            Unit=new UnitViewModel()
+                            {
+                                Code="Code",
+                                Division=new DivisionViewModel()
+                                {
+                                    Code="Code",
+                                    Name="Name",
+                                },
+                                Name="Name",
+                                VBDocumentLayoutOrder=12,
+                                Id = 2
                             }
                         }
                     },
@@ -226,6 +243,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             IsGetPPn=false,
                             Remark="Remark",
                             Total=1
+                        },
+                        new VBRealizationDocumentNonPOExpenditureItemViewModel()
+                        {
+                            Amount=1,
+                            IncomeTax=new IncomeTaxViewModel()
+                            {
+                                Name="Name",
+                                Rate=1
+                            },
+                            DateDetail=DateTimeOffset.Now,
+                            IncomeTaxBy="Name",
+                            IsGetPPh=false,
+                            IsGetPPn=false,
+                            Remark="Remark",
+                            Total=1
                         }
                     }
 
@@ -236,17 +268,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
 
                     UnitCosts = new List<VBRealizationDocumentUnitCostsItemModel>()
                     {
-                        new VBRealizationDocumentUnitCostsItemModel(viewModel.Id, viewModel.UnitCosts.First())
+                        new VBRealizationDocumentUnitCostsItemModel(viewModel.Id, viewModel.UnitCosts.First()),
+                        new VBRealizationDocumentUnitCostsItemModel(viewModel.Id, viewModel.UnitCosts.Last())
                     },
                     Items = new List<VBRealizationDocumentExpenditureItemModel>()
                     {
-                        new VBRealizationDocumentExpenditureItemModel(viewModel.Id, viewModel.Items.First())
+                        new VBRealizationDocumentExpenditureItemModel(viewModel.Id, viewModel.Items.First()),
+                        new VBRealizationDocumentExpenditureItemModel(viewModel.Id, viewModel.Items.Last())
                     }
                 };
             }
         }
 
-        VBRealizationPdfDto TemplatePDFDocumentWithPPHNull
+        VBRealizationPdfDto TemplatePDFDocumentWithPOPPHNull
         {
             get
             {
@@ -355,6 +389,149 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
             }
         }
 
+        VBRealizationPdfDto TemplatePDFDocumentWithPPNandPPH
+        {
+            get
+            {
+                VBRealizationDocumentNonPOViewModel viewModel = new VBRealizationDocumentNonPOViewModel()
+                {
+                    Currency = new CurrencyViewModel()
+                    {
+                        Code = "IDR",
+                        Description = "Description",
+                        Rate = 1,
+                        Symbol = "Rp"
+                    },
+                    DocumentNo = "DocumentNo",
+                    DocumentType = RealizationDocumentType.WithVB,
+                    Type = VBType.WithPO,
+                    Unit = new UnitViewModel()
+                    {
+                        Code = "Code",
+                        Division = new DivisionViewModel()
+                        {
+                            Code = "Code",
+                            Name = "Name"
+                        },
+                        Name = "Name",
+                        VBDocumentLayoutOrder = 1
+                    },
+                    VBDocument = new VBRequestDocumentNonPODto()
+                    {
+                        Amount = 1,
+                        DocumentNo = "DocumentNo",
+                        Currency = new CurrencyDto()
+                        {
+                            Code = "IDR",
+                            Description = "Description",
+                            Rate = 1,
+                            Symbol = "Rp",
+
+                        },
+                        IsApproved = true,
+                        SuppliantUnit = new UnitDto()
+                        {
+                            Code = "Code",
+                            Division = new DivisionDto()
+                            {
+                                Code = "Code",
+                                Name = "Name"
+                            }
+                        }
+                    },
+                    VBNonPOType = "",
+
+                    UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
+                    {
+                        new VBRealizationDocumentNonPOUnitCostViewModel()
+                        {
+                            Amount=1,
+                            Unit=new UnitViewModel()
+                            {
+                                Code="Code",
+                                Division=new DivisionViewModel()
+                                {
+                                    Code="Code",
+                                    Name="Name",
+                                },
+                                Name="Name",
+                                VBDocumentLayoutOrder=12,
+                                Id = 1
+                            }
+                        },
+                        new VBRealizationDocumentNonPOUnitCostViewModel()
+                        {
+                            Amount=1,
+                            Unit=new UnitViewModel()
+                            {
+                                Code="Code",
+                                Division=new DivisionViewModel()
+                                {
+                                    Code="Code",
+                                    Name="Name",
+                                },
+                                Name="Name",
+                                VBDocumentLayoutOrder=12,
+                                Id = 2
+                            }
+                        }
+                    },
+                    Active = true,
+                    Position = new VBRealizationPosition(),
+                    Amount = 1,
+                    Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
+                    {
+                        new VBRealizationDocumentNonPOExpenditureItemViewModel()
+                        {
+                            Amount=1,
+                            IncomeTax=new IncomeTaxViewModel()
+                            {
+                                Name="Name",
+                                Rate=1
+                            },
+                            DateDetail=DateTimeOffset.Now,
+                            IncomeTaxBy="Supplier",
+                            IsGetPPh=true,
+                            IsGetPPn=true,
+                            Remark="Remark",
+                            Total=1
+                        },
+                        new VBRealizationDocumentNonPOExpenditureItemViewModel()
+                        {
+                            Amount=1,
+                            IncomeTax=new IncomeTaxViewModel()
+                            {
+                                Name="Name",
+                                Rate=1
+                            },
+                            DateDetail=DateTimeOffset.Now,
+                            IncomeTaxBy="Supplier",
+                            IsGetPPh=false,
+                            IsGetPPn=false,
+                            Remark="Remark",
+                            Total=1
+                        }
+                    }
+
+                };
+                return new VBRealizationPdfDto()
+                {
+                    Header = new VBRealizationDocumentModel(viewModel),
+
+                    UnitCosts = new List<VBRealizationDocumentUnitCostsItemModel>()
+                    {
+                        new VBRealizationDocumentUnitCostsItemModel(viewModel.Id, viewModel.UnitCosts.First()),
+                        new VBRealizationDocumentUnitCostsItemModel(viewModel.Id, viewModel.UnitCosts.Last())
+                    },
+                    Items = new List<VBRealizationDocumentExpenditureItemModel>()
+                    {
+                        new VBRealizationDocumentExpenditureItemModel(viewModel.Id, viewModel.Items.First()),
+                        new VBRealizationDocumentExpenditureItemModel(viewModel.Id, viewModel.Items.Last())
+                    }
+                };
+            }
+        }
+
         VBRealizationPdfDto TemplatePDFDocumentWithPOItemMoreThanOne
         {
             get
@@ -421,7 +598,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                                     Name="Name",
                                 },
                                 Name="Name",
-                                VBDocumentLayoutOrder=12
+                                VBDocumentLayoutOrder=12,
+                                Id = 1
+                            }
+                        },
+                        new VBRealizationDocumentNonPOUnitCostViewModel()
+                        {
+                            Amount=1,
+                            Unit=new UnitViewModel()
+                            {
+                                Code="Code",
+                                Division=new DivisionViewModel()
+                                {
+                                    Code="Code",
+                                    Name="Name",
+                                },
+                                Name="Name",
+                                VBDocumentLayoutOrder=12,
+                                Id = 2
                             }
                         }
                     },
@@ -474,7 +668,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                     },
                     Items = new List<VBRealizationDocumentExpenditureItemModel>()
                     {
-                        new VBRealizationDocumentExpenditureItemModel(viewModel.Id, viewModel.Items.First())
+                        new VBRealizationDocumentExpenditureItemModel(viewModel.Id, viewModel.Items.First()),
+                        new VBRealizationDocumentExpenditureItemModel(viewModel.Id, viewModel.Items.Last())
                     }
                 };
             }
@@ -500,7 +695,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
         public void shouldSuccessPDFTemplateWithPPHNull()
         {
             VBRealizationDocumentPOPDFTemplate PdfTemplate = new VBRealizationDocumentPOPDFTemplate();
-            MemoryStream result = PdfTemplate.GeneratePdfTemplate(TemplatePDFDocumentWithPPHNull, 7);
+            MemoryStream result = PdfTemplate.GeneratePdfTemplate(TemplatePDFDocumentWithPOPPHNull, 7);
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void shouldSuccessPDFTemplateWithPPNandPPH()
+        {
+            VBRealizationDocumentPOPDFTemplate PdfTemplate = new VBRealizationDocumentPOPDFTemplate();
+            MemoryStream result = PdfTemplate.GeneratePdfTemplate(TemplatePDFDocumentWithPPNandPPH, 7);
             Assert.NotNull(result);
         }
 
