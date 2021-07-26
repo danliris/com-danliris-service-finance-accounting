@@ -131,7 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 else
                 {
                     
-                    var stream = Lib.BusinessLogic.PurchasingMemoTextile.PDFGenerator.Generate(model, _identityService.Username, _identityService.TimezoneOffset);
+                    var stream = PDFGenerator.Generate(model, _identityService.Username, _identityService.TimezoneOffset);
                     return new FileStreamResult(stream, "application/pdf")
                     {
                         FileDownloadName = "Bukti Memorial.pdf"
