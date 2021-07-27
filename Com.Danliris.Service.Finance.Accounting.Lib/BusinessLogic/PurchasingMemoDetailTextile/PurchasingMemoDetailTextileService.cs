@@ -28,7 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             var documentNo = $"{form.Date.AddHours(_identityService.TimezoneOffset):MM}{form.Date.AddHours(_identityService.TimezoneOffset):yy}.MT.0001";
             var month = form.Date.AddHours(_identityService.TimezoneOffset).Month;
             var year = form.Date.AddHours(_identityService.TimezoneOffset).Year;
-            var lastDocumentNo = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.Date.AddHours(_identityService.TimezoneOffset).Month == month && entity.Date.AddHours(_identityService.TimezoneOffset).Year == year).OrderByDescending(entity => entity.Date).Select(entity => entity.DocumentNo).FirstOrDefault();
+            var lastDocumentNo = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.Date.AddHours(_identityService.TimezoneOffset).Month == month && entity.Date.AddHours(_identityService.TimezoneOffset).Year == year).OrderByDescending(entity => entity.Date).ThenByDescending(entity => entity.CreatedUtc).Select(entity => entity.DocumentNo).FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(lastDocumentNo))
             {
                 var splittedDocument = lastDocumentNo.Split('.');

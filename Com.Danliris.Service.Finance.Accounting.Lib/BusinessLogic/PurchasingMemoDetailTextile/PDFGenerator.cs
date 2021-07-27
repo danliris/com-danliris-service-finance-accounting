@@ -168,7 +168,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
             var cellNoBorderAlignRight = new PdfPCell()
             {
-                HorizontalAlignment = Element.ALIGN_LEFT,
+                HorizontalAlignment = Element.ALIGN_RIGHT,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
                 Border = Rectangle.NO_BORDER
             };
@@ -243,10 +243,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 cellNoBorderAlignRight.Phrase = new Phrase("Selisih", _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
 
-                cellNoBorderAlignRight.Phrase = new Phrase(differenceCurrency.ToString("#,##0.#0"), _smallFont);
+                cellNoBorderAlignRight.Colspan = 1;
+                var differenceCurrencyString = sumPaymentAmountCurrency > sumPurchaseAmountCurrency ? "(" + differenceCurrency.ToString("#,##0.#0") + ")" : differenceCurrency.ToString("#,##0.#0");
+                var differenceString = sumPaymentAmount > sumPurchaseAmount ? "(" + difference.ToString("#,##0.#0") + ")" : difference.ToString("#,##0.#0");
+                cellNoBorderAlignRight.Phrase = new Phrase(differenceCurrencyString, _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
 
-                cellNoBorderAlignRight.Phrase = new Phrase(difference.ToString("#,##0.#0"), _smallFont);
+                cellNoBorderAlignRight.Phrase = new Phrase(differenceString, _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
             }
             else
@@ -313,10 +316,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 cellNoBorderAlignRight.Phrase = new Phrase("Selisih", _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
 
-                cellNoBorderAlignRight.Phrase = new Phrase(differenceCurrency.ToString("#,##0.#0"), _smallFont);
+                cellNoBorderAlignRight.Colspan = 1;
+                var differenceCurrencyString = sumPaymentAmountCurrency > sumPurchaseAmountCurrency ? "(" + differenceCurrency.ToString("#,##0.#0") + ")" : differenceCurrency.ToString("#,##0.#0");
+                var differenceString = sumPaymentAmount > sumPurchaseAmount ? "(" + difference.ToString("#,##0.#0") + ")" : difference.ToString("#,##0.#0");
+                cellNoBorderAlignRight.Phrase = new Phrase(differenceCurrencyString, _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
 
-                cellNoBorderAlignRight.Phrase = new Phrase(difference.ToString("#,##0.#0"), _smallFont);
+                cellNoBorderAlignRight.Phrase = new Phrase(differenceString, _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
             }
 
