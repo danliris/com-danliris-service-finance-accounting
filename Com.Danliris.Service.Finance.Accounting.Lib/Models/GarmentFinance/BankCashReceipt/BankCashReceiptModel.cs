@@ -25,6 +25,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Bank
         public string BankCurrencyCode { get; set; }
         public int BankCurrencyId { get; set; }
         public double BankCurrencyRate { get; set; }
+        [MaxLength(32)]
+        public string BankAccountCOA { get; set; }
 
         public int DebitCoaId { get; set; }
         [MaxLength(32)]

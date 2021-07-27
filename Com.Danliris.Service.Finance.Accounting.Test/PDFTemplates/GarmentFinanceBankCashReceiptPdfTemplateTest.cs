@@ -397,5 +397,77 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
             MemoryStream result = PdfTemplate.GeneratePdfTemplate(viewModelDollarNonZero, 7);
             Assert.NotNull(result);
         }
+
+        [Fact]
+        public void Should_Success_TerbilangKoma_MoreThan_4_DecimalPlace()
+        {
+            GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
+            var terbilangKoma = PdfTemplate.TerbilangKoma(123.45678);
+            Assert.NotNull(terbilangKoma);
+        }
+
+        [Fact]
+        public void Should_Success_TerbilangKoma()
+        {
+            GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
+            var angka = "123,45678";
+            var terbilangKoma = PdfTemplate.TerbilangKoma(Convert.ToDouble(angka));
+            Assert.NotNull(terbilangKoma);
+        }
+
+        [Fact]
+        public void Should_Success_TerbilangKoma_LessThanEqual_4_DecimalPlace()
+        {
+            GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
+            var terbilangKoma = PdfTemplate.TerbilangKoma(1004);
+            Assert.NotNull(terbilangKoma);
+        }
+
+        [Fact]
+        public void Should_Success_Terbilang_Ribuan()
+        {
+            GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
+            var terbilang = PdfTemplate.Terbilang(11325, "IDR");
+            Assert.NotNull(terbilang);
+        }
+
+        public void Should_Success_Terbilang_Ratusan()
+        {
+            GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
+            var terbilang = PdfTemplate.Terbilang(123, "IDR");
+            Assert.NotNull(terbilang);
+        }
+
+        public void Should_Success_Terbilang_Puluham()
+        {
+            GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
+            var terbilang = PdfTemplate.Terbilang(56, "IDR");
+            Assert.NotNull(terbilang);
+        }
+
+        [Fact]
+        public void Should_Success_Terbilang_IsNegative()
+        {
+            GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
+            var terbilang = PdfTemplate.Terbilang(-1, "IDR");
+            Assert.NotNull(terbilang);
+        }
+
+        [Fact]
+        public void Should_Success_Terbilang_IsNegative_Decimal()
+        {
+            GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
+            var terbilang = PdfTemplate.Terbilang(-1.2, "USD");
+            Assert.NotNull(terbilang);
+        }
+
+        [Fact]
+        public void Should_Success_Terbilang_Decimal()
+        {
+            GarmentFinanceBankCashReceiptPdfTemplate PdfTemplate = new GarmentFinanceBankCashReceiptPdfTemplate();
+            var angka = "123,456";
+            var terbilang = PdfTemplate.Terbilang(Convert.ToDouble(angka), "USD");
+            Assert.NotNull(terbilang);
+        }
     }
 }

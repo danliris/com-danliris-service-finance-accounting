@@ -131,6 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
             exist.BankCurrencyId = model.BankCurrencyId;
             exist.BankCurrencyCode = model.BankCurrencyCode;
             exist.BankCurrencyRate = model.BankCurrencyRate;
+            exist.BankAccountCOA = model.BankAccountCOA;
             exist.CurrencyCode = model.CurrencyCode;
             exist.CurrencyId = model.CurrencyId;
             exist.CurrencyRate = model.CurrencyRate;
