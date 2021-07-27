@@ -39,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpPost]
-        public IActionResult PostNonPO([FromBody] FormDto form)
+        public IActionResult Post([FromBody] FormDto form)
         {
             try
             {
@@ -104,6 +104,38 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     var result = new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                          .Ok(null, model);
                     return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
+        [HttpGet("pdf/{id}")]
+        public IActionResult GetPDFById([FromRoute] int id)
+        {
+            try
+            {
+                VerifyUser();
+                var model = _service.Read(id);
+
+                if (model == null)
+                {
+                    var result = new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                        .Fail();
+                    return NotFound(result);
+                }
+                else
+                {
+                    
+                    var stream = PDFGenerator.Generate(model, _identityService.Username, _identityService.TimezoneOffset);
+                    return new FileStreamResult(stream, "application/pdf")
+                    {
+                        FileDownloadName = "Bukti Memorial.pdf"
+                    };
                 }
             }
             catch (Exception e)

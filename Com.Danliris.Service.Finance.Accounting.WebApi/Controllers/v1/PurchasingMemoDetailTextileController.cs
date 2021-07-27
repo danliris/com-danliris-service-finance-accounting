@@ -135,6 +135,36 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             }
         }
 
+        [HttpGet("pdf/{id}")]
+        public IActionResult GetPDFById([FromRoute] int id)
+        {
+            try
+            {
+                var model = _service.Read(id);
+
+                if (model == null)
+                {
+                    var result = new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                        .Fail();
+                    return NotFound(result);
+                }
+                else
+                {
+                    var stream = PDFGenerator.Generate(model, _identityService.Username, _identityService.TimezoneOffset);
+                    return new FileStreamResult(stream, "application/pdf")
+                    {
+                        FileDownloadName = "Bukti Rincian Memorial.pdf"
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                var result = new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
         [HttpPut("{id}")]
         public IActionResult Put([FromRoute] int id, [FromBody] FormDto form)
         {

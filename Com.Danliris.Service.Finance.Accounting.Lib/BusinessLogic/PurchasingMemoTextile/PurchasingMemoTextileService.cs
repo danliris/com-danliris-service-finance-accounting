@@ -142,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             {
                 var items = _dbContext.PurchasingMemoTextileItems.Where(entity => entity.PurchasingMemoTextileId == id).ToList();
 
-                var result = new PurchasingTextileDto(model.Id, new AccountingBookDto(model.AccountingBookId, model.AccountingBookCode, model.AccountingBookType), new MemoDetailDto(model.MemoDetailId, model.MemoDetailDocumentNo, model.MemoDetailDate, new CurrencyDto(model.MemoDetailCurrencyId, model.MemoDetailCurrencyCode, model.MemoDetailCurrencyRate)), model.Remark, new List<FormItemDto>());
+                var result = new PurchasingTextileDto(model.Id, new AccountingBookDto(model.AccountingBookId, model.AccountingBookCode, model.AccountingBookType), new MemoDetailDto(model.MemoDetailId, model.MemoDetailDocumentNo, model.MemoDetailDate, new CurrencyDto(model.MemoDetailCurrencyId, model.MemoDetailCurrencyCode, model.MemoDetailCurrencyRate)), model.Remark, new List<FormItemDto>(), "");
 
                 foreach (var item in items)
                 {
