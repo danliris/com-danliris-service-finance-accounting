@@ -139,6 +139,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
+        public static MemoryStream CreateExcelWithTitleNonDateFilterWithSupplierName(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string suplierName, string date, bool styling = false, int index = 0)
+        {
+            ExcelPackage package = new ExcelPackage();
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            {
+                var sheet = package.Workbook.Worksheets.Add(item.Value);
+
+                sheet.Cells["A2"].Value = "PT. DANLIRIS";
+                sheet.Cells["A2:D2"].Merge = true;
+
+                sheet.Cells["A3"].Value = title;
+                sheet.Cells["A3:D3"].Merge = true;
+
+                sheet.Cells["A4"].Value = suplierName;
+                sheet.Cells["A4:D4"].Merge = true;
+
+                sheet.Cells["A5"].Value = $"Per {date}";
+                sheet.Cells["A5:D5"].Merge = true;
+
+                sheet.Cells["A7"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                int cells = 7;
+                sheet.Cells[$"G{cells}:L{(cells + index) - 1}"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            }
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
         public static MemoryStream CreateExcelWithTitleNonDateFilterMemoReport(List<KeyValuePair<DataTable, string>> dtSourceList, string title, string date,string filter, bool styling = false, int index = 0)
         {
             ExcelPackage package = new ExcelPackage();
