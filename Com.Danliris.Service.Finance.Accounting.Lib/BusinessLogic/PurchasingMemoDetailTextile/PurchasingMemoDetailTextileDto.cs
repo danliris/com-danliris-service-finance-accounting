@@ -6,7 +6,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 {
     public class PurchasingMemoDetailTextileDto
     {
-        public PurchasingMemoDetailTextileDto(DateTimeOffset date, DivisionDto division, CurrencyDto currency, bool supplierIsImport, PurchasingMemoType type, List<FormItemDto> items, List<FormDetailDto> details, string remark, int id)
+        public PurchasingMemoDetailTextileDto(DateTimeOffset date, DivisionDto division, CurrencyDto currency, bool supplierIsImport, PurchasingMemoType type, List<FormItemDto> items, List<FormDetailDto> details, string remark, int id, string documentNo)
         {
             Date = date;
             Division = division;
@@ -17,6 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             Details = details;
             Remark = remark;
             Id = id;
+            DocumentNo = documentNo;
         }
 
         public int Id { get; set; }
@@ -28,5 +29,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
         public List<FormItemDto> Items { get; private set; }
         public List<FormDetailDto> Details { get; private set; }
         public string Remark { get; private set; }
+        public string DocumentNo { get; private set; }
     }
 }

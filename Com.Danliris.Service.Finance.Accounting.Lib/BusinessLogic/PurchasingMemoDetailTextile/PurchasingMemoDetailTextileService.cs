@@ -160,7 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
             if (model != null)
             {
-                var result = new PurchasingMemoDetailTextileDto(model.Date, new DivisionDto(model.DivisionId, model.DivisionCode, model.DivisionName), new CurrencyDto(model.CurrencyId, model.CurrencyCode, model.CurrencyRate), model.SupplierIsImport, model.Type, new List<FormItemDto>(), new List<FormDetailDto>(), model.Remark, model.Id);
+                var result = new PurchasingMemoDetailTextileDto(model.Date, new DivisionDto(model.DivisionId, model.DivisionCode, model.DivisionName), new CurrencyDto(model.CurrencyId, model.CurrencyCode, model.CurrencyRate), model.SupplierIsImport, model.Type, new List<FormItemDto>(), new List<FormDetailDto>(), model.Remark, model.Id, model.DocumentNo);
 
                 if (model.Type == PurchasingMemoType.Disposition)
                 {
