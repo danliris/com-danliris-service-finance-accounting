@@ -17,6 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                 .ForPath(d => d.Bank.BankName, opt => opt.MapFrom(s => s.BankName))
                 .ForPath(d => d.Bank.AccountName, opt => opt.MapFrom(s => s.BankAccountName))
                 .ForPath(d => d.Bank.AccountNumber, opt => opt.MapFrom(s => s.BankAccountNumber))
+                .ForPath(d => d.Bank.AccountCOA, opt => opt.MapFrom(s => s.BankAccountCOA))
 
                 .ForPath(d => d.Currency.Id, opt => opt.MapFrom(s => s.CurrencyId))
                 .ForPath(d => d.Currency.Code, opt => opt.MapFrom(s => s.CurrencyCode))

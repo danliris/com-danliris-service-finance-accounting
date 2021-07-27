@@ -31,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                 BankCurrencyCode ="code",
                 BankCurrencyId = 1,
                 BankCurrencyRate = 1,
+                BankAccountCOA = "accountCOA",
                 BankName = "name",
                 DebitCoaCode = "code",
                 DebitCoaId = 1,
