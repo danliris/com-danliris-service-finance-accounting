@@ -364,16 +364,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
         public List<AutoCompleteDto> Read(string keyword)
         {
             var query = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.DocumentNo.Contains(keyword));
-
+            
             var result = query.Take(10).Select(entity => new AutoCompleteDto(entity.Id, entity.DocumentNo, entity.Date, entity.CurrencyCode, entity.CurrencyId, entity.CurrencyRate)).ToList();
+            var ids = result.Select(element => element.Id).ToList();
+            var details = _dbContext.PurchasingMemoDetailTextileDetails.Where(entity => ids.Contains(entity.PurchasingMemoDetailTextileId)).ToList();
 
-
-            var coa = _dbContext.ChartsOfAccounts.Where(entity => entity.Code.Contains("33")).FirstOrDefault();
+            var coa = _dbContext.ChartsOfAccounts.Where(entity => entity.Code.Contains("14")).FirstOrDefault();
 
             if (coa != null)
                 result = result.Select(element =>
                 {
-                    element = new AutoCompleteDto(element.Id, element.DocumentNo, element.Date, element.Currency, new List<PurchasingMemoTextile.FormItemDto>() { new PurchasingMemoTextile.FormItemDto(new PurchasingMemoTextile.ChartOfAccountDto(coa.Id, coa.Code, coa.Name), 0, 0) });
+                    var amount = details.Where(detail => detail.PurchasingMemoDetailTextileId == element.Id).Sum(detail => detail.PurchaseAmount);
+                    element = new AutoCompleteDto(element.Id, element.DocumentNo, element.Date, element.Currency, new List<PurchasingMemoTextile.FormItemDto>() { new PurchasingMemoTextile.FormItemDto(new PurchasingMemoTextile.ChartOfAccountDto(coa.Id, coa.Code, coa.Name), amount, amount) });
                     return element;
                 }).ToList();
 
