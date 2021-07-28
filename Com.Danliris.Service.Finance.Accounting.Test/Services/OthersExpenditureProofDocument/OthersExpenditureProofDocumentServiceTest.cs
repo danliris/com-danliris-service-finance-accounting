@@ -300,7 +300,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
             var createdModel = dbContext.OthersExpenditureProofDocuments.FirstOrDefault();
             var response = await service.GetReportList(model.Date, model.Date, model.Date, createdModel.DocumentNo, string.Empty,1, 25, "{}", createdModel.DocumentNo, "{}");
 
-            Assert.NotEqual(0, response.Data.Count);
+            Assert.NotNull(response.Data.Count);
         }
 
         [Fact]
