@@ -27,6 +27,10 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDebtBalance;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MemoGarmentPurchasing;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.AccountingBook;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memorial;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoDetailTextile;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoTextile;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -109,7 +113,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<GarmentInvoicePurchasingDispositionModel> GarmentInvoicePurchasingDispositions { get; set; }
         public DbSet<GarmentInvoicePurchasingDispositionItemModel> GarmentInvoicePurchasingDispositionItems { get; set; }
         public DbSet<GarmentDebtBalanceModel> GarmentDebtBalances { get; set; }
-
+        
         public DbSet<MemoGarmentPurchasingModel> MemoGarmentPurchasings { get; set; }
         public DbSet<MemoGarmentPurchasingDetailModel> MemoGarmentPurchasingDetails { get; set; }
         public DbSet<MemoDetailGarmentPurchasingModel> MemoDetailGarmentPurchasings { get; set; }
@@ -117,6 +121,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<MemoDetailGarmentPurchasingDetailModel> MemoDetailGarmentPurchasingDetails { get; set; }
 
         public DbSet<AccountingBookModel> AccountingBooks { get; set; }
+
+        public DbSet<GarmentFinanceMemorialModel> GarmentFinanceMemorials { get; set; }
+        public DbSet<GarmentFinanceMemorialItemModel> GarmentFinanceMemorialItems { get; set; }
+        public DbSet<PurchasingMemoDetailTextileModel> PurchasingMemoDetailTextiles { get; set; }
+        public DbSet<PurchasingMemoDetailTextileItemModel> PurchasingMemoDetailTextileItems { get; set; }
+        public DbSet<PurchasingMemoDetailTextileDetailModel> PurchasingMemoDetailTextileDetails { get; set; }
+        public DbSet<PurchasingMemoDetailTextileUnitReceiptNoteModel> PurchasingMemoDetailTextileUnitReceiptNotes { get; set; }
+
+        public DbSet<BankCashReceiptModel> GarmentFinanceBankCashReceipts { get; set; }
+        public DbSet<BankCashReceiptItemModel> GarmentFinanceBankCashReceiptItems { get; set; }
+
+        public DbSet<PurchasingMemoTextileModel> PurchasingMemoTextiles { get; set; }
+        public DbSet<PurchasingMemoTextileItemModel> PurchasingMemoTextileItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

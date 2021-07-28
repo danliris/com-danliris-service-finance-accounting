@@ -653,7 +653,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                              AccountBankCurrencyCode = transaction.AccountBankCurrencyCode,
                              BeforeNominal = transaction.BeforeNominal,
                              AfterNominal = transaction.AfterNominal,
-                             Nominal = transaction.Nominal,
+                             Nominal = transaction.Nominal * transaction.CurrencyRate,
                              BeforeNominalValas = transaction.BeforeNominal * transaction.CurrencyRate,
                              AfterNominalValas = transaction.AfterNominal * transaction.CurrencyRate,
                              NominalValas = transaction.NominalValas,
@@ -1279,7 +1279,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public string GetDataAccountBank(int bankId)
         {
             var dataAccountBank = GetAccountBank(bankId).GetAwaiter().GetResult();
-            string bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
+            string bank = $"";
+
+            if (dataAccountBank != null)
+                bank = $"Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
 
             return bank;
         }
