@@ -87,6 +87,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Garment
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoDetailTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -177,7 +178,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IPurchasingMemoDetailTextileService, PurchasingMemoDetailTextileService>()
                 .AddTransient<IPurchasingMemoTextileService, PurchasingMemoTextileService>()
                 .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>()
-                .AddTransient<IGarmentFinanceMemorialService, GarmentFinanceMemorialService>();
+                .AddTransient<IGarmentFinanceMemorialService, GarmentFinanceMemorialService>()
+                .AddTransient<IGarmentFinanceMemorialDetailService, GarmentFinanceMemorialDetailService>();
             
         }
 
