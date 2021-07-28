@@ -33,6 +33,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
             {
                 yield return new ValidationResult("Mata Uang harus dipilih", new List<string> { "GarmentCurrency" });
             }
+            if(this.Date==DateTimeOffset.MinValue || this.Date == null)
+            {
+                yield return new ValidationResult("Tanggal harus diisi", new List<string> { "Date" });
+            }
+            else if (this.Date > DateTimeOffset.Now)
+            {
+                yield return new ValidationResult("Tanggal tidak boleh lebih dari hari ini", new List<string> { "Date" });
+            }
             if (this.Items == null || this.Items.Count == 0)
             {
                 yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "ItemsCount" });
