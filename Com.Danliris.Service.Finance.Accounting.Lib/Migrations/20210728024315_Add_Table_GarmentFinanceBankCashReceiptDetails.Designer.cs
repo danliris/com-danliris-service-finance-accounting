@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210728024315_Add_Table_GarmentFinanceBankCashReceiptDetails")]
+    partial class Add_Table_GarmentFinanceBankCashReceiptDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1682,8 +1684,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(255);
 
                     b.Property<DateTime>("DeletedUtc");
-
-                    b.Property<int>("InvoiceId");
 
                     b.Property<string>("InvoiceNo");
 
