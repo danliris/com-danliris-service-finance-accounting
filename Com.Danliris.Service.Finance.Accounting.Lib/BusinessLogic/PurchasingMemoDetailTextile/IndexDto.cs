@@ -4,6 +4,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 {
     public class IndexDto
     {
+        public IndexDto(int id, DateTimeOffset lastModifiedUtc, DateTimeOffset date, string divisionName, string currencyCode, bool supplierIsImport, string remark, string documentNo)
+        {
+            Id = id;
+            LastModifiedUtc = lastModifiedUtc;
+            Date = date;
+            DivisionName = divisionName;
+            CurrencyCode = currencyCode;
+            SupplierIsImport = supplierIsImport;
+            Remark = remark;
+            DocumentNo = documentNo;
+        }
+
         public int Id { get; private set; }
         public DateTimeOffset LastModifiedUtc { get; private set; }
         public DateTimeOffset Date { get; private set; }
