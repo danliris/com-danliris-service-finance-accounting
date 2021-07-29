@@ -89,6 +89,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.ExportSa
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
 
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
@@ -182,7 +183,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IExportSalesDebtorReportService, ExportSalesDebtorReportService>()            
                 .AddTransient<IPurchasingMemoTextileService, PurchasingMemoTextileService>()
                 .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>()
-                .AddTransient<IGarmentFinanceMemorialService, GarmentFinanceMemorialService>();
+                .AddTransient<IGarmentFinanceMemorialService, GarmentFinanceMemorialService>()
+                .AddTransient<IGarmentFinanceMemorialDetailService, GarmentFinanceMemorialDetailService>();
             
         }
 
