@@ -228,7 +228,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PurchasingMemoDetailTexti
             var service = new Mock<IPurchasingMemoDetailTextileService>();
 
             service.Setup(s => s.Read(It.IsAny<int>()))
-                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.Disposition, new List<FormItemDto>(), new List<FormDetailDto>(), "", 1));
+                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.Disposition, new List<FormItemDto>(), new List<FormDetailDto>(), "", 1, "No"));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IPurchasingMemoDetailTextileService)))
@@ -294,7 +294,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PurchasingMemoDetailTexti
             var service = new Mock<IPurchasingMemoDetailTextileService>();
 
             service.Setup(s => s.Read(It.IsAny<int>()))
-                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.Disposition, new List<FormItemDto>() { new FormItemDto(new DispositionDto(1, "", DateTimeOffset.Now, new List<FormDetailDto>() { new FormDetailDto(new ExpenditureDto(1, "", DateTimeOffset.Now), new SupplierDto(1, "", ""), "", new UnitPaymentOrderDto(1, "", DateTimeOffset.Now), new List<UnitReceiptNoteDto>(), 1, 1, 1, 1) })) }, new List<FormDetailDto>(), "", 1));
+                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.Disposition, new List<FormItemDto>() { new FormItemDto(new DispositionDto(1, "", DateTimeOffset.Now, new List<FormDetailDto>() { new FormDetailDto(new ExpenditureDto(1, "", DateTimeOffset.Now), new SupplierDto(1, "", ""), "", new UnitPaymentOrderDto(1, "", DateTimeOffset.Now), new List<UnitReceiptNoteDto>(), 1, 1, 1, 1) })) }, new List<FormDetailDto>(), "", 1, "No"));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IPurchasingMemoDetailTextileService)))
@@ -315,7 +315,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PurchasingMemoDetailTexti
             var service = new Mock<IPurchasingMemoDetailTextileService>();
 
             service.Setup(s => s.Read(It.IsAny<int>()))
-                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.Disposition, new List<FormItemDto>() { new FormItemDto(new DispositionDto(1, "", DateTimeOffset.Now, new List<FormDetailDto>() { new FormDetailDto(new ExpenditureDto(1, "", DateTimeOffset.Now), new SupplierDto(1, "", ""), "", new UnitPaymentOrderDto(1, "", DateTimeOffset.Now), new List<UnitReceiptNoteDto>(), 1, 1, 2, 2) })) }, new List<FormDetailDto>(), "", 1));
+                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.Disposition, new List<FormItemDto>() { new FormItemDto(new DispositionDto(1, "", DateTimeOffset.Now, new List<FormDetailDto>() { new FormDetailDto(new ExpenditureDto(1, "", DateTimeOffset.Now), new SupplierDto(1, "", ""), "", new UnitPaymentOrderDto(1, "", DateTimeOffset.Now), new List<UnitReceiptNoteDto>(), 1, 1, 2, 2) })) }, new List<FormDetailDto>(), "", 1, "No"));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IPurchasingMemoDetailTextileService)))
@@ -336,7 +336,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PurchasingMemoDetailTexti
             var service = new Mock<IPurchasingMemoDetailTextileService>();
 
             service.Setup(s => s.Read(It.IsAny<int>()))
-                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.NonDisposition, new List<FormItemDto>(), new List<FormDetailDto>() { new FormDetailDto(new ExpenditureDto(1, "", DateTimeOffset.Now), new SupplierDto(1, "", ""), "", new UnitPaymentOrderDto(1, "", DateTimeOffset.Now), new List<UnitReceiptNoteDto>(), 1, 1, 1, 1) }, "", 1));
+                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.NonDisposition, new List<FormItemDto>(), new List<FormDetailDto>() { new FormDetailDto(new ExpenditureDto(1, "", DateTimeOffset.Now), new SupplierDto(1, "", ""), "", new UnitPaymentOrderDto(1, "", DateTimeOffset.Now), new List<UnitReceiptNoteDto>(), 1, 1, 1, 1) }, "", 1, "No"));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IPurchasingMemoDetailTextileService)))
@@ -357,7 +357,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PurchasingMemoDetailTexti
             var service = new Mock<IPurchasingMemoDetailTextileService>();
 
             service.Setup(s => s.Read(It.IsAny<int>()))
-                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.NonDisposition, new List<FormItemDto>(), new List<FormDetailDto>() { new FormDetailDto(new ExpenditureDto(1, "", DateTimeOffset.Now), new SupplierDto(1, "", ""), "", new UnitPaymentOrderDto(1, "", DateTimeOffset.Now), new List<UnitReceiptNoteDto>(), 1, 1, 2, 2) }, "", 1));
+                .Returns(new PurchasingMemoDetailTextileDto(DateTimeOffset.Now, new DivisionDto(1, "code", "ame"), new CurrencyDto(1, "code", 1), false, PurchasingMemoType.NonDisposition, new List<FormItemDto>(), new List<FormDetailDto>() { new FormDetailDto(new ExpenditureDto(1, "", DateTimeOffset.Now), new SupplierDto(1, "", ""), "", new UnitPaymentOrderDto(1, "", DateTimeOffset.Now), new List<UnitReceiptNoteDto>(), 1, 1, 2, 2) }, "", 1, "No"));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IPurchasingMemoDetailTextileService)))
