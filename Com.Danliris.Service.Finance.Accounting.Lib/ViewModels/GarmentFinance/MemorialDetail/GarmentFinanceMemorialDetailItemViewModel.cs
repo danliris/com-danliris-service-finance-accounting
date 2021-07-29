@@ -15,6 +15,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
 
         public CurrencyViewModel Currency { get; set; }
 
-        public double Quantity { get; set; }
+        public double Amount { get; set; }
     }
 }
