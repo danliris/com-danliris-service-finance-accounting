@@ -11,6 +11,9 @@ using static Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.E
 using Microsoft.Extensions.DependencyInjection;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memorial;
+using Microsoft.EntityFrameworkCore;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.ExportSalesDebtorReport
 {
@@ -20,6 +23,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
         private const string UserAgent = "finance-service";
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
+        protected DbSet<GarmentFinanceMemorialModel> DbSetMemo;
+        protected DbSet<GarmentFinanceMemorialItemModel> DbSetMemoItem;
+        protected DbSet<BankCashReceiptModel> DbSetBankCash;
+        protected DbSet<BankCashReceiptItemModel> DbSetBankCashItem;
+
+
 
         public ExportSalesDebtorReportService(IServiceProvider serviceProvider)
         {
@@ -32,7 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
         {
             GarmentShippingPackingList garmentShipping = new  GarmentShippingPackingList();
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.PackingInventory + $"garment-shipping/invoices?Id={month}";
+            var uri = APIEndpoint.PackingInventory + $"garment-shipping/invoices/exportSalesDebtor?month={month}&year={year}";
             var response = await http.GetAsync(uri);
 
 
@@ -64,6 +73,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
 
             GarmentShippingPackingList garment = await GetDataShippingInvoice(month, year);
             List<ExportSalesDebtorReportViewModel> data = new List<ExportSalesDebtorReportViewModel>();
+            var balanceMemorial=   _dbContext.GarmentFinanceMemorialItems.where
+                                 
             return data;
         }
     }

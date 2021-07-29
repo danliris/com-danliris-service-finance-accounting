@@ -15,11 +15,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
 
         public class ShippingPackingDto
         {
-            public int shippingInvoiceId { get; set; }
-            public int invoiceNo { get; set; }
-            public DateTimeOffset truckingDate { get; set; }
-            public string buyerId { get; set; }
-            public string buyerName { get; set; }
+             
+            public string buyerAgentCode { get; set; }
+            public string buyerAgentName { get; set; }
             public double amount { get; set; }
         }
       

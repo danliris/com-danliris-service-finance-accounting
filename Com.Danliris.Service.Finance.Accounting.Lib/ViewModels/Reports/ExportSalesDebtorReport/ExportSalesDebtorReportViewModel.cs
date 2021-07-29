@@ -11,7 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Rreports.Export
         public int year { get; set; }
         public string buyerCode { get; set; }
         public string buyerName { get; set; }
-        public double beginingBalance { get; set; }
+        public decimal beginingBalance { get; set; }
         public double sales { get; set; }
         public double receipt { get; set; }
         public double endBalance { get; set; }
