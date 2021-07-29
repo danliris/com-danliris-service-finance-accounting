@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
 {
-  public  class VBRealizationDocumentNonPOPDFTemplateTest
+    public class VBRealizationDocumentNonPOPDFTemplateTest
     {
         public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOViewModel
         {
