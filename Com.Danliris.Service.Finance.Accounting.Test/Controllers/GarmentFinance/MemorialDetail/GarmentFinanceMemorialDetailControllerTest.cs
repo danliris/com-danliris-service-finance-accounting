@@ -47,7 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                                 Code = "code",
                                 Name="name"
                             },
-                            Quantity=1,
+                            Amount=1,
                             InvoiceId=1,
                             InvoiceNo="no"
                         },
