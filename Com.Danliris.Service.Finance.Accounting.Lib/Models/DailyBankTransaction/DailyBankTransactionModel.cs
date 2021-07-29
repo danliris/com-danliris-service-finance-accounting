@@ -85,6 +85,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         public decimal BeforeNominalValas { get; set; }
         public decimal CurrencyRate { get; set; }
         public bool IsPosted { get; set; }
+        [MaxLength(128)]
+        public string FinancingSourceReferenceNo { get; set; }
+        public int FinancingSourceReferenceId { get; set; }
         // public decimal NominalOut { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
