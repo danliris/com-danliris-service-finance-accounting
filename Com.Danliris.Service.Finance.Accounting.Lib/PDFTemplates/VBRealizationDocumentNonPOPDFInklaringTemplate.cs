@@ -614,7 +614,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                         cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
                         headerTable3a.AddCell(cellHeaderBody);
                     }
-
                 }
 
                 // Empty space
