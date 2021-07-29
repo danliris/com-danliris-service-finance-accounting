@@ -1,31 +1,18 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
-using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
-using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
 {
-  public  class VBRealizationDocumentPOPDFTemplateTest
+    public class VBRealizationDocumentPOPDFTemplateTest
     {
         VBRealizationPdfDto TemplatePDFDocumentWithPO
         {
