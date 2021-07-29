@@ -28,7 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             var documentNo = $"{form.Date.AddHours(_identityService.TimezoneOffset):MM}{form.Date.AddHours(_identityService.TimezoneOffset):yy}.MT.0001";
             var month = form.Date.AddHours(_identityService.TimezoneOffset).Month;
             var year = form.Date.AddHours(_identityService.TimezoneOffset).Year;
-            var lastDocumentNo = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.Date.AddHours(_identityService.TimezoneOffset).Month == month && entity.Date.AddHours(_identityService.TimezoneOffset).Year == year).OrderByDescending(entity => entity.Date).Select(entity => entity.DocumentNo).FirstOrDefault();
+            var lastDocumentNo = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.Date.AddHours(_identityService.TimezoneOffset).Month == month && entity.Date.AddHours(_identityService.TimezoneOffset).Year == year).OrderByDescending(entity => entity.Date).ThenByDescending(entity => entity.CreatedUtc).Select(entity => entity.DocumentNo).FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(lastDocumentNo))
             {
                 var splittedDocument = lastDocumentNo.Split('.');
@@ -59,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
                     foreach (var detail in item.Disposition.Details)
                     {
-                        var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, itemModel.Id, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOder.Id, detail.UnitPaymentOder.UnitPaymentOrderNo, detail.UnitPaymentOder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmount, detail.PaymentAmountCurrency);
+                        var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, itemModel.Id, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
                         EntityExtension.FlagForCreate(detailModel, _identityService.Username, UserAgent);
                         _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                         _dbContext.SaveChanges();
@@ -78,7 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             {
                 foreach (var detail in form.Details)
                 {
-                    var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, 0, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOder.Id, detail.UnitPaymentOder.UnitPaymentOrderNo, detail.UnitPaymentOder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmount, detail.PaymentAmountCurrency);
+                    var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, 0, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
                     EntityExtension.FlagForCreate(detailModel, _identityService.Username, UserAgent);
                     _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                     _dbContext.SaveChanges();
@@ -139,9 +139,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             return deletedId;
         }
 
-        public ReadResponse<IndexDto> Read(string keyword, int page = 1, int size = 25)
+        public ReadResponse<IndexDto> Read(string keyword, PurchasingMemoType type, int page = 1, int size = 25)
         {
-            var query = _dbContext.PurchasingMemoDetailTextiles.AsQueryable();
+            var query = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.Type == type);
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -149,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             }
 
             var count = query.Select(entity => entity.Id).Count();
-            var data = query.Skip((page - 1) * size).Take(size).Select(entity => new IndexDto()).ToList();
+            var data = query.OrderByDescending(entity => entity.LastModifiedUtc).Skip((page - 1) * size).Take(size).Select(entity => new IndexDto(entity.Id, entity.LastModifiedUtc, entity.Date, entity.DivisionName, entity.CurrencyCode, entity.SupplierIsImport, entity.Remark, entity.DocumentNo)).ToList();
             return new ReadResponse<IndexDto>(data, count, new Dictionary<string, string>(), new List<string>());
         }
 
@@ -260,7 +260,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
                         foreach (var detail in item.Disposition.Details)
                         {
-                            var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, itemModel.Id, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOder.Id, detail.UnitPaymentOder.UnitPaymentOrderNo, detail.UnitPaymentOder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmount, detail.PaymentAmountCurrency);
+                            var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, itemModel.Id, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
                             EntityExtension.FlagForCreate(detailModel, _identityService.Username, UserAgent);
                             _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                             _dbContext.SaveChanges();
@@ -279,7 +279,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 {
                     foreach (var detail in form.Details)
                     {
-                        var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, 0, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOder.Id, detail.UnitPaymentOder.UnitPaymentOrderNo, detail.UnitPaymentOder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmount, detail.PaymentAmountCurrency);
+                        var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, 0, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
                         EntityExtension.FlagForCreate(detailModel, _identityService.Username, UserAgent);
                         _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                         _dbContext.SaveChanges();
@@ -298,6 +298,86 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             }
 
             return updatedId;
+        }
+
+        public List<FormItemDto> ReadDispositions(string keyword, int divisionId, bool supplierIsImport, string currencyCode)
+        {
+            var dispositionQuery = _dbContext.PaymentDispositionNotes.Where(entity => entity.SupplierImport == supplierIsImport);
+
+            if (!string.IsNullOrWhiteSpace(currencyCode))
+                dispositionQuery = dispositionQuery.Where(entity => entity.CurrencyCode == currencyCode);
+
+            var paymentIds = dispositionQuery.Select(entity => entity.Id).Distinct().ToList();
+            var dispositionItemQuery = _dbContext.PaymentDispositionNoteItems.Where(entity => paymentIds.Contains(entity.PaymentDispositionNoteId));
+
+            if (divisionId > 0)
+                dispositionItemQuery = dispositionItemQuery.Where(entity => entity.DivisionId == divisionId);
+
+            var query = dispositionItemQuery.Select(entity => new { entity.DispositionId, entity.DispositionNo, entity.DispositionDate }).Distinct().AsQueryable();
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                query = query.Where(entity => entity.DispositionNo.Contains(keyword));
+            }
+
+
+            var queryResult = query.Take(10).ToList();
+            var dispositionIds = queryResult.Select(element => element.DispositionId).ToList();
+            var paymentDispositionItems = _dbContext.PaymentDispositionNoteItems.Where(entity => dispositionIds.Contains(entity.DispositionId)).ToList();
+            var paymentDispositionItemIds = paymentDispositionItems.Select(entity => entity.Id).ToList();
+            var paymentDispositionIds = paymentDispositionItems.Select(entity => entity.PaymentDispositionNoteId).Distinct().ToList();
+            var paymentDispositions = _dbContext.PaymentDispositionNotes.Where(entity => paymentDispositionIds.Contains(entity.Id)).ToList();
+            var paymentDispositionDetails = _dbContext.PaymentDispositionNoteDetails.Where(entity => paymentDispositionItemIds.Contains(entity.PaymentDispositionNoteItemId)).ToList();
+            var purchasingDispositionExpeditionIds = paymentDispositionItems.Select(element => element.PurchasingDispositionExpeditionId).ToList();
+            var purchasingDispositionExpeditions = _dbContext.PurchasingDispositionExpeditions.Where(entity => purchasingDispositionExpeditionIds.Contains(entity.Id)).ToList();
+            var purchasingDispositionExpeditionItems = _dbContext.PurchasingDispositionExpeditionItems.Where(entity => purchasingDispositionExpeditionIds.Contains(entity.PurchasingDispositionExpeditionId)).ToList();
+
+            var result = new List<FormItemDto>();
+            foreach (var item in queryResult)
+            {
+                var disposition = new DispositionDto(item.DispositionId, item.DispositionNo, item.DispositionDate, new List<FormDetailDto>());
+
+                var itemPaymentDispositionNoteIds = paymentDispositionItems.Where(element => element.DispositionId == item.DispositionId).Select(element => element.PaymentDispositionNoteId).ToList();
+                var itemPaymentDispositionNotes = paymentDispositions.Where(element => itemPaymentDispositionNoteIds.Contains(element.Id)).ToList();
+
+                foreach (var itemPaymentDispositionNote in itemPaymentDispositionNotes)
+                {
+                    var expenditure = new ExpenditureDto(itemPaymentDispositionNote.Id, itemPaymentDispositionNote.PaymentDispositionNo, itemPaymentDispositionNote.PaymentDate);
+                    var supplier = new SupplierDto(itemPaymentDispositionNote.SupplierId, itemPaymentDispositionNote.SupplierCode, itemPaymentDispositionNote.SupplierName);
+                    var itemPaymentDispositionNoteItems = paymentDispositionItems.Where(element => element.PaymentDispositionNoteId == itemPaymentDispositionNote.Id).ToList();
+
+
+                    foreach (var itemPaymentDispositionNoteItem in itemPaymentDispositionNoteItems)
+                    {
+                        var division = new DivisionDto(itemPaymentDispositionNoteItem.DivisionId, itemPaymentDispositionNoteItem.DivisionCode, itemPaymentDispositionNoteItem.DivisionName);
+
+                        disposition.Details.Add(new FormDetailDto(expenditure, supplier, "", new UnitPaymentOrderDto(0, "", DateTimeOffset.MinValue), new List<UnitReceiptNoteDto>(), 0, 0, 0, 0));
+                    }
+                }
+
+                result.Add(new FormItemDto(disposition));
+
+            }
+
+            return result;
+        }
+
+        public List<AutoCompleteDto> Read(string keyword)
+        {
+            var query = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.DocumentNo.Contains(keyword));
+
+            var result = query.Take(10).Select(entity => new AutoCompleteDto(entity.Id, entity.DocumentNo, entity.Date, entity.CurrencyCode, entity.CurrencyId, entity.CurrencyRate)).ToList();
+
+
+            var coa = _dbContext.ChartsOfAccounts.Where(entity => entity.Code.Contains("33")).FirstOrDefault();
+
+            if (coa != null)
+                result = result.Select(element =>
+                {
+                    element = new AutoCompleteDto(element.Id, element.DocumentNo, element.Date, element.Currency, new List<PurchasingMemoTextile.FormItemDto>() { new PurchasingMemoTextile.FormItemDto(new PurchasingMemoTextile.ChartOfAccountDto(coa.Id, coa.Code, coa.Name), 0, 0) });
+                    return element;
+                }).ToList();
+
+            return result;
         }
     }
 }

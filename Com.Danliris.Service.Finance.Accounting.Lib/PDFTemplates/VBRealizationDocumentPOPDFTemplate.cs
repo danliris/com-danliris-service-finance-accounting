@@ -40,14 +40,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             PdfPTable headerTable1 = new PdfPTable(1);
             PdfPTable headerTable2 = new PdfPTable(1);
             PdfPTable headerTable3 = new PdfPTable(7);
-            PdfPTable headerTable3a = new PdfPTable(5);
+            PdfPTable headerTable3a = new PdfPTable(7);
             PdfPTable headerTable4 = new PdfPTable(2);
 
             headerTable_A.SetWidths(new float[] { 10f, 10f });
             headerTable_A.WidthPercentage = 100;
             headerTable3.SetWidths(new float[] { 5f, 15f, 15f, 15f, 15f, 15f, 20f });
             headerTable3.WidthPercentage = 110;
-            headerTable3a.SetWidths(new float[] { 3f, 15f, 5f, 15f, 62f });
+            headerTable3a.SetWidths(new float[] { 3f, 15f, 5f, 15f, 15f, 15f, 16f });
             headerTable3a.WidthPercentage = 110;
             headerTable4.SetWidths(new float[] { 10f, 40f });
             headerTable4.WidthPercentage = 100;
@@ -373,23 +373,84 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellHeaderBody4a.Phrase = new Phrase(" ", normal_font);
             headerTable3.AddCell(cellHeaderBody4a);
 
-            // Beban Unit
-            cellHeaderBody4.Colspan = 7;
-            cellHeaderBody4.HorizontalAlignment = Element.ALIGN_LEFT;
-            cellHeaderBody4.Phrase = new Phrase("Beban Unit :", bold_font);
-            headerTable3.AddCell(cellHeaderBody4);
-
             cellHeader3.AddElement(headerTable3);
             headerTable_B.AddCell(cellHeader3);
             cellHeader4.AddElement(headerTable4);
             headerTable_B.AddCell(cellHeader4);
             document.Add(headerTable_B);
+
+            // Beban Unit
+            cellHeaderBody.Colspan = 4;
+            cellHeaderBody.HorizontalAlignment = Element.ALIGN_LEFT;
+            cellHeaderBody.Phrase = new Phrase("Beban Unit:", bold_font);
+            headerTable3a.AddCell(cellHeaderBody);
+
+            if ((GetPPhValueDanliris(viewModel)) != 0 || (GetPPhValue(viewModel)) != 0)
+            {
+                // Header PPH23
+                cellHeaderBody.Colspan = 1;
+                cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                cellHeaderBody.Phrase = new Phrase("PPH 23", normal_font_8);
+                headerTable3a.AddCell(cellHeaderBody);
+
+                if ((count_price - total_realization) != 0)
+                {
+                    // Header PPN
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase("PPN", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+
+                    // Empty space
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+                else
+                {
+                    // Empty space
+                    cellHeaderBody.Colspan = 2;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+            }
+            else
+            {
+                if ((count_price - total_realization) != 0)
+                {
+                    // Header PPN
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase("PPN", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+
+                    // Empty space
+                    cellHeaderBody.Colspan = 2;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+                else
+                {
+                    // Empty space
+                    cellHeaderBody.Colspan = 3;
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+            }
+
+            // New Line
+            cellHeaderBody.Colspan = 7;
+            cellHeaderBody.Phrase = new Phrase(" ", normal_font);
+            headerTable3a.AddCell(cellHeaderBody);
             #endregion Header
 
             #region NewCheckbox
-            var unitCosts = viewModel.UnitCosts.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
-
             List<PdfFormField> annotations = new List<PdfFormField>();
+            var unitCosts = viewModel.UnitCosts.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
             foreach (var item in unitCosts)
             {
                 PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
@@ -419,6 +480,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 headerTable3a.AddCell(cellform);
 
                 // Beban Unit Item
+                cellHeaderBody.Colspan = 1;
                 if (item.Key == 0)
                 {
                     cellHeaderBody.Phrase = new Phrase("......", normal_font_8);
@@ -434,6 +496,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 if (!flag)
                 {
+                    cellHeaderBody.Colspan = 2;
                     cellHeaderBody.Phrase = new Phrase($"...........", normal_font_8);
                     headerTable3a.AddCell(cellHeaderBody);
                 }
@@ -442,17 +505,89 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                     var nom = item.Sum(s => s.Amount).ToString("#,##0.00", new CultureInfo("id-ID"));
 
                     // Beban Unit Item Mata Uang
+                    cellHeaderBody.Colspan = 1;
                     cellHeaderBody.Phrase = new Phrase(currencyCode, normal_font_8);
                     cellHeaderBody.HorizontalAlignment = Element.ALIGN_RIGHT;
                     headerTable3a.AddCell(cellHeaderBody);
 
                     // Beban Unit Item Nominal
+                    cellHeaderBody.Colspan = 1;
                     cellHeaderBody.Phrase = new Phrase(nom, normal_font_8);
                     cellHeaderBody.HorizontalAlignment = Element.ALIGN_RIGHT;
                     headerTable3a.AddCell(cellHeaderBody);
                 }
 
+                //PPh
+                if ((GetPPhValueDanliris(viewModel)) != 0 && (GetPPhValue(viewModel)) == 0)
+                {
+                    decimal pph_danliris_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (GetPPhValueDanliris(viewModel)));
+
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.Phrase = new Phrase(pph_danliris_unit_item.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font_8);
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+                else if ((GetPPhValueDanliris(viewModel)) == 0 && (GetPPhValue(viewModel)) != 0)
+                {
+                    decimal pph_supplier_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (GetPPhValue(viewModel)));
+
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.Phrase = new Phrase(pph_supplier_unit_item.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font_8);
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+                else if ((GetPPhValueDanliris(viewModel)) != 0 && (GetPPhValue(viewModel)) != 0)
+                {
+                    decimal pph_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * ((GetPPhValue(viewModel)) + (GetPPhValueDanliris(viewModel))));
+
+                    cellHeaderBody.Colspan = 1;
+                    cellHeaderBody.Phrase = new Phrase(pph_unit_item.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font_8);
+                    cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                    headerTable3a.AddCell(cellHeaderBody);
+                }
+
+                //PPn
+                if ((count_price - total_realization) != 0)
+                {
+                    decimal ppn_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (count_price - total_realization));
+
+                    if ((GetPPhValueDanliris(viewModel)) == 0 && (GetPPhValue(viewModel)) == 0)
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(ppn_unit_item.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font_8);
+                        cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                        headerTable3a.AddCell(cellHeaderBody);
+
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                    else
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(ppn_unit_item.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font_8);
+                        cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                }
+                else
+                {
+                    if ((GetPPhValueDanliris(viewModel)) == 0 && (GetPPhValue(viewModel)) == 0)
+                    {
+                        cellHeaderBody.Colspan = 2;
+                        cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                    else
+                    {
+                        cellHeaderBody.Colspan = 1;
+                        cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
+                        headerTable3a.AddCell(cellHeaderBody);
+                    }
+                }
+
                 // Empty space
+                cellHeaderBody.Colspan = 1;
                 cellHeaderBody.Phrase = new Phrase(" ", normal_font_8);
                 headerTable3a.AddCell(cellHeaderBody);
 

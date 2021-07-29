@@ -72,7 +72,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                     foreach (var detail in Details)
                     {
                         ItemsError += "{ ";
-                        if (detail.UnitPaymentOder == null || detail.UnitPaymentOder.Id <= 0)
+                        if (detail.UnitPaymentOrder == null || detail.UnitPaymentOrder.Id <= 0)
                         {
                             CountItemsError++;
                             ItemsError += "'UnitPaymentOrder': 'SPB harus diisi', ";
