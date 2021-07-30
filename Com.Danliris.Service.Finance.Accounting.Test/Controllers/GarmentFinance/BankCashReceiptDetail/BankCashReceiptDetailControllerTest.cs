@@ -76,6 +76,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                             InvoiceNo = "invoiceNo",
                             BuyerAgent = null,
                             Currency = null,
+                        },
+                        new BankCashReceiptDetailItemViewModel()
+                        {
+                            Amount = -1,
+                            InvoiceId = 1,
+                            InvoiceNo = "invoiceNo",
+                            BuyerAgent = new Lib.ViewModels.NewIntegrationViewModel.BuyerViewModel
+                            {
+                                Code = null,
+                            },
+                            Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                            {
+                                Id = 0,
+                                Code = null,
+                            },
                         }
                     }
                 };
