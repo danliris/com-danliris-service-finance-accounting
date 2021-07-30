@@ -299,6 +299,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                     Position = model.Position,
                     Date = model.Date,
                     Type = model.DocumentType == RealizationDocumentType.WithVB ? "Dengan Nomor VB" : "Tanpa Nomor VB",
+                    Remark = model.Remark,
                     SuppliantUnit = new UnitDto()
                     {
                         Code = model.SuppliantUnitCode,
@@ -358,6 +359,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         {
             var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
             model.UpdatePosition(VBRealizationPosition.Purchasing, _identityService.Username, UserAgent);
+            model.SetRemark(form.Remark);
 
             if (form.VBRequestDocument != null && form.VBRequestDocument.Id.GetValueOrDefault() > 0)
             {
