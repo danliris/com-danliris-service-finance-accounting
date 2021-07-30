@@ -44,6 +44,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                         ItemError += "InvoiceNo: 'Invoice harus diisi', ";
                     }
 
+                    if (Item.BuyerAgent == null || string.IsNullOrWhiteSpace(Item.BuyerAgent.Code))
+                    {
+                        itemErrorCount++;
+                        ItemError += "BuyerCode: 'Buyer Tidak Ditemukan',";
+                        ItemError += "BuyerName: 'Buyer Tidak Ditemukan',";
+                    }
+
+                    if (Item.Currency == null || string.IsNullOrWhiteSpace(Item.Currency.Code) || Item.Currency.Id == 0)
+                    {
+                        itemErrorCount++;
+                        ItemError += "CurrencyCode: 'Kurs Tidak Ditemukan',";
+                    }
+
+                    if(Item.Amount == 0 || Item.Amount <= 0)
+                    {
+                        itemErrorCount++;
+                        ItemError += "Amount: 'Jumlah harus diisi',";
+                    }
+
                     ItemError += " }, ";
                 }
 
