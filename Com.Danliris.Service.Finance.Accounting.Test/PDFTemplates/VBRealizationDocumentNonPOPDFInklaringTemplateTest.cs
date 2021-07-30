@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
 {
-  public  class VBRealizationDocumentNonPOPDFInklaringTemplateTest
+    public class VBRealizationDocumentNonPOPDFInklaringTemplateTest
     {
         public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPDFInklaringTemplateViewModel
         {
@@ -69,7 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
             {
                 return new VBRealizationDocumentNonPOViewModel()
                 {
-                    DocumentNo  = "1",
+                    DocumentNo = "1",
                     Unit = new UnitViewModel()
                     {
                         Name = "a"
