@@ -44,7 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
         private static void SetHeader(Document document, PurchasingMemoDetailTextileDto purchasingMemoDetailTextile)
         {
-            var table = new PdfPTable(1)
+            var table = new PdfPTable(2)
             {
                 WidthPercentage = 100
             };
@@ -63,7 +63,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
-            var centeredCell = new PdfPCell()
+            var leftCell = new PdfPCell()
             {
                 Border = Rectangle.NO_BORDER,
                 HorizontalAlignment = Element.ALIGN_CENTER,
@@ -74,18 +74,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             cell.Phrase = new Phrase("PT. DANLIRIS", _headerFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("Kel. Banaran (Sel. Laweyan) Telp. 714400", _smallFont);
-            table.AddCell(cell);
+            rightCell.Phrase = new Phrase($"No. {purchasingMemoDetailTextile.DocumentNo}", _biggerFont);
+            table.AddCell(rightCell);
 
-            cell.Phrase = new Phrase("PO. Box. 166 Solo-57100 Indonesia", _smallFont);
-            table.AddCell(cell);
+            leftCell.Colspan = 2;
+            leftCell.Phrase = new Phrase("Kel. Banaran (Sel. Laweyan) Telp. 714400", _smallFont);
+            table.AddCell(leftCell);
+
+            leftCell.Phrase = new Phrase("PO. Box. 166 Solo-57100 Indonesia", _smallFont);
+            table.AddCell(leftCell);
 
             var importLocal = purchasingMemoDetailTextile.SupplierIsImport ? "IMPOR" : "LOKAL";
 
-            centeredCell.Phrase = new Phrase($"PEMBAYARAN HUTANG DAG {importLocal} TEKSTIL RK UANG MUKA PEMBELIAN {importLocal}", _biggerFont);
-            centeredCell.PaddingTop = 5;
-            table.AddCell(centeredCell);
+            leftCell.Phrase = new Phrase($"PEMBAYARAN HUTANG DAG {importLocal} TEKSTIL RK UANG MUKA PEMBELIAN {importLocal}", _biggerFont);
+            leftCell.PaddingTop = 5;
+            table.AddCell(leftCell);
 
+            rightCell.Colspan = 2;
             rightCell.Phrase = new Phrase($"TEX(151100)", _smallFont);
             rightCell.PaddingBottom = 10;
             table.AddCell(rightCell);
