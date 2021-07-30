@@ -58,6 +58,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                 };
             }
         }
+        private BankCashReceiptDetailViewModel viewModelValidation
+        {
+            get
+            {
+                return new BankCashReceiptDetailViewModel
+                {
+                    BankCashReceiptDate = DateTimeOffset.Now,
+                    BankCashReceiptId = 1,
+                    BankCashReceiptNo = "bankCashReceiptNo",
+                    Items = new List<BankCashReceiptDetailItemViewModel>
+                    {
+                        new BankCashReceiptDetailItemViewModel()
+                        {
+                            Amount = 0,
+                            InvoiceId = 1,
+                            InvoiceNo = "invoiceNo",
+                            BuyerAgent = null,
+                            Currency = null,
+                        }
+                    }
+                };
+            }
+        }
 
         public (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IBankCashReceiptDetailService> Service, Mock<IMapper> Mapper) GetMocks()
         {
@@ -170,7 +193,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
 
             var mockFacade = new Mock<IBankCashReceiptDetailService>();
             var mockIdentity = new Mock<IIdentityService>();
-            var ViewModel = this.viewModel;
+            var ViewModel = this.viewModelValidation;
             ViewModel.BankCashReceiptId = 0;
             var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Post(ViewModel).Result;
             Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
