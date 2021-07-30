@@ -598,7 +598,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                         cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
                         headerTable3a.AddCell(cellHeaderBody);
                     }
-
                 }
                 else
                 {
