@@ -25,6 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memo
 
         [MaxLength(4000)]
         public string Remark { get; set; }
+        public bool IsUsed { get; set; }
 
         public virtual ICollection<GarmentFinanceMemorialItemModel> Items { get; set; }
     }

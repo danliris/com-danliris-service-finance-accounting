@@ -57,6 +57,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             {
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
             }
+            var memorial = DbContext.GarmentFinanceMemorials.Single(a => a.Id == model.MemorialId);
+            memorial.IsUsed = true;
             DbSet.Add(model);
             return await DbContext.SaveChangesAsync();
         }
@@ -79,6 +81,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
             }
             EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
+            var memorial = DbContext.GarmentFinanceMemorials.Single(a => a.Id == model.MemorialId);
+            memorial.IsUsed = false;
             DbSet.Update(model);
             return await DbContext.SaveChangesAsync();
         }

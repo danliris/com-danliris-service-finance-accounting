@@ -39,6 +39,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                         itemErrorCount++;
                         ItemError += "Invoice: 'No Invoice harus diisi', ";
                     }
+                    if (Item.Amount <= 0)
+                    {
+                        itemErrorCount++;
+                        ItemError += "Amount: 'Jumlah harus lebih dari 0', ";
+                    }
 
                     ItemError += " }, ";
                 }
