@@ -214,7 +214,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             var model = _dbContext
                 .DPPVATBankExpenditureNotes
                 .FirstOrDefault(entity => entity.Id == id);
-            model.UpdateData(form.Amount, form.Supplier.Id, form.Supplier.IsImport, form.Supplier.Name, form.BGCheckNo, form.Date.GetValueOrDefault());
+            model.UpdateData(form.Amount, form.Supplier.Id, form.Supplier.IsImport, form.Supplier.Name, form.BGCheckNo, form.Date.GetValueOrDefault(), form.Currency.Rate);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             _dbContext.DPPVATBankExpenditureNotes.Update(model);
 
@@ -256,27 +256,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
             await UpdateInternalNoteInvoiceNoteIsPaid(false, model.Id, model.DocumentNo, existingInternalNoteIds, existingInvoiceNoteIds);
 
-            foreach (var formItem in form.Items.Where(item => item.Select))
-            {
-                var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount, formItem.InternalNote.Supplier.Code);
-                EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
-                _dbContext.DPPVATBankExpenditureNoteItems.Add(item);
-                _dbContext.SaveChanges();
+            var formItems = form.Items.Where(item => item.Select);
 
-                foreach (var formDetail in formItem.InternalNote.Items.Where(invoiceItem => invoiceItem.SelectInvoice))
+            if (formItems != null)
+            {
+                foreach (var formItem in formItems)
                 {
-                    var detailDoJson = JsonConvert.SerializeObject(formDetail.Invoice.DetailDO);
-                    var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod, formDetail.Invoice.DeliveryOrdersNo, formDetail.Invoice.PaymentBills, formDetail.Invoice.BillsNo,detailDoJson);
-                    EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
-                    _dbContext.DPPVATBankExpenditureNoteDetails.Add(detail);
+                    var item = new DPPVATBankExpenditureNoteItemModel(model.Id, formItem.InternalNote.Id, formItem.InternalNote.DocumentNo, formItem.InternalNote.Date, formItem.InternalNote.DueDate, formItem.InternalNote.Supplier.Id, formItem.InternalNote.Supplier.Name, formItem.InternalNote.Supplier.IsImport, formItem.InternalNote.VATAmount, formItem.InternalNote.IncomeTaxAmount, formItem.InternalNote.DPP, formItem.InternalNote.TotalAmount, formItem.InternalNote.Currency.Id, formItem.InternalNote.Currency.Code, formItem.OutstandingAmount, formItem.InternalNote.Supplier.Code);
+                    EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
+                    _dbContext.DPPVATBankExpenditureNoteItems.Add(item);
                     _dbContext.SaveChanges();
 
-                    foreach (var detailDo in formDetail.Invoice.DetailDO)
+                    var formDetails = formItem.InternalNote.Items.Where(invoiceItem => invoiceItem.SelectInvoice);
+
+                    if (formDetails != null)
                     {
-                        var detailDoDd = new DPPVATBankExpenditureNoteDetailDoModel(detailDo.DONo, detailDo.TotalAmount, detailDo.PaymentBill, detailDo.BillNo, detailDo.DOId, detailDo.CurrencyRate);
-                        EntityExtension.FlagForCreate(detailDoDd, _identityService.Username, UserAgent);
-                        _dbContext.DPPVATBankExpenditureNoteDetailDos.Add(detailDoDd);
-                        _dbContext.SaveChanges();
+                        foreach (var formDetail in formItem.InternalNote.Items.Where(invoiceItem => invoiceItem.SelectInvoice))
+                        {
+                            var detailDoJson = JsonConvert.SerializeObject(formDetail.Invoice.DetailDO);
+                            var detail = new DPPVATBankExpenditureNoteDetailModel(model.Id, item.Id, formDetail.Invoice.Id, formDetail.Invoice.DocumentNo, formDetail.Invoice.Date, formDetail.Invoice.ProductNames, formDetail.Invoice.Category.Id, formDetail.Invoice.Category.Name, formDetail.Invoice.Amount, formDetail.Invoice.PaymentMethod, formDetail.Invoice.DeliveryOrdersNo, formDetail.Invoice.PaymentBills, formDetail.Invoice.BillsNo,detailDoJson);
+                            EntityExtension.FlagForCreate(detail, _identityService.Username, UserAgent);
+                            _dbContext.DPPVATBankExpenditureNoteDetails.Add(detail);
+                            _dbContext.SaveChanges();
+
+                            var detailDos = formDetail.Invoice.DetailDO;
+
+                            if (detailDos != null)
+                            {
+                                foreach (var detailDo in formDetail.Invoice.DetailDO)
+                                {
+                                    var detailDoDd = new DPPVATBankExpenditureNoteDetailDoModel(detailDo.DONo, detailDo.TotalAmount, detailDo.PaymentBill, detailDo.BillNo, detailDo.DOId, detailDo.CurrencyRate);
+                                    EntityExtension.FlagForCreate(detailDoDd, _identityService.Username, UserAgent);
+                                    _dbContext.DPPVATBankExpenditureNoteDetailDos.Add(detailDoDd);
+                                    _dbContext.SaveChanges();
+                                }
+                            }
+                        }
                     }
                 }
             }
