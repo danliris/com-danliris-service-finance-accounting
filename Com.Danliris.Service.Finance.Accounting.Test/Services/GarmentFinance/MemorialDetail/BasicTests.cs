@@ -26,6 +26,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
     {
         private const string ENTITY = "GarmentFinanceMemorialDetails";
 
+
+
         [MethodImpl(MethodImplOptions.NoInlining)]
         public string GetCurrentMethod()
         {
@@ -66,9 +68,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
 
         private GarmentFinanceMemorialDetailDataUtil _dataUtil(GarmentFinanceMemorialDetailService service, string testname)
         {
-            var memorialService = new GarmentFinanceMemorialService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var memorialService = new GarmentFinanceMemorialService(GetServiceProvider().Object, service.DbContext);
             var memorialDataUtil = new GarmentFinanceMemorialDataUtil(memorialService);
-            return new GarmentFinanceMemorialDetailDataUtil(service, memorialDataUtil);
+            return new GarmentFinanceMemorialDetailDataUtil(service,memorialDataUtil);
         }
 
         [Fact]
