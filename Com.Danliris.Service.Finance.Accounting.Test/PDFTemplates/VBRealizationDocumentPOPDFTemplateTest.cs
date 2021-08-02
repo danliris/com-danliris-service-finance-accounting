@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
 {
-  public  class VBRealizationDocumentPOPDFTemplateTest
+    public class VBRealizationDocumentPOPDFTemplateTest
     {
         VBRealizationPdfDto TemplatePDFDocumentWithPO
         {

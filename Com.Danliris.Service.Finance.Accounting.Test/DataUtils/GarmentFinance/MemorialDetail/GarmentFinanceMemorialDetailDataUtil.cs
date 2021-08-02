@@ -30,7 +30,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                         BuyerId = 1,
                         BuyerCode = "code",
                         BuyerName = "name",
-                        Quantity = 1,
+                        Amount = 1,
                         CurrencyId = 1,
                         CurrencyCode="code",
                         CurrencyRate=1,
