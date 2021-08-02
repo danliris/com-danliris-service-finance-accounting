@@ -66,7 +66,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             var leftCell = new PdfPCell()
             {
                 Border = Rectangle.NO_BORDER,
-                HorizontalAlignment = Element.ALIGN_CENTER,
+                HorizontalAlignment = Element.ALIGN_LEFT,
                 VerticalAlignment = Element.ALIGN_MIDDLE
 
             };
@@ -116,7 +116,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             cell.Phrase = new Phrase("KAS BON", _smallBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("KETERANGAN", _smallBoldFont);
+            cell.Phrase = new Phrase("SUPPLIER", _smallBoldFont);
+            table.AddCell(cell);
+
+            cell.Phrase = new Phrase("BARANG", _smallBoldFont);
             table.AddCell(cell);
 
             cell.Phrase = new Phrase("VALAS ", _smallBoldFont);
@@ -125,7 +128,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             cell.Phrase = new Phrase("JUMLAH (Rp) BAYAR", _smallBoldFont);
             table.AddCell(cell);
 
-            cell.Phrase = new Phrase("NO DISPOSISI", _smallBoldFont);
+            cell.Phrase = new Phrase(source, _smallBoldFont);
             table.AddCell(cell);
 
             cell.Phrase = new Phrase("VALAS ", _smallBoldFont);
@@ -138,11 +141,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
         private static void SetTable(Document document, PurchasingMemoDetailTextileDto purchasingMemoDetailTextile)
         {
-            var table = new PdfPTable(8)
+            var table = new PdfPTable(9)
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 5f, 12f, 23f, 15f, 15f, 12f, 15f, 15f });
+            table.SetWidths(new float[] { 5f, 12f, 23f, 23f, 15f, 15f, 12f, 15f, 15f });
 
             SetTableHeader(table, purchasingMemoDetailTextile.Type);
 
@@ -200,6 +203,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                         cell.Phrase = new Phrase(detail.Expenditure.DocumentNo, _smallFont);
                         table.AddCell(cell);
 
+                        cellAlignLeft.Phrase = new Phrase(detail.Supplier.Name, _smallFont);
+                        table.AddCell(cellAlignLeft);
+
                         cellAlignLeft.Phrase = new Phrase(detail.Remark, _smallFont);
                         table.AddCell(cellAlignLeft);
 
@@ -224,7 +230,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                     }
                 }
 
-                cellNoBorderAlignRight.Colspan = 3;
+                cellNoBorderAlignRight.Colspan = 4;
                 cellNoBorderAlignRight.Phrase = new Phrase("Total Bayar", _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
 
@@ -244,7 +250,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 cellNoBorderAlignRight.Phrase = new Phrase(sumPurchaseAmount.ToString("#,##0.#0"), _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
 
-                cellNoBorderAlignRight.Colspan = 6;
+                cellNoBorderAlignRight.Colspan = 7;
                 cellNoBorderAlignRight.Phrase = new Phrase("Selisih", _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
 
@@ -274,6 +280,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                     cell.Phrase = new Phrase(detail.Expenditure.DocumentNo, _smallFont);
                     table.AddCell(cell);
 
+                    cellAlignLeft.Phrase = new Phrase(detail.Supplier.Name, _smallFont);
+                    table.AddCell(cellAlignLeft);
+
                     cellAlignLeft.Phrase = new Phrase(detail.Remark, _smallFont);
                     table.AddCell(cellAlignLeft);
 
@@ -297,7 +306,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                     no++;
                 }
 
-                cellNoBorderAlignRight.Colspan = 3;
+                cellNoBorderAlignRight.Colspan = 4;
                 cellNoBorderAlignRight.Phrase = new Phrase("Total Bayar", _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
 
@@ -317,7 +326,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 cellNoBorderAlignRight.Phrase = new Phrase(sumPurchaseAmount.ToString("#,##0.#0"), _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
 
-                cellNoBorderAlignRight.Colspan = 6;
+                cellNoBorderAlignRight.Colspan = 7;
                 cellNoBorderAlignRight.Phrase = new Phrase("Selisih", _smallFont);
                 table.AddCell(cellNoBorderAlignRight);
 
