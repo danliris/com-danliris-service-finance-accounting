@@ -87,6 +87,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Garment
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoDetailTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.ExportSalesDebtorReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.GarmentFinance.BankCashReceiptDetail;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceiptDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
@@ -181,6 +183,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IPurchasingMemoDetailTextileService, PurchasingMemoDetailTextileService>()
                 .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>()
                 .AddTransient<IExportSalesDebtorReportService, ExportSalesDebtorReportService>()            
+                .AddTransient<IBankCashReceiptDetailService, BankCashReceiptDetailService>()
                 .AddTransient<IPurchasingMemoTextileService, PurchasingMemoTextileService>()
                 .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>()
                 .AddTransient<IGarmentFinanceMemorialService, GarmentFinanceMemorialService>()

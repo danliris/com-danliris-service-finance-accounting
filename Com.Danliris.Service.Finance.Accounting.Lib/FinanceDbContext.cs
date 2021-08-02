@@ -30,6 +30,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.AccountingBook;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memorial;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoDetailTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail;
 
@@ -134,6 +135,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<BankCashReceiptModel> GarmentFinanceBankCashReceipts { get; set; }
         public DbSet<BankCashReceiptItemModel> GarmentFinanceBankCashReceiptItems { get; set; }
 
+        public DbSet<BankCashReceiptDetailModel> GarmentFinanceBankCashReceiptDetails { get; set; }
+        public DbSet<BankCashReceiptDetailItemModel> GarmentFinanceBankCashReceiptDetailItems { get; set; }
         public DbSet<PurchasingMemoTextileModel> PurchasingMemoTextiles { get; set; }
         public DbSet<PurchasingMemoTextileItemModel> PurchasingMemoTextileItems { get; set; }
 
