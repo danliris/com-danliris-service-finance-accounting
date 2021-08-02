@@ -28,6 +28,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memo
         public string CurrencyCode { get; set; }
         public double CurrencyRate { get; set; }
 
-        public double Quantity { get; set; }
+        public double Amount { get; set; }
     }
 }

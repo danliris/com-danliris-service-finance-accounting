@@ -138,7 +138,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.G
                 CurrencyId = 1,
                 CurrencyCode="code",
                 CurrencyRate=1,
-                Quantity=1
+                Amount = 1
             };
 
 
