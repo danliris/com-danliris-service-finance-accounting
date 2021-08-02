@@ -211,6 +211,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             Assert.NotEqual(0, Response1);
 
             newModel2.Items = new List<BankCashReceiptDetailItemModel> { model2.Items.First() };
+            newModel2.OtherItems = new List<BankCashReceiptDetailOtherItemModel> { model2.OtherItems.First() };
             var Response = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
 
@@ -220,7 +221,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 Amount = 2,
             };
 
+            BankCashReceiptDetailOtherItemModel newOtherItem = new BankCashReceiptDetailOtherItemModel
+            {
+                BankCashReceiptDetailId = 1,
+                Amount = 2,
+            };
+
             newModel2.Items.Add(newItem);
+            newModel2.OtherItems.Add(newOtherItem);
             var Response3 = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
         }

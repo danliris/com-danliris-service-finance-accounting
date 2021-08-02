@@ -33,6 +33,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
             {
                 EntityExtension.FlagForCreate(item, _identityService.Username, UserAgent);
             }
+            foreach (var otherItem in model.OtherItems)
+            {
+                EntityExtension.FlagForCreate(otherItem, _identityService.Username, UserAgent);
+            }
             _dbContext.GarmentFinanceBankCashReceiptDetails.Add(model);
             return await _dbContext.SaveChangesAsync();
         }
@@ -41,12 +45,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
         {
             var existingModel = _dbContext.GarmentFinanceBankCashReceiptDetails
                                .Include(d => d.Items)
+                               .Include(d => d.OtherItems)
                                .Single(x => x.Id == id && !x.IsDeleted);
             BankCashReceiptDetailModel model = await ReadByIdAsync(id);
             foreach (var item in model.Items)
             {
                 EntityExtension.FlagForDelete(item, _identityService.Username, UserAgent, true);
             }
+            foreach (var otherItem in model.OtherItems)
+            {
+                EntityExtension.FlagForDelete(otherItem, _identityService.Username, UserAgent, true);
+            }
+
             EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent, true);
             _dbContext.GarmentFinanceBankCashReceiptDetails.Update(model);
 
@@ -55,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
 
         public ReadResponse<BankCashReceiptDetailModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
         {
-            IQueryable<BankCashReceiptDetailModel> Query = _dbContext.GarmentFinanceBankCashReceiptDetails.Include(m => m.Items);
+            IQueryable<BankCashReceiptDetailModel> Query = _dbContext.GarmentFinanceBankCashReceiptDetails.Include(m => m.Items).Include(m => m.OtherItems);
             List<string> searchAttributes = new List<string>()
             {
                 "BankCashReceiptNo",
@@ -78,13 +88,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
 
         public async Task<BankCashReceiptDetailModel> ReadByIdAsync(int id)
         {
-            return await _dbContext.GarmentFinanceBankCashReceiptDetails.Include(m => m.Items).FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
+            return await _dbContext.GarmentFinanceBankCashReceiptDetails.Include(m => m.Items).Include(m => m.OtherItems).FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
         }
 
         public async Task<int> UpdateAsync(int id, BankCashReceiptDetailModel model)
         {
             BankCashReceiptDetailModel exist = _dbContext.GarmentFinanceBankCashReceiptDetails
                            .Include(d => d.Items)
+                           .Include(d => d.OtherItems)
                            .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
 
             foreach (var item in exist.Items)
@@ -110,6 +121,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                 {
                     exist.Items.Add(newItem);
                     EntityExtension.FlagForCreate(newItem, _identityService.Username, UserAgent);
+                }
+            }
+
+            foreach (var otherItem in exist.OtherItems)
+            {
+                BankCashReceiptDetailOtherItemModel itemModel = model.OtherItems.FirstOrDefault(prop => prop.Id.Equals(otherItem.Id));
+
+                if (itemModel == null)
+                {
+                    EntityExtension.FlagForDelete(otherItem, _identityService.Username, UserAgent, true);
+
+                }
+                else
+                {
+                    otherItem.Amount = itemModel.Amount;
+                    EntityExtension.FlagForUpdate(otherItem, _identityService.Username, UserAgent);
+
+                }
+            }
+
+            foreach (var newOtherItem in model.OtherItems)
+            {
+                if (newOtherItem.Id == 0)
+                {
+                    exist.OtherItems.Add(newOtherItem);
+                    EntityExtension.FlagForCreate(newOtherItem, _identityService.Username, UserAgent);
                 }
             }
 

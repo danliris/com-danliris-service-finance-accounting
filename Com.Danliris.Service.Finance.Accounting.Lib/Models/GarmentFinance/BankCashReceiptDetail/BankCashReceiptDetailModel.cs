@@ -13,5 +13,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Bank
         public string BankCashReceiptNo { get; set; }
         public DateTimeOffset BankCashReceiptDate { get; set; }
         public virtual ICollection<BankCashReceiptDetailItemModel> Items { get; set; }
+        public virtual ICollection<BankCashReceiptDetailOtherItemModel> OtherItems { get; set; }
     }
 }
