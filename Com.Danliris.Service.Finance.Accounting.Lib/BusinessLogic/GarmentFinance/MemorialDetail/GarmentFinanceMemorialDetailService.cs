@@ -10,6 +10,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memorial;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail
 {
@@ -19,6 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
         protected DbSet<GarmentFinanceMemorialDetailModel> DbSet;
         public IIdentityService IdentityService;
         public readonly IServiceProvider ServiceProvider;
+        protected DbSet<GarmentFinanceMemorialModel> GarmentFinanceMemorialDbSet;
         public FinanceDbContext DbContext;
 
         public GarmentFinanceMemorialDetailService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
@@ -26,6 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             DbContext = dbContext;
             ServiceProvider = serviceProvider;
             DbSet = dbContext.Set<GarmentFinanceMemorialDetailModel>();
+            GarmentFinanceMemorialDbSet= dbContext.Set<GarmentFinanceMemorialModel>();
             IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
@@ -57,6 +60,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             {
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
             }
+            GarmentFinanceMemorialModel memorial = GarmentFinanceMemorialDbSet.FirstOrDefault(a => a.Id == model.MemorialId);
+            memorial.IsUsed = true;
             DbSet.Add(model);
             return await DbContext.SaveChangesAsync();
         }
@@ -79,6 +84,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
             }
             EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
+            var memorial = GarmentFinanceMemorialDbSet.Single(a => a.Id == model.MemorialId);
+            memorial.IsUsed = false;
             DbSet.Update(model);
             return await DbContext.SaveChangesAsync();
         }

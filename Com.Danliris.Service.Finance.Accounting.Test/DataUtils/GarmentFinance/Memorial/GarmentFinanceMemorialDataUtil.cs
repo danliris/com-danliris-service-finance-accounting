@@ -29,6 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                 GarmentCurrencyCode = "number",
                 GarmentCurrencyId = 1,
                 GarmentCurrencyRate = 1,
+                IsUsed=false,
                 Items = new List<GarmentFinanceMemorialItemModel>
                 {
                     new GarmentFinanceMemorialItemModel()

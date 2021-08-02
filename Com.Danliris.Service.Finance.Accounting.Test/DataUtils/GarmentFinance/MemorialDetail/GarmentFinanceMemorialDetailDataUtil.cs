@@ -1,5 +1,7 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.Memorial;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,18 +12,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
     public class GarmentFinanceMemorialDetailDataUtil
     {
         private readonly GarmentFinanceMemorialDetailService Service;
+        private readonly GarmentFinanceMemorialDataUtil MemorialDataUtil;
 
-        public GarmentFinanceMemorialDetailDataUtil(GarmentFinanceMemorialDetailService service)
+        public GarmentFinanceMemorialDetailDataUtil(GarmentFinanceMemorialDetailService service, GarmentFinanceMemorialDataUtil memorialDataUtil)
         {
             Service = service;
+            MemorialDataUtil = memorialDataUtil;
         }
 
         public GarmentFinanceMemorialDetailModel GetNewData()
         {
+            var memorial = Task.Run(() => MemorialDataUtil.GetTestData()).Result;
             return new GarmentFinanceMemorialDetailModel
             {
-                MemorialNo = "no",
-                MemorialId = 1,
+                MemorialNo = memorial.MemorialNo,
+                MemorialId = memorial.Id,
                 MemorialDate = DateTimeOffset.Now,
                 Items = new List<GarmentFinanceMemorialDetailItemModel>
                 {
