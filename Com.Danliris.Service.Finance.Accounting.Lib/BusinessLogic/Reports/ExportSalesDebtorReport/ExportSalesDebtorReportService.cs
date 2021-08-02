@@ -14,6 +14,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memorial;
 using Microsoft.EntityFrameworkCore;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail;
+using System.Linq;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.ExportSalesDebtorReport
 {
@@ -25,6 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
         private readonly IIdentityService _identityService;
         protected DbSet<GarmentFinanceMemorialModel> DbSetMemo;
         protected DbSet<GarmentFinanceMemorialItemModel> DbSetMemoItem;
+        protected DbSet<GarmentFinanceMemorialDetailItemModel> DbSetDetailMemo;
         protected DbSet<BankCashReceiptModel> DbSetBankCash;
         protected DbSet<BankCashReceiptItemModel> DbSetBankCashItem;
 
@@ -71,10 +74,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
         public async  Task<List<ExportSalesDebtorReportViewModel>> GetMonitoring(int month, int year, int offset)
         {
 
-            GarmentShippingPackingList garment = await GetDataShippingInvoice(month, year);
+            GarmentShippingPackingList shippingPackingList = await GetDataShippingInvoice(month, year);
             List<ExportSalesDebtorReportViewModel> data = new List<ExportSalesDebtorReportViewModel>();
-            var balanceMemorial=   _dbContext.GarmentFinanceMemorialItems.where
-                                 
+            IQueryable<GarmentFinanceMemorialModel> memo = DbSetMemo;
+            IQueryable<GarmentFinanceMemorialItemModel> memoItem = DbSetMemoItem;
+            IQueryable<GarmentFinanceMemorialDetailItemModel> memoDetail = DbSetDetailMemo;
+            var beginingMemo = from a in memo
+                               join b in memoItem on a.Id equals b.MemorialId
+                               join c in memoDetail on b.Id equals c.MemorialDetailId
+                               select new ExportSalesDebtorReportViewModel
+                               {
+                                   buyerCode = c.BuyerCode,
+                                   buyerName = c.BuyerName,
+                                   beginingBalance = Convert.ToDecimal(-c.Amount),
+                                   receipt = 0,
+                                   sales = 0,
+                                   endBalance = 0,
+                                   lessThan=0,
+                                   between=0,
+                                   moreThan=0
+
+                               };
+
             return data;
         }
     }

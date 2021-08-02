@@ -7,8 +7,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Rreports.Export
     public class ExportSalesDebtorReportViewModel
     {
         public int index { get; set; }
-        public string month { get; set; }
-        public int year { get; set; }
         public string buyerCode { get; set; }
         public string buyerName { get; set; }
         public decimal beginingBalance { get; set; }
