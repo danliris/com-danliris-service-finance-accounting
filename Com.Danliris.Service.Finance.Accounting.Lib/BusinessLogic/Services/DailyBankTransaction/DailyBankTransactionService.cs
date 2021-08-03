@@ -988,6 +988,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                             return element;
                         }).ToList();
                         _DbContext.UpdateRange(references);
+                        await _DbContext.SaveChangesAsync();
 
                         var inputModel = model.Clone();
 
@@ -1020,6 +1021,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         inputModel.FinancingSourceReferenceId = model.Id;
                         inputModel.FinancingSourceReferenceNo = model.ReferenceNo;
 
+
                         model.Remark = FormatOutRemark(model);
                         inputModel.Remark = FormatInRemark(inputModel, model);
 
@@ -1045,8 +1047,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         else
                         {
                             reference = _DbContext.DailyBankTransactions.FirstOrDefault(entity => entity.FinancingSourceReferenceId == model.Id);
-                            EntityExtension.FlagForDelete(reference, _IdentityService.Username, _UserAgent);
+                            reference.DestinationBankAccountName = model.AccountBankAccountName;
+                            reference.DestinationBankAccountNumber = model.AccountBankAccountNumber;
+                            reference.DestinationBankCode = model.AccountBankCode;
+                            reference.DestinationBankCurrencyCode = model.AccountBankCurrencyCode;
+                            reference.DestinationBankCurrencyId = model.AccountBankCurrencyId;
+                            reference.DestinationBankCurrencySymbol = model.AccountBankCurrencySymbol;
+                            reference.DestinationBankId = model.AccountBankId;
+                            reference.DestinationBankName = model.AccountBankName;
+                            reference.TransactionNominal = model.Nominal;
+                            reference.NominalValas = model.NominalValas;
+                            reference.CurrencyRate = model.CurrencyRate;
+                            reference.Remark = FormatOutRemark(reference);
+                            EntityExtension.FlagForUpdate(reference, _IdentityService.Username, _UserAgent);
                             _DbContext.DailyBankTransactions.Update(reference);
+                            await _DbContext.SaveChangesAsync();
                         }
                         await _DbContext.SaveChangesAsync();
                     }
