@@ -1043,7 +1043,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         }
                         else
                         {
-                            reference = _DbContext.DailyBankTransactions.FirstOrDefault(entity => entity.FinancingSourceReferenceId == model.Id && entity.DestinationBankId == model.AccountBankId);
+                            reference = _DbContext.DailyBankTransactions.FirstOrDefault(entity => entity.FinancingSourceReferenceId == model.Id);
                             EntityExtension.FlagForDelete(reference, _IdentityService.Username, _UserAgent);
                             _DbContext.DailyBankTransactions.Update(reference);
                         }
