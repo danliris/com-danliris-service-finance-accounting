@@ -970,7 +970,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         model.ReferenceNo = await GetDocumentNo("M", model.AccountBankCode, _IdentityService.Username);
                 }
 
-                
+
                 EntityExtension.FlagForUpdate(model, _IdentityService.Username, _UserAgent);
 
                 _DbSet.Update(model);
@@ -991,6 +991,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
                         var inputModel = model.Clone();
 
+                        inputModel.Id = 0;
                         inputModel.AccountBankAccountName = model.DestinationBankAccountName;
                         inputModel.AccountBankAccountNumber = model.DestinationBankAccountNumber;
                         inputModel.AccountBankCode = model.DestinationBankCode;
@@ -1034,7 +1035,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         var reference = _DbContext.DailyBankTransactions.FirstOrDefault(entity => entity.FinancingSourceReferenceId == model.Id && entity.DestinationBankId == model.AccountBankId);
                         if (reference != null)
                         {
-                            reference.Nominal = model.TransactionNominal;
+                            reference.TransactionNominal = model.Nominal;
                             reference.NominalValas = model.NominalValas;
                             reference.CurrencyRate = model.CurrencyRate;
 
