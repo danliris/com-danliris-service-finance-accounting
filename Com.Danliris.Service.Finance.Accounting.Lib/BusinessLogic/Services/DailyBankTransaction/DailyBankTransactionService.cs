@@ -703,7 +703,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public ReadResponse<DailyBankTransactionModel> GetReport(int bankId, int month, int year, int clientTimeZoneOffset)
         {
-            IQueryable<DailyBankTransactionModel> Query = GetQuery(bankId, month, year, clientTimeZoneOffset);
+            IQueryable<DailyBankTransactionModel> Query = GetQuery(bankId, month, year, clientTimeZoneOffset).OrderBy(s => s.Date);
 
             //var Test = Query.ToList();
             List<DailyBankTransactionModel> Result = Query.ToList();
@@ -1259,7 +1259,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public List<DailyBankTransactionModel> GeneratePdf(int bankId, int month, int year, int clientTimeZoneOffset)
         {
-            var Data = GetQuery(bankId, month, year, clientTimeZoneOffset).ToList();
+            var Data = GetQuery(bankId, month, year, clientTimeZoneOffset).OrderBy(element => element.Date).ToList();
 
             return Data;
         }
