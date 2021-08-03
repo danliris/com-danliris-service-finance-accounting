@@ -231,6 +231,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             newModel2.OtherItems.Add(newOtherItem);
             var Response3 = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
+
+            // delete item and other item
+            BankCashReceiptDetailModel newModel3 = new BankCashReceiptDetailModel();
+            newModel3.Id = model2.Id;
+
+            newModel3.Items = new List<BankCashReceiptDetailItemModel>();
+            newModel3.OtherItems = new List<BankCashReceiptDetailOtherItemModel>();
+            var Response4 = await service.UpdateAsync(model2.Id, newModel3);
+            Assert.NotEqual(0, Response4);
+
         }
 
         [Fact]
@@ -248,6 +258,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             vm.Items = new List<BankCashReceiptDetailItemViewModel>
             {
                 new BankCashReceiptDetailItemViewModel()
+                {
+                    Id=0,
+                }
+            };
+            vm.OtherItems = new List<BankCashReceiptDetailOtherItemViewModel>
+            {
+                new BankCashReceiptDetailOtherItemViewModel()
                 {
                     Id=0,
                 }

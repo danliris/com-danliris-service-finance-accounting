@@ -85,7 +85,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                 {
                     ItemError += "{ ";
 
-                    if (string.IsNullOrWhiteSpace(Item.Account.Code) || Item.Account.Id == "" || Item.Account.Id == "0")
+                    if (Item.Account == null || string.IsNullOrWhiteSpace(Item.Account.Code) || Item.Account.Id == "" || Item.Account.Id == "0")
                     {
                         itemErrorCount++;
                         ItemError += "Account: 'Account harus diisi', ";
