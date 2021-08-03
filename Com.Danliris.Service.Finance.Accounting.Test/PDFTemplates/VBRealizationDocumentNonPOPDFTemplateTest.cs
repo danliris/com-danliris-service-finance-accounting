@@ -9,8 +9,81 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
 {
-  public  class VBRealizationDocumentNonPOPDFTemplateTest
+    public class VBRealizationDocumentNonPOPDFTemplateTest
     {
+        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOViewModel
+        {
+            get
+            {
+                return new VBRealizationDocumentNonPOViewModel()
+                {
+                    DocumentNo = "1",
+                    Unit = new UnitViewModel()
+                    {
+                        Name = "a"
+                    },
+                    UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
+                    {
+                        new VBRealizationDocumentNonPOUnitCostViewModel()
+                        {
+                            Active = true,
+                            Amount = 1,
+                            IsSelected = true,
+                            Unit = new UnitViewModel()
+                            {
+                                VBDocumentLayoutOrder = 10
+                            }
+                        },
+                        new VBRealizationDocumentNonPOUnitCostViewModel()
+                        {
+                            Active = true,
+                            Amount = 1,
+                            IsSelected = true,
+                            Unit = new UnitViewModel()
+                            {
+                                VBDocumentLayoutOrder = 10
+                            }
+                        }
+                    },
+                    Currency = new CurrencyViewModel()
+                    {
+                        Code = "a",
+                        Description = "a"
+                    },
+                    Date = DateTimeOffset.Now,
+                    Id = 1,
+                    VBNonPOType = "Tanpa Nomor VB",
+                    Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
+                    {
+                        new VBRealizationDocumentNonPOExpenditureItemViewModel()
+                        {
+                            DateDetail = DateTimeOffset.Now,
+                            BLAWBNumber = "1",
+                            IsGetPPn = true,
+                            IsGetPPh = true,
+                            IncomeTaxBy = "Supplier",
+                            Remark = "Remark",
+                            Amount = 1,
+                            IncomeTax = new IncomeTaxViewModel()
+                            {
+                                Rate = 1
+                            }
+                        },
+                        new VBRealizationDocumentNonPOExpenditureItemViewModel()
+                        {
+                            DateDetail = DateTimeOffset.Now,
+                            BLAWBNumber = "1",
+                            IsGetPPn = false,
+                            IsGetPPh = false,
+                            IncomeTaxBy = "a",
+                            Remark = "Remark"
+                        }
+                    },
+                    Remark = "Remark"
+                };
+            }
+        }
+
         public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPPNNullViewModel
         {
             get
@@ -82,79 +155,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             },
                             Remark = "Remark",
                             Amount = 1
-                        }
-                    },
-                    Remark = "Remark"
-                };
-            }
-        }
-
-        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPPNandPPHViewModel
-        {
-            get
-            {
-                return new VBRealizationDocumentNonPOViewModel()
-                {
-                    DocumentNo = "1",
-                    Unit = new UnitViewModel()
-                    {
-                        Name = "a"
-                    },
-                    UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
-                    {
-                        new VBRealizationDocumentNonPOUnitCostViewModel()
-                        {
-                            Active = true,
-                            Amount = 1,
-                            IsSelected = true,
-                            Unit = new UnitViewModel()
-                            {
-                                VBDocumentLayoutOrder = 10
-                            }
-                        },
-                        new VBRealizationDocumentNonPOUnitCostViewModel()
-                        {
-                            Active = true,
-                            Amount = 1,
-                            IsSelected = true,
-                            Unit = new UnitViewModel()
-                            {
-                                VBDocumentLayoutOrder = 10
-                            }
-                        }
-                    },
-                    Currency = new CurrencyViewModel()
-                    {
-                        Code = "a",
-                        Description = "a"
-                    },
-                    Date = DateTimeOffset.Now,
-                    Id = 1,
-                    VBNonPOType = "Tanpa Nomor VB",
-                    Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
-                    {
-                        new VBRealizationDocumentNonPOExpenditureItemViewModel()
-                        {
-                            DateDetail = DateTimeOffset.Now,
-                            BLAWBNumber = "1",
-                            IsGetPPn = true,
-                            IsGetPPh = true,
-                            IncomeTaxBy = "Supplier",
-                            Remark = "Remark",
-                            Amount = 1,
-                            IncomeTax = new IncomeTaxViewModel()
-                            {
-                                Rate = 1
-                            }
-                        },
-                        new VBRealizationDocumentNonPOExpenditureItemViewModel()
-                        {
-                            DateDetail = DateTimeOffset.Now,
-                            BLAWBNumber = "1",
-                            IsGetPPn = false,
-                            IsGetPPh = false,
-                            IncomeTaxBy = "a",
-                            Remark = "Remark"
                         }
                     },
                     Remark = "Remark"
@@ -365,18 +365,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
         }
 
         [Fact]
-        public void shouldSuccessPDFTemplateWithPPNNull()
+        public void shouldSuccessPDFTemplateWithPPNandPPH()
         {
             VBRealizationDocumentNonPOPDFTemplate PdfTemplate = new VBRealizationDocumentNonPOPDFTemplate();
-            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPPNNullViewModel, 7);
+            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOViewModel, 7);
             Assert.NotNull(result);
         }
 
         [Fact]
-        public void shouldSuccessPDFTemplateWithPPNandPPH()
+        public void shouldSuccessPDFTemplateWithPPNNull()
         {
             VBRealizationDocumentNonPOPDFTemplate PdfTemplate = new VBRealizationDocumentNonPOPDFTemplate();
-            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPPNandPPHViewModel, 7);
+            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPPNNullViewModel, 7);
             Assert.NotNull(result);
         }
 
