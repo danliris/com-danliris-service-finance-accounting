@@ -12,6 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public string BankCashReceiptNo { get; set; }
         public DateTimeOffset BankCashReceiptDate { get; set; }
         public virtual List<BankCashReceiptDetailItemViewModel> Items { get; set; }
+        public virtual List<BankCashReceiptDetailOtherItemViewModel> OtherItems { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -44,6 +45,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                         ItemError += "InvoiceNo: 'Invoice harus diisi', ";
                     }
 
+                    if (Item.BuyerAgent == null || string.IsNullOrWhiteSpace(Item.BuyerAgent.Code))
+                    {
+                        itemErrorCount++;
+                        ItemError += "BuyerCode: 'Buyer Tidak Ditemukan',";
+                        ItemError += "BuyerName: 'Buyer Tidak Ditemukan',";
+                    }
+
+                    if (Item.Currency == null || string.IsNullOrWhiteSpace(Item.Currency.Code) || Item.Currency.Id == 0)
+                    {
+                        itemErrorCount++;
+                        ItemError += "CurrencyCode: 'Kurs Tidak Ditemukan',";
+                    }
+
+                    if(Item.Amount == 0 || Item.Amount <= 0)
+                    {
+                        itemErrorCount++;
+                        ItemError += "Amount: 'Jumlah harus diisi',";
+                    }
+
                     ItemError += " }, ";
                 }
 
@@ -51,6 +71,45 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
 
                 if (itemErrorCount > 0)
                     yield return new ValidationResult(ItemError, new List<string> { "Items" });
+            }
+
+            if (this.OtherItems == null || this.OtherItems.Count == 0)
+            {
+                yield return new ValidationResult("Detail Lain Lain tidak boleh kosong", new List<string> { "OtherItemsCount" });
+            } else
+            {
+                int itemErrorCount = 0;
+                string ItemError = "[";
+
+                foreach (BankCashReceiptDetailOtherItemViewModel Item in OtherItems)
+                {
+                    ItemError += "{ ";
+
+                    if (Item.Account == null || string.IsNullOrWhiteSpace(Item.Account.Code) || Item.Account.Id == "" || Item.Account.Id == "0")
+                    {
+                        itemErrorCount++;
+                        ItemError += "Account: 'Account harus diisi', ";
+                    }
+
+                    if (Item.Currency == null || string.IsNullOrWhiteSpace(Item.Currency.Code) || Item.Currency.Id == 0)
+                    {
+                        itemErrorCount++;
+                        ItemError += "OtherCurrencyCode: 'Kurs Tidak Ditemukan',";
+                    }
+
+                    if (Item.Amount == 0 || Item.Amount <= 0)
+                    {
+                        itemErrorCount++;
+                        ItemError += "OtherAmount: 'Jumlah harus diisi',";
+                    }
+
+                    ItemError += " }, ";
+                }
+
+                ItemError += "]";
+
+                if (itemErrorCount > 0)
+                    yield return new ValidationResult(ItemError, new List<string> { "OtherItems" });
             }
         }
     }

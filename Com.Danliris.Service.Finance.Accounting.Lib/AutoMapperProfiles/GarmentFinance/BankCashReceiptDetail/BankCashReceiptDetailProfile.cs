@@ -15,6 +15,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                 .ReverseMap();
 
             CreateMap<BankCashReceiptDetailItemModel, BankCashReceiptDetailItemViewModel>()
+                .ForPath(d => d.BuyerAgent.Id, opt => opt.MapFrom(s => s.BuyerId))
+                .ForPath(d => d.BuyerAgent.Code, opt => opt.MapFrom(s => s.BuyerCode))
+                .ForPath(d => d.BuyerAgent.Name, opt => opt.MapFrom(s => s.BuyerName))
+
+                .ForPath(d => d.Currency.Id, opt => opt.MapFrom(s => s.CurrencyId))
+                .ForPath(d => d.Currency.Code, opt => opt.MapFrom(s => s.CurrencyCode))
+                .ForPath(d => d.Currency.Rate, opt => opt.MapFrom(s => s.CurrencyRate))
+                .ReverseMap();
+
+            CreateMap<BankCashReceiptDetailOtherItemModel, BankCashReceiptDetailOtherItemViewModel>()
+
+                .ForPath(d => d.Account.Id, opt => opt.MapFrom(s => s.ChartOfAccountId))
+                .ForPath(d => d.Account.Code, opt => opt.MapFrom(s => s.ChartOfAccountCode))
+                .ForPath(d => d.Account.Name, opt => opt.MapFrom(s => s.ChartOfAccountName))
+
+                .ForPath(d => d.Currency.Id, opt => opt.MapFrom(s => s.CurrencyId))
+                .ForPath(d => d.Currency.Code, opt => opt.MapFrom(s => s.CurrencyCode))
+                .ForPath(d => d.Currency.Rate, opt => opt.MapFrom(s => s.CurrencyRate))
                 .ReverseMap();
         }
     }

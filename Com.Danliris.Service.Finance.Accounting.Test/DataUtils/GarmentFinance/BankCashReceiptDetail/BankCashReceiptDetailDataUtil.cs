@@ -38,6 +38,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                         InvoiceId = 1,
                         InvoiceNo = "no",
                     }
+                },
+                OtherItems = new List<BankCashReceiptDetailOtherItemModel>
+                {
+                    new BankCashReceiptDetailOtherItemModel()
+                    {
+                        ChartOfAccountId = 1,
+                        ChartOfAccountCode = "Code",
+                        ChartOfAccountName = "Name",
+                        BankCashReceiptDetailId = 1,
+                        Amount = 1,
+                        CurrencyId = 1,
+                        CurrencyCode = "code",
+                        CurrencyRate = 1,
+                        
+
+                    }
                 }
             };
         }

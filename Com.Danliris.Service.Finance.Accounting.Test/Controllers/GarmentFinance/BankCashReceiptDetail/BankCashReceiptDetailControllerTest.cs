@@ -54,6 +54,75 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                                 Symbol = "symbol"
                             }
                         }
+                    },
+                    OtherItems = new List<BankCashReceiptDetailOtherItemViewModel>
+                    {
+                        new BankCashReceiptDetailOtherItemViewModel()
+                        {
+                            Account = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name"
+                            },
+                             Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                            {
+                                Id = 1,
+                                Code = "code",
+                                Description = "description",
+                                Rate = 1,
+                                Symbol = "symbol"
+                            },
+                             Amount = 1,
+
+                        }
+                    }
+                };
+            }
+        }
+        private BankCashReceiptDetailViewModel viewModelValidation
+        {
+            get
+            {
+                return new BankCashReceiptDetailViewModel
+                {
+                    BankCashReceiptDate = DateTimeOffset.Now,
+                    BankCashReceiptId = 1,
+                    BankCashReceiptNo = "bankCashReceiptNo",
+                    Items = new List<BankCashReceiptDetailItemViewModel>
+                    {
+                        new BankCashReceiptDetailItemViewModel()
+                        {
+                            Amount = 0,
+                            InvoiceId = 1,
+                            InvoiceNo = "invoiceNo",
+                            BuyerAgent = null,
+                            Currency = null,
+                        },
+                        new BankCashReceiptDetailItemViewModel()
+                        {
+                            Amount = -1,
+                            InvoiceId = 1,
+                            InvoiceNo = "invoiceNo",
+                            BuyerAgent = new Lib.ViewModels.NewIntegrationViewModel.BuyerViewModel
+                            {
+                                Code = null,
+                            },
+                            Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                            {
+                                Id = 0,
+                                Code = null,
+                            },
+                        }
+                    },
+                    OtherItems = new List<BankCashReceiptDetailOtherItemViewModel>
+                    {
+                        new BankCashReceiptDetailOtherItemViewModel()
+                        {
+                            Amount = 0,
+                            Currency = null,
+                            Account = null,
+                        }
                     }
                 };
             }
@@ -170,7 +239,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
 
             var mockFacade = new Mock<IBankCashReceiptDetailService>();
             var mockIdentity = new Mock<IIdentityService>();
-            var ViewModel = this.viewModel;
+            var ViewModel = this.viewModelValidation;
             ViewModel.BankCashReceiptId = 0;
             var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Post(ViewModel).Result;
             Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
