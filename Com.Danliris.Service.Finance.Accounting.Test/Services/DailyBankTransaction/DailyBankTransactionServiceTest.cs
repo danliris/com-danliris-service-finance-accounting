@@ -88,6 +88,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             var Response = service.GetReportAll(data.Code,0,string.Empty,data.Date,data.Date ,1, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
             Assert.NotEmpty(Response.Data);
+
+            var Response2 = service.GetReportAll(data.Code, 1, string.Empty, data.Date, data.Date, 0, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
+            Assert.NotEmpty(Response2.Data);
         }
 
         [Fact]
@@ -120,24 +123,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             Assert.NotEmpty(Response);
         }
 
-        //[Fact]
-        //public async Task Should_Success_GenerateExcel()
-        //{
-        //    DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-        //    var data = await _dataUtil(service).GetTestDataIn();
-        //    var Response = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
-        //    Assert.NotNull(Response);
+        [Fact]
+        public async Task Should_Success_GenerateExcel()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = await _dataUtil(service).GetTestDataIn();
+            var Response = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+            Assert.NotNull(Response);
 
-        //    data.AccountBankId = 2;
-        //    var Response2 = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
-        //    Assert.NotNull(Response2);
-        //}
+            //data.AccountBankId = 4;
+            //var Response2 = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+            //Assert.NotNull(Response2);
+        }
 
         //[Fact]
         //public void Should_Success_GenerateExcel_when_dataEmpty()
         //{
         //    DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-           
+
         //    var Response = service.GetExcel(0, 7, 1001, 0);
         //    Assert.NotNull(Response);
         //}
@@ -434,8 +437,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = await _dataUtil(service).GetTestDataNotPosted();
             var newModel = await service.ReadByIdAsync(model.Id);
+            newModel.ReferenceNo = "";
             var Response = await service.UpdateAsync(newModel.Id, newModel);
             Assert.NotEqual(0, Response);
+
+            newModel.ReferenceNo = "";
+            newModel.Status = "IN";
+            var Response2 = await service.UpdateAsync(newModel.Id, newModel);
+            Assert.NotEqual(0, Response2);
         }
 
         [Fact]

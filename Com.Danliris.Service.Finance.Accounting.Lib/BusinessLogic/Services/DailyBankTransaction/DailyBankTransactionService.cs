@@ -708,7 +708,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (bankId > 0)
                 Query = Query.Where(transation => transation.AccountBankId == bankId);
 
-            return Query;
+            return Query.OrderBy(transation => transation.Date);
         }
 
         public ReadResponse<DailyBankTransactionModel> GetReport(int bankId, int month, int year, int clientTimeZoneOffset)
