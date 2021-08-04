@@ -988,8 +988,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                             reference.NominalValas = model.NominalValas;
                             reference.CurrencyRate = model.CurrencyRate;
 
+                            model.Remark = FormatOutRemark(model);
+                            reference.Remark = FormatInRemark(reference, model);
+
                             EntityExtension.FlagForUpdate(reference, _IdentityService.Username, _UserAgent);
                             _DbContext.DailyBankTransactions.Update(reference);
+
+                            await _DbContext.SaveChangesAsync();
                         }
                         else
                         {
