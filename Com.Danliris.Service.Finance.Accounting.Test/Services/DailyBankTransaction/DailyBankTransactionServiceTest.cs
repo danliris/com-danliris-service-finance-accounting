@@ -128,7 +128,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var Response = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
             Assert.NotNull(Response);
 
-            //data.AccountBankId = 2;
+            //data.AccountBankId = 4;
             //var Response2 = service.GetExcel(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
             //Assert.NotNull(Response2);
         }
@@ -434,6 +434,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = await _dataUtil(service).GetTestDataNotPosted();
             var newModel = await service.ReadByIdAsync(model.Id);
+            newModel.ReferenceNo = "";
             var Response = await service.UpdateAsync(newModel.Id, newModel);
             Assert.NotEqual(0, Response);
         }
