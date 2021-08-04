@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
 
         public ReadResponse<GarmentFinanceMemorialDetailModel> Read(int page, int size, string order, List<string> select, string keyword, string filter = "{}")
         {
-            IQueryable<GarmentFinanceMemorialDetailModel> Query = this.DbSet.Include(m => m.Items);
+            IQueryable<GarmentFinanceMemorialDetailModel> Query = this.DbSet.Include(m => m.Items).Include(m => m.OtherItems);
             List<string> searchAttributes = new List<string>()
             {
                 "MemorialNo",  "AccountingBookCode"
@@ -60,6 +60,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             {
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
             }
+            foreach (var otherItem in model.OtherItems)
+            {
+                EntityExtension.FlagForCreate(otherItem, IdentityService.Username, UserAgent);
+            }
             GarmentFinanceMemorialModel memorial = GarmentFinanceMemorialDbSet.FirstOrDefault(a => a.Id == model.MemorialId);
             memorial.IsUsed = true;
             DbSet.Add(model);
@@ -68,7 +72,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
 
         public async Task<GarmentFinanceMemorialDetailModel> ReadByIdAsync(int id)
         {
-            return await DbSet.Include(m => m.Items)
+            return await DbSet.Include(m => m.Items).Include(m => m.OtherItems)
                 .FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
         }
 
@@ -76,12 +80,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
         {
             var existingModel = DbSet
                         .Include(d => d.Items)
+                        .Include(d => d.OtherItems)
                         .Single(o => o.Id == id && !o.IsDeleted);
 
             GarmentFinanceMemorialDetailModel model = await ReadByIdAsync(id);
             foreach (var item in model.Items)
             {
                 EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
+            }
+            foreach (var otherItem in model.OtherItems)
+            {
+                EntityExtension.FlagForDelete(otherItem, IdentityService.Username, UserAgent, true);
             }
             EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
             var memorial = GarmentFinanceMemorialDbSet.Single(a => a.Id == model.MemorialId);
@@ -94,6 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
         {
             var exist = DbSet
                         .Include(d => d.Items)
+                        .Include(d => d.OtherItems)
                         .Single(o => o.Id == id && !o.IsDeleted);
 
             foreach (var item in exist.Items)
@@ -118,6 +128,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 }
             }
 
+            foreach (var otherItem in exist.OtherItems)
+            {
+                GarmentFinanceMemorialDetailOtherItemModel otherItemModel = model.OtherItems.FirstOrDefault(prop => prop.Id.Equals(otherItem.Id));
+
+                if (otherItemModel == null)
+                {
+                    EntityExtension.FlagForDelete(otherItem, IdentityService.Username, UserAgent, true);
+                }
+                else
+                {
+                    otherItem.Amount = otherItemModel.Amount;
+                    EntityExtension.FlagForUpdate(otherItem, IdentityService.Username, UserAgent);
+                }
+            }
+            foreach (var newOtherItem in model.OtherItems)
+            {
+                if (newOtherItem.Id <= 0)
+                {
+                    EntityExtension.FlagForCreate(newOtherItem, IdentityService.Username, UserAgent);
+                    exist.OtherItems.Add(newOtherItem);
+                }
+            }
             EntityExtension.FlagForUpdate(exist, IdentityService.Username, UserAgent);
             return await DbContext.SaveChangesAsync();
         }
