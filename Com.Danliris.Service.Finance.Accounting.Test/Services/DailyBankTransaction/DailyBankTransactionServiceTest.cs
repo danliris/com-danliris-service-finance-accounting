@@ -86,7 +86,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestDataIn();
 
-            var Response = service.GetReportAll(data.Code,0,string.Empty,data.Date,data.Date ,1, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
+            var Response = service.GetReportAll(data.Code, 0, string.Empty, data.Date, data.Date, 1, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
             Assert.NotEmpty(Response.Data);
 
             var Response2 = service.GetReportAll(data.Code, 1, string.Empty, data.Date, data.Date, 0, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
@@ -119,7 +119,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestDataOut();
 
-            var Response = await service.GetDocumentNo("K","test","test");
+            var Response = await service.GetDocumentNo("K", "test", "test");
             Assert.NotEmpty(Response);
         }
 
@@ -530,7 +530,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionModel model = _dataUtil(service).GetNewData();
             model.Status = "OUT";
             model.SourceType = "Pendanaan";
-            var Response = await service.CreateInOutTransactionAsync(model); 
+            var Response = await service.CreateInOutTransactionAsync(model);
             Assert.NotEqual(0, Response);
             var vm = _dataUtil(service).GetDataToValidate();
             vm.Status = "OUT";
@@ -580,7 +580,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         public void Should_Success_ReportDailyBalance_Excel_When_DataNoExist()
         {
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            
+
             var result = service.GenerateExcelDailyBalance(1, DateTime.Now.AddDays(-7), DateTime.Now.AddDays(7), "G", 1);
             Assert.NotNull(result);
         }
@@ -642,7 +642,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var data = await _dataUtil(service).GetTestDataIn();
             var response = service.GetBeforeBalance(data.AccountBankId, data.Date.Month, data.Date.Year, 7);
-         
+
             //Assert.NotEqual(0,response);
         }
 

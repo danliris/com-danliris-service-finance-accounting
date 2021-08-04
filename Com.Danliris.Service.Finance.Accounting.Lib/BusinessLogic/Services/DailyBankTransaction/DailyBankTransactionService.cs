@@ -383,57 +383,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             string date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
             //foreach (var dataAccountBank in dataAccountBanks)
-            //{ 
-            var Query = GetQuery(dataAccountBank.Id, month, year, clientTimeZoneOffset).OrderBy(s => s.Date);
-            //string date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
+            //{
+                var Query = GetQuery(dataAccountBank.Id, month, year, clientTimeZoneOffset).OrderBy(s => s.Date);
+                //string date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
-            string bank = $"({dataAccountBank.Id}) Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
+                string bank = $"({dataAccountBank.Id}) Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
 
-            DataTable result = new DataTable();
+                DataTable result = new DataTable();
 
-            result.Columns.Add(new DataColumn() { ColumnName = "Tanggal", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Keterangan", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Nomor Referensi", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Jenis Referensi", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Currency", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Before", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Tanggal", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Keterangan", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Nomor Referensi", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Jenis Referensi", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Currency", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Before", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Debit", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Saldo", DataType = typeof(String) });
 
-            int index = 0;
-            if (Query.ToArray().Count() == 0)
-                result.Rows.Add("", "", "", "", "", 0.ToString("#,##0.#0"), 0.ToString("#,##0.#0"), 0.ToString("#,##0.#0"), 0.ToString("#,##0.#0")); // to allow column name to be generated properly for empty data as template
-            else
-            {
-                var BalanceByMonthAndYear = GetBalanceMonthAndYear(dataAccountBank.Id, month, year, clientTimeZoneOffset);
-                var beforeBalance = BalanceByMonthAndYear.InitialBalance;
-                //var previous = new DailyBankTransactionModel();
-                foreach (var item in Query)
+                int index = 0;
+                if (Query.ToArray().Count() == 0)
+                    result.Rows.Add("", "", "", "", "", 0.ToString("#,##0.#0"), 0.ToString("#,##0.#0"), 0.ToString("#,##0.#0"), 0.ToString("#,##0.#0")); // to allow column name to be generated properly for empty data as template
+                else
                 {
-                    var debit = item.Status.ToUpper().Equals("IN") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
-                    var kredit = item.Status.ToUpper().Equals("OUT") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
-                    var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
+                    var BalanceByMonthAndYear = GetBalanceMonthAndYear(dataAccountBank.Id, month, year, clientTimeZoneOffset);
+                    var beforeBalance = BalanceByMonthAndYear.InitialBalance;
+                    //var previous = new DailyBankTransactionModel();
+                    foreach (var item in Query)
+                    {
+                        var debit = item.Status.ToUpper().Equals("IN") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
+                        var kredit = item.Status.ToUpper().Equals("OUT") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
+                        var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
 
-                    result.Rows.Add(item.Date.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
-                        item.Remark,
-                        item.ReferenceNo,
-                        item.ReferenceType,
-                        item.AccountBankCurrencyCode,
-                        beforeBalance.ToString("#,##0.#0"),
-                        debit,
-                        kredit,
-                        afterBalance.ToString("#,##0.#0")
-                        );
-                    beforeBalance = afterBalance;
-                    index++;
+                        result.Rows.Add(item.Date.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
+                            item.Remark,
+                            item.ReferenceNo,
+                            item.ReferenceType,
+                            item.AccountBankCurrencyCode,
+                            beforeBalance.ToString("#,##0.#0"),
+                            debit,
+                            kredit,
+                            afterBalance.ToString("#,##0.#0")
+                            );
+                        beforeBalance = afterBalance;
+                        index++;
+                    }
+                    //}
+                    //dataTableBankExcel.Add(new KeyValuePair<DataTable, string> (result, bank ));
                 }
-                //}
-                //dataTableBankExcel.Add(new KeyValuePair<DataTable, string> (result, bank ));
-
-            }
-            //return Excel.DailyMutationReportExcel(dataTableBankExcel, title, date, true, 0);
-            //return dataTableBankExcel;
+                //return Excel.DailyMutationReportExcel(dataTableBankExcel, title, date, true, 0);
+                //return dataTableBankExcel;
             return new KeyValuePair<DataTable, string>(result, bank);
         }
 

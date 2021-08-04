@@ -420,5 +420,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             //Assert
             Assert.True(0 < result);
         }
+
+        [Fact]
+        public void GetVBForPurchasing_Return_Succes()
+        {
+            //Setup
+            var dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            var service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
+            var data = GetdataUtil(service).GetTestData_VBRequestDocumentWithPO_Cancellation();
+
+            //Act
+            bool result = service.GetVBForPurchasing(data.Id);
+
+            //Assert
+            Assert.False(result);
+        }
     }
 }
