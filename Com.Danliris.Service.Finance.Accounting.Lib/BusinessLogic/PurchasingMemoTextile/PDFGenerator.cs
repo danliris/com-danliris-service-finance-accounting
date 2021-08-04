@@ -258,7 +258,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             table.AddCell(cell);
             cell.Phrase = new Phrase();
             table.AddCell(cell);
-            cell.Phrase = new Phrase($"( {purchasingTextile.CreatedBy} )", _smallFont);
+            cell.Phrase = new Phrase($"(..................)", _smallFont);
             table.AddCell(cell);
 
             document.Add(table);
