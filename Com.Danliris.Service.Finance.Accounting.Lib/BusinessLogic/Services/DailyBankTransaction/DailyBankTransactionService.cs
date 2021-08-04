@@ -981,7 +981,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 {
                     if (model.SourceType == "Pendanaan")
                     {
-                        var reference = _DbContext.DailyBankTransactions.FirstOrDefault(entity => entity.FinancingSourceReferenceId == model.Id && entity.DestinationBankId == model.AccountBankId);
+                        var reference = _DbContext.DailyBankTransactions.FirstOrDefault(entity => entity.Id == model.FinancingSourceReferenceId && entity.AccountBankId == model.DestinationBankId);
                         if (reference != null)
                         {
                             reference.Nominal = model.TransactionNominal;
