@@ -20,6 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public CurrencyViewModel GarmentCurrency { get; set; }
 
         public string Remark { get; set; }
+        public bool IsUsed { get; set; }
 
         public List<GarmentFinanceMemorialItemViewModel> Items { get; set; }
 
