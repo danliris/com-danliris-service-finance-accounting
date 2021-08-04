@@ -981,53 +981,67 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 {
                     if (model.SourceType == "Pendanaan")
                     {
-                        var references = _DbContext.DailyBankTransactions.Where(entity => entity.FinancingSourceReferenceId == model.Id).ToList();
-                        references = references.Select(element =>
+                        var reference = _DbContext.DailyBankTransactions.FirstOrDefault(entity => entity.FinancingSourceReferenceId == model.Id && entity.DestinationBankId == model.AccountBankId);
+                        if (reference != null)
                         {
-                            EntityExtension.FlagForDelete(element, _IdentityService.Username, _UserAgent);
-                            return element;
-                        }).ToList();
-                        _DbContext.UpdateRange(references);
-                        await _DbContext.SaveChangesAsync();
+                            reference.Nominal = model.TransactionNominal;
+                            reference.NominalValas = model.NominalValas;
+                            reference.CurrencyRate = model.CurrencyRate;
 
-                        var inputModel = model.Clone();
+                            EntityExtension.FlagForUpdate(reference, _IdentityService.Username, _UserAgent);
+                            _DbContext.DailyBankTransactions.Update(reference);
+                        }
+                        else
+                        {
+                            var references = _DbContext.DailyBankTransactions.Where(entity => entity.FinancingSourceReferenceId == model.Id).ToList();
+                            references = references.Select(element =>
+                            {
+                                EntityExtension.FlagForDelete(element, _IdentityService.Username, _UserAgent);
+                                return element;
+                            }).ToList();
+                            _DbContext.UpdateRange(references);
+                            await _DbContext.SaveChangesAsync();
 
-                        inputModel.Id = 0;
-                        inputModel.AccountBankAccountName = model.DestinationBankAccountName;
-                        inputModel.AccountBankAccountNumber = model.DestinationBankAccountNumber;
-                        inputModel.AccountBankCode = model.DestinationBankCode;
-                        inputModel.AccountBankCurrencyCode = model.DestinationBankCurrencyCode;
-                        inputModel.AccountBankCurrencyId = model.DestinationBankCurrencyId;
-                        inputModel.AccountBankCurrencySymbol = model.DestinationBankCurrencySymbol;
-                        inputModel.AccountBankId = model.DestinationBankId;
-                        inputModel.AccountBankName = model.DestinationBankName;
-                        inputModel.Status = "IN";
-                        inputModel.DestinationBankAccountName = "";
-                        inputModel.DestinationBankAccountNumber = "";
-                        inputModel.DestinationBankCode = "";
-                        inputModel.DestinationBankCurrencyCode = "";
-                        inputModel.DestinationBankCurrencyId = 0;
-                        inputModel.DestinationBankCurrencySymbol = "";
-                        inputModel.DestinationBankId = 0;
-                        inputModel.DestinationBankName = "";
-                        inputModel.Nominal = model.TransactionNominal;
-                        inputModel.NominalValas = model.NominalValas;
-                        inputModel.CurrencyRate = model.CurrencyRate;
+                            var inputModel = model.Clone();
 
-                        await CreateAsync(inputModel);
+                            inputModel.Id = 0;
+                            inputModel.AccountBankAccountName = model.DestinationBankAccountName;
+                            inputModel.AccountBankAccountNumber = model.DestinationBankAccountNumber;
+                            inputModel.AccountBankCode = model.DestinationBankCode;
+                            inputModel.AccountBankCurrencyCode = model.DestinationBankCurrencyCode;
+                            inputModel.AccountBankCurrencyId = model.DestinationBankCurrencyId;
+                            inputModel.AccountBankCurrencySymbol = model.DestinationBankCurrencySymbol;
+                            inputModel.AccountBankId = model.DestinationBankId;
+                            inputModel.AccountBankName = model.DestinationBankName;
+                            inputModel.Status = "IN";
+                            inputModel.DestinationBankAccountName = "";
+                            inputModel.DestinationBankAccountNumber = "";
+                            inputModel.DestinationBankCode = "";
+                            inputModel.DestinationBankCurrencyCode = "";
+                            inputModel.DestinationBankCurrencyId = 0;
+                            inputModel.DestinationBankCurrencySymbol = "";
+                            inputModel.DestinationBankId = 0;
+                            inputModel.DestinationBankName = "";
+                            inputModel.Nominal = model.TransactionNominal;
+                            inputModel.NominalValas = model.NominalValas;
+                            inputModel.CurrencyRate = model.CurrencyRate;
 
-                        model.FinancingSourceReferenceId = inputModel.Id;
-                        model.FinancingSourceReferenceNo = inputModel.ReferenceNo;
-                        inputModel.FinancingSourceReferenceId = model.Id;
-                        inputModel.FinancingSourceReferenceNo = model.ReferenceNo;
+                            await CreateAsync(inputModel);
+
+                            model.FinancingSourceReferenceId = inputModel.Id;
+                            model.FinancingSourceReferenceNo = inputModel.ReferenceNo;
+                            inputModel.FinancingSourceReferenceId = model.Id;
+                            inputModel.FinancingSourceReferenceNo = model.ReferenceNo;
 
 
-                        model.Remark = FormatOutRemark(model);
-                        inputModel.Remark = FormatInRemark(inputModel, model);
+                            model.Remark = FormatOutRemark(model);
+                            inputModel.Remark = FormatInRemark(inputModel, model);
 
-                        _DbContext.DailyBankTransactions.Update(model);
-                        _DbContext.DailyBankTransactions.Update(inputModel);
-                        await _DbContext.SaveChangesAsync();
+                            _DbContext.DailyBankTransactions.Update(model);
+                            _DbContext.DailyBankTransactions.Update(inputModel);
+                            await _DbContext.SaveChangesAsync();
+                        }
+
                     }
                 }
                 else if (model.Status == "IN")
