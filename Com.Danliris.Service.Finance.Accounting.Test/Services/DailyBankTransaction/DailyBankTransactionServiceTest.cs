@@ -88,6 +88,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             var Response = service.GetReportAll(data.Code,0,string.Empty,data.Date,data.Date ,1, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
             Assert.NotEmpty(Response.Data);
+
+            var Response2 = service.GetReportAll(data.Code, 1, string.Empty, data.Date, data.Date, 0, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
+            Assert.NotEmpty(Response2.Data);
         }
 
         [Fact]
@@ -437,6 +440,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             newModel.ReferenceNo = "";
             var Response = await service.UpdateAsync(newModel.Id, newModel);
             Assert.NotEqual(0, Response);
+
+            newModel.ReferenceNo = "";
+            newModel.Status = "IN";
+            var Response2 = await service.UpdateAsync(newModel.Id, newModel);
+            Assert.NotEqual(0, Response2);
         }
 
         [Fact]
