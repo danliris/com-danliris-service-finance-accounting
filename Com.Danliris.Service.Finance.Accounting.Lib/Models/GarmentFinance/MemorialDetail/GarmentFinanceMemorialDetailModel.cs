@@ -14,6 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memo
         public DateTimeOffset MemorialDate { get; set; }
 
         public virtual ICollection<GarmentFinanceMemorialDetailItemModel> Items { get; set; }
+        public virtual ICollection<GarmentFinanceMemorialDetailOtherItemModel> OtherItems { get; set; }
 
     }
 }
