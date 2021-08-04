@@ -383,7 +383,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             string date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
             //foreach (var dataAccountBank in dataAccountBanks)
-            //{
+            //{ 
             var Query = GetQuery(dataAccountBank.Id, month, year, clientTimeZoneOffset);
             //string date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
@@ -708,7 +708,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (bankId > 0)
                 Query = Query.Where(transation => transation.AccountBankId == bankId);
 
-            return Query.OrderBy(transation => transation.Date);
+            return Query;
         }
 
         public ReadResponse<DailyBankTransactionModel> GetReport(int bankId, int month, int year, int clientTimeZoneOffset)
