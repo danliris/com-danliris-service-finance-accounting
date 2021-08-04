@@ -466,8 +466,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         {
             try
             {
-                var Result = _service.GetVBForPurchasing(id);
+                var model = _service.GetVBForPurchasing(id);
 
+                Dictionary<string, object> Result =
+                        new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                        .Ok(null, model);
                 return Ok(Result);
             }
             catch (Exception e)
