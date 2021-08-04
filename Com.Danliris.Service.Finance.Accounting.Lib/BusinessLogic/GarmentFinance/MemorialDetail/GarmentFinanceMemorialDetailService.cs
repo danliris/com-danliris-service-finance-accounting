@@ -150,7 +150,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                     exist.OtherItems.Add(newOtherItem);
                 }
             }
-
             EntityExtension.FlagForUpdate(exist, IdentityService.Username, UserAgent);
             return await DbContext.SaveChangesAsync();
         }
