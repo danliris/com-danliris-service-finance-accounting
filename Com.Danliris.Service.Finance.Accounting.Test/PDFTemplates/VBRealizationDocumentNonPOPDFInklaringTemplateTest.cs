@@ -9,79 +9,9 @@ using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
 {
-  public  class VBRealizationDocumentNonPOPDFInklaringTemplateTest
+    public class VBRealizationDocumentNonPOPDFInklaringTemplateTest
     {
-        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPPNNullViewModel
-        {
-            get
-            {
-                return new VBRealizationDocumentNonPOViewModel()
-                {
-                    DocumentNo  = "1",
-                    Unit = new UnitViewModel()
-                    {
-                        Name = "a"
-                    },
-                    UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
-                    {
-                        new VBRealizationDocumentNonPOUnitCostViewModel()
-                        {
-                            Active = true,
-                            Amount = 1,
-                            IsSelected = true,
-                            Unit = new UnitViewModel()
-                            {
-                                VBDocumentLayoutOrder = 10
-                            }
-                        },
-                        new VBRealizationDocumentNonPOUnitCostViewModel()
-                        {
-                            Active = true,
-                            Amount = 1,
-                            IsSelected = true,
-                            Unit = new UnitViewModel()
-                            {
-                                VBDocumentLayoutOrder = 1
-                            }
-                        }
-                    },
-                    Currency = new CurrencyViewModel()
-                    {
-                        Code = "a",
-                        Description = "a"
-                    },
-                    Date = DateTimeOffset.Now,
-                    Id = 1,
-                    VBNonPOType = "Tanpa Nomor VB",
-                    Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
-                    {
-                        new VBRealizationDocumentNonPOExpenditureItemViewModel()
-                        {
-                            DateDetail = DateTimeOffset.Now,
-                            BLAWBNumber = "1",
-                            IsGetPPn = false,
-                            IsGetPPh = true,
-                            IncomeTaxBy = "a",
-                            Remark = "Remark",
-                            Amount = 1
-                        },
-                        new VBRealizationDocumentNonPOExpenditureItemViewModel()
-                        {
-                            DateDetail = DateTimeOffset.Now,
-                            BLAWBNumber = "1",
-                            IsGetPPn = false,
-                            IsGetPPh = false,
-                            IncomeTaxBy = "a",
-                            Remark = "Remark",
-                            Amount = 1
-                        }
-                    },
-                    Remark = "Remark"
-                };
-            }
-        }
-
-        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPPNandPPHViewModel
+        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPDFInklaringTemplateViewModel
         {
             get
             {
@@ -94,16 +24,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                     },
                     UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
                     {
-                        new VBRealizationDocumentNonPOUnitCostViewModel()
-                        {
-                            Active = true,
-                            Amount = 1,
-                            IsSelected = true,
-                            Unit = new UnitViewModel()
-                            {
-                                VBDocumentLayoutOrder = 10
-                            }
-                        },
                         new VBRealizationDocumentNonPOUnitCostViewModel()
                         {
                             Active = true,
@@ -131,16 +51,59 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             BLAWBNumber = "1",
                             IsGetPPn = true,
                             IsGetPPh = true,
+                            PPhAmount = 1,
+                            PPnAmount = 1,
                             IncomeTaxBy = "Supplier",
                             Remark = "Remark",
                             Amount = 1
-                        },
+                        }
+                    },
+                    Remark = "Remark"
+                };
+            }
+        }
+
+        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPDFInklaringTemplatePPNNullViewModel
+        {
+            get
+            {
+                return new VBRealizationDocumentNonPOViewModel()
+                {
+                    DocumentNo = "1",
+                    Unit = new UnitViewModel()
+                    {
+                        Name = "a"
+                    },
+                    UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
+                    {
+                        new VBRealizationDocumentNonPOUnitCostViewModel()
+                        {
+                            Active = true,
+                            Amount = 1,
+                            IsSelected = true,
+                            Unit = new UnitViewModel()
+                            {
+                                VBDocumentLayoutOrder = 10
+                            }
+                        }
+                    },
+                    Currency = new CurrencyViewModel()
+                    {
+                        Code = "a",
+                        Description = "a"
+                    },
+                    Date = DateTimeOffset.Now,
+                    Id = 1,
+                    VBNonPOType = "Tanpa Nomor VB",
+                    Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
+                    {
                         new VBRealizationDocumentNonPOExpenditureItemViewModel()
                         {
                             DateDetail = DateTimeOffset.Now,
                             BLAWBNumber = "1",
                             IsGetPPn = false,
-                            IsGetPPh = false,
+                            IsGetPPh = true,
+                            PPhAmount = 1,
                             IncomeTaxBy = "a",
                             Remark = "Remark",
                             Amount = 1
@@ -151,7 +114,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
             }
         }
 
-        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPPHNullViewModel
+        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPDFInklaringTemplatePPHNullViewModel
         {
             get
             {
@@ -191,6 +154,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             BLAWBNumber = "1",
                             IsGetPPn = true,
                             IsGetPPh = false,
+                            PPnAmount = 1,
                             IncomeTaxBy = "Supplier",
                             Remark = "Remark",
                             Amount = 1
@@ -201,7 +165,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
             }
         }
 
-        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPONullPPHandPPNViewModel
+        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPDFInklaringTemplatePPHandPPNNullViewModel
         {
             get
             {
@@ -251,7 +215,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
             }
         }
 
-        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentItemMoreThanOneViewModel
+        public VBRealizationDocumentNonPOViewModel VBRealizationDocumentNonPOPDFInklaringTemplateItemMoreThanOneViewModel
         {
             get
             {
@@ -305,6 +269,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             Remark = "Remark",
                             Amount = 1,
                             PPhAmount = 1,
+                            PPnAmount = 1
                         },
                         new VBRealizationDocumentNonPOExpenditureItemViewModel()
                         {
@@ -314,7 +279,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             IsGetPPh = true,
                             IncomeTaxBy = "Supplier",
                             Remark = "Remark",
-                            Amount = 1
+                            Amount = 1,
+                            PPhAmount = 1,
+                            PPnAmount = 1
                         }
                     },
                     Remark = "Remark"
@@ -323,42 +290,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
         }
 
         [Fact]
-        public void shouldSuccessPDFTemplateWithPPNNull()
+        public void shouldSuccessDocumentNonPOPDFInklaringTemplate()
         {
             VBRealizationDocumentNonPOPDFInklaringTemplate PdfTemplate = new VBRealizationDocumentNonPOPDFInklaringTemplate();
-            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPPNNullViewModel, 7);
+            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPDFInklaringTemplateViewModel, 7);
             Assert.NotNull(result);
         }
 
         [Fact]
-        public void shouldSuccessPDFTemplateWithPPNandPPH()
+        public void shouldSuccessDocumentNonPOPDFInklaringTemplateWithPPNNull()
         {
             VBRealizationDocumentNonPOPDFInklaringTemplate PdfTemplate = new VBRealizationDocumentNonPOPDFInklaringTemplate();
-            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPPNandPPHViewModel, 7);
+            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPDFInklaringTemplatePPNNullViewModel, 7);
             Assert.NotNull(result);
         }
 
         [Fact]
-        public void shouldSuccessPDFTemplateWithPPHNull()
+        public void shouldSuccessDocumentNonPOPDFInklaringTemplateWithPPHNull()
         {
             VBRealizationDocumentNonPOPDFInklaringTemplate PdfTemplate = new VBRealizationDocumentNonPOPDFInklaringTemplate();
-            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPPHNullViewModel, 7);
+            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPDFInklaringTemplatePPHNullViewModel, 7);
             Assert.NotNull(result);
         }
 
         [Fact]
-        public void shouldSuccessPDFTemplateWithPPNandPPHNull()
+        public void shouldSuccessDocumentNonPOPDFInklaringTemplateWithPPNandPPHNull()
         {
             VBRealizationDocumentNonPOPDFInklaringTemplate PdfTemplate = new VBRealizationDocumentNonPOPDFInklaringTemplate();
-            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPONullPPHandPPNViewModel, 7);
+            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPDFInklaringTemplatePPHandPPNNullViewModel, 7);
             Assert.NotNull(result);
         }
 
         [Fact]
-        public void shouldSuccessPDFTemplateItemMoreThanOne()
+        public void shouldSuccessDocumentNonPOPDFInklaringTemplateItemMoreThanOne()
         {
             VBRealizationDocumentNonPOPDFInklaringTemplate PdfTemplate = new VBRealizationDocumentNonPOPDFInklaringTemplate();
-            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentItemMoreThanOneViewModel, 7);
+            MemoryStream result = PdfTemplate.GeneratePdfTemplate(VBRealizationDocumentNonPOPDFInklaringTemplateItemMoreThanOneViewModel, 7);
             Assert.NotNull(result);
         }
     }
