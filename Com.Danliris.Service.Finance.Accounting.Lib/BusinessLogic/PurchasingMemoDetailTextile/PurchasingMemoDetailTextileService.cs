@@ -59,7 +59,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
                     foreach (var detail in item.Disposition.Details)
                     {
-                        var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, itemModel.Id, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
+                        var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, itemModel.Id, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PurchaseAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
                         EntityExtension.FlagForCreate(detailModel, _identityService.Username, UserAgent);
                         _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                         _dbContext.SaveChanges();
@@ -78,7 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
             {
                 foreach (var detail in form.Details)
                 {
-                    var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, 0, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
+                    var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, 0, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PurchaseAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
                     EntityExtension.FlagForCreate(detailModel, _identityService.Username, UserAgent);
                     _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                     _dbContext.SaveChanges();
@@ -160,7 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
             if (model != null)
             {
-                var result = new PurchasingMemoDetailTextileDto(model.Date, new DivisionDto(model.DivisionId, model.DivisionCode, model.DivisionName), new CurrencyDto(model.CurrencyId, model.CurrencyCode, model.CurrencyRate), model.SupplierIsImport, model.Type, new List<FormItemDto>(), new List<FormDetailDto>(), model.Remark, model.Id);
+                var result = new PurchasingMemoDetailTextileDto(model.Date, new DivisionDto(model.DivisionId, model.DivisionCode, model.DivisionName), new CurrencyDto(model.CurrencyId, model.CurrencyCode, model.CurrencyRate), model.SupplierIsImport, model.Type, new List<FormItemDto>(), new List<FormDetailDto>(), model.Remark, model.Id, model.DocumentNo);
 
                 if (model.Type == PurchasingMemoType.Disposition)
                 {
@@ -260,7 +260,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
                         foreach (var detail in item.Disposition.Details)
                         {
-                            var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, itemModel.Id, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
+                            var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, itemModel.Id, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PurchaseAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
                             EntityExtension.FlagForCreate(detailModel, _identityService.Username, UserAgent);
                             _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                             _dbContext.SaveChanges();
@@ -279,7 +279,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 {
                     foreach (var detail in form.Details)
                     {
-                        var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, 0, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PaymentAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
+                        var detailModel = new PurchasingMemoDetailTextileDetailModel(model.Id, 0, detail.Expenditure.Id, detail.Expenditure.DocumentNo, detail.Expenditure.Date, detail.Supplier.Id, detail.Supplier.Code, detail.Supplier.Name, detail.Remark, detail.UnitPaymentOrder.Id, detail.UnitPaymentOrder.UnitPaymentOrderNo, detail.UnitPaymentOrder.UnitPaymentOrderDate, detail.PurchaseAmountCurrency, detail.PurchaseAmount, detail.PaymentAmountCurrency, detail.PaymentAmount);
                         EntityExtension.FlagForCreate(detailModel, _identityService.Username, UserAgent);
                         _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                         _dbContext.SaveChanges();
@@ -364,16 +364,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
         public List<AutoCompleteDto> Read(string keyword)
         {
             var query = _dbContext.PurchasingMemoDetailTextiles.Where(entity => entity.DocumentNo.Contains(keyword));
-
+            
             var result = query.Take(10).Select(entity => new AutoCompleteDto(entity.Id, entity.DocumentNo, entity.Date, entity.CurrencyCode, entity.CurrencyId, entity.CurrencyRate)).ToList();
+            var ids = result.Select(element => element.Id).ToList();
+            var details = _dbContext.PurchasingMemoDetailTextileDetails.Where(entity => ids.Contains(entity.PurchasingMemoDetailTextileId)).ToList();
 
-
-            var coa = _dbContext.ChartsOfAccounts.Where(entity => entity.Code.Contains("33")).FirstOrDefault();
+            var coa = _dbContext.ChartsOfAccounts.Where(entity => entity.Code.Contains("14")).FirstOrDefault();
 
             if (coa != null)
                 result = result.Select(element =>
                 {
-                    element = new AutoCompleteDto(element.Id, element.DocumentNo, element.Date, element.Currency, new List<PurchasingMemoTextile.FormItemDto>() { new PurchasingMemoTextile.FormItemDto(new PurchasingMemoTextile.ChartOfAccountDto(coa.Id, coa.Code, coa.Name), 0, 0) });
+                    var amount = details.Where(detail => detail.PurchasingMemoDetailTextileId == element.Id).Sum(detail => detail.PurchaseAmount);
+                    element = new AutoCompleteDto(element.Id, element.DocumentNo, element.Date, element.Currency, new List<PurchasingMemoTextile.FormItemDto>() { new PurchasingMemoTextile.FormItemDto(new PurchasingMemoTextile.ChartOfAccountDto(coa.Id, coa.Code, coa.Name), amount, amount) });
                     return element;
                 }).ToList();
 
