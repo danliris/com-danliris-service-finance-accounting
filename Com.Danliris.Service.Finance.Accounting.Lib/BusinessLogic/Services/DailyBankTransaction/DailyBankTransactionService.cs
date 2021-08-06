@@ -430,7 +430,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     }
                     //}
                     //dataTableBankExcel.Add(new KeyValuePair<DataTable, string> (result, bank ));
-
                 }
                 //return Excel.DailyMutationReportExcel(dataTableBankExcel, title, date, true, 0);
                 //return dataTableBankExcel;

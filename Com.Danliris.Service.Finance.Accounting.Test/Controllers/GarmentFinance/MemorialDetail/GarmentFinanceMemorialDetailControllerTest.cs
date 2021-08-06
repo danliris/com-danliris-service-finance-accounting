@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
-using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memorial;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.Memorial;
-using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentFinance.Memorial;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.MemorialDetail;
+using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentFinance.MemorialDetail;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -18,62 +18,50 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinance.Memorial
+namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinance.MemorialDetail
 {
-    public class GarmentFinanceMemorialControllerTest
+    public class GarmentFinanceMemorialDetailControllerTest
     {
-        private GarmentFinanceMemorialViewModel viewModel
+        private GarmentFinanceMemorialDetailViewModel viewModel
         {
             get
             {
-                return new GarmentFinanceMemorialViewModel
+                return new GarmentFinanceMemorialDetailViewModel
                 {
                     MemorialNo = "no",
-                    AccountingBookCode = "no",
-                    AccountingBookId = 1,
-                    AccountingBookType = "type",
-                    GarmentCurrency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                    MemorialId = 1,
+                    MemorialDate = DateTimeOffset.Now,
+                    Items = new List<GarmentFinanceMemorialDetailItemViewModel>
                     {
-                        Id = 1,
-                        Code = "code",
-                        Rate = 1
-                    },
-                    Remark = "a",
-                    Date = DateTimeOffset.Now,
-                    IsUsed=false,
-                    Items = new List<GarmentFinanceMemorialItemViewModel>
-                    {
-                        new GarmentFinanceMemorialItemViewModel()
+                        new GarmentFinanceMemorialDetailItemViewModel()
                         {
-                            COA= new Lib.ViewModels.MasterCOA.COAViewModel{
-                                Id=1,
-                                Code="code",
+                            Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                            {
+                                Id = 1,
+                                Code = "code",
+                                Rate = 1
+                            },
+                            Buyer= new Lib.ViewModels.NewIntegrationViewModel.BuyerViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
                                 Name="name"
                             },
-                            Credit=1,
-                            Debit=0,
+                            Amount=1,
+                            InvoiceId=1,
+                            InvoiceNo="no"
                         },
-                        new GarmentFinanceMemorialItemViewModel()
-                        {
-                            COA= new Lib.ViewModels.MasterCOA.COAViewModel{
-                                Id=2,
-                                Code="code2",
-                                Name="name2"
-                            },
-                            Credit=0,
-                            Debit=2,
-                        }
                     }
                 };
             }
         }
 
-        public (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialService> Service, Mock<IMapper> Mapper) GetMocks()
+        public (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialDetailService> Service, Mock<IMapper> Mapper) GetMocks()
         {
-            return (IdentityService: new Mock<IIdentityService>(), ValidateService: new Mock<IValidateService>(), Service: new Mock<IGarmentFinanceMemorialService>(), Mapper: new Mock<IMapper>());
+            return (IdentityService: new Mock<IIdentityService>(), ValidateService: new Mock<IValidateService>(), Service: new Mock<IGarmentFinanceMemorialDetailService>(), Mapper: new Mock<IMapper>());
         }
 
-        protected GarmentFinanceMemorialController GetController((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialService> Service, Mock<IMapper> Mapper) mocks)
+        protected GarmentFinanceMemorialDetailController GetController((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialDetailService> Service, Mock<IMapper> Mapper) mocks)
         {
             var user = new Mock<ClaimsPrincipal>();
             var claims = new Claim[]
@@ -81,7 +69,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     new Claim("username", "unittestusername")
             };
             user.Setup(u => u.Claims).Returns(claims);
-            GarmentFinanceMemorialController controller = new GarmentFinanceMemorialController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Mapper.Object, mocks.Service.Object);
+            GarmentFinanceMemorialDetailController controller = new GarmentFinanceMemorialDetailController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Mapper.Object, mocks.Service.Object);
             controller.ControllerContext = new ControllerContext()
             {
                 HttpContext = new DefaultHttpContext()
@@ -107,9 +95,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             return new ServiceValidationException(validationContext, validationResults);
         }
 
-        private int GetStatusCodeGet((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialService> Service, Mock<IMapper> Mapper) mocks)
+        private int GetStatusCodeGet((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialDetailService> Service, Mock<IMapper> Mapper) mocks)
         {
-            GarmentFinanceMemorialController controller = GetController(mocks);
+            GarmentFinanceMemorialDetailController controller = GetController(mocks);
             IActionResult response = controller.Get();
 
             return GetStatusCode(response);
@@ -121,10 +109,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             var mocks = GetMocks();
             mocks.Service
                 .Setup(f => f.Read(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(new ReadResponse<GarmentFinanceMemorialModel>(new List<GarmentFinanceMemorialModel>() { new GarmentFinanceMemorialModel() }, 0, new Dictionary<string, string>(), new List<string>()));
+                .Returns(new ReadResponse<GarmentFinanceMemorialDetailModel>(new List<GarmentFinanceMemorialDetailModel>() { new GarmentFinanceMemorialDetailModel() }, 0, new Dictionary<string, string>(), new List<string>()));
             mocks.Mapper
-                .Setup(f => f.Map<List<GarmentFinanceMemorialViewModel>>(It.IsAny<List<GarmentFinanceMemorialModel>>()))
-                .Returns(new List<GarmentFinanceMemorialViewModel>());
+                .Setup(f => f.Map<List<GarmentFinanceMemorialDetailViewModel>>(It.IsAny<List<GarmentFinanceMemorialDetailModel>>()))
+                .Returns(new List<GarmentFinanceMemorialDetailViewModel>());
 
             var response = GetController(mocks).Get();
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
@@ -140,9 +128,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
 
-        private async Task<int> GetStatusCodePost((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialService> Service, Mock<IMapper> Mapper) mocks)
+        private async Task<int> GetStatusCodePost((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialDetailService> Service, Mock<IMapper> Mapper) mocks)
         {
-            GarmentFinanceMemorialController controller = GetController(mocks);
+            GarmentFinanceMemorialDetailController controller = GetController(mocks);
             IActionResult response = await controller.Post(viewModel);
 
             return GetStatusCode(response);
@@ -152,8 +140,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public async Task Post_WithoutException_ReturnCreated()
         {
             var mocks = GetMocks();
-            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialViewModel>())).Verifiable();
-            mocks.Service.Setup(s => s.CreateAsync(It.IsAny<GarmentFinanceMemorialModel>())).ReturnsAsync(1);
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialDetailViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.CreateAsync(It.IsAny<GarmentFinanceMemorialDetailModel>())).ReturnsAsync(1);
 
             int statusCode = await GetStatusCodePost(mocks);
             Assert.Equal((int)HttpStatusCode.Created, statusCode);
@@ -163,8 +151,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public async Task Post_ThrowException_ReturnInternalServerError()
         {
             var mocks = GetMocks();
-            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialViewModel>())).Verifiable();
-            mocks.Service.Setup(s => s.CreateAsync(It.IsAny<GarmentFinanceMemorialModel>())).ThrowsAsync(new Exception());
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialDetailViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.CreateAsync(It.IsAny<GarmentFinanceMemorialDetailModel>())).ThrowsAsync(new Exception());
 
             int statusCode = await GetStatusCodePost(mocks);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
@@ -175,20 +163,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public void Post_Throws_Validation_Exception()
         {
             var validateMock = new Mock<IValidateService>();
-            validateMock.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialViewModel>())).Throws(GetServiceValidationExeption());
+            validateMock.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialDetailViewModel>())).Throws(GetServiceValidationExeption());
             var mockMapper = new Mock<IMapper>();
 
-            var mockFacade = new Mock<IGarmentFinanceMemorialService>();
+            var mockFacade = new Mock<IGarmentFinanceMemorialDetailService>();
             var mockIdentity = new Mock<IIdentityService>();
             var ViewModel = this.viewModel;
-            ViewModel.Date = DateTimeOffset.MinValue;
+            ViewModel.MemorialDate = DateTimeOffset.MinValue;
             var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Post(ViewModel).Result;
             Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
         }
 
-        private async Task<int> GetStatusCodeGetById((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialService> Service, Mock<IMapper> Mapper) mocks)
+        private async Task<int> GetStatusCodeGetById((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialDetailService> Service, Mock<IMapper> Mapper) mocks)
         {
-            GarmentFinanceMemorialController controller = GetController(mocks);
+            GarmentFinanceMemorialDetailController controller = GetController(mocks);
             IActionResult response = await controller.GetById(1);
 
             return GetStatusCode(response);
@@ -198,7 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public async Task GetById_NotNullModel_ReturnOK()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new GarmentFinanceMemorialModel());
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new GarmentFinanceMemorialDetailModel());
 
             int statusCode = await GetStatusCodeGetById(mocks);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
@@ -208,8 +196,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public async Task GetById_NullModel_ReturnNotFound()
         {
             var mocks = GetMocks();
-            mocks.Mapper.Setup(f => f.Map<GarmentFinanceMemorialViewModel>(It.IsAny<GarmentFinanceMemorialModel>())).Returns(viewModel);
-            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync((GarmentFinanceMemorialModel)null);
+            mocks.Mapper.Setup(f => f.Map<GarmentFinanceMemorialDetailViewModel>(It.IsAny<GarmentFinanceMemorialDetailModel>())).Returns(viewModel);
+            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync((GarmentFinanceMemorialDetailModel)null);
 
             int statusCode = await GetStatusCodeGetById(mocks);
             Assert.Equal((int)HttpStatusCode.NotFound, statusCode);
@@ -255,9 +243,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
-        private async Task<int> GetStatusCodePut((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialService> Service, Mock<IMapper> Mapper) mocks)
+        private async Task<int> GetStatusCodePut((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceMemorialDetailService> Service, Mock<IMapper> Mapper) mocks)
         {
-            GarmentFinanceMemorialController controller = GetController(mocks);
+            GarmentFinanceMemorialDetailController controller = GetController(mocks);
             IActionResult response = await controller.Put(viewModel.Id, viewModel);
 
             return GetStatusCode(response);
@@ -267,8 +255,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public async Task Put_WithoutException_ReturnUpdated()
         {
             var mocks = GetMocks();
-            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialViewModel>())).Verifiable();
-            mocks.Service.Setup(s => s.UpdateAsync(It.IsAny<int>(), It.IsAny<GarmentFinanceMemorialModel>())).ReturnsAsync(1);
+            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialDetailViewModel>())).Verifiable();
+            mocks.Service.Setup(s => s.UpdateAsync(It.IsAny<int>(), It.IsAny<GarmentFinanceMemorialDetailModel>())).ReturnsAsync(1);
 
             int statusCode = await GetStatusCodePut(mocks);
             Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
@@ -278,10 +266,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public void Update_Throws_Validation_Exception()
         {
             var validateMock = new Mock<IValidateService>();
-            validateMock.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialViewModel>())).Throws(GetServiceValidationExeption());
+            validateMock.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialDetailViewModel>())).Throws(GetServiceValidationExeption());
             var mockMapper = new Mock<IMapper>();
 
-            var mockFacade = new Mock<IGarmentFinanceMemorialService>();
+            var mockFacade = new Mock<IGarmentFinanceMemorialDetailService>();
             var mockIdentity = new Mock<IIdentityService>();
             var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Put(It.IsAny<int>(), viewModel).Result;
             Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
@@ -292,9 +280,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public void Update_Throws_Internal_Error()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.UpdateAsync(It.IsAny<int>(), It.IsAny<GarmentFinanceMemorialModel>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.UpdateAsync(It.IsAny<int>(), It.IsAny<GarmentFinanceMemorialDetailModel>())).Throws(new Exception());
 
-            var response = GetController(mocks).Put(1, It.IsAny<GarmentFinanceMemorialViewModel>()).Result;
+            var response = GetController(mocks).Put(1, It.IsAny<GarmentFinanceMemorialDetailViewModel>()).Result;
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
@@ -302,9 +290,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         public void Update_Throws_Internal_Error_Aggregate()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.UpdateAsync(It.IsAny<int>(), It.IsAny<GarmentFinanceMemorialModel>())).Throws(new AggregateException());
+            mocks.Service.Setup(f => f.UpdateAsync(It.IsAny<int>(), It.IsAny<GarmentFinanceMemorialDetailModel>())).Throws(new AggregateException());
 
-            var response = GetController(mocks).Put(1, It.IsAny<GarmentFinanceMemorialViewModel>()).Result;
+            var response = GetController(mocks).Put(1, It.IsAny<GarmentFinanceMemorialDetailViewModel>()).Result;
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
