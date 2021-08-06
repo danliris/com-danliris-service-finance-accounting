@@ -454,10 +454,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
             var data = GetdataUtil(service).GetTestData_VBRequestDocumentWithPO_Cancellation();
 
             //Act
-            bool result = service.GetVBForPurchasing(data.Id);
+            bool result1 = service.GetVBForPurchasing(0);
+            bool result2 = service.GetVBForPurchasing(data.Id);
 
             //Assert
-            Assert.False(result);
+            Assert.True(result1);
+            Assert.False(result2);
         }
     }
 }
