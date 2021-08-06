@@ -7,6 +7,7 @@ using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Reports.
     [Produces("application/json")]
     [ApiVersion("1.0")]
     [Route("v{version:apiVersion}/export-sales-debtor-report")]
-    public class ExportSalesDebtorReportController: Controller
+    public class ExportSalesDebtorReportController : Controller
     {
         private IIdentityService IdentityService;
         private readonly IValidateService ValidateService;
@@ -32,6 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Reports.
             Mapper = mapper;
         }
 
+
         protected void VerifyUser()
         {
             IdentityService.Username = User.Claims.ToArray().SingleOrDefault(p => p.Type.Equals("username")).Value;
@@ -47,7 +49,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Reports.
                 VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                var data = Service.GetMonitoring( month, year,offSet);
+                var data = Service.GetMonitoring(month, year, offSet);
 
                 return Ok(new
                 {
@@ -65,6 +67,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Reports.
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+        [HttpGet("download")]
+        public async Task<IActionResult> GetXls([FromQuery] int month, [FromQuery] int year)
+        {
+            try
+            {
+                VerifyUser();
+                byte[] xlsInBytes;
+                var xls = await Service.GenerateExcel(month,year);
 
+                string filename = String.Format("Report Piutang {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+
+                xlsInBytes = xls.ToArray();
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }

@@ -16,5 +16,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Rreports.Export
         public double lessThan { get; set; }
         public double between { get; set; }
         public double moreThan { get; set; }
+        public TimeSpan timeSpan { get; set; }
     }
 }
