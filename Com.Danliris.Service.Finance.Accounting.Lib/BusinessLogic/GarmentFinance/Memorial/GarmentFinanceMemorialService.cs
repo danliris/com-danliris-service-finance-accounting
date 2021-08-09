@@ -67,8 +67,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             IQueryable<GarmentFinanceMemorialModel> Query = this.DbSet.Include(m => m.Items);
             List<string> searchAttributes = new List<string>()
             {
-                "MemorialNo",  "AccountingBookCode"
+                "MemorialNo",  "AccountingBookCode", "AccountingBookType"
             };
+
+            Query = QueryHelper<GarmentFinanceMemorialModel>.Search(Query, searchAttributes, keyword);
 
             Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
             Query = QueryHelper<GarmentFinanceMemorialModel>.Filter(Query, FilterDictionary);
@@ -94,6 +96,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             var exist = DbSet
                         .Include(d => d.Items)
                         .Single(o => o.Id == id && !o.IsDeleted);
+
+            if(exist.Date != model.Date)
+            {
+                exist.Date = model.Date;
+            }
+            if (exist.Remark != model.Remark)
+            {
+                exist.Remark = model.Remark;
+            }
+            if (exist.GarmentCurrencyRate != model.GarmentCurrencyRate)
+            {
+                exist.GarmentCurrencyRate = model.GarmentCurrencyRate;
+            }
 
             foreach (var item in exist.Items)
             {
