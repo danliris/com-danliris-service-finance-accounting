@@ -9,7 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports
 {
     public interface IExportSalesDebtorReportService
     {
-        Task<List<ExportSalesDebtorReportViewModel>> GetMonitoring(int month, int year, int offset);
-        Task<MemoryStream> GenerateExcel(int month, int year);
+        Task<List<ExportSalesDebtorReportViewModel>> GetMonitoring(int month, int year,string type, int offset);
+        Task<MemoryStream> GenerateExcel(int month, int year,string type);
     }
 }

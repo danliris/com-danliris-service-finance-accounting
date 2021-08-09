@@ -144,7 +144,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             return garmentShipping;
         }
 
-        public async Task<List<ExportSalesDebtorReportViewModel>> GetMonitoring(int month, int year, int offset)
+        public async Task<List<ExportSalesDebtorReportViewModel>> GetMonitoring(int month, int year,string type, int offset)
         {
 
             GarmentShippingPackingList invoicePackingListBalance = await GetDataShippingInvoice(month, year);
@@ -349,7 +349,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
              internal decimal amount { get; set; } 
              internal int day { get; set; }
         }
-        public async Task<MemoryStream> GenerateExcel(int month, int year)
+        public async Task<MemoryStream> GenerateExcel(int month, int year,string type)
         {
 
 

@@ -20,6 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             public string buyerAgentName { get; set; }
             public double amount { get; set; }
             public DateTimeOffset truckingDate { get; set; }
+            public DateTimeOffset bepDate { get; set; }
         }
       
     }
