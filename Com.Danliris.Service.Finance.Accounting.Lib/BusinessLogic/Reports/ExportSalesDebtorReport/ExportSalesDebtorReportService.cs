@@ -143,6 +143,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
 
             return garmentShipping;
         }
+        private async Task<GarmentCurrency> GetCurrencyByCurrencyCodeDate(string currencyCode)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
+
+            var currencyUri = APIEndpoint.Core + $"master/bi-currencies?code={currencyCode}";
+            var currencyResponse = await httpClient.GetAsync(currencyUri);
+
+            var currencyResult = new BaseResponse<GarmentCurrency>()
+            {
+                data = new GarmentCurrency()
+            };
+
+            if (currencyResponse.IsSuccessStatusCode)
+            {
+                currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
+            }
+
+            return currencyResult.data;
+        }
 
         public async Task<List<ExportSalesDebtorReportViewModel>> GetMonitoring(int month, int year,string type, int offset)
         {
@@ -152,6 +176,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             GarmentShippingPackingList balance = await GetDataBalance();
 
             List<ExportSalesDebtorReportViewModel> data = new List<ExportSalesDebtorReportViewModel>();
+            GarmentCurrency garmentCurrency = await GetCurrencyByCurrencyCodeDate("USD");
 
             var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month < month && aa.MemorialDate.Year == year select new { aa.Id })
                                join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
@@ -356,7 +381,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             GarmentShippingPackingList invoicePackingListBalance = await GetDataShippingInvoice(month, year);
             GarmentShippingPackingList invoicePackingListNow = await GetDataShippingInvoiceNow(month, year);
             GarmentShippingPackingList balance = await GetDataShippingInvoice(month, year);
-
+            GarmentCurrency garmentCurrency = await GetCurrencyByCurrencyCodeDate("USD");
             List<ExportSalesDebtorReportViewModel> data = new List<ExportSalesDebtorReportViewModel>();
 
             var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month < month && aa.MemorialDate.Year == year select new { aa.Id })

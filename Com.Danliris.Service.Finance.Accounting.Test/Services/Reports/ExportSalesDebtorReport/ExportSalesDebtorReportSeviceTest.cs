@@ -150,7 +150,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.ExportSa
             BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
             ExportSalesDebtorReportService service = new ExportSalesDebtorReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
  
-            var response = service.GetMonitoring(DateTimeOffset.Now.Month,DateTimeOffset.Now.Year,7);
+            var response = service.GetMonitoring(DateTimeOffset.Now.Month,DateTimeOffset.Now.Year,"IDR",7);
             Assert.NotNull(response);
         }
 
@@ -191,7 +191,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.ExportSa
             BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
             ExportSalesDebtorReportService service = new ExportSalesDebtorReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
 
-            var response = service.GenerateExcel(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year);
+            var response = service.GenerateExcel(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year,"IDR");
             Assert.NotNull(response);
         }
 
