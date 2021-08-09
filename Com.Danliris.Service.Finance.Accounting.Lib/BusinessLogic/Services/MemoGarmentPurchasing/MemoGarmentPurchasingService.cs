@@ -201,9 +201,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Mem
             return generatedNo;
         }
 
-        private int GetTotalAmount(ICollection<MemoGarmentPurchasingDetailModel> model)
+        private double GetTotalAmount(ICollection<MemoGarmentPurchasingDetailModel> model)
         {
-            var total = 0;
+            double total = 0;
             foreach (var detail in model)
             {
                 total += detail.DebitNominal;
