@@ -14,6 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public DateTimeOffset MemorialDate { get; set; }
 
         public List<GarmentFinanceMemorialDetailItemViewModel> Items { get; set; }
+        public List<GarmentFinanceMemorialDetailOtherItemViewModel> OtherItems { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -39,6 +40,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                         itemErrorCount++;
                         ItemError += "Invoice: 'No Invoice harus diisi', ";
                     }
+                    if (Item.Amount <= 0)
+                    {
+                        itemErrorCount++;
+                        ItemError += "Amount: 'Jumlah harus lebih dari 0', ";
+                    }
 
                     ItemError += " }, ";
                 }
@@ -47,6 +53,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
 
                 if (itemErrorCount > 0)
                     yield return new ValidationResult(ItemError, new List<string> { "Items" });
+            }
+
+            if (this.OtherItems == null || this.OtherItems.Count == 0)
+            {
+                yield return new ValidationResult("Item Lain Lain tidak boleh kosong", new List<string> { "OtherItemsCount" });
+            }
+            else
+            {
+                int itemErrorCount = 0;
+                string ItemError = "[";
+
+                foreach (GarmentFinanceMemorialDetailOtherItemViewModel Item in OtherItems)
+                {
+                    ItemError += "{ ";
+
+                    if (Item.Account == null)
+                    {
+                        itemErrorCount++;
+                        ItemError += "Account: 'Account harus diisi', ";
+                    }
+                    if (Item.Amount <= 0)
+                    {
+                        itemErrorCount++;
+                        ItemError += "Amount: 'Jumlah harus lebih dari 0', ";
+                    }
+
+                    ItemError += " }, ";
+                }
+
+                ItemError += "]";
+
+                if (itemErrorCount > 0)
+                    yield return new ValidationResult(ItemError, new List<string> { "OtherItems" });
             }
         }
     }

@@ -1,9 +1,11 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.MemorialDetail;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.Memorial;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.MemorialDetail;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +20,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.GarmentMemorial
+namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.MemorialDetail
 {
     public class BasicTests
     {
         private const string ENTITY = "GarmentFinanceMemorialDetails";
+
+
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public string GetCurrentMethod()
@@ -64,7 +68,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.G
 
         private GarmentFinanceMemorialDetailDataUtil _dataUtil(GarmentFinanceMemorialDetailService service, string testname)
         {
-            return new GarmentFinanceMemorialDetailDataUtil(service);
+            var memorialService = new GarmentFinanceMemorialService(GetServiceProvider().Object, service.DbContext);
+            var memorialDataUtil = new GarmentFinanceMemorialDataUtil(memorialService);
+            return new GarmentFinanceMemorialDetailDataUtil(service,memorialDataUtil);
         }
 
         [Fact]
@@ -125,6 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.G
             newModel2.Id = model2.Id;
 
             newModel2.Items = new List<GarmentFinanceMemorialDetailItemModel> { model2.Items.First() };
+            newModel2.OtherItems = new List<GarmentFinanceMemorialDetailOtherItemModel> { model2.OtherItems.First() };
             var Response = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
 
@@ -143,6 +150,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.G
 
 
             newModel2.Items.Add(newItem);
+
+            GarmentFinanceMemorialDetailOtherItemModel newOtherItem = new GarmentFinanceMemorialDetailOtherItemModel
+            {
+                ChartOfAccountId = 1,
+                ChartOfAccountName = "Name",
+                ChartOfAccountCode = "code",
+                CurrencyId = 1,
+                CurrencyCode = "code",
+                CurrencyRate = 1,
+                Amount = 1
+            };
+            newModel2.OtherItems.Add(newOtherItem);
             var Response3 = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
         }
@@ -164,6 +183,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.G
                 new GarmentFinanceMemorialDetailItemViewModel()
                 {
                     InvoiceId=0
+                }
+            };
+            vm.OtherItems = new List<GarmentFinanceMemorialDetailOtherItemViewModel>
+            {
+                new GarmentFinanceMemorialDetailOtherItemViewModel()
+                {
+                    Account=null,
+                    Amount = 0,
                 }
             };
 

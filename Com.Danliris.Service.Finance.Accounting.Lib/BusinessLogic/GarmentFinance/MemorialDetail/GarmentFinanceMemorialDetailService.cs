@@ -10,6 +10,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memorial;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail
 {
@@ -19,6 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
         protected DbSet<GarmentFinanceMemorialDetailModel> DbSet;
         public IIdentityService IdentityService;
         public readonly IServiceProvider ServiceProvider;
+        protected DbSet<GarmentFinanceMemorialModel> GarmentFinanceMemorialDbSet;
         public FinanceDbContext DbContext;
 
         public GarmentFinanceMemorialDetailService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
@@ -26,16 +28,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             DbContext = dbContext;
             ServiceProvider = serviceProvider;
             DbSet = dbContext.Set<GarmentFinanceMemorialDetailModel>();
+            GarmentFinanceMemorialDbSet= dbContext.Set<GarmentFinanceMemorialModel>();
             IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
         public ReadResponse<GarmentFinanceMemorialDetailModel> Read(int page, int size, string order, List<string> select, string keyword, string filter = "{}")
         {
-            IQueryable<GarmentFinanceMemorialDetailModel> Query = this.DbSet.Include(m => m.Items);
+            IQueryable<GarmentFinanceMemorialDetailModel> Query = this.DbSet.Include(m => m.Items).Include(m => m.OtherItems);
             List<string> searchAttributes = new List<string>()
             {
-                "MemorialNo",  "AccountingBookCode"
+                "MemorialNo"
             };
+
+            Query = QueryHelper<GarmentFinanceMemorialDetailModel>.Search(Query, searchAttributes, keyword);
 
             Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
             Query = QueryHelper<GarmentFinanceMemorialDetailModel>.Filter(Query, FilterDictionary);
@@ -57,13 +62,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             {
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
             }
+            foreach (var otherItem in model.OtherItems)
+            {
+                EntityExtension.FlagForCreate(otherItem, IdentityService.Username, UserAgent);
+            }
+            GarmentFinanceMemorialModel memorial = GarmentFinanceMemorialDbSet.FirstOrDefault(a => a.Id == model.MemorialId);
+            memorial.IsUsed = true;
             DbSet.Add(model);
             return await DbContext.SaveChangesAsync();
         }
 
         public async Task<GarmentFinanceMemorialDetailModel> ReadByIdAsync(int id)
         {
-            return await DbSet.Include(m => m.Items)
+            return await DbSet.Include(m => m.Items).Include(m => m.OtherItems)
                 .FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
         }
 
@@ -71,6 +82,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
         {
             var existingModel = DbSet
                         .Include(d => d.Items)
+                        .Include(d => d.OtherItems)
                         .Single(o => o.Id == id && !o.IsDeleted);
 
             GarmentFinanceMemorialDetailModel model = await ReadByIdAsync(id);
@@ -78,7 +90,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             {
                 EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
             }
+            foreach (var otherItem in model.OtherItems)
+            {
+                EntityExtension.FlagForDelete(otherItem, IdentityService.Username, UserAgent, true);
+            }
             EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
+            var memorial = GarmentFinanceMemorialDbSet.Single(a => a.Id == model.MemorialId);
+            memorial.IsUsed = false;
             DbSet.Update(model);
             return await DbContext.SaveChangesAsync();
         }
@@ -87,6 +105,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
         {
             var exist = DbSet
                         .Include(d => d.Items)
+                        .Include(d => d.OtherItems)
                         .Single(o => o.Id == id && !o.IsDeleted);
 
             foreach (var item in exist.Items)
@@ -111,6 +130,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 }
             }
 
+            foreach (var otherItem in exist.OtherItems)
+            {
+                GarmentFinanceMemorialDetailOtherItemModel otherItemModel = model.OtherItems.FirstOrDefault(prop => prop.Id.Equals(otherItem.Id));
+
+                if (otherItemModel == null)
+                {
+                    EntityExtension.FlagForDelete(otherItem, IdentityService.Username, UserAgent, true);
+                }
+                else
+                {
+                    otherItem.Amount = otherItemModel.Amount;
+                    EntityExtension.FlagForUpdate(otherItem, IdentityService.Username, UserAgent);
+                }
+            }
+            foreach (var newOtherItem in model.OtherItems)
+            {
+                if (newOtherItem.Id <= 0)
+                {
+                    EntityExtension.FlagForCreate(newOtherItem, IdentityService.Username, UserAgent);
+                    exist.OtherItems.Add(newOtherItem);
+                }
+            }
             EntityExtension.FlagForUpdate(exist, IdentityService.Username, UserAgent);
             return await DbContext.SaveChangesAsync();
         }

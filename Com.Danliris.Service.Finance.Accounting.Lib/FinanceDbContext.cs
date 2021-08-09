@@ -137,11 +137,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
 
         public DbSet<BankCashReceiptDetailModel> GarmentFinanceBankCashReceiptDetails { get; set; }
         public DbSet<BankCashReceiptDetailItemModel> GarmentFinanceBankCashReceiptDetailItems { get; set; }
+        public DbSet<BankCashReceiptDetailOtherItemModel> GarmentFinanceBankCashReceiptDetailOtherItems { get; set; }
+
         public DbSet<PurchasingMemoTextileModel> PurchasingMemoTextiles { get; set; }
         public DbSet<PurchasingMemoTextileItemModel> PurchasingMemoTextileItems { get; set; }
 
         public DbSet<GarmentFinanceMemorialDetailModel> GarmentFinanceMemorialDetails { get; set; }
         public DbSet<GarmentFinanceMemorialDetailItemModel> GarmentFinanceMemorialDetailItems { get; set; }
+        public DbSet<GarmentFinanceMemorialDetailOtherItemModel> GarmentFinanceMemorialDetailOtherItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

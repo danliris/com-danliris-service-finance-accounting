@@ -54,6 +54,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                                 Symbol = "symbol"
                             }
                         }
+                    },
+                    OtherItems = new List<BankCashReceiptDetailOtherItemViewModel>
+                    {
+                        new BankCashReceiptDetailOtherItemViewModel()
+                        {
+                            Account = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name"
+                            },
+                             Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                            {
+                                Id = 1,
+                                Code = "code",
+                                Description = "description",
+                                Rate = 1,
+                                Symbol = "symbol"
+                            },
+                             Amount = 1,
+
+                        }
                     }
                 };
             }
@@ -91,6 +113,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                                 Id = 0,
                                 Code = null,
                             },
+                        }
+                    },
+                    OtherItems = new List<BankCashReceiptDetailOtherItemViewModel>
+                    {
+                        new BankCashReceiptDetailOtherItemViewModel()
+                        {
+                            Amount = 0,
+                            Currency = null,
+                            Account = null,
                         }
                     }
                 };

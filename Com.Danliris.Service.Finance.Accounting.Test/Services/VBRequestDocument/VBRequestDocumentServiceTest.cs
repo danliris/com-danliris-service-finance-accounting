@@ -210,6 +210,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
         }
 
         [Fact]
+        public void GetByUser_Return_Success()
+        {
+            //Setup
+            FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            VBRequestDocumentService service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
+            VBRequestDocumentWithPODto data = GetdataUtil(service).GetTestData_VBRequestDocumentWithPO();
+
+            var orderData = new
+            {
+                DocumentNo = "desc"
+            };
+            string order = JsonConvert.SerializeObject(orderData);
+
+            //Act
+            var result = service.GetByUser(1, 1, order, new List<string>(), "", "{}");
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.True(0 < result.Data.Count());
+        }
+
+        [Fact]
         public async Task GetNonPOById_Return_Success()
         {
             //Setup
@@ -419,6 +442,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRequestDocumen
 
             //Assert
             Assert.True(0 < result);
+        }
+
+        [Fact]
+        public void GetVBForPurchasing_Return_Succes()
+        {
+            //Setup
+            var dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            var service = new VBRequestDocumentService(dbContext, GetServiceProvider().Object);
+            var data = GetdataUtil(service).GetTestData_VBRequestDocumentWithPO_Cancellation();
+
+            //Act
+            bool result1 = service.GetVBForPurchasing(0);
+            bool result2 = service.GetVBForPurchasing(data.Id);
+
+            //Assert
+            Assert.True(result1);
+            Assert.False(result2);
         }
     }
 }
