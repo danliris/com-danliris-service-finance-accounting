@@ -56,7 +56,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         public DateTimeOffset Date { get; set; }
         public decimal Nominal { get; set; }
         public decimal NominalValas { get; set; }
-        [NotMapped]
         public decimal TransactionNominal { get; set; }
         [MaxLength(50)]
         public string ReferenceNo { get; set; }

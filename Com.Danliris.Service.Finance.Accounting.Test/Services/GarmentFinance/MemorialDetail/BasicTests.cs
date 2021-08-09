@@ -131,6 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
             newModel2.Id = model2.Id;
 
             newModel2.Items = new List<GarmentFinanceMemorialDetailItemModel> { model2.Items.First() };
+            newModel2.OtherItems = new List<GarmentFinanceMemorialDetailOtherItemModel> { model2.OtherItems.First() };
             var Response = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
 
@@ -149,6 +150,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
 
 
             newModel2.Items.Add(newItem);
+
+            GarmentFinanceMemorialDetailOtherItemModel newOtherItem = new GarmentFinanceMemorialDetailOtherItemModel
+            {
+                ChartOfAccountId = 1,
+                ChartOfAccountName = "Name",
+                ChartOfAccountCode = "code",
+                CurrencyId = 1,
+                CurrencyCode = "code",
+                CurrencyRate = 1,
+                Amount = 1
+            };
+            newModel2.OtherItems.Add(newOtherItem);
             var Response3 = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
         }
@@ -170,6 +183,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
                 new GarmentFinanceMemorialDetailItemViewModel()
                 {
                     InvoiceId=0
+                }
+            };
+            vm.OtherItems = new List<GarmentFinanceMemorialDetailOtherItemViewModel>
+            {
+                new GarmentFinanceMemorialDetailOtherItemViewModel()
+                {
+                    Account=null,
+                    Amount = 0,
                 }
             };
 

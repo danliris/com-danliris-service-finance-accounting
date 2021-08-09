@@ -43,6 +43,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                         InvoiceNo="no",
 
                     },
+                },
+                OtherItems = new List<GarmentFinanceMemorialDetailOtherItemModel>
+                {
+                    new GarmentFinanceMemorialDetailOtherItemModel()
+                    {
+                        Amount = 1,
+                        ChartOfAccountId = 1,
+                        ChartOfAccountCode = "code",
+                        ChartOfAccountName = "name",
+                        CurrencyId = 1,
+                        CurrencyCode = "code",
+                        CurrencyRate = 1
+
+                    }
                 }
             };
         }

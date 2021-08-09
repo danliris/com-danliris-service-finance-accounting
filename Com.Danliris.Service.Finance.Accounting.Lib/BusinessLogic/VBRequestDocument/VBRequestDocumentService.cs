@@ -823,5 +823,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             return _dbContext.SaveChangesAsync();
         }
+
+        public bool GetVBForPurchasing(int id)
+        {
+            bool Response = true;
+
+            var model = _dbContext.VBRequestDocumentEPODetails.Where(s => s.EPOId == id && s.IsDeleted == false).ToList();
+
+            if (model.Count > 0)
+            {
+                foreach (var item in model)
+                {
+                    var VBmodel = _dbContext.VBRequestDocuments.Where(s => s.Id == item.VBRequestDocumentId).ToList();
+
+                    Response = !VBmodel.Count.Equals(0);
+
+                    if (Response == true)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Response = false;
+            }
+
+            return Response;
+        }
     }
 }
