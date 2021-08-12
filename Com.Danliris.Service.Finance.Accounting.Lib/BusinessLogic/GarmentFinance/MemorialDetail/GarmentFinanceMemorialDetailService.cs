@@ -37,8 +37,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             IQueryable<GarmentFinanceMemorialDetailModel> Query = this.DbSet.Include(m => m.Items).Include(m => m.OtherItems);
             List<string> searchAttributes = new List<string>()
             {
-                "MemorialNo",  "AccountingBookCode"
+                "MemorialNo"
             };
+
+            Query = QueryHelper<GarmentFinanceMemorialDetailModel>.Search(Query, searchAttributes, keyword);
 
             Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
             Query = QueryHelper<GarmentFinanceMemorialDetailModel>.Filter(Query, FilterDictionary);
