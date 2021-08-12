@@ -66,9 +66,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.ExportSa
         {
             var serviceProvider = new Mock<IServiceProvider>();
 
+            var httpClientService = new Mock<IHttpClientService>();
+            HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
+
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtor"))))
+                .ReturnsAsync(message);
+
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/garment-debitur-balances"))))
+                .ReturnsAsync(message);
+
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
+                .ReturnsAsync(message);
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
                 .Returns(new HttpClientTestService());
+
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
@@ -118,40 +134,57 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.ExportSa
         {
             var serviceProviderMock = GetServiceProvider();
 
-            var httpClientService = new Mock<IHttpClientService>();
-
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
-                .Returns(httpClientService.Object);
-
             var dbContext = GetDbContext(GetCurrentAsyncMethod());
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
                 .Returns(dbContext);
+
+            var serviceProvider1 = new Mock<IServiceProvider>();
+
+            var httpClientService = new Mock<IHttpClientService>();
             serviceProviderMock
                 .Setup(x => x.GetService(typeof(IIdentityService)))
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
-
+                
             HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"amount\":1000,\"buyerCodeAgent\":\"buyerCode\",\"buyerNameAgent\":\"buyer\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"amount\",\"buyerCodeAgent\",\"truckingDate\"]}}");
+            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
 
             httpClientService
                 .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtor"))))
                 .ReturnsAsync(message);
 
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/garment-debitur-balances"))))
+                .ReturnsAsync(message);
+            httpClientService
+              .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("master/garment-currencies/sales-debtor-currencies"))))
+              .ReturnsAsync(message);
 
-            serviceProviderMock
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
+                .ReturnsAsync(message);
+            serviceProvider1
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientTestService());
+
+
+            serviceProvider1
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            serviceProvider1
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
                 .Returns(httpClientService.Object);
-
+            
             GarmentFinanceMemorialDetailService serviceMemo = new  GarmentFinanceMemorialDetailService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             GarmentFinanceMemorialDetailModel modelMemo =  _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetNewData();
 
             BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
             BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
-            ExportSalesDebtorReportService service = new ExportSalesDebtorReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            ExportSalesDebtorReportService service = new ExportSalesDebtorReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
+ 
+            var response = service.GetMonitoring(DateTimeOffset.Now.Month,DateTimeOffset.Now.Year,"IDR",7);
 
-            var response = service.GetMonitoring(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, 7);
             Assert.NotNull(response);
         }
 
@@ -160,29 +193,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.ExportSa
         {
             var serviceProviderMock = GetServiceProvider();
 
-            var httpClientService = new Mock<IHttpClientService>();
-
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
-                .Returns(httpClientService.Object);
-
             var dbContext = GetDbContext(GetCurrentAsyncMethod());
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
                 .Returns(dbContext);
-            serviceProviderMock
-                .Setup(x => x.GetService(typeof(IIdentityService)))
-                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
 
+            var serviceProvider1 = new Mock<IServiceProvider>();
+
+            var httpClientService = new Mock<IHttpClientService>();
             HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"amount\":1000,\"buyerCodeAgent\":\"buyerCode\",\"buyerNameAgent\":\"buyer\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"amount\",\"buyerCodeAgent\",\"truckingDate\"]}}");
+            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
 
             httpClientService
                 .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtor"))))
                 .ReturnsAsync(message);
 
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/garment-debitur-balances"))))
+                .ReturnsAsync(message);
+            httpClientService
+              .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("master/garment-currencies/sales-debtor-currencies"))))
+              .ReturnsAsync(message);
 
-            serviceProviderMock
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
+                .ReturnsAsync(message);
+            serviceProvider1
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientTestService());
+
+
+            serviceProvider1
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            serviceProvider1
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
                 .Returns(httpClientService.Object);
 
@@ -190,9 +235,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.ExportSa
             GarmentFinanceMemorialDetailModel modelMemo = _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetNewData();
             BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
             BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
-            ExportSalesDebtorReportService service = new ExportSalesDebtorReportService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            ExportSalesDebtorReportService service = new ExportSalesDebtorReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
 
-            var response = service.GenerateExcel(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year);
+            var response = service.GenerateExcel(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year,"IDR");
             Assert.NotNull(response);
         }
 
