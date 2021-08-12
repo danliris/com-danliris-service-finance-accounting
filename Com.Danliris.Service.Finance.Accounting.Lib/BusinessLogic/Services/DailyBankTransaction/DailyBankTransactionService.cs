@@ -397,7 +397,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 else
                 {
                     var BalanceByMonthAndYear = GetBalanceMonthAndYear(dataAccountBank.Id, month, year, clientTimeZoneOffset);
-                    var beforeBalance = BalanceByMonthAndYear.InitialBalance;
+                    var beforeBalance = BalanceByMonthAndYear == null ? 0 : BalanceByMonthAndYear.InitialBalance;
                     //var previous = new DailyBankTransactionModel();
                     foreach (var item in Query)
                     {
@@ -574,7 +574,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             else
             {
                 var BalanceByMonthAndYear = GetBalanceMonthAndYear(dataAccountBank.Id, month, year, clientTimeZoneOffset);
-                var beforeBalance = BalanceByMonthAndYear.InitialBalance;
+                var beforeBalance = BalanceByMonthAndYear == null ? 0 : BalanceByMonthAndYear.InitialBalance;
                 var beforeBalanceValas = beforeBalance / garmentCurrency.Rate;
                 //var previous = new DailyBankTransactionModel();
                 foreach (var item in Query)
