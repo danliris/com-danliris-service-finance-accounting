@@ -377,7 +377,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             var mocks = GetMocks();
             mocks.Mapper.Setup(f => f.Map<BankCashReceiptDetailViewModel>(It.IsAny<BankCashReceiptDetailModel>())).Returns(viewModel);
             mocks.Service.Setup(f => f.GetAmountByInvoiceId(It.IsAny<int>())).Returns(It.IsAny<double>());
-            int statusCode = await GetStatusCodeGetById(mocks);
+            BankCashReceiptDetailController controller = GetController(mocks);
+            IActionResult response = await controller.GetAmount(It.IsAny<int>());
+
+            int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
 
@@ -388,8 +391,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             var mocks = GetMocks();
             mocks.Mapper.Setup(f => f.Map<BankCashReceiptDetailViewModel>(It.IsAny<BankCashReceiptDetailModel>())).Returns(viewModel);
             mocks.Service.Setup(f => f.GetAmountByInvoiceId(It.IsAny<int>())).Throws(new Exception());
+            BankCashReceiptDetailController controller = GetController(mocks);
+            IActionResult response = await controller.GetAmount(It.IsAny<int>());
 
-            int statusCode = await GetStatusCodeGetById(mocks);
+            int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
     }
