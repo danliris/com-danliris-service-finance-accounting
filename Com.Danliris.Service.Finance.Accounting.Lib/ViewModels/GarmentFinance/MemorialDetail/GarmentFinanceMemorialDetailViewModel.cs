@@ -26,13 +26,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                 yield return new ValidationResult("No Memorial harus dipilih", new List<string> { "Memorial" });
             }
 
-            if((Items!=null || Items.Count>0) && (OtherItems!=null || OtherItems.Count > 0))
+            if (Items != null && OtherItems != null)
             {
-
-                if (TotalAmount != Items.Sum(a => a.Amount) + (double)OtherItems.Sum(a => a.Amount))
+                if (Items.Count > 0 && OtherItems.Count > 0)
                 {
-                    yield return new ValidationResult($"Total harus sama dengan total memorial ({TotalAmount})", new List<string> { "Amount" });
+                    if (TotalAmount != (double)Items.Sum(a => a.Amount) + (double)OtherItems.Sum(a => a.Amount))
+                    {
+                        yield return new ValidationResult($"Total harus sama dengan total memorial ({TotalAmount})", new List<string> { "Amount" });
+                    }
                 }
+
+
             }
 
             if (this.Items == null || this.Items.Count == 0)
