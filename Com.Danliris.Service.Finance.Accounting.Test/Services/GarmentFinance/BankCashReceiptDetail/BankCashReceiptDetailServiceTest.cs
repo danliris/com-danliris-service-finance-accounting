@@ -255,6 +255,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
         public void Should_Success_Validate_Null_Items_Data()
         {
             BankCashReceiptDetailViewModel vm = new BankCashReceiptDetailViewModel();
+            vm.TotalAmount = 100;
             vm.Items = new List<BankCashReceiptDetailItemViewModel>
             {
                 new BankCashReceiptDetailItemViewModel()
