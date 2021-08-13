@@ -123,9 +123,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
             //var newModel2 = await service.ReadByIdAsync(model.Id);
             GarmentFinanceMemorialModel newModel2 = new GarmentFinanceMemorialModel();
             newModel2.Id = model2.Id;
-            newModel2.Items.First().Credit += 1;
-            newModel2.Items.First().Debit += 1;
             newModel2.Items = new List<GarmentFinanceMemorialItemModel> { model2.Items.First() };
+            newModel2.Items.First().Credit = 100;
+            newModel2.Items.First().Debit = 100;
             var Response = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
 
