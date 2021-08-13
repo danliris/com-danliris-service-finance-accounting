@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.MemorialDetail
@@ -16,12 +17,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public List<GarmentFinanceMemorialDetailItemViewModel> Items { get; set; }
         public List<GarmentFinanceMemorialDetailOtherItemViewModel> OtherItems { get; set; }
 
+        public double TotalAmount { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (this.MemorialId == 0)
             {
                 yield return new ValidationResult("No Memorial harus dipilih", new List<string> { "Memorial" });
             }
+
+            if (Items != null && OtherItems != null)
+            {
+                if (Items.Count > 0 && OtherItems.Count > 0)
+                {
+                    if (TotalAmount != (double)Items.Sum(a => a.Amount) + (double)OtherItems.Sum(a => a.Amount))
+                    {
+                        yield return new ValidationResult($"Total harus sama dengan total memorial ({TotalAmount})", new List<string> { "Amount" });
+                    }
+                }
+
+
+            }
+
             if (this.Items == null || this.Items.Count == 0)
             {
                 yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "ItemsCount" });
