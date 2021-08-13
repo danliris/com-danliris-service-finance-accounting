@@ -31,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     BankCashReceiptDate = DateTimeOffset.Now,
                     BankCashReceiptId = 1,
                     BankCashReceiptNo = "bankCashReceiptNo",
+                    TotalAmount=2,
                     Items = new List<BankCashReceiptDetailItemViewModel>
                     {
                         new BankCashReceiptDetailItemViewModel()
@@ -89,6 +90,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     BankCashReceiptDate = DateTimeOffset.Now,
                     BankCashReceiptId = 1,
                     BankCashReceiptNo = "bankCashReceiptNo",
+                    TotalAmount=1,
                     Items = new List<BankCashReceiptDetailItemViewModel>
                     {
                         new BankCashReceiptDetailItemViewModel()
@@ -367,6 +369,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
 
             var response = GetController(mocks).Put(1, It.IsAny<BankCashReceiptDetailViewModel>()).Result;
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public async Task GetAmount_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptDetailViewModel>(It.IsAny<BankCashReceiptDetailModel>())).Returns(viewModel);
+            mocks.Service.Setup(f => f.GetAmountByInvoiceId(It.IsAny<int>())).Returns(It.IsAny<double>());
+            int statusCode = await GetStatusCodeGetById(mocks);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
+        }
+
+
+        [Fact]
+        public async Task GetAmount_ThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Mapper.Setup(f => f.Map<BankCashReceiptDetailViewModel>(It.IsAny<BankCashReceiptDetailModel>())).Returns(viewModel);
+            mocks.Service.Setup(f => f.GetAmountByInvoiceId(It.IsAny<int>())).Throws(new Exception());
+
+            int statusCode = await GetStatusCodeGetById(mocks);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
     }
 }
