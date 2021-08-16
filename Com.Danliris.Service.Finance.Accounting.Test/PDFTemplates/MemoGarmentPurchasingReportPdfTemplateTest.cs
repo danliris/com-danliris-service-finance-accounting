@@ -31,6 +31,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             {
                                 Remarks = "Remarks"
                             }
+                        },
+                        new MemoGarmentPurchasingDetailModel()
+                        {
+                            COANo = "COANo",
+                            COAName = "COAName",
+                            DebitNominal = 0,
+                            CreditNominal = 0,
+                            MemoGarmentPurchasing = new MemoGarmentPurchasingModel()
+                            {
+                                Remarks = "Remarks"
+                            }
                         }
                     }
                 };
