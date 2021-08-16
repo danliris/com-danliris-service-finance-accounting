@@ -141,6 +141,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         public decimal DPPCurrency { get; set; }
         public decimal CurrencyRate { get; set; }
 
+        public string PurchasingMemoNo { get; set; }
+        public int PurchasingMemoId { get; set; }
+        public double PurchasingMemoAmount { get; set; }
+
+        public void SetPurchasingMemo(int purchasingMemoId, string purchasingMemoNo, double purchasingMemoAmount)
+        {
+            PurchasingMemoId = purchasingMemoId;
+            PurchasingMemoNo = purchasingMemoNo;
+            PurchasingMemoAmount = purchasingMemoAmount;
+        }
+
+        public void RemovePurchasingMemo()
+        {
+            PurchasingMemoId = 0;
+            PurchasingMemoNo = null;
+            PurchasingMemoAmount = 0;
+        }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             throw new NotImplementedException();

@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoDetailTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -16,11 +18,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
         private const string UserAgent = "finance-service";
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
+        private readonly ICreditorAccountService _creditorAccountService;
 
         public PurchasingMemoDetailTextileService(IServiceProvider serviceProvider)
         {
             _dbContext = serviceProvider.GetService<FinanceDbContext>();
             _identityService = serviceProvider.GetService<IIdentityService>();
+            _creditorAccountService = serviceProvider.GetService<ICreditorAccountService>();
         }
 
         private string GenerateDocumentNo(FormDto form)
@@ -64,6 +68,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                         _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                         _dbContext.SaveChanges();
 
+                        _creditorAccountService.CreateFromPurchasingMemoTextile(new CreditorAccountPurchasingMemoTextileFormDto(detail.UnitPaymentOrder.UnitPaymentOrderNo, model.Id, model.DocumentNo, detail.PaymentAmount));
+
                         foreach (var unitReceiptNote in detail.UnitReceiptNotes)
                         {
                             var unitReceiptNoteModel = new PurchasingMemoDetailTextileUnitReceiptNoteModel(model.Id, itemModel.Id, detailModel.Id, unitReceiptNote.Id, unitReceiptNote.UnitReceiptNoteNo, unitReceiptNote.UnitReceiptNoteDate);
@@ -82,6 +88,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                     EntityExtension.FlagForCreate(detailModel, _identityService.Username, UserAgent);
                     _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                     _dbContext.SaveChanges();
+
+                    _creditorAccountService.CreateFromPurchasingMemoTextile(new CreditorAccountPurchasingMemoTextileFormDto(detail.UnitPaymentOrder.UnitPaymentOrderNo, model.Id, model.DocumentNo, detail.PaymentAmount));
 
                     foreach (var unitReceiptNote in detail.UnitReceiptNotes)
                     {
@@ -133,6 +141,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                 _dbContext.PurchasingMemoDetailTextileUnitReceiptNotes.UpdateRange(unitReceiptNotes);
 
                 _dbContext.SaveChanges();
+
+                foreach (var detail in details)
+                {
+                    _creditorAccountService.DeleteFromPurchasingMemoTextile(new CreditorAccountPurchasingMemoTextileFormDto(detail.UnitPaymentOrderNo, 0, null, 0));
+                }
                 deletedId = model.Id;
             }
 

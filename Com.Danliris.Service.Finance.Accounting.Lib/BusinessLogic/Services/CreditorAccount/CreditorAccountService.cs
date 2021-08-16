@@ -693,5 +693,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             return result;
         }
+
+        public int CreateFromPurchasingMemoTextile(CreditorAccountPurchasingMemoTextileFormDto form)
+        {
+            var models = DbContext.CreditorAccounts.Where(element => element.MemoNo == form.UnitPaymentOrderNo);
+            foreach (var model in models)
+            {
+                model.SetPurchasingMemo(form.PurchasingMemoId, form.PurchasingMemoNo, form.PurchasingMemoAmount);
+                EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+            }
+
+            DbContext.CreditorAccounts.UpdateRange(models);
+            return DbContext.SaveChanges();
+        }
+
+        public int DeleteFromPurchasingMemoTextile(CreditorAccountPurchasingMemoTextileFormDto form)
+        {
+            var models = DbContext.CreditorAccounts.Where(element => element.MemoNo == form.UnitPaymentOrderNo);
+            foreach (var model in models)
+            {
+                model.RemovePurchasingMemo();
+                EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+            }
+
+            DbContext.CreditorAccounts.UpdateRange(models);
+            return DbContext.SaveChanges();
+        }
     }
 }
