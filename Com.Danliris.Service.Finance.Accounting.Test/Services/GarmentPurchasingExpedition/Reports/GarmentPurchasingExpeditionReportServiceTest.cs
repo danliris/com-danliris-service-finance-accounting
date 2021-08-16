@@ -1,7 +1,9 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurchasingExpedition.Reports;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Moonlay.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,13 +59,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProvider();
 
+            var expedition = new GarmentPurchasingExpeditionModel();
+            expedition.SendToVerification("Test");
+            EntityExtension.FlagForCreate(expedition, "Test", "Test");
+            dbContext.GarmentPurchasingExpeditions.Add(expedition);
+            dbContext.SaveChanges();
+
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
                .Returns(dbContext);
 
             var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
 
-            var reportResponse = service.GenerateExcel(1, 1, GarmentPurchasingExpeditionPosition.Invalid, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse = service.GenerateExcel(0, 0, GarmentPurchasingExpeditionPosition.SendToVerification, DateTimeOffset.Now.AddDays(-7), DateTimeOffset.Now.AddDays(7));
 
             Assert.NotNull(reportResponse);
         }
