@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using Xunit;
 
@@ -16,17 +15,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
 {
     public class GarmentPurchasingExpeditionReportServiceTest
     {
-        private const string Entity = "GarmentPurchasingExpeditionReport";
+        private const string Entity = "GarmentPurchasingExpeditions";
 
-        private string GetCurrentAsyncMethod([CallerMemberName] string methodName = "")
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public string GetCurrentMethod()
         {
-            var method = new StackTrace()
-                .GetFrames()
-                .Select(frame => frame.GetMethod())
-                .FirstOrDefault(item => item.Name == methodName);
+            StackTrace st = new StackTrace();
+            StackFrame sf = st.GetFrame(1);
 
-            return method.Name;
-
+            return string.Concat(sf.GetMethod().Name, "_", Entity);
         }
 
         private Mock<IServiceProvider> GetServiceProvider()
@@ -55,9 +52,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
         }
 
         [Fact]
+        public void Should_Success_Generate_Excel_Default()
+        {
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            serviceProviderMock
+               .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+               .Returns(dbContext);
+
+            var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
+
+            var reportResponse = service.GenerateExcel(1, 1, GarmentPurchasingExpeditionPosition.Invalid, DateTimeOffset.Now, DateTimeOffset.Now);
+
+            Assert.NotNull(reportResponse);
+        }
+
+        [Fact]
         public void Should_Success_Generate_Excel()
         {
-            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProvider();
 
             serviceProviderMock
@@ -67,13 +81,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
             var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
 
             var reportResponse = service.GenerateExcel(1, 1, GarmentPurchasingExpeditionPosition.VerificationAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse2 = service.GenerateExcel(1, 1, GarmentPurchasingExpeditionPosition.SendToCashier, DateTimeOffset.Now, DateTimeOffset.Now);
+            
             Assert.NotNull(reportResponse);
+            Assert.NotNull(reportResponse2);
         }
 
         [Fact]
         public void Should_Success_Get_Report()
         {
-            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProvider();
 
             serviceProviderMock
@@ -82,14 +99,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
 
             var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
 
-            var reportResponse = service.GetReport(1, 1, GarmentPurchasingExpeditionPosition.VerificationAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse = service.GetReport(1, 1, GarmentPurchasingExpeditionPosition.Purchasing, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse2 = service.GetReport(1, 1, GarmentPurchasingExpeditionPosition.CashierAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
+            
             Assert.NotNull(reportResponse);
+            Assert.NotNull(reportResponse2);
         }
 
         [Fact]
         public void Should_Success_Get_Report_ViewModel()
         {
-            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProvider();
 
             serviceProviderMock
@@ -98,8 +118,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
 
             var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
 
-            var reportResponse = service.GetReportViewModel(1, 1, GarmentPurchasingExpeditionPosition.VerificationAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse = service.GetReportViewModel(1, 1, GarmentPurchasingExpeditionPosition.SendToVerification, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse2 = service.GetReportViewModel(1, 1, GarmentPurchasingExpeditionPosition.AccountingAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
+
             Assert.NotNull(reportResponse);
+            Assert.NotNull(reportResponse2);
         }
     }
 }
