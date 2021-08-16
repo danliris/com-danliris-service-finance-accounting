@@ -54,7 +54,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
         }
 
         [Fact]
-        public void Should_Success_Generate_Excel_Default()
+        public void Should_Success_Generate_Excel_With_Data()
         {
             var dbContext = GetDbContext(GetCurrentMethod());
             var serviceProviderMock = GetServiceProvider();
@@ -107,7 +107,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
 
             var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
 
-            var reportResponse = service.GetReport(1, 1, GarmentPurchasingExpeditionPosition.Purchasing, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse = service.GetReport(1, 1, 0, DateTimeOffset.Now, DateTimeOffset.Now);
             var reportResponse2 = service.GetReport(1, 1, GarmentPurchasingExpeditionPosition.CashierAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
             
             Assert.NotNull(reportResponse);
