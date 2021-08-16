@@ -126,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
 
             var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
 
-            var reportResponse = service.GetReportViewModel(1, 1, GarmentPurchasingExpeditionPosition.SendToVerification, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse = service.GetReportViewModel(1, 1, GarmentPurchasingExpeditionPosition.Purchasing, DateTimeOffset.Now, DateTimeOffset.Now);
             var reportResponse2 = service.GetReportViewModel(1, 1, GarmentPurchasingExpeditionPosition.AccountingAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
 
             Assert.NotNull(reportResponse);
