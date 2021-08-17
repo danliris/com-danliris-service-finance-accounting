@@ -13,6 +13,7 @@
         public decimal Purchase { get; set; }
 
         public decimal Payment { get; set; }
+        public double PaidAmount { get; set; }
 
         public decimal FinalBalance { get; set; }
 

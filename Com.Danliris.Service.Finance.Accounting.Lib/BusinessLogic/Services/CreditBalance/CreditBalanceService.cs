@@ -37,7 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             var firstDayOfMonth = new DateTime(year, month, 1);
 
             IQueryable<CreditorAccountModel> query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport).AsQueryable();
-            
+
 
             List<CreditBalanceViewModel> result = new List<CreditBalanceViewModel>();
             int previousMonth = month - 1;
@@ -67,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 queryRemainingBalance = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth);
 
             query = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
-            
+
             var data = query.ToList();
             if (string.IsNullOrEmpty(suplierName))
                 data.AddRange(queryRemainingBalance.ToList());
@@ -156,7 +156,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     grp.DivisionCode,
                     grp.UnitReceiptNoteDate,
                     grp.UnitReceiptMutation,
-                    grp.BankExpenditureNoteMutation
+                    grp.BankExpenditureNoteMutation,
+                    grp.PurchasingMemoAmount
                 }
                 )
                     .AsQueryable()
@@ -185,6 +186,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     Currency = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().CurrencyCode ?? "",
                     CurrencyRate = item.FirstOrDefault() == null ? 1 : item.FirstOrDefault().CurrencyRate,
                     DivisionName = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().DivisionName ?? "",
+                    PaidAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.PaidAmount)
                 };
 
                 creditBalance.FinalBalance = creditBalance.StartBalance + creditBalance.Purchase - creditBalance.Payment;
@@ -226,6 +228,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             dt.Columns.Add(new DataColumn() { ColumnName = "Saldo Awal", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Pembelian", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Pembayaran", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Pelunasan", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(string) });
 
             if (isImport)
@@ -241,11 +244,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             {
                 if (isImport)
                 {
-                    dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "");
+                    dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "");
                 }
                 else
                 {
-                    dt.Rows.Add("", "", "", "", "", "", "");
+                    dt.Rows.Add("", "", "", "", "", "", "", "");
                 }
             }
             else
@@ -262,14 +265,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     {
                         dt.Rows.Add(item.SupplierName, item.DivisionName, item.Currency, item.StartBalance.ToString("#,##0.#0"), item.Purchase.ToString("#,##0.#0"),
                                 item.Payment.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"), (item.StartBalance * item.CurrencyRate).ToString("#,##0.#0"),
-                                (item.Purchase * item.CurrencyRate).ToString("#,##0.#0"), (item.Payment * item.CurrencyRate).ToString("#,##0.#0"),
+                                (item.Purchase * item.CurrencyRate).ToString("#,##0.#0"), (item.Payment * item.CurrencyRate).ToString("#,##0.#0"), (item.PaidAmount).ToString("#,##0.#0"),
                                 (item.FinalBalance * item.CurrencyRate).ToString("#,##0.#0"));
                         index++;
                     }
                     else
                     {
                         dt.Rows.Add(item.SupplierName, item.DivisionName, item.Currency, item.StartBalance.ToString("#,##0.#0"), item.Purchase.ToString("#,##0.#0"),
-                                item.Payment.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"));
+                                item.Payment.ToString("#,##0.#0"), item.PaidAmount.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"));
                         index++;
                     }
                 }
