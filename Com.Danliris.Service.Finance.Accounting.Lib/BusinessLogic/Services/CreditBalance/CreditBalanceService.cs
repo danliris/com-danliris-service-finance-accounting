@@ -265,7 +265,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     {
                         dt.Rows.Add(item.SupplierName, item.DivisionName, item.Currency, item.StartBalance.ToString("#,##0.#0"), item.Purchase.ToString("#,##0.#0"),
                                 item.Payment.ToString("#,##0.#0"), item.FinalBalance.ToString("#,##0.#0"), (item.StartBalance * item.CurrencyRate).ToString("#,##0.#0"),
-                                (item.Purchase * item.CurrencyRate).ToString("#,##0.#0"), (item.Payment * item.CurrencyRate).ToString("#,##0.#0"), (item.PaidAmount * item.CurrencyRate).ToString("#,##0.#0"),
+                                (item.Purchase * item.CurrencyRate).ToString("#,##0.#0"), (item.Payment * item.CurrencyRate).ToString("#,##0.#0"), (item.PaidAmount).ToString("#,##0.#0"),
                                 (item.FinalBalance * item.CurrencyRate).ToString("#,##0.#0"));
                         index++;
                     }
