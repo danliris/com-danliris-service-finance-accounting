@@ -313,6 +313,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     //bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
                     //}
                 }
+
+                if (item.PurchasingMemoId > 0)
+                {
+                    vm.BankExpenditureAmount = item.PurchasingMemoAmount;
+                }
+
                 result.Add(vm);
 
                 //if (!string.IsNullOrEmpty(item.MemoNo))
