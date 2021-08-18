@@ -472,6 +472,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = _dataUtil(service).GetNewData();
             model.Status = "DRAFT";
+
             var createdData = await service.CreateAsync(model);
 
             var response = service.ReadUnPostedTransactionsByPeriod(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, model.ReferenceNo, model.Description, false);
