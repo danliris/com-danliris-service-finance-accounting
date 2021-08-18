@@ -254,6 +254,66 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.ExportSa
             var response = service.GenerateExcel(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year,"IDR");
             Assert.NotNull(response);
         }
+        [Fact]
+        public async Task Should_Success_Get_All_DataExcelTypeEndbalance()
+        {
+            var serviceProviderMock = GetServiceProvider();
+
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var serviceProvider1 = new Mock<IServiceProvider>();
+
+            var httpClientService = new Mock<IHttpClientService>();
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"rate\":\"14500\",\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
+
+            HttpResponseMessage messageC = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            messageC.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":{\"Rate\":14500.0,\"Uid\":\"no\",\"Date\":\"2018-10-20T17:00:00\",\"Code\":\"USD\"},\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":1,\"order\":{\"Date\":\"desc\"},\"select\":[\"Rate\"]}}");
+
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtor"))))
+                .ReturnsAsync(message);
+
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/garment-debitur-balances"))))
+                .ReturnsAsync(message);
+            httpClientService
+              .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("master/garment-currencies/sales-debtor-currencies"))))
+              .ReturnsAsync(messageC);
+
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
+                .ReturnsAsync(message);
+            serviceProvider1
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientTestService());
+
+
+            serviceProvider1
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            serviceProvider1
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            GarmentFinanceMemorialDetailService serviceMemo = new GarmentFinanceMemorialDetailService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            GarmentFinanceMemorialDetailModel modelMemo = _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetNewData();
+
+            BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
+            BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
+            ExportSalesDebtorReportService service = new ExportSalesDebtorReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
+
+            var response = service.GenerateExcel(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, "end");
+            Assert.NotNull(response);
+        }
 
     }
 }
