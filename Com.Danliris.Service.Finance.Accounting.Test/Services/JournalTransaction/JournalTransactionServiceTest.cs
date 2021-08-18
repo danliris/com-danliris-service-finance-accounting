@@ -474,7 +474,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             model.Status = "DRAFT";
             var createdData = await service.CreateAsync(model);
 
-            var response = service.ReadUnPostedTransactionsByPeriod(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, model.ReferenceNo, model.Description);
+            var response = service.ReadUnPostedTransactionsByPeriod(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, model.ReferenceNo, model.Description, false);
 
             Assert.NotEmpty(response);
         }

@@ -290,7 +290,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("unposted-transactions")]
-        public IActionResult GetUnPosted([FromQuery] string referenceNo, [FromQuery] string referenceType, [FromQuery] int month = 0, [FromQuery] int year = 0)
+        public IActionResult GetUnPosted([FromQuery] string referenceNo, [FromQuery] string referenceType, [FromQuery] int month = 0, [FromQuery] int year = 0, [FromQuery] bool isVB = false)
         {
             try
             {
@@ -299,7 +299,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                 if (year.Equals(0))
                     year = DateTime.Now.Year;
 
-                List<JournalTransactionModel> result = Service.ReadUnPostedTransactionsByPeriod(month, year, referenceNo, referenceType);
+                List<JournalTransactionModel> result = Service.ReadUnPostedTransactionsByPeriod(month, year, referenceNo, referenceType, isVB);
 
                 List<JournalTransactionViewModel> dataVM = Mapper.Map<List<JournalTransactionViewModel>>(result);
 
