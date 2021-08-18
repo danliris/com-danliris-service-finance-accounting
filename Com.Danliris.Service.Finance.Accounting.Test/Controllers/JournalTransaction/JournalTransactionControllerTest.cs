@@ -68,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public void Get_Unposted_Return_Ok()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.ReadUnPostedTransactionsByPeriod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).Returns(new List<JournalTransactionModel>());
+            mocks.Service.Setup(f => f.ReadUnPostedTransactionsByPeriod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new List<JournalTransactionModel>());
 
             var response = GetController(mocks).GetUnPosted(It.IsAny<string>(), It.IsAny<string>(), 0, 0);
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
@@ -78,7 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public void Get_Unposted_Throws_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.ReadUnPostedTransactionsByPeriod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.ReadUnPostedTransactionsByPeriod(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Throws(new Exception());
 
             var response = GetController(mocks).GetUnPosted(It.IsAny<string>(), It.IsAny<string>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));

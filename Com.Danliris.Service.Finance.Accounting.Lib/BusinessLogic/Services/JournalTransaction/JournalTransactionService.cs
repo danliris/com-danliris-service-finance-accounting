@@ -340,9 +340,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return new ReadResponse<JournalTransactionModel>(list, TotalData, OrderDictionary, new List<string>());
         }
 
-        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year, string referenceNo, string referenceType)
+        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year, string referenceNo, string referenceType, bool isVB)
         {
             var query = _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.Status.Equals("DRAFT"));
+
+            if (isVB)
+                query = query.Where(entity => entity.Description.Contains("VB"));
 
             if (!string.IsNullOrWhiteSpace(referenceNo))
                 query = query.Where(entity => entity.ReferenceNo.Contains(referenceNo));
