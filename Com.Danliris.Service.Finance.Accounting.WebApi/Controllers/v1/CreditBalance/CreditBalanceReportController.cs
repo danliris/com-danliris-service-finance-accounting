@@ -65,6 +65,38 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
             }
         }
 
+        [HttpGet("reports/detail")]
+        public IActionResult GetReportDetail([FromQuery] bool isImport, [FromQuery] int month, [FromQuery] int year, [FromQuery] string supplierCode = null, int page = 1, int size = 25, bool isForeignCurrency = false, int divisionId = 0)
+        {
+            try
+            {
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                //int offSet = 7;
+                var data = Service.GetReportDetail(isImport, supplierCode, month, year, offSet, isForeignCurrency, divisionId);
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data = data.Data,
+                    info = new
+                    {
+                        data.Count,
+                        data.Order,
+                        data.Selected
+                    },
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                   new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                   .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("reports/downloads/xls")]
         public IActionResult GetXls([FromQuery] bool isImport, [FromQuery] int month, [FromQuery] int year, [FromQuery] string supplierName = null, bool isForeignCurrency = false, int divisionId = 0)
         {
