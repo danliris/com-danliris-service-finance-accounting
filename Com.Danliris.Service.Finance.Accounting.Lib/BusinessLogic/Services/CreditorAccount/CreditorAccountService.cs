@@ -508,7 +508,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 DivisionName = viewModel.DivisionName,
                 UnitId = viewModel.UnitId,
                 UnitCode = viewModel.UnitCode,
-                UnitName = viewModel.UnitName
+                UnitName = viewModel.UnitName,
+                ExternalPurchaseOrderNo = viewModel.ExternalPurchaseOrderNo,
+                VATAmount = viewModel.VATAmount,
+                IncomeTaxAmount = viewModel.IncomeTaxAmount,
+                IncomeTaxNo = viewModel.IncomeTaxNo
             };
 
             return await CreateAsync(model);
