@@ -66,7 +66,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
             else
             {
                 int itemErrorCount = 0;
-                //decimal totalAmount = 0;
                 string ItemError = "[";
 
                 foreach (BankCashReceiptItemViewModel Item in Items)
@@ -77,21 +76,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                         itemErrorCount++;
                         ItemError += "NoAcc: 'Salah Satu harus diisi', ";
                         ItemError += "SubAcc: 'Salah Satu harus diisi', ";
-                        //ItemError += "AccUnit: 'Salah Satu harus diisi', ";
-                        //ItemError += "AccBiaya: 'Salah Satu harus diisi', ";
                     }
-                    //totalAmount = Item.C2A + Item.C2B + Item.C2C + Item.C1A + Item.C1B;
-                    //if (totalAmount != Item.Summary)
-                    //{
-                    //    itemErrorCount++;
-                    //    ItemError += "Summary: 'Total Jumlah Tidak Sama', ";
-                    //}
-
-                    /*if (string.IsNullOrWhiteSpace(Item.InvoiceNo) || Item.InvoiceId == 0)
-                    {
-                        itemErrorCount++;
-                        ItemError += "InvoiceNo: 'Invoice harus diisi', ";
-                    }*/
+                    
 
                     ItemError += " }, ";
                 }
