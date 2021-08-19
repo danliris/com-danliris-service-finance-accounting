@@ -263,7 +263,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
 
-        public async Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel accountBank)
+        public async Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel accountBank, string referenceNo)
         {
             var realizations = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) && entity.Type == VBRequestDocument.VBType.WithPO).ToList();
 

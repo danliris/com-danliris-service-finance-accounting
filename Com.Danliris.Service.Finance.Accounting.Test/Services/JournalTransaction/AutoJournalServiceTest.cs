@@ -182,7 +182,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             {
                 1
             };
-            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel);
+            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel, null);
             Assert.NotEqual(0, result);
 
 
@@ -247,7 +247,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             };
 
             //Act
-            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel);
+            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel, null);
             
             //Assert
             Assert.NotEqual(0, result);
