@@ -54,6 +54,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         },
                         Id = 1
                     },
+                    BankCashReceiptType = new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id = 1,
+                        Name = "PENJUALAN"
+                    },
                     Id = 1,
                     Items = new List<BankCashReceiptItemViewModel>()
                     {
@@ -144,6 +149,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         Id = 1
                     },
                     Id = 1,
+                    BankCashReceiptType = new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id = 1,
+                        Name = "LOKAL"
+                    },
                     Items = new List<BankCashReceiptItemViewModel>()
                     {
                         new BankCashReceiptItemViewModel()
@@ -233,6 +243,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         Id = 1
                     },
                     Id = 1,
+                    BankCashReceiptType= new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id=1,
+                        Name="PENJUALAN LOKAL"
+                    },
+                    Buyer = new Lib.ViewModels.NewIntegrationViewModel.NewBuyerViewModel
+                    {
+                        Id = 1,
+                        Name = "name"
+                    },
                     Items = new List<BankCashReceiptItemViewModel>()
                     {
                         new BankCashReceiptItemViewModel()
@@ -303,6 +323,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         Name = "name",
                     },
                     IncomeType = "incomeType",
+                    BankCashReceiptType = new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id = 1,
+                        Name = "JUAL EKSPOR"
+                    },
+                    Buyer = new Lib.ViewModels.NewIntegrationViewModel.NewBuyerViewModel
+                    {
+                        Id = 1,
+                        Name = "name"
+                    },
                     Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel()
                     {
                         AccountCOA = "AccountCOA",
