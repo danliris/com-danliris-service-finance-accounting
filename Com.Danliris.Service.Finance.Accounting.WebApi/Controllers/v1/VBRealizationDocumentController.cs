@@ -73,7 +73,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
 
                 //List<TViewModel> dataVM = Mapper.Map<List<TViewModel>>(read.Data);
 
-
                 return Ok(new { data });
             }
             catch (Exception e)
