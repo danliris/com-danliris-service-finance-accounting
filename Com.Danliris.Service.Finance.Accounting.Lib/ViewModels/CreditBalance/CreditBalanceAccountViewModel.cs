@@ -17,6 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditBalance
         public decimal BankExpenditureNoteMutation { get; set; }
         public decimal FinalBalance { get; set; }
         public double PaidAmount { get; set; }
+        public int DivisionId { get; set; }
         public string SupplierName { get; set; }
         public decimal CurrencyRate { get; set; }
         public string DivisionName { get; set; }
@@ -34,6 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditBalance
             DivisionName = creditorAccountModel.DivisionName;
             FinalBalance = creditorAccountModel.FinalBalance;
             PaidAmount = creditorAccountModel.PurchasingMemoAmount;
+            DivisionId = creditorAccountModel.DivisionId;
         }
     }
 }
