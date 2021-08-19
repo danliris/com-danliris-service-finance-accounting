@@ -38,9 +38,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Bank
         public string CurrencyCode { get; set; }
         public decimal CurrencyRate { get; set; }
 
+        public int BankCashReceiptTypeId { get; set; }
+        [MaxLength(100)]
+        public string BankCashReceiptTypeName { get; set; }
+        public int BankCashReceiptTypeCoaId { get; set; }
+        [MaxLength(32)]
+        public string BankCashReceiptTypeCoaCode { get; set; }
+        [MaxLength(256)]
+        public string BankCashReceiptTypeCoaName { get; set; }
+
+
+        public int BuyerId { get; set; }
+        [MaxLength(100)]
+        public string BuyerName { get; set; }
+        [MaxLength(20)]
+        public string BuyerCode { get; set; }
+
         [MaxLength(32)]
         public string NumberingCode { get; set; }
-        [MaxLength(256)]
+        [MaxLength(100)]
         public string IncomeType { get; set; }
         [MaxLength(1024)]
         public string Remarks { get; set; }

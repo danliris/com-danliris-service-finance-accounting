@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210818082517_tests")]
+    partial class tests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1455,6 +1457,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AccAmountCoaCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("AccAmountCoaId");
+
+                    b.Property<string>("AccAmountCoaName")
+                        .HasMaxLength(256);
+
                     b.Property<string>("AccNumberCoaCode")
                         .HasMaxLength(32);
 
@@ -1471,11 +1481,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("AccSubCoaName")
                         .HasMaxLength(256);
 
+                    b.Property<string>("AccUnitCoaCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("AccUnitCoaId");
+
+                    b.Property<string>("AccUnitCoaName")
+                        .HasMaxLength(256);
+
                     b.Property<bool>("Active");
 
                     b.Property<decimal>("Amount");
 
                     b.Property<int>("BankCashReceiptId");
+
+                    b.Property<decimal>("C1A");
+
+                    b.Property<decimal>("C1B");
+
+                    b.Property<decimal>("C2A");
+
+                    b.Property<decimal>("C2B");
+
+                    b.Property<decimal>("C2C");
 
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
@@ -1548,19 +1576,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("BankAccountingCode")
                         .HasMaxLength(32);
 
-                    b.Property<string>("BankCashReceiptTypeCoaCode")
-                        .HasMaxLength(32);
-
-                    b.Property<int>("BankCashReceiptTypeCoaId");
-
-                    b.Property<string>("BankCashReceiptTypeCoaName")
-                        .HasMaxLength(256);
-
-                    b.Property<int>("BankCashReceiptTypeId");
-
-                    b.Property<string>("BankCashReceiptTypeName")
-                        .HasMaxLength(100);
-
                     b.Property<string>("BankCurrencyCode")
                         .HasMaxLength(32);
 
@@ -1570,14 +1585,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("BankName")
                         .HasMaxLength(256);
-
-                    b.Property<string>("BuyerCode")
-                        .HasMaxLength(20);
-
-                    b.Property<int>("BuyerId");
-
-                    b.Property<string>("BuyerName")
-                        .HasMaxLength(100);
 
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
