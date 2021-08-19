@@ -530,7 +530,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 if (id > 0)
                 {
                     var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
-                    model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                    model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent, null);
                     _dbContext.VBRealizationDocuments.Update(model);
 
                     if (model.Type == VBType.NonPO)
@@ -602,7 +602,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 if (id > 0)
                 {
                     var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
-                    model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                    model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent, null);
                     _dbContext.VBRealizationDocuments.Update(model);
 
                     if (model.Type == VBType.NonPO)
@@ -643,7 +643,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
             if (vbNonPOIdsToBeAccounted.Count > 0)
             {
-                await _autoJournalService.AutoJournalVBNonPOClearence(vbNonPOIdsToBeAccounted, form.Bank);
+                await _autoJournalService.AutoJournalVBNonPOClearence(vbNonPOIdsToBeAccounted, form.Bank, null);
             }
 
             return result;
