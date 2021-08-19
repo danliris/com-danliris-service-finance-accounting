@@ -249,6 +249,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 Id = 1,
                 Name = "PENJUALAN EKSPOR"
             };
+            vm.Buyer = new Lib.ViewModels.NewIntegrationViewModel.NewBuyerViewModel
+            {
+                Id = 0
+            };
             Assert.True(vm.Validate(null).Count() > 0);
 
             BankCashReceiptViewModel vm2 = new BankCashReceiptViewModel();
