@@ -101,6 +101,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         public decimal UnitReceiptNotePPN { get; set; }
 
         public decimal UnitReceiptMutation { get; set; }
+        public decimal IncomeTaxAmount { get; set; }
+        public decimal VATAmount { get; set; }
+        [MaxLength(512)]
+        public string IncomeTaxNo { get; set; }
+        public string ExternalPurchaseOrderNo { get; set; }
         #endregion
 
         #region BankExpenditureNote
