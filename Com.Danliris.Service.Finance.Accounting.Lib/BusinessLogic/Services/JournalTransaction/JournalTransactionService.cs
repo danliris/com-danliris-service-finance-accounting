@@ -1170,14 +1170,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         }
 
-        public List<string> GetAllReferenceNo(string keyword)
+        public List<string> GetAllReferenceNo(string keyword, bool isVB)
         {
-            return _DbContext.JournalTransactions.Select(entity => entity.ReferenceNo).Distinct().Where(entity => !string.IsNullOrWhiteSpace(entity) && entity.Contains(keyword)).Take(10).ToList();
+            var query = _DbContext.JournalTransactions.AsQueryable();
+            if (isVB)
+                query = query.Where(entity => entity.Description.Contains("VB"));
+
+            return query.Select(entity => entity.ReferenceNo).Distinct().Where(entity => !string.IsNullOrWhiteSpace(entity) && entity.Contains(keyword)).ToList();
         }
 
-        public List<string> GetAllReferenceType(string keyword)
+        public List<string> GetAllReferenceType(string keyword, bool isVB)
         {
-            return _DbContext.JournalTransactions.Select(entity => entity.Description).Distinct().Where(entity => !string.IsNullOrWhiteSpace(entity) && entity.Contains(keyword)).Take(10).ToList();
+            var query = _DbContext.JournalTransactions.AsQueryable();
+            if (isVB)
+                query = query.Where(entity => entity.Description.Contains("VB"));
+
+            return query.Select(entity => entity.Description).Distinct().Where(entity => !string.IsNullOrWhiteSpace(entity) && entity.Contains(keyword)).ToList();
         }
     }
 

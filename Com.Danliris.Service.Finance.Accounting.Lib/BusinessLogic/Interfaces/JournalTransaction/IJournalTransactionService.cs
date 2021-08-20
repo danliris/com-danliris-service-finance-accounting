@@ -23,7 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.J
         Task<List<GeneralLedgerWrapperReportViewModel>> GetGeneralLedgerReport(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset);
         Task<MemoryStream> GetGeneralLedgerReportXls(DateTimeOffset startDate, DateTimeOffset endDate, int timezoneoffset);
         ReadResponse<JournalTransactionModel> ReadByDate(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offSet, int page, int size, string order, List<string> select, string keyword, string filter);
-        List<string> GetAllReferenceNo(string keyword);
-        List<string> GetAllReferenceType(string keyword);
+        List<string> GetAllReferenceNo(string keyword, bool isVB);
+        List<string> GetAllReferenceType(string keyword, bool isVB);
     }
 }

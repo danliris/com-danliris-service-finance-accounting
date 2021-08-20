@@ -318,12 +318,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("reference-no")]
-        public IActionResult GetReferenceNo([FromQuery] string keyword)
+        public IActionResult GetReferenceNo([FromQuery] string keyword, [FromQuery] bool isVB = false)
         {
             try
             {
 
-                var result = Service.GetAllReferenceNo(keyword);
+                var result = Service.GetAllReferenceNo(keyword, isVB);
 
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
@@ -340,12 +340,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("reference-type")]
-        public IActionResult GetReferenceType([FromQuery] string keyword)
+        public IActionResult GetReferenceType([FromQuery] string keyword, [FromQuery] bool isVB = false)
         {
             try
             {
 
-                var result = Service.GetAllReferenceType(keyword);
+                var result = Service.GetAllReferenceType(keyword, isVB);
 
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)

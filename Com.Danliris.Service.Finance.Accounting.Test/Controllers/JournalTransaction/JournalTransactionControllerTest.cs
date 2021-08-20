@@ -88,7 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public void Get_ReferenceNo_Return_Ok()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetAllReferenceNo(It.IsAny<string>())).Returns(new List<string>());
+            mocks.Service.Setup(f => f.GetAllReferenceNo(It.IsAny<string>(), It.IsAny<bool>())).Returns(new List<string>());
 
             var response = GetController(mocks).GetReferenceNo(It.IsAny<string>());
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
@@ -98,7 +98,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public void Get_ReferenceNo_Throws_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetAllReferenceNo(It.IsAny<string>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GetAllReferenceNo(It.IsAny<string>(), It.IsAny<bool>())).Throws(new Exception());
 
             var response = GetController(mocks).GetReferenceNo(It.IsAny<string>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
@@ -108,7 +108,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public void Get_ReferenceType_Return_Ok()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetAllReferenceType(It.IsAny<string>())).Returns(new List<string>());
+            mocks.Service.Setup(f => f.GetAllReferenceType(It.IsAny<string>(), It.IsAny<bool>())).Returns(new List<string>());
 
             var response = GetController(mocks).GetReferenceType(It.IsAny<string>());
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
@@ -118,7 +118,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.JournalTransa
         public void Get_ReferenceType_Throws_Exception()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetAllReferenceType(It.IsAny<string>())).Throws(new Exception());
+            mocks.Service.Setup(f => f.GetAllReferenceType(It.IsAny<string>(), It.IsAny<bool>())).Throws(new Exception());
 
             var response = GetController(mocks).GetReferenceType(It.IsAny<string>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
