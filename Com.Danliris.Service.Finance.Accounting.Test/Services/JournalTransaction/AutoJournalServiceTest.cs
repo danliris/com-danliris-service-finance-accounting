@@ -557,7 +557,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             throw new NotImplementedException();
         }
 
+        public List<string> GetAllReferenceNo(string keyword, bool isVB)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<string> GetAllReferenceType(string keyword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetAllReferenceType(string keyword, bool isVB)
         {
             throw new NotImplementedException();
         }

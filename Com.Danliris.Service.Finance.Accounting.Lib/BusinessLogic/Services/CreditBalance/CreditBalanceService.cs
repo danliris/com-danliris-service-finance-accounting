@@ -447,5 +447,94 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             return new ReadResponse<CreditBalanceDetailViewModel>(data.OrderBy(element => element.Date).ToList(), data.Count, new Dictionary<string, string>(), new List<string>());
         }
+
+        public MemoryStream GenerateExcelDetail(ReadResponse<CreditBalanceDetailViewModel> data, int divisionId, int month, int year)
+        {
+            var divisionName = "SEMUA DIVISI";
+
+            if (divisionId > 0)
+            {
+                var summary = data.Data.FirstOrDefault();
+                if (summary != null)
+                {
+                    divisionName = $"DIVISI {summary.DivisionName}";
+                }
+            }
+
+            DataTable dt = new DataTable();
+
+            // v1
+            //dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "Saldo Awal", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "Pembelian", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "Pembayaran", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(string) });
+
+            //v2 
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No PO", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Bon Penerimaan", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No Faktur Pajak", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No SPB/NI", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PPh", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
+
+            int index = 0;
+            if (data.Count == 0)
+            {
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", "");
+            }
+            else
+            {
+                foreach (var item in data.Data)
+                {
+                    // v1
+                    //dt.Rows.Add(item.Currency, item.SupplierName, item.StartBalance.ToString("#,##0"), item.Purchase.ToString("#,##0"),
+                    //    item.Payment.ToString("#,##0"), item.FinalBalance.ToString("#,##0"));
+
+                    // v2
+
+                    dt.Rows.Add(item.Date?.ToString("dd/MM/yyyy"), item.ExternalPurchaseOrderNo, item.UnitReceiptNoteNo, item.SupplierName, item.IncomeTaxNo, item.UnitPaymentOrderNo, item.DPPAmount.ToString("#,##0.#0"), item.VATAmount.ToString("#,##0.#0"),
+                            item.IncomeTaxAmount.ToString("#,##0.#0"), item.Total.ToString("#,##0.#0"));
+                }
+            }
+
+
+            return CreateExcelDetail(month, year, divisionName, new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Rincian Saldo Hutang") }, true);
+        }
+
+        private MemoryStream CreateExcelDetail(int month, int year, string divisionName, List<KeyValuePair<DataTable, string>> dtSourceList, bool styling = false, int index = 0)
+        {
+            ExcelPackage package = new ExcelPackage();
+            foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            {
+                var sheet = package.Workbook.Worksheets.Add(item.Value);
+
+                var lastDate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+
+                sheet.Cells["A1:B4"].Style.Font.Size = 12;
+                sheet.Cells["A1:B4"].Style.Font.Bold = true;
+                sheet.Cells["A1:B1"].Merge = true;
+                sheet.Cells["A2:B2"].Merge = true;
+                sheet.Cells["A3:B3"].Merge = true;
+                sheet.Cells["A4:B4"].Merge = true;
+                sheet.Cells["A1"].Value = "PT DANLIRIS";
+                sheet.Cells["A4"].Value = divisionName;
+
+                sheet.Cells["A3"].Value = "PER " + lastDate.ToString("dd MMMM yyyy").ToUpper();
+                sheet.Cells["A5"].LoadFromDataTable(item.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+                sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+                //int cells = 6;
+                sheet.Cells["A2"].Value = "RINCIAN SALDO HUTANG";
+            }
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
     }
 }

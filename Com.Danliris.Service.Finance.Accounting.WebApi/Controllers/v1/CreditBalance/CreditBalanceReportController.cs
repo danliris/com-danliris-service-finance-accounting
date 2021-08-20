@@ -97,6 +97,45 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CreditBa
             }
         }
 
+        [HttpGet("reports/detail/xls")]
+        public IActionResult GetReportDetailXls([FromQuery] bool isImport, [FromQuery] int month, [FromQuery] int year, [FromQuery] string supplierCode = null, int page = 1, int size = 25, bool isForeignCurrency = false, int divisionId = 0)
+        {
+            try
+            {
+                int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+                //int offSet = 7;
+                var data = Service.GetReportDetail(isImport, supplierCode, month, year, offSet, isForeignCurrency, divisionId);
+                var xls = Service.GenerateExcelDetail(data, divisionId, month, year);
+
+                string fileName = "";
+
+                if (isImport)
+                {
+                    fileName = string.Format("Rincian Saldo Hutang Impor Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                }
+                else
+                {
+                    if (isForeignCurrency)
+                        fileName = string.Format("Rincian Saldo Hutang Lokal Valas Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                    else
+                        fileName = string.Format("Rincian Saldo Hutang Lokal Periode {0} {1}", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month), year);
+                }
+
+
+                var xlsInBytes = xls.ToArray();
+
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                return file;
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                   new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                   .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
         [HttpGet("reports/downloads/xls")]
         public IActionResult GetXls([FromQuery] bool isImport, [FromQuery] int month, [FromQuery] int year, [FromQuery] string supplierName = null, bool isForeignCurrency = false, int divisionId = 0)
         {

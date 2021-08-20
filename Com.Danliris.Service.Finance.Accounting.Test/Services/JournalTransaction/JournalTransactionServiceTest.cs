@@ -486,9 +486,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = _dataUtil(service).GetNewData();
             model.Status = "DRAFT";
+            model.Description = "VB";
             var createdData = await service.CreateAsync(model);
 
-            var response = service.GetAllReferenceNo(model.ReferenceNo);
+            var response = service.GetAllReferenceNo(model.ReferenceNo, true);
 
             Assert.NotEmpty(response);
         }
@@ -499,9 +500,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var service = new JournalTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             var model = _dataUtil(service).GetNewData();
             model.Status = "DRAFT";
+            model.Description = "VB";
             var createdData = await service.CreateAsync(model);
 
-            var response = service.GetAllReferenceType(model.Description);
+            var response = service.GetAllReferenceType(model.Description, true);
 
             Assert.NotEmpty(response);
         }
