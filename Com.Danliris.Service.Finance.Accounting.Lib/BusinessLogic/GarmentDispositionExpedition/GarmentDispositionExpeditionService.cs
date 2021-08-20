@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
@@ -34,6 +35,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         {
             var query = _dbContext.GarmentDispositionExpeditions.Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.SendToVerification || entity.Position == GarmentPurchasingExpeditionPosition.SendToAccounting);
 
+            var dispositionPurchases = GetGarmentDispostionPurchase().Result;
+
+            query = from a in query
+                    join b in dispositionPurchases on a.DispositionNoteId equals b.Id into c
+                    from k in c.DefaultIfEmpty()
+                    select new GarmentDispositionExpeditionModel(a.Id, a.DispositionNoteNo, a.DispositionNoteDate, a.DispositionNoteDueDate, a.DispositionNoteId, a.CurrencyTotalPaid, a.TotalPaid, a.CurrencyId, a.CurrencyCode, a.SupplierName, a.Remark, a.ProformaNo, (k.CreatedBy == null ? a.CreatedBy : k.CreatedBy), a.CurrencyRate, a.SupplierId, a.SupplierCode, a.VATAmount, a.CurrencyVATAmount, a.IncomeTaxAmount, a.CurrencyIncomeTaxAmount, a.DPPAmount, a.CurrencyDPPAmount, a.VerifiedDateSend, a.VerifiedDateReceived, a.SendToPurchasingRemark, a.CreatedUtc);
+
             if (!string.IsNullOrWhiteSpace(keyword))
                 query = query.Where(entity => entity.DispositionNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
 
@@ -45,7 +53,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
-                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode, entity.SupplierName, entity.Remark, entity.ProformaNo,entity.SendToVerificationBy,entity.CurrencyRate,entity.SupplierId,entity.SupplierCode,entity.VATAmount, entity.CurrencyVATAmount,entity.IncomeTaxAmount,entity.CurrencyIncomeTaxAmount,entity.DPPAmount,entity.CurrencyDPPAmount,entity.VerifiedDateSend,entity.VerifiedDateReceived,entity.SendToPurchasingRemark, entity.CreatedUtc))
+                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteNo, entity.DispositionNoteDate, entity.DispositionNoteDueDate, entity.DispositionNoteId, entity.CurrencyTotalPaid, entity.TotalPaid, entity.CurrencyId, entity.CurrencyCode, entity.SupplierName, entity.Remark, entity.ProformaNo,entity.CreatedBy,entity.CurrencyRate,entity.SupplierId,entity.SupplierCode,entity.VATAmount, entity.CurrencyVATAmount,entity.IncomeTaxAmount,entity.CurrencyIncomeTaxAmount,entity.DPPAmount,entity.CurrencyDPPAmount,entity.VerifiedDateSend,entity.VerifiedDateReceived,entity.SendToPurchasingRemark, entity.CreatedUtc))
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
@@ -421,6 +429,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 .ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
+        }
+
+        private async Task<List<DispositionPurchaseIndexDto>> GetGarmentDispostionPurchase()
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"garment-disposition-purchase/all-garment-disposition";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<List<DispositionPurchaseIndexDto>>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<List<DispositionPurchaseIndexDto>>>(responseContent, jsonSerializerSettings);
+            }
+
+            return result.data;
         }
     }
 }
