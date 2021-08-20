@@ -86,7 +86,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return _journalTransactionService.ReverseJournalTransactionByReferenceNo(documentNo);
         }
 
-        public async Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds, AccountBankViewModel bank)
+        public async Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds, AccountBankViewModel bank, string referenceNo)
         {
             var dbContext = _serviceProvider.GetService<FinanceDbContext>();
 
@@ -101,7 +101,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             foreach (var vbRealization in vbRealizations)
             {
-                var bankDocumentNo = DocumentNoGenerator(bank);
+                //var bankDocumentNo = DocumentNoGenerator(bank);
 
                 var coaUnit = "00";
                 var unit = units.FirstOrDefault(element => vbRealization.SuppliantUnitId == element.Id);
@@ -126,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         {
                             Date = vbRealization.Date,
                             Description = "Clearance VB Inklaring",
-                            ReferenceNo = bankDocumentNo,
+                            ReferenceNo = referenceNo,
                             Status = "DRAFT",
                             Items = new List<JournalTransactionItemModel>()
                         };
@@ -197,7 +197,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                 {
                                     Date = vbRequest.Date,
                                     Description = "Clearence VB Inklaring",
-                                    ReferenceNo = bankDocumentNo,
+                                    ReferenceNo = referenceNo,
                                     Status = "POSTED",
                                     Items = new List<JournalTransactionItemModel>()
                                 };
@@ -232,7 +232,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     {
                         Date = vbRealization.Date,
                         Description = "Clearance VB",
-                        ReferenceNo = bankDocumentNo,
+                        ReferenceNo = referenceNo,
                         Status = "DRAFT",
                         Items = new List<JournalTransactionItemModel>()
                     };

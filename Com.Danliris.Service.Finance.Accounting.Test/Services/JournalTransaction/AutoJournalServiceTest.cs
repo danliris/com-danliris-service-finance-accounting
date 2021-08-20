@@ -182,7 +182,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             {
                 1
             };
-            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel);
+            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel, null);
             Assert.NotEqual(0, result);
 
 
@@ -247,7 +247,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             };
 
             //Act
-            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel);
+            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel, null);
             
             //Assert
             Assert.NotEqual(0, result);
@@ -557,7 +557,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             throw new NotImplementedException();
         }
 
+        public List<string> GetAllReferenceNo(string keyword, bool isVB)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<string> GetAllReferenceType(string keyword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetAllReferenceType(string keyword, bool isVB)
         {
             throw new NotImplementedException();
         }
@@ -612,7 +622,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             throw new NotImplementedException();
         }
 
-        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year, string referenceNo, string referenceType)
+        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year, string referenceNo, string referenceType, bool isVB)
         {
             throw new NotImplementedException();
         }
