@@ -94,11 +94,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             var service = new BankCashReceiptService(serviceProviderMock.Object);
 
             var model = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
+            var model2 = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
+            model2.CurrencyCode = "USD";
             //Act
             var Response = await service.CreateAsync(model);
+            var Response2 = await service.CreateAsync(model2);
 
             //Assert
             Assert.NotEqual(0, Response);
+            Assert.NotEqual(0, Response2);
         }
 
         [Fact]
