@@ -38,9 +38,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var dispositionPurchases = GetGarmentDispostionPurchase().Result;
 
             query = from a in query
-                    join b in dispositionPurchases on a.DispositionNoteId equals b.Id into c
-                    from k in c.DefaultIfEmpty()
-                    select new GarmentDispositionExpeditionModel(a.Id, a.DispositionNoteNo, a.DispositionNoteDate, a.DispositionNoteDueDate, a.DispositionNoteId, a.CurrencyTotalPaid, a.TotalPaid, a.CurrencyId, a.CurrencyCode, a.SupplierName, a.Remark, a.ProformaNo, (k.CreatedBy == null ? a.CreatedBy : k.CreatedBy), a.CurrencyRate, a.SupplierId, a.SupplierCode, a.VATAmount, a.CurrencyVATAmount, a.IncomeTaxAmount, a.CurrencyIncomeTaxAmount, a.DPPAmount, a.CurrencyDPPAmount, a.VerifiedDateSend, a.VerifiedDateReceived, a.SendToPurchasingRemark, a.CreatedUtc);
+                    join b in dispositionPurchases on a.DispositionNoteId equals b.Id 
+                    select new GarmentDispositionExpeditionModel(a.Id, a.DispositionNoteNo, a.DispositionNoteDate, a.DispositionNoteDueDate, a.DispositionNoteId, a.CurrencyTotalPaid, a.TotalPaid, a.CurrencyId, a.CurrencyCode, a.SupplierName, a.Remark, a.ProformaNo, b.CreatedBy, a.CurrencyRate, a.SupplierId, a.SupplierCode, a.VATAmount, a.CurrencyVATAmount, a.IncomeTaxAmount, a.CurrencyIncomeTaxAmount, a.DPPAmount, a.CurrencyDPPAmount, a.VerifiedDateSend, a.VerifiedDateReceived, a.SendToPurchasingRemark, a.CreatedUtc);
 
             if (!string.IsNullOrWhiteSpace(keyword))
                 query = query.Where(entity => entity.DispositionNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
