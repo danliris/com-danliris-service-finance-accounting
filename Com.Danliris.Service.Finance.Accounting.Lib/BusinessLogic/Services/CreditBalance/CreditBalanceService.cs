@@ -285,9 +285,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     Currency = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().CurrencyCode ?? "",
                     CurrencyRate = item.FirstOrDefault() == null ? 1 : item.FirstOrDefault().CurrencyRate,
                     DivisionName = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().DivisionName ?? "",
-                    Date = item.FirstOrDefault() == null ? null : item.FirstOrDefault().UnitReceiptNoteDate ?? null,
-                    UnitPaymentOrderNo = item.FirstOrDefault() == null ? null : item.FirstOrDefault().UnitPaymentOrderNo ?? null,
-                    UnitReceiptNoteNo = item.FirstOrDefault() == null ? null : item.FirstOrDefault().UnitReceiptNoteNo ?? null,
+                    Date = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitReceiptNoteDate ?? null,
+                    UnitPaymentOrderNo = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitPaymentOrderNo ?? null,
+                    UnitReceiptNoteNo = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitReceiptNoteNo ?? null,
                     PaidAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.PaidAmount)
                 };
 
