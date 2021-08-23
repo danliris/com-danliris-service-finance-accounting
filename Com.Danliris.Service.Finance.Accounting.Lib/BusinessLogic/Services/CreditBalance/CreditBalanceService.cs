@@ -251,6 +251,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     grp.CurrencyCode,
                     grp.DivisionCode,
                     grp.UnitReceiptNoteDate,
+                    grp.UnitReceiptNoteNo,
                     grp.UnitReceiptMutation,
                     grp.BankExpenditureNoteMutation,
                     grp.PurchasingMemoAmount
@@ -289,6 +290,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     UnitPaymentOrderNo = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitPaymentOrderNo ?? null,
                     UnitReceiptNoteNo = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitReceiptNoteNo ?? null,
                     PaidAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.PaidAmount)
+
                 };
 
                 creditBalance.FinalBalance = creditBalance.StartBalance + creditBalance.Purchase - creditBalance.Payment;
