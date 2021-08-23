@@ -378,11 +378,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var vBRealizationWithPOService = new VBRealizationWithPOService(dbContext, serviceProviderMock.Object);
             var vBRealizationDocumenData = GetDataUtil(vBRealizationWithPOService).GetTestData_DenganNomorVB();
 
+            var realization = new Lib.ViewModels.VBRealizationDocumentNonPO.VBRealizationDocumentNonPOViewModel()
+            {
+                IsInklaring = true,
+                Currency = new Lib.ViewModels.VBRealizationDocumentNonPO.CurrencyViewModel()
+                {
+                    Code = "USD"
+                }
+            };
+
+            var vbRealizations = new VBRealizationDocumentModel(realization);
+
+            dbContext.VBRealizationDocuments.Add(vbRealizations);
+            dbContext.SaveChanges();
+
             var service = new AutoJournalService(dbContext, serviceProviderMock.Object);
 
             List<int> vbRealizationIds = new List<int>()
             {
-                1
+                1,
+                2
             };
 
             //Act
