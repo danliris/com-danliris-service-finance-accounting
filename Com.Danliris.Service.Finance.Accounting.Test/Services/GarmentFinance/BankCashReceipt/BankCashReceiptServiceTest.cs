@@ -94,11 +94,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             var service = new BankCashReceiptService(serviceProviderMock.Object);
 
             var model = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
+            var model2 = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
+            model2.CurrencyCode = "USD";
             //Act
             var Response = await service.CreateAsync(model);
+            var Response2 = await service.CreateAsync(model2);
 
             //Assert
             Assert.NotEqual(0, Response);
+            Assert.NotEqual(0, Response2);
         }
 
         [Fact]
@@ -273,6 +277,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 new BankCashReceiptItemViewModel()
                 {
                     Id=0,
+                }
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_With_Data()
+        {
+            BankCashReceiptViewModel vm = new BankCashReceiptViewModel();
+            vm.ReceiptDate = DateTimeOffset.Now.AddDays(7);
+            vm.Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
+            {
+                Id = 0
+            };
+            vm.Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+            {
+                Id = 0
+            };
+            vm.Items = new List<BankCashReceiptItemViewModel>
+            {
+                new BankCashReceiptItemViewModel()
+                {
+                    Summary = 1
                 }
             };
 
