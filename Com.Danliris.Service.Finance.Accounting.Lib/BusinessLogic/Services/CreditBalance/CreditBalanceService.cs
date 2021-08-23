@@ -251,6 +251,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     grp.CurrencyCode,
                     grp.DivisionCode,
                     grp.UnitReceiptNoteDate,
+                    grp.UnitReceiptNoteNo,
                     grp.UnitReceiptMutation,
                     grp.BankExpenditureNoteMutation,
                     grp.PurchasingMemoAmount
