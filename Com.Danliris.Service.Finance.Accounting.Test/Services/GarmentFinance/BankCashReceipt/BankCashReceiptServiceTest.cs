@@ -254,5 +254,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
 
             Assert.True(vm.Validate(null).Count() > 0);
         }
+
+        [Fact]
+        public void Should_Success_Validate_With_Data()
+        {
+            BankCashReceiptViewModel vm = new BankCashReceiptViewModel();
+            vm.ReceiptDate = DateTimeOffset.Now.AddDays(7);
+            vm.Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
+            {
+                Id = 0
+            };
+            vm.Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+            {
+                Id = 0
+            };
+            vm.Items = new List<BankCashReceiptItemViewModel>
+            {
+                new BankCashReceiptItemViewModel()
+                {
+                    Summary = 1
+                }
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
     }
 }
