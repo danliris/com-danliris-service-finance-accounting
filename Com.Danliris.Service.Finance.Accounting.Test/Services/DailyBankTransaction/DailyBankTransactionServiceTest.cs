@@ -454,6 +454,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             DailyBankTransactionModel model = await _dataUtil(service).GetTestDataNotPosted();
             var newModel = await service.ReadByIdAsync(model.Id);
+            newModel.FinancingSourceReferenceId = 1;
 
             var Response = await service.DeleteAsync(newModel.Id);
             Assert.NotEqual(0, Response);

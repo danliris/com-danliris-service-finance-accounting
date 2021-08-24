@@ -347,9 +347,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                             item.DivisionId,
                             item.DivisionName,
                             item.VatValue,
-                            item.DPP,
+                            item.PayToSupplier,
                             expenditure.TransactionType,
                             expenditure.BankAccountNumber,
+                            item.IncomeTaxValue
                             item.PayToSupplier
                         };
 
@@ -367,6 +368,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                 query = query.Where(entity => entity.DivisionId == divisionId);
 
             var result = query.OrderBy(entity => entity.PaymentDate).ToList();
+
             return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.PayToSupplier, element.TransactionType, element.BankAccountNumber)).ToList();
         }
 
