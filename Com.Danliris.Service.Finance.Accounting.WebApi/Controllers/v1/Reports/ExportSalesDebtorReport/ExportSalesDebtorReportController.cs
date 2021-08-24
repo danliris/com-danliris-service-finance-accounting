@@ -42,14 +42,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Reports.
         }
 
         [HttpGet("monitoring")]
-        public IActionResult Get([FromQuery] int month, [FromQuery] int year)
+        public IActionResult Get([FromQuery] int month, [FromQuery] int year, [FromQuery] string type)
         {
             try
             {
                 VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                var data = Service.GetMonitoring(month, year, offSet);
+                var data = Service.GetMonitoring(month, year,type, offSet);
 
                 return Ok(new
                 {
@@ -68,13 +68,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Reports.
             }
         }
         [HttpGet("download")]
-        public async Task<IActionResult> GetXls([FromQuery] int month, [FromQuery] int year)
+        public async Task<IActionResult> GetXls([FromQuery] int month, [FromQuery] int year, [FromQuery] string type)
         {
             try
             {
                 VerifyUser();
                 byte[] xlsInBytes;
-                var xls = await Service.GenerateExcel(month,year);
+                var xls = await Service.GenerateExcel(month,year,type);
 
                 string filename = String.Format("Report Piutang {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
 

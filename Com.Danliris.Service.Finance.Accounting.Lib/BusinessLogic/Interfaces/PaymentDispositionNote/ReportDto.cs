@@ -4,7 +4,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
 {
     public class ReportDto
     {
-        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber, double incomeTaxValue)
+        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber)
         {
             ExpenditureId = expenditureId;
             ExpenditureNo = expenditureNo;
@@ -26,7 +26,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             DivisionId = divisionId;
             DivisionName = divisionName;
             VATAmount = vATAmount;
-            PaidAmount = (paidAmount + vATAmount - incomeTaxValue);
+            PaidAmount = paidAmount;
             TransactionType = transactionType;
             BankAccountNumber = bankAccountNumber;
         }

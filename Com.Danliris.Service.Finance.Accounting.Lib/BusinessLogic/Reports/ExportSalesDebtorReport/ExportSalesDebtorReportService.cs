@@ -143,8 +143,66 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
 
             return garmentShipping;
         }
+        private async Task<GarmentCurrency> GetCurrency()
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
 
-        public async Task<List<ExportSalesDebtorReportViewModel>> GetMonitoring(int month, int year, int offset)
+            var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
+
+            var currencyUri = APIEndpoint.Core + $"master/garment-currencies/sales-debtor-currencies";
+            var currencyResponse = await httpClient.GetAsync(currencyUri);
+
+            var currencyResult = new BaseResponse<GarmentCurrency>()
+            {
+                data = new GarmentCurrency()
+            };
+
+            if (currencyResponse.IsSuccessStatusCode)
+            {
+                //currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
+                var contentString = await currencyResponse.Content.ReadAsStringAsync();
+                Dictionary<string, object> content = JsonConvert.DeserializeObject<Dictionary<string, object>>(contentString);
+                var dataString = content.GetValueOrDefault("data").ToString();
+                var listData = JsonConvert.DeserializeObject<GarmentCurrency>(dataString);
+                currencyResult.data = listData;
+            }
+
+            return currencyResult.data;
+        }
+
+        private async Task<GarmentCurrency> GetCurrencyPEBDate(string stringDate)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
+
+            var currencyUri = APIEndpoint.Core + $"master/garment-currencies/sales-debtor-currencies-peb?stringDate={stringDate}";
+            var currencyResponse = await httpClient.GetAsync(currencyUri);
+
+            var currencyResult = new BaseResponse<GarmentCurrency>()
+            {
+                data = new GarmentCurrency()
+            };
+
+            if (currencyResponse.IsSuccessStatusCode)
+            {
+                //currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
+                var contentString = await currencyResponse.Content.ReadAsStringAsync();
+                Dictionary<string, object> content = JsonConvert.DeserializeObject<Dictionary<string, object>>(contentString);
+                var dataString = content.GetValueOrDefault("data").ToString();
+                var listData = JsonConvert.DeserializeObject<GarmentCurrency>(dataString);
+                currencyResult.data = listData;
+            }
+
+            return currencyResult.data;
+        }
+        public async Task<List<ExportSalesDebtorReportViewModel>> GetMonitoring(int month, int year,string type, int offset)
         {
 
             GarmentShippingPackingList invoicePackingListBalance = await GetDataShippingInvoice(month, year);
@@ -152,14 +210,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             GarmentShippingPackingList balance = await GetDataBalance();
 
             List<ExportSalesDebtorReportViewModel> data = new List<ExportSalesDebtorReportViewModel>();
+            GarmentCurrency garmentCurrency = await GetCurrency();
 
-            var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month < month && aa.MemorialDate.Year == year select new { aa.Id })
+            var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month < month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                                join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+                              
                                select new ExportSalesDebtorReportViewModel
                                {
                                    buyerCode = c.BuyerCode,
                                    buyerName = c.BuyerName,
-                                   beginingBalance = Convert.ToDecimal(-c.Amount),
+                                   beginingBalance = type=="IDR"? Convert.ToDecimal(-c.Amount)  * Convert.ToDecimal(garmentCurrency.Rate): Convert.ToDecimal(-c.Amount),
                                    receipt = 0,
                                    sales = 0,
                                    endBalance = 0,
@@ -168,14 +228,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                    moreThan = 0
 
                                };
-            var beginingBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month < month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var beginingBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month < month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                           join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
-
+                                       
                                           select new ExportSalesDebtorReportViewModel
                                           {
                                               buyerCode = b.BuyerCode,
                                               buyerName = b.BuyerName,
-                                              beginingBalance = Convert.ToDecimal(-b.Amount),
+                                              beginingBalance = type=="IDR"? Convert.ToDecimal(-b.CurrencyRate * b.Amount) : Convert.ToDecimal(-b.Amount),
                                               receipt = 0,
                                               sales = 0,
                                               endBalance = 0,
@@ -184,12 +244,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                               moreThan = 0
 
                                           };
+            
+            foreach (var item in invoicePackingListBalance.data)
+            {
+                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
+                item.rate = Convert.ToDouble(currency.Rate);
+
+            }
+            foreach (var item in invoicePackingListNow.data)
+            {
+                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
+                item.rate = Convert.ToDouble(currency.Rate);
+
+            }
             var beginingInvoice = from a in invoicePackingListBalance.data
+                                  
                                   select new ExportSalesDebtorReportViewModel
                                   {
                                       buyerCode = a.buyerAgentCode,
                                       buyerName = a.buyerAgentName,
-                                      beginingBalance = Convert.ToDecimal(a.amount),
+                                      beginingBalance = type=="IDR" ? Convert.ToDecimal(a.amount * a .rate) : Convert.ToDecimal(a.amount),
                                       receipt = 0,
                                       sales = 0,
                                       endBalance = 0,
@@ -198,12 +272,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                       moreThan = 0
 
                                   };
+ 
             var beginingBalance = from a in balance.data
+                                
                                   select new ExportSalesDebtorReportViewModel
                                   {
                                       buyerCode = a.buyerAgentCode,
                                       buyerName = a.buyerAgentName,
-                                      beginingBalance = Convert.ToDecimal(a.amount),
+                                      beginingBalance = type=="IDR" ? Convert.ToDecimal(a.balanceAmount * garmentCurrency.Rate) : Convert.ToDecimal(a.balanceAmount),
                                       receipt = 0,
                                       sales = 0,
                                       endBalance = 0,
@@ -213,26 +289,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
 
                                   };
             var salesNow = from a in invoicePackingListNow.data
+                          
                            select new ExportSalesDebtorReportViewModel
                            {
                                buyerCode = a.buyerAgentCode,
                                buyerName = a.buyerAgentName,
                                beginingBalance = 0,
                                receipt = 0,
-                               sales = Convert.ToDouble(a.amount),
+                               sales = type =="IDR"? Convert.ToDouble(a.amount *a.rate) : Convert.ToDouble(a.amount),
                                endBalance = 0,
                                lessThan = 0,
                                between = 0,
                                moreThan = 0
                            };
-            var memoNow = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month == month && aa.MemorialDate.Year == year select new { aa.Id })
+            var memoNow = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month == month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                           join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+                          
                           select new ExportSalesDebtorReportViewModel
                           {
                               buyerCode = c.BuyerCode,
                               buyerName = c.BuyerName,
                               beginingBalance = 0,
-                              receipt = Convert.ToDouble(c.Amount),
+                              receipt = type=="IDR" ? Convert.ToDouble(c.Amount * c.CurrencyRate) : Convert.ToDouble(c.Amount),
                               sales = 0,
                               endBalance = 0,
                               lessThan = 0,
@@ -240,15 +318,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                               moreThan = 0
 
                           };
-            var bankCashReceiptNow = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month == month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var bankCashReceiptNow = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month == month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                      join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
-
+                                      
                                      select new ExportSalesDebtorReportViewModel
                                      {
                                          buyerCode = b.BuyerCode,
                                          buyerName = b.BuyerName,
                                          beginingBalance = 0,
-                                         receipt = Convert.ToDouble(b.Amount),
+                                         receipt = type=="IDR" ? Convert.ToDouble(b.Amount * b.CurrencyRate) : Convert.ToDouble(b.Amount),
                                          sales = 0,
                                          endBalance = 0,
                                          lessThan = 0,
@@ -256,9 +334,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                          moreThan = 0
 
                                      };
-            var periodeMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month <= month && aa.MemorialDate.Year == year select new { aa.Id })
+            var periodeMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month <= month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                                join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
-                               select new ExportSalesDebtorReportViewModel
+                         
+                              select new ExportSalesDebtorReportViewModel
                                {
                                    buyerCode = c.BuyerCode,
                                    buyerName = c.BuyerName,
@@ -266,15 +345,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                    receipt = 0,
                                    sales = 0,
                                    endBalance = 0,
-                                   lessThan = -c.Amount,
-                                   between = -c.Amount,
-                                   moreThan = -c.Amount
+                                   lessThan = type =="IDR"?-c.Amount * Convert.ToDouble(garmentCurrency.Rate):-c.Amount,
+                                   between = type=="IDR" ? -c.Amount *Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                   moreThan = type=="IDR" ? -c.Amount *Convert.ToDouble(garmentCurrency.Rate) : -c.Amount
 
                                };
-            var periodeBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month <= month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var periodeBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month <= month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                           join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
-
-                                          select new ExportSalesDebtorReportViewModel
+                                      
+                                         select new ExportSalesDebtorReportViewModel
                                           {
                                               buyerCode = b.BuyerCode,
                                               buyerName = b.BuyerName,
@@ -282,9 +361,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                               receipt = 0,
                                               sales = 0,
                                               endBalance = 0,
-                                              lessThan = Convert.ToDouble(-b.Amount),
-                                              between = Convert.ToDouble(-b.Amount),
-                                              moreThan = Convert.ToDouble(-b.Amount)
+                                              lessThan = type=="IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                              between = type=="IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                              moreThan = type=="IDR"? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount)
 
                                           };
             var queryUnion =beginingBalance.Union(beginingMemo).Union(beginingBankCashReceipt).Union(beginingInvoice)
@@ -312,7 +391,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                 select new timeSpanInvoice
                                 {
                                     buyerCode = aa.buyerAgentCode,
-                                    amount = Convert.ToDecimal(aa.amount),
+                                    amount = type=="IDR" ? Convert.ToDecimal(aa.amount* aa.rate) : Convert.ToDecimal(aa.amount),
                                     day = (DateTimeOffset.Now - aa.truckingDate).Days
                                 };
             var querySumTS = querytimeSpan.ToList()
@@ -339,8 +418,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                 data.Add(model);
                 index++;
             }
-            
-
             return data;
         }
         class timeSpanInvoice
@@ -349,23 +426,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
              internal decimal amount { get; set; } 
              internal int day { get; set; }
         }
-        public async Task<MemoryStream> GenerateExcel(int month, int year)
+        public async Task<MemoryStream> GenerateExcel(int month, int year,string type)
         {
-
-
             GarmentShippingPackingList invoicePackingListBalance = await GetDataShippingInvoice(month, year);
             GarmentShippingPackingList invoicePackingListNow = await GetDataShippingInvoiceNow(month, year);
-            GarmentShippingPackingList balance = await GetDataShippingInvoice(month, year);
+            GarmentShippingPackingList balance = await GetDataBalance();
 
             List<ExportSalesDebtorReportViewModel> data = new List<ExportSalesDebtorReportViewModel>();
+            GarmentCurrency garmentCurrency = await GetCurrency();
 
-            var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month < month && aa.MemorialDate.Year == year select new { aa.Id })
+            var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month < month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                                join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+
                                select new ExportSalesDebtorReportViewModel
                                {
                                    buyerCode = c.BuyerCode,
                                    buyerName = c.BuyerName,
-                                   beginingBalance = Convert.ToDecimal(-c.Amount),
+                                   beginingBalance = type == "IDR" ? Convert.ToDecimal(-c.Amount) * Convert.ToDecimal(garmentCurrency.Rate) : Convert.ToDecimal(-c.Amount),
                                    receipt = 0,
                                    sales = 0,
                                    endBalance = 0,
@@ -374,14 +451,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                    moreThan = 0
 
                                };
-            var beginingBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month < month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var beginingBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month < month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                           join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
 
                                           select new ExportSalesDebtorReportViewModel
                                           {
                                               buyerCode = b.BuyerCode,
                                               buyerName = b.BuyerName,
-                                              beginingBalance = Convert.ToDecimal(-b.Amount),
+                                              beginingBalance = type == "IDR" ? Convert.ToDecimal(-b.CurrencyRate * b.Amount) : Convert.ToDecimal(-b.Amount),
                                               receipt = 0,
                                               sales = 0,
                                               endBalance = 0,
@@ -390,12 +467,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                               moreThan = 0
 
                                           };
+
+            foreach (var item in invoicePackingListBalance.data)
+            {
+                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
+                item.rate = Convert.ToDouble(currency.Rate);
+
+            }
+            foreach (var item in invoicePackingListNow.data)
+            {
+                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
+                item.rate = Convert.ToDouble(currency.Rate);
+
+            }
             var beginingInvoice = from a in invoicePackingListBalance.data
+
                                   select new ExportSalesDebtorReportViewModel
                                   {
                                       buyerCode = a.buyerAgentCode,
                                       buyerName = a.buyerAgentName,
-                                      beginingBalance = Convert.ToDecimal(a.amount),
+                                      beginingBalance = type == "IDR" ? Convert.ToDecimal(a.amount * a.rate) : Convert.ToDecimal(a.amount),
                                       receipt = 0,
                                       sales = 0,
                                       endBalance = 0,
@@ -404,12 +495,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                       moreThan = 0
 
                                   };
+
             var beginingBalance = from a in balance.data
+
                                   select new ExportSalesDebtorReportViewModel
                                   {
                                       buyerCode = a.buyerAgentCode,
                                       buyerName = a.buyerAgentName,
-                                      beginingBalance = Convert.ToDecimal(a.amount),
+                                      beginingBalance = type == "IDR" ? Convert.ToDecimal(a.balanceAmount * garmentCurrency.Rate) : Convert.ToDecimal(a.balanceAmount),
                                       receipt = 0,
                                       sales = 0,
                                       endBalance = 0,
@@ -419,26 +512,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
 
                                   };
             var salesNow = from a in invoicePackingListNow.data
+
                            select new ExportSalesDebtorReportViewModel
                            {
                                buyerCode = a.buyerAgentCode,
                                buyerName = a.buyerAgentName,
                                beginingBalance = 0,
                                receipt = 0,
-                               sales = Convert.ToDouble(a.amount),
+                               sales = type == "IDR" ? Convert.ToDouble(a.amount * a.rate) : Convert.ToDouble(a.amount),
                                endBalance = 0,
                                lessThan = 0,
                                between = 0,
                                moreThan = 0
                            };
-            var memoNow = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month == month && aa.MemorialDate.Year == year select new { aa.Id })
+            var memoNow = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month == month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                           join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+
                           select new ExportSalesDebtorReportViewModel
                           {
                               buyerCode = c.BuyerCode,
                               buyerName = c.BuyerName,
                               beginingBalance = 0,
-                              receipt = Convert.ToDouble(c.Amount),
+                              receipt = type == "IDR" ? Convert.ToDouble(c.Amount * c.CurrencyRate) : Convert.ToDouble(c.Amount),
                               sales = 0,
                               endBalance = 0,
                               lessThan = 0,
@@ -446,7 +541,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                               moreThan = 0
 
                           };
-            var bankCashReceiptNow = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month == month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var bankCashReceiptNow = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month == month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                      join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
 
                                      select new ExportSalesDebtorReportViewModel
@@ -454,7 +549,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                          buyerCode = b.BuyerCode,
                                          buyerName = b.BuyerName,
                                          beginingBalance = 0,
-                                         receipt = Convert.ToDouble(b.Amount),
+                                         receipt = type == "IDR" ? Convert.ToDouble(b.Amount * b.CurrencyRate) : Convert.ToDouble(b.Amount),
                                          sales = 0,
                                          endBalance = 0,
                                          lessThan = 0,
@@ -462,9 +557,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                          moreThan = 0
 
                                      };
-
-            var periodeMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month <= month && aa.MemorialDate.Year == year select new { aa.Id })
+            var periodeMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month <= month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                               join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+
                               select new ExportSalesDebtorReportViewModel
                               {
                                   buyerCode = c.BuyerCode,
@@ -473,12 +568,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                   receipt = 0,
                                   sales = 0,
                                   endBalance = 0,
-                                  lessThan = -c.Amount,
-                                  between = -c.Amount,
-                                  moreThan = -c.Amount
+                                  lessThan = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                  between = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                  moreThan = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount
 
                               };
-            var periodeBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month <= month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var periodeBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month <= month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                          join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
 
                                          select new ExportSalesDebtorReportViewModel
@@ -489,12 +584,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                              receipt = 0,
                                              sales = 0,
                                              endBalance = 0,
-                                             lessThan = Convert.ToDouble(-b.Amount),
-                                             between = Convert.ToDouble(-b.Amount),
-                                             moreThan = Convert.ToDouble(-b.Amount)
+                                             lessThan = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                             between = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                             moreThan = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount)
 
                                          };
-            var queryUnion = beginingMemo.Union(beginingBankCashReceipt).Union(beginingInvoice)
+            var queryUnion = beginingBalance.Union(beginingMemo).Union(beginingBankCashReceipt).Union(beginingInvoice)
                         .Union(memoNow).Union(bankCashReceiptNow).Union(salesNow)
                         .Union(periodeBankCashReceipt).Union(periodeMemo);
 
@@ -519,7 +614,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                 select new timeSpanInvoice
                                 {
                                     buyerCode = aa.buyerAgentCode,
-                                    amount = Convert.ToDecimal(aa.amount),
+                                    amount = type == "IDR" ? Convert.ToDecimal(aa.amount * aa.rate) : Convert.ToDecimal(aa.amount),
                                     day = (DateTimeOffset.Now - aa.truckingDate).Days
                                 };
             var querySumTS = querytimeSpan.ToList()
@@ -546,7 +641,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                 data.Add(model);
                 index++;
             }
-          
+
             DataTable result = new DataTable();
 
             result.Columns.Add(new DataColumn() { ColumnName = "No", DataType = typeof(String) });
