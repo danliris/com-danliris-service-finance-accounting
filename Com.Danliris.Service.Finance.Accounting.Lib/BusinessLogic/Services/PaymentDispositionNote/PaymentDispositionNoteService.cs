@@ -347,10 +347,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                             item.DivisionId,
                             item.DivisionName,
                             item.VatValue,
-                            item.PayToSupplier,
+                            item.DPP,
                             expenditure.TransactionType,
                             expenditure.BankAccountNumber,
-                            item.IncomeTaxValue
+                            item.IncomeTaxValue,
                             item.PayToSupplier
                         };
 
