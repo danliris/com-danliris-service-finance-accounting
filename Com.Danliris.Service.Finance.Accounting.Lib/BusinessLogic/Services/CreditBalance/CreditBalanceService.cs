@@ -218,6 +218,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             //else
 
             if (!isImport && !isForeignCurrency)
+
                 query = query.Where(entity => entity.CurrencyCode == "IDR");
 
             if (divisionId > 0)
