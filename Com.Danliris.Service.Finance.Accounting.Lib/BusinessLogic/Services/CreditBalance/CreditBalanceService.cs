@@ -202,19 +202,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         {
             var firstDayOfMonth = new DateTime(year, month, 1);
 
-            IQueryable<CreditorAccountModel> query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport).AsQueryable();
+            var query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport).AsQueryable();
 
-
-            List<CreditBalanceDetailViewModel> result = new List<CreditBalanceDetailViewModel>();
-            int previousMonth = month - 1;
-            int previousYear = year;
+            var previousMonth = month - 1;
+            var previousYear = year;
 
             if (previousMonth == 0)
             {
                 previousMonth = 12;
                 previousYear = year - 1;
             }
-
 
             if (isForeignCurrency)
                 query = query.Where(entity => entity.CurrencyCode != "IDR");
@@ -226,79 +223,143 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             if (divisionId > 0)
                 query = query.Where(entity => entity.DivisionId == divisionId);
 
-            var queryRemainingBalance = query;
+            //var queryRemainingBalance = query;
+            //var startBalance = query.Where()
+
             if (!string.IsNullOrEmpty(supplierCode))
                 query = query.Where(x => x.SupplierCode == supplierCode);
-            else
-                queryRemainingBalance = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth);
+            //else
+            //    queryRemainingBalance = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth);
 
-            //query = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
-
-            var data = query.Select(item => new CreditBalanceAccountViewModel(item)
-
-            ).ToList();
-            if (string.IsNullOrEmpty(supplierCode))
-                data.AddRange(queryRemainingBalance.Select(item => new CreditBalanceAccountViewModel(item)).ToList());
-
-            var grouppedData = data.GroupBy(x => new { x.DivisionCode, x.CurrencyCode }).ToList();
-            var grouppedDataKey = grouppedData.Select(s => s.Key).ToList();
-            var joinSumBalanceStart = DbSet.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth).Join(grouppedDataKey,
-                grp => new { grp.DivisionCode, grp.CurrencyCode },
-                sum => new { sum.DivisionCode, sum.CurrencyCode },
-                (grp, sum) => new
-                {
-                    grp.SupplierCode,
-                    grp.CurrencyCode,
-                    grp.DivisionCode,
-                    grp.UnitReceiptNoteDate,
-                    grp.UnitReceiptNoteNo,
-                    grp.UnitReceiptMutation,
-                    grp.BankExpenditureNoteMutation,
-                    grp.PurchasingMemoAmount
-                }
-                )
-                    .AsQueryable()
-                    //.Where(x => x.SupplierCode == item.Key.SupplierCode && x.DivisionCode == item.Key.DivisionCode && x.CurrencyCode == item.Key.CurrencyCode && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
-                    .ToList();
-            foreach (var item in grouppedData)
+            var result = query.Select(entity => new CreditBalanceDetailViewModel()
             {
-                var productsUnion = string.Join("\n", item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Select(x => x.Products).ToList());
-                var uniqueProducts = string.Join("\n", productsUnion.Split("\n").Distinct());
-                //var now = DateTimeOffset.Now;
+                //StartBalance = DbSet
+                //.AsQueryable()
+                //.Where(x => x.SupplierCode == item.Key.SupplierCode && x.DivisionCode == item.Key.DivisionCode && x.CurrencyCode == item.Key.CurrencyCode && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
+                //.ToList().Sum(x => x.UnitReceiptMutation - x.BankExpenditureNoteMutation),
+                //StartBalance = joinSumBalanceStart
+                //    .Where(x => x.DivisionCode == item.Key.DivisionCode && x.CurrencyCode == item.Key.CurrencyCode && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
+                //    .Sum(x => x.UnitReceiptMutation - x.BankExpenditureNoteMutation),
+                Products = entity.Products,
+                Purchase = entity.UnitReceiptMutation,
+                DPPAmount = entity.UnitReceiptMutation,
+                IncomeTaxAmount = entity.IncomeTaxAmount,
+                VATAmount = entity.VATAmount,
+                Payment = entity.BankExpenditureNoteMutation,
+                SupplierName = entity.SupplierName,
+                Currency = entity.CurrencyCode,
+                CurrencyRate = entity.CurrencyRate,
+                DivisionName = entity.DivisionName,
+                Date = entity.UnitReceiptNoteDate,
+                UnitPaymentOrderNo = entity.MemoNo,
+                UnitReceiptNoteNo = entity.UnitReceiptNoteNo,
+                PaidAmount = entity.PurchasingMemoAmount
 
-                var creditBalance = new CreditBalanceDetailViewModel()
-                {
-                    //StartBalance = DbSet
-                    //.AsQueryable()
-                    //.Where(x => x.SupplierCode == item.Key.SupplierCode && x.DivisionCode == item.Key.DivisionCode && x.CurrencyCode == item.Key.CurrencyCode && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
-                    //.ToList().Sum(x => x.UnitReceiptMutation - x.BankExpenditureNoteMutation),
-                    StartBalance = joinSumBalanceStart
-                    .Where(x => x.DivisionCode == item.Key.DivisionCode && x.CurrencyCode == item.Key.CurrencyCode && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
-                    .Sum(x => x.UnitReceiptMutation - x.BankExpenditureNoteMutation),
-                    Products = uniqueProducts,
-                    Purchase = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.UnitReceiptMutation),
-                    DPPAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.UnitReceiptMutation),
-                    IncomeTaxAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.IncomeTaxAmount),
-                    VATAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.VATAmount),
-                    Payment = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.BankExpenditureNoteMutation),
-                    FinalBalance = item.Sum(x => x.FinalBalance),
-                    SupplierName = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().SupplierName ?? "",
-                    Currency = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().CurrencyCode ?? "",
-                    CurrencyRate = item.FirstOrDefault() == null ? 1 : item.FirstOrDefault().CurrencyRate,
-                    DivisionName = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().DivisionName ?? "",
-                    Date = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitReceiptNoteDate ?? null,
-                    UnitPaymentOrderNo = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitPaymentOrderNo ?? null,
-                    UnitReceiptNoteNo = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitReceiptNoteNo ?? null,
-                    PaidAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.PaidAmount)
-
-                };
-
-                creditBalance.FinalBalance = creditBalance.StartBalance + creditBalance.Purchase - creditBalance.Payment;
-                result.Add(creditBalance);
-            }
+            }).ToList();
 
             return result.OrderBy(x => x.Currency).ThenBy(x => x.Products).ThenBy(x => x.SupplierName).ToList();
         }
+
+        //public List<CreditBalanceDetailViewModel> GetReportDetailData(bool isImport, string supplierCode, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
+        //{
+        //    var firstDayOfMonth = new DateTime(year, month, 1);
+
+        //    IQueryable<CreditorAccountModel> query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport).AsQueryable();
+
+
+        //    List<CreditBalanceDetailViewModel> result = new List<CreditBalanceDetailViewModel>();
+        //    int previousMonth = month - 1;
+        //    int previousYear = year;
+
+        //    if (previousMonth == 0)
+        //    {
+        //        previousMonth = 12;
+        //        previousYear = year - 1;
+        //    }
+
+
+        //    if (isForeignCurrency)
+        //        query = query.Where(entity => entity.CurrencyCode != "IDR");
+        //    //else
+
+        //    if (!isImport && !isForeignCurrency)
+        //        query = query.Where(entity => entity.CurrencyCode == "IDR");
+
+        //    if (divisionId > 0)
+        //        query = query.Where(entity => entity.DivisionId == divisionId);
+
+        //    var queryRemainingBalance = query;
+        //    if (!string.IsNullOrEmpty(supplierCode))
+        //        query = query.Where(x => x.SupplierCode == supplierCode);
+        //    else
+        //        queryRemainingBalance = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth);
+
+        //    //query = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
+
+        //    var data = query.Select(item => new CreditBalanceAccountViewModel(item)).ToList();
+
+        //    if (string.IsNullOrEmpty(supplierCode))
+        //        data.AddRange(queryRemainingBalance.Select(item => new CreditBalanceAccountViewModel(item)).ToList());
+
+        //    var grouppedData = data.GroupBy(x => new { x.DivisionCode, x.CurrencyCode }).ToList();
+        //    var grouppedDataKey = grouppedData.Select(s => s.Key).ToList();
+        //    var joinSumBalanceStart = DbSet.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth).Join(grouppedDataKey,
+        //        grp => new { grp.DivisionCode, grp.CurrencyCode },
+        //        sum => new { sum.DivisionCode, sum.CurrencyCode },
+        //        (grp, sum) => new
+        //        {
+        //            grp.SupplierCode,
+        //            grp.CurrencyCode,
+        //            grp.DivisionCode,
+        //            grp.UnitReceiptNoteDate,
+        //            grp.UnitReceiptNoteNo,
+        //            grp.UnitReceiptMutation,
+        //            grp.BankExpenditureNoteMutation,
+        //            grp.PurchasingMemoAmount
+        //        }
+        //        )
+        //            .AsQueryable()
+        //            //.Where(x => x.SupplierCode == item.Key.SupplierCode && x.DivisionCode == item.Key.DivisionCode && x.CurrencyCode == item.Key.CurrencyCode && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
+        //            .ToList();
+        //    foreach (var item in grouppedData)
+        //    {
+        //        var productsUnion = string.Join("\n", item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Select(x => x.Products).ToList());
+        //        var uniqueProducts = string.Join("\n", productsUnion.Split("\n").Distinct());
+        //        //var now = DateTimeOffset.Now;
+
+        //        var creditBalance = new CreditBalanceDetailViewModel()
+        //        {
+        //            //StartBalance = DbSet
+        //            //.AsQueryable()
+        //            //.Where(x => x.SupplierCode == item.Key.SupplierCode && x.DivisionCode == item.Key.DivisionCode && x.CurrencyCode == item.Key.CurrencyCode && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
+        //            //.ToList().Sum(x => x.UnitReceiptMutation - x.BankExpenditureNoteMutation),
+        //            StartBalance = joinSumBalanceStart
+        //            .Where(x => x.DivisionCode == item.Key.DivisionCode && x.CurrencyCode == item.Key.CurrencyCode && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth)
+        //            .Sum(x => x.UnitReceiptMutation - x.BankExpenditureNoteMutation),
+        //            Products = uniqueProducts,
+        //            Purchase = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.UnitReceiptMutation),
+        //            DPPAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.UnitReceiptMutation),
+        //            IncomeTaxAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.IncomeTaxAmount),
+        //            VATAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.VATAmount),
+        //            Payment = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.BankExpenditureNoteMutation),
+        //            FinalBalance = item.Sum(x => x.FinalBalance),
+        //            SupplierName = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().SupplierName ?? "",
+        //            Currency = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().CurrencyCode ?? "",
+        //            CurrencyRate = item.FirstOrDefault() == null ? 1 : item.FirstOrDefault().CurrencyRate,
+        //            DivisionName = item.FirstOrDefault() == null ? "" : item.FirstOrDefault().DivisionName ?? "",
+        //            Date = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitReceiptNoteDate ?? null,
+        //            UnitPaymentOrderNo = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitPaymentOrderNo ?? null,
+        //            UnitReceiptNoteNo = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault() == null ? null : item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).FirstOrDefault().UnitReceiptNoteNo ?? null,
+        //            PaidAmount = item.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year).Sum(x => x.PaidAmount)
+
+        //        };
+
+        //        creditBalance.FinalBalance = creditBalance.StartBalance + creditBalance.Purchase - creditBalance.Payment;
+        //        result.Add(creditBalance);
+        //    }
+
+        //    return result.OrderBy(x => x.Currency).ThenBy(x => x.Products).ThenBy(x => x.SupplierName).ToList();
+        //}
 
 
         public MemoryStream GenerateExcel(bool isImport, string suplierName, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
