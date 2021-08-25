@@ -54,18 +54,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         },
                         Id = 1
                     },
+                    BankCashReceiptType = new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id = 1,
+                        Name = "PENJUALAN"
+                    },
                     Id = 1,
                     Items = new List<BankCashReceiptItemViewModel>()
                     {
                         new BankCashReceiptItemViewModel()
                         {
                             Id = 1,
-                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
                             {
                                 Id = "1",
@@ -78,18 +83,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                                 Code = "code",
                                 Name = "name",
                             },
-                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             Amount = 1,
-                            C1A = 1,
-                            C1B = 1,
-                            C2A = 1,
-                            C2B = 1,
-                            C2C = 1,
+                            //C1A = 1,
+                            //C1B = 1,
+                            //C2A = 1,
+                            //C2B = 1,
+                            //C2C = 1,
                             NoteNumber = "noteNumber",
                             Remarks = "remarks",
                             Summary = 1,
@@ -144,17 +149,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         Id = 1
                     },
                     Id = 1,
+                    BankCashReceiptType = new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id = 1,
+                        Name = "LOKAL"
+                    },
                     Items = new List<BankCashReceiptItemViewModel>()
                     {
                         new BankCashReceiptItemViewModel()
                         {
                             Id = 1,
-                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
                             {
                                 Id = "1",
@@ -167,18 +177,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                                 Code = "code",
                                 Name = "name",
                             },
-                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             Amount = 1,
-                            C1A = 1,
-                            C1B = 1,
-                            C2A = 1,
-                            C2B = 1,
-                            C2C = 1,
+                            //C1A = 1,
+                            //C1B = 1,
+                            //C2A = 1,
+                            //C2B = 1,
+                            //C2C = 1,
                             NoteNumber = "noteNumber",
                             Remarks = "remarks",
                             Summary = 1,
@@ -233,17 +243,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         Id = 1
                     },
                     Id = 1,
+                    BankCashReceiptType= new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id=1,
+                        Name="PENJUALAN LOKAL"
+                    },
+                    Buyer = new Lib.ViewModels.NewIntegrationViewModel.NewBuyerViewModel
+                    {
+                        Id = 1,
+                        Name = "name"
+                    },
                     Items = new List<BankCashReceiptItemViewModel>()
                     {
                         new BankCashReceiptItemViewModel()
                         {
                             Id = 1,
-                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
                             {
                                 Id = "1",
@@ -256,18 +276,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                                 Code = "code",
                                 Name = "name",
                             },
-                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             Amount = 1,
-                            C1A = 1,
-                            C1B = 1,
-                            C2A = 1,
-                            C2B = 1,
-                            C2C = 1,
+                            //C1A = 1,
+                            //C1B = 1,
+                            //C2A = 1,
+                            //C2B = 1,
+                            //C2C = 1,
                             NoteNumber = "noteNumber",
                             Remarks = "remarks",
                             Summary = 1,
@@ -303,6 +323,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         Name = "name",
                     },
                     IncomeType = "incomeType",
+                    BankCashReceiptType = new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id = 1,
+                        Name = "JUAL EKSPOR"
+                    },
+                    Buyer = new Lib.ViewModels.NewIntegrationViewModel.NewBuyerViewModel
+                    {
+                        Id = 1,
+                        Name = "name"
+                    },
                     Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel()
                     {
                         AccountCOA = "AccountCOA",
@@ -327,12 +357,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         new BankCashReceiptItemViewModel()
                         {
                             Id = 1,
-                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
                             {
                                 Id = "1",
@@ -345,18 +375,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                                 Code = "code",
                                 Name = "name",
                             },
-                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             Amount = 1,
-                            C1A = 1,
-                            C1B = 1,
-                            C2A = 1,
-                            C2B = 1,
-                            C2C = 1,
+                            //C1A = 1,
+                            //C1B = 1,
+                            //C2A = 1,
+                            //C2B = 1,
+                            //C2C = 1,
                             NoteNumber = "noteNumber",
                             Remarks = "remarks",
                             Summary = 1,
