@@ -20,5 +20,7 @@
         public decimal CurrencyRate { get; set; }
 
         public string DivisionName { get; set; }
+        public int DivisionId { get; set; }
+        public string SupplierCode { get; set; }
     }
 }

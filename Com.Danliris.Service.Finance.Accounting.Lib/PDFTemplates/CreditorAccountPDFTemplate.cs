@@ -190,8 +190,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 cellAlignRight.Phrase = new Phrase(payment.ToString("#,##0.#0"), _smallerFont);
                 table.AddCell(cellAlignRight);
 
-                cellAlignRight.Phrase = new Phrase(item.BankExpenditureAmount.ToString("#,##0.#0"), _smallerFont);
-                table.AddCell(cellAlignRight);
+                //cellAlignRight.Phrase = new Phrase(item.BankExpenditureAmount.ToString("#,##0.#0"), _smallerFont);
+                //table.AddCell(cellAlignRight);
 
                 cellAlignRight.Phrase = new Phrase(tempBalance.ToString("#,##0.#0"), _smallerFont);
                 table.AddCell(cellAlignRight);
@@ -257,8 +257,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellAlignRight.Phrase = new Phrase(totalPayment.ToString("#,##0.#0"), _normalBoldFont);
             table.AddCell(cellAlignRight);
 
-            cellAlignRight.Phrase = new Phrase("", _normalBoldFont);
-            table.AddCell(cellAlignRight);
+            //cellAlignRight.Phrase = new Phrase("", _normalBoldFont);
+            //table.AddCell(cellAlignRight);
 
             cellAlignRight.Phrase = new Phrase(totalEachBalance.ToString("#,##0.#0"), _normalBoldFont);
             table.AddCell(cellAlignRight);
