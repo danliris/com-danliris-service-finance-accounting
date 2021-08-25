@@ -119,11 +119,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
         private static void SetReportTable(Document document, List<CreditorAccountViewModel> data, string suplierName, int month, int year, int offSet, decimal? finalBalance)
         {
-            var table = new PdfPTable(9)
+            var table = new PdfPTable(10)
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 10f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
+            table.SetWidths(new float[] { 10f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
 
             SetReportTableHeader(table);
 
@@ -139,7 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 VerticalAlignment = Element.ALIGN_MIDDLE
             };
 
-            cell.Colspan = 8;
+            cell.Colspan = 9;
             cell.Phrase = new Phrase("SALDO AWAL", _smallerFont);
             table.AddCell(cell);
 
@@ -202,11 +202,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
         private static void SetFooter(Document document, List<CreditorAccountViewModel> data, string suplierName, int month, int year, int offSet, decimal? finalBalance)
         {
-            var table = new PdfPTable(9)
+            var table = new PdfPTable(10)
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 10f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
+            table.SetWidths(new float[] { 10f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
 
             var cell = new PdfPCell()
             {

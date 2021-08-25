@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210818083033_Update_BankCashReceipt")]
+    partial class Update_BankCashReceipt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -567,14 +569,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("DivisionName");
 
-                    b.Property<string>("ExternalPurchaseOrderNo");
-
                     b.Property<decimal>("FinalBalance");
-
-                    b.Property<decimal>("IncomeTaxAmount");
-
-                    b.Property<string>("IncomeTaxNo")
-                        .HasMaxLength(512);
 
                     b.Property<string>("InvoiceNo")
                         .HasMaxLength(128);
@@ -650,8 +645,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(128);
 
                     b.Property<decimal>("UnitReceiptNotePPN");
-
-                    b.Property<decimal>("VATAmount");
 
                     b.HasKey("Id");
 
@@ -1464,6 +1457,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AccAmountCoaCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("AccAmountCoaId");
+
+                    b.Property<string>("AccAmountCoaName")
+                        .HasMaxLength(256);
+
                     b.Property<string>("AccNumberCoaCode")
                         .HasMaxLength(32);
 
@@ -1480,11 +1481,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("AccSubCoaName")
                         .HasMaxLength(256);
 
+                    b.Property<string>("AccUnitCoaCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("AccUnitCoaId");
+
+                    b.Property<string>("AccUnitCoaName")
+                        .HasMaxLength(256);
+
                     b.Property<bool>("Active");
 
                     b.Property<decimal>("Amount");
 
                     b.Property<int>("BankCashReceiptId");
+
+                    b.Property<decimal>("C1A");
+
+                    b.Property<decimal>("C1B");
+
+                    b.Property<decimal>("C2A");
+
+                    b.Property<decimal>("C2B");
+
+                    b.Property<decimal>("C2C");
 
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
@@ -1561,9 +1580,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(32);
 
                     b.Property<int>("BankCashReceiptTypeCoaId");
-
-                    b.Property<string>("BankCashReceiptTypeCoaName")
-                        .HasMaxLength(256);
 
                     b.Property<int>("BankCashReceiptTypeId");
 
@@ -4989,8 +5005,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("BLAWBNumber")
                         .HasMaxLength(256);
 
-                    b.Property<string>("CompletedBy")
-                        .HasMaxLength(512);
+                    b.Property<string>("CompletedBy");
 
                     b.Property<DateTimeOffset?>("CompletedDate");
 
@@ -5060,9 +5075,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("NotVerifiedReason");
 
                     b.Property<int>("Position");
-
-                    b.Property<string>("ReferenceNo")
-                        .HasMaxLength(128);
 
                     b.Property<string>("Remark");
 

@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210819041715_update_BankCashReceiptItems")]
+    partial class update_BankCashReceiptItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -567,14 +569,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("DivisionName");
 
-                    b.Property<string>("ExternalPurchaseOrderNo");
-
                     b.Property<decimal>("FinalBalance");
-
-                    b.Property<decimal>("IncomeTaxAmount");
-
-                    b.Property<string>("IncomeTaxNo")
-                        .HasMaxLength(512);
 
                     b.Property<string>("InvoiceNo")
                         .HasMaxLength(128);
@@ -650,8 +645,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(128);
 
                     b.Property<decimal>("UnitReceiptNotePPN");
-
-                    b.Property<decimal>("VATAmount");
 
                     b.HasKey("Id");
 
@@ -4989,8 +4982,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("BLAWBNumber")
                         .HasMaxLength(256);
 
-                    b.Property<string>("CompletedBy")
-                        .HasMaxLength(512);
+                    b.Property<string>("CompletedBy");
 
                     b.Property<DateTimeOffset?>("CompletedDate");
 
@@ -5060,9 +5052,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("NotVerifiedReason");
 
                     b.Property<int>("Position");
-
-                    b.Property<string>("ReferenceNo")
-                        .HasMaxLength(128);
 
                     b.Property<string>("Remark");
 

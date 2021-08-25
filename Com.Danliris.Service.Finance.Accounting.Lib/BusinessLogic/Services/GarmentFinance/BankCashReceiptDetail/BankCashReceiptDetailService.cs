@@ -154,5 +154,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
 
             return await _dbContext.SaveChangesAsync();
         }
+
+        public double GetAmountByInvoiceId(int invoiceId)
+        {
+            double bankCashReceiptDetailItem = (double)_dbContext.GarmentFinanceBankCashReceiptDetailItems.Where(a => a.InvoiceId == invoiceId).Sum(a=>a.Amount);
+            double memorialDetailItem = _dbContext.GarmentFinanceMemorialDetailItems.Where(a => a.InvoiceId == invoiceId).Sum(a => a.Amount);
+
+            return bankCashReceiptDetailItem + memorialDetailItem;
+        }
     }
 }

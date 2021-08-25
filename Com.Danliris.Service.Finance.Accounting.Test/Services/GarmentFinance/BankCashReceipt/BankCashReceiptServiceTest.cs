@@ -224,11 +224,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             BankCashReceiptItemModel newItem = new BankCashReceiptItemModel
             {
                 BankCashReceiptId = 1,
-                C1A = 1,
-                C1B = 1,
-                C2A = 1,
-                C2B = 1,
-                C2C = 1,
+                //C1A = 1,
+                //C1B = 1,
+                //C2A = 1,
+                //C2B = 1,
+                //C2C = 1,
             };
 
             newModel2.Items.Add(newItem);
@@ -242,6 +242,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             BankCashReceiptViewModel vm = new BankCashReceiptViewModel();
 
             Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_All_Null_Buyer()
+        {
+            BankCashReceiptViewModel vm = new BankCashReceiptViewModel();
+            vm.BankCashReceiptType = new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+            {
+                Id = 1,
+                Name = "PENJUALAN EKSPOR"
+            };
+            vm.Buyer = new Lib.ViewModels.NewIntegrationViewModel.NewBuyerViewModel
+            {
+                Id = 0
+            };
+            Assert.True(vm.Validate(null).Count() > 0);
+
+            BankCashReceiptViewModel vm2 = new BankCashReceiptViewModel();
+            vm2.BankCashReceiptType = new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+            {
+                Id = 1,
+                Name = "PENJUALAN LOKAL"
+            };
+            Assert.True(vm2.Validate(null).Count() > 0);
         }
 
         [Fact]

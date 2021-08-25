@@ -211,6 +211,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
 
             List<ExportSalesDebtorReportViewModel> data = new List<ExportSalesDebtorReportViewModel>();
             GarmentCurrency garmentCurrency = await GetCurrency();
+            if (garmentCurrency == null)
+            {
+                garmentCurrency.Rate = 1;
+            }
 
             var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month < month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                                join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
@@ -404,7 +408,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             {
                 ExportSalesDebtorReportViewModel model = new ExportSalesDebtorReportViewModel
                 {
-                    index = index,
+                    index = index.ToString(),
                     buyerCode = item.buyerCode,
                     buyerName = item.buyerName,
                     beginingBalance = item.beginingBalance,
@@ -414,9 +418,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                     lessThan =  Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && aa.day <=30 select aa.amount).FirstOrDefault()),
                     between = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day > 30 && aa.day <60)  select aa.amount).FirstOrDefault()),
                     moreThan = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && aa.day > 60 select aa.amount).FirstOrDefault()),
+                    total="TOTAL"
                 };
                 data.Add(model);
                 index++;
+            }
+            var queryTOTAL = data.ToList()
+                   .GroupBy(x => new { x.total }, (key, group) => new
+                   {
+                       
+                       beginingBalance = group.Sum(s => s.beginingBalance),
+                       receipt = group.Sum(s => s.receipt),
+                       sales = group.Sum(s => s.sales),
+                       endBalance = group.Sum(s => s.endBalance),
+                       lessThan = group.Sum(s => s.lessThan),
+                       between = group.Sum(s => s.between),
+                       moreThan = group.Sum(s => s.moreThan)
+
+                   });
+            foreach(var item in queryTOTAL)
+            {
+                ExportSalesDebtorReportViewModel model = new ExportSalesDebtorReportViewModel
+                {
+                    index="",
+                    buyerCode = "TOTAL",
+                    buyerName = "",
+                    beginingBalance = item.beginingBalance,
+                    receipt = item.receipt,
+                    sales = item.sales,
+                    endBalance = item.endBalance,
+                    lessThan = item.lessThan,
+                    between = item.between,
+                    moreThan = item.moreThan,
+                };
+                data.Add(model);
+
             }
             return data;
         }
@@ -627,7 +663,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             {
                 ExportSalesDebtorReportViewModel model = new ExportSalesDebtorReportViewModel
                 {
-                    index = index,
+                    index = index.ToString(),
                     buyerCode = item.buyerCode,
                     buyerName = item.buyerName,
                     beginingBalance = item.beginingBalance,
@@ -640,9 +676,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                 };
                 data.Add(model);
                 index++;
+
             }
 
-            DataTable result = new DataTable();
+            var queryTOTAL = data.ToList()
+                   .GroupBy(x => new { x.total }, (key, group) => new
+                   {
+
+                       beginingBalance = group.Sum(s => s.beginingBalance),
+                       receipt = group.Sum(s => s.receipt),
+                       sales = group.Sum(s => s.sales),
+                       endBalance = group.Sum(s => s.endBalance),
+                       lessThan = group.Sum(s => s.lessThan),
+                       between = group.Sum(s => s.between),
+                       moreThan = group.Sum(s => s.moreThan)
+
+                   });
+            foreach (var item in queryTOTAL)
+            {
+                ExportSalesDebtorReportViewModel model = new ExportSalesDebtorReportViewModel
+                {
+                    index = "",
+                    buyerCode = "TOTAL",
+                    buyerName = "",
+                    beginingBalance = item.beginingBalance,
+                    receipt = item.receipt,
+                    sales = item.sales,
+                    endBalance = item.endBalance,
+                    lessThan = item.lessThan,
+                    between = item.between,
+                    moreThan = item.moreThan,
+                };
+                data.Add(model);
+            }
+
+                DataTable result = new DataTable();
 
             result.Columns.Add(new DataColumn() { ColumnName = "No", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Kode", DataType = typeof(String) });
@@ -741,8 +809,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                     cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 }
                 worksheet.Cells["A" + 2 + ":J" + (counter + 3) + ""].AutoFitColumns();
-
-                 
+                worksheet.Cells["A" + (counter + 3) + ":J" + (counter + 3) + ""].Style.Font.Bold = true;
+                worksheet.Cells["A" + (counter + 3) + ":C" + (counter + 3) + ""].Merge = true;
                 var stream = new MemoryStream();
 
                 package.SaveAs(stream);

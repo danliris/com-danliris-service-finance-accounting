@@ -63,7 +63,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 arrayRemarks.Add(item.Remarks);
             }
 
-            string payment = String.Join(", ", arrayRemarks);
+            string payment = viewModel.BankCashReceiptType.Name=="PENJUALAN EKSPOR" || viewModel.BankCashReceiptType.Name == "PENJUALAN LOKAL" ? viewModel.Buyer.Name : String.Join(", ", arrayRemarks);
 
 
             #endregion CustomModel
@@ -141,7 +141,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(viewModel?.Remarks, normal_font);
+            cellHeaderBody.Phrase = new Phrase(payment, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("", normal_font);
@@ -162,7 +162,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             headerTable3.AddCell(cellHeaderBody);
             cellHeaderBody.Phrase = new Phrase(":", normal_font);
             headerTable3.AddCell(cellHeaderBody);
-            cellHeaderBody.Phrase = new Phrase(payment);
+            cellHeaderBody.Phrase = new Phrase(viewModel?.Remarks, normal_font);
             headerTable3.AddCell(cellHeaderBody);
 
             cellHeaderBody.Phrase = new Phrase("", normal_font);
