@@ -13,11 +13,14 @@
         public decimal Purchase { get; set; }
 
         public decimal Payment { get; set; }
+        public double PaidAmount { get; set; }
 
         public decimal FinalBalance { get; set; }
 
         public decimal CurrencyRate { get; set; }
 
         public string DivisionName { get; set; }
+        public int DivisionId { get; set; }
+        public string SupplierCode { get; set; }
     }
 }

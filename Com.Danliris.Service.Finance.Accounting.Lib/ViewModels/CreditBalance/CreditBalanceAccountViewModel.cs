@@ -16,9 +16,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditBalance
         public decimal UnitReceiptMutation { get; set; }
         public decimal BankExpenditureNoteMutation { get; set; }
         public decimal FinalBalance { get; set; }
+        public double PaidAmount { get; set; }
+        public int DivisionId { get; set; }
+        public decimal IncomeTaxAmount { get; set; }
         public string SupplierName { get; set; }
         public decimal CurrencyRate { get; set; }
         public string DivisionName { get; set; }
+        public decimal VATAmount { get; set; }
+        public string UnitPaymentOrderNo { get; set; }
+        public string ExternalPurchaseOrderNo { get; set; }
+        public string UnitReceiptNoteNo { get; set; }
+
         public CreditBalanceAccountViewModel(CreditorAccountModel creditorAccountModel)
         {
             SupplierCode = creditorAccountModel.SupplierCode;
@@ -32,6 +40,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditBalance
             CurrencyRate = creditorAccountModel.CurrencyRate;
             DivisionName = creditorAccountModel.DivisionName;
             FinalBalance = creditorAccountModel.FinalBalance;
+            PaidAmount = creditorAccountModel.PurchasingMemoAmount;
+            DivisionId = creditorAccountModel.DivisionId;
+            IncomeTaxAmount = creditorAccountModel.IncomeTaxAmount;
+            VATAmount = creditorAccountModel.VATAmount;
+            UnitPaymentOrderNo = creditorAccountModel.MemoNo;
+            ExternalPurchaseOrderNo = creditorAccountModel.ExternalPurchaseOrderNo;
+            UnitReceiptNoteNo = creditorAccountModel.UnitReceiptNoteNo;
         }
     }
 }
