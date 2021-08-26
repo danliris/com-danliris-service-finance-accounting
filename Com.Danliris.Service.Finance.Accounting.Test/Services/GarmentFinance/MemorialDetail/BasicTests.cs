@@ -178,6 +178,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
         public void Should_Success_Validate_Null_Invoice_Data()
         {
             GarmentFinanceMemorialDetailViewModel vm = new GarmentFinanceMemorialDetailViewModel();
+            vm.TotalAmount = 100;
             vm.Items = new List<GarmentFinanceMemorialDetailItemViewModel>
             {
                 new GarmentFinanceMemorialDetailItemViewModel()
