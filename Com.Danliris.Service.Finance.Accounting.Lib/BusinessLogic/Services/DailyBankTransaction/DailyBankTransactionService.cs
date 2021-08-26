@@ -407,7 +407,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 else
                 {
                     var BalanceByMonthAndYear = GetBalanceMonthAndYear(dataAccountBank.Id, month, year, clientTimeZoneOffset);
-                    var beforeBalance = BalanceByMonthAndYear.InitialBalance;
+                    var beforeBalance = BalanceByMonthAndYear == null ? 0 : BalanceByMonthAndYear.InitialBalance;
                     //var previous = new DailyBankTransactionModel();
                     foreach (var item in Query)
                     {
@@ -583,7 +583,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             else
             {
                 var BalanceByMonthAndYear = GetBalanceMonthAndYear(dataAccountBank.Id, month, year, clientTimeZoneOffset);
-                var beforeBalance = BalanceByMonthAndYear.InitialBalance;
+                var beforeBalance = BalanceByMonthAndYear == null ? 0 : BalanceByMonthAndYear.InitialBalance;
                 var beforeBalanceValas = beforeBalance / garmentCurrency.Rate;
                 //var previous = new DailyBankTransactionModel();
                 foreach (var item in Query)
@@ -662,12 +662,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                              AccountBankCurrencyCode = transaction.AccountBankCurrencyCode,
                              BeforeNominal = transaction.BeforeNominal,
                              AfterNominal = transaction.AfterNominal,
-                             Nominal = transaction.Nominal * transaction.CurrencyRate,
-                             BeforeNominalValas = transaction.BeforeNominal * transaction.CurrencyRate,
-                             AfterNominalValas = transaction.AfterNominal * transaction.CurrencyRate,
+                             Nominal = transaction.Nominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
+                             BeforeNominalValas = transaction.BeforeNominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
+                             AfterNominalValas = transaction.AfterNominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
                              NominalValas = transaction.NominalValas,
                              Status = transaction.Status,
-                             CurrencyRate = transaction.CurrencyRate,
+                             CurrencyRate = (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
                              AccountBankAccountName = transaction.AccountBankAccountName,
                              AccountBankAccountNumber = transaction.AccountBankAccountNumber,
                              AccountBankCode = transaction.AccountBankCode,
@@ -764,8 +764,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     Status = s.Status,
                     SourceType = s.SourceType,
                     IsPosted = s.IsPosted,
-                    Remark = s.Remark,
-                    Nominal = s.Nominal
+                    Remark = s.Remark, 
+                    Nominal = s.Nominal * (s.CurrencyRate == 0 ? 1 : s.CurrencyRate)
                 });
 
             List<string> searchAttributes = new List<string>()
@@ -832,7 +832,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                    Status = s.Status,
                    SourceType = s.SourceType,
                    IsPosted = s.IsPosted,
-                   Nominal = s.Nominal
+                   Nominal = s.Nominal 
                }).ToList()
             );
 

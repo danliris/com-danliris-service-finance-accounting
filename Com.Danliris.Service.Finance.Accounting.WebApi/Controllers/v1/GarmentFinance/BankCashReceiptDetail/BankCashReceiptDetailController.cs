@@ -181,5 +181,38 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentF
             }
 
         }
+        [HttpGet("get-amount/{invoiceId}")]
+        public async Task<IActionResult> GetAmount([FromRoute] int invoiceId)
+        {
+            try
+            {
+                var indexAcceptPdf = Request.Headers["Accept"].ToList().IndexOf("application/pdf");
+                var amount = Service.GetAmountByInvoiceId(invoiceId);
+                //BankCashReceiptDetailViewModel viewModel = Mapper.Map<BankCashReceiptDetailViewModel>(model);
+
+                //if (amount == null)
+                //{
+                //    Dictionary<string, object> Result =
+                //        new ResultFormatter(ApiVersion, General.NOT_FOUND_STATUS_CODE, General.NOT_FOUND_MESSAGE)
+                //        .Fail();
+                //    return NotFound(Result);
+                //}
+
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    data = amount,
+                    message = General.OK_MESSAGE,
+                    statusCode = General.OK_STATUS_CODE
+                });
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }

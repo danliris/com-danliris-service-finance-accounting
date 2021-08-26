@@ -131,6 +131,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         {
             try
             {
+                VerifyUser();
                 var result = _service.GetSendToVerificationOrAccounting(keyword, page, size, order);
                 return Ok(new
                 {

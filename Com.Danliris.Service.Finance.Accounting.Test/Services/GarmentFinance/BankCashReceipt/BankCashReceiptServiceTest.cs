@@ -94,11 +94,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             var service = new BankCashReceiptService(serviceProviderMock.Object);
 
             var model = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
+            var model2 = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
+            model2.CurrencyCode = "USD";
             //Act
             var Response = await service.CreateAsync(model);
+            var Response2 = await service.CreateAsync(model2);
 
             //Assert
             Assert.NotEqual(0, Response);
+            Assert.NotEqual(0, Response2);
         }
 
         [Fact]
@@ -220,11 +224,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             BankCashReceiptItemModel newItem = new BankCashReceiptItemModel
             {
                 BankCashReceiptId = 1,
-                C1A = 1,
-                C1B = 1,
-                C2A = 1,
-                C2B = 1,
-                C2C = 1,
+                //C1A = 1,
+                //C1B = 1,
+                //C2A = 1,
+                //C2B = 1,
+                //C2C = 1,
             };
 
             newModel2.Items.Add(newItem);
@@ -241,6 +245,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
         }
 
         [Fact]
+        public void Should_Success_Validate_All_Null_Buyer()
+        {
+            BankCashReceiptViewModel vm = new BankCashReceiptViewModel();
+            vm.BankCashReceiptType = new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+            {
+                Id = 1,
+                Name = "PENJUALAN EKSPOR"
+            };
+            vm.Buyer = new Lib.ViewModels.NewIntegrationViewModel.NewBuyerViewModel
+            {
+                Id = 0
+            };
+            Assert.True(vm.Validate(null).Count() > 0);
+
+            BankCashReceiptViewModel vm2 = new BankCashReceiptViewModel();
+            vm2.BankCashReceiptType = new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+            {
+                Id = 1,
+                Name = "PENJUALAN LOKAL"
+            };
+            Assert.True(vm2.Validate(null).Count() > 0);
+        }
+
+        [Fact]
         public void Should_Success_Validate_Null_Items_Data()
         {
             BankCashReceiptViewModel vm = new BankCashReceiptViewModel();
@@ -249,6 +277,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 new BankCashReceiptItemViewModel()
                 {
                     Id=0,
+                }
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_With_Data()
+        {
+            BankCashReceiptViewModel vm = new BankCashReceiptViewModel();
+            vm.ReceiptDate = DateTimeOffset.Now.AddDays(7);
+            vm.Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel
+            {
+                Id = 0
+            };
+            vm.Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+            {
+                Id = 0
+            };
+            vm.Items = new List<BankCashReceiptItemViewModel>
+            {
+                new BankCashReceiptItemViewModel()
+                {
+                    Summary = 1
                 }
             };
 

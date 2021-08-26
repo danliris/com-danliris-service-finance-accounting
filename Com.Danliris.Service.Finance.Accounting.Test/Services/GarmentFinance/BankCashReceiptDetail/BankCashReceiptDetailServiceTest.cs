@@ -255,6 +255,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
         public void Should_Success_Validate_Null_Items_Data()
         {
             BankCashReceiptDetailViewModel vm = new BankCashReceiptDetailViewModel();
+            vm.TotalAmount = 100;
             vm.Items = new List<BankCashReceiptDetailItemViewModel>
             {
                 new BankCashReceiptDetailItemViewModel()
@@ -271,6 +272,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             };
 
             Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetAmount()
+        {
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            var httpClientService = new Mock<IHttpClientService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+
+            var dto = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
+            //Act
+            var Response = service.GetAmountByInvoiceId(dto.Items.First().InvoiceId);
+
+            //Assert
+            Assert.NotEqual(Response,0);
         }
     }
 }

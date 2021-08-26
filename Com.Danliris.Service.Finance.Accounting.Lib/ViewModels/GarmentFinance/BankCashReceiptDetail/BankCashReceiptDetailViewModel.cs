@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.BankCashReceiptDetail
@@ -13,6 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public DateTimeOffset BankCashReceiptDate { get; set; }
         public virtual List<BankCashReceiptDetailItemViewModel> Items { get; set; }
         public virtual List<BankCashReceiptDetailOtherItemViewModel> OtherItems { get; set; }
+        public double TotalAmount { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -24,6 +26,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
             if (this.BankCashReceiptNo == null || this.BankCashReceiptNo == "")
             {
                 yield return new ValidationResult("Nomor Kwitansi harus diisi", new List<string> { "BankCashReceiptNo" });
+            }
+
+            if (Items != null && OtherItems != null)
+            {
+                if(Items.Count > 0 && OtherItems.Count > 0)
+                {
+                    if (TotalAmount != (double)Items.Sum(a => a.Amount) + (double)OtherItems.Sum(a => a.Amount))
+                    {
+                        yield return new ValidationResult($"Total harus sama dengan total kwitansi ({TotalAmount})", new List<string> { "Amount" });
+                    }
+                }
+
+                
             }
 
             if (this.Items == null || this.Items.Count == 0)

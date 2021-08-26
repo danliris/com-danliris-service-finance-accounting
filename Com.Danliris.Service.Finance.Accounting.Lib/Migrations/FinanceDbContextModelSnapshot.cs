@@ -1464,14 +1464,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AccAmountCoaCode")
-                        .HasMaxLength(32);
-
-                    b.Property<int>("AccAmountCoaId");
-
-                    b.Property<string>("AccAmountCoaName")
-                        .HasMaxLength(256);
-
                     b.Property<string>("AccNumberCoaCode")
                         .HasMaxLength(32);
 
@@ -1488,29 +1480,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("AccSubCoaName")
                         .HasMaxLength(256);
 
-                    b.Property<string>("AccUnitCoaCode")
-                        .HasMaxLength(32);
-
-                    b.Property<int>("AccUnitCoaId");
-
-                    b.Property<string>("AccUnitCoaName")
-                        .HasMaxLength(256);
-
                     b.Property<bool>("Active");
 
                     b.Property<decimal>("Amount");
 
                     b.Property<int>("BankCashReceiptId");
-
-                    b.Property<decimal>("C1A");
-
-                    b.Property<decimal>("C1B");
-
-                    b.Property<decimal>("C2A");
-
-                    b.Property<decimal>("C2B");
-
-                    b.Property<decimal>("C2C");
 
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
@@ -1583,6 +1557,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("BankAccountingCode")
                         .HasMaxLength(32);
 
+                    b.Property<string>("BankCashReceiptTypeCoaCode")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("BankCashReceiptTypeCoaId");
+
+                    b.Property<string>("BankCashReceiptTypeCoaName")
+                        .HasMaxLength(256);
+
+                    b.Property<int>("BankCashReceiptTypeId");
+
+                    b.Property<string>("BankCashReceiptTypeName")
+                        .HasMaxLength(100);
+
                     b.Property<string>("BankCurrencyCode")
                         .HasMaxLength(32);
 
@@ -1592,6 +1579,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("BankName")
                         .HasMaxLength(256);
+
+                    b.Property<string>("BuyerCode")
+                        .HasMaxLength(20);
+
+                    b.Property<int>("BuyerId");
+
+                    b.Property<string>("BuyerName")
+                        .HasMaxLength(100);
 
                     b.Property<string>("CreatedAgent")
                         .IsRequired()
@@ -1628,7 +1623,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<DateTime>("DeletedUtc");
 
                     b.Property<string>("IncomeType")
-                        .HasMaxLength(256);
+                        .HasMaxLength(100);
 
                     b.Property<bool>("IsDeleted");
 
@@ -1765,8 +1760,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<bool>("IsUsed");
-
                     b.Property<string>("LastModifiedAgent")
                         .IsRequired()
                         .HasMaxLength(255);
@@ -1900,7 +1893,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<int>("MemorialDetailId");
+                    b.Property<int>("MemorialId");
 
                     b.HasKey("Id");
 
@@ -2042,8 +2035,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<DateTime>("LastModifiedUtc");
 
                     b.Property<int>("MemorialDetailId");
-
-                    b.Property<double>("Quantity");
 
                     b.HasKey("Id");
 
@@ -6028,7 +6019,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetail.BankCashReceiptDetailOtherItemModel", b =>
                 {
                     b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetail.BankCashReceiptDetailModel", "BankCashReceiptDetailModel")
-                        .WithMany()
+                        .WithMany("OtherItems")
                         .HasForeignKey("BankCashReceiptDetailId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -6052,7 +6043,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail.GarmentFinanceMemorialDetailOtherItemModel", b =>
                 {
                     b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail.GarmentFinanceMemorialDetailModel", "GarmentFinanceMemorialDetailModel")
-                        .WithMany()
+                        .WithMany("OtherItems")
                         .HasForeignKey("MemorialDetailId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
