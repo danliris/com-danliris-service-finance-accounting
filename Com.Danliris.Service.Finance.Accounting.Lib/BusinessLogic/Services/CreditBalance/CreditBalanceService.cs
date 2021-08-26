@@ -218,7 +218,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             //else
 
             if (!isImport && !isForeignCurrency)
-
                 query = query.Where(entity => entity.CurrencyCode == "IDR");
 
             if (divisionId > 0)
@@ -254,7 +253,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 Date = entity.UnitReceiptNoteDate,
                 UnitPaymentOrderNo = entity.MemoNo,
                 UnitReceiptNoteNo = entity.UnitReceiptNoteNo,
-                PaidAmount = entity.PurchasingMemoAmount
+                PaidAmount = entity.PurchasingMemoAmount,
+                InvoiceNo = entity.InvoiceNo
 
             }).ToList();
 
@@ -537,20 +537,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             //v2 
             dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "No PO", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "No PO", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Bon Penerimaan", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No Faktur Pajak", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No Invoice", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No SPB/NI", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "PPh", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "PPh", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
 
             int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "");
             }
             else
             {
@@ -562,8 +563,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                     // v2
 
-                    dt.Rows.Add(item.Date?.ToString("dd/MM/yyyy"), item.ExternalPurchaseOrderNo, item.UnitReceiptNoteNo, item.SupplierName, item.IncomeTaxNo, item.UnitPaymentOrderNo, item.DPPAmount.ToString("#,##0.#0"), item.VATAmount.ToString("#,##0.#0"),
-                            item.IncomeTaxAmount.ToString("#,##0.#0"), item.Total.ToString("#,##0.#0"));
+                    dt.Rows.Add(item.Date?.ToString("dd/MM/yyyy"), item.UnitReceiptNoteNo, item.SupplierName, item.IncomeTaxNo, item.InvoiceNo, item.UnitPaymentOrderNo, item.Total.ToString("#,##0.#0"));
                 }
             }
 
