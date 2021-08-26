@@ -40,6 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     },
                     Remark = "a",
                     Date = DateTimeOffset.Now,
+                    IsUsed=false,
                     Items = new List<GarmentFinanceMemorialItemViewModel>
                     {
                         new GarmentFinanceMemorialItemViewModel()

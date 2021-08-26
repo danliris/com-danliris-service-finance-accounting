@@ -299,6 +299,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                     Position = model.Position,
                     Date = model.Date,
                     Type = model.DocumentType == RealizationDocumentType.WithVB ? "Dengan Nomor VB" : "Tanpa Nomor VB",
+                    Remark = model.Remark,
                     SuppliantUnit = new UnitDto()
                     {
                         Code = model.SuppliantUnitCode,
@@ -321,7 +322,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                     },
                     Items = items.Select(item =>
                     {
-                        var unitCostItems = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => entity.VBRealizationDocumentExpenditureItemId == item.Id).ToList();
+                        var unitCostItems = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => entity.VBRealizationDocumentId == model.Id).ToList();
 
                         var itemResult = new VBRealizationWithPOItemDto()
                         {
@@ -340,7 +341,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                                 },
                                 IncomeTaxBy = item.IncomeTaxBy,
                                 UseIncomeTax = item.UseIncomeTax,
-                                UseVat = item.UseVat
+                                UseVat = item.UseVat,
+                                Division = new DivisionDto()
+                                {
+                                    Id = item.DivisionId,
+                                    Name = item.DivisionName,
+                                    Code = item.DivisionCode
+                                },
+                                Supplier = new SupplierDto()
+                                {
+                                    Id = item.SupplierId,
+                                    Name = item.SupplierName,
+                                    Code = item.SupplierCode
+                                },
+                                UnitCosts = unitCostItems.Select(unititem => 
+                                {
+                                    var unitcost = new UnitCostDto()
+                                    {
+                                        Amount = Convert.ToDouble(unititem.Amount),
+                                        Unit = new UnitDto()
+                                        {
+                                            Id = unititem.UnitId,
+                                            Code = unititem.UnitCode,
+                                            Name = unititem.UnitName,
+                                            Division = new DivisionDto()
+                                            {
+                                                Id = unititem.DivisionId,
+                                                Name = unititem.DivisionName,
+                                                Code = unititem.DivisionCode
+                                            },
+                                            VBDocumentLayoutOrder = unititem.VBDocumentLayoutOrder
+                                        }
+                                    };
+                                    return unitcost;
+                                }).ToList()
                             }
                         };
                         return itemResult;
@@ -358,6 +392,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         {
             var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
             model.UpdatePosition(VBRealizationPosition.Purchasing, _identityService.Username, UserAgent);
+            model.SetRemark(form.Remark);
 
             if (form.VBRequestDocument != null && form.VBRequestDocument.Id.GetValueOrDefault() > 0)
             {
