@@ -202,7 +202,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         {
             var firstDayOfMonth = new DateTime(year, month, 1);
 
-            var query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport).AsQueryable();
+            var query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport && x.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Month == month && x.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Year == year).AsQueryable();
 
             var previousMonth = month - 1;
             var previousYear = year;
