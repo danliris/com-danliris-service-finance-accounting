@@ -23,11 +23,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                 BankCashReceiptId = 1,
                 BankCashReceiptDate = DateTimeOffset.Now,
                 BankCashReceiptNo = "bankCashReceiptNo",
+                Amount = 2,
                 Items = new List<BankCashReceiptDetailItemModel>
                 {
                     new BankCashReceiptDetailItemModel()
                     {
-                        Amount = 1,
+                        Amount = 2,
                         BankCashReceiptDetailId = 1,
                         BuyerCode = "code",
                         BuyerId = 1,
@@ -51,7 +52,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                         CurrencyId = 1,
                         CurrencyCode = "code",
                         CurrencyRate = 1,
-                        
+                        Remarks = "remarks",
+                        TypeAmount = "KREDIT"
+
+                    },
+                    new BankCashReceiptDetailOtherItemModel()
+                    {
+                        ChartOfAccountId = 1,
+                        ChartOfAccountCode = "Code",
+                        ChartOfAccountName = "Name",
+                        BankCashReceiptDetailId = 1,
+                        Amount = 1,
+                        CurrencyId = 1,
+                        CurrencyCode = "code",
+                        CurrencyRate = 1,
+                        Remarks = "remarks",
+                        TypeAmount = "DEBIT"
 
                     }
                 }
