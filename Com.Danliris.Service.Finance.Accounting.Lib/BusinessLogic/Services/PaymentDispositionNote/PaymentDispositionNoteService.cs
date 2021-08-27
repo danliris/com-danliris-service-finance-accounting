@@ -413,7 +413,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         item.CategoryName,
                         item.DivisionName,
                         item.VATAmount,
-                        item.PaidAmount,
+                        string.Format("{0:0.00}", item.PaidAmount),
                         item.TransactionType
                         );
                 }
