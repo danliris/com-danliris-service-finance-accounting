@@ -49,7 +49,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     {
                         new BankCashReceiptDetailItemViewModel()
                         {
-                            Amount = 1,
+                            Amount = 2,
                             InvoiceId = 1,
                             InvoiceNo = "invoiceNo",
                             BuyerAgent = new Lib.ViewModels.NewIntegrationViewModel.BuyerViewModel
