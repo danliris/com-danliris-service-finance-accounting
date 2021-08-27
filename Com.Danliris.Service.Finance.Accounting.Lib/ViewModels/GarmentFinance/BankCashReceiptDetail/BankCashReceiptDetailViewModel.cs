@@ -32,7 +32,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                 yield return new ValidationResult("Nomor Kwitansi harus diisi", new List<string> { "BankCashReceiptNo" });
             }
 
-            if (this.Amount == null || this.Amount == 0)
+            if (this.Amount == 0 || this.Amount <= 0)
             {
                 yield return new ValidationResult("Amount harus diisi", new List<string> { "Amount" });
             }

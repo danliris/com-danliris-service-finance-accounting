@@ -32,6 +32,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     BankCashReceiptId = 1,
                     BankCashReceiptNo = "bankCashReceiptNo",
                     TotalAmount=2,
+                    Amount = 2,
+                    InvoiceCoa = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                    {
+                        Id = "1",
+                        Code = "code",
+                        Name = "name"
+                    },
+                    DebitCoa = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                    {
+                        Id = "1",
+                        Code = "code",
+                        Name = "name"
+                    },
                     Items = new List<BankCashReceiptDetailItemViewModel>
                     {
                         new BankCashReceiptDetailItemViewModel()
@@ -75,6 +88,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                                 Symbol = "symbol"
                             },
                              Amount = 1,
+                             Remarks = "remarks",
+                             TypeAmount = "Kredit"
+
+                        },
+                        new BankCashReceiptDetailOtherItemViewModel()
+                        {
+                            Account = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name"
+                            },
+                             Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                            {
+                                Id = 1,
+                                Code = "code",
+                                Description = "description",
+                                Rate = 1,
+                                Symbol = "symbol"
+                            },
+                             Amount = 1,
+                             Remarks = "remarks",
+                             TypeAmount = "Debit"
 
                         }
                     }
@@ -91,6 +127,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     BankCashReceiptId = 1,
                     BankCashReceiptNo = "bankCashReceiptNo",
                     TotalAmount=1,
+                    Amount = 0,
                     Items = new List<BankCashReceiptDetailItemViewModel>
                     {
                         new BankCashReceiptDetailItemViewModel()

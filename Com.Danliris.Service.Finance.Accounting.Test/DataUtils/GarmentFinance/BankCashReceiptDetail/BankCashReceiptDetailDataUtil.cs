@@ -52,7 +52,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                         CurrencyId = 1,
                         CurrencyCode = "code",
                         CurrencyRate = 1,
-                        
+                        Remarks = "remarks",
+                        TypeAmount = "Kredit"
 
                     }
                 }
