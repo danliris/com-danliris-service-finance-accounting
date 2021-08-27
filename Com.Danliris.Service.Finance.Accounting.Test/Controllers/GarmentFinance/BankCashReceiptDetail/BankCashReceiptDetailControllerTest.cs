@@ -375,7 +375,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             var mockFacade = new Mock<IBankCashReceiptDetailService>();
             var mockIdentity = new Mock<IIdentityService>();
             var ViewModel = this.viewModelValidationAmount;
-            ViewModel.BankCashReceiptId = 0;
             var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Post(ViewModel).Result;
             Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
         }

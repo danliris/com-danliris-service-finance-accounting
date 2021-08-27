@@ -256,6 +256,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
         {
             BankCashReceiptDetailViewModel vm = new BankCashReceiptDetailViewModel();
             vm.TotalAmount = 100;
+            vm.Amount = 0;
             vm.Items = new List<BankCashReceiptDetailItemViewModel>
             {
                 new BankCashReceiptDetailItemViewModel()
@@ -268,6 +269,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 new BankCashReceiptDetailOtherItemViewModel()
                 {
                     Id=0,
+                    TypeAmount = "KREDIT",
+                    Amount= 0,
                 }
             };
 
