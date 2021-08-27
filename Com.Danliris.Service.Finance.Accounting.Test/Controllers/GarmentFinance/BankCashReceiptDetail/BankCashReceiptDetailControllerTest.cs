@@ -127,7 +127,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     BankCashReceiptId = 1,
                     BankCashReceiptNo = "bankCashReceiptNo",
                     TotalAmount=1,
-                    Amount = 0,
+                    Amount = -1,
                     Items = new List<BankCashReceiptDetailItemViewModel>
                     {
                         new BankCashReceiptDetailItemViewModel()
@@ -177,7 +177,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     BankCashReceiptId = 1,
                     BankCashReceiptNo = "bankCashReceiptNo",
                     TotalAmount = 2,
-                    Amount = 1,
+                    Amount = 0,
                     InvoiceCoa = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
                     {
                         Id = "1",
@@ -234,7 +234,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                             },
                              Amount = 1,
                              Remarks = "remarks",
-                             TypeAmount = "KREDIT"
+                             TypeAmount = null,
 
                         },
                         new BankCashReceiptDetailOtherItemViewModel()
@@ -255,7 +255,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                             },
                              Amount = 1,
                              Remarks = "remarks",
-                             TypeAmount = "DEBIT"
+                             TypeAmount = "KREDIT"
 
                         }
                     }
