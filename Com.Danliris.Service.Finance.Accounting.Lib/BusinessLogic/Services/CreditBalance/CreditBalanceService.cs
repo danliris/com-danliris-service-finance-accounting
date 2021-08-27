@@ -509,7 +509,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         {
             var data = GetReportDetailData(isImport, supplierCode, month, year, offSet, isForeignCurrency, divisionId);
 
-            return new ReadResponse<CreditBalanceDetailViewModel>(data.OrderBy(element => element.Date).ToList(), data.Count, new Dictionary<string, string>(), new List<string>());
+            return new ReadResponse<CreditBalanceDetailViewModel>(data.OrderBy(element => element.SupplierName).ThenBy(element => element.Date).ToList(), data.Count, new Dictionary<string, string>(), new List<string>());
         }
 
         public MemoryStream GenerateExcelDetail(ReadResponse<CreditBalanceDetailViewModel> data, int divisionId, int month, int year)
