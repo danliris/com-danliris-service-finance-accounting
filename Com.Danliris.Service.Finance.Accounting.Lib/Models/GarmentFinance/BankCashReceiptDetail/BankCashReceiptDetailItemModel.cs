@@ -24,8 +24,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Bank
         public decimal CurrencyRate { get; set; }
 
         public decimal Amount { get; set; }
-        [MaxLength(1000)]
-        public string Remarks { get; set; }
 
         public virtual int BankCashReceiptDetailId { get; set; }
         [ForeignKey("BankCashReceiptDetailId")]

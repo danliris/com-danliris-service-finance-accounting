@@ -23,6 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                 BankCashReceiptId = 1,
                 BankCashReceiptDate = DateTimeOffset.Now,
                 BankCashReceiptNo = "bankCashReceiptNo",
+                Amount = 1,
                 Items = new List<BankCashReceiptDetailItemModel>
                 {
                     new BankCashReceiptDetailItemModel()
