@@ -340,9 +340,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return new ReadResponse<JournalTransactionModel>(list, TotalData, OrderDictionary, new List<string>());
         }
 
-        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year, string referenceNo, string referenceType)
+        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year, string referenceNo, string referenceType, bool isVB)
         {
             var query = _DbSet.Where(w => w.Date.Month.Equals(month) && w.Date.Year.Equals(year) && w.Status.Equals("DRAFT"));
+
+            if (isVB)
+                query = query.Where(entity => entity.Description.Contains("VB"));
 
             if (!string.IsNullOrWhiteSpace(referenceNo))
                 query = query.Where(entity => entity.ReferenceNo.Contains(referenceNo));
@@ -1167,14 +1170,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
         }
 
-        public List<string> GetAllReferenceNo(string keyword)
+        public List<string> GetAllReferenceNo(string keyword, bool isVB)
         {
-            return _DbContext.JournalTransactions.Select(entity => entity.ReferenceNo).Distinct().Where(entity => !string.IsNullOrWhiteSpace(entity) && entity.Contains(keyword)).Take(10).ToList();
+            var query = _DbContext.JournalTransactions.AsQueryable();
+            if (isVB)
+                query = query.Where(entity => entity.Description.Contains("VB"));
+
+            return query.Select(entity => entity.ReferenceNo).Distinct().Where(entity => !string.IsNullOrWhiteSpace(entity) && entity.Contains(keyword)).ToList();
         }
 
-        public List<string> GetAllReferenceType(string keyword)
+        public List<string> GetAllReferenceType(string keyword, bool isVB)
         {
-            return _DbContext.JournalTransactions.Select(entity => entity.Description).Distinct().Where(entity => !string.IsNullOrWhiteSpace(entity) && entity.Contains(keyword)).Take(10).ToList();
+            var query = _DbContext.JournalTransactions.AsQueryable();
+            if (isVB)
+                query = query.Where(entity => entity.Description.Contains("VB"));
+
+            return query.Select(entity => entity.Description).Distinct().Where(entity => !string.IsNullOrWhiteSpace(entity) && entity.Contains(keyword)).ToList();
         }
     }
 

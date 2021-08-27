@@ -95,12 +95,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             dt.Columns.Add(new DataColumn() { ColumnName = "Nilai Invoice PPN", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nilai Invoice Total", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mutasi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Bukti Pengeluaran Bank", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(string) });
 
             int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("","","", "", "", "", "", "", "", "TOTAL", "", "", "IDR", 0.ToString("#,##0.#0"));
+                dt.Rows.Add("","","", "", "", "", "", "", "", "TOTAL", "", "", "", "IDR", 0.ToString("#,##0.#0"));
                 index++;
             }
             else
@@ -123,11 +124,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         item.PPN.ToString("#,##0.#0"),
                         item.Total.ToString("#,##0.#0"),
                         item.Mutation.ToString("#,##0.#0"), 
+                        item.BankExpenditureAmount.ToString("#,##0.#0"),
                         item.FinalBalance.ToString("#,##0.#0"));
                     index++;
                 }
 
-                dt.Rows.Add("", "", "", "", "", "","", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0.#0"));
+                dt.Rows.Add("", "", "", "", "", "","", "", "", "TOTAL", "", "", "", "IDR", totalBalance.ToString("#,##0.#0"));
                 index++;
             }
             return Excel.CreateExcelWithTitleNonDateFilterWithSupplierName(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, title, suplierName, date, true, index);
@@ -313,6 +315,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     //bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
                     //}
                 }
+
+                if (item.PurchasingMemoId > 0)
+                {
+                    vm.BankExpenditureAmount = item.PurchasingMemoAmount;
+                    vm.BankExpenditureNoteNo = item.PurchasingMemoNo;
+                }
+
                 result.Add(vm);
 
                 //if (!string.IsNullOrEmpty(item.MemoNo))
@@ -502,7 +511,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 DivisionName = viewModel.DivisionName,
                 UnitId = viewModel.UnitId,
                 UnitCode = viewModel.UnitCode,
-                UnitName = viewModel.UnitName
+                UnitName = viewModel.UnitName,
+                ExternalPurchaseOrderNo = viewModel.ExternalPurchaseOrderNo,
+                VATAmount = viewModel.VATAmount,
+                IncomeTaxAmount = viewModel.IncomeTaxAmount,
+                IncomeTaxNo = viewModel.IncomeTaxNo
             };
 
             return await CreateAsync(model);
@@ -692,6 +705,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             }
 
             return result;
+        }
+
+        public int CreateFromPurchasingMemoTextile(CreditorAccountPurchasingMemoTextileFormDto form)
+        {
+            var models = DbContext.CreditorAccounts.Where(element => element.MemoNo == form.UnitPaymentOrderNo);
+            foreach (var model in models)
+            {
+                model.SetPurchasingMemo(form.PurchasingMemoId, form.PurchasingMemoNo, form.PurchasingMemoAmount);
+                EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+            }
+
+            DbContext.CreditorAccounts.UpdateRange(models);
+            return DbContext.SaveChanges();
+        }
+
+        public int DeleteFromPurchasingMemoTextile(CreditorAccountPurchasingMemoTextileFormDto form)
+        {
+            var models = DbContext.CreditorAccounts.Where(element => element.MemoNo == form.UnitPaymentOrderNo);
+            foreach (var model in models)
+            {
+                model.RemovePurchasingMemo();
+                EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+            }
+
+            DbContext.CreditorAccounts.UpdateRange(models);
+            return DbContext.SaveChanges();
         }
     }
 }

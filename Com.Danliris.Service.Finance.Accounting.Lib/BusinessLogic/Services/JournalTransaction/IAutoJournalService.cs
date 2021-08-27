@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         Task<int> AutoJournalFromOthersExpenditureProof(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> items);
         Task<int> AutoJournalReverseFromOthersExpenditureProof(string documentNo);
         Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds);
-        Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds, AccountBankViewModel bank);
+        Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds, AccountBankViewModel bank, string referenceNo);
         //Task<int> AutoJournalInklaring(List<int> vbRequestIds);
         Task<int> AutoJournalInklaring(List<int> vbRequestIds, AccountBankViewModel bank);
         string DocumentNoGenerator(AccountBankViewModel bank);
