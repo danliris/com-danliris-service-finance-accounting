@@ -89,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                             },
                              Amount = 1,
                              Remarks = "remarks",
-                             TypeAmount = "Kredit"
+                             TypeAmount = "KREDIT"
 
                         },
                         new BankCashReceiptDetailOtherItemViewModel()
@@ -110,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                             },
                              Amount = 1,
                              Remarks = "remarks",
-                             TypeAmount = "Debit"
+                             TypeAmount = "DEBIT"
 
                         }
                     }
@@ -161,6 +161,102 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                             Amount = 0,
                             Currency = null,
                             Account = null,
+                        }
+                    }
+                };
+            }
+        }
+
+        private BankCashReceiptDetailViewModel viewModelValidationAmount
+        {
+            get
+            {
+                return new BankCashReceiptDetailViewModel
+                {
+                    BankCashReceiptDate = DateTimeOffset.Now,
+                    BankCashReceiptId = 1,
+                    BankCashReceiptNo = "bankCashReceiptNo",
+                    TotalAmount = 2,
+                    Amount = 1,
+                    InvoiceCoa = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                    {
+                        Id = "1",
+                        Code = "code",
+                        Name = "name"
+                    },
+                    DebitCoa = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel()
+                    {
+                        Id = "1",
+                        Code = "code",
+                        Name = "name"
+                    },
+                    Items = new List<BankCashReceiptDetailItemViewModel>
+                    {
+                        new BankCashReceiptDetailItemViewModel()
+                        {
+                            Amount = 1,
+                            InvoiceId = 1,
+                            InvoiceNo = "invoiceNo",
+                            BuyerAgent = new Lib.ViewModels.NewIntegrationViewModel.BuyerViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name",
+                                Address = "address"
+                            },
+                            Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                            {
+                                Id = 1,
+                                Code = "code",
+                                Description = "description",
+                                Rate = 1,
+                                Symbol = "symbol"
+                            }
+                        }
+                    },
+                    OtherItems = new List<BankCashReceiptDetailOtherItemViewModel>
+                    {
+                        new BankCashReceiptDetailOtherItemViewModel()
+                        {
+                            Account = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name"
+                            },
+                             Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                            {
+                                Id = 1,
+                                Code = "code",
+                                Description = "description",
+                                Rate = 1,
+                                Symbol = "symbol"
+                            },
+                             Amount = 1,
+                             Remarks = "remarks",
+                             TypeAmount = "KREDIT"
+
+                        },
+                        new BankCashReceiptDetailOtherItemViewModel()
+                        {
+                            Account = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            {
+                                Id = "1",
+                                Code = "code",
+                                Name = "name"
+                            },
+                             Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel
+                            {
+                                Id = 1,
+                                Code = "code",
+                                Description = "description",
+                                Rate = 1,
+                                Symbol = "symbol"
+                            },
+                             Amount = 1,
+                             Remarks = "remarks",
+                             TypeAmount = "DEBIT"
+
                         }
                     }
                 };
@@ -267,6 +363,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
 
             int statusCode = await GetStatusCodePost(mocks);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void Post_Throws_Validation_Amount_Exception()
+        {
+            var validateMock = new Mock<IValidateService>();
+            validateMock.Setup(s => s.Validate(It.IsAny<BankCashReceiptDetailViewModel>())).Throws(GetServiceValidationExeption());
+            var mockMapper = new Mock<IMapper>();
+
+            var mockFacade = new Mock<IBankCashReceiptDetailService>();
+            var mockIdentity = new Mock<IIdentityService>();
+            var ViewModel = this.viewModelValidationAmount;
+            ViewModel.BankCashReceiptId = 0;
+            var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Post(ViewModel).Result;
+            Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
         }
 
         [Fact]
