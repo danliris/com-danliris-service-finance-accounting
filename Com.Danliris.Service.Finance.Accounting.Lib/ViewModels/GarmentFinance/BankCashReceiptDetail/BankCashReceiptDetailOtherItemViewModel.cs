@@ -11,5 +11,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public ChartOfAccountViewModel Account { get; set; }
         public CurrencyViewModel Currency { get; set; }
         public decimal Amount { get; set; }
+        public string TypeAmount { get; set; }
     }
 }

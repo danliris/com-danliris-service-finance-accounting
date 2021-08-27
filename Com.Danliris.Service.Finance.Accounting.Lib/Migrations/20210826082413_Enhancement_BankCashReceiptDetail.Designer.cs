@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210826082413_Enhancement_BankCashReceiptDetail")]
+    partial class Enhancement_BankCashReceiptDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1761,10 +1763,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("DeletedUtc");
 
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<bool>("IsUsed");
-
                     b.Property<string>("InvoiceCoaCode")
                         .HasMaxLength(32);
 
@@ -1772,6 +1770,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("InvoiceCoaName")
                         .HasMaxLength(256);
+
+                    b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LastModifiedAgent")
                         .IsRequired()
@@ -1847,9 +1847,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<string>("TypeAmount")
-                        .HasMaxLength(32);
-
                     b.HasKey("Id");
 
                     b.HasIndex("BankCashReceiptDetailId");
@@ -1909,7 +1906,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<int>("MemorialDetailId");
+                    b.Property<int>("MemorialId");
 
                     b.HasKey("Id");
 
@@ -2051,8 +2048,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<DateTime>("LastModifiedUtc");
 
                     b.Property<int>("MemorialDetailId");
-
-                    b.Property<double>("Quantity");
 
                     b.HasKey("Id");
 
