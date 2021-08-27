@@ -271,6 +271,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                     Id=0,
                     TypeAmount = "KREDIT",
                     Amount= 0,
+                },
+                new BankCashReceiptDetailOtherItemViewModel()
+                {
+                    Id=0,
+                    TypeAmount = "DEBIT",
+                    Amount= 0,
+                },
+                new BankCashReceiptDetailOtherItemViewModel()
+                {
+                    Id=0,
+                    TypeAmount = null,
+                    Amount= 0,
                 }
             };
 
