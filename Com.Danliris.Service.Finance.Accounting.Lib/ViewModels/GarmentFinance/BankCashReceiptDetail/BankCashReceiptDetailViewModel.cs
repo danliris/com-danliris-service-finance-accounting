@@ -42,19 +42,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
 
             totalDebit += this.Amount;
 
-            if (Items != null && OtherItems != null)
-            {
-                if(Items.Count > 0 && OtherItems.Count > 0)
-                {
-                    if (TotalAmount != (double)Items.Sum(a => a.Amount) + (double)OtherItems.Sum(a => a.Amount))
-                    {
-                        yield return new ValidationResult($"Total harus sama dengan total kwitansi ({TotalAmount})", new List<string> { "Amount" });
-                    }
-                }
-
-                
-            }
-
             if (this.Items == null || this.Items.Count == 0)
             {
                 yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "ItemsCount" });
