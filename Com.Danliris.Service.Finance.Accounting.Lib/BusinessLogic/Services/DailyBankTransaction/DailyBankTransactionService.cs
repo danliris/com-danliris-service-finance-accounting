@@ -88,9 +88,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (string.IsNullOrWhiteSpace(model.ReferenceNo))
             {
                 if (model.Status == "OUT")
-                    model.ReferenceNo = await GetDocumentNo("K", model.AccountBankCode, _IdentityService.Username, model.Date.ToOffset(timeOffset).Date);
+                    model.ReferenceNo = await GetDocumentNo("K", model.AccountBankCode, _IdentityService.Username, model.Date.AddHours(7).Date);
                 else if (model.Status == "IN")
-                    model.ReferenceNo = await GetDocumentNo("M", model.AccountBankCode, _IdentityService.Username, model.Date.ToOffset(timeOffset).Date);
+                    model.ReferenceNo = await GetDocumentNo("M", model.AccountBankCode, _IdentityService.Username, model.Date.AddHours(7).Date);
             }
 
             EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
@@ -415,7 +415,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         var kredit = item.Status.ToUpper().Equals("OUT") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
                         var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
 
-                        result.Rows.Add(item.Date.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
+                        result.Rows.Add((item.Date.AddHours(clientTimeZoneOffset)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
                             item.Remark,
                             item.ReferenceNo,
                             item.ReferenceType,
@@ -649,8 +649,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                          && transaction.IsPosted
                          //&& transaction.AccountBankId == bankId
                          //&& transaction.Date.Month == month
-                         && transaction.Date.ToOffset(offset).Month == month
-                         && transaction.Date.Year == year
+                         && transaction.Date.AddHours(clientTimeZoneOffset).Month == month
+                         && transaction.Date.AddHours(clientTimeZoneOffset).Year == year
                          orderby transaction.ReferenceNo
                          select new DailyBankTransactionModel
                          {
@@ -788,11 +788,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (accountBankId > 0)
                 Query = Query.Where(s => s.AccountBankId == accountBankId);
 
+            var offset = _IdentityService.TimezoneOffset;
             if (startDate.HasValue)
-                Query = Query.Where(s => s.Date >= startDate);
+                Query = Query.Where(s => s.Date.AddHours(offset) >= startDate);
 
             if (endDate.HasValue)
-                Query = Query.Where(s => s.Date <= endDate);
+                Query = Query.Where(s => s.Date.AddHours(offset) <= endDate);
 
 
             List<DailyBankTransactionModel> Data = new List<DailyBankTransactionModel>();
