@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceiptDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetail;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.BankCashReceipt;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,19 +11,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
     public class BankCashReceiptDetailDataUtil
     {
         private readonly BankCashReceiptDetailService Service;
-
-        public BankCashReceiptDetailDataUtil(BankCashReceiptDetailService service)
+        private readonly BankCashReceiptDataUtil BankCashReceiptDataUtil;
+        public BankCashReceiptDetailDataUtil(BankCashReceiptDetailService service, BankCashReceiptDataUtil bankCashReceiptDataUtil)
         {
             Service = service;
+            BankCashReceiptDataUtil = bankCashReceiptDataUtil;
         }
 
         public BankCashReceiptDetailModel GetNewData()
         {
+            var bankCashReceipt = Task.Run(() => BankCashReceiptDataUtil.GetTestData()).Result;
             return new BankCashReceiptDetailModel
             {
-                BankCashReceiptId = 1,
-                BankCashReceiptDate = DateTimeOffset.Now,
-                BankCashReceiptNo = "bankCashReceiptNo",
+                BankCashReceiptId = bankCashReceipt.Id,
+                BankCashReceiptDate = bankCashReceipt.ReceiptDate,
+                BankCashReceiptNo = bankCashReceipt.ReceiptNo,
                 Amount = 2,
                 Items = new List<BankCashReceiptDetailItemModel>
                 {
