@@ -7,6 +7,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentDispositionExped
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
 using Com.Moonlay.Models;
@@ -185,6 +186,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 
             var result = await service.UpdateAsync(model.Id, model);
             Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public void Should_Success_Read_Details_By_EPOId()
+        {
+            var serviceProviderMock = GetServiceProvider();
+            var dbContext = GetDbContext(GetCurrentMethod());
+
+            var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+            var expedition = new GarmentDispositionExpeditionModel();
+            EntityExtension.FlagForCreate(expedition, "Test", "Test");
+            dbContext.GarmentDispositionExpeditions.Add(expedition);
+            dbContext.SaveChanges();
+
+            var result = service.ReadDetailsByEPOId("Test");
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Should_Success_Post_Data()
+        {
+            var serviceProviderMock = GetServiceProvider();
+            var dbContext = GetDbContext(GetCurrentMethod());
+
+            var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+            var expedition = new GarmentDispositionExpeditionModel();
+            EntityExtension.FlagForCreate(expedition, "Test", "Test");
+            dbContext.GarmentDispositionExpeditions.Add(expedition);
+            dbContext.SaveChanges();
+
+            var model = new GarmentInvoicePurchasingDispositionPostingViewModel() { ListIds = new List<GarmentInvoicePurchasingDispositionPostingIdViewModel>() { new GarmentInvoicePurchasingDispositionPostingIdViewModel() { Id = 1 } } };
+
+            var result = await service.Post(model);
+            Assert.Equal(0, result);
         }
 
     }
