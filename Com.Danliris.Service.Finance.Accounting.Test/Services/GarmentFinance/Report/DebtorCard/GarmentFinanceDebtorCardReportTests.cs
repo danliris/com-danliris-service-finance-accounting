@@ -90,7 +90,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
 
         private BankCashReceiptDetailDataUtil _dataUtilBankCash(BankCashReceiptDetailService service)
         {
-            var bankCashReceiptService = new BankCashReceiptService(GetServiceProvider().Object);
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var bankCashReceiptService = new BankCashReceiptService(serviceProviderMock.Object);
             var bankCashReceiptDataUtil = new BankCashReceiptDataUtil(bankCashReceiptService);
             return new BankCashReceiptDetailDataUtil(service, bankCashReceiptDataUtil);
         }
