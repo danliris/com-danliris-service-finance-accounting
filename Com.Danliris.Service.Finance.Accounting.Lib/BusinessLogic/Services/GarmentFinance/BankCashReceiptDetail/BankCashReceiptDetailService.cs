@@ -38,6 +38,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                 EntityExtension.FlagForCreate(otherItem, _identityService.Username, UserAgent);
             }
             _dbContext.GarmentFinanceBankCashReceiptDetails.Add(model);
+            await UpdateIsUsedBankCashReceipt(model.BankCashReceiptId, true);
             return await _dbContext.SaveChangesAsync();
         }
 
@@ -59,6 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
 
             EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent, true);
             _dbContext.GarmentFinanceBankCashReceiptDetails.Update(model);
+            await UpdateIsUsedBankCashReceipt(model.BankCashReceiptId, false);
 
             return await _dbContext.SaveChangesAsync();
         }
@@ -161,6 +163,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
             double memorialDetailItem = _dbContext.GarmentFinanceMemorialDetailItems.Where(a => a.InvoiceId == invoiceId).Sum(a => a.Amount);
 
             return bankCashReceiptDetailItem + memorialDetailItem;
+        }
+
+        public async Task<int> UpdateIsUsedBankCashReceipt(int garmentBankCashReceiptId, bool isUsed)
+        {
+            var bankCashReceipt = await _dbContext.GarmentFinanceBankCashReceipts
+                .Where(x => x.Id == garmentBankCashReceiptId)
+                .Include(i => i.Items)
+                .FirstOrDefaultAsync();
+
+            bankCashReceipt.IsUsed = isUsed;
+            EntityExtension.FlagForUpdate(bankCashReceipt, _identityService.Username, UserAgent);
+
+            return await _dbContext.SaveChangesAsync();
+
         }
     }
 }
