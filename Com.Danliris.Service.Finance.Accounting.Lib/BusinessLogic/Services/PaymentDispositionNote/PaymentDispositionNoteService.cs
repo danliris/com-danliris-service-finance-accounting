@@ -372,7 +372,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
             var result = query.OrderBy(entity => entity.PaymentDate).ToList();
 
-            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.Amount, element.TransactionType, element.BankAccountNumber, element.CurrencyRate, element.BankCurrencyCode)).ToList();
+            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.PayToSupplier, element.TransactionType, element.BankAccountNumber, element.CurrencyRate, element.BankCurrencyCode)).ToList();
         }
 
         public MemoryStream GetXls(List<ReportDto> data)
@@ -414,7 +414,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         item.CategoryName,
                         item.DivisionName,
                         item.VATAmount,
-                        string.Format("{0:0.00}", item.PaidAmount),
+                        item.PaidAmount,
                         item.TransactionType
                         );
                 }
