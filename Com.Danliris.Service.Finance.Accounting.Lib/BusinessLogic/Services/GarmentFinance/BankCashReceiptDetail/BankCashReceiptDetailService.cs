@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
             {
                 receipts.IsUsed = true;
             }
-            _dbContext.GarmentFinanceBankCashReceiptDetails.Add(model);
+            await _dbContext.GarmentFinanceBankCashReceiptDetails.AddAsync(model);
             return await _dbContext.SaveChangesAsync();
         }
 

@@ -1,6 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceiptDetail;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -81,7 +82,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             return new BankCashReceiptDetailDataUtil(service, bankCashReceiptDataUtil);
         }
 
-
+        private BankCashReceiptDataUtil _dataUtilReceipt(BankCashReceiptService service, string testname)
+        {
+            return new BankCashReceiptDataUtil(service);
+        }
 
         [Fact]
         public async Task Should_Success_Create_Data()
@@ -102,6 +106,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 .Returns(dbContext);
 
             var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+            var serviceReceipt = new BankCashReceiptService(serviceProviderMock.Object);
+
+            var dto = _dataUtilReceipt(serviceReceipt, GetCurrentAsyncMethod()).GetTestData();
+            //Act
+            var ResponseReceipt = serviceReceipt.ReadByIdAsync(dto.Id);
+
+            Assert.NotNull(ResponseReceipt);
 
             var model = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
             
@@ -185,6 +196,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 .Returns(dbContext);
 
             var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+            var serviceReceipt = new BankCashReceiptService(serviceProviderMock.Object);
+
+            var dto = _dataUtilReceipt(serviceReceipt, GetCurrentAsyncMethod()).GetTestData();
+            //Act
+            var ResponseReceipt = serviceReceipt.ReadByIdAsync(dto.Id);
+
+            Assert.NotNull(ResponseReceipt);
 
             var model = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
             //Act
