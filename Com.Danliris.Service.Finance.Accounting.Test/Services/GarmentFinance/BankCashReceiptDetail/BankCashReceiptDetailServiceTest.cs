@@ -124,6 +124,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
         }
 
         [Fact]
+        public async Task Should_Success_Create_Data_Null_Receipt()
+        {
+
+            //Arrange
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            var httpClientService = new Mock<IHttpClientService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+
+            var model = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
+
+            //Act
+            var Response = await service.CreateAsync(model);
+
+            //Assert
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
         public async Task Should_Success_Get_Data()
         {
             //Arrange
@@ -203,6 +232,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             var ResponseReceipt = serviceReceipt.ReadByIdAsync(dto.Id);
 
             Assert.NotNull(ResponseReceipt);
+
+            var model = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
+            //Act
+            var newModel = await service.ReadByIdAsync(model.Id);
+            var Response = await service.DeleteAsync(newModel.Id);
+
+            //Assert
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Delete_Data_Null_Receipt()
+        {
+            //Arrange
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            var httpClientService = new Mock<IHttpClientService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
 
             var model = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
             //Act
