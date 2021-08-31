@@ -143,8 +143,66 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
 
             return garmentShipping;
         }
+        private async Task<GarmentCurrency> GetCurrency()
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
 
-        public async Task<List<ExportSalesDebtorReportViewModel>> GetMonitoring(int month, int year, int offset)
+            var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
+
+            var currencyUri = APIEndpoint.Core + $"master/garment-currencies/sales-debtor-currencies";
+            var currencyResponse = await httpClient.GetAsync(currencyUri);
+
+            var currencyResult = new BaseResponse<GarmentCurrency>()
+            {
+                data = new GarmentCurrency()
+            };
+
+            if (currencyResponse.IsSuccessStatusCode)
+            {
+                //currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
+                var contentString = await currencyResponse.Content.ReadAsStringAsync();
+                Dictionary<string, object> content = JsonConvert.DeserializeObject<Dictionary<string, object>>(contentString);
+                var dataString = content.GetValueOrDefault("data").ToString();
+                var listData = JsonConvert.DeserializeObject<GarmentCurrency>(dataString);
+                currencyResult.data = listData;
+            }
+
+            return currencyResult.data;
+        }
+
+        private async Task<GarmentCurrency> GetCurrencyPEBDate(string stringDate)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
+
+            var currencyUri = APIEndpoint.Core + $"master/garment-currencies/sales-debtor-currencies-peb?stringDate={stringDate}";
+            var currencyResponse = await httpClient.GetAsync(currencyUri);
+
+            var currencyResult = new BaseResponse<GarmentCurrency>()
+            {
+                data = new GarmentCurrency()
+            };
+
+            if (currencyResponse.IsSuccessStatusCode)
+            {
+                //currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
+                var contentString = await currencyResponse.Content.ReadAsStringAsync();
+                Dictionary<string, object> content = JsonConvert.DeserializeObject<Dictionary<string, object>>(contentString);
+                var dataString = content.GetValueOrDefault("data").ToString();
+                var listData = JsonConvert.DeserializeObject<GarmentCurrency>(dataString);
+                currencyResult.data = listData;
+            }
+
+            return currencyResult.data;
+        }
+        public async Task<List<ExportSalesDebtorReportViewModel>> GetMonitoring(int month, int year,string type, int offset)
         {
 
             GarmentShippingPackingList invoicePackingListBalance = await GetDataShippingInvoice(month, year);
@@ -152,141 +210,182 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             GarmentShippingPackingList balance = await GetDataBalance();
 
             List<ExportSalesDebtorReportViewModel> data = new List<ExportSalesDebtorReportViewModel>();
+            GarmentCurrency garmentCurrency = await GetCurrency();
+            if (garmentCurrency == null)
+            {
+                garmentCurrency.Rate = 1;
+            }
 
-            var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month < month && aa.MemorialDate.Year == year select new { aa.Id })
+            var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month < month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                                join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+                               where c.BuyerCode=="T09"
                                select new ExportSalesDebtorReportViewModel
                                {
                                    buyerCode = c.BuyerCode,
                                    buyerName = c.BuyerName,
-                                   beginingBalance = Convert.ToDecimal(-c.Amount),
+                                   beginingBalance = type=="IDR"? Convert.ToDecimal(-c.Amount)  * Convert.ToDecimal(garmentCurrency.Rate): Convert.ToDecimal(-c.Amount),
                                    receipt = 0,
                                    sales = 0,
                                    endBalance = 0,
-                                   lessThan = 0,
-                                   between = 0,
-                                   moreThan = 0
+                                   normal = 0,
+                                   oneThirty = 0,
+                                   thirtySixty = 0,
+                                   sixtyNinety = 0,
+                                   moreThanNinety = 0
 
                                };
-            var beginingBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month < month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var beginingBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month < month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                           join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
-
+                                          
                                           select new ExportSalesDebtorReportViewModel
                                           {
                                               buyerCode = b.BuyerCode,
                                               buyerName = b.BuyerName,
-                                              beginingBalance = Convert.ToDecimal(-b.Amount),
+                                              beginingBalance = type=="IDR"? Convert.ToDecimal(-b.CurrencyRate * b.Amount) : Convert.ToDecimal(-b.Amount),
                                               receipt = 0,
                                               sales = 0,
                                               endBalance = 0,
-                                              lessThan = 0,
-                                              between = 0,
-                                              moreThan = 0
-
+                                              normal = 0,
+                                              oneThirty = 0,
+                                              thirtySixty = 0,
+                                              sixtyNinety = 0,
+                                              moreThanNinety = 0
                                           };
+            
+            foreach (var item in invoicePackingListBalance.data)
+            { 
+                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
+                item.rate = Convert.ToDouble(currency.Rate);
+
+            }
+            foreach (var item in invoicePackingListNow.data)
+            {
+                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
+                item.rate = Convert.ToDouble(currency.Rate);
+
+            }
             var beginingInvoice = from a in invoicePackingListBalance.data
+                                  
                                   select new ExportSalesDebtorReportViewModel
                                   {
                                       buyerCode = a.buyerAgentCode,
                                       buyerName = a.buyerAgentName,
-                                      beginingBalance = Convert.ToDecimal(a.amount),
+                                      beginingBalance = type=="IDR" ? Convert.ToDecimal(a.amount * a .rate) : Convert.ToDecimal(a.amount),
                                       receipt = 0,
                                       sales = 0,
                                       endBalance = 0,
-                                      lessThan = 0,
-                                      between = 0,
-                                      moreThan = 0
+                                      normal = 0,
+                                      oneThirty = 0,
+                                      thirtySixty = 0,
+                                      sixtyNinety = 0,
+                                      moreThanNinety = 0
 
                                   };
+ 
             var beginingBalance = from a in balance.data
+                                  
                                   select new ExportSalesDebtorReportViewModel
                                   {
                                       buyerCode = a.buyerAgentCode,
                                       buyerName = a.buyerAgentName,
-                                      beginingBalance = Convert.ToDecimal(a.amount),
+                                      beginingBalance = type=="IDR" ? Convert.ToDecimal(a.balanceAmountIDR) : Convert.ToDecimal(a.balanceAmount),
                                       receipt = 0,
                                       sales = 0,
                                       endBalance = 0,
-                                      lessThan = 0,
-                                      between = 0,
-                                      moreThan = 0
+                                      normal = 0,
+                                      oneThirty = 0,
+                                      thirtySixty = 0,
+                                      sixtyNinety = 0,
+                                      moreThanNinety = 0
 
                                   };
             var salesNow = from a in invoicePackingListNow.data
+                           
                            select new ExportSalesDebtorReportViewModel
                            {
                                buyerCode = a.buyerAgentCode,
                                buyerName = a.buyerAgentName,
                                beginingBalance = 0,
                                receipt = 0,
-                               sales = Convert.ToDouble(a.amount),
-                               endBalance = 0,
-                               lessThan = 0,
-                               between = 0,
-                               moreThan = 0
+                               sales = type =="IDR"? Convert.ToDouble(a.amount *a.rate) : Convert.ToDouble(a.amount),
+                               normal = 0,
+                               oneThirty = 0,
+                               thirtySixty = 0,
+                               sixtyNinety = 0,
+                               moreThanNinety = 0
                            };
-            var memoNow = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month == month && aa.MemorialDate.Year == year select new { aa.Id })
+            var memoNow = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month == month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                           join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+                         
                           select new ExportSalesDebtorReportViewModel
                           {
                               buyerCode = c.BuyerCode,
                               buyerName = c.BuyerName,
                               beginingBalance = 0,
-                              receipt = Convert.ToDouble(c.Amount),
+                              receipt = type=="IDR" ? Convert.ToDouble(c.Amount * c.CurrencyRate) : Convert.ToDouble(c.Amount),
                               sales = 0,
                               endBalance = 0,
-                              lessThan = 0,
-                              between = 0,
-                              moreThan = 0
+                              normal = 0,
+                              oneThirty = 0,
+                              thirtySixty = 0,
+                              sixtyNinety = 0,
+                              moreThanNinety = 0
 
                           };
-            var bankCashReceiptNow = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month == month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var bankCashReceiptNow = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month == month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                      join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
-
+                                     
                                      select new ExportSalesDebtorReportViewModel
                                      {
                                          buyerCode = b.BuyerCode,
                                          buyerName = b.BuyerName,
                                          beginingBalance = 0,
-                                         receipt = Convert.ToDouble(b.Amount),
+                                         receipt = type=="IDR" ? Convert.ToDouble(b.Amount * b.CurrencyRate) : Convert.ToDouble(b.Amount),
                                          sales = 0,
                                          endBalance = 0,
-                                         lessThan = 0,
-                                         between = 0,
-                                         moreThan = 0
+                                         normal = 0,
+                                         oneThirty = 0,
+                                         thirtySixty = 0,
+                                         sixtyNinety = 0,
+                                         moreThanNinety = 0
 
                                      };
-            var periodeMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month <= month && aa.MemorialDate.Year == year select new { aa.Id })
-                               join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
-                               select new ExportSalesDebtorReportViewModel
-                               {
-                                   buyerCode = c.BuyerCode,
-                                   buyerName = c.BuyerName,
-                                   beginingBalance =0,
-                                   receipt = 0,
-                                   sales = 0,
-                                   endBalance = 0,
-                                   lessThan = -c.Amount,
-                                   between = -c.Amount,
-                                   moreThan = -c.Amount
+            var periodeMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month <= month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
+                              join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+                              
+                              select new ExportSalesDebtorReportViewModel
+                              {
+                                  buyerCode = c.BuyerCode,
+                                  buyerName = c.BuyerName,
+                                  beginingBalance = 0,
+                                  receipt = 0,
+                                  sales = 0,
+                                  endBalance = 0,
+                                  normal = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                  oneThirty = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                  thirtySixty = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                  sixtyNinety = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                  moreThanNinety = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount
 
-                               };
-            var periodeBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month <= month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
-                                          join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
+                              };
+            var periodeBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month <= month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
+                                         join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
+                                          
+                                         select new ExportSalesDebtorReportViewModel
+                                         {
+                                             buyerCode = b.BuyerCode,
+                                             buyerName = b.BuyerName,
+                                             beginingBalance = 0,
+                                             receipt = 0,
+                                             sales = 0,
+                                             endBalance = 0,
+                                             normal = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                             oneThirty = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                             thirtySixty = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                             sixtyNinety = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                             moreThanNinety = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount)
 
-                                          select new ExportSalesDebtorReportViewModel
-                                          {
-                                              buyerCode = b.BuyerCode,
-                                              buyerName = b.BuyerName,
-                                              beginingBalance = 0,
-                                              receipt = 0,
-                                              sales = 0,
-                                              endBalance = 0,
-                                              lessThan = Convert.ToDouble(-b.Amount),
-                                              between = Convert.ToDouble(-b.Amount),
-                                              moreThan = Convert.ToDouble(-b.Amount)
-
-                                          };
+                                         };
             var queryUnion =beginingBalance.Union(beginingMemo).Union(beginingBankCashReceipt).Union(beginingInvoice)
                         .Union(memoNow).Union(bankCashReceiptNow).Union(salesNow)
                         .Union(periodeBankCashReceipt).Union(periodeMemo);
@@ -302,18 +401,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                        receipt = group.Sum(s => s.receipt),
                        sales = group.Sum(s => s.sales),
                        endBalance = group.Sum(s => s.endBalance),
-                       lessThan = group.Sum(s => s.lessThan),
-                       between = group.Sum(s => s.between),
-                       moreThan = group.Sum(s => s.moreThan)
-
+                       normal = group.Sum(s => s.normal),
+                       oneThirty = group.Sum(s => s.oneThirty),
+                       thirtySixty = group.Sum(s => s.thirtySixty),
+                       sixtyNinety = group.Sum(s => s.sixtyNinety),
+                       moreThanNinety = group.Sum(s => s.moreThanNinety)
                    }).OrderByDescending(s => s.buyerName);
             int index = 1;
             var querytimeSpan = from aa in _invoice
                                 select new timeSpanInvoice
                                 {
                                     buyerCode = aa.buyerAgentCode,
-                                    amount = Convert.ToDecimal(aa.amount),
-                                    day = (DateTimeOffset.Now - aa.truckingDate).Days
+                                    amount = type=="IDR" ? Convert.ToDecimal(aa.amount* aa.rate) : Convert.ToDecimal(aa.amount),
+                                    day = (aa.truckingDate.AddDays(aa.paymentdue) - aa.truckingDate).Days
                                 };
             var querySumTS = querytimeSpan.ToList()
                    .GroupBy(x => new { x.buyerCode, x.day }, (key, group) => new
@@ -325,22 +425,56 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             {
                 ExportSalesDebtorReportViewModel model = new ExportSalesDebtorReportViewModel
                 {
-                    index = index,
+                    index = index.ToString(),
                     buyerCode = item.buyerCode,
                     buyerName = item.buyerName,
                     beginingBalance = item.beginingBalance,
                     receipt = item.receipt,
                     sales = item.sales,
                     endBalance = Convert.ToDouble(item.beginingBalance) + item.sales - item.receipt,
-                    lessThan =  Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && aa.day <=30 select aa.amount).FirstOrDefault()),
-                    between = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day > 30 && aa.day <60)  select aa.amount).FirstOrDefault()),
-                    moreThan = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && aa.day > 60 select aa.amount).FirstOrDefault()),
+                    normal =  Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && aa.day <=0 select aa.amount).FirstOrDefault()),
+                    oneThirty = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day > 0 && aa.day <31)  select aa.amount).FirstOrDefault()),
+                    thirtySixty = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day >=31  && aa.day < 61) select aa.amount).FirstOrDefault()),
+                    sixtyNinety = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day >=61  && aa.day < 91) select aa.amount).FirstOrDefault()),
+                    moreThanNinety = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day >90) select aa.amount).FirstOrDefault()),
+                    total = "TOTAL"
                 };
                 data.Add(model);
                 index++;
             }
-            
-
+            var queryTOTAL = data.ToList()
+                   .GroupBy(x => new { x.total }, (key, group) => new
+                   {
+                       
+                       beginingBalance = group.Sum(s => s.beginingBalance),
+                       receipt = group.Sum(s => s.receipt),
+                       sales = group.Sum(s => s.sales),
+                       endBalance = group.Sum(s => s.endBalance),
+                       normal = group.Sum(s => s.normal),
+                       oneThirty = group.Sum(s => s.oneThirty),
+                       thirtySixty = group.Sum(s => s.thirtySixty),
+                       sixtyNinety = group.Sum(s => s.sixtyNinety),
+                       moreThanNinety = group.Sum(s => s.moreThanNinety)
+                   });
+            foreach(var item in queryTOTAL)
+            {
+                ExportSalesDebtorReportViewModel model = new ExportSalesDebtorReportViewModel
+                {
+                    index="",
+                    buyerCode = "TOTAL",
+                    buyerName = "",
+                    beginingBalance = item.beginingBalance,
+                    receipt = item.receipt,
+                    sales = item.sales,
+                    endBalance = item.endBalance,
+                    normal = item.normal,
+                    oneThirty = item.oneThirty,
+                    thirtySixty = item.thirtySixty,
+                    sixtyNinety=item.sixtyNinety,
+                    moreThanNinety=item.moreThanNinety
+                };
+                data.Add(model);
+            }
             return data;
         }
         class timeSpanInvoice
@@ -349,122 +483,153 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
              internal decimal amount { get; set; } 
              internal int day { get; set; }
         }
-        public async Task<MemoryStream> GenerateExcel(int month, int year)
+        public async Task<MemoryStream> GenerateExcel(int month, int year,string type)
         {
-
-
             GarmentShippingPackingList invoicePackingListBalance = await GetDataShippingInvoice(month, year);
             GarmentShippingPackingList invoicePackingListNow = await GetDataShippingInvoiceNow(month, year);
-            GarmentShippingPackingList balance = await GetDataShippingInvoice(month, year);
+            GarmentShippingPackingList balance = await GetDataBalance();
 
             List<ExportSalesDebtorReportViewModel> data = new List<ExportSalesDebtorReportViewModel>();
+            GarmentCurrency garmentCurrency = await GetCurrency();
 
-            var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month < month && aa.MemorialDate.Year == year select new { aa.Id })
+
+            var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month < month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                                join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+                               
                                select new ExportSalesDebtorReportViewModel
                                {
                                    buyerCode = c.BuyerCode,
                                    buyerName = c.BuyerName,
-                                   beginingBalance = Convert.ToDecimal(-c.Amount),
+                                   beginingBalance = type == "IDR" ? Convert.ToDecimal(-c.Amount) * Convert.ToDecimal(garmentCurrency.Rate) : Convert.ToDecimal(-c.Amount),
                                    receipt = 0,
                                    sales = 0,
                                    endBalance = 0,
-                                   lessThan = 0,
-                                   between = 0,
-                                   moreThan = 0
+                                   normal = 0,
+                                   oneThirty = 0,
+                                   thirtySixty = 0,
+                                   sixtyNinety = 0,
+                                   moreThanNinety = 0
 
                                };
-            var beginingBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month < month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var beginingBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month < month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                           join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
-
+                                          
                                           select new ExportSalesDebtorReportViewModel
                                           {
                                               buyerCode = b.BuyerCode,
                                               buyerName = b.BuyerName,
-                                              beginingBalance = Convert.ToDecimal(-b.Amount),
+                                              beginingBalance = type == "IDR" ? Convert.ToDecimal(-b.CurrencyRate * b.Amount) : Convert.ToDecimal(-b.Amount),
                                               receipt = 0,
                                               sales = 0,
                                               endBalance = 0,
-                                              lessThan = 0,
-                                              between = 0,
-                                              moreThan = 0
-
+                                              normal = 0,
+                                              oneThirty = 0,
+                                              thirtySixty = 0,
+                                              sixtyNinety = 0,
+                                              moreThanNinety = 0
                                           };
+
+            foreach (var item in invoicePackingListBalance.data)
+            {
+                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
+                item.rate = Convert.ToDouble(currency.Rate);
+
+            }
+            foreach (var item in invoicePackingListNow.data)
+            {
+                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
+                item.rate = Convert.ToDouble(currency.Rate);
+
+            }
             var beginingInvoice = from a in invoicePackingListBalance.data
+                                 
                                   select new ExportSalesDebtorReportViewModel
                                   {
                                       buyerCode = a.buyerAgentCode,
                                       buyerName = a.buyerAgentName,
-                                      beginingBalance = Convert.ToDecimal(a.amount),
+                                      beginingBalance = type == "IDR" ? Convert.ToDecimal(a.amount * a.rate) : Convert.ToDecimal(a.amount),
                                       receipt = 0,
                                       sales = 0,
                                       endBalance = 0,
-                                      lessThan = 0,
-                                      between = 0,
-                                      moreThan = 0
+                                      normal = 0,
+                                      oneThirty = 0,
+                                      thirtySixty = 0,
+                                      sixtyNinety = 0,
+                                      moreThanNinety = 0
 
                                   };
+
             var beginingBalance = from a in balance.data
+                                 
                                   select new ExportSalesDebtorReportViewModel
                                   {
                                       buyerCode = a.buyerAgentCode,
                                       buyerName = a.buyerAgentName,
-                                      beginingBalance = Convert.ToDecimal(a.amount),
+                                      beginingBalance = type == "IDR" ? Convert.ToDecimal(a.balanceAmountIDR) : Convert.ToDecimal(a.balanceAmount),
                                       receipt = 0,
                                       sales = 0,
                                       endBalance = 0,
-                                      lessThan = 0,
-                                      between = 0,
-                                      moreThan = 0
+                                      normal = 0,
+                                      oneThirty = 0,
+                                      thirtySixty = 0,
+                                      sixtyNinety = 0,
+                                      moreThanNinety = 0
 
                                   };
             var salesNow = from a in invoicePackingListNow.data
+                          
                            select new ExportSalesDebtorReportViewModel
                            {
                                buyerCode = a.buyerAgentCode,
                                buyerName = a.buyerAgentName,
                                beginingBalance = 0,
                                receipt = 0,
-                               sales = Convert.ToDouble(a.amount),
-                               endBalance = 0,
-                               lessThan = 0,
-                               between = 0,
-                               moreThan = 0
+                               sales = type == "IDR" ? Convert.ToDouble(a.amount * a.rate) : Convert.ToDouble(a.amount),
+                               normal = 0,
+                               oneThirty = 0,
+                               thirtySixty = 0,
+                               sixtyNinety = 0,
+                               moreThanNinety = 0
                            };
-            var memoNow = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month == month && aa.MemorialDate.Year == year select new { aa.Id })
+            var memoNow = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month == month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                           join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+                          
                           select new ExportSalesDebtorReportViewModel
                           {
                               buyerCode = c.BuyerCode,
                               buyerName = c.BuyerName,
                               beginingBalance = 0,
-                              receipt = Convert.ToDouble(c.Amount),
+                              receipt = type == "IDR" ? Convert.ToDouble(c.Amount * c.CurrencyRate) : Convert.ToDouble(c.Amount),
                               sales = 0,
                               endBalance = 0,
-                              lessThan = 0,
-                              between = 0,
-                              moreThan = 0
+                              normal = 0,
+                              oneThirty = 0,
+                              thirtySixty = 0,
+                              sixtyNinety = 0,
+                              moreThanNinety = 0
 
                           };
-            var bankCashReceiptNow = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month == month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var bankCashReceiptNow = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month == month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                      join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
-
+                                     
                                      select new ExportSalesDebtorReportViewModel
                                      {
                                          buyerCode = b.BuyerCode,
                                          buyerName = b.BuyerName,
                                          beginingBalance = 0,
-                                         receipt = Convert.ToDouble(b.Amount),
+                                         receipt = type == "IDR" ? Convert.ToDouble(b.Amount * b.CurrencyRate) : Convert.ToDouble(b.Amount),
                                          sales = 0,
                                          endBalance = 0,
-                                         lessThan = 0,
-                                         between = 0,
-                                         moreThan = 0
+                                         normal = 0,
+                                         oneThirty = 0,
+                                         thirtySixty = 0,
+                                         sixtyNinety = 0,
+                                         moreThanNinety = 0
 
                                      };
-
-            var periodeMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.Month <= month && aa.MemorialDate.Year == year select new { aa.Id })
+            var periodeMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Month <= month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
                               join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+                             
                               select new ExportSalesDebtorReportViewModel
                               {
                                   buyerCode = c.BuyerCode,
@@ -473,14 +638,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                   receipt = 0,
                                   sales = 0,
                                   endBalance = 0,
-                                  lessThan = -c.Amount,
-                                  between = -c.Amount,
-                                  moreThan = -c.Amount
+                                  normal = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                  oneThirty = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                  thirtySixty = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                  sixtyNinety = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount,
+                                  moreThanNinety = type == "IDR" ? -c.Amount * Convert.ToDouble(garmentCurrency.Rate) : -c.Amount
 
                               };
-            var periodeBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.Month <= month && aa.BankCashReceiptDate.Year == year select new { aa.Id })
+            var periodeBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Month <= month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                          join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
-
+                                         
                                          select new ExportSalesDebtorReportViewModel
                                          {
                                              buyerCode = b.BuyerCode,
@@ -489,12 +656,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                              receipt = 0,
                                              sales = 0,
                                              endBalance = 0,
-                                             lessThan = Convert.ToDouble(-b.Amount),
-                                             between = Convert.ToDouble(-b.Amount),
-                                             moreThan = Convert.ToDouble(-b.Amount)
+                                             normal = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                             oneThirty = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                             thirtySixty = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                             sixtyNinety = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount),
+                                             moreThanNinety = type == "IDR" ? Convert.ToDouble(-b.Amount) * Convert.ToDouble(garmentCurrency.Rate) : Convert.ToDouble(-b.Amount)
 
                                          };
-            var queryUnion = beginingMemo.Union(beginingBankCashReceipt).Union(beginingInvoice)
+            var queryUnion = beginingBalance.Union(beginingMemo).Union(beginingBankCashReceipt).Union(beginingInvoice)
                         .Union(memoNow).Union(bankCashReceiptNow).Union(salesNow)
                         .Union(periodeBankCashReceipt).Union(periodeMemo);
 
@@ -509,18 +678,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                        receipt = group.Sum(s => s.receipt),
                        sales = group.Sum(s => s.sales),
                        endBalance = group.Sum(s => s.endBalance),
-                       lessThan = group.Sum(s => s.lessThan),
-                       between = group.Sum(s => s.between),
-                       moreThan = group.Sum(s => s.moreThan)
-
+                       normal = group.Sum(s => s.normal),
+                       oneThirty = group.Sum(s => s.oneThirty),
+                       thirtySixty = group.Sum(s => s.thirtySixty),
+                       sixtyNinety = group.Sum(s => s.sixtyNinety),
+                       moreThanNinety = group.Sum(s => s.moreThanNinety)
                    }).OrderByDescending(s => s.buyerName);
             int index = 1;
             var querytimeSpan = from aa in _invoice
                                 select new timeSpanInvoice
                                 {
                                     buyerCode = aa.buyerAgentCode,
-                                    amount = Convert.ToDecimal(aa.amount),
-                                    day = (DateTimeOffset.Now - aa.truckingDate).Days
+                                    amount = type == "IDR" ? Convert.ToDecimal(aa.amount * aa.rate) : Convert.ToDecimal(aa.amount),
+                                    day = (aa.truckingDate.AddDays(aa.paymentdue) - aa.truckingDate).Days
                                 };
             var querySumTS = querytimeSpan.ToList()
                    .GroupBy(x => new { x.buyerCode, x.day }, (key, group) => new
@@ -532,127 +702,222 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             {
                 ExportSalesDebtorReportViewModel model = new ExportSalesDebtorReportViewModel
                 {
-                    index = index,
+                    index = index.ToString(),
                     buyerCode = item.buyerCode,
                     buyerName = item.buyerName,
                     beginingBalance = item.beginingBalance,
                     receipt = item.receipt,
                     sales = item.sales,
                     endBalance = Convert.ToDouble(item.beginingBalance) + item.sales - item.receipt,
-                    lessThan = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && aa.day <= 30 select aa.amount).FirstOrDefault()),
-                    between = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day > 30 && aa.day < 60) select aa.amount).FirstOrDefault()),
-                    moreThan = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && aa.day > 60 select aa.amount).FirstOrDefault()),
+                    normal = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && aa.day <= 0 select aa.amount).FirstOrDefault()),
+                    oneThirty = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day > 0 && aa.day < 31) select aa.amount).FirstOrDefault()),
+                    thirtySixty = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day >= 31 && aa.day < 61) select aa.amount).FirstOrDefault()),
+                    sixtyNinety = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day >= 61 && aa.day < 91) select aa.amount).FirstOrDefault()),
+                    moreThanNinety = Convert.ToDouble((from aa in querytimeSpan where aa.buyerCode == item.buyerCode && (aa.day > 90) select aa.amount).FirstOrDefault()),
+                    total = "TOTAL"
                 };
                 data.Add(model);
                 index++;
             }
-          
-            DataTable result = new DataTable();
+            var queryTOTAL = data.ToList()
+                   .GroupBy(x => new { x.total }, (key, group) => new
+                   {
 
-            result.Columns.Add(new DataColumn() { ColumnName = "No", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Kode", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Nama Buyer", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Saldo Awal", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Penjualan", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Penerimaan", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Umur Piutang", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Umur Piutang1", DataType = typeof(String) });
-            result.Columns.Add(new DataColumn() { ColumnName = "Umur Piutang2", DataType = typeof(String) });
-          
-            int counter = 0;
-            result.Rows.Add("",
-                    "", "", "", "", "", "", "< 30 hari", " 31- 60 hari", "> 61 hari");
-            if (data.Count() == 0)
-                result.Rows.Add("", "", "", 0, 0, 0, 0, 0, 0, 0); // to allow column name to be generated properly for empty data as template
+                       beginingBalance = group.Sum(s => s.beginingBalance),
+                       receipt = group.Sum(s => s.receipt),
+                       sales = group.Sum(s => s.sales),
+                       endBalance = group.Sum(s => s.endBalance),
+                       normal = group.Sum(s => s.normal),
+                       oneThirty = group.Sum(s => s.oneThirty),
+                       thirtySixty = group.Sum(s => s.thirtySixty),
+                       sixtyNinety = group.Sum(s => s.sixtyNinety),
+                       moreThanNinety = group.Sum(s => s.moreThanNinety)
+                   });
+            foreach (var item in queryTOTAL)
+            {
+                ExportSalesDebtorReportViewModel model = new ExportSalesDebtorReportViewModel
+                {
+                    index = "",
+                    buyerCode = "TOTAL",
+                    buyerName = "",
+                    beginingBalance = item.beginingBalance,
+                    receipt = item.receipt,
+                    sales = item.sales,
+                    endBalance = item.endBalance,
+                    normal = item.normal,
+                    oneThirty = item.oneThirty,
+                    thirtySixty = item.thirtySixty,
+                    sixtyNinety = item.sixtyNinety,
+                    moreThanNinety = item.moreThanNinety
+                };
+                data.Add(model);
+            }
+
+            DataTable result = new DataTable();
+            string monthValue = "";
+            switch (month)
+            {
+                case 1:
+                    monthValue = "JANUARI";
+                    break;
+                case 2:
+                    monthValue = "FEBRUARI";
+                    break;
+                case 3:
+                    monthValue = "MARET";
+                    break;
+                case 4:
+                    monthValue = "APRIL";
+                    break;
+                case 5:
+                    monthValue = "MEI";
+                    break;
+                case 6:
+                    monthValue = "JUNI";
+                    break;
+                case 7:
+                    monthValue = "JULI";
+                    break;
+                case 8:
+                    monthValue = "AGUSTUS";
+                    break;
+                case 9:
+                    monthValue = "SEPTEMBER";
+                    break;
+                case 10:
+                    monthValue = "OKTOBER";
+                    break;
+                case 11:
+                    monthValue = "NOVEMBER";
+                    break;
+                default:
+                    monthValue = "DESEMBER";
+                    break;
+            }
+            if (type != "end")
+            {
+                result.Columns.Add(new DataColumn() { ColumnName = "No", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Kode", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Nama Buyer", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Saldo Awal", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Penjualan", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Penerimaan", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Umur Piutang", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Umur Piutang1", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Umur Piutang2", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Umur Piutang3", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Umur Piutang4", DataType = typeof(String) });
+
+                int counter = 0;
+                result.Rows.Add("",
+                        "", "", "", "", "", "", "Normal", "1 - 30 hari"," 31- 60 hari","61 - 90 hari", "> 90 hari");
+                if (data.Count() == 0)
+                    result.Rows.Add("", "", "", 0, 0, 0, 0, 0, 0, 0); // to allow column name to be generated properly for empty data as template
+                else
+                {
+
+                    foreach (var item in data)
+                    {
+                        counter++;
+                         result.Rows.Add(item.index, item.buyerCode, item.buyerName, Math.Round(item.beginingBalance, 2), Math.Round(item.sales, 2), Math.Round(item.receipt, 2), Math.Round(item.endBalance, 2), Math.Round(item.normal, 2), Math.Round(item.oneThirty, 2), Math.Round(item.thirtySixty, 2), Math.Round(item.sixtyNinety, 2), Math.Round(item.moreThanNinety, 2));
+                    }
+                }
+              
+                using (var package = new ExcelPackage())
+                {
+                    var worksheet = package.Workbook.Worksheets.Add("Sheet 1");
+                    worksheet.Cells["A1"].Value = "BULAN " + monthValue + " " + year;
+                    worksheet.Cells["A1"].Style.Font.Size = 14;
+                    worksheet.Cells["A1"].Style.Font.Bold = true;
+                    worksheet.Cells["A2"].LoadFromDataTable(result, true);
+                    worksheet.Cells["A" + 2 + ":A" + 3 + ""].Merge = true;
+                    worksheet.Cells["B" + 2 + ":B" + 3 + ""].Merge = true;
+                    worksheet.Cells["C" + 2 + ":C" + 3 + ""].Merge = true;
+                    worksheet.Cells["D" + 2 + ":D" + 3 + ""].Merge = true;
+                    worksheet.Cells["E" + 2 + ":E" + 3 + ""].Merge = true;
+                    worksheet.Cells["F" + 2 + ":F" + 3 + ""].Merge = true;
+                    worksheet.Cells["G" + 2 + ":G" + 3 + ""].Merge = true;
+                    worksheet.Cells["A" + 2 + ":L" + (counter + 3) + ""].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A" + 2 + ":L" + (counter + 3) + ""].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A" + 2 + ":L" + (counter + 3) + ""].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A" + 2 + ":L" + (counter + 3) + ""].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A" + 2 + ":L" + 3 + ""].Style.Font.Bold = true;
+                    worksheet.Cells["H" + 2 + ":L" + 2 + ""].Merge = true;
+
+                    worksheet.Cells["A" + 2 + ":L" + 2 + ""].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                    foreach (var cell in worksheet.Cells["D" + 4 + ":L" + (counter + 3) + ""])
+                    {
+                        cell.Value = Convert.ToDecimal(cell.Value);
+                        cell.Style.Numberformat.Format = "#,##0.00";
+                        cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+                    worksheet.Cells["A" + 2 + ":L" + (counter + 3) + ""].AutoFitColumns();
+                    worksheet.Cells["A" + (counter + 3) + ":L" + (counter + 3) + ""].Style.Font.Bold = true;
+                    worksheet.Cells["A" + (counter + 3) + ":C" + (counter + 3) + ""].Merge = true;
+                    
+                    var stream = new MemoryStream();
+
+                    package.SaveAs(stream);
+                    return stream;
+                }
+            }
             else
             {
 
-                foreach (var item in data)
+                result.Columns.Add(new DataColumn() { ColumnName = "No", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Kode", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Nama Buyer", DataType = typeof(String) });
+                result.Columns.Add(new DataColumn() { ColumnName = "Saldo Akhir", DataType = typeof(String) });
+               
+                int counter = 0;
+                result.Rows.Add("",
+                        "", "", "");
+                if (data.Count() == 0)
+                    result.Rows.Add("", "", "", 0); // to allow column name to be generated properly for empty data as template
+                else
                 {
-                    counter++;
-                    //DateTimeOffset date = item.date ?? new DateTime(1970, 1, 1);
-                    //string dateString = date == new DateTime(1970, 1, 1) ? "-" : date.ToOffset(new TimeSpan(offset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID"));
-                    result.Rows.Add(item.index, item.buyerCode, item.buyerName, Math.Round(item.beginingBalance,2),Math.Round(item.sales,2), Math.Round(item.receipt,2), Math.Round(item.endBalance,2), Math.Round(item.lessThan,2), Math.Round(item.between,2), Math.Round(item.moreThan,2));
+
+                    foreach (var item in data)
+                    {
+                        counter++;
+                        result.Rows.Add(item.index, item.buyerCode, item.buyerName,  Math.Round(item.endBalance, 2));
+                    }
                 }
-            }
-            using (var package = new ExcelPackage())
-            {
-                var worksheet = package.Workbook.Worksheets.Add("Sheet 1");
-                string monthValue = "";
-                switch (month)
+                using (var package = new ExcelPackage())
                 {
-                    case 1:
-                        monthValue="JANUARI";
-                        break;
-                    case 2:
-                        monthValue = "FEBRUARI";
-                        break;
-                    case 3:
-                        monthValue = "MARET";
-                        break;
-                    case 4:
-                        monthValue = "APRIL";
-                        break;
-                    case 5:
-                        monthValue = "MEI";
-                        break;
-                    case 6:
-                        monthValue = "JUNI";
-                        break;
-                    case 7:
-                        monthValue = "JULI";
-                        break;
-                    case 8:
-                        monthValue = "AGUSTUS";
-                        break;
-                    case 9:
-                        monthValue = "SEPTEMBER";
-                        break;
-                    case 10:
-                        monthValue = "OKTOBER";
-                        break;
-                    case 11:
-                        monthValue = "NOVEMBER";
-                        break;
-                    default:
-                        monthValue = "DESEMBER";
-                        break;
+                    var worksheet = package.Workbook.Worksheets.Add("Sheet 1");
+                    worksheet.Cells["A1"].Value = "BULAN " + monthValue + " " + year;
+                    worksheet.Cells["A1"].Style.Font.Size = 14;
+                    worksheet.Cells["A1"].Style.Font.Bold = true;
+                    worksheet.Cells["A2"].LoadFromDataTable(result, true);
+                    worksheet.Cells["A" + 2 + ":A" + 3 + ""].Merge = true;
+                    worksheet.Cells["B" + 2 + ":B" + 3 + ""].Merge = true;
+                    worksheet.Cells["C" + 2 + ":C" + 3 + ""].Merge = true;
+                    worksheet.Cells["D" + 2 + ":D" + 3 + ""].Merge = true;
+                    worksheet.Cells["A" + 2 + ":D" + (counter + 3) + ""].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A" + 2 + ":D" + (counter + 3) + ""].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A" + 2 + ":D" + (counter + 3) + ""].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A" + 2 + ":D" + (counter + 3) + ""].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells["A" + 2 + ":D" + 3 + ""].Style.Font.Bold = true;
+                    worksheet.Cells["A" + 2 + ":D" + 2 + ""].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                    foreach (var cell in worksheet.Cells["D" + 4 + ":D" + (counter + 3) + ""])
+                    {
+                        cell.Value = Convert.ToDecimal(cell.Value);
+                        cell.Style.Numberformat.Format = "#,##0.00";
+                        cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+                    worksheet.Cells["A" + 2 + ":D" + (counter + 3) + ""].AutoFitColumns();
+                    worksheet.Cells["A" + (counter + 3) + ":D" + (counter + 3) + ""].Style.Font.Bold = true;
+                    worksheet.Cells["A" + (counter + 3) + ":C" + (counter + 3) + ""].Merge = true;
+
+                    var stream = new MemoryStream();
+                    package.SaveAs(stream);
+
+                    return stream;
                 }
-                worksheet.Cells["A1"].Value = "BULAN " +  monthValue + " " + year ;
-                worksheet.Cells["A1"].Style.Font.Size = 14;
-                worksheet.Cells["A1"].Style.Font.Bold = true;
-                worksheet.Cells["A2"].LoadFromDataTable(result, true);
-                worksheet.Cells["A" + 2 + ":A" + 3 + ""].Merge = true;
-                worksheet.Cells["B" + 2 + ":B" + 3 + ""].Merge = true;
-                worksheet.Cells["C" + 2 + ":C" + 3 + ""].Merge = true;
-                worksheet.Cells["D" + 2 + ":D" + 3 + ""].Merge = true;
-                worksheet.Cells["E" + 2 + ":E" + 3 + ""].Merge = true;
-                worksheet.Cells["F" + 2 + ":F" + 3 + ""].Merge = true;
-                worksheet.Cells["G" + 2 + ":G" + 3 + ""].Merge = true;
-                worksheet.Cells["A" + 2 + ":J" + (counter + 3) + ""].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells["A" + 2 + ":J" + (counter + 3) + ""].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells["A" + 2 + ":J" + (counter + 3) + ""].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells["A" + 2 + ":J" + (counter + 3) + ""].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells["A" + 2 + ":J" + 3 + ""].Style.Font.Bold = true;
-                worksheet.Cells["H" + 2 + ":J" + 2 + ""].Merge = true;
-
-                worksheet.Cells["A" + 2 + ":J" + 2 + ""].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                
-                foreach (var cell in worksheet.Cells["D" + 4 + ":J" + (counter + 3 ) + ""])
-                {
-                    cell.Value = Convert.ToDecimal(cell.Value);
-                    cell.Style.Numberformat.Format = "#,##0.00";
-                    cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                }
-                worksheet.Cells["A" + 2 + ":J" + (counter + 3) + ""].AutoFitColumns();
-
-                 
-                var stream = new MemoryStream();
-
-                package.SaveAs(stream);
-
-                return stream;
             }
 
         }

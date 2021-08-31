@@ -82,11 +82,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Expor
             var mock = GetMocks();
 
             mock.Service
-                .Setup(s => s.GetMonitoring(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetMonitoring(It.IsAny<int>(), It.IsAny<int>(),"", It.IsAny<int>()))
                 .Throws(new Exception());
 
             //Act
-            IActionResult response = GetController(mock).Get(1,1);
+            IActionResult response = GetController(mock).Get(1,1,"");
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -97,9 +97,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Expor
         {
             var mocks = GetMocks();
 
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>()))
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(),""))
                .ReturnsAsync(new MemoryStream());
-            var response = GetController(mocks).GetXls(1,1);
+            var response = GetController(mocks).GetXls(1,1,"");
+            Assert.NotNull(response);
+
+        }
+        [Fact]
+        public void Should_Success_GetXlsEndBalance()
+        {
+            var mocks = GetMocks();
+
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), "end"))
+               .ReturnsAsync(new MemoryStream());
+            var response = GetController(mocks).GetXls(1, 1, "end");
             Assert.NotNull(response);
 
         }
@@ -108,9 +119,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Expor
         {
             var mocks = GetMocks();
 
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>()))
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(),""))
                .Throws(new Exception());
-            var response = GetController(mocks).GetXls(1, 1);
+            var response = GetController(mocks).GetXls(1, 1,"");
             Assert.NotNull(response);
 
         }
