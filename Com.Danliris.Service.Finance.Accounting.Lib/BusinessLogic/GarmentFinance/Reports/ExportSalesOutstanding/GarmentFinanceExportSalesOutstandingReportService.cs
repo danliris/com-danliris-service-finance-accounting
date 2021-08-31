@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.ExportSalesDebtorReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -10,6 +13,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.Repo
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.Report.ExportSalesOutstanding;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using static Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.ExportSalesDebtorReport.GarmentShippingPackingList;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.ExportSalesOutstanding
 {
@@ -28,59 +32,78 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             _serviceProvider = serviceProvider;
         }
 
-        public List<GarmentShippingInvoiceViewModel> GetDataShippingInvoiceNow(int month, int year, string buyer)
+        public async Task<GarmentShippingPackingList> GetDataShippingInvoiceNow(int month, int year)
         {
-            var uri = APIEndpoint.PackingInventory + $"garment-shipping/invoices/packing-list-for-debtor-card-now?month={month}&year={year}&buyer={buyer}";
-            var httpService = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
-            List<GarmentShippingInvoiceViewModel> garmentShipping = new List<GarmentShippingInvoiceViewModel>();
+            GarmentShippingPackingList garmentShipping = new GarmentShippingPackingList();
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var response = httpService.GetAsync(uri).Result.Content.ReadAsStringAsync();
-            Dictionary<string, object> result = JsonConvert.DeserializeObject<Dictionary<string, object>>(response.Result);
-            var json = result.Single(p => p.Key.Equals("data")).Value;
-            var listData = JsonConvert.DeserializeObject<List<GarmentShippingInvoiceViewModel>>(json.ToString());
-            foreach (var item in listData)
+            var uri = APIEndpoint.PackingInventory + $"garment-shipping/invoices/exportSalesDebtorNow?month={month}&year={year}";
+            var response = await http.GetAsync(uri);
+
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
             {
-                garmentShipping.Add(item);
+                if (response.Content != null)
+                {
+                    var contentString = await response.Content.ReadAsStringAsync();
+                    Dictionary<string, object> content = JsonConvert.DeserializeObject<Dictionary<string, object>>(contentString);
+                    var dataString = content.GetValueOrDefault("data").ToString();
+                    var listData = JsonConvert.DeserializeObject<List<ShippingPackingDto>>(dataString);
+                    garmentShipping.data = listData;
+                }
             }
+
+
+            else
+            {
+                var err = await response.Content.ReadAsStringAsync();
+
+            }
+
 
             return garmentShipping;
         }
 
-        public List<GarmentFinanceExportSalesOutstandingReportViewModel> GetReportQuery(int month, int year, string buyer, int offset)
+        public async Task<List<GarmentFinanceExportSalesOutstandingReportViewModel>> GetReportQuery(int month, int year, string buyer, int offset)
         {
-            var invoicePackingListNow = GetDataShippingInvoiceNow(month, year, buyer);
+            GarmentShippingPackingList invoicePackingListNow = await GetDataShippingInvoiceNow(month, year);
 
             DateTime date = new DateTime(year, month, 1);
 
             List<GarmentFinanceExportSalesOutstandingReportViewModel> data = new List<GarmentFinanceExportSalesOutstandingReportViewModel>();
 
-            var invoice =  from a in invoicePackingListNow
+            var invoice =  from a in invoicePackingListNow.data
                            select new GarmentFinanceExportSalesOutstandingReportViewModel
                            {
                                Amount = Convert.ToDecimal(a.amount),
-                               InvoiceNo = a.invoiceNo,
+                               InvoiceId =Convert.ToInt32( a.invoiceId),
                                TruckingDate = a.truckingDate
                            };
             var memorial = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails where aa.MemorialDate.AddHours(7).Date.Month <= month && aa.MemorialDate.AddHours(7).Date.Year == year select new { aa.Id, aa.MemorialNo, aa.MemorialDate })
                           join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
-                          where c.BuyerCode == buyer
-                          select new GarmentFinanceExportSalesOutstandingReportViewModel
+                          
+                           where (buyer == null || (buyer != null && buyer != "" && c.BuyerCode == buyer))
+                           select new GarmentFinanceExportSalesOutstandingReportViewModel
                           {
                               Amount = Convert.ToDecimal(-c.Amount),
                               InvoiceNo = c.InvoiceNo,
+                              InvoiceId= c.InvoiceId
+                              
                           };
             var bankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails where aa.BankCashReceiptDate.AddHours(7).Date.Month <= month && aa.BankCashReceiptDate.AddHours(7).Date.Year == year select new { aa.Id, aa.BankCashReceiptNo, aa.BankCashReceiptDate })
                                      join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems on a.Id equals b.BankCashReceiptDetailId
-                                     where b.BuyerCode == buyer
-                                     select new GarmentFinanceExportSalesOutstandingReportViewModel
+                                  where (buyer == null || (buyer != null && buyer != "" && b.BuyerCode == buyer))
+                                  select new GarmentFinanceExportSalesOutstandingReportViewModel
                                      {
                                          Amount = Convert.ToDecimal(-b.Amount),
                                          InvoiceNo = b.InvoiceNo,
+                                         InvoiceId = b.InvoiceId
                                      };
             var unionQuery = memorial.Union(bankCashReceipt).Union(invoice);
-            var querySum= unionQuery.GroupBy(a=> new { a.InvoiceNo }, (key, group) => new
+            var querySum= unionQuery.GroupBy(a=> new { a.InvoiceId }, (key, group) => new
             {
-                invoiceNo = key.InvoiceNo,
+                invoiveId = key.InvoiceId,
                 balance = group.Sum(s => s.Amount)
             });
             decimal total = 0;
@@ -88,9 +111,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             {
                 GarmentFinanceExportSalesOutstandingReportViewModel model = new GarmentFinanceExportSalesOutstandingReportViewModel
                 {
-                    InvoiceNo = item.InvoiceNo,
+                    InvoiceNo = (from a in memorial where item.InvoiceId== a.InvoiceId select a.InvoiceNo).FirstOrDefault() == null ? (from a in bankCashReceipt where item.InvoiceId == a.InvoiceId select a.InvoiceNo).FirstOrDefault(): (from a in memorial where item.InvoiceId == a.InvoiceId select a.InvoiceNo).FirstOrDefault(),
                     TruckingDate = item.TruckingDate,
-                    Amount = querySum.First(a => a.invoiceNo == item.InvoiceNo).balance
+                    Amount = querySum.First(a => a.invoiveId == item.InvoiceId).balance
                 };
                 data.Add(model);
                 total += model.Amount;

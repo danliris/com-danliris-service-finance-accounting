@@ -10,5 +10,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public DateTimeOffset? TruckingDate { get; set; }
         public string InvoiceNo { get; set; }
         public decimal Amount { get; set; }
+        public int InvoiceId { get; set; }
     }
 }
