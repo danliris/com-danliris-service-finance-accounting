@@ -200,9 +200,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
         public List<CreditBalanceDetailViewModel> GetReportDetailData(bool isImport, string supplierCode, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
         {
-            var firstDayOfMonth = new DateTime(year, month, 1);
+            var lastDay = DateTime.DaysInMonth(year, month);
+            var lastDayOfMonth = new DateTime(year, month, lastDay);
 
-            var query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport && x.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Month == month && x.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Year == year).AsQueryable();
+            var query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport && x.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime <= lastDayOfMonth).AsQueryable();
 
             var previousMonth = month - 1;
             var previousYear = year;
