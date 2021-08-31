@@ -350,7 +350,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             {
                 new BankCashReceiptDetailItemViewModel()
                 {
+                    InvoiceId =0,
                     Id=0,
+                    BuyerAgent = new Lib.ViewModels.NewIntegrationViewModel.BuyerViewModel()
+                    {
+                        Id = "1",
+                        Code = null,
+                    },
+                    Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel()
+                    {
+                        Id = 0,
+                        Code = null
+                    }
                 }
             };
             vm.OtherItems = new List<BankCashReceiptDetailOtherItemViewModel>
