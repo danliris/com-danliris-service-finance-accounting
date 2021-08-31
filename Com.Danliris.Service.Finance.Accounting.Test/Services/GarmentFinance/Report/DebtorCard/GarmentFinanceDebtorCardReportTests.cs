@@ -2,11 +2,13 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.DebtorCard;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceiptDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.BankCashReceipt;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.BankCashReceiptDetail;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.Memorial;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.MemorialDetail;
@@ -88,7 +90,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
 
         private BankCashReceiptDetailDataUtil _dataUtilBankCash(BankCashReceiptDetailService service)
         {
-            return new BankCashReceiptDetailDataUtil(service);
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var bankCashReceiptService = new BankCashReceiptService(serviceProviderMock.Object);
+            var bankCashReceiptDataUtil = new BankCashReceiptDataUtil(bankCashReceiptService);
+            return new BankCashReceiptDetailDataUtil(service, bankCashReceiptDataUtil);
         }
         private GarmentFinanceMemorialDetailDataUtil _dataUtilMemo(GarmentFinanceMemorialDetailService service, string testname)
         {
