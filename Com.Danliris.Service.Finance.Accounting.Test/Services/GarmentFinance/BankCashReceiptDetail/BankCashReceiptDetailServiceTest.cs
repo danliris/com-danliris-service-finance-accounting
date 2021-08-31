@@ -379,6 +379,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
         }
 
         [Fact]
+        public void Should_Success_Validate_Amount_Different()
+        {
+            BankCashReceiptDetailViewModel vm = new BankCashReceiptDetailViewModel();
+            vm.Amount = 3;
+            vm.Items = new List<BankCashReceiptDetailItemViewModel>
+            {
+                new BankCashReceiptDetailItemViewModel()
+                {
+                    Amount = 1,
+                }
+            };
+            vm.OtherItems = new List<BankCashReceiptDetailOtherItemViewModel>
+            {
+                new BankCashReceiptDetailOtherItemViewModel()
+                {
+                    TypeAmount = "KREDIT",
+                    Amount= 1,
+                },
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
         public async Task Should_Success_GetAmount()
         {
             var dbContext = GetDbContext(GetCurrentAsyncMethod());
