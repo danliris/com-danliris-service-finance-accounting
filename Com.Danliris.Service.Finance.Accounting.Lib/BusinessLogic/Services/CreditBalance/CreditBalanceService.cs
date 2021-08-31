@@ -259,7 +259,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             }).ToList();
 
-            return result.OrderBy(x => x.Currency).ThenBy(x => x.Products).ThenBy(x => x.SupplierName).ToList();
+            return result.Where(element => element.Purchase - element.Payment > 0).OrderBy(x => x.Currency).ThenBy(x => x.Products).ThenBy(x => x.SupplierName).ToList();
         }
 
         //public List<CreditBalanceDetailViewModel> GetReportDetailData(bool isImport, string supplierCode, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
