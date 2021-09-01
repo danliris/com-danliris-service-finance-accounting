@@ -234,6 +234,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             Assert.NotEmpty(reportResponse);
         }
 
-      
+        [Fact]
+        public async Task Should_Success_Get_Report_Detail()
+        {
+            //Arrange
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
+            data.SupplierCode = unitData.SupplierCode;
+            data.SupplierName = unitData.SupplierName;
+            data.InvoiceNo = unitData.InvoiceNo;
+            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
+            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+
+            //Act
+            var reportResponse = creditBalanceService.GetReportDetail(false, data.SupplierCode, data.Date.Month, data.Date.Year, 7, false, unitData.DivisionId);
+
+            //Assert
+            Assert.NotNull(reportResponse.Data);
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_Excel_Detail()
+        {
+            CreditorAccountService service = new CreditorAccountService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            CreditBalanceService creditBalanceService = new CreditBalanceService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var data = _dataUtil(service).GetBankExpenditureNotePostedViewModel();
+            var unitData = _dataUtil(service).GetNewData_UnitReceiptNotePostedViewModel();
+            data.SupplierCode = unitData.SupplierCode;
+            data.SupplierName = unitData.SupplierName;
+            data.InvoiceNo = unitData.InvoiceNo;
+            var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
+            var Response = await service.CreateFromBankExpenditureNoteAsync(data);
+            var detail = creditBalanceService.GetReportDetail(false, data.SupplierCode, data.Date.Month, data.Date.Year, 7, false, unitData.DivisionId);
+
+            var reportResponse = creditBalanceService.GenerateExcelDetail(detail, unitData.DivisionId, data.Date.Month, data.Date.Year);
+            Assert.NotNull(reportResponse);
+        }
     }
 }
