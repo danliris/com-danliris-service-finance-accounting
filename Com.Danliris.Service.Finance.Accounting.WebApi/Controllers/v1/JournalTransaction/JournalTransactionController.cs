@@ -290,7 +290,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("unposted-transactions")]
-        public IActionResult GetUnPosted([FromQuery] string referenceNo, [FromQuery] string referenceType, [FromQuery] int month = 0, [FromQuery] int year = 0)
+        public IActionResult GetUnPosted([FromQuery] string referenceNo, [FromQuery] string referenceType, [FromQuery] int month = 0, [FromQuery] int year = 0, [FromQuery] bool isVB = false)
         {
             try
             {
@@ -299,7 +299,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
                 if (year.Equals(0))
                     year = DateTime.Now.Year;
 
-                List<JournalTransactionModel> result = Service.ReadUnPostedTransactionsByPeriod(month, year, referenceNo, referenceType);
+                List<JournalTransactionModel> result = Service.ReadUnPostedTransactionsByPeriod(month, year, referenceNo, referenceType, isVB);
 
                 List<JournalTransactionViewModel> dataVM = Mapper.Map<List<JournalTransactionViewModel>>(result);
 
@@ -318,12 +318,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("reference-no")]
-        public IActionResult GetReferenceNo([FromQuery] string keyword)
+        public IActionResult GetReferenceNo([FromQuery] string keyword, [FromQuery] bool isVB = false)
         {
             try
             {
 
-                var result = Service.GetAllReferenceNo(keyword);
+                var result = Service.GetAllReferenceNo(keyword, isVB);
 
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
@@ -340,12 +340,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.JournalT
         }
 
         [HttpGet("reference-type")]
-        public IActionResult GetReferenceType([FromQuery] string keyword)
+        public IActionResult GetReferenceType([FromQuery] string keyword, [FromQuery] bool isVB = false)
         {
             try
             {
 
-                var result = Service.GetAllReferenceType(keyword);
+                var result = Service.GetAllReferenceType(keyword, isVB);
 
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)

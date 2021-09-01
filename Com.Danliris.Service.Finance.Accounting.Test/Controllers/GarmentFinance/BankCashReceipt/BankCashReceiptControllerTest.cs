@@ -59,18 +59,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     ReceiptDate = DateTimeOffset.Now,
                     NumberingCode = "numberingCode",
                     Remarks = "remarks",
+                    BankCashReceiptType= new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id=1,
+                        Name="PENJUALAN EKSPOR",
+                    },
+                    Buyer= new Lib.ViewModels.NewIntegrationViewModel.NewBuyerViewModel
+                    {
+                        Id=1,
+                        Name="name"
+                    },
                     Items = new List<BankCashReceiptItemViewModel>
                     {
                         new BankCashReceiptItemViewModel()
                         {
                             NoteNumber = "noteNumber",
                             Remarks = "remarks",
-                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
                             {
                                 Id = "1",
@@ -83,18 +93,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                                 Code = "code",
                                 Name = "name",
                             },
-                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             Amount = 1,
-                            C1A = 1,
-                            C1B = 1,
-                            C2A = 1,
-                            C2B = 1,
-                            C2C = 1,
+                            //C1A = 1,
+                            //C1B = 1,
+                            //C2A = 1,
+                            //C2B = 1,
+                            //C2C = 1,
                             Summary = 1,
                         }
                     }
@@ -139,18 +149,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     ReceiptDate = DateTimeOffset.Now,
                     NumberingCode = "numberingCode",
                     Remarks = "remarks",
+                    BankCashReceiptType= new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id=1,
+                        Name="name"
+                    },
                     Items = new List<BankCashReceiptItemViewModel>
                     {
                         new BankCashReceiptItemViewModel()
                         {
                             NoteNumber = "noteNumber",
                             Remarks = "remarks",
-                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
                             {
                                 Id = "1",
@@ -163,18 +178,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                                 Code = "code",
                                 Name = "name",
                             },
-                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             Amount = 1,
-                            C1A = 1,
-                            C1B = 1,
-                            C2A = 1,
-                            C2B = 1,
-                            C2C = 1,
+                            //C1A = 1,
+                            //C1B = 1,
+                            //C2A = 1,
+                            //C2B = 1,
+                            //C2C = 1,
                             Summary = 1,
                         }
                     }
@@ -215,6 +230,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                         Code = "code",
                         Name = "name",
                     },
+                    BankCashReceiptType= new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id=2,
+                        Name="PENJUALAN LOKAL"
+                    },
+                    Buyer= new Lib.ViewModels.NewIntegrationViewModel.NewBuyerViewModel
+                    {
+                        Id=1,
+                        Name="nama"
+                    },
                     IncomeType = "incomeType",
                     ReceiptDate = DateTimeOffset.Now,
                     NumberingCode = "numberingCode",
@@ -225,12 +250,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                         {
                             NoteNumber = "noteNumber",
                             Remarks = "remarks",
-                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
                             {
                                 Id = "1",
@@ -243,18 +268,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                                 Code = "code",
                                 Name = "name",
                             },
-                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             Amount = 1,
-                            C1A = 1,
-                            C1B = 1,
-                            C2A = 1,
-                            C2B = 1,
-                            C2C = 1,
+                            //C1A = 1,
+                            //C1B = 1,
+                            //C2A = 1,
+                            //C2B = 1,
+                            //C2C = 1,
                             Summary = 1,
                         }
                     }
@@ -299,18 +324,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                     ReceiptDate = DateTimeOffset.Now,
                     NumberingCode = "numberingCode",
                     Remarks = "remarks",
+                    BankCashReceiptType= new Lib.ViewModels.NewIntegrationViewModel.BankCashReceiptTypeViewModel
+                    {
+                        Id=1,
+                        Name="LAIN LAIN"
+                    },
                     Items = new List<BankCashReceiptItemViewModel>
                     {
                         new BankCashReceiptItemViewModel()
                         {
                             NoteNumber = "noteNumber",
                             Remarks = "remarks",
-                            AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccAmount = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             AccNumber = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
                             {
                                 Id = "1",
@@ -323,18 +353,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                                 Code = "code",
                                 Name = "name",
                             },
-                            AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
-                            {
-                                Id = "1",
-                                Code = "code",
-                                Name = "name",
-                            },
+                            //AccUnit = new Lib.ViewModels.NewIntegrationViewModel.ChartOfAccountViewModel
+                            //{
+                            //    Id = "1",
+                            //    Code = "code",
+                            //    Name = "name",
+                            //},
                             Amount = 1,
-                            C1A = 1,
-                            C1B = 1,
-                            C2A = 1,
-                            C2B = 1,
-                            C2C = 1,
+                            //C1A = 1,
+                            //C1B = 1,
+                            //C2A = 1,
+                            //C2B = 1,
+                            //C2C = 1,
                             Summary = 1,
                         }
                     }

@@ -147,11 +147,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         [MaxLength(32)]
         public string VBNonPoType { get; private set; }
 
-        public void SetIsCompleted(DateTimeOffset? completedDate, string username, string userAgent)
+        public void SetIsCompleted(DateTimeOffset? completedDate, string username, string userAgent, string referenceNo)
         {
             IsCompleted = true;
             CompletedDate = completedDate;
             CompletedBy = username;
+            ReferenceNo = referenceNo;
             this.FlagForUpdate(username, userAgent);
         }
 
@@ -192,7 +193,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public string VerifiedBy { get; private set; }
         public bool IsCompleted { get; private set; }
         public DateTimeOffset? CompletedDate { get; private set; }
+        [MaxLength(512)]
         public string CompletedBy { get; private set; }
+        [MaxLength(128)]
+        public string ReferenceNo { get; private set; }
         [MaxLength(256)]
         public string BLAWBNumber { get; private set; }
         [MaxLength(256)]
