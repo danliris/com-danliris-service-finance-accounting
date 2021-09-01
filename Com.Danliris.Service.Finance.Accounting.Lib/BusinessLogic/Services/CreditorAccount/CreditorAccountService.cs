@@ -313,6 +313,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     //bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
                     //}
                 }
+
+                if (item.PurchasingMemoId > 0)
+                {
+                    vm.BankExpenditureNoteNo = item.PurchasingMemoNo;
+                }
+
                 result.Add(vm);
 
                 //if (!string.IsNullOrEmpty(item.MemoNo))
@@ -502,7 +508,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 DivisionName = viewModel.DivisionName,
                 UnitId = viewModel.UnitId,
                 UnitCode = viewModel.UnitCode,
-                UnitName = viewModel.UnitName
+                UnitName = viewModel.UnitName,
+                ExternalPurchaseOrderNo = viewModel.ExternalPurchaseOrderNo,
+                VATAmount = viewModel.VATAmount,
+                IncomeTaxAmount = viewModel.IncomeTaxAmount,
+                IncomeTaxNo = viewModel.IncomeTaxNo
             };
 
             return await CreateAsync(model);
@@ -692,6 +702,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             }
 
             return result;
+        }
+
+        public int CreateFromPurchasingMemoTextile(CreditorAccountPurchasingMemoTextileFormDto form)
+        {
+            var models = DbContext.CreditorAccounts.Where(element => element.MemoNo == form.UnitPaymentOrderNo);
+            foreach (var model in models)
+            {
+                model.SetPurchasingMemo(form.PurchasingMemoId, form.PurchasingMemoNo, form.PurchasingMemoAmount);
+                EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+            }
+
+            DbContext.CreditorAccounts.UpdateRange(models);
+            return DbContext.SaveChanges();
+        }
+
+        public int DeleteFromPurchasingMemoTextile(CreditorAccountPurchasingMemoTextileFormDto form)
+        {
+            var models = DbContext.CreditorAccounts.Where(element => element.MemoNo == form.UnitPaymentOrderNo);
+            foreach (var model in models)
+            {
+                model.RemovePurchasingMemo();
+                EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
+            }
+
+            DbContext.CreditorAccounts.UpdateRange(models);
+            return DbContext.SaveChanges();
         }
     }
 }

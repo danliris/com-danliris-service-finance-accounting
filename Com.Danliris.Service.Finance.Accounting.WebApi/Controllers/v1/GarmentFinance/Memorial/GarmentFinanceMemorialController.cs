@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memorial;
+using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -115,13 +117,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentF
                     return NotFound(Result);
                 }
 
-                return Ok(new
+                if (indexAcceptPdf < 0)
                 {
-                    apiVersion = ApiVersion,
-                    data = viewModel,
-                    message = General.OK_MESSAGE,
-                    statusCode = General.OK_STATUS_CODE
-                });
+                    return Ok(new
+                    {
+                        apiVersion = ApiVersion,
+                        data = viewModel,
+                        message = General.OK_MESSAGE,
+                        statusCode = General.OK_STATUS_CODE
+                    });
+                }
+                else
+                {
+                    int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
+
+                    GarmentFinanceMemorialPDFTemplate PdfTemplate = new GarmentFinanceMemorialPDFTemplate();
+                    MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, clientTimeZoneOffset);
+
+                    return new FileStreamResult(stream, "application/pdf")
+                    {
+                        FileDownloadName = $"Bukti Penerimaan Kas Bank {viewModel.MemorialNo}.pdf"
+                    };
+                }
             }
             catch (Exception e)
             {
