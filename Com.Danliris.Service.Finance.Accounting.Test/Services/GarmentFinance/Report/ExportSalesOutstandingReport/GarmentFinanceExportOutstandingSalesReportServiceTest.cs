@@ -176,8 +176,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
                 .Returns(httpClientService.Object);
 
             GarmentFinanceMemorialDetailService serviceMemo = new GarmentFinanceMemorialDetailService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            GarmentFinanceMemorialDetailModel modelMemo = _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetNewData();
-
+            GarmentFinanceMemorialDetailModel modelMemo = await _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetTestData();
             BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
             BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
             GarmentFinanceExportSalesOutstandingReportService service = new GarmentFinanceExportSalesOutstandingReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
@@ -204,11 +203,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
 
             HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"rate\":\"14500\",\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
-
-            HttpResponseMessage messageC = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            messageC.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":{\"Rate\":14500.0,\"Uid\":\"no\",\"Date\":\"2018-10-20T17:00:00\",\"Code\":\"USD\"},\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":1,\"order\":{\"Date\":\"desc\"},\"select\":[\"Rate\"]}}");
-
+            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"rate\":\"14500\",\"invoiceNo\":\"no\",\"buyerAgentCode\":\"code\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
+            
             httpClientService
                 .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
                 .ReturnsAsync(message);
@@ -226,10 +222,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
                 .Returns(httpClientService.Object);
 
             GarmentFinanceMemorialDetailService serviceMemo = new GarmentFinanceMemorialDetailService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            GarmentFinanceMemorialDetailModel modelMemo = _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetNewData();
-
+            GarmentFinanceMemorialDetailModel modelMemo = await _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetTestData();
             BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
             BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
+
             GarmentFinanceExportSalesOutstandingReportService service = new GarmentFinanceExportSalesOutstandingReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
 
             var response = service.GetMonitoring(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, "code", 7);
