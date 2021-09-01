@@ -72,12 +72,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentF
             try
             {
                 VerifyUser();
+                byte[] xlsInBytes;
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
-                var xls = Service.GenerateExcel(month, year, buyer, offSet);
 
-                string filename = String.Format("Report Outstanding Penjualan Export - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+                var xls = await Service.GenerateExcel(month, year, buyer,offSet);
 
-                return File(xls.Item1.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", xls.Item2);
+                string filename = String.Format("Report Outstanding Penjualan Export {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+
+                xlsInBytes = xls.ToArray();
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+               
             }
             catch (Exception e)
             {

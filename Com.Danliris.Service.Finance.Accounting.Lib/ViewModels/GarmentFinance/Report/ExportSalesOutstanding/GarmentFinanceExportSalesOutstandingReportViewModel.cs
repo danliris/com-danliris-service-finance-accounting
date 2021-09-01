@@ -11,5 +11,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public string InvoiceNo { get; set; }
         public decimal Amount { get; set; }
         public int InvoiceId { get; set; }
+        public string BuyerName { get; set; }
     }
 }
