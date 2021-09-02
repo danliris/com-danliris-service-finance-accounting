@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Newtonsoft.Json;
 using Com.Moonlay.NetCore.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceiptDetail
 {
@@ -37,6 +38,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
             {
                 EntityExtension.FlagForCreate(otherItem, _identityService.Username, UserAgent);
             }
+            var receipts = await _dbContext.GarmentFinanceBankCashReceipts.FirstOrDefaultAsync(a => a.Id == model.BankCashReceiptId);
+            if(receipts != null)
+            {
+                receipts.IsUsed = true;
+            }
             _dbContext.GarmentFinanceBankCashReceiptDetails.Add(model);
             return await _dbContext.SaveChangesAsync();
         }
@@ -58,6 +64,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
             }
 
             EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent, true);
+            var receipts = await _dbContext.GarmentFinanceBankCashReceipts.FirstOrDefaultAsync(a => a.Id == model.BankCashReceiptId);
+            if (receipts != null)
+            {
+                receipts.IsUsed = false;
+            }
             _dbContext.GarmentFinanceBankCashReceiptDetails.Update(model);
 
             return await _dbContext.SaveChangesAsync();

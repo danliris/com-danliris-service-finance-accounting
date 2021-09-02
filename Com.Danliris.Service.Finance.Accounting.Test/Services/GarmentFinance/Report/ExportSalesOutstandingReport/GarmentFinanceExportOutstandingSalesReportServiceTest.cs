@@ -1,7 +1,7 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.DebtorCard;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.ExportSalesOutstanding;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceiptDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetail;
@@ -27,11 +27,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.Report.DebtorCard
+namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.Report.ExportSalesOutstandingReport
 {
-    public class GarmentFinanceDebtorCardReportTests
+    public class GarmentFinanceExportOutstandingSalesReportServiceTest
     {
-        private const string ENTITY = "DebtorCardReportService";
+        private const string ENTITY = "ExportSalesOutstandingReportService";
         //private PurchasingDocumentAcceptanceDataUtil pdaDataUtil;
         //private readonly IIdentityService identityService;
 
@@ -65,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
             message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
 
             httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/packing-list-for-debtor-card-now"))))
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtor"))))
                 .ReturnsAsync(message);
 
             httpClientService
@@ -73,8 +73,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
                 .ReturnsAsync(message);
 
             httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/packing-list-for-debtor-card"))))
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
                 .ReturnsAsync(message);
+            httpClientService
+             .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("master/garment-currencies/sales-debtor-currencies"))))
+             .ReturnsAsync(message);
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
                 .Returns(new HttpClientTestService());
@@ -100,6 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
             var bankCashReceiptService = new BankCashReceiptService(serviceProviderMock.Object);
             var bankCashReceiptDataUtil = new BankCashReceiptDataUtil(bankCashReceiptService);
             return new BankCashReceiptDetailDataUtil(service, bankCashReceiptDataUtil);
+
         }
         private GarmentFinanceMemorialDetailDataUtil _dataUtilMemo(GarmentFinanceMemorialDetailService service, string testname)
         {
@@ -145,19 +149,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
             var serviceProvider1 = new Mock<IServiceProvider>();
 
             var httpClientService = new Mock<IHttpClientService>();
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
             HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
+            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"rate\":\"14500\",\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
+
+            HttpResponseMessage messageC = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            messageC.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":{\"Rate\":14500.0,\"Uid\":\"no\",\"Date\":\"2018-10-20T17:00:00\",\"Code\":\"USD\"},\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":1,\"order\":{\"Date\":\"desc\"},\"select\":[\"Rate\"]}}");
 
             httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/packing-list-for-debtor-card-now"))))
-                .ReturnsAsync(message);
-
-            httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/garment-debitur-balances"))))
-                .ReturnsAsync(message);
-
-            httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/packing-list-for-debtor-card"))))
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
                 .ReturnsAsync(message);
             serviceProvider1
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
@@ -176,10 +179,57 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
             GarmentFinanceMemorialDetailModel modelMemo = await _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetTestData();
             BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
             BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
-            GarmentFinanceDebtorCardReportService service = new GarmentFinanceDebtorCardReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
-            
+            GarmentFinanceExportSalesOutstandingReportService service = new GarmentFinanceExportSalesOutstandingReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
 
-            var response = service.GetMonitoring(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, modelMemo.Items.First().BuyerCode, 7);
+            var response = service.GetMonitoring(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, null, 7);
+
+            Assert.NotNull(response);
+        }
+        [Fact]
+        public async Task Should_Success_Get_All_DataByBuyerCode()
+        {
+            var serviceProviderMock = GetServiceProvider();
+
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var serviceProvider1 = new Mock<IServiceProvider>();
+
+            var httpClientService = new Mock<IHttpClientService>();
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"rate\":\"14500\",\"invoiceNo\":\"no\",\"buyerAgentCode\":\"code\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
+            
+            httpClientService
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
+                .ReturnsAsync(message);
+            serviceProvider1
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientTestService());
+
+
+            serviceProvider1
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            serviceProvider1
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            GarmentFinanceMemorialDetailService serviceMemo = new GarmentFinanceMemorialDetailService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            GarmentFinanceMemorialDetailModel modelMemo = await _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetTestData();
+            BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
+            BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
+
+            GarmentFinanceExportSalesOutstandingReportService service = new GarmentFinanceExportSalesOutstandingReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
+
+            var response = service.GetMonitoring(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, "code", 7);
+
             Assert.NotNull(response);
         }
 
@@ -196,19 +246,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
             var serviceProvider1 = new Mock<IServiceProvider>();
 
             var httpClientService = new Mock<IHttpClientService>();
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
             HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
+            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"rate\":\"14500\",\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
 
             httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/packing-list-for-debtor-card-now"))))
-                .ReturnsAsync(message);
-
-            httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/garment-debitur-balances"))))
-                .ReturnsAsync(message);
-
-            httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/packing-list-for-debtor-card"))))
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
                 .ReturnsAsync(message);
             serviceProvider1
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
@@ -224,14 +270,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
                 .Returns(httpClientService.Object);
 
             GarmentFinanceMemorialDetailService serviceMemo = new GarmentFinanceMemorialDetailService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            GarmentFinanceMemorialDetailModel modelMemo = await _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetTestData();
+            GarmentFinanceMemorialDetailModel modelMemo = _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetNewData();
+
             BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
             BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
-            GarmentFinanceDebtorCardReportService service = new GarmentFinanceDebtorCardReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
+            GarmentFinanceExportSalesOutstandingReportService service = new GarmentFinanceExportSalesOutstandingReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
 
-
-            var response = service.GenerateExcel(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, modelMemo.Items.First().BuyerCode, 7);
+            var response = service.GenerateExcel(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, "",7);
             Assert.NotNull(response);
         }
+      
     }
 }

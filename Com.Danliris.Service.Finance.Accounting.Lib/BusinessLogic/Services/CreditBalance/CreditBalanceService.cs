@@ -36,8 +36,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         //{
         //    var firstDayOfMonth = new DateTime(year, month, 1);
 
-        //    IQueryable<CreditorAccountModel> query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport).AsQueryable();
 
+        //    IQueryable<CreditorAccountModel> query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport).AsQueryable();
+            
         //    List<CreditBalanceViewModel> result = new List<CreditBalanceViewModel>();
         //    int previousMonth = month - 1;
         //    int previousYear = year;
@@ -66,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         //        queryRemainingBalance = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.DateTime < firstDayOfMonth);
 
         //    query = query.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year);
-
+            
         //    var data = query.ToList();
         //    if (string.IsNullOrEmpty(suplierName))
         //        data.AddRange(queryRemainingBalance.ToList());

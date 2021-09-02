@@ -229,7 +229,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
             var Response = await service.CreateFromBankExpenditureNoteAsync(data);
 
-            var reportResponse = creditBalanceService.GeneratePdf(true, data.SupplierName, data.Date.Month, data.Date.Year, 7, false, unitData.DivisionId);
+            var reportResponse = creditBalanceService.GeneratePdf(true, data.SupplierName, data.Date.Month, data.Date.Year, 7, true, unitData.DivisionId);
             Assert.True(0 <= reportResponse.Count());
             Assert.NotEmpty(reportResponse);
         }
