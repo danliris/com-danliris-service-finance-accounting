@@ -88,9 +88,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (string.IsNullOrWhiteSpace(model.ReferenceNo))
             {
                 if (model.Status == "OUT")
-                    model.ReferenceNo = await GetDocumentNo("K", model.AccountBankCode, _IdentityService.Username, model.Date.ToOffset(timeOffset).Date);
+                    model.ReferenceNo = await GetDocumentNo("K", model.AccountBankCode, _IdentityService.Username, model.Date.AddHours(7).Date);
                 else if (model.Status == "IN")
-                    model.ReferenceNo = await GetDocumentNo("M", model.AccountBankCode, _IdentityService.Username, model.Date.ToOffset(timeOffset).Date);
+                    model.ReferenceNo = await GetDocumentNo("M", model.AccountBankCode, _IdentityService.Username, model.Date.AddHours(7).Date);
             }
 
             EntityExtension.FlagForCreate(model, _IdentityService.Username, _UserAgent);
@@ -407,7 +407,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 else
                 {
                     var BalanceByMonthAndYear = GetBalanceMonthAndYear(dataAccountBank.Id, month, year, clientTimeZoneOffset);
-                    var beforeBalance = BalanceByMonthAndYear.InitialBalance;
+                    var beforeBalance = BalanceByMonthAndYear == null ? 0 : BalanceByMonthAndYear.InitialBalance;
                     //var previous = new DailyBankTransactionModel();
                     foreach (var item in Query)
                     {
@@ -415,7 +415,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         var kredit = item.Status.ToUpper().Equals("OUT") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
                         var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
 
-                        result.Rows.Add(item.Date.ToOffset(new TimeSpan(clientTimeZoneOffset, 0, 0)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
+                        result.Rows.Add((item.Date.AddHours(clientTimeZoneOffset)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
                             item.Remark,
                             item.ReferenceNo,
                             item.ReferenceType,
@@ -583,7 +583,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             else
             {
                 var BalanceByMonthAndYear = GetBalanceMonthAndYear(dataAccountBank.Id, month, year, clientTimeZoneOffset);
-                var beforeBalance = BalanceByMonthAndYear.InitialBalance;
+                var beforeBalance = BalanceByMonthAndYear == null ? 0 : BalanceByMonthAndYear.InitialBalance;
                 var beforeBalanceValas = beforeBalance / garmentCurrency.Rate;
                 //var previous = new DailyBankTransactionModel();
                 foreach (var item in Query)
@@ -649,8 +649,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                          && transaction.IsPosted
                          //&& transaction.AccountBankId == bankId
                          //&& transaction.Date.Month == month
-                         && transaction.Date.ToOffset(offset).Month == month
-                         && transaction.Date.Year == year
+                         && transaction.Date.AddHours(clientTimeZoneOffset).Month == month
+                         && transaction.Date.AddHours(clientTimeZoneOffset).Year == year
                          orderby transaction.ReferenceNo
                          select new DailyBankTransactionModel
                          {
@@ -662,12 +662,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                              AccountBankCurrencyCode = transaction.AccountBankCurrencyCode,
                              BeforeNominal = transaction.BeforeNominal,
                              AfterNominal = transaction.AfterNominal,
-                             Nominal = transaction.Nominal * transaction.CurrencyRate,
-                             BeforeNominalValas = transaction.BeforeNominal * transaction.CurrencyRate,
-                             AfterNominalValas = transaction.AfterNominal * transaction.CurrencyRate,
+                             Nominal = transaction.Nominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
+                             BeforeNominalValas = transaction.BeforeNominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
+                             AfterNominalValas = transaction.AfterNominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
                              NominalValas = transaction.NominalValas,
                              Status = transaction.Status,
-                             CurrencyRate = transaction.CurrencyRate,
+                             CurrencyRate = (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
                              AccountBankAccountName = transaction.AccountBankAccountName,
                              AccountBankAccountNumber = transaction.AccountBankAccountNumber,
                              AccountBankCode = transaction.AccountBankCode,
@@ -741,7 +741,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public ReadResponse<DailyBankTransactionModel> GetReportAll(string referenceNo, int accountBankId, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int page = 1, int size = 25, string order = "{}", List<string> select = null, string keyword = null, string filter = "{}")
         {
-            IQueryable<DailyBankTransactionModel> Query = _DbSet;
+            IQueryable<DailyBankTransactionModel> Query = _DbSet.Where(entity => entity.IsPosted);
 
             Query = Query
                 .Select(s => new DailyBankTransactionModel
@@ -764,8 +764,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     Status = s.Status,
                     SourceType = s.SourceType,
                     IsPosted = s.IsPosted,
-                    Remark = s.Remark,
-                    Nominal = s.Nominal
+                    Remark = s.Remark, 
+                    Nominal = s.Nominal * (s.CurrencyRate == 0 ? 1 : s.CurrencyRate)
                 });
 
             List<string> searchAttributes = new List<string>()
@@ -788,11 +788,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (accountBankId > 0)
                 Query = Query.Where(s => s.AccountBankId == accountBankId);
 
+            var offset = _IdentityService.TimezoneOffset;
             if (startDate.HasValue)
-                Query = Query.Where(s => s.Date >= startDate);
+                Query = Query.Where(s => s.Date.AddHours(offset) >= startDate);
 
             if (endDate.HasValue)
-                Query = Query.Where(s => s.Date <= endDate);
+                Query = Query.Where(s => s.Date.AddHours(offset) <= endDate);
 
 
             List<DailyBankTransactionModel> Data = new List<DailyBankTransactionModel>();
@@ -832,7 +833,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                    Status = s.Status,
                    SourceType = s.SourceType,
                    IsPosted = s.IsPosted,
-                   Nominal = s.Nominal
+                   Nominal = s.Nominal 
                }).ToList()
             );
 
