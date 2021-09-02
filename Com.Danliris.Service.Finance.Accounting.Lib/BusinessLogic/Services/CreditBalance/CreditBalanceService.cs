@@ -38,7 +38,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
         //    IQueryable<CreditorAccountModel> query = DbContext.CreditorAccounts.Where(x => x.SupplierIsImport == isImport).AsQueryable();
 
-
         //    List<CreditBalanceViewModel> result = new List<CreditBalanceViewModel>();
         //    int previousMonth = month - 1;
         //    int previousYear = year;
