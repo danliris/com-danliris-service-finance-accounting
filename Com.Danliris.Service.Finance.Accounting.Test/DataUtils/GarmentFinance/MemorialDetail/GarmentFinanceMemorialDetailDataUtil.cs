@@ -57,6 +57,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                         CurrencyRate = 1
 
                     }
+                },
+                RupiahItems = new List<GarmentFinanceMemorialDetailRupiahItemModel>
+                {
+                    new GarmentFinanceMemorialDetailRupiahItemModel()
+                    {
+                        ChartOfAccountId = 1,
+                        ChartOfAccountCode = "code",
+                        ChartOfAccountName = "name",
+                        Debit = 1,
+                        Credit = 1,
+                    }
                 }
             };
         }
