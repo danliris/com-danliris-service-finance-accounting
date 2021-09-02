@@ -211,8 +211,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
             {
                 new GarmentFinanceMemorialDetailRupiahItemViewModel()
                 {
-                    Account=null
+                    Account=null,
+                    Credit = 0,
+                    Debit = 0,
                 }
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_Amount_Different()
+        {
+            GarmentFinanceMemorialDetailViewModel vm = new GarmentFinanceMemorialDetailViewModel();
+            vm.Amount = 3;
+            vm.Items = new List<GarmentFinanceMemorialDetailItemViewModel>
+            {
+                new GarmentFinanceMemorialDetailItemViewModel()
+                {
+                    Amount = 1,
+                }
+            };
+            vm.OtherItems = new List<GarmentFinanceMemorialDetailOtherItemViewModel>
+            {
+                new GarmentFinanceMemorialDetailOtherItemViewModel()
+                {
+                    TypeAmount = "KREDIT",
+                    Amount= 1,
+                },
             };
 
             Assert.True(vm.Validate(null).Count() > 0);
