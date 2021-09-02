@@ -783,17 +783,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             //filter
             if (!string.IsNullOrEmpty(referenceNo))
-                Query = Query.Where(s => s.Code == referenceNo);
+                Query = Query.Where(s => s.ReferenceNo == referenceNo);
 
             if (accountBankId > 0)
                 Query = Query.Where(s => s.AccountBankId == accountBankId);
 
             var offset = _IdentityService.TimezoneOffset;
             if (startDate.HasValue)
-                Query = Query.Where(s => s.Date.AddHours(offset) >= startDate);
+                Query = Query.Where(s => s.Date >= startDate.Value.AddHours(-offset));
 
             if (endDate.HasValue)
-                Query = Query.Where(s => s.Date.AddHours(offset) <= endDate);
+                Query = Query.Where(s => s.Date <= endDate.Value.AddHours(offset));
 
 
             List<DailyBankTransactionModel> Data = new List<DailyBankTransactionModel>();
@@ -848,8 +848,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             Query = Query
                 .Select(s => new DailyBankTransactionModel
                 {
-                    Id = s.Id,
-                    Code = s.Code,
                     ReferenceNo = s.ReferenceNo,
                     Status = s.Status
                 });
@@ -864,7 +862,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
             Query = QueryHelper<DailyBankTransactionModel>.Filter(Query, FilterDictionary);
 
-            return new ReadResponse<DailyBankTransactionModel>(Query.ToList(), Query.Count(), new Dictionary<string, string>(), new List<string>());
+            return new ReadResponse<DailyBankTransactionModel>(Query.Distinct().ToList(), Query.Count(), new Dictionary<string, string>(), new List<string>());
         }
 
         public ReadResponse<DailyBankTransactionModel> Read(int page, int size, string order, List<string> select, string keyword, string filter)
