@@ -741,7 +741,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public ReadResponse<DailyBankTransactionModel> GetReportAll(string referenceNo, int accountBankId, string division, DateTimeOffset? startDate, DateTimeOffset? endDate, int page = 1, int size = 25, string order = "{}", List<string> select = null, string keyword = null, string filter = "{}")
         {
-            IQueryable<DailyBankTransactionModel> Query = _DbSet;
+            IQueryable<DailyBankTransactionModel> Query = _DbSet.Where(entity => entity.IsPosted);
 
             Query = Query
                 .Select(s => new DailyBankTransactionModel
