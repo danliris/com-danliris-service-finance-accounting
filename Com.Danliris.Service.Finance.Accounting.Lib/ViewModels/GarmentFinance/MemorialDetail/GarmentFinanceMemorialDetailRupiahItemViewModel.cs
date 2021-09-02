@@ -6,12 +6,10 @@ using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.MemorialDetail
 {
-    public class GarmentFinanceMemorialDetailOtherItemViewModel : BaseViewModel
+    public class GarmentFinanceMemorialDetailRupiahItemViewModel : BaseViewModel
     {
         public ChartOfAccountViewModel Account { get; set; }
-        public CurrencyViewModel Currency { get; set; }
-        public decimal Amount { get; set; }
-        public string TypeAmount { get; set; }
-        public string Remarks { get; set; }
+        public decimal Debit { get; set; }
+        public decimal Credit { get; set; }
     }
 }
