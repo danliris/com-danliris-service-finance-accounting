@@ -790,10 +790,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             var offset = _IdentityService.TimezoneOffset;
             if (startDate.HasValue)
-                Query = Query.Where(s => s.Date.AddHours(offset) >= startDate);
+                Query = Query.Where(s => s.Date >= startDate.Value.AddHours(-offset));
 
             if (endDate.HasValue)
-                Query = Query.Where(s => s.Date.AddHours(offset) <= endDate);
+                Query = Query.Where(s => s.Date <= endDate.Value.AddHours(offset));
 
 
             List<DailyBankTransactionModel> Data = new List<DailyBankTransactionModel>();
