@@ -27,7 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             DivisionName = divisionName;
             VATAmount = vATAmount;
             if (bankCurrencyCode != currencyCode)
-                PaidAmount = Math.Round(paidAmount, 2) * (currencyRate == 0 ? 1 : currencyRate);
+                PaidAmount = paidAmount * (currencyRate == 0 ? 1 : currencyRate);
             else
                 PaidAmount = paidAmount;
 
