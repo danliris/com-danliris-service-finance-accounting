@@ -251,7 +251,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
 
             HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"rate\":\"14500\",\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
+            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"rate\":\"14500\",\"invoiceNo\":\"no\",\"buyerAgentCode\":\"code\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
 
             httpClientService
                 .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
@@ -270,15 +270,51 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
                 .Returns(httpClientService.Object);
 
             GarmentFinanceMemorialDetailService serviceMemo = new GarmentFinanceMemorialDetailService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            GarmentFinanceMemorialDetailModel modelMemo = _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetNewData();
-
+            GarmentFinanceMemorialDetailModel modelMemo = await _dataUtilMemo(serviceMemo, GetCurrentMethod()).GetTestData();
             BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
             BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
             GarmentFinanceExportSalesOutstandingReportService service = new GarmentFinanceExportSalesOutstandingReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
 
-            var response = service.GenerateExcel(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, "",7);
+            var response = service.GenerateExcel(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year, "code",7);
             Assert.NotNull(response);
+            var response1 = service.GenerateExcel(1, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response2 = service.GenerateExcel(2, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response3 = service.GenerateExcel(3, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response4 = service.GenerateExcel(4, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response5 = service.GenerateExcel(5, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response6 = service.GenerateExcel(6, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response7 = service.GenerateExcel(7, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response8 = service.GenerateExcel(8, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response9 = service.GenerateExcel(9, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response10 = service.GenerateExcel(10, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response11 = service.GenerateExcel(11, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+            var response12 = service.GenerateExcel(12, DateTimeOffset.Now.Year, "", 7);
+            Assert.NotNull(response);
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
-      
+
     }
 }
