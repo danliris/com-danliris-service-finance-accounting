@@ -78,7 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             List<GarmentFinanceExportSalesOutstandingReportViewModel> data = new List<GarmentFinanceExportSalesOutstandingReportViewModel>();
 
             var invoice = from a in invoicePackingListNow.data
-                          where (buyer == null || (buyer != null && buyer != "" && a.buyerAgentCode == buyer))
+                          where (buyer == null || buyer =="undefined" || (buyer != null && buyer != "undefined" && buyer != "" && a.buyerAgentCode == buyer))
 
                           select new GarmentFinanceExportSalesOutstandingReportViewModel
                           {
@@ -114,13 +114,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                                          
                                   };
             var unionQuery = memorial.Union(bankCashReceipt).Union(invoice);
-            if (buyer == null)
+            if (buyer == null || buyer =="undefined" || buyer =="")
             {
                 _buyerName = "ALL";
             } else
             {
                 _buyerName = (from a in unionQuery.ToList()
-                              select a.BuyerName).FirstOrDefault();
+                              select a.BuyerName).FirstOrDefault() + " >> " + buyer;
             }
             var querySum= unionQuery.ToList().GroupBy(a=> new { a.InvoiceId }, (key, group) => new
             {
@@ -204,7 +204,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 result.Columns.Add(new DataColumn() { ColumnName = "Amount", DataType = typeof(double) });
                 
                 int counter = 0;
-            if (Data.Count() == 0)
+            if (Data.Count() <=1)
                 result.Rows.Add("", "", "", 0); // to allow column name to be generated properly for empty data as template
             else
             {
@@ -229,7 +229,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                     worksheet.Cells["A1"].Value = "PT. D A N L I R I S";
                     worksheet.Cells["A2"].Value = "OUTSTANDING PENJUALAN EXPORT ";
                     worksheet.Cells["A3"].Value = "BULAN " + monthValue + " " + year;
-                    worksheet.Cells["A4"].Value = "DEBITUR " + _buyerName + " >> " + buyer;
+                    worksheet.Cells["A4"].Value = "DEBITUR " + _buyerName ;
                     worksheet.Cells["A" + 1 + ":A" + 4 + ""].Style.Font.Size = 14;
                     worksheet.Cells["A" + 1 + ":A" + 4 + ""].Style.Font.Bold = true;
                     worksheet.Cells["A5"].LoadFromDataTable(result, true);
@@ -248,7 +248,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                     cell.Style.Numberformat.Format = "#,##0.00";
                     cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 }
-                worksheet.Cells["A" + 4 + ":D" + (counter + 4) + ""].AutoFitColumns();
+                worksheet.Cells["B" + 4 + ":D" + (counter + 4) + ""].AutoFitColumns();
                 worksheet.Cells["A" + (counter + 5) + ":C" + (counter + 5) + ""].Merge = true;
                 worksheet.Cells["A" + (counter + 5) + ":C" + (counter + 5) + ""].Value = "TOTAL";
 

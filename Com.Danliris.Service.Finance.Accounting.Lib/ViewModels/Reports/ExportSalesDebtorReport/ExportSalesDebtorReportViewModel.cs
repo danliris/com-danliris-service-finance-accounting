@@ -20,5 +20,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Rreports.Export
         public double sixtyNinety { get; set; }
         public double moreThanNinety { get; set; }
         public TimeSpan timeSpan { get; set; }
+
     }
 }
