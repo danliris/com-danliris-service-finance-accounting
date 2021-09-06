@@ -353,7 +353,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                             expenditure.TransactionType,
                             expenditure.BankAccountNumber,
                             item.IncomeTaxValue,
-                            item.PayToSupplier
+                            item.PayToSupplier,
+                            expenditure.Amount
                         };
 
             query = query.Where(entity => entity.PaymentDate >= startDate && entity.PaymentDate <= endDate);

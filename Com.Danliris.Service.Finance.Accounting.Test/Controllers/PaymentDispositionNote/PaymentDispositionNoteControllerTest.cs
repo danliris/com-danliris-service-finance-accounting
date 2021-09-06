@@ -573,6 +573,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
         }
 
         [Fact]
+        public void Get_Report_NullDate_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service
+                .Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+                .Returns(new List<ReportDto>());
+
+            var response = GetController(mocks).GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), null, null);
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
         public void Get_Report_ThrowException_ReturnInternalServerError()
         {
             var mocks = GetMocks();
@@ -597,6 +609,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
                 .Returns(new MemoryStream());
 
             var response = GetController(mocks).GetReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public void Get_ReportXls_DateNull_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service
+                .Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+                .Returns(new List<ReportDto>());
+
+            mocks.Service
+                .Setup(f => f.GetXls(It.IsAny<List<ReportDto>>()))
+                .Returns(new MemoryStream());
+
+            var response = GetController(mocks).GetReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), null, null);
             Assert.NotNull(response);
         }
 
