@@ -225,6 +225,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
 
             List<ExportSalesDebtorReportViewModel> data = new List<ExportSalesDebtorReportViewModel>();
             GarmentCurrency garmentCurrency = await GetCurrency();
+            foreach (var item in invoicePackingListBalance.data)
+            {
+                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
+                item.rate = Convert.ToDouble(currency.Rate);
+
+            }
+            foreach (var item in invoicePackingListNow.data)
+            {
+                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
+                item.rate = Convert.ToDouble(currency.Rate);
+
+            }
+
             var _invoice = invoicePackingListBalance.data.Union(invoicePackingListNow.data);
             var querytimeSpan = from aa in _invoice
                                 select new timeSpanInvoice
@@ -285,18 +298,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                               moreThanNinety = 0
                                           };
 
-            foreach (var item in invoicePackingListBalance.data)
-            {
-                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
-                item.rate = Convert.ToDouble(currency.Rate);
-
-            }
-            foreach (var item in invoicePackingListNow.data)
-            {
-                GarmentCurrency currency = await GetCurrencyPEBDate(item.pebDate.Date.ToShortDateString());
-                item.rate = Convert.ToDouble(currency.Rate);
-
-            }
+           
             var beginingInvoice = from a in invoicePackingListBalance.data
                                   
                                   select new ExportSalesDebtorReportViewModel
