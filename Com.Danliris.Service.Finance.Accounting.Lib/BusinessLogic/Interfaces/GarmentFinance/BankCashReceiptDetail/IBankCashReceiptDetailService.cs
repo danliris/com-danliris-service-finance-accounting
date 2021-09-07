@@ -8,6 +8,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.G
 {
     public interface IBankCashReceiptDetailService : IBaseService<BankCashReceiptDetailModel>
     {
-
+        double GetAmountByInvoiceId(int invoiceId);
     }
 }

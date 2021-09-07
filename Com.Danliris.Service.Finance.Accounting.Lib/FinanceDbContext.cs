@@ -146,6 +146,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<GarmentFinanceMemorialDetailModel> GarmentFinanceMemorialDetails { get; set; }
         public DbSet<GarmentFinanceMemorialDetailItemModel> GarmentFinanceMemorialDetailItems { get; set; }
         public DbSet<GarmentFinanceMemorialDetailOtherItemModel> GarmentFinanceMemorialDetailOtherItems { get; set; }
+        public DbSet<GarmentFinanceMemorialDetailRupiahItemModel> GarmentFinanceMemorialDetailRupiahItems { get; set; }
 
         public DbSet<GarmentFinanceMemorialDetailLocalModel> GarmentFinanceMemorialDetailLocals { get; set; }
         public DbSet<GarmentFinanceMemorialDetailLocalItemModel> GarmentFinanceMemorialDetailLocalItems { get; set; }

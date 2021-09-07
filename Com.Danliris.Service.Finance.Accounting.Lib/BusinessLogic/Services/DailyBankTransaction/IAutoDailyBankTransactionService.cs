@@ -17,7 +17,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         Task<int> AutoCreateFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels);
         Task<int> AutoRevertFromOthersExpenditureProofDocument(OthersExpenditureProofDocumentModel model, List<OthersExpenditureProofDocumentItemModel> itemModels);
         //Task<int> AutoCreateFromGarmentDPPVATExpenditureNote();
-        Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel bank);
+        Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel bank, string referenceNo);
         Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos);
     }
 }

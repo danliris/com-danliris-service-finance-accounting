@@ -123,24 +123,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                            .Include(d => d.Items)
                            .Single(dispo => dispo.Id == id && !dispo.IsDeleted);
 
-            exist.ReceiptDate = model.ReceiptDate;
-            exist.BankAccountId = model.BankAccountId;
-            exist.BankAccountingCode = model.BankAccountingCode;
-            exist.BankAccountName = model.BankAccountName;
-            exist.BankAccountNumber = model.BankAccountNumber;
-            exist.BankCurrencyId = model.BankCurrencyId;
-            exist.BankCurrencyCode = model.BankCurrencyCode;
-            exist.BankCurrencyRate = model.BankCurrencyRate;
-            exist.BankAccountCOA = model.BankAccountCOA;
-            exist.CurrencyCode = model.CurrencyCode;
-            exist.CurrencyId = model.CurrencyId;
-            exist.CurrencyRate = model.CurrencyRate;
-            exist.DebitCoaId = model.DebitCoaId;
-            exist.DebitCoaCode = model.DebitCoaCode;
-            exist.DebitCoaName = model.DebitCoaName;
-            exist.NumberingCode = model.NumberingCode;
-            exist.IncomeType = model.IncomeType;
             exist.Remarks = model.Remarks;
+            exist.BuyerCode = model.BuyerCode;
+            exist.BuyerId = model.BuyerId;
+            exist.BuyerName = model.BuyerName;
 
             foreach (var item in exist.Items)
             {
@@ -155,11 +141,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                 {
                     item.Amount = itemModel.Amount;
                     item.Summary = itemModel.Summary;
-                    item.C2A = itemModel.C2A;
-                    item.C2B = itemModel.C2B;
-                    item.C2C = itemModel.C2C;
-                    item.C1A = itemModel.C1A;
-                    item.C1B = itemModel.C1B;
                     item.NoteNumber = itemModel.NoteNumber;
                     item.Remarks = itemModel.Remarks;
                     EntityExtension.FlagForUpdate(item, _identityService.Username, UserAgent);
