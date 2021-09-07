@@ -95,6 +95,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.M
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.GarmentFinance.MemorialDetailLocal;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.MemorialDetailLocal;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.DebtorCard;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.ExportSalesOutstanding;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -191,8 +192,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IGarmentFinanceMemorialService, GarmentFinanceMemorialService>()
                 .AddTransient<IGarmentFinanceMemorialDetailService, GarmentFinanceMemorialDetailService>()
                 .AddTransient<IGarmentFinanceMemorialDetailLocalService, GarmentFinanceMemorialDetailLocalService>()
-                .AddTransient<IGarmentFinanceDebtorCardReportService, GarmentFinanceDebtorCardReportService>();
-            
+                .AddTransient<IGarmentFinanceDebtorCardReportService, GarmentFinanceDebtorCardReportService>()
+                .AddTransient<IGarmentFinanceExportSalesOutstandingReportService, GarmentFinanceExportSalesOutstandingReportService>();    
         }
 
 

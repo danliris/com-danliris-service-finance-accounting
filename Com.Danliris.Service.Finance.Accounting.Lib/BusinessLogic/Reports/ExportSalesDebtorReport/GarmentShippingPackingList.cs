@@ -16,13 +16,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
         public class ShippingPackingDto
         {
             public string invoiceId { get; set; }
+            public string invoiceNo { get; set; }
             public string buyerAgentCode { get; set; }
             public string buyerAgentName { get; set; }
             public double amount { get; set; }
             public double rate { get; set; }
             public double balanceAmount { get; set; }
+            public double balanceAmountIDR { get; set; }
             public DateTimeOffset truckingDate { get; set; }
             public DateTimeOffset pebDate { get; set; }
+            public int paymentdue { get; set; }
         }
       
     }

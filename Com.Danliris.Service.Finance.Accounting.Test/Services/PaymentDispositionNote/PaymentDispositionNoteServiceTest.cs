@@ -228,8 +228,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
             PaymentDispositionNoteService service = new PaymentDispositionNoteService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
             PaymentDispositionNoteModel model = _dataUtil(service, GetCurrentMethod()).GetNewData();
 
-            var xls = service.GetXls(new List<ReportDto>() { new ReportDto(1, "", DateTimeOffset.Now, 1, "", DateTimeOffset.Now, DateTimeOffset.Now, 1, "", 1, "", 1, "", false, "", 1, "", 1, "", 1, 1, "", "") });
+            var xls = service.GetXls(new List<ReportDto>() { new ReportDto(1, "", DateTimeOffset.Now, 1, "", DateTimeOffset.Now, DateTimeOffset.Now, 1, "", 1, "", 1, "", false, "", 1, "", 1, "", 1, 1, "", "", 1, "") });
+            var xls2 = service.GetXls(new List<ReportDto>() { new ReportDto(1, "", DateTimeOffset.Now, 1, "", DateTimeOffset.Now, DateTimeOffset.Now, 1, "", 1, "", 1, "", false, "", 1, "", 1, "", 1, 1, "", "", 0, "") });
+            
             Assert.NotNull(xls);
+            Assert.NotNull(xls2);
         }
 
         [Fact]

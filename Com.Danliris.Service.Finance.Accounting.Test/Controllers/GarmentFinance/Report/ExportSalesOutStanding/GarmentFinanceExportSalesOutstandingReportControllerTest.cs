@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.ExportSalesOutstanding;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.Rreports.ExportSalesDebtorReportController;
-using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Reports.ExportSalesDebtorReport;
+using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentFinance.Report.ExportOutstandingSalesReport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -17,11 +16,11 @@ using System.Security.Claims;
 using System.Text;
 using Xunit;
 
-namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.ExportSalesDebtorReport
+namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinance.Report.ExportSalesOutStanding
 {
-    public class ExportSalesDebtorReportControllerTest
+    public class GarmentFinanceExportSalesOutstandingReportControllerTest
     {
-        protected ExportSalesDebtorReportController GetController((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IExportSalesDebtorReportService> Service, Mock<IMapper> Mapper) mocks)
+        protected GarmentFinanceExportOutstandingSalesReportController GetController((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceExportSalesOutstandingReportService> Service, Mock<IMapper> Mapper) mocks)
         {
             var user = new Mock<ClaimsPrincipal>();
             var claims = new Claim[]
@@ -30,7 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Expor
             };
             user.Setup(u => u.Claims).Returns(claims);
 
-            ExportSalesDebtorReportController controller = new ExportSalesDebtorReportController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Service.Object, mocks.Mapper.Object);
+            GarmentFinanceExportOutstandingSalesReportController controller = new GarmentFinanceExportOutstandingSalesReportController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Service.Object, mocks.Mapper.Object);
             controller.ControllerContext = new ControllerContext()
             {
                 HttpContext = new DefaultHttpContext()
@@ -43,9 +42,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Expor
             return controller;
         }
 
-        public (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IExportSalesDebtorReportService> Service, Mock<IMapper> Mapper) GetMocks()
+        public (Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentFinanceExportSalesOutstandingReportService> Service, Mock<IMapper> Mapper) GetMocks()
         {
-            return (IdentityService: new Mock<IIdentityService>(), ValidateService: new Mock<IValidateService>(), Service: new Mock<IExportSalesDebtorReportService>(), Mapper: new Mock<IMapper>());
+            return (IdentityService: new Mock<IIdentityService>(), ValidateService: new Mock<IValidateService>(), Service: new Mock<IGarmentFinanceExportSalesOutstandingReportService>(), Mapper: new Mock<IMapper>());
         }
 
         Mock<IServiceProvider> GetServiceProvider()
@@ -66,7 +65,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Expor
         {
             return (int)response.GetType().GetProperty("StatusCode").GetValue(response, null);
         }
-     
+
 
         protected ServiceValidationException GetServiceValidationException(dynamic dto)
         {
@@ -82,11 +81,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Expor
             var mock = GetMocks();
 
             mock.Service
-                .Setup(s => s.GetMonitoring(It.IsAny<int>(), It.IsAny<int>(),"", It.IsAny<int>()))
+                .Setup(s => s.GetMonitoring(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
                 .Throws(new Exception());
 
             //Act
-            IActionResult response = GetController(mock).Get(1,1,"");
+            IActionResult response = GetController(mock).Get(1, 1, "code");
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -97,18 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Expor
         {
             var mocks = GetMocks();
 
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(),""))
-               .ReturnsAsync(new MemoryStream());
-            var response = GetController(mocks).GetXls(1,1,"");
-            Assert.NotNull(response);
-
-        }
-        [Fact]
-        public void Should_Success_GetXlsEndBalance()
-        {
-            var mocks = GetMocks();
-
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), "end"))
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), "end",7))
                .ReturnsAsync(new MemoryStream());
             var response = GetController(mocks).GetXls(1, 1, "end");
             Assert.NotNull(response);
@@ -119,9 +107,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Expor
         {
             var mocks = GetMocks();
 
-            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(),""))
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
                .Throws(new Exception());
-            var response = GetController(mocks).GetXls(1, 1,"");
+            var response = GetController(mocks).GetXls(1, 1, "a");
             Assert.NotNull(response);
 
         }
