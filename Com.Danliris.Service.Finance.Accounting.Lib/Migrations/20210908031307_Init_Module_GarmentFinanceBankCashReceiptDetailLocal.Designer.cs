@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210908031307_Init_Module_GarmentFinanceBankCashReceiptDetailLocal")]
+    partial class Init_Module_GarmentFinanceBankCashReceiptDetailLocal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1750,8 +1752,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<bool>("IsUsed");
-
                     b.Property<string>("LastModifiedAgent")
                         .IsRequired()
                         .HasMaxLength(255);
@@ -2097,7 +2097,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<int>("MemorialDetailId");
+                    b.Property<int>("MemorialId");
 
                     b.HasKey("Id");
 
@@ -2239,8 +2239,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<DateTime>("LastModifiedUtc");
 
                     b.Property<int>("MemorialDetailId");
-
-                    b.Property<double>("Quantity");
 
                     b.HasKey("Id");
 
@@ -6221,7 +6219,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetail.BankCashReceiptDetailOtherItemModel", b =>
                 {
                     b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetail.BankCashReceiptDetailModel", "BankCashReceiptDetailModel")
-                        .WithMany()
+                        .WithMany("OtherItems")
                         .HasForeignKey("BankCashReceiptDetailId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -6261,7 +6259,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
             modelBuilder.Entity("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail.GarmentFinanceMemorialDetailOtherItemModel", b =>
                 {
                     b.HasOne("Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail.GarmentFinanceMemorialDetailModel", "GarmentFinanceMemorialDetailModel")
-                        .WithMany()
+                        .WithMany("OtherItems")
                         .HasForeignKey("MemorialDetailId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
