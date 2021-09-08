@@ -120,6 +120,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 }
                 else
                 {
+                    if(item.Debit!= itemModel.Debit)
+                    {
+                        item.Debit = itemModel.Debit;
+                    }
+                    if (item.Credit != itemModel.Credit)
+                    {
+                        item.Credit = itemModel.Credit;
+                    }
                     EntityExtension.FlagForUpdate(item, IdentityService.Username, UserAgent);
                 }
             }

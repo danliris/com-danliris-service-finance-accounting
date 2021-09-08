@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoDetailTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums;
@@ -51,6 +52,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PurchasingMemoDetailTexti
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            var mockCreditorAccountService = new Mock<ICreditorAccountService>();
+            mockCreditorAccountService.Setup(service => service.CreateFromPurchasingMemoTextile(It.IsAny<CreditorAccountPurchasingMemoTextileFormDto>()))
+                .Returns(1);
+
+            mockCreditorAccountService.Setup(service => service.DeleteFromPurchasingMemoTextile(It.IsAny<CreditorAccountPurchasingMemoTextileFormDto>()))
+                .Returns(1);
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(ICreditorAccountService)))
+                .Returns(mockCreditorAccountService.Object);
 
             serviceProvider
                 .Setup(x => x.GetService(typeof(FinanceDbContext)))
