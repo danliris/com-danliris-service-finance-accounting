@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.R
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.Report.BankCashReceiptMonthlyRecap;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentFinance.Report.BankCashReceiptMonthlyRecap;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -76,6 +77,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         }
 
         [Fact]
+        public void GetMonitoring_Success()
+        {
+            var mock = GetMocks();
+            mock.Service
+               .Setup(s => s.GetMonitoring(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<int>()))
+               .Returns(new List<GarmentFinanceBankCashReceiptMonthlyRecapViewModel>());
+            //Act
+            IActionResult response = GetController(mock).Get(DateTimeOffset.Now.AddDays(-3), DateTimeOffset.Now.AddDays(3));
+
+            //Assert
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public void GetMonitoringwithError()
         {
             var mock = GetMocks();
@@ -85,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
                 .Throws(new Exception());
 
             //Act
-            IActionResult response = GetController(mock).Get(DateTimeOffset.Now, DateTimeOffset.Now);
+            IActionResult response = GetController(mock).Get(DateTimeOffset.Now.AddDays(-3), DateTimeOffset.Now.AddDays(3));
 
             //Assert
             int statusCode = this.GetStatusCode(response);
