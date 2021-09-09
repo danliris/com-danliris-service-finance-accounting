@@ -136,7 +136,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentF
 
                     return new FileStreamResult(stream, "application/pdf")
                     {
-                        FileDownloadName = $"Bukti Penerimaan Kas Bank {viewModel.MemorialNo}.pdf"
+                        FileDownloadName = $"Memorial {viewModel.MemorialNo}.pdf"
                     };
                 }
             }

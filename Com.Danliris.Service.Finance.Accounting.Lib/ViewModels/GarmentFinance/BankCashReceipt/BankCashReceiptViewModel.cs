@@ -22,6 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public string IncomeType { get; set; }
         public string Remarks { get; set; }
         public decimal Amount { get; set; }
+        public bool IsUsed { get; set; }
 
         public BankCashReceiptTypeViewModel BankCashReceiptType { get; set; }
 
