@@ -7,6 +7,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.C
     {
         public string ExternalPurchaseOrderNo { get; set; }
         public string IncomeTaxNo { get; set; }
+        public string InvoiceNo { get; set; }
         public decimal DPPAmount { get; set; }
         public decimal VATAmount { get; set; }
         public decimal IncomeTaxAmount { get; set; }
