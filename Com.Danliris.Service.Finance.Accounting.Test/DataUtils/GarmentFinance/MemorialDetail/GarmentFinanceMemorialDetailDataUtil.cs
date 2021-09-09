@@ -28,6 +28,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                 MemorialNo = memorial.MemorialNo,
                 MemorialId = memorial.Id,
                 MemorialDate = DateTimeOffset.Now,
+                Amount = 2,
+                DebitCoaId = 1,
+                DebitCoaCode = "code",
+                DebitCoaName = "name",
+                InvoiceCoaId = 1,
+                InvoiceCoaCode = "code",
+                InvoiceCoaName = "name",
                 Items = new List<GarmentFinanceMemorialDetailItemModel>
                 {
                     new GarmentFinanceMemorialDetailItemModel()
@@ -54,8 +61,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                         ChartOfAccountName = "name",
                         CurrencyId = 1,
                         CurrencyCode = "code",
-                        CurrencyRate = 1
+                        CurrencyRate = 1,
+                        TypeAmount = "KREDIT",
+                        Remarks = "remarks"
 
+                    },
+                    new GarmentFinanceMemorialDetailOtherItemModel()
+                    {
+                        Amount = 1,
+                        ChartOfAccountId = 1,
+                        ChartOfAccountCode = "code",
+                        ChartOfAccountName = "name",
+                        CurrencyId = 1,
+                        CurrencyCode = "code",
+                        CurrencyRate = 1,
+                        TypeAmount = "DEBIT",
+                        Remarks = "remarks"
+
+                    },
+                },
+                RupiahItems = new List<GarmentFinanceMemorialDetailRupiahItemModel>
+                {
+                    new GarmentFinanceMemorialDetailRupiahItemModel()
+                    {
+                        ChartOfAccountId = 1,
+                        ChartOfAccountCode = "code",
+                        ChartOfAccountName = "name",
+                        Debit = 1,
+                        Credit = 1,
                     }
                 }
             };

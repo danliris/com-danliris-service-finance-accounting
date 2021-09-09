@@ -21,6 +21,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Memo
         public decimal CurrencyRate { get; set; }
 
         public decimal Amount { get; set; }
+        [MaxLength(32)]
+        public string TypeAmount { get; set; }
+        [MaxLength(1000)]
+        public string Remarks { get; set; }
 
         public virtual int MemorialDetailId { get; set; }
         [ForeignKey("MemorialDetailId")]

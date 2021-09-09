@@ -6,15 +6,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
 {
     public class GarmentShippingInvoiceViewModel
     {
-
-        //public IList<ShippingPackingViewModel> data { get; set; }
-        //public GarmentShippingInvoiceViewModel()
-        //{
-        //    data = new List<ShippingPackingViewModel>();
-        //}
-
-        //public class ShippingPackingViewModel
-        //{
             public string invoiceId { get; set; }
             public string buyerAgentCode { get; set; }
             public string buyerAgentName { get; set; }
@@ -23,6 +14,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
             public DateTimeOffset truckingDate { get; set; }
             public DateTimeOffset date { get; set; }
             public string invoiceNo { get; set; }
-        //}
+    
     }
 }

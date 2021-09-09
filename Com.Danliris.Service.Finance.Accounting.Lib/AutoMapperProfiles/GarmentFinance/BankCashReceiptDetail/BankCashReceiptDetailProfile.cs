@@ -12,6 +12,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
         public BankCashReceiptDetailProfile()
         {
             CreateMap<BankCashReceiptDetailModel, BankCashReceiptDetailViewModel>()
+
+                .ForPath(d => d.DebitCoa.Id, opt => opt.MapFrom(s => s.DebitCoaId))
+                .ForPath(d => d.DebitCoa.Code, opt => opt.MapFrom(s => s.DebitCoaCode))
+                .ForPath(d => d.DebitCoa.Name, opt => opt.MapFrom(s => s.DebitCoaName))
+
+                .ForPath(d => d.InvoiceCoa.Id, opt => opt.MapFrom(s => s.InvoiceCoaId))
+                .ForPath(d => d.InvoiceCoa.Code, opt => opt.MapFrom(s => s.InvoiceCoaCode))
+                .ForPath(d => d.InvoiceCoa.Name, opt => opt.MapFrom(s => s.InvoiceCoaName))
+
                 .ReverseMap();
 
             CreateMap<BankCashReceiptDetailItemModel, BankCashReceiptDetailItemViewModel>()
