@@ -241,6 +241,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
             try
             {
                 int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
+                VerifyUser();
                 ReadResponse<DailyBankTransactionModel> Result = Service.GetReportAll(referenceNo,accountBankId,division,startDate,endDate,page,size,order,select,keyword,filter);
 
                 return Ok(new
@@ -287,6 +288,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
             try
             {
                 int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
+                VerifyUser();
                 ReadResponse<DailyBankTransactionModel> Result = Service.GetReportAll(referenceNo, accountBankId, division, startDate, endDate, page, size, order, select, keyword, filter);
                
                 var filename = "Laporan Bank Harian Masuk";
@@ -312,6 +314,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.DailyBan
             try
             {
                 int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
+                VerifyUser();
                 ReadResponse<DailyBankTransactionModel> Result = Service.GetReportAll(referenceNo, accountBankId, division, startDate, endDate, page, size, order, select, keyword, filter);
 
                 var filename = "Laporan Bank Harian Keluar";

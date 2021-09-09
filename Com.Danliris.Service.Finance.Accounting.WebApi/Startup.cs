@@ -92,8 +92,13 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Garment
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.GarmentFinance.BankCashReceiptDetailLocal;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceiptDetailLocal;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.GarmentFinance.MemorialDetailLocal;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.MemorialDetailLocal;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.DebtorCard;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.BankCashReceiptMonthlyRecap;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.ExportSalesOutstanding;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -190,8 +195,12 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IGarmentFinanceMemorialService, GarmentFinanceMemorialService>()
                 .AddTransient<IGarmentFinanceMemorialDetailService, GarmentFinanceMemorialDetailService>()
                 .AddTransient<IGarmentFinanceDebtorCardReportService, GarmentFinanceDebtorCardReportService>()
-                .AddTransient<IGarmentFinanceBankCashReceiptMonthlyRecapService, GarmentFinanceBankCashReceiptMonthlyRecapService>();
-            
+                .AddTransient<IGarmentFinanceBankCashReceiptMonthlyRecapService, GarmentFinanceBankCashReceiptMonthlyRecapService>()
+                .AddTransient<IGarmentFinanceBankCashReceiptDetailLocalService, GarmentFinanceBankCashReceiptDetailLocalService>()
+                .AddTransient<IGarmentFinanceMemorialDetailLocalService, GarmentFinanceMemorialDetailLocalService>()
+                .AddTransient<IGarmentFinanceDebtorCardReportService, GarmentFinanceDebtorCardReportService>()
+                .AddTransient<IGarmentFinanceExportSalesOutstandingReportService, GarmentFinanceExportSalesOutstandingReportService>();    
+
         }
 
 

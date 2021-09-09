@@ -104,6 +104,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Expor
 
         }
         [Fact]
+        public void Should_Success_GetXlsEndBalance()
+        {
+            var mocks = GetMocks();
+
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>(), "end"))
+               .ReturnsAsync(new MemoryStream());
+            var response = GetController(mocks).GetXls(1, 1, "end");
+            Assert.NotNull(response);
+
+        }
+        [Fact]
         public void Should_Error_GetXls()
         {
             var mocks = GetMocks();
