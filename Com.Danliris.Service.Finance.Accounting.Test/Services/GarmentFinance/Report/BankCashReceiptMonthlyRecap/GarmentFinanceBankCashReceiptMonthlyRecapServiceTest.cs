@@ -113,6 +113,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
         }
 
         [Fact]
+        public async Task Should_Success_Get_All_Data_Null_Date()
+        {
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            var httpClientService = new Mock<IHttpClientService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+
+            var dto = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
+            GarmentFinanceBankCashReceiptMonthlyRecapService serviceReport = new GarmentFinanceBankCashReceiptMonthlyRecapService(serviceProviderMock.Object, dbContext);
+
+
+            var response = serviceReport.GetMonitoring(null, null, 7);
+            Assert.NotNull(response);
+        }
+
+        [Fact]
         public async Task Should_Success_Get_All_DataExcel()
         {
             var dbContext = GetDbContext(GetCurrentAsyncMethod());
@@ -135,6 +161,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
 
 
             var response = serviceReport.GenerateExcel(DateTimeOffset.Now.AddDays(-3), DateTimeOffset.Now.AddDays(3), 7);
+            Assert.NotNull(response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Get_All_DataExcel_ZeroData()
+        {
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            var httpClientService = new Mock<IHttpClientService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+
+            var dto = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
+            GarmentFinanceBankCashReceiptMonthlyRecapService serviceReport = new GarmentFinanceBankCashReceiptMonthlyRecapService(serviceProviderMock.Object, dbContext);
+
+
+            var response = serviceReport.GenerateExcel(DateTimeOffset.Now.AddDays(-3), DateTimeOffset.Now.AddDays(-3), 7);
             Assert.NotNull(response);
         }
     }
