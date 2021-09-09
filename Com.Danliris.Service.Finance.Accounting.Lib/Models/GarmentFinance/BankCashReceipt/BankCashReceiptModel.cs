@@ -60,6 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Bank
         public string IncomeType { get; set; }
         [MaxLength(1024)]
         public string Remarks { get; set; }
+        public bool IsUsed { get; set; }
 
         public decimal Amount { get; set; }
         public virtual ICollection<BankCashReceiptItemModel> Items { get; set; }
