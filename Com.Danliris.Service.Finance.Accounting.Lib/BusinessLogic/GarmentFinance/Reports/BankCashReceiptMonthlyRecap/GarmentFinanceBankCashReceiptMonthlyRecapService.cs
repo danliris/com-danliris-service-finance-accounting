@@ -121,7 +121,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             result.Columns.Add(new DataColumn() { ColumnName = "Nama Akun", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Debet", DataType = typeof(double) });
             result.Columns.Add(new DataColumn() { ColumnName = "Kredit", DataType = typeof(double) });
-            if (Query.ToArray().Count() == 0)
+            if (Query.ToArray().Count() <= 1)
                 result.Rows.Add("", "", 0, 0); // to allow column name to be generated properly for empty data as template
             else
             {
