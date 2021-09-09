@@ -93,6 +93,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMemoTe
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Memorial;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.MemorialDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.DebtorCard;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.BankCashReceiptMonthlyRecap;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -188,7 +189,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IGarmentDownPaymentReportService, GarmentDownPaymentReportService>()
                 .AddTransient<IGarmentFinanceMemorialService, GarmentFinanceMemorialService>()
                 .AddTransient<IGarmentFinanceMemorialDetailService, GarmentFinanceMemorialDetailService>()
-                .AddTransient<IGarmentFinanceDebtorCardReportService, GarmentFinanceDebtorCardReportService>();
+                .AddTransient<IGarmentFinanceDebtorCardReportService, GarmentFinanceDebtorCardReportService>()
+                .AddTransient<IGarmentFinanceBankCashReceiptMonthlyRecapService, GarmentFinanceBankCashReceiptMonthlyRecapService>();
             
         }
 
