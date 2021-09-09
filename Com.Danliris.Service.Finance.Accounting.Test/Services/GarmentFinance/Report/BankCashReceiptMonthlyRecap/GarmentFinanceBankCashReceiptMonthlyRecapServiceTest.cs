@@ -25,63 +25,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
 {
     public class GarmentFinanceBankCashReceiptMonthlyRecapServiceTest
     {
-        private const string ENTITY = "BankCashReceiptMonthlyRecapService";
-        //private PurchasingDocumentAcceptanceDataUtil pdaDataUtil;
-        //private readonly IIdentityService identityService;
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public string GetCurrentMethod()
+        private string GetCurrentAsyncMethod([CallerMemberName] string methodName = "")
         {
-            StackTrace st = new StackTrace();
-            StackFrame sf = st.GetFrame(1);
+            var method = new StackTrace()
+                .GetFrames()
+                .Select(frame => frame.GetMethod())
+                .FirstOrDefault(item => item.Name == methodName);
 
-            return string.Concat(sf.GetMethod().Name, "_", ENTITY);
+            return method.Name;
+
         }
 
-        private FinanceDbContext _dbContext(string testName)
-        {
-            DbContextOptionsBuilder<FinanceDbContext> optionsBuilder = new DbContextOptionsBuilder<FinanceDbContext>();
-            optionsBuilder
-                .UseInMemoryDatabase(testName)
-                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
-
-            FinanceDbContext dbContext = new FinanceDbContext(optionsBuilder.Options);
-
-            return dbContext;
-        }
-
-        private Mock<IServiceProvider> GetServiceProvider()
-        {
-            var serviceProvider = new Mock<IServiceProvider>();
-
-            
-            serviceProvider
-                .Setup(x => x.GetService(typeof(IHttpClientService)))
-                .Returns(new HttpClientTestService());
-
-
-            serviceProvider
-                .Setup(x => x.GetService(typeof(IIdentityService)))
-                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
-
-            return serviceProvider;
-        }
-
-
-        private BankCashReceiptDetailDataUtil _dataUtilBankCash(BankCashReceiptDetailService service)
-        {
-            var dbContext = GetDbContext(GetCurrentAsyncMethod());
-            var serviceProviderMock = GetServiceProvider();
-
-            serviceProviderMock
-                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
-                .Returns(dbContext);
-
-            var bankCashReceiptService = new BankCashReceiptService(serviceProviderMock.Object);
-            var bankCashReceiptDataUtil = new BankCashReceiptDataUtil(bankCashReceiptService);
-            return new BankCashReceiptDetailDataUtil(service, bankCashReceiptDataUtil);
-        }
-        
         private FinanceDbContext GetDbContext(string testName)
         {
             var serviceProvider = new ServiceCollection()
@@ -96,52 +50,91 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.R
 
             return new FinanceDbContext(optionsBuilder.Options);
         }
-        private string GetCurrentAsyncMethod([CallerMemberName] string methodName = "")
+
+        private Mock<IServiceProvider> GetServiceProvider()
         {
-            var method = new StackTrace()
-                .GetFrames()
-                .Select(frame => frame.GetMethod())
-                .FirstOrDefault(item => item.Name == methodName);
+            var serviceProvider = new Mock<IServiceProvider>();
 
-            return method.Name;
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new HttpClientTestService());
 
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IIdentityService)))
+                .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+
+            return serviceProvider;
+        }
+
+        private BankCashReceiptDetailDataUtil _dataUtil(BankCashReceiptDetailService service, string testname)
+        {
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var bankCashReceiptService = new BankCashReceiptService(serviceProviderMock.Object);
+            var bankCashReceiptDataUtil = new BankCashReceiptDataUtil(bankCashReceiptService);
+            return new BankCashReceiptDetailDataUtil(service, bankCashReceiptDataUtil);
+        }
+
+        private BankCashReceiptDataUtil _dataUtilReceipt(BankCashReceiptService service, string testname)
+        {
+            return new BankCashReceiptDataUtil(service);
         }
 
         [Fact]
         public async Task Should_Success_Get_All_Data()
         {
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
             var serviceProviderMock = GetServiceProvider();
 
-            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var httpClientService = new Mock<IHttpClientService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
                 .Returns(dbContext);
 
-            BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
-            BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
-            GarmentFinanceBankCashReceiptMonthlyRecapService service = new GarmentFinanceBankCashReceiptMonthlyRecapService(serviceProviderMock.Object, _dbContext(GetCurrentMethod()));
+            var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+
+            var dto = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
+            GarmentFinanceBankCashReceiptMonthlyRecapService serviceReport = new GarmentFinanceBankCashReceiptMonthlyRecapService(serviceProviderMock.Object, dbContext);
 
 
-            var response = service.GetMonitoring(DateTimeOffset.Now, DateTimeOffset.Now,  7);
+            var response = serviceReport.GetMonitoring(DateTimeOffset.Now.AddDays(-3), DateTimeOffset.Now.AddDays(3),  7);
             Assert.NotNull(response);
         }
 
         [Fact]
         public async Task Should_Success_Get_All_DataExcel()
         {
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
             var serviceProviderMock = GetServiceProvider();
 
-            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var httpClientService = new Mock<IHttpClientService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
             serviceProviderMock
                 .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
                 .Returns(dbContext);
 
-            BankCashReceiptDetailService serviceBankCash = new BankCashReceiptDetailService(serviceProviderMock.Object);
-            BankCashReceiptDetailModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
-            GarmentFinanceBankCashReceiptMonthlyRecapService service = new GarmentFinanceBankCashReceiptMonthlyRecapService(serviceProviderMock.Object, _dbContext(GetCurrentMethod()));
+            var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+
+            var dto = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
+            GarmentFinanceBankCashReceiptMonthlyRecapService serviceReport = new GarmentFinanceBankCashReceiptMonthlyRecapService(serviceProviderMock.Object, dbContext);
 
 
-            var response = service.GenerateExcel(DateTimeOffset.Now, DateTimeOffset.Now, 7);
+            var response = serviceReport.GenerateExcel(DateTimeOffset.Now.AddDays(-3), DateTimeOffset.Now.AddDays(3), 7);
             Assert.NotNull(response);
         }
     }
