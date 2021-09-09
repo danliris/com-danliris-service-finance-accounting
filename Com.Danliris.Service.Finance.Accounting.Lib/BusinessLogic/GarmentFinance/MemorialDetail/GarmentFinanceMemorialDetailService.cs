@@ -152,6 +152,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 {
                     otherItem.Amount = otherItemModel.Amount;
                     otherItem.CurrencyRate = otherItemModel.CurrencyRate;
+                    otherItem.TypeAmount = otherItemModel.TypeAmount;
                     EntityExtension.FlagForUpdate(otherItem, IdentityService.Username, UserAgent);
                 }
             }
