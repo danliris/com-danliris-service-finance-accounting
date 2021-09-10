@@ -14,6 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.C
         public DateTimeOffset? Date { get; set; }
         public string UnitPaymentOrderNo { get; internal set; }
         public string UnitReceiptNoteNo { get; internal set; }
-        public decimal Total { get { return DPPAmount + VATAmount - IncomeTaxAmount; } }
+        public decimal Total { get { return Purchase - Payment; } }
+        public string BankExpenditureNoteNo { get; set; }
     }
 }
