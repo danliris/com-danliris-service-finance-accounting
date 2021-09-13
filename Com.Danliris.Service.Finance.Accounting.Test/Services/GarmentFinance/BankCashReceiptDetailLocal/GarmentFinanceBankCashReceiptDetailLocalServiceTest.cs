@@ -109,7 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
 
             var dto = _dataUtilReceipt(serviceReceipt, GetCurrentAsyncMethod()).GetTestData();
             //Act
-            var ResponseReceipt = serviceReceipt.ReadByIdAsync(dto.Id);
+            var ResponseReceipt = await serviceReceipt.ReadByIdAsync(dto.Id);
 
             Assert.NotNull(ResponseReceipt);
 
@@ -228,7 +228,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
 
             var dto = _dataUtilReceipt(serviceReceipt, GetCurrentAsyncMethod()).GetTestData();
             //Act
-            var ResponseReceipt = serviceReceipt.ReadByIdAsync(dto.Id);
+            var ResponseReceipt = await serviceReceipt.ReadByIdAsync(dto.Id);
 
             Assert.NotNull(ResponseReceipt);
 
