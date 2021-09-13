@@ -427,7 +427,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             //}).ToList();
 
-            return result.OrderBy(x => x.Currency).ThenBy(x => x.Products).ThenBy(x => x.SupplierName).ToList();
+            return result.Where(element => element.Total != 0).OrderBy(x => x.Currency).ThenBy(x => x.Products).ThenBy(x => x.SupplierName).ToList();
         }
 
         //public List<CreditBalanceDetailViewModel> GetReportDetailData(bool isImport, string supplierCode, int month, int year, int offSet, bool isForeignCurrency, int divisionId)
@@ -716,14 +716,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             //dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(string) });
             //dt.Columns.Add(new DataColumn() { ColumnName = "PPh", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Pembelian", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Pembayaran", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Pembayaran", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "Pembelian", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "Pembayaran", DataType = typeof(string) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Pembayaran", DataType = typeof(string) });
 
             int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "");
             }
             else
             {
@@ -735,7 +735,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                     // v2
 
-                    dt.Rows.Add(item.Date?.ToString("dd/MM/yyyy"), item.UnitReceiptNoteNo, item.SupplierName, item.IncomeTaxNo, item.InvoiceNo, item.UnitPaymentOrderNo, item.Total.ToString("#,##0.#0"), item.Purchase.ToString("#,##0.#0"), item.Payment.ToString("#,##0.#0"), item.BankExpenditureNoteNo);
+                    dt.Rows.Add(item.Date?.ToString("dd/MM/yyyy"), item.UnitReceiptNoteNo, item.SupplierName, item.IncomeTaxNo, item.InvoiceNo, item.UnitPaymentOrderNo, item.Total.ToString("#,##0.#0"));
                 }
             }
 
