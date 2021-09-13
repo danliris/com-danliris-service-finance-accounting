@@ -139,8 +139,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 .Returns(dbContext);
 
             var service = new GarmentFinanceBankCashReceiptDetailLocalService(serviceProviderMock.Object);
+            var serviceReceipt = new BankCashReceiptService(serviceProviderMock.Object);
 
             var model = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
+            var dto = _dataUtilReceipt(serviceReceipt, GetCurrentAsyncMethod()).GetTestData();
+            //Act
+            var ResponseReceipt = await serviceReceipt.ReadByIdAsync(2);
 
             //Act
             var Response = await service.CreateAsync(model);
