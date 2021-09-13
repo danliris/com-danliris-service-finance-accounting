@@ -111,8 +111,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             //Act
             var ResponseReceipt = await serviceReceipt.ReadByIdAsync(dto.Id);
 
-            Assert.NotNull(ResponseReceipt);
-
             var model = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
 
             //Act
