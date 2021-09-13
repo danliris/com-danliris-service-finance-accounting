@@ -192,7 +192,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                     if (item.UnitPaymentCorrectionDate.HasValue && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).Year == year && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).Month == month)
                     {
-                        itemResult.Purchase = (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN) * item.CurrencyRate;
+                        itemResult.Purchase = (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN);
                         itemResult.PurchaseCurrency = (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN);
                     }
                 }
@@ -600,8 +600,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     if (isImport)
                     {
                         dt.Rows.Add(item.SupplierName, item.DivisionName, item.Currency, item.StartBalanceCurrency.ToString("#,##0.#0"), item.PurchaseCurrency.ToString("#,##0.#0"),
-                                item.PaymentCurrency.ToString("#,##0.#0"), item.FinalBalanceCurrency.ToString("#,##0.#0"), (item.StartBalance).ToString("#,##0.#0"),
-                                (item.Purchase).ToString("#,##0.#0"), (item.Payment).ToString("#,##0.#0"), (item.PaidAmount).ToString("#,##0.#0"),
+                                item.PaymentCurrency.ToString("#,##0.#0"), item.PaidAmountCurrency.ToString("#,##0.#0"), (item.FinalBalanceCurrency).ToString("#,##0.#0"),
+                                (item.StartBalance).ToString("#,##0.#0"), (item.Purchase).ToString("#,##0.#0"), (item.Payment).ToString("#,##0.#0"),
                                 (item.FinalBalance).ToString("#,##0.#0"));
                         index++;
                     }
