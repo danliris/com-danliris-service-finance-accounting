@@ -768,7 +768,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     SourceType = s.SourceType,
                     IsPosted = s.IsPosted,
                     Remark = s.Remark, 
-                    Nominal = s.Nominal * (s.CurrencyRate == 0 ? 1 : s.CurrencyRate)
+                    Nominal = s.Nominal
                 });
 
             List<string> searchAttributes = new List<string>()
