@@ -147,14 +147,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     if (item.UnitReceiptNoteDate.HasValue && item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime)
                     {
-                        itemResult.StartBalance = item.UnitReceiptNoteDPP;
-                        itemResult.StartBalanceCurrency = item.DPPCurrency;
+                        itemResult.StartBalance = item.UnitReceiptNoteDPP - item.IncomeTaxAmount;
+                        itemResult.StartBalanceCurrency = item.DPPCurrency - (item.IncomeTaxAmount / item.CurrencyRate);
                     }
 
                     if (item.UnitReceiptNoteDate.HasValue && item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Year == year && item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Month == month)
                     {
-                        itemResult.Purchase = item.UnitReceiptNoteDPP;
-                        itemResult.PurchaseCurrency = item.DPPCurrency;
+                        itemResult.Purchase = item.UnitReceiptNoteDPP - item.IncomeTaxAmount;
+                        itemResult.PurchaseCurrency = item.DPPCurrency - (item.IncomeTaxAmount / item.CurrencyRate);
                     }
 
                     if (item.MemoDate.HasValue && item.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime)
@@ -367,7 +367,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     if (item.UnitReceiptNoteDate.HasValue && item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
                     {
-                        itemResult.Purchase = item.UnitReceiptNoteDPP;
+                        itemResult.Purchase = item.UnitReceiptNoteDPP - item.IncomeTaxAmount;
                         itemResult.UnitReceiptNoteNo = item.UnitReceiptNoteNo;
                         itemResult.Date = item.UnitReceiptNoteDate;
                     }
@@ -375,7 +375,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     if (item.MemoDate.HasValue && item.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
                     {
                         itemResult.Purchase += item.UnitReceiptNotePPN;
-                        itemResult.Purchase -= item.IncomeTaxAmount * item.CurrencyRate;
                         itemResult.UnitPaymentOrderNo = item.MemoNo;
                         itemResult.InvoiceNo = item.InvoiceNo;
                         itemResult.IncomeTaxNo = item.IncomeTaxNo;
