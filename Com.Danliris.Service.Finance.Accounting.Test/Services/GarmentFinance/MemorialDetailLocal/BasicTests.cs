@@ -163,6 +163,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
             newModel2.OtherItems.Add(newOtherItem);
             var Response3 = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
+
+            // delete item and other item
+            GarmentFinanceMemorialDetailLocalModel newModel3 = new GarmentFinanceMemorialDetailLocalModel();
+            newModel3.Id = model2.Id;
+
+            newModel3.Items = new List<GarmentFinanceMemorialDetailLocalItemModel>();
+            newModel3.OtherItems = new List<GarmentFinanceMemorialDetailLocalOtherItemModel>();
+            var Response4 = await service.UpdateAsync(model2.Id, newModel3);
+            Assert.NotEqual(0, Response4);
         }
 
         [Fact]
