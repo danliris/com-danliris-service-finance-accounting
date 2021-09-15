@@ -270,7 +270,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
         }
 
         [Fact]
-        public async Task Should_Success_Update_Data()
+        public async Task Shou0ld_Success_Update_Data()
         {
             //Arrange
             var dbContext = GetDbContext(GetCurrentAsyncMethod());
@@ -313,6 +313,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             {
                 BankCashReceiptDetailLocalId = 1,
                 Amount = 2,
+                TypeAmount = "DEBIT"
             };
 
             newModel2.Items.Add(newItem);
