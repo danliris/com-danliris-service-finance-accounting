@@ -194,7 +194,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
 
 
         [Fact]
-        public void Post_Throws_Validation_Exception()
+        public async Task Post_Throws_Validation_Exception()
         {
             var validateMock = new Mock<IValidateService>();
             validateMock.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialDetailLocalViewModel>())).Throws(GetServiceValidationExeption());
@@ -204,7 +204,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
             var mockIdentity = new Mock<IIdentityService>();
             var ViewModel = this.viewModel;
             ViewModel.MemorialDate = DateTimeOffset.MinValue;
-            var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Post(ViewModel).Result;
+            var controller = GetController((mockIdentity, validateMock, mockFacade, mockMapper));
+            var response = await controller.Post(ViewModel);
             Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
         }
 
@@ -248,32 +249,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         }
 
         [Fact]
-        public void Delete_Success()
+        public async Task Delete_Success()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.DeleteAsync(It.IsAny<int>())).ReturnsAsync(1);
 
-            var response = GetController(mocks).Delete(1).Result;
+            var response = await GetController(mocks).Delete(1);
             Assert.Equal((int)HttpStatusCode.NoContent, GetStatusCode(response));
         }
 
         [Fact]
-        public void Delete_Throws_Internal_Error()
+        public async Task Delete_Throws_Internal_Error()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.DeleteAsync(It.IsAny<int>())).Throws(new Exception());
 
-            var response = GetController(mocks).Delete(1).Result;
+            var response = await GetController(mocks).Delete(1);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
         [Fact]
-        public void Delete_Throws_Internal_Error_Aggregate()
+        public async Task Delete_Throws_Internal_Error_Aggregate()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.DeleteAsync(It.IsAny<int>())).Throws(new AggregateException());
 
-            var response = GetController(mocks).Delete(1).Result;
+            var response = await GetController(mocks).Delete(1);
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
@@ -297,7 +298,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
         }
 
         [Fact]
-        public void Update_Throws_Validation_Exception()
+        public async Task Update_Throws_Validation_Exception()
         {
             var validateMock = new Mock<IValidateService>();
             validateMock.Setup(s => s.Validate(It.IsAny<GarmentFinanceMemorialDetailLocalViewModel>())).Throws(GetServiceValidationExeption());
@@ -305,28 +306,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentFinanc
 
             var mockFacade = new Mock<IGarmentFinanceMemorialDetailLocalService>();
             var mockIdentity = new Mock<IIdentityService>();
-            var response = GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Put(It.IsAny<int>(), viewModel).Result;
+            var response = await GetController((mockIdentity, validateMock, mockFacade, mockMapper)).Put(It.IsAny<int>(), viewModel);
             Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
         }
 
 
         [Fact]
-        public void Update_Throws_Internal_Error()
+        public async Task Update_Throws_Internal_Error()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.UpdateAsync(It.IsAny<int>(), It.IsAny<GarmentFinanceMemorialDetailLocalModel>())).Throws(new Exception());
 
-            var response = GetController(mocks).Put(1, It.IsAny<GarmentFinanceMemorialDetailLocalViewModel>()).Result;
+            var response = await GetController(mocks).Put(1, It.IsAny<GarmentFinanceMemorialDetailLocalViewModel>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
         [Fact]
-        public void Update_Throws_Internal_Error_Aggregate()
+        public async Task Update_Throws_Internal_Error_Aggregate()
         {
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.UpdateAsync(It.IsAny<int>(), It.IsAny<GarmentFinanceMemorialDetailLocalModel>())).Throws(new AggregateException());
 
-            var response = GetController(mocks).Put(1, It.IsAny<GarmentFinanceMemorialDetailLocalViewModel>()).Result;
+            var response = await GetController(mocks).Put(1, It.IsAny<GarmentFinanceMemorialDetailLocalViewModel>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
     }
