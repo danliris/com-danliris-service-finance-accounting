@@ -187,13 +187,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     if (item.UnitPaymentCorrectionDate.HasValue && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime)
                     {
-                        itemResult.StartBalance += (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN);
+                        itemResult.StartBalance += (item.UnitPaymentCorrectionMutation);
                     }
 
                     if (item.UnitPaymentCorrectionDate.HasValue && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).Year == year && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).Month == month)
                     {
-                        itemResult.Purchase = (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN);
-                        itemResult.PurchaseCurrency = (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN);
+                        itemResult.Purchase = (item.UnitPaymentCorrectionMutation);
+                        itemResult.PurchaseCurrency = (item.UnitPaymentCorrectionMutation / item.CurrencyRate);
                     }
                 }
 
@@ -390,7 +390,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     if (item.UnitPaymentCorrectionDate.HasValue && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
                     {
-                        itemResult.Purchase = (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN);
+                        itemResult.Purchase = item.UnitPaymentCorrectionMutation;
                     }
                 }
 
