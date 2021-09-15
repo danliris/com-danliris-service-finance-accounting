@@ -157,7 +157,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
                 CurrencyId = 1,
                 CurrencyCode = "code",
                 CurrencyRate = 1,
-                Amount = 1
+                Amount = 1,
+                TypeAmount = "DEBIT"
             };
             newModel2.OtherItems.Add(newOtherItem);
             var Response3 = await service.UpdateAsync(model2.Id, newModel2);
