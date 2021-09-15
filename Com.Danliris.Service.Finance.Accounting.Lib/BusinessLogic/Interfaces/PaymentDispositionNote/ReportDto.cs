@@ -26,7 +26,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             DivisionId = divisionId;
             DivisionName = divisionName;
             VATAmount = vATAmount;
-            PaidAmount = Math.Round(Math.Round(paidAmount, 2) * (currencyRate == 0 ? 1 : currencyRate), 2);
+            if (bankCurrencyCode != currencyCode)
+            {
+                PaidAmount = Math.Round(Math.Round(paidAmount, 2) * (currencyRate == 0 ? 1 : currencyRate), 2);
+            }
+            else
+            {
+                PaidAmount = paidAmount;
+            }
             TransactionType = transactionType;
             BankAccountNumber = bankAccountNumber;
         }
