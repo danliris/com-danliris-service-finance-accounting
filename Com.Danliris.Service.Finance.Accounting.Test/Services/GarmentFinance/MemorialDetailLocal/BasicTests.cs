@@ -35,6 +35,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
             return string.Concat(sf.GetMethod().Name, "_", ENTITY);
         }
 
+        private string GetCurrentAsyncMethod([CallerMemberName] string methodName = "")
+        {
+            var method = new StackTrace()
+                .GetFrames()
+                .Select(frame => frame.GetMethod())
+                .FirstOrDefault(item => item.Name == methodName);
+
+            return method.Name;
+
+        }
+
         private FinanceDbContext _dbContext(string testName)
         {
             DbContextOptionsBuilder<FinanceDbContext> optionsBuilder = new DbContextOptionsBuilder<FinanceDbContext>();
@@ -74,8 +85,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
         [Fact]
         public async Task Should_Success_Create_Data()
         {
-            GarmentFinanceMemorialDetailLocalService service = new GarmentFinanceMemorialDetailLocalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            GarmentFinanceMemorialDetailLocalModel model = _dataUtil(service, GetCurrentMethod()).GetNewData();
+            GarmentFinanceMemorialDetailLocalService service = new GarmentFinanceMemorialDetailLocalService(GetServiceProvider().Object, _dbContext(GetCurrentAsyncMethod()));
+            GarmentFinanceMemorialDetailLocalModel model = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
             var Response = await service.CreateAsync(model);
             Assert.NotEqual(0, Response);
         }
@@ -92,8 +103,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
         [Fact]
         public async Task Should_Success_Get_Data_By_Id()
         {
-            GarmentFinanceMemorialDetailLocalService service = new GarmentFinanceMemorialDetailLocalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            GarmentFinanceMemorialDetailLocalModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
+            GarmentFinanceMemorialDetailLocalService service = new GarmentFinanceMemorialDetailLocalService(GetServiceProvider().Object, _dbContext(GetCurrentAsyncMethod()));
+            GarmentFinanceMemorialDetailLocalModel model = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
             var Response = await service.ReadByIdAsync(model.Id);
             Assert.NotNull(Response);
         }
@@ -101,10 +112,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
         [Fact]
         public async Task Should_Success_Delete_Data()
         {
-            GarmentFinanceMemorialDetailLocalService service = new GarmentFinanceMemorialDetailLocalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            GarmentFinanceMemorialDetailLocalService service = new GarmentFinanceMemorialDetailLocalService(GetServiceProvider().Object, _dbContext(GetCurrentAsyncMethod()));
 
 
-            GarmentFinanceMemorialDetailLocalModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
+            GarmentFinanceMemorialDetailLocalModel model = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
             var newModel = await service.ReadByIdAsync(model.Id);
 
             var Response = await service.DeleteAsync(newModel.Id);
@@ -114,7 +125,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
         [Fact]
         public async Task Should_Success_Update_Data()
         {
-            GarmentFinanceMemorialDetailLocalService service = new GarmentFinanceMemorialDetailLocalService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            GarmentFinanceMemorialDetailLocalService service = new GarmentFinanceMemorialDetailLocalService(GetServiceProvider().Object, _dbContext(GetCurrentAsyncMethod()));
 
 
             GarmentFinanceMemorialDetailLocalModel model = await _dataUtil(service, GetCurrentMethod()).GetTestData();
@@ -163,6 +174,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
             newModel2.OtherItems.Add(newOtherItem);
             var Response3 = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
+
+            // delete item and other item
+            GarmentFinanceMemorialDetailLocalModel newModel3 = new GarmentFinanceMemorialDetailLocalModel();
+            newModel3.Id = model2.Id;
+
+            newModel3.Items = new List<GarmentFinanceMemorialDetailLocalItemModel>();
+            newModel3.OtherItems = new List<GarmentFinanceMemorialDetailLocalOtherItemModel>();
+            var Response4 = await service.UpdateAsync(model2.Id, newModel3);
+            Assert.NotEqual(0, Response4);
         }
 
         [Fact]
