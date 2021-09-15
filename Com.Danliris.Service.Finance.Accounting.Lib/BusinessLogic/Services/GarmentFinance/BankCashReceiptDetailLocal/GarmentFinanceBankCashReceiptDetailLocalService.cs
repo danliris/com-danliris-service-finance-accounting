@@ -147,6 +147,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                 else
                 {
                     otherItem.Amount = itemModel.Amount;
+                    otherItem.TypeAmount = itemModel.TypeAmount;
                     EntityExtension.FlagForUpdate(otherItem, _identityService.Username, UserAgent);
 
                 }
