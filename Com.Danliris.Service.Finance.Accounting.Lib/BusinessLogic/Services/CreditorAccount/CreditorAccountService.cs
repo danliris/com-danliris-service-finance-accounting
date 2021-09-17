@@ -165,7 +165,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             List<CreditorAccountModel> previousMonthCreditorAccount = new List<CreditorAccountModel>();
             var timeOffset = new TimeSpan(IdentityService.TimezoneOffset, 0, 0);
             var dateSearch = new DateTimeOffset(year, month, 1, 0, 0, 0, timeOffset);
-            var debtQuery = supplierQuery.Where(x => x.FinalBalance > 0 && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value < dateSearch).ToList();
+            var lastDayOfMonth = dateSearch.AddMonths(1);
+            var debtQuery = supplierQuery.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value < dateSearch).ToList();
+            //var debtQuery = supplierQuery.Where(x => x.FinalBalance > 0 && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value < dateSearch).ToList();
             var paidQuery = supplierQuery.Where(x => x.FinalBalance == 0 && x.BankExpenditureNoteDate.HasValue && x.BankExpenditureNoteDate.Value.Month == month && x.BankExpenditureNoteDate.Value.Year == year && x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value < dateSearch).ToList();
 
             previousMonthCreditorAccount.AddRange(debtQuery);
@@ -186,8 +188,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     InvoiceNo = item.InvoiceNo,
                     DPP = item.UnitReceiptNoteDPP,
                     //PPN = item.UnitReceiptNotePPN,
-                    Total = item.UnitReceiptNoteDPP,
-                    Mutation = item.UnitReceiptMutation,
+                    Total = item.UnitReceiptNoteDPP - item.IncomeTaxAmount,
+                    Mutation = item.UnitReceiptNoteDPP - item.IncomeTaxAmount,
                     Products = item.Products,
                     //MemoNo = item.MemoNo
 
@@ -195,17 +197,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 unitReceiptMutaion = vm.Mutation;
                 //}
 
-                if (!string.IsNullOrEmpty(item.MemoNo) && item.MemoDate.HasValue && item.MemoDate.Value.AddHours(offSet).Month == month && item.MemoDate.Value.AddHours(offSet).Year == year)
+                if (!string.IsNullOrEmpty(item.MemoNo) && item.MemoDate.HasValue && item.MemoDate.Value.AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
                 {
                     vm.UnitReceiptNoteNo = item.UnitReceiptNoteNo;
                     vm.MemoNo = item.MemoNo;
                     vm.Date = item.UnitReceiptNoteDate.Value;
+                    vm.DPP = item.UnitReceiptNoteDPP;
                     vm.PPN = item.UnitReceiptNotePPN;
                     vm.Products = item.Products;
-                    vm.Total = item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN;
+                    vm.Total = (item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN) - item.IncomeTaxAmount;
+                    vm.Mutation = (item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN) - item.IncomeTaxAmount;
                 }
 
-                if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo) && item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.Value.AddHours(offSet).Month == month && item.BankExpenditureNoteDate.Value.AddHours(offSet).Year == year)
+                if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo) && item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.Value.AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
                 {
                     //CreditorAccountViewModel vm = new CreditorAccountViewModel
                     //{
@@ -214,13 +218,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.BankExpenditureNoteDPP;
                     vm.PPN = item.BankExpenditureNotePPN;
-                    vm.Total = item.BankExpenditureNoteMutation;
-                    vm.MutationPayment = item.BankExpenditureNoteMutation * -1;
+                    vm.Total = (item.BankExpenditureNoteDPP + item.BankExpenditureNotePPN) - item.IncomeTaxAmount;
+                    vm.MutationPayment = ((item.BankExpenditureNoteDPP + item.BankExpenditureNotePPN) - item.IncomeTaxAmount) * -1;
                     vm.MemoNo = item.MemoNo;
 
                     //};
                     bankExpenditureMutation = vm.MutationPayment;
                     //result.Add(vm);
+                }
+
+                if (!string.IsNullOrEmpty(item.UnitPaymentCorrectionNo) && item.UnitPaymentCorrectionDate.HasValue && item.UnitPaymentCorrectionDate.Value.AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
+                {
+                    vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
+                    vm.CorrectionNo = item.UnitPaymentCorrectionNo;
+                    //vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
+                    vm.InvoiceNo = item.InvoiceNo;
+                    vm.DPP = item.UnitPaymentCorrectionDPP;
+                    vm.PPN = item.UnitPaymentCorrectionPPN;
+                    vm.Total = (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN) - item.IncomeTaxAmount;
+                    vm.Mutation = (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN) - item.IncomeTaxAmount;
+                    vm.MemoNo = item.MemoNo;
+                    vm.PaymentDuration = item.PaymentDuration;
+                    vm.Products = item.Products;
+                    //if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo) && item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.Value.AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
+                    //{
+                    //    vm.MutationPayment = ((item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN) - item.IncomeTaxAmount) * -1;
+                    //}
+                    //};
+                    //bankExpenditureMutation = vm.Mutation.GetValueOrDefault();
+                    //}
                 }
 
                 if (!string.IsNullOrEmpty(item.PurchasingMemoNo))
@@ -264,6 +290,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         public (List<CreditorAccountViewModel>, decimal) GetReport(string suplierName, int month, int year, int offSet)
         {
             var supplierQuery = DbContext.CreditorAccounts.AsQueryable().Where(x => x.SupplierName == suplierName);
+            //var supplierQuery = DbContext.CreditorAccounts.AsQueryable();
             var result = GetPreviousMonthReport(supplierQuery, month, year, offSet);
 
             //var currentQuery = supplierQuery.Where(x => x.UnitReceiptNoteDate.HasValue && x.UnitReceiptNoteDate.Value.Month == month && x.UnitReceiptNoteDate.Value.Year == year || (x.UnitPaymentCorrectionDate.HasValue && x.UnitPaymentCorrectionDate.Value.Month == month && x.UnitPaymentCorrectionDate.Value.Year == year));
@@ -296,8 +323,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     vm.DPP = item.UnitReceiptNoteDPP;
                     vm.DPPCurrency = item.DPPCurrency;
                     //PPN = item.UnitReceiptNotePPN,
-                    vm.Total = item.UnitReceiptNoteDPP;
-                    vm.Mutation = item.CurrencyRate != 1 ? item.UnitReceiptMutation * item.CurrencyRate : item.UnitReceiptMutation;
+                    vm.Total = item.UnitReceiptNoteDPP - item.IncomeTaxAmount;
+                    vm.Mutation = item.UnitReceiptNoteDPP - item.IncomeTaxAmount;/*item.CurrencyRate != 1 ? item.UnitReceiptMutation * item.CurrencyRate : item.UnitReceiptMutation;*/
                     vm.PaymentDuration = item.PaymentDuration;
                     //MemoNo = item.MemoNo,
                     //CorrectionNo = item.UnitPaymentCorrectionNo
@@ -311,9 +338,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     vm.UnitReceiptNoteNo = item.UnitReceiptNoteNo;
                     vm.MemoNo = item.MemoNo;
                     vm.Date = item.MemoDate.Value;
+                    vm.DPP = item.UnitReceiptNoteDPP;
                     vm.PPN = item.UnitReceiptNotePPN;
                     vm.Products = item.Products;
-                    vm.Total = item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN;
+                    vm.Total = (item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN) - item.IncomeTaxAmount;
+                    vm.Mutation = (item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN) - item.IncomeTaxAmount;
                 }
 
                 if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo) && item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.Value.AddHours(offSet).Month == month && item.BankExpenditureNoteDate.Value.AddHours(offSet).Year == year)
@@ -321,10 +350,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
                     vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
                     //vm.InvoiceNo = item.InvoiceNo;
-                    //vm.DPP = item.BankExpenditureNoteDPP;
-                    //vm.PPN = item.BankExpenditureNotePPN;
-                    //vm.Total = item.BankExpenditureNoteMutation;
-                    vm.MutationPayment = item.BankExpenditureNoteMutation * -1;
+                    vm.DPP = item.BankExpenditureNoteDPP;
+                    vm.PPN = item.BankExpenditureNotePPN;
+                    vm.Total = (item.BankExpenditureNoteDPP + item.BankExpenditureNotePPN) - item.IncomeTaxAmount;
+                    vm.MutationPayment = ((item.BankExpenditureNoteDPP + item.BankExpenditureNotePPN) - item.IncomeTaxAmount) * -1;
                     vm.MemoNo = item.MemoNo;
                     vm.UnitReceiptNoteNo = item.UnitReceiptNoteNo;
                     vm.PaymentDuration = item.PaymentDuration;
@@ -342,12 +371,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 if (!string.IsNullOrEmpty(item.UnitPaymentCorrectionNo) && item.UnitPaymentCorrectionDate.HasValue && item.UnitPaymentCorrectionDate.Value.AddHours(offSet).Month == month && item.UnitPaymentCorrectionDate.Value.AddHours(offSet).Year == year)
                 {
                     vm.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
+                    vm.CorrectionNo = item.UnitPaymentCorrectionNo;
                     //vm.Date = item.BankExpenditureNoteDate.GetValueOrDefault();
                     vm.InvoiceNo = item.InvoiceNo;
                     vm.DPP = item.UnitPaymentCorrectionDPP;
                     vm.PPN = item.UnitPaymentCorrectionPPN;
-                    vm.Total = item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN;
-                    vm.Mutation = item.UnitPaymentCorrectionMutation;
+                    vm.Total = (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN) - item.IncomeTaxAmount;
+                    vm.Mutation = (item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN) - item.IncomeTaxAmount;
+                    //if (!string.IsNullOrEmpty(item.BankExpenditureNoteNo) && item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.Value.AddHours(offSet).Month == month && item.BankExpenditureNoteDate.Value.AddHours(offSet).Year == year)
+                    //{
+                    //    vm.MutationPayment = ((item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN) - item.IncomeTaxAmount) * -1;
+                    //}
                     vm.MemoNo = item.MemoNo;    
                     vm.PaymentDuration = item.PaymentDuration;
                     vm.Products = item.Products;
