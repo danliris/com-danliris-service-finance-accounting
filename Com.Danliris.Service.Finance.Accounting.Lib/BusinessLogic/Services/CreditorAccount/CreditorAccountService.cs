@@ -298,6 +298,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 var dppAmount = (decimal)0;
                 var dppAmountCurency = (decimal)0;
                 var vatAmount = (decimal)0;
+                var products = item.Products;
                 
                 var paymentAmount = (decimal)0;
 
@@ -346,7 +347,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                 var mutation = dppAmount + vatAmount;
                 var purchaseAmount = mutation;
-                tempResult.Add(new DebtCardDto(date.GetValueOrDefault(), unitReceiptNoteNo, bankExpenditureNoteNo, unitPaymentOrderNo, invoiceNo, unitPaymentCorrectionNoteNo, paymentDuration, dppAmount, dppAmountCurency, vatAmount, mutation, purchaseAmount, paymentAmount));
+                tempResult.Add(new DebtCardDto(date.GetValueOrDefault(), unitReceiptNoteNo, bankExpenditureNoteNo, unitPaymentOrderNo, invoiceNo, unitPaymentCorrectionNoteNo, paymentDuration, dppAmount, dppAmountCurency, vatAmount, mutation, purchaseAmount, paymentAmount, products));
             }
 
             tempResult = tempResult.OrderBy(element => element.Date).ThenBy(element => element.UnitReceiptNoteNo).ThenBy(element => element.UnitPaymentOrderNo).ThenBy(element => element.UnitPaymentCorrectionNoteNo).ThenBy(element => element.BankExpenditureNoteNo).ToList();
