@@ -47,6 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
         {
             try
             {
+                VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
                 var data = Service.GetReport(page, size, supplierName, month, year, offSet);
@@ -80,6 +81,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
         {
             try
             {
+                VerifyUser();
                 byte[] xlsInBytes;
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 var xls = Service.GenerateExcel(supplierName, month, year, offSet);
