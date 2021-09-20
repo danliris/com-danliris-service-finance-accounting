@@ -76,7 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
         public MemoryStream GenerateExcel(string suplierName, int month, int year, int offSet)
         {
-            var data = GetReport(suplierName, month, year, offSet).Item1;
+            var data = GetReport(suplierName, month, year);
             string title = "Kartu Hutang",
                 date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
@@ -109,23 +109,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 decimal totalBalance = 0;
                 foreach (var item in data)
                 {
-                    totalBalance += item.FinalBalance;
-                    dt.Rows.Add(
-                        item.Date.HasValue ? item.Date.Value.AddHours(offSet).ToString("dd-MMM-yyyy") : null,
+                    if (!string.IsNullOrWhiteSpace(item.Remark))
+                    {
+                        dt.Rows.Add("", "", "", "", "", "", "", "", "", item.Remark, "", "", "IDR", item.FinalBalance.ToString("#,##0.#0"));
+                    }
+                    else
+                    {
+                        dt.Rows.Add(
+                        item.Date.AddHours(offSet).ToString("dd-MMM-yyyy"),
                         item.UnitReceiptNoteNo,
                         item.BankExpenditureNoteNo,
-                        item.MemoNo,
+                        item.UnitPaymentOrderNo,
                         //item.MemoNo,
                         item.InvoiceNo,
-                        item.CorrectionNo,
+                        item.UnitPaymentCorrectionNoteNo,
                         item.PaymentDuration,
-                        item.DPP.ToString("#,##0.#0"),
-                        item.DPPCurrency.ToString("#,##0.#0"),
-                        item.PPN.ToString("#,##0.#0"),
-                        item.Total.ToString("#,##0.#0"),
-                        item.Mutation.ToString("#,##0.#0"), 
-                        item.MutationPayment.ToString("#,##0.#0"), 
+                        item.DPPAmount.ToString("#,##0.#0"),
+                        item.DPPAmountCurrency.ToString("#,##0.#0"),
+                        item.VATAmount.ToString("#,##0.#0"),
+                        item.Mutation.ToString("#,##0.#0"),
+                        item.PurchaseAmount.ToString("#,##0.#0"),
+                        item.PaymentAmount.ToString("#,##0.#0"),
                         item.FinalBalance.ToString("#,##0.#0"));
+                        totalBalance = item.FinalBalance;
+                    }
+                    
                     index++;
                 }
 
@@ -149,14 +157,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             return data;
         }
 
-        public (ReadResponse<CreditorAccountViewModel>, decimal) GetReport(int page, int size, string suplierName, int month, int year, int offSet)
+        public (ReadResponse<DebtCardDto>, decimal) GetReport(int page, int size, string suplierName, int month, int year, int offSet)
         {
-            var queries = GetReport(suplierName, month, year, offSet);
+            var queries = GetReport(suplierName, month, year);
+            var finalBalance = queries.LastOrDefault() == null ? 0 : queries.LastOrDefault().FinalBalance;
 
-            Pageable<CreditorAccountViewModel> pageable = new Pageable<CreditorAccountViewModel>(queries.Item1, page - 1, size);
-            List<CreditorAccountViewModel> data = pageable.Data.ToList();
+            var pageable = new Pageable<DebtCardDto>(queries, page - 1, size);
+            var data = pageable.Data.ToList();
 
-            return (new ReadResponse<CreditorAccountViewModel>(queries.Item1, pageable.TotalCount, new Dictionary<string, string>(), new List<string>()), queries.Item2);
+            return (new ReadResponse<DebtCardDto>(queries, pageable.TotalCount, new Dictionary<string, string>(), new List<string>()), finalBalance);
         }
 
         private List<CreditorAccountViewModel> GetPreviousMonthReport(IQueryable<CreditorAccountModel> supplierQuery, int month, int year, int offSet)
@@ -260,6 +269,101 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             return result;
         }
 
+        public List<DebtCardDto> GetReport(string supplierName, int month, int year)
+        {
+            DateTimeOffset firstDayOfMonth = new DateTime(year, month, 1);
+            DateTimeOffset lastDayOfMonth = firstDayOfMonth.AddMonths(1);
+            var query = DbContext.CreditorAccounts.Where(entity => (entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime));
+
+            //if (divisionId > 0)
+            //    query = query.Where(entity => entity.DivisionId == divisionId);
+
+            if (!string.IsNullOrWhiteSpace(supplierName))
+                query = query.Where(entity => entity.SupplierName == supplierName);
+
+            var queryResult = query.ToList();
+
+            var tempResult = new List<DebtCardDto>();
+            foreach (var item in queryResult)
+            {
+                var currencyCode = item.CurrencyCode;
+                var currencyRate = item.CurrencyRate;
+                var date = item.UnitReceiptNoteDate;
+                var unitReceiptNoteNo = item.UnitReceiptNoteNo;
+                var bankExpenditureNoteNo = "";
+                var unitPaymentOrderNo = "";
+                var invoiceNo = "";
+                var unitPaymentCorrectionNoteNo = "";
+                int.TryParse(item.PaymentDuration, out var paymentDuration);
+                var dppAmount = (decimal)0;
+                var dppAmountCurency = (decimal)0;
+                var vatAmount = (decimal)0;
+                
+                var paymentAmount = (decimal)0;
+
+                if (item.UnitPaymentCorrectionId == 0)
+                {
+                    if (!string.IsNullOrWhiteSpace(item.UnitReceiptNoteNo))
+                    {
+                        dppAmount = item.UnitReceiptNoteDPP - item.IncomeTaxAmount;
+                        dppAmountCurency = item.DPPCurrency - (item.IncomeTaxAmount / item.CurrencyRate);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(item.MemoNo))
+                    {
+                        date = item.MemoDate;
+                        invoiceNo = item.InvoiceNo;
+                        unitPaymentOrderNo = item.MemoNo;
+                        vatAmount = item.UnitReceiptNoteDPP;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(item.BankExpenditureNoteNo))
+                    {
+                        date = item.BankExpenditureNoteDate;
+                        bankExpenditureNoteNo = item.BankExpenditureNoteNo;
+                        paymentAmount = item.BankExpenditureNoteMutation;
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(item.UnitPaymentCorrectionNo))
+                    {
+                        date = item.UnitPaymentCorrectionDate;
+                        unitPaymentCorrectionNoteNo = item.UnitPaymentCorrectionNo;
+                        dppAmount = item.UnitPaymentCorrectionDPP;
+                        dppAmountCurency = item.UnitPaymentCorrectionDPP / item.CurrencyRate;
+                        vatAmount = item.UnitPaymentCorrectionPPN;
+
+                        if (item.IncomeTaxAmount > 0)
+                        {
+                            var incomeTaxRate = item.IncomeTaxAmount / item.UnitReceiptNoteDPP;
+                            var incomeTaxCorrection = item.UnitPaymentCorrectionDPP * incomeTaxRate;
+                            dppAmount -= incomeTaxCorrection;
+                            dppAmountCurency -= (incomeTaxCorrection / item.CurrencyRate);
+                        }
+                    }
+                }
+
+                var mutation = dppAmount + vatAmount;
+                var purchaseAmount = mutation;
+                tempResult.Add(new DebtCardDto(date.GetValueOrDefault(), unitReceiptNoteNo, bankExpenditureNoteNo, unitPaymentOrderNo, invoiceNo, unitPaymentCorrectionNoteNo, paymentDuration, dppAmount, dppAmountCurency, vatAmount, mutation, purchaseAmount, paymentAmount));
+            }
+
+            tempResult = tempResult.OrderBy(element => element.Date).ThenBy(element => element.UnitReceiptNoteNo).ThenBy(element => element.UnitPaymentOrderNo).ThenBy(element => element.UnitPaymentCorrectionNoteNo).ThenBy(element => element.BankExpenditureNoteNo).ToList();
+
+            var startBalance = tempResult.Where(element => element.Date.AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime).Sum(element => element.PurchaseAmount - element.PaymentAmount);
+            var result = new List<DebtCardDto>();
+            var previousMonthSummary = new DebtCardDto("SALDO AWAL", startBalance);
+            result.Add(previousMonthSummary);
+            foreach (var item in tempResult.Where(element => !(element.Date.AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime)).OrderBy(element => element.Date).ThenBy(element => element.UnitReceiptNoteNo).ThenBy(element => element.UnitPaymentOrderNo).ThenBy(element => element.UnitPaymentCorrectionNoteNo).ThenBy(element => element.BankExpenditureNoteNo))
+            {
+                startBalance = startBalance + item.PurchaseAmount - item.PaymentAmount;
+                item.SetFinalBalance(startBalance);
+                result.Add(item);
+            }
+
+            return result;
+        }
 
         public (List<CreditorAccountViewModel>, decimal) GetReport(string suplierName, int month, int year, int offSet)
         {
