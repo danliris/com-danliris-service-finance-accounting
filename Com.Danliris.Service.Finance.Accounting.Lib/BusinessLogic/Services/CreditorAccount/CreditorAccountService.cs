@@ -273,7 +273,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         {
             DateTimeOffset firstDayOfMonth = new DateTime(year, month, 1);
             DateTimeOffset lastDayOfMonth = firstDayOfMonth.AddMonths(1);
-            var query = DbContext.CreditorAccounts.Where(entity => (entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime));
+            var unitReceiptNoteStartBalance = DbContext.CreditorAccounts.Where(entity => entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo)).Sum(entity => entity.UnitReceiptNoteDPP - entity.IncomeTaxAmount);
+            var unitPaymentOrderStartBalance = DbContext.CreditorAccounts.Where(entity => entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo)).Sum(entity => entity.UnitReceiptNotePPN);
+            var bankExpenitureNoteStartBalance = DbContext.CreditorAccounts.Where(entity => entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo)).Sum(entity => entity.BankExpenditureNoteMutation);
+            var correctionStartBalance = DbContext.CreditorAccounts.Where(entity => entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && !string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo)).Sum(entity => entity.UnitPaymentCorrectionMutation);
+            var query = DbContext.CreditorAccounts.Where(entity => (entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year));
 
             //if (divisionId > 0)
             //    query = query.Where(entity => entity.DivisionId == divisionId);
@@ -314,7 +318,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         date = item.MemoDate;
                         invoiceNo = item.InvoiceNo;
                         unitPaymentOrderNo = item.MemoNo;
-                        vatAmount = item.UnitReceiptNoteDPP;
+                        vatAmount = item.UnitReceiptNotePPN;
                     }
 
                     if (!string.IsNullOrWhiteSpace(item.BankExpenditureNoteNo))
