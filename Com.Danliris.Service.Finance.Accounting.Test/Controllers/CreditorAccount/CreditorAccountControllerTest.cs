@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CreditorAccount;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
@@ -72,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
         public void GetReport_ReturnOK()
         {
             var mocks = GetMocks();
-            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns((new ReadResponse<CreditorAccountViewModel>(new List<CreditorAccountViewModel>(), 1, new Dictionary<string, string>(), new List<string>()), 1));
+            mocks.Service.Setup(f => f.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())).Returns((new ReadResponse<DebtCardDto>(new List<DebtCardDto>(), 1, new Dictionary<string, string>(), new List<string>()), 1));
 
             var response = GetController(mocks).GetReport("code", 1, 2018);
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));

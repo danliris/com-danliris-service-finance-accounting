@@ -6,9 +6,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 {
     public class DebtCardDto
     {
-        public DebtCardDto(DateTimeOffset date, string unitReceiptNoteNo, string bankExpenditureNoteNo, string unitPaymentOrderNo, string invoiceNo, string unitPaymentCorrectionNoteNo, int paymentDuration, decimal dppAmount, decimal dppAmountCurrency, decimal vatAmount, decimal mutation, decimal purchaseAmount, decimal paymentAmount)
+        public DebtCardDto(DateTimeOffset date, string unitReceiptNoteNo, string bankExpenditureNoteNo, string unitPaymentOrderNo, string invoiceNo, string unitPaymentCorrectionNoteNo, int paymentDuration, decimal dppAmount, decimal dppAmountCurrency, decimal vatAmount, decimal mutation, decimal purchaseAmount, decimal paymentAmount, string products)
         {
             Date = date;
+            Products = products;
             UnitReceiptNoteNo = unitReceiptNoteNo;
             BankExpenditureNoteNo = bankExpenditureNoteNo;
             UnitPaymentOrderNo = unitPaymentOrderNo;
@@ -24,6 +25,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         }
 
         public DateTimeOffset Date { get; private set; }
+        public string Products { get; private set; }
         public string UnitReceiptNoteNo { get; private set; }
         public string BankExpenditureNoteNo { get; private set; }
         public string UnitPaymentOrderNo { get; private set; }

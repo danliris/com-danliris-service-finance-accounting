@@ -174,7 +174,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 query = query.Where(entity => entity.DivisionId == divisionId);
 
             if (!string.IsNullOrWhiteSpace(supplierCode))
-                query = query.Where(entity => entity.SupplierName == supplierCode);
+                query = query.Where(entity => entity.SupplierCode == supplierCode);
 
             var queryResult = query.OrderBy(entity => entity.SupplierName).ToList();
 
