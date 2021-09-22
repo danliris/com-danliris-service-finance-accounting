@@ -101,7 +101,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("","","", "", "", "", "", "", "TOTAL", "", "", "", "IDR", 0.ToString("#,##0.#0"));
+                dt.Rows.Add("", "", "", "", "", "", "", "", "TOTAL", "", "", "", "IDR", 0.ToString("#,##0.#0"));
                 index++;
             }
             else
@@ -133,11 +133,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         item.FinalBalance.ToString("#,##0.#0"));
                         totalBalance = item.FinalBalance;
                     }
-                    
+
                     index++;
                 }
 
-                dt.Rows.Add("", "", "", "", "","", "", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0.#0"));
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", "TOTAL", "", "", "IDR", totalBalance.ToString("#,##0.#0"));
                 index++;
             }
             return Excel.CreateExcelWithTitleNonDateFilterWithSupplierName(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Kartu Hutang") }, title, suplierName, date, true, index);
@@ -273,7 +273,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
         {
             DateTimeOffset firstDayOfMonth = new DateTime(year, month, 1);
             DateTimeOffset lastDayOfMonth = firstDayOfMonth.AddMonths(1);
-            var query = DbContext.CreditorAccounts.Where(entity => (entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < lastDayOfMonth.DateTime));
+            var unitReceiptNoteStartBalance = DbContext.CreditorAccounts.Where(entity => entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo)).Sum(entity => entity.UnitReceiptNoteDPP - entity.IncomeTaxAmount);
+
+            var unitPaymentOrderStartBalance = DbContext.CreditorAccounts.Where(entity => entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo)).Sum(entity => entity.UnitReceiptNotePPN);
+
+            var bankExpenitureNoteStartBalance = DbContext.CreditorAccounts.Where(entity => entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo)).Sum(entity => entity.BankExpenditureNoteMutation);
+
+            var correctionStartBalance = DbContext.CreditorAccounts.Where(entity => entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && !string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo)).Sum(entity => entity.UnitPaymentCorrectionMutation);
+
+            if (!string.IsNullOrWhiteSpace(supplierName))
+            {
+                unitReceiptNoteStartBalance = DbContext.CreditorAccounts.Where(entity => entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo) && entity.SupplierName == supplierName).Sum(entity => entity.UnitReceiptNoteDPP - entity.IncomeTaxAmount);
+                unitPaymentOrderStartBalance = DbContext.CreditorAccounts.Where(entity => entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo) && entity.SupplierName == supplierName).Sum(entity => entity.UnitReceiptNotePPN);
+                bankExpenitureNoteStartBalance = DbContext.CreditorAccounts.Where(entity => entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo) && entity.SupplierName == supplierName).Sum(entity => entity.BankExpenditureNoteMutation);
+                correctionStartBalance = DbContext.CreditorAccounts.Where(entity => entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && !string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo) && entity.SupplierName == supplierName).Sum(entity => entity.UnitPaymentCorrectionMutation);
+            }
+
+            var query = DbContext.CreditorAccounts.Where(entity => (entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year));
 
             //if (divisionId > 0)
             //    query = query.Where(entity => entity.DivisionId == divisionId);
@@ -299,28 +315,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 var dppAmountCurency = (decimal)0;
                 var vatAmount = (decimal)0;
                 var products = item.Products;
-                
+
                 var paymentAmount = (decimal)0;
 
-                if (item.UnitPaymentCorrectionId == 0)
+                if (string.IsNullOrWhiteSpace(item.UnitPaymentCorrectionNo))
                 {
-                    if (!string.IsNullOrWhiteSpace(item.UnitReceiptNoteNo))
+                    if (!string.IsNullOrWhiteSpace(item.UnitReceiptNoteNo) && item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year)
                     {
                         dppAmount = item.UnitReceiptNoteDPP - item.IncomeTaxAmount;
-                        dppAmountCurency = item.DPPCurrency - (item.IncomeTaxAmount / item.CurrencyRate);
+                        if (item.CurrencyCode != "IDR")
+                            dppAmountCurency = item.DPPCurrency - (item.IncomeTaxAmount / item.CurrencyRate);
                     }
 
-                    if (!string.IsNullOrWhiteSpace(item.MemoNo))
+                    if (!string.IsNullOrWhiteSpace(item.MemoNo) && item.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && item.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year)
                     {
                         date = item.MemoDate;
                         invoiceNo = item.InvoiceNo;
                         unitPaymentOrderNo = item.MemoNo;
-                        vatAmount = item.UnitReceiptNoteDPP;
+                        vatAmount = item.UnitReceiptNotePPN;
                     }
 
-                    if (!string.IsNullOrWhiteSpace(item.BankExpenditureNoteNo))
+                    if (!string.IsNullOrWhiteSpace(item.BankExpenditureNoteNo) && item.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && item.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year)
                     {
                         date = item.BankExpenditureNoteDate;
+                        invoiceNo = item.InvoiceNo;
+                        unitPaymentOrderNo = item.MemoNo;
                         bankExpenditureNoteNo = item.BankExpenditureNoteNo;
                         paymentAmount = item.BankExpenditureNoteMutation;
                     }
@@ -331,8 +350,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     {
                         date = item.UnitPaymentCorrectionDate;
                         unitPaymentCorrectionNoteNo = item.UnitPaymentCorrectionNo;
+                        invoiceNo = item.InvoiceNo;
+                        unitPaymentOrderNo = item.MemoNo;
                         dppAmount = item.UnitPaymentCorrectionDPP;
-                        dppAmountCurency = item.UnitPaymentCorrectionDPP / item.CurrencyRate;
+                        if (item.CurrencyCode != "IDR")
+                            dppAmountCurency = item.UnitPaymentCorrectionDPP / item.CurrencyRate;
                         vatAmount = item.UnitPaymentCorrectionPPN;
 
                         if (item.IncomeTaxAmount > 0)
@@ -340,7 +362,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                             var incomeTaxRate = item.IncomeTaxAmount / item.UnitReceiptNoteDPP;
                             var incomeTaxCorrection = item.UnitPaymentCorrectionDPP * incomeTaxRate;
                             dppAmount -= incomeTaxCorrection;
-                            dppAmountCurency -= (incomeTaxCorrection / item.CurrencyRate);
+                            if (item.CurrencyCode != "IDR")
+                                dppAmountCurency -= (incomeTaxCorrection / item.CurrencyRate);
                         }
                     }
                 }
@@ -352,11 +375,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             tempResult = tempResult.OrderBy(element => element.Date).ThenBy(element => element.UnitReceiptNoteNo).ThenBy(element => element.UnitPaymentOrderNo).ThenBy(element => element.UnitPaymentCorrectionNoteNo).ThenBy(element => element.BankExpenditureNoteNo).ToList();
 
-            var startBalance = tempResult.Where(element => element.Date.AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime).Sum(element => element.PurchaseAmount - element.PaymentAmount);
+            var startBalance = unitReceiptNoteStartBalance + unitPaymentOrderStartBalance + correctionStartBalance - bankExpenitureNoteStartBalance;
             var result = new List<DebtCardDto>();
             var previousMonthSummary = new DebtCardDto("SALDO AWAL", startBalance);
             result.Add(previousMonthSummary);
-            foreach (var item in tempResult.Where(element => !(element.Date.AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime)).OrderBy(element => element.Date).ThenBy(element => element.UnitReceiptNoteNo).ThenBy(element => element.UnitPaymentOrderNo).ThenBy(element => element.UnitPaymentCorrectionNoteNo).ThenBy(element => element.BankExpenditureNoteNo))
+            foreach (var item in tempResult)
             {
                 startBalance = startBalance + item.PurchaseAmount - item.PaymentAmount;
                 item.SetFinalBalance(startBalance);
@@ -453,7 +476,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     vm.PPN = item.UnitPaymentCorrectionPPN;
                     vm.Total = item.UnitPaymentCorrectionDPP + item.UnitPaymentCorrectionPPN;
                     vm.Mutation = item.UnitPaymentCorrectionMutation;
-                    vm.MemoNo = item.MemoNo;    
+                    vm.MemoNo = item.MemoNo;
                     vm.PaymentDuration = item.PaymentDuration;
                     vm.Products = item.Products;
                     //};
@@ -465,7 +488,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     vm.BankExpenditureNoteNo = item.PurchasingMemoNo;
                 }
-                    
+
                 result.Add(vm);
 
                 //if (!string.IsNullOrEmpty(item.MemoNo))
