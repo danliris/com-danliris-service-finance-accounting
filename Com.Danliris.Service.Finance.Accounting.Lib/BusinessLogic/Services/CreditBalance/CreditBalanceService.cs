@@ -198,30 +198,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     if (item.UnitReceiptNoteDate.HasValue && item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
                     {
-                        itemResult.Purchase = item.DPPCurrency - (item.IncomeTaxAmount / item.CurrencyRate);
+                        itemResult.Purchase = item.UnitReceiptNoteDPP - item.IncomeTaxAmount;
                         itemResult.UnitReceiptNoteNo = item.UnitReceiptNoteNo;
                         itemResult.Date = item.UnitReceiptNoteDate;
-                        itemResult.IncomeTaxNo = item.IncomeTaxNo;
                     }
 
                     if (item.MemoDate.HasValue && item.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
                     {
-                        itemResult.Purchase += item.VATAmount;
+                        itemResult.Purchase += item.UnitReceiptNotePPN;
                         itemResult.UnitPaymentOrderNo = item.MemoNo;
                         itemResult.InvoiceNo = item.InvoiceNo;
+                        itemResult.IncomeTaxNo = item.IncomeTaxNo;
                     }
 
                     if (item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
                     {
                         itemResult.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
-                        itemResult.Payment = item.BankExpenditureNoteMutation / item.CurrencyRate;
+                        itemResult.Payment = item.BankExpenditureNoteMutation;
                     }
                 }
                 else
                 {
                     if (item.UnitPaymentCorrectionDate.HasValue && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
                     {
-                        itemResult.Purchase = item.UnitPaymentCorrectionMutation / item.CurrencyRate;
+                        itemResult.Purchase = item.UnitPaymentCorrectionMutation;
                     }
                 }
 
