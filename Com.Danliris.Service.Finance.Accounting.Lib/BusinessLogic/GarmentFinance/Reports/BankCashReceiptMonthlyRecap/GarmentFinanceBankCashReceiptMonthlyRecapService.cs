@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
 
             List<GarmentFinanceBankCashReceiptMonthlyRecapViewModel> data = new List<GarmentFinanceBankCashReceiptMonthlyRecapViewModel>();
             var headerIds = _dbContext.GarmentFinanceBankCashReceiptDetails
-                        .Where(a => a.BankCashReceiptDate >= dateFromFilter && a.BankCashReceiptDate <= dateToFilter).Select(a=>a.Id).ToList();
+                        .Where(a => a.BankCashReceiptDate.AddHours(7).Date >= dateFromFilter && a.BankCashReceiptDate.AddHours(7).Date <= dateToFilter).Select(a=>a.Id).ToList();
             var headerDebit = _dbContext.GarmentFinanceBankCashReceiptDetails.Where(a => headerIds.Contains(a.Id))
                             .Select(a => new GarmentFinanceBankCashReceiptMonthlyRecapViewModel
                             {
@@ -105,7 +105,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 AccountName = "",
                 AccountNo = "TOTAL",
                 Credit = sumQuery.Sum(a => a.credit),
-                Debit = sumQuery.Sum(a => a.debit)
+                Debit = sumQuery.Sum(a => a.debit) + first.Sum(a => a.Debit)
             };
             data.Add(total);
             return data;
