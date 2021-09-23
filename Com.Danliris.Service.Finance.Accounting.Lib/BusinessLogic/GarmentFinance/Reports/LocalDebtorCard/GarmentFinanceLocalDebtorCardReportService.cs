@@ -174,7 +174,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                        buy = group.Sum(s => s.PaidAmount),
                        date = key.Date,
                        receiptNo = key.ReceiptNo
-                   }).OrderBy(s => s.date);
+                   }).OrderBy(s => s.date).ThenByDescending(s=>s.sell);
             decimal SumBY = 0;
             decimal SumJL = 0;
 
