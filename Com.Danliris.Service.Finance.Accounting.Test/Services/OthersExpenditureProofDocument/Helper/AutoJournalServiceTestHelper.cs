@@ -55,5 +55,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
         {
             return string.Empty;
         }
+
+        public async Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds, AccountBankViewModel bank, string referenceNo)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
+        }
     }
 }

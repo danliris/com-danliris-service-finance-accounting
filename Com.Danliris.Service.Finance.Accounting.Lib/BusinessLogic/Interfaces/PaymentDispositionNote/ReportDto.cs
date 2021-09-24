@@ -26,7 +26,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             DivisionId = divisionId;
             DivisionName = divisionName;
             VATAmount = vATAmount;
-            PaidAmount = paidAmount + vATAmount;
+            PaidAmount = paidAmount;
             TransactionType = transactionType;
             BankAccountNumber = bankAccountNumber;
         }

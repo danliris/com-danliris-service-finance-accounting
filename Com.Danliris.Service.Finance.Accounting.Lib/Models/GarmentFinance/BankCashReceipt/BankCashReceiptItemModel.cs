@@ -25,27 +25,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.Bank
         [MaxLength(256)]
         public string AccSubCoaName { get; set; }
 
-        public int AccUnitCoaId { get; set; }
-        [MaxLength(32)]
-        public string AccUnitCoaCode { get; set; }
-        [MaxLength(256)]
-        public string AccUnitCoaName { get; set; }
+        //public int AccUnitCoaId { get; set; }
+        //[MaxLength(32)]
+        //public string AccUnitCoaCode { get; set; }
+        //[MaxLength(256)]
+        //public string AccUnitCoaName { get; set; }
 
-        public int AccAmountCoaId { get; set; }
-        [MaxLength(32)]
-        public string AccAmountCoaCode { get; set; }
-        [MaxLength(256)]
-        public string AccAmountCoaName { get; set; }
+        //public int AccAmountCoaId { get; set; }
+        //[MaxLength(32)]
+        //public string AccAmountCoaCode { get; set; }
+        //[MaxLength(256)]
+        //public string AccAmountCoaName { get; set; }
 
         public decimal Amount { get; set; }
 
         public decimal Summary { get; set; }
 
-        public decimal C2A { get; set; }
-        public decimal C2B { get; set; }
-        public decimal C2C { get; set; }
-        public decimal C1A { get; set; }
-        public decimal C1B { get; set; }
+        //public decimal C2A { get; set; }
+        //public decimal C2B { get; set; }
+        //public decimal C2C { get; set; }
+        //public decimal C1A { get; set; }
+        //public decimal C1B { get; set; }
 
         [MaxLength(256)]
         public string NoteNumber { get; set; }
