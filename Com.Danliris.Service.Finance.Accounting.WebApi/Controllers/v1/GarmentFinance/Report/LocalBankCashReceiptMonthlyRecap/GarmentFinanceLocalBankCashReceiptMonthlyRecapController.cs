@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.BankCashReceiptMonthlyRecap;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.LocalBankCashReceiptMonthlyRecap;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
@@ -9,20 +9,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentFinance.Report.BankCashReceiptMonthlyRecap
+namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentFinance.Report.LocalBankCashReceiptMonthlyRecap
 {
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("v{version:apiVersion}/bank-cash-receipts/monthly-recap")]
-    public class GarmentFinanceBankCashReceiptMonthlyRecapController : Controller
+    [Route("v{version:apiVersion}/bank-cash-receipts/local-monthly-recap")]
+    public class GarmentFinanceLocalBankCashReceiptMonthlyRecapController : Controller
     {
         private IIdentityService IdentityService;
         private readonly IValidateService ValidateService;
-        private readonly IGarmentFinanceBankCashReceiptMonthlyRecapService Service;
+        private readonly IGarmentFinanceLocalBankCashReceiptMonthlyRecapService Service;
         private readonly string ApiVersion;
         private readonly IMapper Mapper;
 
-        public GarmentFinanceBankCashReceiptMonthlyRecapController(IIdentityService identityService, IValidateService validateService, IGarmentFinanceBankCashReceiptMonthlyRecapService service, IMapper mapper)
+        public GarmentFinanceLocalBankCashReceiptMonthlyRecapController(IIdentityService identityService, IValidateService validateService, IGarmentFinanceLocalBankCashReceiptMonthlyRecapService service, IMapper mapper)
         {
             IdentityService = identityService;
             ValidateService = validateService;
@@ -47,7 +47,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentF
                 VerifyUser();
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 //int offSet = 7;
-                var data = Service.GetMonitoring(dateFrom,dateTo, offSet);
+                var data = Service.GetMonitoring(dateFrom, dateTo, offSet);
 
                 return Ok(new
                 {
@@ -75,7 +75,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentF
                 int offSet = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
                 var xls = Service.GenerateExcel(dateFrom, dateTo, offSet);
 
-                string filename = String.Format("Rekap Memo per Bulan - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+                string filename = String.Format("Rekap Memo per Bulan - Lokal - {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
 
                 return File(xls.Item1.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", xls.Item2);
             }
