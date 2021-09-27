@@ -627,7 +627,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 if (id > 0)
                 {
                     var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
-                    var referenceNo = await GetDocumentNo("OUT", form.Bank.BankCode, _identityService.Username, model.Date.DateTime);
+                    var referenceNo = await GetDocumentNo("K", form.Bank.BankCode, _identityService.Username, model.Date.DateTime);
 
                     model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent, referenceNo);
                     _dbContext.VBRealizationDocuments.Update(model);

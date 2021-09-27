@@ -665,7 +665,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                              //Nominal = transaction.Nominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
                              BeforeNominal = transaction.BeforeNominal,
                              AfterNominal = transaction.AfterNominal,
-                             Nominal = transaction.Nominal,
+                             Nominal = transaction.AccountBankCurrencyCode != transaction.AccountBankAccountName.Substring(transaction.AccountBankAccountName.Length - 3) ? (transaction.NominalValas == 0 ? transaction.Nominal : transaction.NominalValas * transaction.CurrencyRate) : transaction.Nominal,
                              BeforeNominalValas = transaction.BeforeNominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
                              AfterNominalValas = transaction.AfterNominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
                              NominalValas = transaction.NominalValas,
