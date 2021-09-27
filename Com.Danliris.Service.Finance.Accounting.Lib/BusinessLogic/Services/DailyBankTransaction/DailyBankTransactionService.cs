@@ -660,9 +660,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                              ReferenceNo = transaction.ReferenceNo,
                              ReferenceType = transaction.ReferenceType,
                              AccountBankCurrencyCode = transaction.AccountBankCurrencyCode,
+                             //BeforeNominal = transaction.BeforeNominal,
+                             //AfterNominal = transaction.AfterNominal,
+                             //Nominal = transaction.Nominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
                              BeforeNominal = transaction.BeforeNominal,
                              AfterNominal = transaction.AfterNominal,
-                             Nominal = transaction.Nominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
+                             Nominal = transaction.Nominal,
                              BeforeNominalValas = transaction.BeforeNominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
                              AfterNominalValas = transaction.AfterNominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
                              NominalValas = transaction.NominalValas,
@@ -765,7 +768,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     SourceType = s.SourceType,
                     IsPosted = s.IsPosted,
                     Remark = s.Remark, 
-                    Nominal = s.Nominal * (s.CurrencyRate == 0 ? 1 : s.CurrencyRate)
+                    Nominal = s.Nominal
                 });
 
             List<string> searchAttributes = new List<string>()

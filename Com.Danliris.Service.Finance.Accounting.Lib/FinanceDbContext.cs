@@ -35,6 +35,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingMemoTextile;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetailLocal;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.MemorialDetailLocal;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.LocalDebiturBalance;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib
 {
@@ -156,6 +157,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib
         public DbSet<GarmentFinanceBankCashReceiptDetailLocalModel> GarmentFinanceBankCashReceiptDetailLocals { get; set; }
         public DbSet<GarmentFinanceBankCashReceiptDetailLocalItemModel> GarmentFinanceBankCashReceiptDetailLocalItems { get; set; }
         public DbSet<GarmentFinanceBankCashReceiptDetailLocalOtherItemModel> GarmentFinanceBankCashReceiptDetailLocalOtherItems { get; set; }
+
+        public DbSet<GarmentLocalDebiturBalanceModel> GarmentLocalDebiturBalances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

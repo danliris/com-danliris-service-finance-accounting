@@ -96,7 +96,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             }
             return result.data;
         }
-        private async Task<string> GetDocumentNo(string type, string bankCode, string username,DateTime date)
+        private async Task<string> GetDocumentNo(string type, string bankCode, string username, DateTime date)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
             {
@@ -289,9 +289,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
         }
 
 
-        public async Task<OthersExpenditureProofDocumentReportListViewModel> GetReportList(DateTimeOffset? startDate, DateTimeOffset? endDate, DateTimeOffset? dateExpenditure, string bankExpenditureNo, string division, int page, int size, string order, string keyword, string filter) 
+        public async Task<OthersExpenditureProofDocumentReportListViewModel> GetReportList(DateTimeOffset? startDate, DateTimeOffset? endDate, DateTimeOffset? dateExpenditure, string bankExpenditureNo, string division, int page, int size, string order, string keyword, string filter)
         {
-            var query = _dbSet.AsNoTracking().AsQueryable();
+            var query = _dbSet.AsNoTracking().Where(entity => entity.IsPosted);
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -305,11 +305,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             if (endDate.HasValue)
                 query = query.Where(document => document.Date.AddHours(_identityService.TimezoneOffset) <= endDate.GetValueOrDefault());
 
-            if(dateExpenditure.HasValue)
+            if (dateExpenditure.HasValue)
                 query = query.Where(document => document.Date.AddHours(_identityService.TimezoneOffset) == dateExpenditure.GetValueOrDefault());
 
             if (!string.IsNullOrEmpty(bankExpenditureNo))
-                query = query.Where(document => document.DocumentNo==bankExpenditureNo);
+                query = query.Where(document => document.DocumentNo == bankExpenditureNo);
 
             //Todo: OtherExpenditureDocument filter search for division
 
@@ -349,27 +349,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             }).ToList();
 
             var result = (from dt in data
-                         join accBank in accountBanks on dt.AccountBankId equals accBank.Id into dtAccBanks
-                         from dtAccBank in dtAccBanks
-                         select new OthersExpenditureProofDocumentReportViewModel
-                         {
-                             BankCOAId = dt.AccountBankId,
-                             BankCOANo = dtAccBank.AccountCOA,
-                             BankName = dtAccBank.BankName,
-                             CekBgNo = dt.CekBgNo,
-                             CurrencyCode = dtAccBank.Currency.Code,
-                             Date = dt.Date,
-                             DocumentNo = dt.DocumentNo,
-                             Id = dt.Id,
-                             Remark = dt.Remark,
-                             Total = dt.Total,
-                             IsPosted = dt.IsPosted,
-                             Type = dt.Type,
-                             AccountName = dtAccBank.AccountName,
-                             AccountBankId = dtAccBank.Id,
-                             AccountNumber = dtAccBank.AccountNumber
+                          join accBank in accountBanks on dt.AccountBankId equals accBank.Id into dtAccBanks
+                          from dtAccBank in dtAccBanks
+                          select new OthersExpenditureProofDocumentReportViewModel
+                          {
+                              BankCOAId = dt.AccountBankId,
+                              BankCOANo = dtAccBank.AccountCOA,
+                              BankName = dtAccBank.BankName,
+                              CekBgNo = dt.CekBgNo,
+                              CurrencyCode = dtAccBank.Currency.Code,
+                              Date = dt.Date,
+                              DocumentNo = dt.DocumentNo,
+                              Id = dt.Id,
+                              Remark = dt.Remark,
+                              Total = dt.Total,
+                              IsPosted = dt.IsPosted,
+                              Type = dt.Type,
+                              AccountName = dtAccBank.AccountName,
+                              AccountBankId = dtAccBank.Id,
+                              AccountNumber = dtAccBank.AccountNumber
 
-                         }).ToList();
+                          }).ToList();
 
             return new OthersExpenditureProofDocumentReportListViewModel()
             {
