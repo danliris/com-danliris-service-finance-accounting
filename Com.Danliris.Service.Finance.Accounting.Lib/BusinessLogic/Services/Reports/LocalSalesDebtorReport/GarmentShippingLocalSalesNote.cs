@@ -20,6 +20,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
             public string noteNo { get; set; }
             public Buyer buyer { get; set; }
             public double amount { get; set; }
+            public DateTimeOffset date { get; set; }
         }
     }
 }
