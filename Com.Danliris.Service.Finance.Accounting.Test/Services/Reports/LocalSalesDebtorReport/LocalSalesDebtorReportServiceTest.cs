@@ -216,8 +216,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.LocalSal
             GarmentFinanceBankCashReceiptDetailLocalModel cashReceiptDetailModel = await _dataUtilBankCash(serviceBankCash).GetTestData();
             LocalSalesDebtorReportService service = new LocalSalesDebtorReportService(serviceProvider1.Object, _dbContext(GetCurrentMethod()));
 
-            var response = service.GenerateExcelSummary(DateTimeOffset.Now.Month, DateTimeOffset.Now.Year);
-            Assert.NotNull(response);
+            var response1 = service.GenerateExcelSummary(1, DateTimeOffset.Now.Year);
+            Assert.NotNull(response1);
+
+            var response2 = service.GenerateExcelSummary(2, DateTimeOffset.Now.Year);
+            Assert.NotNull(response2);
+
+            var response3 = service.GenerateExcelSummary(3, DateTimeOffset.Now.Year);
+            Assert.NotNull(response3);
+
+            var response4 = service.GenerateExcelSummary(4, DateTimeOffset.Now.Year);
+            Assert.NotNull(response4);
+
+            var response5 = service.GenerateExcelSummary(5, DateTimeOffset.Now.Year);
+            Assert.NotNull(response5);
+
+            var response6 = service.GenerateExcelSummary(6, DateTimeOffset.Now.Year);
+            Assert.NotNull(response6);
+
+            var response7 = service.GenerateExcelSummary(7, DateTimeOffset.Now.Year);
+            Assert.NotNull(response7);
+
+            var response8 = service.GenerateExcelSummary(8, DateTimeOffset.Now.Year);
+            Assert.NotNull(response8);
+
+            var response9 = service.GenerateExcelSummary(9, DateTimeOffset.Now.Year);
+            Assert.NotNull(response9);
+
+            var response10 = service.GenerateExcelSummary(10, DateTimeOffset.Now.Year);
+            Assert.NotNull(response10);
+
+            var response11 = service.GenerateExcelSummary(11, DateTimeOffset.Now.Year);
+            Assert.NotNull(response11);
+
+            var response12 = service.GenerateExcelSummary(12, DateTimeOffset.Now.Year);
+            Assert.NotNull(response12);
+
+
         }
 
     }
