@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.LocalSal
                 .ReturnsAsync(message);
 
             httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/local-sales-notes/localSalesDebtor"))))
                 .ReturnsAsync(message);
             httpClientService
              .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("master/garment-currencies/sales-debtor-currencies"))))
