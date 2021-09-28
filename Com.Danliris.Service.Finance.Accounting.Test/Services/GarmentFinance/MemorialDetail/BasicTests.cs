@@ -132,6 +132,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
 
             newModel2.Items = new List<GarmentFinanceMemorialDetailItemModel> { model2.Items.First() };
             newModel2.OtherItems = new List<GarmentFinanceMemorialDetailOtherItemModel> { model2.OtherItems.First() };
+            newModel2.RupiahItems = new List<GarmentFinanceMemorialDetailRupiahItemModel> { model2.RupiahItems.First() };
+
             var Response = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
 
@@ -159,9 +161,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
                 CurrencyId = 1,
                 CurrencyCode = "code",
                 CurrencyRate = 1,
-                Amount = 1
+                Amount = 1,
+                TypeAmount = "KREDIT"
             };
             newModel2.OtherItems.Add(newOtherItem);
+
+            GarmentFinanceMemorialDetailRupiahItemModel newRupiahItem = new GarmentFinanceMemorialDetailRupiahItemModel
+            {
+                ChartOfAccountId = 1,
+                ChartOfAccountName = "Name",
+                ChartOfAccountCode = "code",
+                Credit = 1,
+                Debit = 1,
+            };
+            newModel2.RupiahItems.Add(newRupiahItem);
+
             var Response3 = await service.UpdateAsync(model2.Id, newModel2);
             Assert.NotEqual(0, Response);
         }
@@ -178,6 +192,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
         public void Should_Success_Validate_Null_Invoice_Data()
         {
             GarmentFinanceMemorialDetailViewModel vm = new GarmentFinanceMemorialDetailViewModel();
+            vm.TotalAmount = 100;
             vm.Items = new List<GarmentFinanceMemorialDetailItemViewModel>
             {
                 new GarmentFinanceMemorialDetailItemViewModel()
@@ -192,6 +207,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
                     Account=null,
                     Amount = 0,
                 }
+            };
+            vm.RupiahItems = new List<GarmentFinanceMemorialDetailRupiahItemViewModel>
+            {
+                new GarmentFinanceMemorialDetailRupiahItemViewModel()
+                {
+                    Account=null,
+                    Credit = 0,
+                    Debit = 0,
+                }
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_Amount_Different()
+        {
+            GarmentFinanceMemorialDetailViewModel vm = new GarmentFinanceMemorialDetailViewModel();
+            vm.Amount = 3;
+            vm.Items = new List<GarmentFinanceMemorialDetailItemViewModel>
+            {
+                new GarmentFinanceMemorialDetailItemViewModel()
+                {
+                    Amount = 1,
+                }
+            };
+            vm.OtherItems = new List<GarmentFinanceMemorialDetailOtherItemViewModel>
+            {
+                new GarmentFinanceMemorialDetailOtherItemViewModel()
+                {
+                    TypeAmount = "KREDIT",
+                    Amount= 1,
+                },
             };
 
             Assert.True(vm.Validate(null).Count() > 0);

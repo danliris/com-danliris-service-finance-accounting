@@ -144,14 +144,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             footerTable.AddCell(cellFooter);
             cellFooter.Phrase = new Phrase("", normal_font);
             footerTable.AddCell(cellFooter);
-
+          
             cellFooter.Phrase = new Phrase("", normal_font);
             footerTable.AddCell(cellFooter);
             cellFooter.Phrase = new Phrase("", normal_font);
             footerTable.AddCell(cellFooter);
             cellFooter.Phrase = new Phrase("", normal_font);
             footerTable.AddCell(cellFooter);
-
+          
             cellFooter.Phrase = new Phrase("", normal_font);
             footerTable.AddCell(cellFooter);
             cellFooter.Phrase = new Phrase("", normal_font);

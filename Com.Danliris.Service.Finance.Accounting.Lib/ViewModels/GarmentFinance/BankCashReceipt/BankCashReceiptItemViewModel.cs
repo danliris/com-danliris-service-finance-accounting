@@ -10,15 +10,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
     {
         public ChartOfAccountViewModel AccNumber { get; set; }
         public ChartOfAccountViewModel AccSub { get; set; }
-        public ChartOfAccountViewModel AccUnit { get; set; }
-        public ChartOfAccountViewModel AccAmount { get; set; }
+        //public ChartOfAccountViewModel AccUnit { get; set; }
+        //public ChartOfAccountViewModel AccAmount { get; set; }
         public decimal Amount { get; set; }
         public decimal Summary { get; set; }
-        public decimal C2A { get; set; }
-        public decimal C2B { get; set; }
-        public decimal C2C { get; set; }
-        public decimal C1A { get; set; }
-        public decimal C1B { get; set; }
+        //public decimal C2A { get; set; }
+        //public decimal C2B { get; set; }
+        //public decimal C2C { get; set; }
+        //public decimal C1A { get; set; }
+        //public decimal C1B { get; set; }
         public string NoteNumber { get; set; }
         public string Remarks { get; set; }
     }

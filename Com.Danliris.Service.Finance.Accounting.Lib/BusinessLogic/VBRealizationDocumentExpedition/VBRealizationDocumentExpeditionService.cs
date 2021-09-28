@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
@@ -32,6 +33,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         private readonly IServiceProvider _serviceProvider;
         private readonly IIdentityService _identityService;
         private readonly IAutoJournalService _autoJournalService;
+        private readonly IAutoDailyBankTransactionService _autoDailyBankTransactionService;
         private readonly FinanceDbContext _dbContext;
 
         public VBRealizationDocumentExpeditionService(FinanceDbContext dbContext, IServiceProvider serviceProvider)
@@ -42,6 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             _serviceProvider = serviceProvider;
             _identityService = serviceProvider.GetService<IIdentityService>();
             _autoJournalService = serviceProvider.GetService<IAutoJournalService>();
+            _autoDailyBankTransactionService = serviceProvider.GetService<IAutoDailyBankTransactionService>();
         }
 
         public Task<int> CashierReceipt(List<int> vbRealizationIds)
@@ -530,7 +533,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 if (id > 0)
                 {
                     var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
-                    model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                    model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent, null);
                     _dbContext.VBRealizationDocuments.Update(model);
 
                     if (model.Type == VBType.NonPO)
@@ -577,6 +580,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             return result;
         }
 
+        public async Task<string> GetDocumentNo(string type, string bankCode, string username, DateTime date)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no-date?type={type}&bankCode={bankCode}&username={username}&date={date}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+            }
+
+            return result.data;
+        }
+
         public async Task<int> ClearanceVBPost(ClearanceFormDto form)
         {
             var vbRequestIds = form.ListIds.Select(element => element.VBRequestId).ToList();
@@ -602,12 +627,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 if (id > 0)
                 {
                     var model = _dbContext.VBRealizationDocuments.FirstOrDefault(entity => entity.Id == id);
-                    model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent);
+                    var referenceNo = await GetDocumentNo("K", form.Bank.BankCode, _identityService.Username, model.Date.DateTime);
+
+                    model.SetIsCompleted(DateTimeOffset.UtcNow, _identityService.Username, UserAgent, referenceNo);
                     _dbContext.VBRealizationDocuments.Update(model);
 
                     if (model.Type == VBType.NonPO)
                     {
-                        vbNonPOIdsToBeAccounted.Add(model.Id);
+                        //vbNonPOIdsToBeAccounted.Add(model.Id);
+                        await _autoJournalService.AutoJournalVBNonPOClearence(new List<int>() { model.Id }, form.Bank, referenceNo);
                     }
 
                     if (model.Type == VBType.WithPO)
@@ -636,15 +664,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
 
                         var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == model.VBRequestDocumentId);
                     }
+
+                    await _autoDailyBankTransactionService.AutoCreateFromClearenceVB(new List<int>() { model.Id }, form.Bank, referenceNo);
                 }
             }
 
             var result = await _dbContext.SaveChangesAsync();
 
-            if (vbNonPOIdsToBeAccounted.Count > 0)
-            {
-                await _autoJournalService.AutoJournalVBNonPOClearence(vbNonPOIdsToBeAccounted, form.Bank);
-            }
+            //if (vbNonPOIdsToBeAccounted.Count > 0)
+            //{
+            //    await _autoJournalService.AutoJournalVBNonPOClearence(vbNonPOIdsToBeAccounted, form.Bank, null);
+            //}
 
             return result;
         }
