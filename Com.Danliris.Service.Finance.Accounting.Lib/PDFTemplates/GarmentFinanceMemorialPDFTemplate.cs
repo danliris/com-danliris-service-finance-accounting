@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
     {
         public MemoryStream GeneratePdfTemplate(GarmentFinanceMemorialViewModel viewModel, int clientTimeZoneOffset)
         {
-            const int MARGIN = 8;
+            const int MARGIN = 25;
 
             Font header_font = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 18);
             Font normal_font = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 9);
@@ -110,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             tableContent.AddCell(cellRight);
 
             tableContent.SpacingBefore = 10f;
-            tableContent.SpacingAfter = 15f;
+            tableContent.SpacingAfter = 20f;
             document.Add(tableContent);
             #endregion
 
@@ -118,14 +118,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             Paragraph remark = new Paragraph("Keterangan : " + viewModel.Remark, normal_font);
             document.Add(remark);
 
-            PdfPTable footerTable = new PdfPTable(1);
-            footerTable.WidthPercentage = 30;
+            PdfPTable footerTable = new PdfPTable(3);
+            footerTable.SetWidths(new float[] { 1f ,2f, 1f });
+            footerTable.WidthPercentage = 100;
             footerTable.HorizontalAlignment = Element.ALIGN_RIGHT;
             PdfPCell cellFooter = new PdfPCell() { Border = Rectangle.NO_BORDER, HorizontalAlignment = Element.ALIGN_CENTER };
 
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
             cellFooter.Phrase = new Phrase("Solo, " + viewModel.Date.GetValueOrDefault().AddHours(clientTimeZoneOffset).ToString("dd MMMM yyyy", new CultureInfo("id-ID")), normal_font);
             footerTable.AddCell(cellFooter);
 
+            cellFooter.Phrase = new Phrase("Kepala Pembukuan", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
             cellFooter.Phrase = new Phrase("Yg. Membuat", normal_font);
             footerTable.AddCell(cellFooter);
 
@@ -135,6 +144,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             footerTable.AddCell(cellFooter);
             cellFooter.Phrase = new Phrase("", normal_font);
             footerTable.AddCell(cellFooter);
+          
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+          
             cellFooter.Phrase = new Phrase("", normal_font);
             footerTable.AddCell(cellFooter);
             cellFooter.Phrase = new Phrase("", normal_font);
@@ -142,7 +159,46 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cellFooter.Phrase = new Phrase("", normal_font);
             footerTable.AddCell(cellFooter);
 
-            cellFooter.Phrase = new Phrase("(    WIHASTORO AGUNG    )", underlined_font);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+
+            cellFooter.Phrase = new Phrase("(                             )", underlined_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("", normal_font);
+            footerTable.AddCell(cellFooter);
+            cellFooter.Phrase = new Phrase("(                             )", underlined_font);
             footerTable.AddCell(cellFooter);
 
             document.Add(footerTable);
