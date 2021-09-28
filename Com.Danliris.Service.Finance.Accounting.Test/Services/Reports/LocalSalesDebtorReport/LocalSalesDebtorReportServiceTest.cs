@@ -63,19 +63,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.LocalSal
             message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"invoiceNo\":\"no\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
 
             httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtor"))))
-                .ReturnsAsync(message);
-
-            httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/garment-debitur-balances"))))
-                .ReturnsAsync(message);
-
-            httpClientService
                 .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/local-sales-notes/localSalesDebtor"))))
                 .ReturnsAsync(message);
-            httpClientService
-             .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("master/garment-currencies/sales-debtor-currencies"))))
-             .ReturnsAsync(message);
+
             serviceProvider
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
                 .Returns(new HttpClientTestService());
@@ -151,25 +141,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.Reports.LocalSal
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
 
             HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            message.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":[{\"rate\":\"14500\",\"invoiceNo\":\"no\",\"invoiceId\":\"1\",\"amount\":1,\"balanceAmount\":1,\"date\":\"2018/10/20\",\"truckingDate\":\"2018/10/20\"}],\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":2,\"order\":{\"date\":\"desc\"},\"select\":[\"Id\",\"CustomsType\",\"BeacukaiDate\",\"BeacukaiNo\",,\"POSerialNumber\"]}}");
-
-            HttpResponseMessage messageC = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            messageC.Content = new StringContent("{\"apiVersion\":\"1.0\",\"statusCode\":200,\"message\":\"Ok\",\"data\":{\"Rate\":14500.0,\"Uid\":\"no\",\"Date\":\"2018-10-20T17:00:00\",\"Code\":\"USD\"},\"info\":{\"count\":1,\"page\":1,\"size\":1,\"total\":1,\"order\":{\"Date\":\"desc\"},\"select\":[\"Rate\"]}}");
+            message.Content = new StringContent("{\"data\":[{\"salesContractNo\":null,\"localSalesContractId\":0,\"noteNo\":\"21 / LBJ / 00003\",\"date\":\"2021 - 08 - 31T17: 00:00 + 00:00\",\"transactionType\":null,\"buyer\":{\"id\":63,\"code\":\"IJA\",\"name\":\"PT INDORENZA JAYA ABADI\",\"address\":null,\"npwp\":null,\"country\":null,\"nik\":null,\"kaberType\":null},\"tempo\":0,\"expenditureNo\":null,\"dispositionNo\":null,\"useVat\":false,\"remark\":null,\"isUsed\":false,\"paymentType\":null,\"amount\":55000000.0,\"items\":null,\"id\":29,\"active\":false,\"createdUtc\":\"0001 - 01 - 01T00: 00:00\",\"createdBy\":null,\"createdAgent\":null,\"lastModifiedUtc\":\"0001 - 01 - 01T00: 00:00\",\"lastModifiedBy\":null,\"lastModifiedAgent\":null,\"isDeleted\":false,\"deletedUtc\":\"0001 - 01 - 01T00: 00:00\",\"deletedBy\":null,\"deletedAgent\":null},]}");
 
             httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtor"))))
+                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/local-sales-notes/localSalesDebtor"))))
                 .ReturnsAsync(message);
 
-            httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/garment-debitur-balances"))))
-                .ReturnsAsync(message);
-            httpClientService
-              .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("master/garment-currencies/sales-debtor-currencies"))))
-              .ReturnsAsync(messageC);
-
-            httpClientService
-                .Setup(x => x.GetAsync(It.Is<string>(s => s.Contains("garment-shipping/invoices/exportSalesDebtorNow"))))
-                .ReturnsAsync(message);
             serviceProvider1
                 .Setup(x => x.GetService(typeof(IHttpClientService)))
                 .Returns(new HttpClientTestService());
