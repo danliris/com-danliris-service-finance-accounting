@@ -11,5 +11,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.R
     {
         Task<List<LocalSalesDebtorReportViewModel>> GetMonitoring(int month, int year, int offset);
         Task<MemoryStream> GenerateExcel(int month, int year, string type);
+        Task<MemoryStream> GenerateExcelSummary(int month, int year);
     }
 }
