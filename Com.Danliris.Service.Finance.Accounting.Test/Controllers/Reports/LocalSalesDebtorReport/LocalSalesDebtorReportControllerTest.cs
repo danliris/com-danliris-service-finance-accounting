@@ -11,6 +11,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
@@ -104,6 +105,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Local
             //Assert
             int statusCode = this.GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+        }
+
+        [Fact]
+        public void Should_Success_GetXls()
+        {
+            var mocks = GetMocks();
+
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>()))
+               .ReturnsAsync(new MemoryStream());
+            var response = GetController(mocks).GetXls(1, 1);
+            Assert.NotNull(response);
+
+        }
+
+        [Fact]
+        public void Should_Error_GetXls()
+        {
+            var mocks = GetMocks();
+
+            mocks.Service.Setup(f => f.GenerateExcel(It.IsAny<int>(), It.IsAny<int>()))
+               .Throws(new Exception());
+            var response = GetController(mocks).GetXls(1, 1);
+            Assert.NotNull(response);
+
         }
     }
 }
