@@ -62,6 +62,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
             List<LocalSalesDebtorReportViewModel> data = new List<LocalSalesDebtorReportViewModel>();
             //GarmentCurrency garmentCurrency = await GetCurrency();
 
+            var querytimeSpan = from aa in salesBalance.data
+                                select new timeSpanInvoice
+                                {
+                                    buyerCode = aa.buyer.Code,
+                                    amount = Convert.ToDecimal(aa.amount),
+                                    type = (aa.tempo <= 0) ? "normal" :
+                                            (aa.tempo > 0 && aa.tempo < 31) ? "oneThirty" :
+                                            (aa.tempo > 30 && aa.tempo < 61) ? "thirtySixty" :
+                                            (aa.tempo > 60 && aa.tempo < 91) ? "sixtyNinety" :
+                                            "moreThanNinety",
+                                    localSalesNoteId = Convert.ToInt32(aa.Id)
+                                };
+
+            var querySumInvoice = querytimeSpan.ToList()
+               .GroupBy(x => new { x.buyerCode, x.type }, (key, group) => new
+               {
+                   buyerCode = key.buyerCode,
+                   type = key.type,
+                   amount = group.Sum(s => s.amount)
+               });
+
             var receiptBankCashReceiptDetailLocal = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetailLocals where aa.BankCashReceiptDate.AddHours(7).Month == month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
                                                     join b in _dbContext.GarmentFinanceBankCashReceiptDetailLocalItems on a.Id equals b.BankCashReceiptDetailLocalId
 
@@ -185,82 +206,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
                                                                  moreThanNinety = 0
                                                              };
 
-            /*
-             var beginingMemo = from a in (from aa in _dbContext.GarmentFinanceMemorialDetailLocals where aa.MemorialDate.AddHours(7).Month < month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
-                               join c in _dbContext.GarmentFinanceMemorialDetailLocalItems on a.Id equals c.MemorialDetailLocalId
+            var periodeMemoLocal = from a in (from aa in _dbContext.GarmentFinanceMemorialDetailLocals where aa.MemorialDate.AddHours(7).Month <= month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
+                              join c in _dbContext.GarmentFinanceMemorialDetailLocalItems on a.Id equals c.MemorialDetailLocalId
 
-                               select new LocalSalesDebtorReportViewModel
-                               {
-                                   buyerCode = c.BuyerCode,
-                                   buyerName = c.BuyerName,
-                                   beginingBalance = Convert.ToDecimal(-c.Amount),
-                                   receipt = 0,
-                                   sales = 0,
-                                   endBalance = 0,
-                                   normal = 0,
-                                   oneThirty = 0,
-                                   thirtySixty = 0,
-                                   sixtyNinety = 0,
-                                   moreThanNinety = 0
+                              select new LocalSalesDebtorReportViewModel
+                              {
+                                  buyerCode = c.BuyerCode,
+                                  buyerName = c.BuyerName,
+                                  beginingBalance = 0,
+                                  receipt = 0,
+                                  sales = 0,
+                                  endBalance = 0,
+                                  normal = (from aa in querytimeSpan where aa.localSalesNoteId == c.LocalSalesNoteId select aa.type).FirstOrDefault() == "normal" ? Convert.ToDouble(-c.Amount) : 0,
+                                  oneThirty = (from aa in querytimeSpan where aa.localSalesNoteId == c.LocalSalesNoteId select aa.type).FirstOrDefault() == "oneThirty" ? Convert.ToDouble(-c.Amount) : 0,
+                                  thirtySixty = (from aa in querytimeSpan where aa.localSalesNoteId == c.LocalSalesNoteId select aa.type).FirstOrDefault() == "thirtySixty" ? Convert.ToDouble(-c.Amount) : 0,
+                                  sixtyNinety = (from aa in querytimeSpan where aa.localSalesNoteId == c.LocalSalesNoteId select aa.type).FirstOrDefault() == "sixtyNinety" ? Convert.ToDouble(-c.Amount) : 0,
+                                  moreThanNinety = (from aa in querytimeSpan where aa.localSalesNoteId == c.LocalSalesNoteId select aa.type).FirstOrDefault() == "moreThanNinety" ? Convert.ToDouble(-c.Amount) : 0,
 
-                               };
+                              };
 
-            var beginingBankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetailLocals where aa.BankCashReceiptDate.AddHours(7).Month < month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
-                                          join b in _dbContext.GarmentFinanceBankCashReceiptDetailLocalItems on a.Id equals b.BankCashReceiptDetailLocalId
+            var periodeBankCashReceiptLocal = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetailLocals where aa.BankCashReceiptDate.AddHours(7).Month <= month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
+                                         join b in _dbContext.GarmentFinanceBankCashReceiptDetailLocalItems on a.Id equals b.BankCashReceiptDetailLocalId
 
-                                          select new LocalSalesDebtorReportViewModel
-                                          {
-                                              buyerCode = b.BuyerCode,
-                                              buyerName = b.BuyerName,
-                                              beginingBalance = Convert.ToDecimal(-b.Amount),
-                                              receipt = 0,
-                                              sales = 0,
-                                              endBalance = 0,
-                                              normal = 0,
-                                              oneThirty = 0,
-                                              thirtySixty = 0,
-                                              sixtyNinety = 0,
-                                              moreThanNinety = 0
-                                          };
+                                         select new LocalSalesDebtorReportViewModel
+                                         {
+                                             buyerCode = b.BuyerCode,
+                                             buyerName = b.BuyerName,
+                                             beginingBalance = 0,
+                                             receipt = 0,
+                                             sales = 0,
+                                             endBalance = 0,
+                                             normal = (from aa in querytimeSpan where aa.localSalesNoteId == b.LocalSalesNoteId select aa.type).FirstOrDefault() == "normal" ? Convert.ToDouble(-b.Amount) : 0,
+                                             oneThirty = (from aa in querytimeSpan where aa.localSalesNoteId == b.LocalSalesNoteId select aa.type).FirstOrDefault() == "oneThirty" ? Convert.ToDouble(-b.Amount) : 0,
+                                             thirtySixty = (from aa in querytimeSpan where aa.localSalesNoteId == b.LocalSalesNoteId select aa.type).FirstOrDefault() == "thirtySixty" ? Convert.ToDouble(-b.Amount) : 0,
+                                             sixtyNinety = (from aa in querytimeSpan where aa.localSalesNoteId == b.LocalSalesNoteId select aa.type).FirstOrDefault() == "sixtyNinety" ? Convert.ToDouble(-b.Amount) : 0,
+                                             moreThanNinety = (from aa in querytimeSpan where aa.localSalesNoteId == b.LocalSalesNoteId select aa.type).FirstOrDefault() == "moreThanNinety" ? Convert.ToDouble(-b.Amount) : 0,
 
-            var memoNow = from a in (from aa in _dbContext.GarmentFinanceMemorialDetailLocals where aa.MemorialDate.AddHours(7).Month == month && aa.MemorialDate.AddHours(7).Year == year select new { aa.Id })
-                          join c in _dbContext.GarmentFinanceMemorialDetailLocalItems on a.Id equals c.MemorialDetailLocalId
-
-                          select new LocalSalesDebtorReportViewModel
-                          {
-                              buyerCode = c.BuyerCode,
-                              buyerName = c.BuyerName,
-                              beginingBalance = 0,
-                              receipt = Convert.ToDouble(c.Amount),
-                              sales = 0,
-                              endBalance = 0,
-                              normal = 0,
-                              oneThirty = 0,
-                              thirtySixty = 0,
-                              sixtyNinety = 0,
-                              moreThanNinety = 0
-
-                          };
-            var bankCashReceiptNow = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetailLocals where aa.BankCashReceiptDate.AddHours(7).Month == month && aa.BankCashReceiptDate.AddHours(7).Year == year select new { aa.Id })
-                                     join b in _dbContext.GarmentFinanceBankCashReceiptDetailLocalItems on a.Id equals b.BankCashReceiptDetailLocalId
-
-                                     select new LocalSalesDebtorReportViewModel
-                                     {
-                                         buyerCode = b.BuyerCode,
-                                         buyerName = b.BuyerName,
-                                         beginingBalance = 0,
-                                         receipt = Convert.ToDouble(b.Amount),
-                                         sales = 0,
-                                         endBalance = 0,
-                                         normal = 0,
-                                         oneThirty = 0,
-                                         thirtySixty = 0,
-                                         sixtyNinety = 0,
-                                         moreThanNinety = 0
-                                     };*/
-
-
-
+                                         };
 
             var queryUnion = localDebtorBalance
                 .Union(salesBalanceLocal)
@@ -268,7 +250,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
                 .Union(receiptBankCashReceiptDetailLocal)
                 .Union(beginningBalanceSales)
                 .Union(beginningBalanceReceiptBankCashReceiptDetailLocal)
-                .Union(beginningBalanceReceiptMemorialDetailLocal);
+                .Union(beginningBalanceReceiptMemorialDetailLocal)
+                .Union(periodeMemoLocal)
+                .Union(periodeBankCashReceiptLocal);
 
             var querySum = queryUnion.ToList()
                    .GroupBy(x => new { x.buyerCode, x.buyerName }, (key, group) => new
@@ -297,11 +281,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
                     receipt = item.receipt,
                     sales = item.sales,
                     endBalance = Convert.ToDouble(item.beginingBalance) + item.sales - item.receipt,
-                    normal = item.normal,
-                    oneThirty = item.oneThirty,
-                    thirtySixty = item.thirtySixty,
-                    sixtyNinety = item.sixtyNinety,
-                    moreThanNinety = item.moreThanNinety,
+                    normal = item.normal + Convert.ToDouble((from aa in querySumInvoice where aa.buyerCode == item.buyerCode && aa.type == "normal" select aa.amount).FirstOrDefault()),
+                    oneThirty = item.oneThirty + Convert.ToDouble((from aa in querySumInvoice where aa.buyerCode == item.buyerCode && (aa.type == "oneThirty") select aa.amount).FirstOrDefault()),
+                    thirtySixty = item.thirtySixty + Convert.ToDouble((from aa in querySumInvoice where aa.buyerCode == item.buyerCode && (aa.type == "thirtySixty") select aa.amount).FirstOrDefault()),
+                    sixtyNinety = item.sixtyNinety + Convert.ToDouble((from aa in querySumInvoice where aa.buyerCode == item.buyerCode && (aa.type == "sixtyNinety") select aa.amount).FirstOrDefault()),
+                    moreThanNinety = item.moreThanNinety + Convert.ToDouble((from aa in querySumInvoice where aa.buyerCode == item.buyerCode && (aa.type == "moreThanNinety") select aa.amount).FirstOrDefault()),
                     total = "TOTAL"
                 };
                 data.Add(model);
@@ -378,9 +362,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
         {
             internal string buyerCode { get; set; }
             internal decimal amount { get; set; }
-            internal int day { get; set; }
             internal string type { get; set; }
-            internal int invoiceId { get; set; }
+            internal int localSalesNoteId { get; set; }
         }
 
         public async Task<MemoryStream> GenerateExcelSummary(int month, int year)
