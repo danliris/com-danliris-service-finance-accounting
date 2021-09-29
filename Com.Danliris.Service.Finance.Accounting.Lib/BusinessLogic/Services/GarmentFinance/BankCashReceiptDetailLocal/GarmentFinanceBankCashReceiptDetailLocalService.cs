@@ -38,6 +38,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
             {
                 EntityExtension.FlagForCreate(otherItem, _identityService.Username, UserAgent);
             }
+            var receipts = await _dbContext.GarmentFinanceBankCashReceipts.FirstOrDefaultAsync(a => a.Id == model.BankCashReceiptId);
+            if (receipts != null)
+            {
+                receipts.IsUsed = true;
+            }
             _dbContext.GarmentFinanceBankCashReceiptDetailLocals.Add(model);
             return await _dbContext.SaveChangesAsync();
         }
@@ -59,6 +64,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
             }
 
             EntityExtension.FlagForDelete(model, _identityService.Username, UserAgent, true);
+            var receipts = await _dbContext.GarmentFinanceBankCashReceipts.FirstOrDefaultAsync(a => a.Id == model.BankCashReceiptId);
+            if (receipts != null)
+            {
+                receipts.IsUsed = false;
+            }
             _dbContext.GarmentFinanceBankCashReceiptDetailLocals.Update(model);
 
             return await _dbContext.SaveChangesAsync();
@@ -137,6 +147,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Gar
                 else
                 {
                     otherItem.Amount = itemModel.Amount;
+                    otherItem.TypeAmount = itemModel.TypeAmount;
                     EntityExtension.FlagForUpdate(otherItem, _identityService.Username, UserAgent);
 
                 }

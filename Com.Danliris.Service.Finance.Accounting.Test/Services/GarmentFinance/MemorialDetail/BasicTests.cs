@@ -161,7 +161,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.M
                 CurrencyId = 1,
                 CurrencyCode = "code",
                 CurrencyRate = 1,
-                Amount = 1
+                Amount = 1,
+                TypeAmount = "KREDIT"
             };
             newModel2.OtherItems.Add(newOtherItem);
 
