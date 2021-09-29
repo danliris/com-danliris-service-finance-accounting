@@ -193,7 +193,6 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IGarmentFinanceDebtorCardReportService, GarmentFinanceDebtorCardReportService>()
                 .AddTransient<IGarmentFinanceExportSalesOutstandingReportService, GarmentFinanceExportSalesOutstandingReportService>()
                 .AddTransient<IGarmentFinanceLocalSalesOutstandingReportService, GarmentFinanceLocalSalesOutstandingReportService>();
-            
         }
 
 
