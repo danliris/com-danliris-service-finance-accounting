@@ -170,8 +170,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
             List<LocalSalesDebtorReportViewModel> data = new List<LocalSalesDebtorReportViewModel>();
             //GarmentCurrency garmentCurrency = await GetCurrency();
-
-            var querytimeSpan = from aa in salesBalance.data
+            var _sales = salesBalance.data.Union(salesBalanceNow.data);
+            var querytimeSpan = from aa in _sales
                                 select new timeSpanInvoice
                                 {
                                     buyerCode = aa.buyer.Code,
