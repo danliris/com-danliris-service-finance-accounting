@@ -140,7 +140,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Local
                 .Setup(s => s.GenerateExcelSummary(It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new MemoryStream());
           
-            var response = GetController(mocks).GetXls(1, 1);
+            var response = GetController(mocks).GetXlsSummary(1, 1);
             Assert.NotNull(response);
 
         }
@@ -153,7 +153,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Reports.Local
             mocks.Service.Setup(f => f.GenerateExcelSummary(It.IsAny<int>(), It.IsAny<int>()))
                .Throws(new Exception());
           
-            var response = GetController(mocks).GetXls(1, 1);
+            var response = GetController(mocks).GetXlsSummary(1, 1);
             Assert.NotNull(response);
 
         }
