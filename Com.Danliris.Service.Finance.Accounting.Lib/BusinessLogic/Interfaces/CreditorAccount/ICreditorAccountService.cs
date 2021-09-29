@@ -1,4 +1,5 @@
 ﻿
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -13,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.C
 {
     public interface ICreditorAccountService
     {
-        (ReadResponse<CreditorAccountViewModel>, decimal) GetReport(int page, int size, string suplierName, int month, int year, int offSet);
+        (ReadResponse<DebtCardDto>, decimal) GetReport(int page, int size, string suplierName, int month, int year, int offSet);
         MemoryStream GenerateExcel(string suplierName, int month, int year, int offSet);
         List<CreditorAccountViewModel> GeneratePdf(string suplierName, int month, int year, int offSet);
         decimal? GetFinalBalance(string suplierName, int month, int year, int offSet);

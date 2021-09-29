@@ -336,8 +336,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                             item.PaymentDueDate,
                             expenditure.BankId,
                             expenditure.BankName,
+                            expenditure.BankCurrencyCode,
                             expenditure.CurrencyId,
                             expenditure.CurrencyCode,
+                            expenditure.CurrencyRate,
                             expenditure.SupplierId,
                             expenditure.SupplierName,
                             expenditure.SupplierImport,
@@ -351,7 +353,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                             expenditure.TransactionType,
                             expenditure.BankAccountNumber,
                             item.IncomeTaxValue,
-                            item.PayToSupplier
+                            item.PayToSupplier,
+                            expenditure.Amount
                         };
 
             query = query.Where(entity => entity.PaymentDate >= startDate && entity.PaymentDate <= endDate);
@@ -369,7 +372,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
             var result = query.OrderBy(entity => entity.PaymentDate).ToList();
 
-            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.PayToSupplier, element.TransactionType, element.BankAccountNumber)).ToList();
+            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.PayToSupplier, element.TransactionType, element.BankAccountNumber, element.CurrencyRate, element.BankCurrencyCode)).ToList();
         }
 
         public MemoryStream GetXls(List<ReportDto> data)

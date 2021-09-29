@@ -12,6 +12,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
         public GarmentFinanceMemorialDetailProfile()
         {
             CreateMap<GarmentFinanceMemorialDetailModel, GarmentFinanceMemorialDetailViewModel>()
+
+                .ForPath(d => d.DebitCoa.Id, opt => opt.MapFrom(s => s.DebitCoaId))
+                .ForPath(d => d.DebitCoa.Code, opt => opt.MapFrom(s => s.DebitCoaCode))
+                .ForPath(d => d.DebitCoa.Name, opt => opt.MapFrom(s => s.DebitCoaName))
+
+                .ForPath(d => d.InvoiceCoa.Id, opt => opt.MapFrom(s => s.InvoiceCoaId))
+                .ForPath(d => d.InvoiceCoa.Code, opt => opt.MapFrom(s => s.InvoiceCoaCode))
+                .ForPath(d => d.InvoiceCoa.Name, opt => opt.MapFrom(s => s.InvoiceCoaName))
+
                 .ReverseMap();
 
             CreateMap<GarmentFinanceMemorialDetailItemModel, GarmentFinanceMemorialDetailItemViewModel>()
@@ -29,6 +38,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.Garment
                 .ForPath(d => d.Currency.Code, opt => opt.MapFrom(s => s.CurrencyCode))
                 .ForPath(d => d.Currency.Rate, opt => opt.MapFrom(s => s.CurrencyRate))
 
+                .ForPath(d => d.Account.Id, opt => opt.MapFrom(s => s.ChartOfAccountId))
+                .ForPath(d => d.Account.Code, opt => opt.MapFrom(s => s.ChartOfAccountCode))
+                .ForPath(d => d.Account.Name, opt => opt.MapFrom(s => s.ChartOfAccountName))
+                .ReverseMap();
+
+            CreateMap<GarmentFinanceMemorialDetailRupiahItemModel, GarmentFinanceMemorialDetailRupiahItemViewModel>()
                 .ForPath(d => d.Account.Id, opt => opt.MapFrom(s => s.ChartOfAccountId))
                 .ForPath(d => d.Account.Code, opt => opt.MapFrom(s => s.ChartOfAccountCode))
                 .ForPath(d => d.Account.Name, opt => opt.MapFrom(s => s.ChartOfAccountName))

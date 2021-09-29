@@ -7,12 +7,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.C
     {
         public string ExternalPurchaseOrderNo { get; set; }
         public string IncomeTaxNo { get; set; }
+        public string InvoiceNo { get; set; }
         public decimal DPPAmount { get; set; }
         public decimal VATAmount { get; set; }
         public decimal IncomeTaxAmount { get; set; }
         public DateTimeOffset? Date { get; set; }
         public string UnitPaymentOrderNo { get; internal set; }
         public string UnitReceiptNoteNo { get; internal set; }
-        public decimal Total { get { return DPPAmount + VATAmount - IncomeTaxAmount; } }
+        public decimal Total { get { return Purchase - Payment; } }
+        public string BankExpenditureNoteNo { get; set; }
     }
 }
