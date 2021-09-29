@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
 
         public ReadResponse<GarmentFinanceMemorialDetailModel> Read(int page, int size, string order, List<string> select, string keyword, string filter = "{}")
         {
-            IQueryable<GarmentFinanceMemorialDetailModel> Query = this.DbSet.Include(m => m.Items).Include(m => m.OtherItems);
+            IQueryable<GarmentFinanceMemorialDetailModel> Query = this.DbSet.Include(m => m.Items).Include(m => m.OtherItems).Include(m => m.RupiahItems);
             List<string> searchAttributes = new List<string>()
             {
                 "MemorialNo"
@@ -66,6 +66,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             {
                 EntityExtension.FlagForCreate(otherItem, IdentityService.Username, UserAgent);
             }
+            foreach (var rupiahItem in model.RupiahItems)
+            {
+                EntityExtension.FlagForCreate(rupiahItem, IdentityService.Username, UserAgent);
+            }
             GarmentFinanceMemorialModel memorial = GarmentFinanceMemorialDbSet.FirstOrDefault(a => a.Id == model.MemorialId);
             memorial.IsUsed = true;
             DbSet.Add(model);
@@ -74,7 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
 
         public async Task<GarmentFinanceMemorialDetailModel> ReadByIdAsync(int id)
         {
-            return await DbSet.Include(m => m.Items).Include(m => m.OtherItems)
+            return await DbSet.Include(m => m.Items).Include(m => m.OtherItems).Include(m => m.RupiahItems)
                 .FirstOrDefaultAsync(d => d.Id.Equals(id) && d.IsDeleted.Equals(false));
         }
 
@@ -83,6 +87,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             var existingModel = DbSet
                         .Include(d => d.Items)
                         .Include(d => d.OtherItems)
+                        .Include(m => m.RupiahItems)
                         .Single(o => o.Id == id && !o.IsDeleted);
 
             GarmentFinanceMemorialDetailModel model = await ReadByIdAsync(id);
@@ -93,6 +98,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             foreach (var otherItem in model.OtherItems)
             {
                 EntityExtension.FlagForDelete(otherItem, IdentityService.Username, UserAgent, true);
+            }
+            foreach (var rupiahItem in model.RupiahItems)
+            {
+                EntityExtension.FlagForDelete(rupiahItem, IdentityService.Username, UserAgent, true);
             }
             EntityExtension.FlagForDelete(model, IdentityService.Username, UserAgent, true);
             var memorial = GarmentFinanceMemorialDbSet.Single(a => a.Id == model.MemorialId);
@@ -106,6 +115,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             var exist = DbSet
                         .Include(d => d.Items)
                         .Include(d => d.OtherItems)
+                        .Include(d => d.RupiahItems)
                         .Single(o => o.Id == id && !o.IsDeleted);
 
             foreach (var item in exist.Items)
@@ -141,6 +151,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 else
                 {
                     otherItem.Amount = otherItemModel.Amount;
+                    otherItem.CurrencyRate = otherItemModel.CurrencyRate;
+                    otherItem.TypeAmount = otherItemModel.TypeAmount;
                     EntityExtension.FlagForUpdate(otherItem, IdentityService.Username, UserAgent);
                 }
             }
@@ -152,6 +164,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                     exist.OtherItems.Add(newOtherItem);
                 }
             }
+
+            foreach (var rupiahItem in exist.RupiahItems)
+            {
+                GarmentFinanceMemorialDetailRupiahItemModel rupiahItemModel = model.RupiahItems.FirstOrDefault(prop => prop.Id.Equals(rupiahItem.Id));
+
+                if (rupiahItemModel == null)
+                {
+                    EntityExtension.FlagForDelete(rupiahItem, IdentityService.Username, UserAgent, true);
+                }
+                else
+                {
+                    rupiahItem.Credit = rupiahItemModel.Credit;
+                    rupiahItem.Debit = rupiahItemModel.Debit;
+                    EntityExtension.FlagForUpdate(rupiahItem, IdentityService.Username, UserAgent);
+                }
+            }
+            foreach (var newRupiahItem in model.RupiahItems)
+            {
+                if (newRupiahItem.Id <= 0)
+                {
+                    EntityExtension.FlagForCreate(newRupiahItem, IdentityService.Username, UserAgent);
+                    exist.RupiahItems.Add(newRupiahItem);
+                }
+            }
+
             EntityExtension.FlagForUpdate(exist, IdentityService.Username, UserAgent);
             return await DbContext.SaveChangesAsync();
         }

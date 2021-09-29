@@ -120,11 +120,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var models = new List<GarmentDispositionExpeditionModel>();
             foreach (var item in form.Items)
             {
-                var model = new GarmentDispositionExpeditionModel(item.DispositionNote.Id, item.DispositionNote.DocumentNo, item.DispositionNote.Date, item.DispositionNote.DueDate, item.DispositionNote.SupplierId, item.DispositionNote.SupplierName, item.DispositionNote.VATAmount, item.DispositionNote.CurrencyVATAmount, item.DispositionNote.IncomeTaxAmount, item.DispositionNote.CurrencyIncomeTaxAmount, item.DispositionNote.TotalPaid, item.DispositionNote.CurrencyTotalPaid, item.DispositionNote.CurrencyId, item.DispositionNote.CurrencyCode, item.Remark, item.DispositionNote.DPPAmount, item.DispositionNote.CurrencyDPPAmount, item.DispositionNote.SupplierCode, item.DispositionNote.CurrencyRate,item.DispositionNote.ProformaNo,item.DispositionNote.Category);
+                var query = _dbContext.GarmentDispositionExpeditions.Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.SendToVerification);
+                var list = query.Where(entity => entity.DispositionNoteNo.Contains(item.DispositionNote.DocumentNo)).ToList();
+
+                var model = new GarmentDispositionExpeditionModel(item.DispositionNote.Id, item.DispositionNote.DocumentNo, item.DispositionNote.Date, item.DispositionNote.DueDate, item.DispositionNote.SupplierId, item.DispositionNote.SupplierName, item.DispositionNote.VATAmount, item.DispositionNote.CurrencyVATAmount, item.DispositionNote.IncomeTaxAmount, item.DispositionNote.CurrencyIncomeTaxAmount, item.DispositionNote.TotalPaid, item.DispositionNote.CurrencyTotalPaid, item.DispositionNote.CurrencyId, item.DispositionNote.CurrencyCode, item.Remark, item.DispositionNote.DPPAmount, item.DispositionNote.CurrencyDPPAmount, item.DispositionNote.SupplierCode, item.DispositionNote.CurrencyRate, item.DispositionNote.ProformaNo, item.DispositionNote.Category);
                 model.SendToVerification(_identityService.Username);
 
                 EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
                 models.Add(model);
+
+                foreach (var expedition in list)
+                {
+                    expedition.SendToPurchasingRejected(_identityService.Username, "");
+
+                    EntityExtension.FlagForUpdate(expedition, _identityService.Username, UserAgent);
+                    models.Add(expedition);
+                }
             }
             _dbContext.GarmentDispositionExpeditions.UpdateRange(models);
 
@@ -134,6 +145,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 Ids = models.Select(element => element.DispositionNoteId).ToList(),
                 Position = GarmentPurchasingExpeditionPosition.SendToVerification
             };
+
+            
 
             await httpClient.PutAsync($"{APIEndpoint.Purchasing}garment-purchasing-expeditions/disposition-notes/position", new StringContent(JsonConvert.SerializeObject(updateDispositionNotePositionData), Encoding.UTF8, General.JsonMediaType));
             return _dbContext.SaveChanges();

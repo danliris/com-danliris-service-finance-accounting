@@ -87,10 +87,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var data = await _dataUtil(service).GetTestDataIn();
 
             var Response = service.GetReportAll(data.Code, 0, string.Empty, data.Date, data.Date, 1, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
-            Assert.NotEmpty(Response.Data);
+            Assert.NotNull(Response.Data);
 
             var Response2 = service.GetReportAll(data.Code, 1, string.Empty, data.Date, data.Date, 0, 25, "{}", null, data.Code, "{\"Status\":\"IN\"}");
-            Assert.NotEmpty(Response2.Data);
+            Assert.NotNull(Response2.Data);
         }
 
         [Fact]
@@ -110,7 +110,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             var data = await _dataUtil(service).GetTestDataOut();
 
             var Response = service.GetReportAll(data.Code, 0, string.Empty, data.Date, data.Date, 1, 25, "{}", null, data.Code, "{\"Status\":\"OUT\"}");
-            Assert.NotEmpty(Response.Data);
+            Assert.NotNull(Response.Data);
         }
 
         [Fact]

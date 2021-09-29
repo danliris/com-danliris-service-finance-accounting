@@ -314,6 +314,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             {
                 BankCashReceiptDetailId = 1,
                 Amount = 2,
+                TypeAmount = "KREDIT"
             };
 
             newModel2.Items.Add(newItem);

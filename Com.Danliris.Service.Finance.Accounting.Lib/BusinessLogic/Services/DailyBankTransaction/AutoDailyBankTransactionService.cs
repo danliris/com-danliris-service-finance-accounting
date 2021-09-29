@@ -30,10 +30,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             _dbContext = serviceProvider.GetService<FinanceDbContext>();
         }
 
-        public async Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos) 
+        public async Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos)
         {
             var result = 0;
-            foreach(var dto in dtos)
+            foreach (var dto in dtos)
             {
                 result += await AutoCreateVbApproval(dto);
             }
@@ -284,13 +284,21 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     Date = realization.Date,
                     Nominal = realizationItems.Sum(item => item.Amount),
                     CurrencyRate = (decimal)realization.CurrencyRate,
-                    ReferenceNo = realization.DocumentNo,
-                    ReferenceType = "Clearence VB",
-                    Remark = $"{realization.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", realizationItems.Sum(item => item.Amount))}",
+                    ReferenceNo = realization.ReferenceNo,
+                    //ReferenceType = "Clearence VB",
+                    Remark = $"Pembayaran atas {accountBank.Currency.Code} untuk:\nPermohonan VB {realization.VBRequestDocumentNo}\nRealisasi VB {realization.DocumentNo}",
+                    //Remark = $"{realization.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", realizationItems.Sum(item => item.Amount))}",k
                     SourceType = "OPERASIONAL",
                     Status = "OUT",
                     IsPosted = true
                 };
+
+                if (realization.IsInklaring)
+                    dailyBankTransactionModel.ReferenceType = "Clearence VB Inklaring";
+                else if (realization.Type == VBType.NonPO)
+                    dailyBankTransactionModel.ReferenceType = "Clearence VB Non PO";
+                else
+                    dailyBankTransactionModel.ReferenceType = "Clearence VB With PO";
 
                 if (accountBank.Currency.Code != "IDR")
                     dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;

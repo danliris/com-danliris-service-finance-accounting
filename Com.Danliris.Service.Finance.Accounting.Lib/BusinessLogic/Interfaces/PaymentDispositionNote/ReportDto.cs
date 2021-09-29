@@ -4,7 +4,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
 {
     public class ReportDto
     {
-        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber)
+        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber, double currencyRate, string bankCurrencyCode)
         {
             ExpenditureId = expenditureId;
             ExpenditureNo = expenditureNo;
@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             DispositionDate = dispositionDate;
             DispositionDueDate = dispositionDueDate;
             BankId = bankId;
-            BankName = bankName + " - " + currencyCode + " - " + bankAccountNumber;
+            BankName = bankName + " - " + bankCurrencyCode + " - " + bankAccountNumber;
             CurrencyId = currencyId;
             CurrencyCode = currencyCode;
             SupplierId = supplierId;
@@ -26,7 +26,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             DivisionId = divisionId;
             DivisionName = divisionName;
             VATAmount = vATAmount;
-            PaidAmount = paidAmount;
+            if (bankCurrencyCode != currencyCode)
+            {
+                PaidAmount = Math.Round(Math.Round(paidAmount, 2) * (currencyRate == 0 ? 1 : currencyRate), 2);
+            }
+            else
+            {
+                PaidAmount = paidAmount;
+            }
             TransactionType = transactionType;
             BankAccountNumber = bankAccountNumber;
         }

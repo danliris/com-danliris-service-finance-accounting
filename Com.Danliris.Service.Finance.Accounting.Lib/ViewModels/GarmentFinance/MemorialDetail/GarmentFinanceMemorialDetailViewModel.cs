@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,9 +14,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public string MemorialNo { get; set; }
         public int MemorialId { get; set; }
         public DateTimeOffset MemorialDate { get; set; }
+        public decimal Amount { get; set; }
+        public ChartOfAccountViewModel DebitCoa { get; set; }
+        public ChartOfAccountViewModel InvoiceCoa { get; set; }
 
         public List<GarmentFinanceMemorialDetailItemViewModel> Items { get; set; }
         public List<GarmentFinanceMemorialDetailOtherItemViewModel> OtherItems { get; set; }
+        public List<GarmentFinanceMemorialDetailRupiahItemViewModel> RupiahItems { get; set; }
 
         public double TotalAmount { get; set; }
 
@@ -26,18 +31,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                 yield return new ValidationResult("No Memorial harus dipilih", new List<string> { "Memorial" });
             }
 
-            if (Items != null && OtherItems != null)
-            {
-                if (Items.Count > 0 && OtherItems.Count > 0)
-                {
-                    if (TotalAmount != (double)Items.Sum(a => a.Amount) + (double)OtherItems.Sum(a => a.Amount))
-                    {
-                        yield return new ValidationResult($"Total harus sama dengan total memorial ({TotalAmount})", new List<string> { "Amount" });
-                    }
-                }
+            var totalCredit = 0M;
+            var totalDebit = 0M;
 
-
-            }
+            totalDebit += this.Amount;
 
             if (this.Items == null || this.Items.Count == 0)
             {
@@ -62,6 +59,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                         itemErrorCount++;
                         ItemError += "Amount: 'Jumlah harus lebih dari 0', ";
                     }
+
+                    totalCredit += (decimal)Item.Amount;
 
                     ItemError += " }, ";
                 }
@@ -96,6 +95,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                         ItemError += "Amount: 'Jumlah harus lebih dari 0', ";
                     }
 
+                    if (Item.TypeAmount == "KREDIT")
+                    {
+                        totalCredit += Item.Amount;
+                    }
+                    else
+                    {
+                        totalDebit += Item.Amount;
+                    }
+
                     ItemError += " }, ";
                 }
 
@@ -103,6 +111,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
 
                 if (itemErrorCount > 0)
                     yield return new ValidationResult(ItemError, new List<string> { "OtherItems" });
+            }
+
+            if (this.RupiahItems == null || this.RupiahItems.Count == 0)
+            {
+                yield return new ValidationResult("Rupiah Item tidak boleh kosong", new List<string> { "RupiahItemsCount" });
+            }
+            else
+            {
+                int itemErrorCount = 0;
+                string ItemError = "[";
+
+                foreach (GarmentFinanceMemorialDetailRupiahItemViewModel Item in RupiahItems)
+                {
+                    ItemError += "{ ";
+
+                    if (Item.Account == null)
+                    {
+                        itemErrorCount++;
+                        ItemError += "Account: 'Account harus diisi', ";
+                    }
+
+                    ItemError += " }, ";
+                }
+
+                ItemError += "]";
+
+                if (itemErrorCount > 0)
+                    yield return new ValidationResult(ItemError, new List<string> { "RupiahItems" });
+            }
+
+            if (totalCredit != totalDebit)
+            {
+                yield return new ValidationResult("Jumlah Kredit dan Debit Tidak Sama !", new List<string> { "Amount" });
             }
         }
     }
