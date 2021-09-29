@@ -64,9 +64,33 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Reports.
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+        
+        [HttpGet("download")]
+        public async Task<IActionResult> GetXls([FromQuery] int month, [FromQuery] int year)
+        {
+            try
+            {
+                VerifyUser();
+                byte[] xlsInBytes;
+                var xls = await Service.GenerateExcel(month, year);
+
+                string filename = String.Format("Report Piutang Lokal {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+
+                xlsInBytes = xls.ToArray();
+                var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+                return file;
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
 
         [HttpGet("summary/download")]
-        public async Task<IActionResult> GetXls([FromQuery] int month, [FromQuery] int year)
+        public async Task<IActionResult> GetXlsSummary([FromQuery] int month, [FromQuery] int year)
         {
             try
             {
