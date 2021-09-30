@@ -21,6 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
             public Buyer buyer { get; set; }
             public double amount { get; set; }
             public DateTimeOffset date { get; set; }
+            public int tempo { get; set; }
         }
     }
 }
