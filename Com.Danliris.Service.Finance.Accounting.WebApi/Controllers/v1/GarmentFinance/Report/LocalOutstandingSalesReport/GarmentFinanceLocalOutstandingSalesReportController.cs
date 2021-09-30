@@ -78,7 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentF
 
                 var xls = await Service.GenerateExcel(month, year, buyer, offSet);
 
-                string filename = String.Format("Report Outstanding Penjualan Export {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
+                string filename = String.Format("Report Outstanding Penjualan Local {0}.xlsx", DateTime.UtcNow.ToString("ddMMyyyy"));
 
                 xlsInBytes = xls.ToArray();
                 var file = File(xlsInBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);

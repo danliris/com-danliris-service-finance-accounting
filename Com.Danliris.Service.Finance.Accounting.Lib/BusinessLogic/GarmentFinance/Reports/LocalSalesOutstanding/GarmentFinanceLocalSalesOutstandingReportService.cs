@@ -214,7 +214,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                     var truckingDate = "";
                     if (item.TruckingDate != null)
                     {
-                        DateTimeOffset PassDate = (DateTimeOffset)item.TruckingDate;
+                        DateTimeOffset PassDate = (DateTimeOffset)item.TruckingDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset);
                         var dateFormat = "yyyy-MM-dd";
                         truckingDate = PassDate.ToString(dateFormat);
                     }
