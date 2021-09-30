@@ -66,7 +66,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
                     yield return new ValidationResult(ItemError, new List<string> { "Items" });
             }
 
-            if (this.OtherItems != null || this.OtherItems.Count != 0)
+            if (this.OtherItems == null || this.OtherItems.Count == 0)
+            {
+
+            } else
             {
                 int itemErrorCount = 0;
                 string ItemError = "[";
