@@ -1,24 +1,24 @@
-﻿using System;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
-using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.Report.BankCashReceiptMonthlyRecap;
 using Microsoft.Extensions.DependencyInjection;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.Report.LocalBankCashReceiptMonthlyRecap;
 using System.Linq;
+using System.IO;
 using System.Data;
 using OfficeOpenXml;
 
-namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.BankCashReceiptMonthlyRecap
+namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.LocalBankCashReceiptMonthlyRecap
 {
-    public class GarmentFinanceBankCashReceiptMonthlyRecapService : IGarmentFinanceBankCashReceiptMonthlyRecapService
+    public class GarmentFinanceLocalBankCashReceiptMonthlyRecapService : IGarmentFinanceLocalBankCashReceiptMonthlyRecapService
     {
         private readonly IServiceProvider _serviceProvider;
         private const string UserAgent = "finance-service";
         private readonly FinanceDbContext _dbContext;
         private readonly IIdentityService _identityService;
 
-        public GarmentFinanceBankCashReceiptMonthlyRecapService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
+        public GarmentFinanceLocalBankCashReceiptMonthlyRecapService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
             _dbContext = dbContext;
 
@@ -26,16 +26,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             _serviceProvider = serviceProvider;
         }
 
-        public List<GarmentFinanceBankCashReceiptMonthlyRecapViewModel> GetReportQuery(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset)
+        public List<GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel> GetReportQuery(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset)
         {
             DateTimeOffset dateFromFilter = (dateFrom == null ? new DateTime(1970, 1, 1) : dateFrom.Value.Date);
             DateTimeOffset dateToFilter = (dateTo == null ? DateTimeOffset.UtcNow.Date : dateTo.Value.Date);
 
-            List<GarmentFinanceBankCashReceiptMonthlyRecapViewModel> data = new List<GarmentFinanceBankCashReceiptMonthlyRecapViewModel>();
-            var headerIds = _dbContext.GarmentFinanceBankCashReceiptDetails
-                        .Where(a => a.BankCashReceiptDate.AddHours(7).Date >= dateFromFilter && a.BankCashReceiptDate.AddHours(7).Date <= dateToFilter).Select(a=>a.Id).ToList();
-            var headerDebit = _dbContext.GarmentFinanceBankCashReceiptDetails.Where(a => headerIds.Contains(a.Id))
-                            .Select(a => new GarmentFinanceBankCashReceiptMonthlyRecapViewModel
+            List<GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel> data = new List<GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel>();
+            var headerIds = _dbContext.GarmentFinanceBankCashReceiptDetailLocals
+                        .Where(a => a.BankCashReceiptDate.AddHours(7).Date >= dateFromFilter && a.BankCashReceiptDate.AddHours(7).Date <= dateToFilter).Select(a => a.Id).ToList();
+            var headerDebit = _dbContext.GarmentFinanceBankCashReceiptDetailLocals.Where(a => headerIds.Contains(a.Id))
+                            .Select(a => new GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel
                             {
                                 AccountName = a.DebitCoaName,
                                 AccountNo = a.DebitCoaCode,
@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                                 Debit = a.Amount
                             });
             var first = headerDebit.ToList()
-                .GroupBy(x => new { x.AccountName, x.AccountNo }, (key, group) => new GarmentFinanceBankCashReceiptMonthlyRecapViewModel
+                .GroupBy(x => new { x.AccountName, x.AccountNo }, (key, group) => new GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel
                 {
                     AccountName = key.AccountName,
                     AccountNo = key.AccountNo,
@@ -52,7 +52,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 }).OrderByDescending(a => a.Debit).ThenBy(s => s.AccountNo);
             foreach (var i in first)
             {
-                GarmentFinanceBankCashReceiptMonthlyRecapViewModel row = new GarmentFinanceBankCashReceiptMonthlyRecapViewModel
+                GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel row = new GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel
                 {
                     AccountName = i.AccountName,
                     AccountNo = i.AccountNo,
@@ -62,16 +62,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 data.Add(row);
             }
 
-            var headerCredit= _dbContext.GarmentFinanceBankCashReceiptDetails.Where(a => headerIds.Contains(a.Id))
-                                .Select(a => new GarmentFinanceBankCashReceiptMonthlyRecapViewModel
+            var headerCredit = _dbContext.GarmentFinanceBankCashReceiptDetailLocals.Where(a => headerIds.Contains(a.Id))
+                                .Select(a => new GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel
                                 {
                                     AccountName = a.InvoiceCoaName,
                                     AccountNo = a.InvoiceCoaCode,
-                                    Credit = (_dbContext.GarmentFinanceBankCashReceiptDetailItems.Where(x=>x.BankCashReceiptDetailId==a.Id).Sum(i=>i.Amount)),
+                                    Credit = (_dbContext.GarmentFinanceBankCashReceiptDetailLocalItems.Where(x => x.BankCashReceiptDetailLocalId == a.Id).Sum(i => i.Amount)),
                                     Debit = 0
                                 });
-            var otherDetails = _dbContext.GarmentFinanceBankCashReceiptDetailOtherItems.Where(a => headerIds.Contains(a.BankCashReceiptDetailId))
-                               .Select(a => new GarmentFinanceBankCashReceiptMonthlyRecapViewModel
+            var otherDetails = _dbContext.GarmentFinanceBankCashReceiptDetailLocalOtherItems.Where(a => headerIds.Contains(a.BankCashReceiptDetailLocalId))
+                               .Select(a => new GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel
                                {
                                    AccountName = a.ChartOfAccountName,
                                    AccountNo = a.ChartOfAccountCode,
@@ -81,16 +81,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             var unionQuery = headerCredit.Union(otherDetails);
             var sumQuery = unionQuery.ToList()
                 .GroupBy(x => new { x.AccountName, x.AccountNo }, (key, group) => new
-            {
-                name = key.AccountName,
-                code = key.AccountNo,
-                credit = group.Sum(a => a.Credit),
-                debit = group.Sum(a => a.Debit)
-            }).OrderBy(s => s.code).ThenByDescending(a => a.debit); 
+                {
+                    name = key.AccountName,
+                    code = key.AccountNo,
+                    credit = group.Sum(a => a.Credit),
+                    debit = group.Sum(a => a.Debit)
+                }).OrderBy(s => s.code).ThenByDescending(a => a.debit);
 
-            foreach(var item in sumQuery)
+            foreach (var item in sumQuery)
             {
-                GarmentFinanceBankCashReceiptMonthlyRecapViewModel recap = new GarmentFinanceBankCashReceiptMonthlyRecapViewModel
+                GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel recap = new GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel
                 {
                     AccountName = item.name,
                     AccountNo = item.code,
@@ -100,7 +100,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 data.Add(recap);
             }
 
-            GarmentFinanceBankCashReceiptMonthlyRecapViewModel total = new GarmentFinanceBankCashReceiptMonthlyRecapViewModel
+            GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel total = new GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel
             {
                 AccountName = "",
                 AccountNo = "TOTAL",
@@ -127,12 +127,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             {
                 foreach (var item in Query)
                 {
-                    result.Rows.Add(item.AccountNo,  item.AccountName, item.Debit, item.Credit);
+                    result.Rows.Add(item.AccountNo, item.AccountName, item.Debit, item.Credit);
                 }
 
             }
             ExcelPackage package = new ExcelPackage();
-            var sheet = package.Workbook.Worksheets.Add("Rekap Memo per Bulan");
+            var sheet = package.Workbook.Worksheets.Add("Rekap Memo per Bulan - Lokal");
             sheet.Cells["A1"].LoadFromDataTable(result, true, OfficeOpenXml.Table.TableStyles.Light16);
 
             sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
@@ -142,12 +142,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             package.SaveAs(streamExcel);
 
             //Dictionary<string, string> FilterDictionary = new Dictionary<string, string>(JsonConvert.DeserializeObject<Dictionary<string, string>>(filter), StringComparer.OrdinalIgnoreCase);
-            string fileName = string.Concat("Rekap Memo per Bulan ", DateTime.Now.Date, ".xlsx");
+            string fileName = string.Concat("Rekap Memo per Bulan - Lokal ", DateTime.Now.Date, ".xlsx");
 
             return Tuple.Create(streamExcel, fileName);
         }
 
-        public List<GarmentFinanceBankCashReceiptMonthlyRecapViewModel> GetMonitoring(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset)
+        public List<GarmentFinanceLocalBankCashReceiptMonthlyRecapViewModel> GetMonitoring(DateTimeOffset? dateFrom, DateTimeOffset? dateTo, int offset)
         {
             var Data = GetReportQuery(dateFrom, dateTo, offset);
             return Data;
