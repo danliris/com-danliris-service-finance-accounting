@@ -68,9 +68,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
 
             if (this.OtherItems == null || this.OtherItems.Count == 0)
             {
-                yield return new ValidationResult("Item Lain Lain tidak boleh kosong", new List<string> { "OtherItemsCount" });
-            }
-            else
+
+            } else
             {
                 int itemErrorCount = 0;
                 string ItemError = "[";
