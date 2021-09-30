@@ -164,12 +164,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
         public async Task<List<LocalSalesDebtorReportViewModel>> GetReportQuery(int month, int year)
         {
-            //GarmentShippingPackingList balance = await GetDataBalance();
             GarmentShippingLocalSalesNote salesBalanceNow = await GetDataLocalSalesNote("now", month, year);
             GarmentShippingLocalSalesNote salesBalance = await GetDataLocalSalesNote("balance", month, year);
 
             List<LocalSalesDebtorReportViewModel> data = new List<LocalSalesDebtorReportViewModel>();
-            //GarmentCurrency garmentCurrency = await GetCurrency();
+            
             var _sales = salesBalance.data.Union(salesBalanceNow.data);
             var querytimeSpan = from aa in _sales
                                 select new timeSpanInvoice
