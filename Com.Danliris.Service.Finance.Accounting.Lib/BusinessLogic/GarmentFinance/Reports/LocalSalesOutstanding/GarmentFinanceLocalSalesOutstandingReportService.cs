@@ -81,31 +81,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                               TruckingDate = a.date,
                               BuyerName = a.buyer.name
                           };
-            var memorial = from a in (from aa in _dbContext.GarmentFinanceMemorialDetails 
+            var memorial = from a in (from aa in _dbContext.GarmentFinanceMemorialDetailLocals
                                       where aa.MemorialDate.AddHours(7).Date.Month <= month && aa.MemorialDate.AddHours(7).Date.Year == year 
                                       select new { aa.Id, aa.MemorialNo, aa.MemorialDate })
-                           join c in _dbContext.GarmentFinanceMemorialDetailItems on a.Id equals c.MemorialDetailId
+                           join c in _dbContext.GarmentFinanceMemorialDetailLocalItems on a.Id equals c.MemorialDetailLocalId
                            where (buyer == null || (buyer != null && buyer != "" && c.BuyerCode == buyer))
                            select new GarmentFinanceLocalSalesOutstandingReportViewModel
                            {
                                Amount = Convert.ToDecimal(-c.Amount),
-                               InvoiceNo = c.InvoiceNo,
-                               InvoiceId = c.InvoiceId,
+                               InvoiceNo = c.LocalSalesNoteNo,
+                               InvoiceId = c.LocalSalesNoteId,
                                TruckingDate = null,
                                BuyerName = c.BuyerName
 
                            };
-            var bankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetails 
+            var bankCashReceipt = from a in (from aa in _dbContext.GarmentFinanceBankCashReceiptDetailLocals
                                              where aa.BankCashReceiptDate.AddHours(7).Date.Month <= month && aa.BankCashReceiptDate.AddHours(7).Date.Year == year 
                                              select new { aa.Id, aa.BankCashReceiptNo, aa.BankCashReceiptDate })
-                                  join b in _dbContext.GarmentFinanceBankCashReceiptDetailItems 
-                                  on a.Id equals b.BankCashReceiptDetailId
+                                  join b in _dbContext.GarmentFinanceBankCashReceiptDetailLocalItems
+                                  on a.Id equals b.BankCashReceiptDetailLocalId
                                   where (buyer == null || (buyer != null && buyer != "" && b.BuyerCode == buyer))
                                   select new GarmentFinanceLocalSalesOutstandingReportViewModel
                                   {
                                       Amount = Convert.ToDecimal(-b.Amount),
-                                      InvoiceNo = b.InvoiceNo,
-                                      InvoiceId = b.InvoiceId,
+                                      InvoiceNo = b.LocalSalesNoteNo,
+                                      InvoiceId = b.LocalSalesNoteId,
                                       TruckingDate = null,
                                       BuyerName = b.BuyerName
 
