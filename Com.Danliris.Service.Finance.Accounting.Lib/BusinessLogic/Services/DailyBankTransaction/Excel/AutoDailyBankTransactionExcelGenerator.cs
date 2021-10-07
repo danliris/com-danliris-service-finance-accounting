@@ -90,7 +90,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 var dataWithIndex = results.Select((item, index) => new { item, Index = index + 1 });
                 foreach (var data in dataWithIndex)
                 {
-                    dataTable.Rows.Add(data.Index, data.item.ReferenceNo, data.item.Date.AddHours(timezoneOffset).ToString("dd/MM/yyyy"), data.item.AccountBankAccountName + " " + data.item.AccountBankName+" "+ data.item.DestinationBankAccountNumber+" "+data.item.AccountBankCurrencyCode, data.item.AccountBankCurrencyCode, data.item.ReferenceType, data.item.SourceType, "IN", data.item.Nominal, data.item.Remark);
+                    dataTable.Rows.Add(data.Index, data.item.ReferenceNo, data.item.Date.AddHours(timezoneOffset).ToString("dd/MM/yyyy"), data.item.AccountBankAccountName + " - " + data.item.AccountBankName + " - " + data.item.AccountBankAccountNumber + " - " + data.item.AccountBankCurrencyCode, data.item.AccountBankCurrencyCode, data.item.ReferenceType, data.item.SourceType, "IN", data.item.Nominal, data.item.Remark);
                 }
                 worksheet.Cells[row, col].LoadFromDataTable(dataTable, false);
                 if (countData != 0)
@@ -188,7 +188,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 var dataWithIndex = results.Select((item, index) => new { item, Index = index + 1 });
                 foreach (var data in dataWithIndex)
                 {
-                    dataTable.Rows.Add(data.Index, data.item.ReferenceNo, data.item.Date.AddHours(timezoneOffset).ToString("dd/MM/yyyy"), data.item.AccountBankAccountName + " " + data.item.AccountBankName + " " + data.item.DestinationBankAccountNumber + " " + data.item.AccountBankCurrencyCode, data.item.AccountBankCurrencyCode, data.item.ReferenceType, data.item.SourceType, "OUT", data.item.Nominal, data.item.Remark);
+                    dataTable.Rows.Add(data.Index, data.item.ReferenceNo, data.item.Date.AddHours(timezoneOffset).ToString("dd/MM/yyyy"), data.item.AccountBankAccountName + " - " + data.item.AccountBankName + " - " + data.item.AccountBankAccountNumber + " - " + data.item.AccountBankCurrencyCode, data.item.AccountBankCurrencyCode, data.item.ReferenceType, data.item.SourceType, "OUT", data.item.Nominal, data.item.Remark);
                 }
                 worksheet.Cells[row, col].LoadFromDataTable(dataTable, false);
                 if (countData != 0)
