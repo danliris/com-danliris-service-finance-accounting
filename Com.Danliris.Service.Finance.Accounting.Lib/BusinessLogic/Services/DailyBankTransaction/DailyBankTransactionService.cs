@@ -413,11 +413,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 //var previous = new DailyBankTransactionModel();
                 foreach (var item in Query)
                 {
+                    item.Nominal = item.CurrencyRate == 1 ? item.Nominal : (item.NominalValas == 0 ? item.Nominal : item.NominalValas * item.CurrencyRate);
                     var debit = item.Status.ToUpper().Equals("IN") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
                     var kredit = item.Status.ToUpper().Equals("OUT") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
                     var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
-                    item.Nominal = item.CurrencyRate == 1 ? item.Nominal : (item.NominalValas == 0 ? item.Nominal * (item.CurrencyRate == 0 ? 1 : item.CurrencyRate) : item.NominalValas);
-
+                    
                     result.Rows.Add((item.Date.AddHours(clientTimeZoneOffset)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
                         item.Remark,
                         item.ReferenceNo,
@@ -863,7 +863,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                    Status = s.Status,
                    SourceType = s.SourceType,
                    IsPosted = s.IsPosted,
-                   Nominal = s.AccountBankCurrencyCode != s.AccountBankAccountName.Substring(s.AccountBankAccountName.Length - 3) ? (s.NominalValas == 0 ? s.Nominal : s.NominalValas * s.CurrencyRate) : s.Nominal
+                   Nominal = s.AccountBankCurrencyCode != ((s.AccountBankAccountName.Contains("PT. DAN LIRIS") || s.AccountBankAccountName.Contains("KAS DITANGAN SOLO")) ? s.AccountBankCurrencyCode : s.AccountBankAccountName.Substring(s.AccountBankAccountName.Length - 3)) ? (s.NominalValas == 0 ? s.Nominal : s.NominalValas * s.CurrencyRate) : s.Nominal
                }).ToList()
             );
 
