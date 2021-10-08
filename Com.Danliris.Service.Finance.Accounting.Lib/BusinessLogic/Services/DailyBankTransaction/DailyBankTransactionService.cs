@@ -815,12 +815,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             var offset = _IdentityService.TimezoneOffset;
             if (startDate.HasValue)
-                Query = Query.Where(s => s.Date >= startDate.Value.AddHours(-offset));
-
+            {
+                DateTimeOffset firstDay = new DateTime(startDate.Value.Year, startDate.Value.Month, startDate.Value.Day);
+                Query = Query.Where(s => s.Date.AddHours(offset).DateTime > firstDay.DateTime);
+            }
+            
             if (endDate.HasValue)
-                Query = Query.Where(s => s.Date <= endDate.Value.AddHours(offset));
-
-
+            {
+                DateTimeOffset lastDay = new DateTime(endDate.Value.Year, endDate.Value.Month, endDate.Value.Day);
+                Query = Query.Where(s => s.Date.AddHours(offset).DateTime < lastDay.AddDays(1).DateTime);
+            }
+            
             List<DailyBankTransactionModel> Data = new List<DailyBankTransactionModel>();
             int TotalData = 0;
 

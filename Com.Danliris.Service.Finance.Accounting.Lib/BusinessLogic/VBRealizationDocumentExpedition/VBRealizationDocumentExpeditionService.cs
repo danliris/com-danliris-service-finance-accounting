@@ -129,7 +129,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             Purpose = realization.VBRequestDocumentPurpose,
                             LastModifiedDate = realization.LastModifiedUtc
                         };
-            query = query.Where(entity => entity.VBRealizationDate >= dateStart && entity.VBRealizationDate <= dateEnd);
+
+            DateTimeOffset firstDay = new DateTime(dateStart.Year, dateStart.Month, dateStart.Day);
+            DateTimeOffset lastDay = new DateTime(dateEnd.Year, dateEnd.Month, dateEnd.Day);
+
+            query = query.Where(entity => entity.VBRealizationDate.AddHours(_identityService.TimezoneOffset).DateTime > firstDay.DateTime && entity.VBRealizationDate.AddHours(_identityService.TimezoneOffset).DateTime < lastDay.AddDays(1).DateTime);
 
             if (vbId > 0)
                 query = query.Where(entity => entity.VBId == vbId);
@@ -164,9 +168,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             var result = query.Skip((page - 1) * size).Take(size).ToList();
             result = result.Select(element =>
             {
-                var unitIncomeTax = unitCosts.Where(unit => unit.VBRealizationDocumentId == element.VBRealizationId).Sum(s => (decimal)s.IncomeTaxRate / 100 * element.VBAmount);
-                var itemIncomeTax = expenditureItems.Where(unit => unit.VBRealizationDocumentId == element.VBRealizationId).Sum(s => (decimal)s.IncomeTaxRate / 100 * element.VBAmount);
-                element.VBRealizationAmount = element.VBRealizationAmount - unitIncomeTax - itemIncomeTax;
+                //var unitIncomeTax = unitCosts.Where(unit => unit.VBRealizationDocumentId == element.VBRealizationId).Sum(s => (decimal)s.IncomeTaxRate / 100 * element.VBAmount);
+                //var itemIncomeTax = expenditureItems.Where(unit => unit.VBRealizationDocumentId == element.VBRealizationId).Sum(s => (decimal)s.IncomeTaxRate / 100 * element.VBAmount);
+                //element.VBRealizationAmount = element.VBRealizationAmount - unitIncomeTax - itemIncomeTax;
                 return element;
             }).ToList();
             var total = await query.CountAsync();
