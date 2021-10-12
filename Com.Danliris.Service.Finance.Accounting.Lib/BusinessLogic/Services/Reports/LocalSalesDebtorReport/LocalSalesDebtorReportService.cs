@@ -196,8 +196,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
                                                     select new LocalSalesDebtorReportViewModel
                                                     {
-                                                        buyerCode = b.BuyerCode,
-                                                        buyerName = b.BuyerName,
+                                                        buyerCode = b.BuyerCode.TrimEnd(),
+                                                        buyerName = b.BuyerName.TrimEnd(),
                                                         beginingBalance = 0,
                                                         receipt = Convert.ToDouble(b.Amount),
                                                         sales = 0,
@@ -214,8 +214,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
                                              select new LocalSalesDebtorReportViewModel
                                              {
-                                                 buyerCode = c.BuyerCode,
-                                                 buyerName = c.BuyerName,
+                                                 buyerCode = c.BuyerCode.TrimEnd(),
+                                                 buyerName = c.BuyerName.TrimEnd(),
                                                  beginingBalance = 0,
                                                  receipt = Convert.ToDouble(c.Amount),
                                                  sales = 0,
@@ -231,8 +231,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
                                     select new LocalSalesDebtorReportViewModel
                                     {
-                                        buyerCode = a.buyer.Code,
-                                        buyerName = a.buyer.Name,
+                                        buyerCode = a.buyer.Code.TrimEnd(),
+                                        buyerName = a.buyer.Name.TrimEnd(),
                                         beginingBalance = 0,
                                         receipt = 0,
                                         sales = a.amount,
@@ -248,8 +248,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
                                      select new LocalSalesDebtorReportViewModel
                                      {
-                                         buyerCode = a.BuyerCode,
-                                         buyerName = a.BuyerName,
+                                         buyerCode = a.BuyerCode.TrimEnd(),
+                                         buyerName = a.BuyerName.TrimEnd(),
                                          beginingBalance = Convert.ToDecimal(a.BalanceAmount),
                                          receipt = 0,
                                          sales = 0,
@@ -265,8 +265,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
                                         select new LocalSalesDebtorReportViewModel
                                         {
-                                            buyerCode = a.buyer.Code,
-                                            buyerName = a.buyer.Name,
+                                            buyerCode = a.buyer.Code.TrimEnd(),
+                                            buyerName = a.buyer.Name.TrimEnd(),
                                             beginingBalance = Convert.ToDecimal(a.amount),
                                             receipt = 0,
                                             sales = 0,
@@ -283,8 +283,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
                                                                     select new LocalSalesDebtorReportViewModel
                                                                     {
-                                                                        buyerCode = b.BuyerCode,
-                                                                        buyerName = b.BuyerName,
+                                                                        buyerCode = b.BuyerCode.TrimEnd(),
+                                                                        buyerName = b.BuyerName.TrimEnd(),
                                                                         beginingBalance = -b.Amount,
                                                                         receipt = 0,
                                                                         sales = 0,
@@ -301,8 +301,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
                                                              select new LocalSalesDebtorReportViewModel
                                                              {
-                                                                 buyerCode = c.BuyerCode,
-                                                                 buyerName = c.BuyerName,
+                                                                 buyerCode = c.BuyerCode.TrimEnd(),
+                                                                 buyerName = c.BuyerName.TrimEnd(),
                                                                  beginingBalance = -c.Amount,
                                                                  receipt = 0,
                                                                  sales = 0,
@@ -319,8 +319,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
                                    select new LocalSalesDebtorReportViewModel
                                    {
-                                       buyerCode = c.BuyerCode,
-                                       buyerName = c.BuyerName,
+                                       buyerCode = c.BuyerCode.TrimEnd(),
+                                       buyerName = c.BuyerName.TrimEnd(),
                                        beginingBalance = 0,
                                        receipt = 0,
                                        sales = 0,
@@ -338,8 +338,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
 
                                               select new LocalSalesDebtorReportViewModel
                                               {
-                                                  buyerCode = b.BuyerCode,
-                                                  buyerName = b.BuyerName,
+                                                  buyerCode = b.BuyerCode.TrimEnd(),
+                                                  buyerName = b.BuyerName.TrimEnd(),
                                                   beginingBalance = 0,
                                                   receipt = 0,
                                                   sales = 0,
