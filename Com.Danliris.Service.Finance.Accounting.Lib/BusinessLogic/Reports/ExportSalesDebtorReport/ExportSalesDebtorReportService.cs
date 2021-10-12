@@ -255,7 +255,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
             var querySumInvoice = querytimeSpan.ToList()
                    .GroupBy(x => new { x.buyerCode, x.type }, (key, group) => new
                    {
-                       buyerCode = key.buyerCode,
+                       buyerCode = key.buyerCode.TrimEnd(),
                        type = key.type,
                        amount = group.Sum(s => s.amount)
                    });
@@ -267,8 +267,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                               
                                select new ExportSalesDebtorReportViewModel
                                {
-                                   buyerCode = c.BuyerCode,
-                                   buyerName = c.BuyerName,
+                                   buyerCode = c.BuyerCode.TrimEnd(),
+                                   buyerName = c.BuyerName.TrimEnd(),
                                    beginingBalance = type == "IDR" ? Convert.ToDecimal(-c.Amount) * Convert.ToDecimal(garmentCurrency.Rate) : Convert.ToDecimal(-c.Amount),
                                    receipt = 0,
                                    sales = 0,
@@ -285,8 +285,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                           
                                           select new ExportSalesDebtorReportViewModel
                                           {
-                                              buyerCode = b.BuyerCode,
-                                              buyerName = b.BuyerName,
+                                              buyerCode = b.BuyerCode.TrimEnd(),
+                                              buyerName = b.BuyerName.TrimEnd(),
                                               beginingBalance = type == "IDR" ? Convert.ToDecimal(-b.CurrencyRate * b.Amount) : Convert.ToDecimal(-b.Amount),
                                               receipt = 0,
                                               sales = 0,
@@ -303,8 +303,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                   
                                   select new ExportSalesDebtorReportViewModel
                                   {
-                                      buyerCode = a.buyerAgentCode,
-                                      buyerName = a.buyerAgentName,
+                                      buyerCode = a.buyerAgentCode.TrimEnd(),
+                                      buyerName = a.buyerAgentName.TrimEnd(),
                                       beginingBalance = type == "IDR" ? Convert.ToDecimal(a.amount * a.rate) : Convert.ToDecimal(a.amount),
                                       receipt = 0,
                                       sales = 0,
@@ -320,8 +320,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                   
                                   select new ExportSalesDebtorReportViewModel
                                   {
-                                      buyerCode = a.buyerAgentCode,
-                                      buyerName = a.buyerAgentName,
+                                      buyerCode = a.buyerAgentCode.TrimEnd(),
+                                      buyerName = a.buyerAgentName.TrimEnd(),
                                       beginingBalance = type == "IDR" ? Convert.ToDecimal(a.balanceAmountIDR) : Convert.ToDecimal(a.balanceAmount),
                                       receipt = 0,
                                       sales = 0,
@@ -336,8 +336,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                            
                            select new ExportSalesDebtorReportViewModel
                            {
-                               buyerCode = a.buyerAgentCode,
-                               buyerName = a.buyerAgentName,
+                               buyerCode = a.buyerAgentCode.TrimEnd(),
+                               buyerName = a.buyerAgentName.TrimEnd(),
                                beginingBalance = 0,
                                receipt = 0,
                                sales = type == "IDR" ? Convert.ToDouble(a.amount * a.rate) : Convert.ToDouble(a.amount),
@@ -352,8 +352,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                           
                           select new ExportSalesDebtorReportViewModel
                           {
-                              buyerCode = c.BuyerCode,
-                              buyerName = c.BuyerName,
+                              buyerCode = c.BuyerCode.TrimEnd(),
+                              buyerName = c.BuyerName.TrimEnd(),
                               beginingBalance = 0,
                               receipt = type == "IDR" ? Convert.ToDouble(c.Amount * c.CurrencyRate) : Convert.ToDouble(c.Amount),
                               sales = 0,
@@ -370,8 +370,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                      
                                      select new ExportSalesDebtorReportViewModel
                                      {
-                                         buyerCode = b.BuyerCode,
-                                         buyerName = b.BuyerName,
+                                         buyerCode = b.BuyerCode.TrimEnd(),
+                                         buyerName = b.BuyerName.TrimEnd(),
                                          beginingBalance = 0,
                                          receipt = type == "IDR" ? Convert.ToDouble(b.Amount * b.CurrencyRate) : Convert.ToDouble(b.Amount),
                                          sales = 0,
@@ -387,8 +387,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                               
                               select new ExportSalesDebtorReportViewModel
                               {
-                                  buyerCode = c.BuyerCode,
-                                  buyerName = c.BuyerName,
+                                  buyerCode = c.BuyerCode.TrimEnd(),
+                                  buyerName = c.BuyerName.TrimEnd(),
                                   beginingBalance = 0,
                                   receipt = 0,
                                   sales = 0,
@@ -405,8 +405,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                                          
                                          select new ExportSalesDebtorReportViewModel
                                          {
-                                             buyerCode = b.BuyerCode,
-                                             buyerName = b.BuyerName,
+                                             buyerCode = b.BuyerCode.TrimEnd(),
+                                             buyerName = b.BuyerName.TrimEnd(),
                                              beginingBalance = 0,
                                              receipt = 0,
                                              sales = 0,
