@@ -439,7 +439,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Reports.Expo
                        moreThanNinety = group.Sum(s => s.moreThanNinety)
                    }).OrderByDescending(s => s.buyerName);
             int index = 1;
-            foreach (var item in querySum)
+            foreach (var item in querySum.OrderBy(a => a.buyerName))
             {
                 ExportSalesDebtorReportViewModel model = new ExportSalesDebtorReportViewModel
                 {
