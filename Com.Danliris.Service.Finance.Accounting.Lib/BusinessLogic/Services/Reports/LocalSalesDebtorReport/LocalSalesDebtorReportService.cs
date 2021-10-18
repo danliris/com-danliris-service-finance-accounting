@@ -378,7 +378,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
                        moreThanNinety = group.Sum(s => s.moreThanNinety)
                    }).OrderByDescending(s => s.buyerName);
             int index = 1;
-            foreach (var item in querySum)
+            foreach (var item in querySum.OrderBy(a => a.buyerName))
             {
                 LocalSalesDebtorReportViewModel model = new LocalSalesDebtorReportViewModel
                 {
@@ -400,7 +400,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
                 index++;
             }
 
-            data.OrderBy(a => a.buyerName);
             var queryTOTAL = data.ToList()
                    .GroupBy(x => new { x.total }, (key, group) => new
                    {
