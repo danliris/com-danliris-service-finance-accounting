@@ -399,6 +399,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Rep
                 data.Add(model);
                 index++;
             }
+
+            data.OrderBy(a => a.buyerName);
             var queryTOTAL = data.ToList()
                    .GroupBy(x => new { x.total }, (key, group) => new
                    {

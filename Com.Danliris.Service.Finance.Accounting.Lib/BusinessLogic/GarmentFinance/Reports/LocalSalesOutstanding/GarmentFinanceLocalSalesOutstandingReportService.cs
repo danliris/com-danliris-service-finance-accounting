@@ -140,6 +140,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                 total += model.Amount;
                 index++;
             }
+            data.OrderBy(a => a.BuyerName);
             index = 0;
             var lastRow = new GarmentFinanceLocalSalesOutstandingReportViewModel
             {
