@@ -27,6 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
         public decimal Total { get; set; }
 
         public decimal Mutation { get; set; }
+        public decimal MutationPayment { get; set; }
 
         public decimal FinalBalance { get; set; }
         public decimal DPPCurrency { get; set; }
@@ -34,5 +35,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
 
         public string Currency { get; set; }
         public string PaymentDuration { get; set; }
+        public double BankExpenditureAmount { get; internal set; }
     }
 }

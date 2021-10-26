@@ -41,28 +41,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                 CurrencyId = 1,
                 CurrencyRate = 1,
                 CurrencyCode = "IDR",
+                BankCashReceiptTypeCoaCode="11",
+                BankCashReceiptTypeCoaName="name",
+                BankCashReceiptTypeCoaId=1,
+                BankCashReceiptTypeId=1,
+                BankCashReceiptTypeName="PENJUALAN LOKAL",
+                BuyerCode="code",
+                BuyerId=1,
+                BuyerName="name",
+                
                 Items = new List<BankCashReceiptItemModel>
                 {
                     new BankCashReceiptItemModel()
                     {
                         BankCashReceiptId = 1,
-                        AccAmountCoaCode = "code",
-                        AccAmountCoaId = 1,
-                        AccAmountCoaName = "name",
+                        //AccAmountCoaCode = "code",
+                        //AccAmountCoaId = 1,
+                        //AccAmountCoaName = "name",
                         AccNumberCoaCode = "code",
                         AccNumberCoaId = 1,
                         AccNumberCoaName = "name",
                         AccSubCoaCode = "code",
                         AccSubCoaId = 1,
                         AccSubCoaName = "name",
-                        AccUnitCoaCode = "code",
-                        AccUnitCoaId = 1,
-                        AccUnitCoaName = "name",
-                        C1A = 1,
-                        C1B = 1,
-                        C2A = 1,
-                        C2B = 1,
-                        C2C = 1,
+                        //AccUnitCoaCode = "code",
+                        //AccUnitCoaId = 1,
+                        //AccUnitCoaName = "name",
+                        //C1A = 1,
+                        //C1B = 1,
+                        //C2A = 1,
+                        //C2B = 1,
+                        //C2C = 1,
                         NoteNumber = "1",
                         Remarks = "remarks",
                         Amount = 1,
@@ -72,23 +81,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
                     new BankCashReceiptItemModel()
                     {
                         BankCashReceiptId = 2,
-                        AccAmountCoaCode = "code",
-                        AccAmountCoaId = 1,
-                        AccAmountCoaName = "name",
+                        //AccAmountCoaCode = "code",
+                        //AccAmountCoaId = 1,
+                        //AccAmountCoaName = "name",
                         AccNumberCoaCode = "code",
                         AccNumberCoaId = 1,
                         AccNumberCoaName = "name",
                         AccSubCoaCode = "code",
                         AccSubCoaId = 1,
                         AccSubCoaName = "name",
-                        AccUnitCoaCode = "code",
-                        AccUnitCoaId = 1,
-                        AccUnitCoaName = "name",
-                        C1A = 1,
-                        C1B = 1,
-                        C2A = 1,
-                        C2B = 1,
-                        C2C = 1,
+                        //AccUnitCoaCode = "code",
+                        //AccUnitCoaId = 1,
+                        //AccUnitCoaName = "name",
+                        //C1A = 1,
+                        //C1B = 1,
+                        //C2A = 1,
+                        //C2B = 1,
+                        //C2C = 1,
                         NoteNumber = "1",
                         Remarks = "remarks",
                         Amount = 1,
@@ -99,9 +108,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.
             };
         }
 
+        public async Task<BankCashReceiptModel> GetTestData_LOKAL()
+        {
+            BankCashReceiptModel model = GetNewData();
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
+
+        public async Task<BankCashReceiptModel> GetTestData_EKSPOR()
+        {
+            BankCashReceiptModel model = GetNewData();
+            await Service.CreateAsync(model);
+            return await Service.ReadByIdAsync(model.Id);
+        }
+
         public async Task<BankCashReceiptModel> GetTestData()
         {
             BankCashReceiptModel model = GetNewData();
+            model.BankCashReceiptTypeName = "LAIN-LAIN";
+            
             await Service.CreateAsync(model);
             return await Service.ReadByIdAsync(model.Id);
         }

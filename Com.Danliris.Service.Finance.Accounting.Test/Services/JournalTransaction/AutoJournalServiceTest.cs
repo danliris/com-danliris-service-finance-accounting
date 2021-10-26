@@ -29,6 +29,7 @@ using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDocume
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransaction
 {
@@ -182,7 +183,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             {
                 1
             };
-            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel);
+            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel, null);
             Assert.NotEqual(0, result);
 
 
@@ -221,6 +222,35 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var expeditionService = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
             var model = _dataUtil(expeditionService, dbContext).GetTestData_VBRealizationDocumentExpedition();
 
+            var realization = new Lib.ViewModels.VBRealizationDocumentNonPO.VBRealizationDocumentNonPOViewModel()
+            {
+                IsInklaring = true,
+                Currency = new Lib.ViewModels.VBRealizationDocumentNonPO.CurrencyViewModel()
+                {
+                    Code = "IDR"
+                }
+            };
+
+            var expenditureitem = new Lib.ViewModels.VBRealizationDocumentNonPO.VBRealizationDocumentNonPOExpenditureItemViewModel()
+            {
+                PPhAmount = 1,
+                PPnAmount = 1,
+            };
+
+            var unitcostitem = new Lib.ViewModels.VBRealizationDocumentNonPO.VBRealizationDocumentNonPOUnitCostViewModel()
+            {
+                IsSelected = true
+            };
+
+            var vbRealizations = new VBRealizationDocumentModel(realization);
+            var vbRealizationItems = new VBRealizationDocumentExpenditureItemModel(2, expenditureitem);
+            var vbRealizationsUnitItems = new VBRealizationDocumentUnitCostsItemModel(2, unitcostitem);
+
+            dbContext.VBRealizationDocuments.Add(vbRealizations);
+            dbContext.VBRealizationDocumentExpenditureItems.Add(vbRealizationItems);
+            dbContext.VBRealizationDocumentUnitCostsItems.Add(vbRealizationsUnitItems);
+            dbContext.SaveChanges();
+
             var service = new AutoJournalService(dbContext, serviceProviderMock.Object);
 
             AccountBankViewModel viewModel = new AccountBankViewModel()
@@ -243,11 +273,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             List<int> vbRealizationIds = new List<int>()
             {
-                1
+                1,
+                2
             };
 
             //Act
-            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel);
+            var result = await service.AutoJournalVBNonPOClearence(vbRealizationIds, viewModel, null);
             
             //Assert
             Assert.NotEqual(0, result);
@@ -347,11 +378,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var vBRealizationWithPOService = new VBRealizationWithPOService(dbContext, serviceProviderMock.Object);
             var vBRealizationDocumenData = GetDataUtil(vBRealizationWithPOService).GetTestData_DenganNomorVB();
 
+            var realization = new Lib.ViewModels.VBRealizationDocumentNonPO.VBRealizationDocumentNonPOViewModel()
+            {
+                IsInklaring = true,
+                Currency = new Lib.ViewModels.VBRealizationDocumentNonPO.CurrencyViewModel()
+                {
+                    Code = "USD"
+                }
+            };
+
+            var vbRealizations = new VBRealizationDocumentModel(realization);
+
+            dbContext.VBRealizationDocuments.Add(vbRealizations);
+            dbContext.SaveChanges();
+
             var service = new AutoJournalService(dbContext, serviceProviderMock.Object);
 
             List<int> vbRealizationIds = new List<int>()
             {
-                1
+                1,
+                2
             };
 
             //Act
@@ -557,7 +603,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             throw new NotImplementedException();
         }
 
+        public List<string> GetAllReferenceNo(string keyword, bool isVB)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<string> GetAllReferenceType(string keyword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetAllReferenceType(string keyword, bool isVB)
         {
             throw new NotImplementedException();
         }
@@ -612,7 +668,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             throw new NotImplementedException();
         }
 
-        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year, string referenceNo, string referenceType)
+        public List<JournalTransactionModel> ReadUnPostedTransactionsByPeriod(int month, int year, string referenceNo, string referenceType, bool isVB)
         {
             throw new NotImplementedException();
         }

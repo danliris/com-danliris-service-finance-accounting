@@ -22,7 +22,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
         public string IncomeType { get; set; }
         public string Remarks { get; set; }
         public decimal Amount { get; set; }
+        public bool IsUsed { get; set; }
 
+        public BankCashReceiptTypeViewModel BankCashReceiptType { get; set; }
+
+        public NewBuyerViewModel Buyer { get; set; }
 
         public virtual List<BankCashReceiptItemViewModel> Items { get; set; }
 
@@ -45,6 +49,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
             {
                 yield return new ValidationResult("Kurs harus dipilih", new List<string> { "Currency" });
             }
+            if(BankCashReceiptType==null || BankCashReceiptType.Id == 0)
+            {
+                yield return new ValidationResult("Tipe Pemasukan harus dipilih", new List<string> { "BankCashReceiptType" });
+            }
+            else if(BankCashReceiptType.Name=="PENJUALAN EKSPOR" || BankCashReceiptType.Name == "PENJUALAN LOKAL")
+            {
+                if(Buyer==null || Buyer.Id == 0)
+                {
+                    yield return new ValidationResult("Buyer harus dipilih", new List<string> { "Buyer" });
+                }
+            }
             if (this.Items == null || this.Items.Count == 0)
             {
                 yield return new ValidationResult("Item tidak boleh kosong", new List<string> { "ItemsCount" });
@@ -52,32 +67,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.
             else
             {
                 int itemErrorCount = 0;
-                decimal totalAmount = 0;
                 string ItemError = "[";
 
                 foreach (BankCashReceiptItemViewModel Item in Items)
                 {
                     ItemError += "{ ";
-                    if(Item.AccUnit == null && Item.AccNumber == null && Item.AccAmount == null && Item.AccSub == null)
+                    if(Item.AccNumber == null && Item.AccSub == null)
                     {
                         itemErrorCount++;
                         ItemError += "NoAcc: 'Salah Satu harus diisi', ";
                         ItemError += "SubAcc: 'Salah Satu harus diisi', ";
-                        ItemError += "AccUnit: 'Salah Satu harus diisi', ";
-                        ItemError += "AccBiaya: 'Salah Satu harus diisi', ";
                     }
-                    totalAmount = Item.C2A + Item.C2B + Item.C2C + Item.C1A + Item.C1B;
-                    if (totalAmount != Item.Summary)
-                    {
-                        itemErrorCount++;
-                        ItemError += "Summary: 'Total Jumlah Tidak Sama', ";
-                    }
-
-                    /*if (string.IsNullOrWhiteSpace(Item.InvoiceNo) || Item.InvoiceId == 0)
-                    {
-                        itemErrorCount++;
-                        ItemError += "InvoiceNo: 'Invoice harus diisi', ";
-                    }*/
+                    
 
                     ItemError += " }, ";
                 }
