@@ -134,7 +134,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 IsPosted = true
             };
 
-            if (model.BankCurrencyCode != "IDR")
+            if (model.BankCurrencyCode == "IDR" && model.CurrencyCode != "IDR")
             {
                 dailyBankTransactionModel.Nominal = model.Items.Sum(item => (decimal)item.PayToSupplier) * (decimal)model.CurrencyRate;
                 dailyBankTransactionModel.NominalValas = nominal;
