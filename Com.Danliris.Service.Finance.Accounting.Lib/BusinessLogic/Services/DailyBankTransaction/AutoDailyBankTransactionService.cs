@@ -134,9 +134,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 IsPosted = true
             };
 
-            if (model.BankCurrencyCode != "IDR")
+            if (model.BankCurrencyCode == "IDR" && model.CurrencyCode != "IDR")
             {
-                dailyBankTransactionModel.Nominal = model.Items.Sum(item => (decimal)item.PayToSupplier);
+                dailyBankTransactionModel.Nominal = model.Items.Sum(item => (decimal)item.PayToSupplier) * (decimal)model.CurrencyRate;
                 dailyBankTransactionModel.NominalValas = nominal;
             }
 
@@ -260,6 +260,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 SourceType = "OPERASIONAL",
                 Status = "IN"
             };
+
+            if (model.BankCurrencyCode == "IDR" && model.CurrencyCode != "IDR")
+            {
+                dailyBankTransactionModel.Nominal = (decimal)model.Amount * (decimal)model.CurrencyRate;
+                dailyBankTransactionModel.NominalValas = (decimal)model.Amount;
+            }
+
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
 

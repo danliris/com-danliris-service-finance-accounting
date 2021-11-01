@@ -343,10 +343,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         bankExpenditureNoteNo = item.BankExpenditureNoteNo;
                         paymentAmount = item.BankExpenditureNoteMutation;
                     }
+
+                    var mutation = dppAmount + vatAmount;
+                    var purchaseAmount = mutation;
+                    tempResult.Add(new DebtCardDto(date.GetValueOrDefault(), unitReceiptNoteNo, bankExpenditureNoteNo, unitPaymentOrderNo, invoiceNo, unitPaymentCorrectionNoteNo, paymentDuration, dppAmount, dppAmountCurency, vatAmount, mutation, purchaseAmount, paymentAmount, products));
                 }
                 else
                 {
-                    if (!string.IsNullOrWhiteSpace(item.UnitPaymentCorrectionNo))
+                    if (!string.IsNullOrWhiteSpace(item.UnitPaymentCorrectionNo) && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year)
                     {
                         date = item.UnitPaymentCorrectionDate;
                         unitPaymentCorrectionNoteNo = item.UnitPaymentCorrectionNo;
@@ -365,12 +369,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                             if (item.CurrencyCode != "IDR")
                                 dppAmountCurency -= (incomeTaxCorrection / item.CurrencyRate);
                         }
+
+                        var mutation = dppAmount + vatAmount;
+                        var purchaseAmount = mutation;
+                        tempResult.Add(new DebtCardDto(date.GetValueOrDefault(), unitReceiptNoteNo, bankExpenditureNoteNo, unitPaymentOrderNo, invoiceNo, unitPaymentCorrectionNoteNo, paymentDuration, dppAmount, dppAmountCurency, vatAmount, mutation, purchaseAmount, paymentAmount, products));
                     }
                 }
-
-                var mutation = dppAmount + vatAmount;
-                var purchaseAmount = mutation;
-                tempResult.Add(new DebtCardDto(date.GetValueOrDefault(), unitReceiptNoteNo, bankExpenditureNoteNo, unitPaymentOrderNo, invoiceNo, unitPaymentCorrectionNoteNo, paymentDuration, dppAmount, dppAmountCurency, vatAmount, mutation, purchaseAmount, paymentAmount, products));
             }
 
             tempResult = tempResult.OrderBy(element => element.Date).ThenBy(element => element.UnitReceiptNoteNo).ThenBy(element => element.UnitPaymentOrderNo).ThenBy(element => element.UnitPaymentCorrectionNoteNo).ThenBy(element => element.BankExpenditureNoteNo).ToList();
