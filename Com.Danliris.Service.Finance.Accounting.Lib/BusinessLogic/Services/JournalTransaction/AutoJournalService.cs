@@ -706,7 +706,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 {
                     Id = item.COAId,
                 },
-                Debit = item.Debit
+                Debit = item.Debit * (decimal)model.CurrencyRate
             }).ToList();
 
             var accountBankCOA = await GetAccountBankCOA(model.AccountBankId);
