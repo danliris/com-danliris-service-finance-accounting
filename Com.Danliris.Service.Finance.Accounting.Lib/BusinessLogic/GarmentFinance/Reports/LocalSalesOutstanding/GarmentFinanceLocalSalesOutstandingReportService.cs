@@ -72,7 +72,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
             List<GarmentFinanceLocalSalesOutstandingReportViewModel> data = new List<GarmentFinanceLocalSalesOutstandingReportViewModel>();
 
             var invoice = from a in invoicePackingListNow.data
-                          where (buyer == null || buyer == "undefined" || (buyer != null && buyer != "undefined" && buyer != ""))
+                          where (buyer == null || buyer == "undefined" || (buyer != null && buyer != "undefined" && buyer != "" && a.buyer.code == buyer))
                           select new GarmentFinanceLocalSalesOutstandingReportViewModel
                           {
                               Amount = Convert.ToDecimal(a.items.Sum(s => a.useVat ? (s.price * s.quantity) +  (0.1 * (s.price * s.quantity)): s.price * s.quantity)),
