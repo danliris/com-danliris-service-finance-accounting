@@ -67,8 +67,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
             if (model.BankCurrencyCode != "IDR")
             {
-                var garmentCurrency = await GetGarmentCurrency(model.BankCurrencyCode);
-                model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
+                var BICurrency = await GetBICurrency(model.BankCurrencyCode);
+                model.CurrencyRate = BICurrency.Rate.GetValueOrDefault();
             }
 
             CreateModel(model);
@@ -123,6 +123,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
             var http = ServiceProvider.GetService<IHttpClientService>();
             var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+            return result.data;
+        }
+
+        private async Task<GarmentCurrency> GetBICurrency(string codeCurrency)
+        {
+            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={date}";
+
+            var http = ServiceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/bi-currencies/single-by-code-date?{queryString}");
 
             var responseString = await response.Content.ReadAsStringAsync();
             var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
