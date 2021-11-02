@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
@@ -92,12 +93,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             var vbRealizations = dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id)).ToList();
             var vbRequestIds = vbRealizations.Select(element => element.VBRequestDocumentId).ToList();
-            var vbRequests = dbContext.VBRequestDocuments.Where(entity => vbRequestIds.Contains(entity.Id)).ToList();
-            var vbRealizationItems = dbContext.VBRealizationDocumentExpenditureItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId)).ToList();
-            var vbRealizationUnitCosts = dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId) && entity.IsSelected).ToList();
+            var _vbRequestDocuments = dbContext.VBRequestDocuments.Where(entity => vbRequestIds.Contains(entity.Id)).ToList();
+            var _vbRealizationItems = dbContext.VBRealizationDocumentExpenditureItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId)).ToList();
+            var _vbRealizationUnitCosts = dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => vbRealizationIds.Contains(entity.VBRealizationDocumentId) && entity.IsSelected).ToList();
 
             var units = await _masterCOAService.GetCOAUnits();
             var divisions = await _masterCOAService.GetCOADivisions();
+            //var bans = await _masterCOAService.Get
 
             foreach (var vbRealization in vbRealizations)
             {
@@ -113,25 +115,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 if (division != null)
                     coaDivision = division.COACode;
 
-
-                //var vbRequest = vbRequests.FirstOrDefault(element => element.Id == vbRealization.VBRequestDocumentId);
-                var selectedVbRealizationItems = vbRealizationItems.Where(entity => entity.VBRealizationDocumentId == vbRealization.Id).ToList();
-                var selectedVbRealizationUnitCosts = vbRealizationUnitCosts.Where(entity => entity.VBRealizationDocumentId == vbRealization.Id).ToList();
                 if (vbRealization.IsInklaring)
                 {
-                    var vbRequest = vbRequests.FirstOrDefault(element => element.Id == vbRealization.VBRequestDocumentId);
                     if (vbRealization.CurrencyCode == "IDR")
                     {
-                        var modelInklaring = new JournalTransactionModel()
+                        var journalTransaction = new JournalTransactionModel()
                         {
                             Date = vbRealization.Date,
-                            Description = "Clearance VB Inklaring",
-                            ReferenceNo = referenceNo,
+                            Description = $"Pajak Clearance {vbRealization.DocumentNo}",
+                            ReferenceNo = vbRealization.ReferenceNo,
                             Status = "DRAFT",
                             Items = new List<JournalTransactionItemModel>()
                         };
 
-                        foreach (var vbRealizationUnitCost in selectedVbRealizationUnitCosts)
+                        var vbRealizationUnitCosts = _vbRealizationUnitCosts.Where(element => element.VBRealizationDocumentId == vbRealization.Id && element.IsSelected).ToList();
+
+                        foreach (var vbRealizationUnitCost in vbRealizationUnitCosts)
                         {
                             var costCOADivision = "0";
                             var costDivision = divisions.FirstOrDefault(element => element.Id == vbRealizationUnitCost.DivisionId);
@@ -143,112 +142,154 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                             if (costUnit != null && !string.IsNullOrWhiteSpace(costUnit.COACode))
                                 costCOAUnit = costUnit.COACode;
 
-                            modelInklaring.Items.Add(new JournalTransactionItemModel()
+                            journalTransaction.Items.Add(new JournalTransactionItemModel()
                             {
                                 COA = new COAModel()
                                 {
                                     Code = $"1804.00.{costCOADivision}.{costCOAUnit}"
                                 },
-                                Debit = vbRealizationUnitCost.Amount
+                                Debit = vbRealizationUnitCost.Amount * (decimal)vbRealization.CurrencyRate
                             });
 
-                            modelInklaring.Items.Add(new JournalTransactionItemModel()
+                            journalTransaction.Items.Add(new JournalTransactionItemModel()
                             {
                                 COA = new COAModel()
                                 {
                                     Code = $"1503.00.{costCOADivision}.{costCOAUnit}"
                                 },
-                                Credit = vbRealizationUnitCost.Amount
+                                Credit = vbRealizationUnitCost.Amount * (decimal)vbRealization.CurrencyRate
                             });
                         }
 
-                        var sumPPn = selectedVbRealizationItems.Sum(element => element.PPnAmount);
-                        var sumPPh = selectedVbRealizationItems.Sum(element => element.PPhAmount);
-
+                        var sumPPn = _vbRealizationItems.Where(element => element.VBRealizationDocumentId == vbRealization.Id).Sum(element => element.PPnAmount);
+                        var sumPPh = _vbRealizationItems.Where(element => element.VBRealizationDocumentId == vbRealization.Id).Sum(element => element.PPhAmount);
 
                         if (sumPPn > 0)
-                            modelInklaring.Items.Add(new JournalTransactionItemModel()
+                            journalTransaction.Items.Add(new JournalTransactionItemModel()
                             {
                                 COA = new COAModel()
                                 {
                                     Code = $"1509.00.{coaDivision}.{coaUnit}"
                                 },
-                                Debit = sumPPn
+                                Debit = sumPPn * (decimal)vbRealization.CurrencyRate
                             });
 
                         if (sumPPh > 0)
-                            modelInklaring.Items.Add(new JournalTransactionItemModel()
+                            journalTransaction.Items.Add(new JournalTransactionItemModel()
                             {
                                 COA = new COAModel()
                                 {
                                     Code = $"3330.00.{coaDivision}.{coaUnit}"
                                 },
-                                Credit = sumPPh
+                                Credit = sumPPh * (decimal)vbRealization.CurrencyRate
                             });
 
-                        await _journalTransactionService.CreateAsync(modelInklaring);
+                        await _journalTransactionService.CreateAsync(journalTransaction);
 
-                        if (vbRequest != null)
+                        var vbRequestDocument = _vbRequestDocuments.FirstOrDefault(element => element.Id == vbRealization.VBRequestDocumentId);
+
+                        if (vbRequestDocument != null)
                         {
-                            var difference = vbRequest.Amount - vbRealization.Amount;
+                            var difference = vbRequestDocument.Amount - vbRealization.Amount;
                             if (difference > 0)
                             {
-                                var modelDifference = new JournalTransactionModel()
+                                if (!string.IsNullOrWhiteSpace(vbRealization.ReferenceNo) && vbRealization.ReferenceNo.Length == 15)
                                 {
-                                    Date = vbRequest.Date,
-                                    Description = "Clearence VB Inklaring",
-                                    ReferenceNo = referenceNo,
-                                    Status = "POSTED",
-                                    Items = new List<JournalTransactionItemModel>()
-                                };
+                                    //var bankCode = vbRealization.ReferenceNo.Substring(4, 6);
 
-                                modelDifference.Items.Add(new JournalTransactionItemModel()
-                                {
-                                    COA = new COAModel()
+                                    //bankCod = GetAccountBankCOA(bank.);
+                                    if (bank != null)
                                     {
-                                        Code = bank.AccountCOA
-                                    },
-                                    Debit = difference
-                                });
+                                        var diffReferenceNo = await GetDocumentNo("M", bank.BankCode, vbRealization.CreatedBy, vbRealization.Date.DateTime);
+                                        var modelDifference = new JournalTransactionModel()
+                                        {
+                                            Date = vbRealization.Date,
+                                            Description = "Sisa Clearence VB Inklaring",
+                                            ReferenceNo = diffReferenceNo,
+                                            Status = "POSTED",
+                                            Items = new List<JournalTransactionItemModel>()
+                                        };
 
-                                modelDifference.Items.Add(new JournalTransactionItemModel()
-                                {
-                                    COA = new COAModel()
-                                    {
-                                        Code = $"1503.00.{coaDivision}.{coaUnit}"
-                                    },
-                                    Credit = difference
-                                });
+                                        modelDifference.Items.Add(new JournalTransactionItemModel()
+                                        {
+                                            COA = new COAModel()
+                                            {
+                                                Code = bank.AccountCOA
+                                            },
+                                            Debit = difference * (decimal)vbRealization.CurrencyRate
+                                        });
 
-                                await _journalTransactionService.CreateAsync(modelDifference);
+                                        modelDifference.Items.Add(new JournalTransactionItemModel()
+                                        {
+                                            COA = new COAModel()
+                                            {
+                                                Code = $"1503.00.{coaDivision}.{coaUnit}"
+                                            },
+                                            Credit = difference * (decimal)vbRealization.CurrencyRate
+                                        });
+
+                                        await _journalTransactionService.CreateAsync(modelDifference);
+
+                                        var dailyBankTransaction = new DailyBankTransactionModel()
+                                        {
+                                            AccountBankAccountName = bank.AccountName,
+                                            AccountBankAccountNumber = bank.AccountNumber,
+                                            AccountBankCode = bank.BankCode,
+                                            AccountBankCurrencyCode = bank.Currency.Code,
+                                            AccountBankCurrencyId = bank.Id,
+                                            AccountBankCurrencySymbol = vbRealization.CurrencyCode,
+                                            AccountBankId = bank.Id,
+                                            AccountBankName = bank.BankName,
+                                            Date = vbRealization.Date,
+                                            Nominal = (decimal)difference * (decimal)vbRealization.CurrencyRate,
+                                            CurrencyRate = (decimal)vbRealization.CurrencyRate,
+                                            ReferenceNo = diffReferenceNo,
+                                            ReferenceType = "Sisa Clearance VB Inklaring",
+                                            Remark = vbRealization.CurrencyCode != "IDR" ? $"Pembayaran atas {bank.Currency.Code} dengan nominal {string.Format("{0:n}", vbRealization.Amount)} dan kurs {vbRealization.CurrencyCode}" : "",
+                                            SourceType = "OPERASIONAL",
+                                            SupplierCode = vbRealization.SuppliantUnitCode,
+                                            SupplierId = vbRealization.SuppliantUnitId,
+                                            SupplierName = vbRealization.SuppliantUnitName,
+                                            Status = "IN",
+                                            IsPosted = true
+                                        };
+
+                                        //if (vbRealizationDocument.IsInklaring)
+                                        //    dailyBankTransaction.ReferenceType = "Clearence VB Inklaring";
+                                        //else if (vbRealizationDocument.Type == 2)
+                                        //    dailyBankTransaction.ReferenceType = "Clearence VB Non PO";
+                                        //else
+                                        //    dailyBankTransaction.ReferenceType = "Clearence VB With PO";
+
+                                        if (bank.Currency.Code != "IDR")
+                                            dailyBankTransaction.NominalValas = difference;
+
+                                        _dbContext.DailyBankTransactions.Add(dailyBankTransaction);
+                                        _dbContext.SaveChanges();
+                                    }
+                                }
+
                             }
                         }
-
                     }
+
                 }
                 else
                 {
-                    var model = new JournalTransactionModel()
+                    var journalTransaction = new JournalTransactionModel()
                     {
                         Date = vbRealization.Date,
                         Description = "Clearance VB",
-                        ReferenceNo = referenceNo,
+                        ReferenceNo = vbRealization.ReferenceNo,
                         Status = "DRAFT",
                         Items = new List<JournalTransactionItemModel>()
                     };
 
-                    //model.Items.Add(new JournalTransactionItemModel()
-                    //{
-                    //    COA = new COAModel()
-                    //    {
-                    //        Code = $"9999.00.0.00"
-                    //    },
-                    //    Debit = vbRealization.Amount
-                    //});
-
                     if (vbRealization.CurrencyCode == "IDR")
                     {
-                        foreach (var vbRealizationUnitCost in selectedVbRealizationUnitCosts)
+                        var vbRealizationUnitCosts = _vbRealizationUnitCosts.Where(element => element.VBRealizationDocumentId == vbRealization.Id && element.IsSelected).ToList();
+
+                        foreach (var vbRealizationUnitCost in vbRealizationUnitCosts)
                         {
                             var costCOADivision = "0";
                             var costDivision = divisions.FirstOrDefault(element => element.Id == vbRealizationUnitCost.DivisionId);
@@ -260,17 +301,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                             if (costUnit != null && !string.IsNullOrWhiteSpace(costUnit.COACode))
                                 costCOAUnit = costUnit.COACode;
 
-                            model.Items.Add(new JournalTransactionItemModel()
+                            journalTransaction.Items.Add(new JournalTransactionItemModel()
                             {
                                 COA = new COAModel()
                                 {
                                     Code = $"1011.00.{costCOADivision}.{costCOAUnit}"
                                 },
-                                Credit = vbRealizationUnitCost.Amount
+                                Credit = vbRealizationUnitCost.Amount * (decimal)vbRealization.CurrencyRate
                             });
                         }
 
-                        var sumPPn = selectedVbRealizationUnitCosts.Sum(element =>
+                        var sumPPn = _vbRealizationItems.Where(element => element.VBRealizationDocumentId == vbRealization.Id).Sum(element =>
                         {
                             var result = (decimal)0;
 
@@ -280,7 +321,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                             return result;
                         });
 
-                        var sumPPh = selectedVbRealizationUnitCosts.Sum(element =>
+                        var sumPPh = _vbRealizationItems.Where(element => element.VBRealizationDocumentId == vbRealization.Id).Sum(element =>
                         {
                             var result = (decimal)0;
 
@@ -291,98 +332,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         });
 
                         if (sumPPn > 0)
-                        {
-                            model.Items.Add(new JournalTransactionItemModel()
+                            journalTransaction.Items.Add(new JournalTransactionItemModel()
                             {
                                 COA = new COAModel()
                                 {
                                     Code = $"1509.00.{coaDivision}.{coaUnit}"
                                 },
-                                Debit = sumPPn
+                                Debit = sumPPn * (decimal)vbRealization.CurrencyRate
                             });
-                        }
 
                         if (sumPPh > 0)
-                        {
-                            model.Items.Add(new JournalTransactionItemModel()
+                            journalTransaction.Items.Add(new JournalTransactionItemModel()
                             {
                                 COA = new COAModel()
                                 {
                                     Code = $"3330.00.{coaDivision}.{coaUnit}"
                                 },
-                                Credit = sumPPh
+                                Credit = sumPPh * (decimal)vbRealization.CurrencyRate
                             });
-                        }
+
+                        await _journalTransactionService.CreateAsync(journalTransaction);
                     }
                     else
                     {
-                        model.Items.Add(new JournalTransactionItemModel()
+                        journalTransaction.Items.Add(new JournalTransactionItemModel()
                         {
                             COA = new COAModel()
                             {
                                 Code = $"1012.00.{coaDivision}.{coaUnit}"
                             },
-                            Credit = vbRealization.Amount
+                            Credit = vbRealization.Amount * (decimal)vbRealization.CurrencyRate
                         });
+
+                        await _journalTransactionService.CreateAsync(journalTransaction);
                     }
-
-                    //if (model.Items.Any(element => element.COA.Code.Contains("9999")))
-                    //    model.Status = "DRAFT";
-
-                    await _journalTransactionService.CreateAsync(model);
                 }
-
-                #region old auto journal
-                //else
-                //{
-                //    var model = new JournalTransactionModel()
-                //    {
-                //        Date = vbRealization.Date,
-                //        Description = "Clearance VB",
-                //        ReferenceNo = vbRealization.DocumentNo,
-                //        Status = "DRAFT",
-                //        Items = new List<JournalTransactionItemModel>()
-                //    };
-
-                //    //model.Items.Add(new JournalTransactionItemModel()
-                //    //{
-                //    //    COA = new COAModel()
-                //    //    {
-                //    //        Code = $"9999.00.0.00"
-                //    //    },
-                //    //    Debit = vbRealization.Amount
-                //    //});
-
-                //    if (vbRealization.CurrencyCode == "IDR")
-                //    {
-                //        model.Items.Add(new JournalTransactionItemModel()
-                //        {
-                //            COA = new COAModel()
-                //            {
-                //                Code = $"1011.00.{coaDivision}.{coaUnit}"
-                //            },
-                //            Credit = vbRealization.Amount
-                //        });
-                //    }
-                //    else
-                //    {
-                //        model.Items.Add(new JournalTransactionItemModel()
-                //        {
-                //            COA = new COAModel()
-                //            {
-                //                Code = $"1012.00.{coaDivision}.{coaUnit}"
-                //            },
-                //            Credit = vbRealization.Amount
-                //        });
-                //    }
-
-                //    //if (model.Items.Any(element => element.COA.Code.Contains("9999")))
-                //    //    model.Status = "DRAFT";
-
-                //    await _journalTransactionService.CreateAsync(model);
-
-                //}
-                #endregion
 
             }
 
@@ -488,6 +472,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             _dbContext.SaveChanges();
 
             return result;
+        }
+
+        public async Task<string> GetDocumentNo(string type, string bankCode, string username, DateTime date)
+        {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no-date?type={type}&bankCode={bankCode}&username={username}&date={date}";
+            var response = await http.GetAsync(uri);
+
+            var result = new BaseResponse<string>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+            }
+
+            return result.data;
         }
 
         public async Task<int> AutoJournalVBNonPOClearence(List<int> vbRealizationIds)
@@ -713,7 +719,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var creditItem = new JournalTransactionItemModel()
             {
                 COA = new COAModel() { Code = accountBankCOA },
-                Credit = items.Sum(item => item.Debit)
+                Credit = journalTransactionModel.Items.Sum(item => item.Credit)
             };
             journalTransactionModel.Items.Add(creditItem);
 
