@@ -53,8 +53,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             var accountBank = await GetAccountBank(viewModel.AccountBankId.GetValueOrDefault());
             if (accountBank.Currency.Code != "IDR")
             {
-                var garmentCurrency = await GetGarmentCurrency(accountBank.Currency.Code);
-                model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
+                var BICurrency = await GetBICurrency(accountBank.Currency.Code);
+                model.CurrencyRate = BICurrency.Rate.GetValueOrDefault();
             }
 
             EntityExtension.FlagForCreate(model, _identityService.Username, _userAgent);
@@ -124,6 +124,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
 
             var http = _serviceProvider.GetService<IHttpClientService>();
             var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+            return result.data;
+        }
+
+        private async Task<GarmentCurrency> GetBICurrency(string codeCurrency)
+        {
+            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={date}";
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/bi-currencies/single-by-code-date?{queryString}");
 
             var responseString = await response.Content.ReadAsStringAsync();
             var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
