@@ -317,7 +317,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 }
 
                 //if (accountBank.Currency.Code != "IDR")
-                //    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate
+                //    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
 
                 result += await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
             }
