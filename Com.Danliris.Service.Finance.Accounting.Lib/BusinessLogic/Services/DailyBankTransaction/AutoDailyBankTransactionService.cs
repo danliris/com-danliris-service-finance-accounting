@@ -310,7 +310,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     dailyBankTransactionModel.ReferenceType = "Clearence VB With PO";
 
                 if (accountBank.Currency.Code != "IDR")
-                    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
+                {
+                    dailyBankTransactionModel.Nominal = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
+                    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount);
+                }
+
+                //if (accountBank.Currency.Code != "IDR")
+                //    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
 
                 result += await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
             }
