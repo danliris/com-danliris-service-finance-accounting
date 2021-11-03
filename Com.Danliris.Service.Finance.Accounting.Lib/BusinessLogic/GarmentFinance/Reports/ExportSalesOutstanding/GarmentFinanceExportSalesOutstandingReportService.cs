@@ -40,7 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
         {
             GarmentShippingPackingList garmentShipping = new GarmentShippingPackingList();
             var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.PackingInventory + $"garment-shipping/invoices/exportSalesDebtorNow?month={month}&year={year}";
+            var uri = APIEndpoint.PackingInventory + $"garment-shipping/invoices/exportSalesDebtor?month={month}&year={year}";
             var response = await http.GetAsync(uri);
 
 

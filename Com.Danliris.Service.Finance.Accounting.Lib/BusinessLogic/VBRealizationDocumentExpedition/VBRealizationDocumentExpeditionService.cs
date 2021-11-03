@@ -653,13 +653,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             var body = new VBAutoJournalFormDto()
                             {
                                 Date = DateTimeOffset.UtcNow,
-                                DocumentNo = model.DocumentNo,
+                                DocumentNo = referenceNo,
                                 EPOIds = epoIds,
-                                UPOIds = upoIds
+                                UPOIds = upoIds,
+                                Bank = form.Bank
                             };
 
                             var httpClient = _serviceProvider.GetService<IHttpClientService>();
-                            var response = httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType)).Result;
+                            var response = await httpClient.PostAsync($"{APIEndpoint.Purchasing}{autoJournalEPOUri}", new StringContent(JsonConvert.SerializeObject(body).ToString(), Encoding.UTF8, General.JsonMediaType));
                         }
                     }
 
