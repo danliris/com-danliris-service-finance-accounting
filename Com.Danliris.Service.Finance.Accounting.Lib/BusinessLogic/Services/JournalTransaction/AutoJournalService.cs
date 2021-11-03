@@ -355,13 +355,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     }
                     else
                     {
+                        var currency = await GetBICurrency(vbRealization.CurrencyCode, vbRealization.Date);
+                        var currencyRate = currency != null ? (decimal)currency.Rate.GetValueOrDefault() : (decimal)vbRealization.CurrencyRate;
+
                         journalTransaction.Items.Add(new JournalTransactionItemModel()
                         {
                             COA = new COAModel()
                             {
-                                Code = $"1012.00.{coaDivision}.{coaUnit}"
+                                Code = $"{bank.AccountCOA}"
                             },
-                            Credit = vbRealization.Amount * (decimal)vbRealization.CurrencyRate
+                            Credit = vbRealization.Amount * (decimal)currencyRate
                         });
 
                         await _journalTransactionService.CreateAsync(journalTransaction);
@@ -372,6 +375,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             return vbRealizations.Count;
         }
+
+        private async Task<GarmentCurrency> GetBICurrency(string codeCurrency, DateTimeOffset date)
+        {
+            string stringDate = date.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={stringDate}";
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/bi-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+            return result.data;
+        }
+
 
         public async Task<int> AutoJournalInklaring(List<int> vbRequestIds, AccountBankViewModel bank)
         {
