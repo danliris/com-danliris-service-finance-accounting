@@ -110,7 +110,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public Task<int> AutoCreateFromPaymentDisposition(PaymentDispositionNoteModel model)
         {
             var nominal = model.Items.Sum(item => (decimal)item.PayToSupplier);
-            var nominalValas = model.CurrencyCode != "IDR" ? nominal * (decimal)model.CurrencyRate : 0;
             var dailyBankTransactionModel = new DailyBankTransactionModel()
             {
                 AccountBankAccountName = model.BankAccountName,
@@ -123,7 +122,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 AccountBankName = model.BankName,
                 Date = model.PaymentDate,
                 Nominal = nominal,
-                NominalValas = nominalValas,
                 CurrencyRate = (decimal)model.CurrencyRate,
                 ReferenceNo = model.PaymentDispositionNo,
                 ReferenceType = "Pembayaran Disposisi",
@@ -136,7 +134,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 IsPosted = true
             };
 
-            if (model.BankCurrencyCode == "IDR" && model.CurrencyCode != "IDR")
+            if (model.CurrencyCode != "IDR")
             {
                 dailyBankTransactionModel.Nominal = model.Items.Sum(item => (decimal)item.PayToSupplier) * (decimal)model.CurrencyRate;
                 dailyBankTransactionModel.NominalValas = nominal;
@@ -263,7 +261,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Status = "IN"
             };
 
-            if (model.BankCurrencyCode == "IDR" && model.CurrencyCode != "IDR")
+            if (model.CurrencyCode != "IDR")
             {
                 dailyBankTransactionModel.Nominal = (decimal)model.Amount * (decimal)model.CurrencyRate;
                 dailyBankTransactionModel.NominalValas = (decimal)model.Amount;
