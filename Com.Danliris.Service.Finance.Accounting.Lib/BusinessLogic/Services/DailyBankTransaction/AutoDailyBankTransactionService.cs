@@ -280,7 +280,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             foreach (var realization in realizations)
             {
                 var realizationItems = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => entity.VBRealizationDocumentId == realization.Id).ToList();
-                var BICurrency = await GetBICurrencyWithDate(realization.CurrencyCode, realization.Date);
+                var BICurrency = await GetBICurrency(realization.CurrencyCode, realization.Date);
                 var dailyBankTransactionModel = new DailyBankTransactionModel()
                 {
                     AccountBankAccountName = accountBank.AccountName,
@@ -320,7 +320,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             return result;
         }
 
-        private async Task<GarmentCurrency> GetBICurrencyWithDate(string codeCurrency, DateTimeOffset date)
+        private async Task<GarmentCurrency> GetBICurrency(string codeCurrency, DateTimeOffset date)
         {
             string stringDate = date.ToString("yyyy/MM/dd HH:mm:ss");
             string queryString = $"code={codeCurrency}&stringDate={stringDate}";
