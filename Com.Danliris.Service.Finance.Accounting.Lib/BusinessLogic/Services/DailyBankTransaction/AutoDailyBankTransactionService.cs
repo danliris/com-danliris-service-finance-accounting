@@ -274,7 +274,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public async Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel accountBank, string referenceNo)
         {
-            var realizations = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) && entity.Type == VBRequestDocument.VBType.WithPO).ToList();
+            var realizations = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) /*&& entity.Type == VBRequestDocument.VBType.WithPO*/).ToList();
 
             var result = 0;
             foreach (var realization in realizations)
