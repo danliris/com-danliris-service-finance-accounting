@@ -280,6 +280,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             foreach (var realization in realizations)
             {
                 var realizationItems = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => entity.VBRealizationDocumentId == realization.Id).ToList();
+                var BICurrency = await GetBICurrencyWithDate(realization.CurrencyCode, realization.Date);
                 var dailyBankTransactionModel = new DailyBankTransactionModel()
                 {
                     AccountBankAccountName = accountBank.AccountName,
@@ -292,7 +293,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     AccountBankName = accountBank.BankName,
                     Date = realization.Date,
                     Nominal = realizationItems.Sum(item => item.Amount),
-                    CurrencyRate = (decimal)realization.CurrencyRate,
+                    CurrencyRate = (decimal)BICurrency.Rate,
                     ReferenceNo = realization.ReferenceNo,
                     //ReferenceType = "Clearence VB",
                     Remark = $"Pembayaran atas {accountBank.Currency.Code} untuk:\nPermohonan VB {realization.VBRequestDocumentNo}\nRealisasi VB {realization.DocumentNo}",
@@ -310,13 +311,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     dailyBankTransactionModel.ReferenceType = "Clearence VB With PO";
 
                 if (accountBank.Currency.Code != "IDR")
-                    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
+                    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)BICurrency.Rate;
 
                 result += await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
             }
 
 
             return result;
+        }
+
+        private async Task<GarmentCurrency> GetBICurrencyWithDate(string codeCurrency, DateTimeOffset date)
+        {
+            string stringDate = date.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={stringDate}";
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/bi-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+            return result.data;
         }
     }
 }

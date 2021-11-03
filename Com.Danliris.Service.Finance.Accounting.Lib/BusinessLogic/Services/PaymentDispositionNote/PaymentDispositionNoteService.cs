@@ -67,7 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
             if (model.BankCurrencyCode != "IDR")
             {
-                var BICurrency = await GetBICurrency(model.BankCurrencyCode);
+                var BICurrency = await GetBICurrency(model.BankCurrencyCode, model.PaymentDate);
                 model.CurrencyRate = BICurrency.Rate.GetValueOrDefault();
             }
 
@@ -116,26 +116,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             }
             return result.data;
         }
-        private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        //private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        //{
+        //    var date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+        //    var queryString = $"code={codeCurrency}&stringDate={date}";
+
+        //    var http = ServiceProvider.GetService<IHttpClientService>();
+        //    var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+        //    var responseString = await response.Content.ReadAsStringAsync();
+        //    var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+        //    var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+        //    return result.data;
+        //}
+
+        private async Task<GarmentCurrency> GetBICurrency(string codeCurrency, DateTimeOffset date)
         {
-            var date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
-            var queryString = $"code={codeCurrency}&stringDate={date}";
-
-            var http = ServiceProvider.GetService<IHttpClientService>();
-            var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
-
-            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
-
-            return result.data;
-        }
-
-        private async Task<GarmentCurrency> GetBICurrency(string codeCurrency)
-        {
-            string date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
-            string queryString = $"code={codeCurrency}&stringDate={date}";
+            string stringDate = date.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={stringDate}";
 
             var http = ServiceProvider.GetService<IHttpClientService>();
             var response = await http.GetAsync(APIEndpoint.Core + $"master/bi-currencies/single-by-code-date?{queryString}");
