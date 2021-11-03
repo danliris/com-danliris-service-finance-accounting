@@ -653,9 +653,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             var body = new VBAutoJournalFormDto()
                             {
                                 Date = DateTimeOffset.UtcNow,
-                                DocumentNo = model.DocumentNo,
+                                DocumentNo = model.ReferenceNo,
                                 EPOIds = epoIds,
-                                UPOIds = upoIds
+                                UPOIds = upoIds,
+                                Bank = form.Bank
                             };
 
                             var httpClient = _serviceProvider.GetService<IHttpClientService>();
