@@ -274,7 +274,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public async Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel accountBank, string referenceNo)
         {
-            var realizations = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) && entity.Type == VBRequestDocument.VBType.WithPO).ToList();
+            var realizations = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) /*&& entity.Type == VBRequestDocument.VBType.WithPO*/).ToList();
 
             var result = 0;
             foreach (var realization in realizations)
@@ -310,7 +310,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     dailyBankTransactionModel.ReferenceType = "Clearence VB With PO";
 
                 if (accountBank.Currency.Code != "IDR")
-                    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
+                {
+                    dailyBankTransactionModel.Nominal = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
+                    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount);
+                }
+
+                //if (accountBank.Currency.Code != "IDR")
+                //    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
 
                 result += await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
             }
