@@ -134,9 +134,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 IsPosted = true
             };
 
-            if (model.CurrencyCode != "IDR")
+            if (model.BankCurrencyCode != "IDR")
             {
-                dailyBankTransactionModel.Nominal = model.Items.Sum(item => (decimal)item.PayToSupplier) * (decimal)model.CurrencyRate;
+                dailyBankTransactionModel.Nominal = nominal * (decimal)model.CurrencyRate;
                 dailyBankTransactionModel.NominalValas = nominal;
             }
 
@@ -308,7 +308,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 else
                     dailyBankTransactionModel.ReferenceType = "Clearence VB With PO";
 
-                if (accountBank.Currency.Code != "IDR")
+                if (realization.CurrencyCode != "IDR")
                 {
                     dailyBankTransactionModel.Nominal = realizationItems.Sum(item => item.Amount) * (decimal)BICurrency.Rate;
                     dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount);

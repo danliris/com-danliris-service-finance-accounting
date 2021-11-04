@@ -564,9 +564,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         private KeyValuePair<DataTable, string> GenerateExcelValasPerSheet(AccountBank dataAccountBank, string title, int month, int year, int clientTimeZoneOffset)
         {
             var Query = GetQuery(dataAccountBank.Id, month, year, clientTimeZoneOffset).OrderBy(s => s.Date);
+            DateTimeOffset newDate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
             string date = new DateTime(year, month, DateTime.DaysInMonth(year, month)).ToString("dd MMMM yyyy");
 
-            var garmentCurrency = GetGarmentCurrency(dataAccountBank.Currency.Code).GetAwaiter().GetResult();
+            var garmentCurrency = GetBICurrency(dataAccountBank.Currency.Code, newDate).GetAwaiter().GetResult();
             string bank = $"({dataAccountBank.Id}) Bank {dataAccountBank.BankName} A/C : {dataAccountBank.AccountNumber}";
 
             DataTable result = new DataTable();
@@ -590,10 +591,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             else
             {
                 DateTimeOffset firstDayOfMonth = new DateTime(year, month, 1);
-                var BalanceByMonthAndYear = //_DbContext.DailyBankTransactions.Where(entity => entity.Date.AddHours(clientTimeZoneOffset).DateTime < firstDayOfMonth.DateTime).Sum(entity => entity.Nominal);
-                GetBalanceMonthAndYear(dataAccountBank.Id, month, year, clientTimeZoneOffset);
-                var beforeBalance = BalanceByMonthAndYear == null ? 0 : BalanceByMonthAndYear.InitialBalance;
-                var beforeBalanceValas = beforeBalance / garmentCurrency.Rate;
+                var BalanceByMonthAndYear = GetBalanceMonthAndYear(dataAccountBank.Id, month, year, clientTimeZoneOffset);
+                var beforeBalance = BalanceByMonthAndYear == null ? 0 : BalanceByMonthAndYear.InitialBalance * garmentCurrency.Rate.GetValueOrDefault();
+                var beforeBalanceValas = BalanceByMonthAndYear == null ? 0 : BalanceByMonthAndYear.InitialBalance;
                 decimal totalDebit = 0;
                 decimal totalDebit2 = 0;
                 decimal totalKredit = 0;
@@ -613,20 +613,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         item.ReferenceNo,
                         item.ReferenceType,
                         item.AccountBankCurrencyCode,
-                        beforeBalance.ToString("#,##0.#0"),
-                        debit,
+                        beforeBalanceValas.ToString("#,##0.#0"),
                         debitValas,
-                        kredit,
+                        debit,
                         kreditValas,
-                        afterBalance.ToString("#,##0.#0"),
-                        afterBalanceValas.GetValueOrDefault().ToString("#,##0.#0")
+                        kredit,
+                        afterBalanceValas.ToString("#,##0.#0"),
+                        afterBalance.ToString("#,##0.#0")
                         );
                     beforeBalance = afterBalance;
                     beforeBalanceValas = afterBalanceValas;
-                    totalDebit += item.Status.ToUpper().Equals("IN") ? item.Nominal : 0;
-                    totalDebit2 += item.Status.ToUpper().Equals("IN") ? item.NominalValas : 0;
-                    totalKredit += item.Status.ToUpper().Equals("OUT") ? item.Nominal : 0;
-                    totalKredit2 += item.Status.ToUpper().Equals("OUT") ? item.NominalValas : 0;
+                    totalDebit2 += item.Status.ToUpper().Equals("IN") ? item.Nominal : 0;
+                    totalDebit += item.Status.ToUpper().Equals("IN") ? item.NominalValas : 0;
+                    totalKredit2 += item.Status.ToUpper().Equals("OUT") ? item.Nominal : 0;
+                    totalKredit += item.Status.ToUpper().Equals("OUT") ? item.NominalValas : 0;
                     index++;
                 }
                 result.Rows.Add("", "", "", "", "", "TOTAL", totalDebit.ToString("#,##0.#0"), totalDebit2.ToString("#,##0.#0"), totalKredit.ToString("#,##0.#0"), totalKredit2.ToString("#,##0.#0"), "", "");
@@ -647,6 +647,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             var http = _serviceProvider.GetService<IHttpClientService>();
             var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+            return result.data;
+        }
+
+        private async Task<GarmentCurrency> GetBICurrency(string codeCurrency, DateTimeOffset date)
+        {
+            string stringDate = date.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={stringDate}";
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/bi-currencies/single-by-code-date?{queryString}");
 
             var responseString = await response.Content.ReadAsStringAsync();
             var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
@@ -685,8 +701,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                              BeforeNominal = transaction.BeforeNominal,
                              AfterNominal = transaction.AfterNominal,
                              //Nominal = transaction.AccountBankCurrencyCode != transaction.AccountBankAccountName.Substring(transaction.AccountBankAccountName.Length - 3) ? (transaction.NominalValas == 0 ? transaction.Nominal : transaction.Nominal * transaction.CurrencyRate) : transaction.Nominal,
-                             BeforeNominalValas = transaction.BeforeNominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
-                             AfterNominalValas = transaction.AfterNominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate),
+                             BeforeNominalValas = transaction.BeforeNominalValas,
+                             AfterNominalValas = transaction.AfterNominalValas,
                              NominalValas = transaction.NominalValas,
                              //NominalValas = transaction.NominalValas == 0 ? transaction.Nominal * (transaction.CurrencyRate == 0 ? 1 : transaction.CurrencyRate) : transaction.NominalValas,
                              Status = transaction.Status,
@@ -750,9 +766,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 {
                     var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
                     item.BeforeNominal = (decimal)beforeBalance;
-                    item.BeforeNominalValas = (decimal)beforeBalance * item.CurrencyRate;
                     item.AfterNominal = (decimal)afterBalance;
-                    item.AfterNominalValas = (decimal)afterBalance * item.CurrencyRate;
+
+                    if (item.AccountBankCurrencyCode != "IDR")
+                    {
+                        item.BeforeNominal = (decimal)beforeBalance * item.CurrencyRate;
+                        item.BeforeNominalValas = (decimal)beforeBalance;
+                        item.AfterNominal = (decimal)afterBalance * item.CurrencyRate;
+                        item.AfterNominalValas = (decimal)afterBalance;
+                    }
+
                     beforeBalance = afterBalance;
                 }
             }
