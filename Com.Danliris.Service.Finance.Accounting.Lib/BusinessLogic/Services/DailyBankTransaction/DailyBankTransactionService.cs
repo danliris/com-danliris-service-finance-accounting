@@ -614,19 +614,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         item.ReferenceType,
                         item.AccountBankCurrencyCode,
                         beforeBalance.ToString("#,##0.#0"),
-                        debit,
                         debitValas,
-                        kredit,
+                        debit,
                         kreditValas,
+                        kredit,
                         afterBalance.ToString("#,##0.#0"),
                         afterBalanceValas.GetValueOrDefault().ToString("#,##0.#0")
                         );
                     beforeBalance = afterBalance;
                     beforeBalanceValas = afterBalanceValas;
-                    totalDebit += item.Status.ToUpper().Equals("IN") ? item.Nominal : 0;
-                    totalDebit2 += item.Status.ToUpper().Equals("IN") ? item.NominalValas : 0;
-                    totalKredit += item.Status.ToUpper().Equals("OUT") ? item.Nominal : 0;
-                    totalKredit2 += item.Status.ToUpper().Equals("OUT") ? item.NominalValas : 0;
+                    totalDebit2 += item.Status.ToUpper().Equals("IN") ? item.Nominal : 0;
+                    totalDebit += item.Status.ToUpper().Equals("IN") ? item.NominalValas : 0;
+                    totalKredit2 += item.Status.ToUpper().Equals("OUT") ? item.Nominal : 0;
+                    totalKredit += item.Status.ToUpper().Equals("OUT") ? item.NominalValas : 0;
                     index++;
                 }
                 result.Rows.Add("", "", "", "", "", "TOTAL", totalDebit.ToString("#,##0.#0"), totalDebit2.ToString("#,##0.#0"), totalKredit.ToString("#,##0.#0"), totalKredit2.ToString("#,##0.#0"), "", "");
