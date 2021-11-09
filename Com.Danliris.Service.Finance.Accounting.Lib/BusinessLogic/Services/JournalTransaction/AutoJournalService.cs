@@ -22,6 +22,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 {
     public class AutoJournalService : IAutoJournalService
     {
+        private const string UserAgent = "finance-accounting-service";
         private readonly FinanceDbContext _dbContext;
         private readonly IServiceProvider _serviceProvider;
         private readonly IJournalTransactionService _journalTransactionService;
@@ -264,6 +265,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                         if (bank.Currency.Code != "IDR")
                                             dailyBankTransaction.NominalValas = difference;
 
+                                        dailyBankTransaction.FlagForCreate(_identityService.Username, UserAgent);
                                         _dbContext.DailyBankTransactions.Add(dailyBankTransaction);
                                         _dbContext.SaveChanges();
                                     }
