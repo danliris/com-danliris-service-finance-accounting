@@ -868,7 +868,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     model.FinalBalance,
                     model.CurrencyCode,
                     model.DPPCurrency,
-                    model.CurrencyRate
+                    model.CurrencyRate,
+                    model.VATAmount,
+                    model.IncomeTaxAmount
                     );
 
                 EntityExtension.FlagForCreate(correction, IdentityService.Username, UserAgent);
