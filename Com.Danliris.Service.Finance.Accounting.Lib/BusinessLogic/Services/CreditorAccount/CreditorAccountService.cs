@@ -361,13 +361,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                             dppAmountCurency = item.UnitPaymentCorrectionDPP / item.CurrencyRate;
                         vatAmount = item.UnitPaymentCorrectionPPN;
 
-                        if (item.IncomeTaxAmount > 0)
+                        if (item.IncomeTaxAmount != 0)
                         {
-                            var incomeTaxRate = item.IncomeTaxAmount / item.UnitReceiptNoteDPP;
-                            var incomeTaxCorrection = item.UnitPaymentCorrectionDPP * incomeTaxRate;
-                            dppAmount -= incomeTaxCorrection;
+                            //var incomeTaxRate = item.IncomeTaxAmount / item.UnitReceiptNoteDPP;
+                            //var incomeTaxCorrection = item.UnitPaymentCorrectionDPP * incomeTaxRate;
+                            dppAmount -= item.IncomeTaxAmount;
                             if (item.CurrencyCode != "IDR")
-                                dppAmountCurency -= (incomeTaxCorrection / item.CurrencyRate);
+                                dppAmountCurency -= (item.IncomeTaxAmount / item.CurrencyRate);
                         }
 
                         var mutation = dppAmount + vatAmount;
@@ -869,8 +869,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     model.CurrencyCode,
                     model.DPPCurrency,
                     model.CurrencyRate,
-                    model.VATAmount,
-                    model.IncomeTaxAmount
+                    (viewModel.UnitPaymentCorrectionPPN / (model.CurrencyRate == 0 ? 1 : model.CurrencyRate)),
+                    ((viewModel.UnitPaymentCorrectionDPP + viewModel.UnitPaymentCorrectionPPN) - viewModel.UnitPaymentCorrectionMutation)
                     );
 
                 EntityExtension.FlagForCreate(correction, IdentityService.Username, UserAgent);
