@@ -114,6 +114,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             cell.Phrase = new Phrase("PEMBAYARAN", _normalBoldFont);
             table.AddCell(cell);
 
+            cell.Phrase = new Phrase("PELUNASAN", _normalBoldFont);
+            table.AddCell(cell);
+
             cell.Phrase = new Phrase("SALDO AKHIR", _normalBoldFont);
             table.AddCell(cell);
 
@@ -139,11 +142,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
         private static void SetReportTable(Document document, List<CreditBalanceViewModel> data)
         {
-            var table = new PdfPTable(12)
+            var table = new PdfPTable(13)
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 5f, 15f, 15f, 5f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
+            table.SetWidths(new float[] { 5f, 15f, 15f, 5f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
 
             /*
             var widths = new List<int>();
@@ -197,6 +200,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 cellAlignRight.Phrase = new Phrase(item.Payment.ToString("#,##0.#0"), _normalFont);
                 table.AddCell(cellAlignRight);
 
+                cellAlignRight.Phrase = new Phrase(item.PaidAmount.ToString("#,##0.#0"), _normalFont);
+                table.AddCell(cellAlignRight);
+
                 cellAlignRight.Phrase = new Phrase(item.FinalBalance.ToString("#,##0.#0"), _normalFont);
                 table.AddCell(cellAlignRight);
 
@@ -218,11 +224,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
         private static void SetFooter(Document document, List<CreditBalanceViewModel> data)
         {
-            var table = new PdfPTable(12)
+            var table = new PdfPTable(13)
             {
                 WidthPercentage = 100
             };
-            table.SetWidths(new float[] { 5f, 15f, 15f, 5f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
+            table.SetWidths(new float[] { 5f, 15f, 15f, 5f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f });
 
             var groupedByCurrency = data.GroupBy(item => item.Currency).Select(element => new
             {
@@ -271,6 +277,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 table.AddCell(cellAlignRight);
 
                 cellAlignRight.Phrase = new Phrase(item.totalPayment.ToString("#,##0.#0"), _normalBoldFont);
+                table.AddCell(cellAlignRight);
+
+                cellAlignRight.Phrase = new Phrase("", _normalBoldFont);
                 table.AddCell(cellAlignRight);
 
                 cellAlignRight.Phrase = new Phrase(item.totalFinalBalance.ToString("#,##0.#0"), _normalBoldFont);

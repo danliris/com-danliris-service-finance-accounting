@@ -1,9 +1,12 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.GarmentFinance.BankCashReceiptDetail;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceipt;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentFinance.BankCashReceiptDetail;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentFinance.BankCashReceiptDetail;
+using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.BankCashReceipt;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.GarmentFinance.BankCashReceiptDetail;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -66,8 +69,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
         }
 
         private BankCashReceiptDetailDataUtil _dataUtil(BankCashReceiptDetailService service, string testname)
+        { 
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var bankCashReceiptService = new BankCashReceiptService(serviceProviderMock.Object);
+            var bankCashReceiptDataUtil = new BankCashReceiptDataUtil(bankCashReceiptService);
+            return new BankCashReceiptDetailDataUtil(service, bankCashReceiptDataUtil);
+        }
+
+        private BankCashReceiptDataUtil _dataUtilReceipt(BankCashReceiptService service, string testname)
         {
-            return new BankCashReceiptDetailDataUtil(service);
+            return new BankCashReceiptDataUtil(service);
         }
 
         [Fact]
@@ -89,8 +106,45 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 .Returns(dbContext);
 
             var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+            var serviceReceipt = new BankCashReceiptService(serviceProviderMock.Object);
+
+            var dto = _dataUtilReceipt(serviceReceipt, GetCurrentAsyncMethod()).GetTestData();
+            //Act
+            var ResponseReceipt = serviceReceipt.ReadByIdAsync(dto.Id);
+
+            Assert.NotNull(ResponseReceipt);
 
             var model = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
+            
+            //Act
+            var Response = await service.CreateAsync(model);
+
+            //Assert
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Create_Data_Null_Receipt()
+        {
+
+            //Arrange
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            var httpClientService = new Mock<IHttpClientService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+
+            var model = _dataUtil(service, GetCurrentAsyncMethod()).GetNewData();
+
             //Act
             var Response = await service.CreateAsync(model);
 
@@ -171,6 +225,41 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 .Returns(dbContext);
 
             var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+            var serviceReceipt = new BankCashReceiptService(serviceProviderMock.Object);
+
+            var dto = _dataUtilReceipt(serviceReceipt, GetCurrentAsyncMethod()).GetTestData();
+            //Act
+            var ResponseReceipt = serviceReceipt.ReadByIdAsync(dto.Id);
+
+            Assert.NotNull(ResponseReceipt);
+
+            var model = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
+            //Act
+            var newModel = await service.ReadByIdAsync(model.Id);
+            var Response = await service.DeleteAsync(newModel.Id);
+
+            //Assert
+            Assert.NotEqual(0, Response);
+        }
+
+        [Fact]
+        public async Task Should_Success_Delete_Data_Null_Receipt()
+        {
+            //Arrange
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            var httpClientService = new Mock<IHttpClientService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
 
             var model = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
             //Act
@@ -225,6 +314,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
             {
                 BankCashReceiptDetailId = 1,
                 Amount = 2,
+                TypeAmount = "KREDIT"
             };
 
             newModel2.Items.Add(newItem);
@@ -255,11 +345,24 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
         public void Should_Success_Validate_Null_Items_Data()
         {
             BankCashReceiptDetailViewModel vm = new BankCashReceiptDetailViewModel();
+            vm.TotalAmount = 100;
+            vm.Amount = 0;
             vm.Items = new List<BankCashReceiptDetailItemViewModel>
             {
                 new BankCashReceiptDetailItemViewModel()
                 {
+                    InvoiceId =0,
                     Id=0,
+                    BuyerAgent = new Lib.ViewModels.NewIntegrationViewModel.BuyerViewModel()
+                    {
+                        Id = "1",
+                        Code = null,
+                    },
+                    Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel()
+                    {
+                        Id = 0,
+                        Code = null
+                    }
                 }
             };
             vm.OtherItems = new List<BankCashReceiptDetailOtherItemViewModel>
@@ -267,10 +370,74 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentFinance.B
                 new BankCashReceiptDetailOtherItemViewModel()
                 {
                     Id=0,
+                    TypeAmount = "KREDIT",
+                    Amount= 0,
+                },
+                new BankCashReceiptDetailOtherItemViewModel()
+                {
+                    Id=0,
+                    TypeAmount = "DEBIT",
+                    Amount= 0,
+                },
+                new BankCashReceiptDetailOtherItemViewModel()
+                {
+                    Id=0,
+                    TypeAmount = null,
+                    Amount= 0,
                 }
             };
 
             Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public void Should_Success_Validate_Amount_Different()
+        {
+            BankCashReceiptDetailViewModel vm = new BankCashReceiptDetailViewModel();
+            vm.Amount = 3;
+            vm.Items = new List<BankCashReceiptDetailItemViewModel>
+            {
+                new BankCashReceiptDetailItemViewModel()
+                {
+                    Amount = 1,
+                }
+            };
+            vm.OtherItems = new List<BankCashReceiptDetailOtherItemViewModel>
+            {
+                new BankCashReceiptDetailOtherItemViewModel()
+                {
+                    TypeAmount = "KREDIT",
+                    Amount= 1,
+                },
+            };
+
+            Assert.True(vm.Validate(null).Count() > 0);
+        }
+
+        [Fact]
+        public async Task Should_Success_GetAmount()
+        {
+            var dbContext = GetDbContext(GetCurrentAsyncMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            var httpClientService = new Mock<IHttpClientService>();
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+
+            serviceProviderMock
+                .Setup(serviceProvider => serviceProvider.GetService(typeof(FinanceDbContext)))
+                .Returns(dbContext);
+
+            var service = new BankCashReceiptDetailService(serviceProviderMock.Object);
+
+            var dto = await _dataUtil(service, GetCurrentAsyncMethod()).GetTestData();
+            //Act
+            var Response = service.GetAmountByInvoiceId(dto.Items.First().InvoiceId);
+
+            //Assert
+            Assert.NotEqual(Response,0);
         }
     }
 }

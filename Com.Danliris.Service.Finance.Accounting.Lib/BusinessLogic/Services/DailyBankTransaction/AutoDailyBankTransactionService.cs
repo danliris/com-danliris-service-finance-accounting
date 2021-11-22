@@ -30,10 +30,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             _dbContext = serviceProvider.GetService<FinanceDbContext>();
         }
 
-        public async Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos) 
+        public async Task<int> AutoCreateVbApproval(List<ApprovalVBAutoJournalDto> dtos)
         {
             var result = 0;
-            foreach(var dto in dtos)
+            foreach (var dto in dtos)
             {
                 result += await AutoCreateVbApproval(dto);
             }
@@ -136,7 +136,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             if (model.BankCurrencyCode != "IDR")
             {
-                dailyBankTransactionModel.Nominal = model.Items.Sum(item => (decimal)item.PayToSupplier);
+                dailyBankTransactionModel.Nominal = nominal * (decimal)model.CurrencyRate;
                 dailyBankTransactionModel.NominalValas = nominal;
             }
 
@@ -260,17 +260,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 SourceType = "OPERASIONAL",
                 Status = "IN"
             };
+
+            if (model.CurrencyCode != "IDR")
+            {
+                dailyBankTransactionModel.Nominal = (decimal)model.Amount * (decimal)model.CurrencyRate;
+                dailyBankTransactionModel.NominalValas = (decimal)model.Amount;
+            }
+
             return await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
 
-        public async Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel accountBank)
+        public async Task<int> AutoCreateFromClearenceVB(List<int> vbRealizationIds, AccountBankViewModel accountBank, string referenceNo)
         {
-            var realizations = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) && entity.Type == VBRequestDocument.VBType.WithPO).ToList();
+            var realizations = _dbContext.VBRealizationDocuments.Where(entity => vbRealizationIds.Contains(entity.Id) /*&& entity.Type == VBRequestDocument.VBType.WithPO*/).ToList();
 
             var result = 0;
             foreach (var realization in realizations)
             {
                 var realizationItems = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => entity.VBRealizationDocumentId == realization.Id).ToList();
+                var BICurrency = await GetBICurrency(realization.CurrencyCode, realization.Date);
                 var dailyBankTransactionModel = new DailyBankTransactionModel()
                 {
                     AccountBankAccountName = accountBank.AccountName,
@@ -283,23 +291,53 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     AccountBankName = accountBank.BankName,
                     Date = realization.Date,
                     Nominal = realizationItems.Sum(item => item.Amount),
-                    CurrencyRate = (decimal)realization.CurrencyRate,
-                    ReferenceNo = realization.DocumentNo,
-                    ReferenceType = "Clearence VB",
-                    Remark = $"{realization.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", realizationItems.Sum(item => item.Amount))}",
+                    CurrencyRate = (decimal)BICurrency.Rate,
+                    ReferenceNo = realization.ReferenceNo,
+                    //ReferenceType = "Clearence VB",
+                    Remark = $"Pembayaran atas {accountBank.Currency.Code} untuk:\nPermohonan VB {realization.VBRequestDocumentNo}\nRealisasi VB {realization.DocumentNo}",
+                    //Remark = $"{realization.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", realizationItems.Sum(item => item.Amount))}",k
                     SourceType = "OPERASIONAL",
                     Status = "OUT",
                     IsPosted = true
                 };
 
-                if (accountBank.Currency.Code != "IDR")
-                    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
+                if (realization.IsInklaring)
+                    dailyBankTransactionModel.ReferenceType = "Clearence VB Inklaring";
+                else if (realization.Type == VBType.NonPO)
+                    dailyBankTransactionModel.ReferenceType = "Clearence VB Non PO";
+                else
+                    dailyBankTransactionModel.ReferenceType = "Clearence VB With PO";
+
+                if (realization.CurrencyCode != "IDR")
+                {
+                    dailyBankTransactionModel.Nominal = realizationItems.Sum(item => item.Amount) * (decimal)BICurrency.Rate;
+                    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount);
+                }
+
+                //if (accountBank.Currency.Code != "IDR")
+                //    dailyBankTransactionModel.NominalValas = realizationItems.Sum(item => item.Amount) * (decimal)realization.CurrencyRate;
 
                 result += await _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
             }
 
 
             return result;
+        }
+
+        private async Task<GarmentCurrency> GetBICurrency(string codeCurrency, DateTimeOffset date)
+        {
+            string stringDate = date.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={stringDate}";
+
+            var http = _serviceProvider.GetService<IHttpClientService>();
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/bi-currencies/single-by-code-date?{queryString}");
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+            return result.data;
         }
     }
 }

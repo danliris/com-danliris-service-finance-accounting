@@ -131,27 +131,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.ClearaceVB
 
 
 
-        [Fact]
-        public async Task Success_Success_ClearanceVBPost()
-        {
-            var dbContext = _dbContext(GetCurrentMethod());
-            var serviceProvider = GetServiceProvider().Object;
-            var service = new ClearaceVBService(serviceProvider, dbContext);
+        //[Fact]
+        //public async Task Success_Success_ClearanceVBPost()
+        //{
+        //    var dbContext = _dbContext(GetCurrentMethod());
+        //    var serviceProvider = GetServiceProvider().Object;
+        //    var service = new ClearaceVBService(serviceProvider, dbContext);
 
-            var data = await _dataUtil(service).GetTestData();
+        //    var data = await _dataUtil(service).GetTestData();
 
-            var vBRealizationDocumentNonPOService = new VBRealizationDocumentNonPOService(serviceProvider, dbContext);
-            var vm = await _dataUtil(vBRealizationDocumentNonPOService).GetTestData();
+        //    var vBRealizationDocumentNonPOService = new VBRealizationDocumentNonPOService(serviceProvider, dbContext);
+        //    var vm = await _dataUtil(vBRealizationDocumentNonPOService).GetTestData();
 
-            var VBRealizationDocumentExpedition = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
-            var model = _dataUtil(VBRealizationDocumentExpedition, dbContext).GetTestData_VBRealizationDocumentExpedition();
+        //    var VBRealizationDocumentExpedition = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+        //    var model = _dataUtil(VBRealizationDocumentExpedition, dbContext).GetTestData_VBRealizationDocumentExpedition();
 
 
-            var dto = _dataUtil(service).GetNewData_ClearenceFormDto();
+        //    var dto = _dataUtil(service).GetNewData_ClearenceFormDto();
 
-            var Response = await service.ClearanceVBPost(dto);
-            Assert.NotEqual(0, Response);
-        }
+        //    var Response = await service.ClearanceVBPost(dto);
+        //    Assert.NotEqual(0, Response);
+        //}
 
 
         [Fact]

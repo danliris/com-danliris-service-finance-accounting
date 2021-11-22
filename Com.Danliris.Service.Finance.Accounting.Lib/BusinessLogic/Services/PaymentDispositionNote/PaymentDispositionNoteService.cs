@@ -67,8 +67,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
             if (model.BankCurrencyCode != "IDR")
             {
-                var garmentCurrency = await GetGarmentCurrency(model.BankCurrencyCode);
-                model.CurrencyRate = garmentCurrency.Rate.GetValueOrDefault();
+                var BICurrency = await GetBICurrency(model.BankCurrencyCode, model.PaymentDate);
+                model.CurrencyRate = BICurrency.Rate.GetValueOrDefault();
             }
 
             CreateModel(model);
@@ -116,13 +116,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             }
             return result.data;
         }
-        private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        //private async Task<GarmentCurrency> GetGarmentCurrency(string codeCurrency)
+        //{
+        //    var date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
+        //    var queryString = $"code={codeCurrency}&stringDate={date}";
+
+        //    var http = ServiceProvider.GetService<IHttpClientService>();
+        //    var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+
+        //    var responseString = await response.Content.ReadAsStringAsync();
+        //    var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
+
+        //    var result = JsonConvert.DeserializeObject<APIDefaultResponse<GarmentCurrency>>(responseString, jsonSerializationSetting);
+
+        //    return result.data;
+        //}
+
+        private async Task<GarmentCurrency> GetBICurrency(string codeCurrency, DateTimeOffset date)
         {
-            var date = DateTimeOffset.UtcNow.ToString("yyyy/MM/dd HH:mm:ss");
-            var queryString = $"code={codeCurrency}&stringDate={date}";
+            string stringDate = date.ToString("yyyy/MM/dd HH:mm:ss");
+            string queryString = $"code={codeCurrency}&stringDate={stringDate}";
 
             var http = ServiceProvider.GetService<IHttpClientService>();
-            var response = await http.GetAsync(APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?{queryString}");
+            var response = await http.GetAsync(APIEndpoint.Core + $"master/bi-currencies/single-by-code-date?{queryString}");
 
             var responseString = await response.Content.ReadAsStringAsync();
             var jsonSerializationSetting = new JsonSerializerSettings() { MissingMemberHandling = MissingMemberHandling.Ignore };
@@ -336,8 +352,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                             item.PaymentDueDate,
                             expenditure.BankId,
                             expenditure.BankName,
+                            expenditure.BankCurrencyCode,
                             expenditure.CurrencyId,
                             expenditure.CurrencyCode,
+                            expenditure.CurrencyRate,
                             expenditure.SupplierId,
                             expenditure.SupplierName,
                             expenditure.SupplierImport,
@@ -349,7 +367,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                             item.VatValue,
                             item.DPP,
                             expenditure.TransactionType,
-                            expenditure.BankAccountNumber
+                            expenditure.BankAccountNumber,
+                            item.IncomeTaxValue,
+                            item.PayToSupplier,
+                            expenditure.Amount
                         };
 
             query = query.Where(entity => entity.PaymentDate >= startDate && entity.PaymentDate <= endDate);
@@ -366,7 +387,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                 query = query.Where(entity => entity.DivisionId == divisionId);
 
             var result = query.OrderBy(entity => entity.PaymentDate).ToList();
-            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.DPP, element.TransactionType, element.BankAccountNumber)).ToList();
+
+            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.PayToSupplier, element.TransactionType, element.BankAccountNumber, element.CurrencyRate, element.BankCurrencyCode)).ToList();
         }
 
         public MemoryStream GetXls(List<ReportDto> data)
