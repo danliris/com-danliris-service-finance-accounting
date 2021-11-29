@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -98,7 +99,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
 
         }
 
+        public VBRequestDocumentModel GetTestData_VBRequestDocument()
+        {
+            var data = new VBRequestDocumentModel("documentNo", DateTimeOffset.Now, DateTimeOffset.Now, 1, "suppliantUnitCode", "suppliantUnitName", 1, "suppliantDivisionCode", "suppliantDivisionName", 1, "currencyCode", "currencySymbol", "currencyDescription", 1, "purpose", 1, true, true, VBType.NonPO, true, "noBI", "noPo", "typePurchasing");
+            dbContext.VBRequestDocuments.Add(data);
+            dbContext.SaveChanges();
+            return data;
 
-
+        }
     }
 }

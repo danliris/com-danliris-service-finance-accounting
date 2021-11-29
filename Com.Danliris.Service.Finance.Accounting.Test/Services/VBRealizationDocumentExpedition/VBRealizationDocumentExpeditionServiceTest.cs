@@ -3,6 +3,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDoc
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -343,5 +344,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             int result = await service.VerifiedToCashier(model.VBRealizationId);
             Assert.NotEqual(0, result);
         }
+
+        [Fact]
+        public void UpdateAsync_Return_Success()
+        {
+            FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+            VBRequestDocumentModel model = _dataUtil(service, dbContext).GetTestData_VBRequestDocument();
+            service.UpdateAsync(model.Id, model);
+            var result = model;
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void ReadByIdAsync_Return_Success()
+        {
+            FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+            VBRequestDocumentModel model = _dataUtil(service, dbContext).GetTestData_VBRequestDocument();
+            var result = service.ReadByIdAsync(model.Id);
+
+            Assert.NotNull(result);
+        }
+
+
     }
 }
