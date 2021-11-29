@@ -352,17 +352,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 if (dateEnd == null)
                     dateEnd = DateTime.MaxValue;
                 else
-                    dateEnd = dateEnd.GetValueOrDefault();
+                    dateEnd = dateEnd.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
 
                 if (dateStart == null)
                     dateStart = DateTime.MinValue;
                 else
-                    dateStart = dateStart.GetValueOrDefault();
+                    dateStart = dateStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
 
                 //dateEndXls = (DateTime)dateEnd == DateTime.MaxValue ? "-" : dateEndXls;
                 //dateStartXls = (DateTime)dateStart == DateTime.MinValue ? "-" : dateStartXls;
 
-                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault(), dateEnd.GetValueOrDefault(), status, 1, int.MaxValue);
+                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault().ToUniversalTime(), dateEnd.GetValueOrDefault().ToUniversalTime(), status, 1, int.MaxValue);
                 var stream = GenerateExcel(reportResult.Data, dateStart, dateEnd);
 
                 var xls = stream.ToArray();
