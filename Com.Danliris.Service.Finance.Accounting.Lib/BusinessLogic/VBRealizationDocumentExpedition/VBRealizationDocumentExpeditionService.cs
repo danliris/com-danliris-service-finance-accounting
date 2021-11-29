@@ -130,10 +130,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             LastModifiedDate = realization.LastModifiedUtc
                         };
 
-            DateTimeOffset firstDay = new DateTime(dateStart.Year, dateStart.Month, dateStart.Day);
-            DateTimeOffset lastDay = new DateTime(dateEnd.Year, dateEnd.Month, dateEnd.Day);
-
-            query = query.Where(entity => entity.VBRealizationDate.AddHours(_identityService.TimezoneOffset).DateTime > firstDay.DateTime && entity.VBRealizationDate.AddHours(_identityService.TimezoneOffset).DateTime < lastDay.AddDays(1).DateTime);
+            query = query.Where(entity => entity.VBRealizationDate >= dateStart && entity.VBRealizationDate <= dateEnd);
 
             if (vbId > 0)
                 query = query.Where(entity => entity.VBId == vbId);
