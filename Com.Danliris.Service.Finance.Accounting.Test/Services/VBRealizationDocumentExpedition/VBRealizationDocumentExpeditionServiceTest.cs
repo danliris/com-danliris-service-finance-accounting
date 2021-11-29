@@ -370,6 +370,60 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             Assert.NotNull(result);
         }
 
+        [Fact]
+        public async Task ClearanceVBPost_Return_Success()
+        {
+            FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
 
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+            VBRequestDocumentModel model = _dataUtil(service, dbContext).GetTestData_VBRequestDocument();
+
+            List<ClearancePostId> postIds = new List<ClearancePostId>();
+            ClearancePostId postId = new ClearancePostId();
+            postId.VBRealizationId = 0;
+            postId.VBRequestId = 1;
+            postIds.Add(postId);
+            var result = await service.ClearanceVBPost(postIds);
+
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task ClearanceVBPost2_Return_Success()
+        {
+            FinanceDbContext dbContext = _dbContext(GetCurrentAsyncMethod());
+
+            VBRealizationDocumentExpeditionService service = new VBRealizationDocumentExpeditionService(dbContext, GetServiceProvider().Object);
+            VBRequestDocumentModel model = _dataUtil(service, dbContext).GetTestData_VBRequestDocument();
+
+            List<ClearancePostId> postIds = new List<ClearancePostId>();
+            ClearancePostId postId = new ClearancePostId();
+            postId.VBRealizationId = 0;
+            postId.VBRequestId = 1;
+            postIds.Add(postId);
+
+            ClearanceFormDto clearanceForm = new ClearanceFormDto();
+            clearanceForm.Bank = new Lib.ViewModels.NewIntegrationViewModel.AccountBankViewModel { 
+                AccountCOA = "",
+                AccountName = "",
+                AccountNumber = "",
+                BankCode = "",
+                BankName = "",
+                Code = "",
+                Currency = new Lib.ViewModels.NewIntegrationViewModel.CurrencyViewModel {
+                    Code = "",
+                    Description = "",
+                    Id = 1,
+                    Rate = 1,
+                    Symbol = ""
+                },
+                Id = 1
+            };
+            clearanceForm.ListIds = postIds;
+
+            var result = await service.ClearanceVBPost(clearanceForm);
+
+            Assert.NotEqual(0, result);
+        }
     }
 }
