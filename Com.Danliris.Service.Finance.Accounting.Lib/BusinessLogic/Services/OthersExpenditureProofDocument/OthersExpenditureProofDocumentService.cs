@@ -76,26 +76,26 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             return _taskDone;
         }
 
-        private async Task<string> GetDocumentNo(string type, string bankCode, string username)
-        {
-            var jsonSerializerSettings = new JsonSerializerSettings
-            {
-                MissingMemberHandling = MissingMemberHandling.Ignore
-            };
+        //private async Task<string> GetDocumentNo(string type, string bankCode, string username)
+        //{
+        //    var jsonSerializerSettings = new JsonSerializerSettings
+        //    {
+        //        MissingMemberHandling = MissingMemberHandling.Ignore
+        //    };
 
-            var http = _serviceProvider.GetService<IHttpClientService>();
-            var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
-            var response = await http.GetAsync(uri);
+        //    var http = _serviceProvider.GetService<IHttpClientService>();
+        //    var uri = APIEndpoint.Purchasing + $"bank-expenditure-notes/bank-document-no?type={type}&bankCode={bankCode}&username={username}";
+        //    var response = await http.GetAsync(uri);
 
-            var result = new BaseResponse<string>();
+        //    var result = new BaseResponse<string>();
 
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
-            }
-            return result.data;
-        }
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var responseContent = await response.Content.ReadAsStringAsync();
+        //        result = JsonConvert.DeserializeObject<BaseResponse<string>>(responseContent, jsonSerializerSettings);
+        //    }
+        //    return result.data;
+        //}
         private async Task<string> GetDocumentNo(string type, string bankCode, string username, DateTime date)
         {
             var jsonSerializerSettings = new JsonSerializerSettings
