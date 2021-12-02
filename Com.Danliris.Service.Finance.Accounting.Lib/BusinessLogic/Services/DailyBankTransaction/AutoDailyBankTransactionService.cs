@@ -204,7 +204,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 Nominal = itemModels.Sum(item => item.Debit),
                 CurrencyRate = (decimal)model.CurrencyRate,
                 ReferenceNo = model.DocumentNo,
-                ReferenceType = "Pembayaran Lain - lain",
+                ReferenceType = "Pengeluaran Bank Lain-lain",
                 Remark = $"{model.Remark}\n\nPembayaran atas {accountBank.Currency.Code} dengan nominal {string.Format("{0:n}", total)}",
                 SourceType = model.Type,
                 Status = "OUT",
