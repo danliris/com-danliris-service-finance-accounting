@@ -183,7 +183,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.CreditBalance
             var tempResponse = await service.CreateFromUnitReceiptNoteAsync(unitData);
             var Response = await service.CreateFromBankExpenditureNoteAsync(data);
 
-            var reportResponse = creditBalanceService.GenerateExcel(false, "", data.Date.Month + 1, data.Date.Year + 1, 7, false, 11);
+            var reportResponse = creditBalanceService.GenerateExcel(false, "", data.Date.AddMonths(1).Month, data.Date.AddYears(1).Year, 7, false, 11);
             Assert.NotNull(reportResponse);
         }
 
