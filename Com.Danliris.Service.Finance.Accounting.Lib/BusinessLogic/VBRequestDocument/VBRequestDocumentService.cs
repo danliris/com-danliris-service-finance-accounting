@@ -132,7 +132,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             try
             {
                 var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper(), form.IsInklaring);
-                var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.DocumentNo.StartsWith(unitCode)).OrderByDescending(s => s.Index).FirstOrDefault();
+                var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.Date.AddHours(_identityService.TimezoneOffset).Year == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Year && a.DocumentNo.StartsWith(unitCode)).OrderByDescending(s => s.Index).FirstOrDefault();
                 var documentNo = GetDocumentNo(form, existingData);
                 var model = new VBRequestDocumentModel(
                     documentNo.Item1,
