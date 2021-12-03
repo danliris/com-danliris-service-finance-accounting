@@ -53,7 +53,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             var year = now.ToString("yy");
             var month = now.ToString("MM");
 
-
             //var unit = model.UnitCode.ToString().Split(" - ");
 
             var unitCode = "T";
@@ -68,7 +67,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             if (existingData != null)
             {
-                index = existingData.Index + 1;
+                if (year != "21" && month != "12" && index != 1)
+                {
+                    index = existingData.Index + 1;
+                }
+                else if (unitCode == "T" && index == 64)
+                {
+                    index = 71;
+                }
+                else if (unitCode == "G" && index == 21)
+                {
+                    index = 25;
+                }
             }
 
             documentNo += string.Format("{0:000}", index);
