@@ -53,7 +53,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             var year = now.ToString("yy");
             var month = now.ToString("MM");
 
-
             //var unit = model.UnitCode.ToString().Split(" - ");
 
             var unitCode = "T";
@@ -68,7 +67,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             if (existingData != null)
             {
-                index = existingData.Index + 1;
+                if (year == "21" && month == "12")
+                {
+                    if (unitCode == "T")
+                    {
+                        if (existingData.Index == 75)
+                        {
+                            index = 1;
+                        }
+                        else if (existingData.Index == 64)
+                        {
+                            index = 76;
+                        }
+                        else
+                        {
+                            index = existingData.Index + 1;
+                        }
+                    }
+                    else if (unitCode == "G")
+                    {
+                        if (existingData.Index == 25)
+                        {
+                            index = 1;
+                        }
+                        else if (existingData.Index == 21)
+                        {
+                            index = 26;
+                        }
+                        else
+                        {
+                            index = existingData.Index + 1;
+                        }
+                    }
+                }
+                else
+                {
+                    index = existingData.Index + 1;
+                }
             }
 
             documentNo += string.Format("{0:000}", index);
@@ -104,7 +139,43 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             if (existingData != null)
             {
-                index = existingData.Index + 1;
+                if (year == "21" && month == "12")
+                {
+                    if (unitCode == "T")
+                    {
+                        if (existingData.Index == 75)
+                        {
+                            index = 1;
+                        }
+                        else if (existingData.Index == 64)
+                        {
+                            index = 76;
+                        }
+                        else
+                        {
+                            index = existingData.Index + 1;
+                        }
+                    }
+                    else if (unitCode == "G")
+                    {
+                        if (existingData.Index == 25)
+                        {
+                            index = 1;
+                        }
+                        else if (existingData.Index == 21)
+                        {
+                            index = 26;
+                        }
+                        else
+                        {
+                            index = existingData.Index + 1;
+                        }
+                    }
+                }
+                else
+                {
+                    index = existingData.Index + 1;
+                }
             }
 
             documentNo += string.Format("{0:000}", index);
