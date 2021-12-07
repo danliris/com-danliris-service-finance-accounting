@@ -71,13 +71,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     if (unitCode == "T")
                     {
-                        if (existingData.Index == 78)
+                        if (existingData.Index == 82)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 64)
                         {
-                            index = 79;
+                            index = 83;
                         }
                         else
                         {
@@ -86,13 +86,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     }
                     else if (unitCode == "G")
                     {
-                        if (existingData.Index == 26)
+                        if (existingData.Index == 29)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 21)
                         {
-                            index = 27;
+                            index = 30;
+                        }
+                        else
+                        {
+                            index = existingData.Index + 1;
+                        }
+                    }
+                    else if (unitCode == "GI")
+                    {
+                        if (existingData.Index == 15)
+                        {
+                            index = 1;
+                        }
+                        else if (existingData.Index == 11)
+                        {
+                            index = 16;
                         }
                         else
                         {
@@ -143,13 +158,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     if (unitCode == "T")
                     {
-                        if (existingData.Index == 78)
+                        if (existingData.Index == 82)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 64)
                         {
-                            index = 79;
+                            index = 83;
                         }
                         else
                         {
@@ -158,13 +173,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     }
                     else if (unitCode == "G")
                     {
-                        if (existingData.Index == 26)
+                        if (existingData.Index == 29)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 21)
                         {
-                            index = 27;
+                            index = 30;
+                        }
+                        else
+                        {
+                            index = existingData.Index + 1;
+                        }
+                    }
+                    else if (unitCode == "GI")
+                    {
+                        if (existingData.Index == 15)
+                        {
+                            index = 1;
+                        }
+                        else if (existingData.Index == 11)
+                        {
+                            index = 16;
                         }
                         else
                         {
