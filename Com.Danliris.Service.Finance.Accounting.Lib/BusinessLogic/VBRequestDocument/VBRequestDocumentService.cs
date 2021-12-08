@@ -71,13 +71,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     if (unitCode == "T")
                     {
-                        if (existingData.Index == 75)
+                        if (existingData.Index == 88)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 64)
                         {
-                            index = 76;
+                            index = 89;
                         }
                         else
                         {
@@ -86,13 +86,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     }
                     else if (unitCode == "G")
                     {
-                        if (existingData.Index == 25)
+                        if (existingData.Index == 32)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 21)
                         {
-                            index = 26;
+                            index = 33;
+                        }
+                        else
+                        {
+                            index = existingData.Index + 1;
+                        }
+                    }
+                    else if (unitCode == "GI")
+                    {
+                        if (existingData.Index == 15)
+                        {
+                            index = 1;
+                        }
+                        else if (existingData.Index == 11)
+                        {
+                            index = 16;
                         }
                         else
                         {
@@ -143,13 +158,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     if (unitCode == "T")
                     {
-                        if (existingData.Index == 75)
+                        if (existingData.Index == 88)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 64)
                         {
-                            index = 76;
+                            index = 89;
                         }
                         else
                         {
@@ -158,13 +173,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     }
                     else if (unitCode == "G")
                     {
-                        if (existingData.Index == 25)
+                        if (existingData.Index == 32)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 21)
                         {
-                            index = 26;
+                            index = 33;
+                        }
+                        else
+                        {
+                            index = existingData.Index + 1;
+                        }
+                    }
+                    else if (unitCode == "GI")
+                    {
+                        if (existingData.Index == 15)
+                        {
+                            index = 1;
+                        }
+                        else if (existingData.Index == 11)
+                        {
+                            index = 16;
                         }
                         else
                         {
@@ -281,7 +311,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public int CreateWithPO(VBRequestDocumentWithPOFormDto form)
         {
             var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper(), form.IsInklaring);
-            var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.DocumentNo.StartsWith(unitCode)).OrderByDescending(s => s.Index).FirstOrDefault();
+            var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.DocumentNo.StartsWith(unitCode) && a.Date.AddHours(_identityService.TimezoneOffset).Year == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Year).OrderByDescending(s => s.Index).FirstOrDefault();
             var documentNo = GetDocumentNo(form, existingData);
 
             var model = new VBRequestDocumentModel(
