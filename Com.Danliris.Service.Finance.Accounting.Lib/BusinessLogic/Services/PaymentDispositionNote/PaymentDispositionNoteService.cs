@@ -65,10 +65,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             var timeOffset = new TimeSpan(IdentityService.TimezoneOffset, 0, 0);
             model.PaymentDispositionNo = await GetDocumentNo("K", model.BankCode, IdentityService.Username, model.PaymentDate.ToOffset(timeOffset).Date);
 
-            if (model.BankCurrencyCode != "IDR")
+            if (model.CurrencyCode != "IDR")
             {
-                var BICurrency = await GetBICurrency(model.BankCurrencyCode, model.PaymentDate);
-                model.CurrencyRate = BICurrency.Rate.GetValueOrDefault();
+                if (model.BankCurrencyCode != "IDR")
+                {
+                    var BICurrency = await GetBICurrency(model.BankCurrencyCode, model.PaymentDate);
+                    model.CurrencyRate = BICurrency.Rate.GetValueOrDefault();
+                }
             }
 
             CreateModel(model);
@@ -341,6 +344,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             var query = from expenditure in expenditureQuery
                         join expenditureItem in expenditureItemQuery on expenditure.Id equals expenditureItem.PaymentDispositionNoteId into items
                         from item in items.DefaultIfEmpty()
+                        where expenditure.IsPosted
                         select new
                         {
                             expenditure.Id,
