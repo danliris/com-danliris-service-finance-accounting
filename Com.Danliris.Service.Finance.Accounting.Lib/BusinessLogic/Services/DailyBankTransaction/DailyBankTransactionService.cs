@@ -1000,7 +1000,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public async Task<DailyBankTransactionModel> ReadByIdAsync(int id)
         {
             var data = await _DbSet.Where(w => w.Id.Equals(id)).FirstOrDefaultAsync();
-            if (data.AccountBankCurrencyCode != "IDR")
+            if (data.AccountBankCurrencyCode != "IDR" && data.NominalValas != 0)
             {
                 data.Nominal = data.NominalValas;
             }
