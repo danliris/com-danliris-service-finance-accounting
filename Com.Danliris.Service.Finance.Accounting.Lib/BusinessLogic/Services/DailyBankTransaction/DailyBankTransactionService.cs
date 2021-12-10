@@ -1043,6 +1043,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     model.Nominal = model.Nominal * model.CurrencyRate;
                     model.TransactionNominal = model.Nominal;
                 }
+                else
+                {
+                    model.NominalValas = 0;
+                }
 
                 EntityExtension.FlagForUpdate(model, _IdentityService.Username, _UserAgent);
 
