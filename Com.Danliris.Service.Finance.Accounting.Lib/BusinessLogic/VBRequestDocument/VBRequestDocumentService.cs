@@ -71,13 +71,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     if (unitCode == "T")
                     {
-                        if (existingData.Index == 88)
+                        if (existingData.Index == 94)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 64)
                         {
-                            index = 89;
+                            index = 95;
                         }
                         else
                         {
@@ -158,13 +158,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     if (unitCode == "T")
                     {
-                        if (existingData.Index == 88)
+                        if (existingData.Index == 94)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 64)
                         {
-                            index = 89;
+                            index = 95;
                         }
                         else
                         {
@@ -233,7 +233,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
             try
             {
                 var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper(), form.IsInklaring);
-                var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.Date.AddHours(_identityService.TimezoneOffset).Year == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Year && a.DocumentNo.StartsWith(unitCode)).OrderByDescending(s => s.Index).FirstOrDefault();
+                var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.Date.AddHours(_identityService.TimezoneOffset).Year == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Year && a.DocumentNo.StartsWith(unitCode)).OrderByDescending(s => s.Id).FirstOrDefault();
                 var documentNo = GetDocumentNo(form, existingData);
                 var model = new VBRequestDocumentModel(
                     documentNo.Item1,
@@ -311,7 +311,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public int CreateWithPO(VBRequestDocumentWithPOFormDto form)
         {
             var unitCode = GetDocumentUnitCode(form.SuppliantUnit.Division.Name.ToUpper(), form.IsInklaring);
-            var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.DocumentNo.StartsWith(unitCode) && a.Date.AddHours(_identityService.TimezoneOffset).Year == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Year).OrderByDescending(s => s.Index).FirstOrDefault();
+            var existingData = _dbContext.VBRequestDocuments.Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month && a.DocumentNo.StartsWith(unitCode) && a.Date.AddHours(_identityService.TimezoneOffset).Year == form.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Year).OrderByDescending(s => s.Id).FirstOrDefault();
             var documentNo = GetDocumentNo(form, existingData);
 
             var model = new VBRequestDocumentModel(
