@@ -41,30 +41,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             _serviceProvider = serviceProvider;
         }
 
-        private async Task<GarmentCurrency> GetCurrencyByCurrencyCodeDate(string currencyCode, DateTimeOffset date)
-        {
-            var jsonSerializerSettings = new JsonSerializerSettings
-            {
-                MissingMemberHandling = MissingMemberHandling.Ignore
-            };
+        //private async Task<GarmentCurrency> GetCurrencyByCurrencyCodeDate(string currencyCode, DateTimeOffset date)
+        //{
+        //    var jsonSerializerSettings = new JsonSerializerSettings
+        //    {
+        //        MissingMemberHandling = MissingMemberHandling.Ignore
+        //    };
 
-            var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
+        //    var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
 
-            var currencyUri = APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?code={currencyCode}&stringDate={date.DateTime.ToString("yyyy-MM-dd")}";
-            var currencyResponse = await httpClient.GetAsync(currencyUri);
+        //    var currencyUri = APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?code={currencyCode}&stringDate={date.DateTime.ToString("yyyy-MM-dd")}";
+        //    var currencyResponse = await httpClient.GetAsync(currencyUri);
 
-            var currencyResult = new BaseResponse<GarmentCurrency>()
-            {
-                data = new GarmentCurrency()
-            };
+        //    var currencyResult = new BaseResponse<GarmentCurrency>()
+        //    {
+        //        data = new GarmentCurrency()
+        //    };
 
-            if (currencyResponse.IsSuccessStatusCode)
-            {
-                currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
-            }
+        //    if (currencyResponse.IsSuccessStatusCode)
+        //    {
+        //        currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
+        //    }
 
-            return currencyResult.data;
-        }
+        //    return currencyResult.data;
+        //}
 
         public async Task<int> CreateAsync(DailyBankTransactionModel model)
         {
