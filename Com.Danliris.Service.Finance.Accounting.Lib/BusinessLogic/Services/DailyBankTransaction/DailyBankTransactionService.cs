@@ -999,7 +999,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public async Task<DailyBankTransactionModel> ReadByIdAsync(int id)
         {
-            return await _DbSet.Where(w => w.Id.Equals(id)).FirstOrDefaultAsync();
+            var data = await _DbSet.Where(w => w.Id.Equals(id)).FirstOrDefaultAsync();
+            if (data.AccountBankCurrencyCode != "IDR")
+            {
+                data.Nominal = data.NominalValas;
+            }
+
+            return data;
         }
 
         public async Task<int> UpdateAsync(int id, DailyBankTransactionModel model)
@@ -1027,6 +1033,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         model.ReferenceNo = await GetDocumentNo("M", model.AccountBankCode, _IdentityService.Username);
                 }
 
+                var nominal = model.Nominal;
+                var nominalValas = model.NominalValas;
+                var transactionNominal = model.TransactionNominal;
+
+                if (model.AccountBankCurrencyCode != "IDR")
+                {
+                    model.NominalValas = model.Nominal;
+                    model.Nominal = model.Nominal * model.CurrencyRate;
+                    model.TransactionNominal = model.Nominal;
+                }
 
                 EntityExtension.FlagForUpdate(model, _IdentityService.Username, _UserAgent);
 
@@ -1084,8 +1100,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                             inputModel.DestinationBankCurrencySymbol = "";
                             inputModel.DestinationBankId = 0;
                             inputModel.DestinationBankName = "";
-                            inputModel.Nominal = model.TransactionNominal;
-                            inputModel.NominalValas = model.NominalValas;
+                            inputModel.Nominal = transactionNominal;
+                            inputModel.NominalValas = model.AccountBankCurrencyCode != "IDR" ? nominalValas : 0;
                             inputModel.CurrencyRate = model.CurrencyRate;
 
                             await CreateAsync(inputModel);
