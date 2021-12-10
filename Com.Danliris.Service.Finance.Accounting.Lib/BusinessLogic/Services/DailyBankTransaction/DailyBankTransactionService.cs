@@ -75,10 +75,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             }
             while (_DbSet.Any(d => d.Code.Equals(model.Code)));
 
-            var currency = await GetCurrencyByCurrencyCodeDate(model.AccountBankCurrencyCode, model.Date);
+            var currency = await GetBICurrency(model.AccountBankCurrencyCode, model.Date);
             model.CurrencyRate = (decimal)currency.Rate.GetValueOrDefault();
             if (model.CurrencyRate <= 0)
                 model.CurrencyRate = 1;
+
+            if (model.AccountBankCurrencyCode != "IDR")
+            {
+                model.NominalValas = model.Nominal;
+                model.Nominal = model.Nominal * model.CurrencyRate;
+            }
 
             model.Date = model.Date.AddHours(_IdentityService.TimezoneOffset);
 
@@ -1006,7 +1012,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             //while (_DbSet.Any(d => d.Code.Equals(model.Code)));
 
             //model.Date = model.Date.AddHours(_IdentityService.TimezoneOffset);
-            var currency = await GetCurrencyByCurrencyCodeDate(model.AccountBankCurrencyCode, model.Date);
+            var currency = await GetBICurrency(model.AccountBankCurrencyCode, model.Date);
             model.CurrencyRate = (decimal)currency.Rate.GetValueOrDefault();
             if (model.CurrencyRate <= 0)
                 model.CurrencyRate = 1;
