@@ -71,13 +71,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     if (unitCode == "T")
                     {
-                        if (existingData.Index == 94)
+                        if (existingData.Index == 98)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 64)
                         {
-                            index = 95;
+                            index = 99;
                         }
                         else
                         {
@@ -113,6 +113,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                         {
                             index = existingData.Index + 1;
                         }
+                    }
+                    else
+                    {
+                        index = existingData.Index + 1;
                     }
                 }
                 else
@@ -158,13 +162,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 {
                     if (unitCode == "T")
                     {
-                        if (existingData.Index == 94)
+                        if (existingData.Index == 98)
                         {
                             index = 1;
                         }
                         else if (existingData.Index == 64)
                         {
-                            index = 95;
+                            index = 99;
                         }
                         else
                         {
@@ -200,6 +204,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                         {
                             index = existingData.Index + 1;
                         }
+                    }
+                    else
+                    {
+                        index = existingData.Index + 1;
                     }
                 }
                 else
