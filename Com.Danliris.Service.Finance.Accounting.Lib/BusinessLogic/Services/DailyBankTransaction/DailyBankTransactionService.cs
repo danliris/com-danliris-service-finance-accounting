@@ -41,30 +41,30 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             _serviceProvider = serviceProvider;
         }
 
-        private async Task<GarmentCurrency> GetCurrencyByCurrencyCodeDate(string currencyCode, DateTimeOffset date)
-        {
-            var jsonSerializerSettings = new JsonSerializerSettings
-            {
-                MissingMemberHandling = MissingMemberHandling.Ignore
-            };
+        //private async Task<GarmentCurrency> GetCurrencyByCurrencyCodeDate(string currencyCode, DateTimeOffset date)
+        //{
+        //    var jsonSerializerSettings = new JsonSerializerSettings
+        //    {
+        //        MissingMemberHandling = MissingMemberHandling.Ignore
+        //    };
 
-            var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
+        //    var httpClient = (IHttpClientService)_serviceProvider.GetService(typeof(IHttpClientService));
 
-            var currencyUri = APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?code={currencyCode}&stringDate={date.DateTime.ToString("yyyy-MM-dd")}";
-            var currencyResponse = await httpClient.GetAsync(currencyUri);
+        //    var currencyUri = APIEndpoint.Core + $"master/garment-currencies/single-by-code-date?code={currencyCode}&stringDate={date.DateTime.ToString("yyyy-MM-dd")}";
+        //    var currencyResponse = await httpClient.GetAsync(currencyUri);
 
-            var currencyResult = new BaseResponse<GarmentCurrency>()
-            {
-                data = new GarmentCurrency()
-            };
+        //    var currencyResult = new BaseResponse<GarmentCurrency>()
+        //    {
+        //        data = new GarmentCurrency()
+        //    };
 
-            if (currencyResponse.IsSuccessStatusCode)
-            {
-                currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
-            }
+        //    if (currencyResponse.IsSuccessStatusCode)
+        //    {
+        //        currencyResult = JsonConvert.DeserializeObject<BaseResponse<GarmentCurrency>>(currencyResponse.Content.ReadAsStringAsync().Result, jsonSerializerSettings);
+        //    }
 
-            return currencyResult.data;
-        }
+        //    return currencyResult.data;
+        //}
 
         public async Task<int> CreateAsync(DailyBankTransactionModel model)
         {
@@ -75,10 +75,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             }
             while (_DbSet.Any(d => d.Code.Equals(model.Code)));
 
-            var currency = await GetCurrencyByCurrencyCodeDate(model.AccountBankCurrencyCode, model.Date);
+            var currency = await GetBICurrency(model.AccountBankCurrencyCode, model.Date);
             model.CurrencyRate = (decimal)currency.Rate.GetValueOrDefault();
             if (model.CurrencyRate <= 0)
                 model.CurrencyRate = 1;
+
+            if (model.AccountBankCurrencyCode != "IDR")
+            {
+                model.NominalValas = model.Nominal;
+                model.Nominal = model.Nominal * model.CurrencyRate;
+            }
 
             model.Date = model.Date.AddHours(_IdentityService.TimezoneOffset);
 
@@ -993,7 +999,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public async Task<DailyBankTransactionModel> ReadByIdAsync(int id)
         {
-            return await _DbSet.Where(w => w.Id.Equals(id)).FirstOrDefaultAsync();
+            var data = await _DbSet.Where(w => w.Id.Equals(id)).FirstOrDefaultAsync();
+            if (data.AccountBankCurrencyCode != "IDR" && data.NominalValas != 0)
+            {
+                data.Nominal = data.NominalValas;
+            }
+
+            return data;
         }
 
         public async Task<int> UpdateAsync(int id, DailyBankTransactionModel model)
@@ -1006,7 +1018,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             //while (_DbSet.Any(d => d.Code.Equals(model.Code)));
 
             //model.Date = model.Date.AddHours(_IdentityService.TimezoneOffset);
-            var currency = await GetCurrencyByCurrencyCodeDate(model.AccountBankCurrencyCode, model.Date);
+            var currency = await GetBICurrency(model.AccountBankCurrencyCode, model.Date);
             model.CurrencyRate = (decimal)currency.Rate.GetValueOrDefault();
             if (model.CurrencyRate <= 0)
                 model.CurrencyRate = 1;
@@ -1021,6 +1033,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                         model.ReferenceNo = await GetDocumentNo("M", model.AccountBankCode, _IdentityService.Username);
                 }
 
+                var nominal = model.Nominal;
+                var nominalValas = model.NominalValas;
+                var transactionNominal = model.TransactionNominal;
+
+                if (model.AccountBankCurrencyCode != "IDR")
+                {
+                    model.NominalValas = model.Nominal;
+                    model.Nominal = model.Nominal * model.CurrencyRate;
+                    model.TransactionNominal = model.Nominal;
+                }
+                else
+                {
+                    model.NominalValas = 0;
+                }
 
                 EntityExtension.FlagForUpdate(model, _IdentityService.Username, _UserAgent);
 
@@ -1078,8 +1104,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                             inputModel.DestinationBankCurrencySymbol = "";
                             inputModel.DestinationBankId = 0;
                             inputModel.DestinationBankName = "";
-                            inputModel.Nominal = model.TransactionNominal;
-                            inputModel.NominalValas = model.NominalValas;
+                            inputModel.Nominal = transactionNominal;
+                            inputModel.NominalValas = model.AccountBankCurrencyCode != "IDR" ? nominalValas : 0;
                             inputModel.CurrencyRate = model.CurrencyRate;
 
                             await CreateAsync(inputModel);
