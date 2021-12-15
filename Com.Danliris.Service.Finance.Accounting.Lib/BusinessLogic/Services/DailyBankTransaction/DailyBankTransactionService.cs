@@ -76,7 +76,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             while (_DbSet.Any(d => d.Code.Equals(model.Code)));
 
             var currency = await GetBICurrency(model.AccountBankCurrencyCode, model.Date);
-            model.CurrencyRate = (decimal)currency.Rate.GetValueOrDefault();
+            model.CurrencyRate = currency == null ? 1 : (decimal)currency.Rate.GetValueOrDefault();
             if (model.CurrencyRate <= 0)
                 model.CurrencyRate = 1;
 
