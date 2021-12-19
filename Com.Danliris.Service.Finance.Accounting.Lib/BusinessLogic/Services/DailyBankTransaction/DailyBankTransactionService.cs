@@ -700,7 +700,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                              Remark = $"{transaction.SupplierName ?? transaction.BuyerName}\n{transaction.Remark}",
                              ReferenceNo = transaction.ReferenceNo,
                              ReferenceType = transaction.ReferenceType,
-                             AccountBankCurrencyCode = transaction.AccountBankCurrencyCode != transaction.AccountBankAccountName.Substring(transaction.AccountBankAccountName.Length - 3) ? ((transaction.AccountBankAccountName.Contains("PT. DAN LIRIS") || transaction.AccountBankAccountName.Contains("KAS DITANGAN SOLO")) ? transaction.AccountBankCurrencyCode : transaction.AccountBankAccountName.Substring(transaction.AccountBankAccountName.Length - 3)) : transaction.AccountBankCurrencyCode,
+                             AccountBankCurrencyCode = transaction.AccountBankCurrencyCode,
                              //BeforeNominal = transaction.BeforeNominal,
                              //AfterNominal = transaction.AfterNominal,
                              Nominal = transaction.Nominal,
@@ -882,7 +882,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                    AccountBankAccountName = s.AccountBankAccountName,
                    AccountBankAccountNumber = s.AccountBankAccountNumber,
                    AccountBankCode = s.AccountBankCode,
-                   AccountBankCurrencyCode = s.AccountBankCurrencyCode != s.AccountBankAccountName.Substring(s.AccountBankAccountName.Length - 3) ? ((s.AccountBankAccountName.Contains("PT. DAN LIRIS") || s.AccountBankAccountName.Contains("KAS DITANGAN SOLO")) ? s.AccountBankCurrencyCode : s.AccountBankAccountName.Substring(s.AccountBankAccountName.Length - 3)) : s.AccountBankCurrencyCode,
+                   AccountBankCurrencyCode = s.AccountBankCurrencyCode,
                    AccountBankCurrencyId = s.AccountBankCurrencyId,
                    AccountBankCurrencySymbol = s.AccountBankCurrencySymbol,
                    AccountBankId = s.AccountBankId,
@@ -892,7 +892,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                    Status = s.Status,
                    SourceType = s.SourceType,
                    IsPosted = s.IsPosted,
-                   Nominal = s.AccountBankCurrencyCode != ((s.AccountBankAccountName.Contains("PT. DAN LIRIS") || s.AccountBankAccountName.Contains("KAS DITANGAN SOLO")) ? s.AccountBankCurrencyCode : s.AccountBankAccountName.Substring(s.AccountBankAccountName.Length - 3)) ? (s.NominalValas == 0 ? s.Nominal : s.NominalValas * s.CurrencyRate) : s.Nominal
+                   Nominal = s.AccountBankCurrencyCode != "IDR" ? (s.NominalValas == 0 ? s.Nominal : s.NominalValas) : s.Nominal
                }).ToList()
             );
 
