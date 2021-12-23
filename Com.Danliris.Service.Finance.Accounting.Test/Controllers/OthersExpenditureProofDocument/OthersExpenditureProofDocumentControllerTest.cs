@@ -365,13 +365,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.OthersExpendi
             var validateServiceMock = new Mock<IValidateService>();
             validateServiceMock.Setup(validateService => validateService.Validate(It.IsAny<OthersExpenditureProofDocumentCreateUpdateViewModel>())).Verifiable();
             var serviceMock = new Mock<IOthersExpenditureProofDocumentService>();
-            serviceMock.Setup(service => service.Posting(It.IsAny<List<int>>())).ReturnsAsync(1);
+            serviceMock.Setup(service => service.Posting(It.IsAny<List<int>>())).ReturnsAsync("1");
 
             var controller = GetController(identityServiceMock.Object, validateServiceMock.Object, serviceMock.Object);
             var response = await controller.Posting(It.IsAny<List<int>>());
 
             int statusCode = GetStatusCode(response);
-            Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
+            Assert.Equal((int)HttpStatusCode.OK, statusCode);
         }
 
         [Fact]
