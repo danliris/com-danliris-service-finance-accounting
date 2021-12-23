@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
@@ -485,22 +486,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Services.OthersExpenditure
             return result.data;
         }
 
-        public async Task<int> Posting(List<int> ids)
+        public async Task<string> Posting(List<int> ids)
         {
             var models = _dbContext.OthersExpenditureProofDocuments.Where(entity => ids.Contains(entity.Id)).ToList();
             var itemModels = _dbContext.OthersExpenditureProofDocumentItems.Where(entity => ids.Contains(entity.OthersExpenditureProofDocumentId)).ToList();
+            var result = "";
 
             foreach (var model in models)
             {
-                var items = itemModels.Where(element => element.OthersExpenditureProofDocumentId == model.Id).ToList();
-                model.IsPosted = true;
-                EntityExtension.FlagForUpdate(model, _identityService.Username, _userAgent);
+                if (model.IsPosted)
+                {
+                    result += "Nomor " + model.DocumentNo + ", ";
+                }
+                else
+                {
+                    var items = itemModels.Where(element => element.OthersExpenditureProofDocumentId == model.Id).ToList();
 
-                await _autoJournalService.AutoJournalFromOthersExpenditureProof(model, items);
-                await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, items);
+                    await _autoJournalService.AutoJournalFromOthersExpenditureProof(model, items);
+                    await _autoDailyBankTransactionService.AutoCreateFromOthersExpenditureProofDocument(model, items);
+
+                    model.IsPosted = true;
+                    EntityExtension.FlagForUpdate(model, _identityService.Username, _userAgent);
+
+                    await _dbContext.SaveChangesAsync();
+                }
             }
-
-            var result = await _dbContext.SaveChangesAsync();
 
             return result;
         }

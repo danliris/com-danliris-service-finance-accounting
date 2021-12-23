@@ -271,7 +271,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.OthersEx
                 VerifyUser();
                 var result = await _service.Posting(ids);
 
-                return NoContent();
+                return Ok(new
+                {
+                    apiVersion = _apiVersion,
+                    data = result,
+                    message = General.OK_MESSAGE,
+                    statusCode = General.CREATED_STATUS_CODE
+                });
             }
             catch (Exception e)
             {
