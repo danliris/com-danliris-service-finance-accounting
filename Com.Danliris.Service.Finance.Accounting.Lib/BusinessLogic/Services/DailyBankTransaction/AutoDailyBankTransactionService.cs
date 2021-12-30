@@ -139,6 +139,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 dailyBankTransactionModel.Nominal = nominal * (decimal)model.CurrencyRate;
                 dailyBankTransactionModel.NominalValas = nominal;
             }
+            else if (model.CurrencyCode != "IDR")
+            {
+                dailyBankTransactionModel.Nominal = nominal * (decimal)model.CurrencyRate;
+            }
 
             return _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
         }
