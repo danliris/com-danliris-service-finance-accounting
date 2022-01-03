@@ -80,7 +80,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (model.CurrencyRate <= 0)
                 model.CurrencyRate = 1;
 
-            if (model.AccountBankCurrencyCode != "IDR")
+            if (model.AccountBankCurrencyCode != "IDR" && 
+                model.ReferenceType != "Pembayaran Disposisi" && model.ReferenceType != "Pengeluaran Bank Lain-lain" && model.ReferenceType != "Bayar Hutang" && model.ReferenceType != "Bayar PPh" && !model.ReferenceType.Contains("VB"))
             {
                 model.NominalValas = model.Nominal;
                 model.Nominal = model.Nominal * model.CurrencyRate;

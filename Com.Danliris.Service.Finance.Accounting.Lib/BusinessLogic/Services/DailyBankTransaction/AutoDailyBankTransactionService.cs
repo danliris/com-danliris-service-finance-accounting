@@ -109,7 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public Task<int> AutoCreateFromPaymentDisposition(PaymentDispositionNoteModel model)
         {
-            var nominal = model.Items.Sum(item => (decimal)item.PayToSupplier);
+            var nominal = model.Items.Sum(item => Math.Round((decimal)item.PayToSupplier, 2));
             var dailyBankTransactionModel = new DailyBankTransactionModel()
             {
                 AccountBankAccountName = model.BankAccountName,
@@ -136,12 +136,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
             if (model.BankCurrencyCode != "IDR")
             {
-                dailyBankTransactionModel.Nominal = nominal * (decimal)model.CurrencyRate;
+                dailyBankTransactionModel.Nominal = Math.Round(nominal * (decimal)model.CurrencyRate, 2);
                 dailyBankTransactionModel.NominalValas = nominal;
             }
             else if (model.CurrencyCode != "IDR")
             {
-                dailyBankTransactionModel.Nominal = nominal * (decimal)model.CurrencyRate;
+                dailyBankTransactionModel.Nominal = Math.Round(nominal * (decimal)model.CurrencyRate, 2);
             }
 
             return _dailyBankTransactionService.CreateAsync(dailyBankTransactionModel);
