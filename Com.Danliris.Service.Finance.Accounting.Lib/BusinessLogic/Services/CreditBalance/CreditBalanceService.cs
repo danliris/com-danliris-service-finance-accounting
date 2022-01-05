@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                 if (item.UnitPaymentCorrectionId == 0)
                 {
-                    if (item.UnitReceiptNoteDate.HasValue && item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime)
+                    if (item.UnitReceiptNoteDate.HasValue && item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime && (item.IsStartBalance || item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Year >= 2021))
                     {
                         itemResult.StartBalance = item.UnitReceiptNoteDPP - item.IncomeTaxAmount;
                         itemResult.StartBalanceCurrency = item.DPPCurrency - (item.IncomeTaxAmount / item.CurrencyRate);
