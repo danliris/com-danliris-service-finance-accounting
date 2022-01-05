@@ -83,7 +83,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         itemResult.PurchaseCurrency = item.DPPCurrency - (item.IncomeTaxAmount / item.CurrencyRate);
                     }
 
-                    if (item.MemoDate.HasValue && item.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime)
+                    if (item.MemoDate.HasValue && item.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime && (item.IsStartBalance || item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Year >= 2021))
                     {
                         itemResult.StartBalance += item.UnitReceiptNotePPN;
                         itemResult.StartBalanceCurrency += item.VATAmount;
@@ -95,7 +95,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         itemResult.PurchaseCurrency += item.VATAmount;
                     }
 
-                    if (item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime)
+                    if (item.BankExpenditureNoteDate.HasValue && item.BankExpenditureNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime && (item.IsStartBalance || item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Year >= 2021))
                     {
                         itemResult.StartBalance -= item.BankExpenditureNoteMutation;
                         //itemResult.StartBalance -= item.UnitReceiptNoteDPP;
@@ -111,7 +111,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 }
                 else
                 {
-                    if (item.UnitPaymentCorrectionDate.HasValue && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime)
+                    if (item.UnitPaymentCorrectionDate.HasValue && item.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < firstDayOfMonth.DateTime && (item.IsStartBalance || item.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Year >= 2021))
                     {
                         itemResult.StartBalance += (item.UnitPaymentCorrectionMutation);
                         itemResult.StartBalanceCurrency += (item.UnitPaymentCorrectionMutation / item.CurrencyRate);
@@ -168,7 +168,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             DateTimeOffset firstDayOfMonth = new DateTime(year, month, 1);
             DateTimeOffset lastDayOfMonth = firstDayOfMonth.AddMonths(1);
-            query = query.Where(entity => (entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime));
+            query = query.Where(entity => ((entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)) && (entity.IsStartBalance || entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Year >= 2021));
 
             if (divisionId > 0)
                 query = query.Where(entity => entity.DivisionId == divisionId);
