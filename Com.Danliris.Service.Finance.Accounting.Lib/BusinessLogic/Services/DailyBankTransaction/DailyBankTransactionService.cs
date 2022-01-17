@@ -424,7 +424,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     var debit = item.Status.ToUpper().Equals("IN") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
                     var kredit = item.Status.ToUpper().Equals("OUT") ? item.Nominal.ToString("#,##0.#0") : 0.ToString("#,##0.#0");
                     var afterBalance = beforeBalance + (item.Status.Equals("IN") ? (double)item.Nominal : (double)item.Nominal * -1);
-                    
+
                     result.Rows.Add((item.Date.AddHours(clientTimeZoneOffset)).ToString("dd MMM yyyy", new CultureInfo("id-ID")),
                         item.Remark,
                         item.ReferenceNo,
@@ -847,15 +847,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (startDate.HasValue)
             {
                 DateTimeOffset firstDay = new DateTime(startDate.Value.Year, startDate.Value.Month, startDate.Value.Day);
-                Query = Query.Where(s => s.Date.AddHours(offset).DateTime > firstDay.DateTime);
+                Query = Query.Where(s => s.Date.AddHours(offset).DateTime >= firstDay.DateTime);
             }
-            
+
             if (endDate.HasValue)
             {
                 DateTimeOffset lastDay = new DateTime(endDate.Value.Year, endDate.Value.Month, endDate.Value.Day);
                 Query = Query.Where(s => s.Date.AddHours(offset).DateTime < lastDay.AddDays(1).DateTime);
             }
-            
+
             List<DailyBankTransactionModel> Data = new List<DailyBankTransactionModel>();
             int TotalData = 0;
 
@@ -1431,7 +1431,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
                 var responseObject = JsonConvert.DeserializeObject<APIDefaultResponse<AccountBank>>(responseString, jsonSerializationSetting);
 
-                result.Add(responseObject.data);
+                if (responseObject.data != null)
+                    result.Add(responseObject.data);
             }
             return result;
         }
