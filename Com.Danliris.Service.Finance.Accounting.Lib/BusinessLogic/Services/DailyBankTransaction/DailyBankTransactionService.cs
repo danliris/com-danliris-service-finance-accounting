@@ -846,7 +846,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             if (startDate.HasValue)
             {
                 DateTimeOffset firstDay = new DateTime(startDate.Value.Year, startDate.Value.Month, startDate.Value.Day);
-                Query = Query.Where(s => s.Date.AddHours(offset).DateTime > firstDay.DateTime);
+                Query = Query.Where(s => s.Date.AddHours(offset).DateTime >= firstDay.DateTime);
             }
 
             if (endDate.HasValue)
