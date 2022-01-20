@@ -146,7 +146,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                             if (costUnit != null && !string.IsNullOrWhiteSpace(costUnit.COACode))
                                 costCOAUnit = costUnit.COACode;
 
-                            var prorate = vbRealizationUnitCost.Amount / vbRealization.Amount;
+                            var prorate = vbRealizationUnitCost.Amount / (vbRealization.Amount == 0 ? 1 : vbRealization.Amount);
 
                             journalTransaction.Items.Add(new JournalTransactionItemModel()
                             {
