@@ -113,7 +113,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
 
             var response = await service.Posting(dbContext.OthersExpenditureProofDocuments.Select(entity => entity.Id).ToList());
 
-            Assert.NotEqual(0, response);
+            Assert.NotNull(response);
         }
 
         [Fact]

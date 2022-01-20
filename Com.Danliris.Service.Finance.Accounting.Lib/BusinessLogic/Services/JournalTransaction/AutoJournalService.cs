@@ -108,12 +108,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
                 var coaUnit = "00";
                 var unit = units.FirstOrDefault(element => vbRealization.SuppliantUnitId == element.Id);
-                if (unit != null)
+                if (unit != null && !string.IsNullOrWhiteSpace(unit.COACode))
                     coaUnit = unit.COACode;
 
                 var coaDivision = "0";
                 var division = divisions.FirstOrDefault(element => vbRealization.SuppliantDivisionId == element.Id);
-                if (division != null)
+                if (division != null && !string.IsNullOrWhiteSpace(division.COACode))
                     coaDivision = division.COACode;
 
                 if (vbRealization.IsInklaring)
@@ -123,13 +123,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         var journalTransaction = new JournalTransactionModel()
                         {
                             Date = vbRealization.Date,
-                            Description = $"Pajak Clearance {vbRealization.DocumentNo}",
+                            Description = $"Realisasi {vbRealization.DocumentNo}",
                             ReferenceNo = vbRealization.ReferenceNo,
                             Status = "DRAFT",
                             Items = new List<JournalTransactionItemModel>()
                         };
 
                         var vbRealizationUnitCosts = _vbRealizationUnitCosts.Where(element => element.VBRealizationDocumentId == vbRealization.Id && element.IsSelected).ToList();
+
+                        var sumPPn = _vbRealizationItems.Where(element => element.VBRealizationDocumentId == vbRealization.Id).Sum(element => element.PPnAmount);
+                        var sumPPh = _vbRealizationItems.Where(element => element.VBRealizationDocumentId == vbRealization.Id).Sum(element => element.PPhAmount);
 
                         foreach (var vbRealizationUnitCost in vbRealizationUnitCosts)
                         {
@@ -149,7 +152,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                 {
                                     Code = $"1804.00.{costCOADivision}.{costCOAUnit}"
                                 },
-                                Debit = vbRealizationUnitCost.Amount * (decimal)vbRealization.CurrencyRate
+                                Debit = (vbRealizationUnitCost.Amount * (decimal)vbRealization.CurrencyRate) - sumPPn + sumPPh
                             });
 
                             journalTransaction.Items.Add(new JournalTransactionItemModel()
@@ -161,9 +164,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                 Credit = vbRealizationUnitCost.Amount * (decimal)vbRealization.CurrencyRate
                             });
                         }
-
-                        var sumPPn = _vbRealizationItems.Where(element => element.VBRealizationDocumentId == vbRealization.Id).Sum(element => element.PPnAmount);
-                        var sumPPh = _vbRealizationItems.Where(element => element.VBRealizationDocumentId == vbRealization.Id).Sum(element => element.PPhAmount);
 
                         if (sumPPn > 0)
                             journalTransaction.Items.Add(new JournalTransactionItemModel()
@@ -409,12 +409,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
                 var coaUnit = "00";
                 var unit = units.FirstOrDefault(element => vbRequest.SuppliantUnitId == element.Id);
-                if (unit != null)
+                if (unit != null && !string.IsNullOrWhiteSpace(unit.COACode))
                     coaUnit = unit.COACode;
 
                 var coaDivision = "0";
                 var division = divisions.FirstOrDefault(element => vbRequest.SuppliantDivisionId == element.Id);
-                if (division != null)
+                if (division != null && !string.IsNullOrWhiteSpace(division.COACode))
                     coaDivision = division.COACode;
 
                 if (vbRequest.IsInklaring && vbRequest.CurrencyCode == "IDR")
