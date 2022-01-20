@@ -421,7 +421,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 {
                     var modelInklaring = new JournalTransactionModel()
                     {
-                        Date = vbRequest.Date,
+                        Date = vbRequest.ApprovalDate == null ? vbRequest.Date : vbRequest.ApprovalDate.GetValueOrDefault(),
                         Description = "Approval VB Inklaring",
                         ReferenceNo = bankDocumentNo,
                         Status = "DRAFT",
@@ -683,7 +683,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 {
                     var modelInklaring = new JournalTransactionModel()
                     {
-                        Date = vbRequest.Date,
+                        Date = vbRequest.ApprovalDate == null ? vbRequest.Date : vbRequest.ApprovalDate.GetValueOrDefault(),
                         Description = "Approval VB Inklaring",
                         ReferenceNo = vbRequest.DocumentNo,
                         Status = "DRAFT",

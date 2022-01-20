@@ -51,7 +51,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                 AccountBankCurrencySymbol = dto.Bank.Currency.Symbol,
                 AccountBankId = dto.Bank.Id,
                 AccountBankName = dto.Bank.BankName,
-                Date = dto.VbRequestDocument.Date,
+                Date = dto.VbRequestDocument.ApprovalDate == null ? dto.VbRequestDocument.Date : dto.VbRequestDocument.ApprovalDate.GetValueOrDefault(),
                 Nominal = dto.VbRequestDocument.Amount,
                 CurrencyRate = (decimal)dto.VbRequestDocument.CurrencyRate,
                 ReferenceNo = dto.VbRequestDocument.BankDocumentNo,
