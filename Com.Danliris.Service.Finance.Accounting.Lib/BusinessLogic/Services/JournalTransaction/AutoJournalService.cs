@@ -146,13 +146,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                             if (costUnit != null && !string.IsNullOrWhiteSpace(costUnit.COACode))
                                 costCOAUnit = costUnit.COACode;
 
+                            var prorate = vbRealizationUnitCost.Amount / vbRealization.Amount;
+
                             journalTransaction.Items.Add(new JournalTransactionItemModel()
                             {
                                 COA = new COAModel()
                                 {
                                     Code = $"1804.00.{costCOADivision}.{costCOAUnit}"
                                 },
-                                Debit = (vbRealizationUnitCost.Amount * (decimal)vbRealization.CurrencyRate) - sumPPn + sumPPh
+                                Debit = ((vbRealizationUnitCost.Amount - (sumPPn * prorate) + (sumPPh * prorate)) * (decimal)vbRealization.CurrencyRate)
                             });
 
                             journalTransaction.Items.Add(new JournalTransactionItemModel()
