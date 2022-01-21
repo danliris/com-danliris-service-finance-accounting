@@ -66,7 +66,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             }
             else
             {
-                var data = query.OrderByDescending(s => s.LastModifiedUtc).ToList();
+                var queryViewModel = query.Select(entity => new GarmentPurchasingExpeditionReportViewModel(entity));
+                var data = queryViewModel.OrderByDescending(s => s.LastModifiedUtc).ToList();
                 foreach (var item in data)
                 {
                     dt.Rows.Add(
@@ -87,7 +88,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                         item.Remark,
                         item.SendToVerificationBy,
                         item.VerificationAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
-                        item.SendToVerificationDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
+                        item.VerificationSendDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         item.VerificationAcceptedBy,
                         item.CashierAcceptedDate?.ToOffset(new TimeSpan(_identityService.TimezoneOffset, 0, 0)).ToString("d/M/yyyy", new CultureInfo("id-ID")),
                         null,
