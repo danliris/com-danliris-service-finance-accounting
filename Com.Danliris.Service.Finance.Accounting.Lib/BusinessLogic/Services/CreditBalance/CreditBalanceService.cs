@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             DateTimeOffset firstDayOfMonth = new DateTime(year, month, 1);
             DateTimeOffset lastDayOfMonth = firstDayOfMonth.AddMonths(1);
-            query = query.Where(entity => (entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime));
+            query = query.Where(entity => (entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.PurchasingMemoDate.HasValue && entity.PurchasingMemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime));
 
             if (divisionId > 0)
                 query = query.Where(entity => entity.DivisionId == divisionId);
@@ -108,6 +108,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         itemResult.Payment = item.BankExpenditureNoteMutation;
                         itemResult.PaymentCurrency = item.DPPCurrency + item.VATAmount - (item.IncomeTaxAmount / item.CurrencyRate);
                     }
+                    
+                    if (item.PurchasingMemoDate.HasValue && item.PurchasingMemoDate.GetValueOrDefault().AddHours(offSet).Year == year && item.PurchasingMemoDate.GetValueOrDefault().AddHours(offSet).Month == month)
+                    {
+                        itemResult.Payment = (decimal)item.PurchasingMemoAmount;
+                        itemResult.PaymentCurrency = (decimal)item.PurchasingMemoAmount / item.CurrencyRate;
+                    }
                 }
                 else
                 {
@@ -168,7 +174,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             DateTimeOffset firstDayOfMonth = new DateTime(year, month, 1);
             DateTimeOffset lastDayOfMonth = firstDayOfMonth.AddMonths(1);
-            query = query.Where(entity => ((entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)) && (entity.IsStartBalance || entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Year >= 2021));
+            query = query.Where(entity => ((entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime) || (entity.PurchasingMemoDate.HasValue && entity.PurchasingMemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)) && (entity.IsStartBalance || entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(offSet).Year >= 2021));
 
             if (divisionId > 0)
                 query = query.Where(entity => entity.DivisionId == divisionId);
@@ -215,6 +221,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     {
                         itemResult.BankExpenditureNoteNo = item.BankExpenditureNoteNo;
                         itemResult.Payment = item.BankExpenditureNoteMutation; /// item.CurrencyRate;
+                    }
+
+                    if (item.PurchasingMemoDate.HasValue && item.PurchasingMemoDate.GetValueOrDefault().AddHours(offSet).DateTime < lastDayOfMonth.DateTime)
+                    {
+                        itemResult.BankExpenditureNoteNo = item.PurchasingMemoNo;
+                        itemResult.Payment = (decimal)item.PurchasingMemoAmount;
                     }
                 }
                 else
