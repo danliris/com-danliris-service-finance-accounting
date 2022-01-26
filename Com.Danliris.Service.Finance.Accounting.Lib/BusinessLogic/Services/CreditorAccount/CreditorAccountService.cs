@@ -289,7 +289,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 correctionStartBalance = DbContext.CreditorAccounts.Where(entity => entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime < firstDayOfMonth.DateTime && !string.IsNullOrWhiteSpace(entity.UnitPaymentCorrectionNo) && entity.SupplierName == supplierName && (entity.IsStartBalance || entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).Year >= 2021)).Sum(entity => entity.UnitPaymentCorrectionMutation);
             }
 
-            var query = DbContext.CreditorAccounts.Where(entity => (entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year));
+            var query = DbContext.CreditorAccounts.Where(entity => (entity.UnitReceiptNoteDate.HasValue && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.UnitReceiptNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.MemoDate.HasValue && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.MemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.UnitPaymentCorrectionDate.HasValue && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.UnitPaymentCorrectionDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.BankExpenditureNoteDate.HasValue && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.BankExpenditureNoteDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year) || (entity.PurchasingMemoDate.HasValue && entity.PurchasingMemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && entity.PurchasingMemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year));
 
             //if (divisionId > 0)
             //    query = query.Where(entity => entity.DivisionId == divisionId);
@@ -342,6 +342,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         unitPaymentOrderNo = item.MemoNo;
                         bankExpenditureNoteNo = item.BankExpenditureNoteNo;
                         paymentAmount = item.BankExpenditureNoteMutation;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(item.PurchasingMemoNo) && item.PurchasingMemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Month == month && item.PurchasingMemoDate.GetValueOrDefault().AddHours(IdentityService.TimezoneOffset).DateTime.Year == year)
+                    {
+                        bankExpenditureNoteNo = item.PurchasingMemoNo;
+                        paymentAmount = (decimal)item.PurchasingMemoAmount;
                     }
 
                     var mutation = dppAmount + vatAmount;
@@ -886,7 +892,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             var models = DbContext.CreditorAccounts.Where(element => element.MemoNo == form.UnitPaymentOrderNo);
             foreach (var model in models)
             {
-                model.SetPurchasingMemo(form.PurchasingMemoId, form.PurchasingMemoNo, form.PurchasingMemoAmount);
+                model.SetPurchasingMemo(form.PurchasingMemoId, form.PurchasingMemoNo, form.PurchasingMemoAmount, form.PurchasingMemoDate);
                 EntityExtension.FlagForUpdate(model, IdentityService.Username, UserAgent);
             }
 

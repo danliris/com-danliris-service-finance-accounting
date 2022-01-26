@@ -68,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                         _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                         _dbContext.SaveChanges();
 
-                        _creditorAccountService.CreateFromPurchasingMemoTextile(new CreditorAccountPurchasingMemoTextileFormDto(detail.UnitPaymentOrder.UnitPaymentOrderNo, model.Id, model.DocumentNo, detail.PaymentAmount));
+                        _creditorAccountService.CreateFromPurchasingMemoTextile(new CreditorAccountPurchasingMemoTextileFormDto(detail.UnitPaymentOrder.UnitPaymentOrderNo, model.Id, model.DocumentNo, detail.PaymentAmount, form.Date));
 
                         foreach (var unitReceiptNote in detail.UnitReceiptNotes)
                         {
@@ -89,7 +89,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
                     _dbContext.PurchasingMemoDetailTextileDetails.Add(detailModel);
                     _dbContext.SaveChanges();
 
-                    _creditorAccountService.CreateFromPurchasingMemoTextile(new CreditorAccountPurchasingMemoTextileFormDto(detail.UnitPaymentOrder.UnitPaymentOrderNo, model.Id, model.DocumentNo, detail.PaymentAmount));
+                    _creditorAccountService.CreateFromPurchasingMemoTextile(new CreditorAccountPurchasingMemoTextileFormDto(detail.UnitPaymentOrder.UnitPaymentOrderNo, model.Id, model.DocumentNo, detail.PaymentAmount, form.Date));
 
                     foreach (var unitReceiptNote in detail.UnitReceiptNotes)
                     {
@@ -144,7 +144,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.PurchasingMe
 
                 foreach (var detail in details)
                 {
-                    _creditorAccountService.DeleteFromPurchasingMemoTextile(new CreditorAccountPurchasingMemoTextileFormDto(detail.UnitPaymentOrderNo, 0, null, 0));
+                    _creditorAccountService.DeleteFromPurchasingMemoTextile(new CreditorAccountPurchasingMemoTextileFormDto(detail.UnitPaymentOrderNo, 0, null, 0, null));
                 }
                 deletedId = model.Id;
             }

@@ -151,13 +151,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
         public string PurchasingMemoNo { get; set; }
         public int PurchasingMemoId { get; set; }
         public double PurchasingMemoAmount { get; set; }
+        public DateTimeOffset? PurchasingMemoDate { get; set; }
         public bool IsStartBalance { get; set; }
 
-        public void SetPurchasingMemo(int purchasingMemoId, string purchasingMemoNo, double purchasingMemoAmount)
+        public void SetPurchasingMemo(int purchasingMemoId, string purchasingMemoNo, double purchasingMemoAmount, DateTimeOffset? purchasingMemoDate)
         {
             PurchasingMemoId = purchasingMemoId;
             PurchasingMemoNo = purchasingMemoNo;
             PurchasingMemoAmount = purchasingMemoAmount;
+            PurchasingMemoDate = purchasingMemoDate;
         }
 
         public void RemovePurchasingMemo()
