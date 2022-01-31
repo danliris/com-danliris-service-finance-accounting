@@ -142,7 +142,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
             dbContext.SaveChanges();
 
             await service.CreateAsync(new GarmentInvoicePurchasingDispositionModel() { InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, expedition.Id, "Test") } });
-            var result = service.Read(1, 10, "{}", new List<string>(), "", "{}");
+            var result = service.Read(1, 10, "{}", new List<string>(), null, "{}");
 
             Assert.NotEmpty(result.Data);
 
