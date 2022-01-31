@@ -209,10 +209,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
             IQueryable<GarmentInvoicePurchasingDispositionModel> Query = this.DbSet.Include(m => m.Items);
             List<string> searchAttributes = new List<string>()
             {
-                "InvoiceNo",  "SupplierName", "CurrencyCode", "BankName"
+                "InvoiceNo", "SupplierName", "CurrencyCode", "BankName", "Items.DispositionNo"
             };
 
-            //Query = QueryHelper<GarmentInvoicePurchasingDispositionModel>.Search(Query, searchAttributes, keyword);
+            Query = QueryHelper<GarmentInvoicePurchasingDispositionModel>.Search(Query, searchAttributes, keyword);
 
             Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
             Query = QueryHelper<GarmentInvoicePurchasingDispositionModel>.Filter(Query, FilterDictionary);
