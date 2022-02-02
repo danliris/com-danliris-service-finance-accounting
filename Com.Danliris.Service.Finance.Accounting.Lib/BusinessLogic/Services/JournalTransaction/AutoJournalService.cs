@@ -122,7 +122,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     {
                         var journalTransaction = new JournalTransactionModel()
                         {
-                            Date = vbRealization.Date,
+                            Date = vbRealization.CompletedDate == null ? vbRealization.Date : vbRealization.CompletedDate.GetValueOrDefault(),
                             Description = $"Realisasi {vbRealization.DocumentNo}",
                             ReferenceNo = vbRealization.ReferenceNo,
                             Status = "DRAFT",
@@ -206,7 +206,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                         var diffReferenceNo = await GetDocumentNo("M", bank.BankCode, vbRealization.CreatedBy, vbRealization.Date.DateTime);
                                         var modelDifference = new JournalTransactionModel()
                                         {
-                                            Date = vbRealization.Date,
+                                            Date = vbRealization.CompletedDate == null ? vbRealization.Date : vbRealization.CompletedDate.GetValueOrDefault(),
                                             Description = "Sisa Clearence VB Inklaring",
                                             ReferenceNo = diffReferenceNo,
                                             Status = "POSTED",
@@ -243,7 +243,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                             AccountBankCurrencySymbol = vbRealization.CurrencyCode,
                                             AccountBankId = bank.Id,
                                             AccountBankName = bank.BankName,
-                                            Date = vbRealization.Date,
+                                            Date = vbRealization.CompletedDate == null ? vbRealization.Date : vbRealization.CompletedDate.GetValueOrDefault(),
                                             Nominal = (decimal)difference * (decimal)vbRealization.CurrencyRate,
                                             CurrencyRate = (decimal)vbRealization.CurrencyRate,
                                             ReferenceNo = diffReferenceNo,
@@ -282,7 +282,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 {
                     var journalTransaction = new JournalTransactionModel()
                     {
-                        Date = vbRealization.Date,
+                        Date = vbRealization.CompletedDate == null ? vbRealization.Date : vbRealization.CompletedDate.GetValueOrDefault(),
                         Description = "Clearance VB",
                         ReferenceNo = vbRealization.ReferenceNo,
                         Status = "DRAFT",
@@ -541,7 +541,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         {
                             var modelInklaring = new JournalTransactionModel()
                             {
-                                Date = vbRealization.Date,
+                                Date = vbRealization.CompletedDate == null ? vbRealization.Date : vbRealization.CompletedDate.GetValueOrDefault(),
                                 Description = "Clearance VB Inklaring",
                                 ReferenceNo = vbRealization.DocumentNo,
                                 Status = "POSTED",
@@ -576,7 +576,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     {
                         var model = new JournalTransactionModel()
                         {
-                            Date = vbRealization.Date,
+                            Date = vbRealization.CompletedDate == null ? vbRealization.Date : vbRealization.CompletedDate.GetValueOrDefault(),
                             Description = "Clearance VB",
                             ReferenceNo = vbRealization.DocumentNo,
                             Status = "DRAFT",
@@ -625,7 +625,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 {
                     var model = new JournalTransactionModel()
                     {
-                        Date = vbRealization.Date,
+                        Date = vbRealization.CompletedDate == null ? vbRealization.Date : vbRealization.CompletedDate.GetValueOrDefault(),
                         Description = "Clearance VB",
                         ReferenceNo = vbRealization.DocumentNo,
                         Status = "DRAFT",
