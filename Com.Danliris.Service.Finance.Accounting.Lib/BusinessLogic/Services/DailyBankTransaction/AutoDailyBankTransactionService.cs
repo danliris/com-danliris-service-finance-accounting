@@ -296,7 +296,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
                     AccountBankCurrencySymbol = accountBank.Currency.Symbol,
                     AccountBankId = accountBank.Id,
                     AccountBankName = accountBank.BankName,
-                    Date = realization.Date,
+                    Date = realization.CompletedDate == null ? realization.Date : realization.CompletedDate.GetValueOrDefault(),
                     Nominal = realizationItems.Sum(item => item.Amount),
                     CurrencyRate = (decimal)BICurrency.Rate,
                     ReferenceNo = realization.ReferenceNo,

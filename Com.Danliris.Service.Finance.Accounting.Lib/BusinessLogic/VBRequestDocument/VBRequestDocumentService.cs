@@ -873,7 +873,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 if (item.IsInklaring)
                 {
                     vbRequestIdJournals.Add(item.Id);
-                    var bankDocumentNo = await _dppVatBankExpenditureNoteService.GetDocumentNo("K",data.Bank.BankCode,_identityService.Username,item.Date.Date);
+                    var bankDocumentNo = await _dppVatBankExpenditureNoteService.GetDocumentNo("K",data.Bank.BankCode,_identityService.Username,DateTime.UtcNow);
                     item.SetBankDocumentNo(bankDocumentNo,_identityService.Username,UserAgent);
                     vbRequestsList.Add(new ApprovalVBAutoJournalDto { VbRequestDocument = item, Bank = data.Bank });
                 }
