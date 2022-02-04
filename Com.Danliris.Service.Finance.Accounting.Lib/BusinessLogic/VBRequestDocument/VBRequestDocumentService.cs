@@ -67,62 +67,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             if (existingData != null)
             {
-                if (year == "21" && month == "12")
-                {
-                    if (unitCode == "T")
-                    {
-                        if (existingData.Index == 98)
-                        {
-                            index = 1;
-                        }
-                        else if (existingData.Index == 64)
-                        {
-                            index = 99;
-                        }
-                        else
-                        {
-                            index = existingData.Index + 1;
-                        }
-                    }
-                    else if (unitCode == "G")
-                    {
-                        if (existingData.Index == 32)
-                        {
-                            index = 1;
-                        }
-                        else if (existingData.Index == 21)
-                        {
-                            index = 33;
-                        }
-                        else
-                        {
-                            index = existingData.Index + 1;
-                        }
-                    }
-                    else if (unitCode == "GI")
-                    {
-                        if (existingData.Index == 15)
-                        {
-                            index = 1;
-                        }
-                        else if (existingData.Index == 11)
-                        {
-                            index = 16;
-                        }
-                        else
-                        {
-                            index = existingData.Index + 1;
-                        }
-                    }
-                    else
-                    {
-                        index = existingData.Index + 1;
-                    }
-                }
-                else
-                {
-                    index = existingData.Index + 1;
-                }
+                index = existingData.Index + 1;
             }
 
             documentNo += string.Format("{0:000}", index);
@@ -158,62 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
 
             if (existingData != null)
             {
-                if (year == "21" && month == "12")
-                {
-                    if (unitCode == "T")
-                    {
-                        if (existingData.Index == 98)
-                        {
-                            index = 1;
-                        }
-                        else if (existingData.Index == 64)
-                        {
-                            index = 99;
-                        }
-                        else
-                        {
-                            index = existingData.Index + 1;
-                        }
-                    }
-                    else if (unitCode == "G")
-                    {
-                        if (existingData.Index == 32)
-                        {
-                            index = 1;
-                        }
-                        else if (existingData.Index == 21)
-                        {
-                            index = 33;
-                        }
-                        else
-                        {
-                            index = existingData.Index + 1;
-                        }
-                    }
-                    else if (unitCode == "GI")
-                    {
-                        if (existingData.Index == 15)
-                        {
-                            index = 1;
-                        }
-                        else if (existingData.Index == 11)
-                        {
-                            index = 16;
-                        }
-                        else
-                        {
-                            index = existingData.Index + 1;
-                        }
-                    }
-                    else
-                    {
-                        index = existingData.Index + 1;
-                    }
-                }
-                else
-                {
-                    index = existingData.Index + 1;
-                }
+                index = existingData.Index + 1;
             }
 
             documentNo += string.Format("{0:000}", index);
