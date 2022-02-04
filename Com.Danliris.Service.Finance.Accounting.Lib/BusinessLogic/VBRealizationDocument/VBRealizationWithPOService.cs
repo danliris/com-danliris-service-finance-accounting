@@ -322,7 +322,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                     },
                     Items = items.Select(item =>
                     {
-                        var unitCostItems = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => entity.VBRealizationDocumentId == model.Id).ToList();
+                        var unitCostItems = _dbContext.VBRealizationDocumentUnitCostsItems.Where(entity => entity.VBRealizationDocumentId == model.Id && entity.Amount == item.Amount).ToList();
 
                         var itemResult = new VBRealizationWithPOItemDto()
                         {
