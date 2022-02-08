@@ -224,5 +224,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
             Assert.Equal(0, result);
         }
 
-    }
+
+		[Fact]
+		public void Should_Success_getMonitoring()
+		{
+			var serviceProviderMock = GetServiceProvider();
+			var dbContext = GetDbContext(GetCurrentMethod());
+
+			var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+			var expedition = new GarmentDispositionExpeditionModel();
+			EntityExtension.FlagForCreate(expedition, "Test", "Test");
+			dbContext.GarmentDispositionExpeditions.Add(expedition);
+			dbContext.SaveChanges();
+
+			var result = service.GetMonitoring(null,null,DateTimeOffset.Now,DateTimeOffset.Now,7);
+			Assert.NotNull(result);
+		}
+
+		[Fact]
+		public void Should_Success_getExcel()
+		{
+			var serviceProviderMock = GetServiceProvider();
+			var dbContext = GetDbContext(GetCurrentMethod());
+
+			var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+			var expedition = new GarmentDispositionExpeditionModel();
+			EntityExtension.FlagForCreate(expedition, "Test", "Test");
+			dbContext.GarmentDispositionExpeditions.Add(expedition);
+			dbContext.SaveChanges();
+
+			var result = service.DownloadReportXls(null, null, DateTimeOffset.Now, DateTimeOffset.Now);
+			Assert.NotNull(result);
+		}
+	}
 }
