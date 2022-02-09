@@ -321,14 +321,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 							Category = b.Category
 						};
 
-			if(invoiceNo!=null)
+			if(invoiceNo!=null && dispositionNo == null)
 			{
 				query = query.Where(s => s.InvoiceNo == invoiceNo);
-			}else
-			if(dispositionNo!=null)
+			}
+			if(dispositionNo!=null && invoiceNo == null)
 			{
 				query = query.Where(s => s.DispositionNo == dispositionNo);
-			}else if(invoiceNo !=null && dispositionNo !=null)
+			}
+			if (invoiceNo !=null && dispositionNo !=null)
 			{
 				query = query.Where(s => s.DispositionNo == dispositionNo && s.InvoiceNo == invoiceNo);
 			}
