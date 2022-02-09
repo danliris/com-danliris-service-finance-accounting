@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoicePurchasingDisposition;
+﻿using AutoMapper;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoicePurchasingDisposition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -12,14 +13,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Security.Claims;
-using System.Text;
+
 using Xunit;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentInvoicePurchasingDisposition
 {
 	public class GarmentInvoicePurchasingDispositionControllerTest
 	{
-		protected GarmentInvoicePurchasingDispositionController GetController((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentInvoicePurchasingDispositionService> Service, Mock<IMapper> Mapper) mocks)
+		protected GarmentInvoicePurchasingDispositionController GetController((Moq.Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IGarmentInvoicePurchasingDispositionService> Service, Mock<IMapper> Mapper) mocks)
 		{
 			var user = new Mock<ClaimsPrincipal>();
 			var claims = new Claim[]
@@ -28,7 +29,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentInvoic
 			};
 			user.Setup(u => u.Claims).Returns(claims);
 
-			GarmentInvoicePurchasingDispositionController controller = new GarmentInvoicePurchasingDispositionController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Service.Object, mocks.Mapper.Object);
+			GarmentInvoicePurchasingDispositionController controller = new GarmentInvoicePurchasingDispositionController(mocks.IdentityService.Object, mocks.ValidateService.Object,mocks.Mapper.Object, mocks.Service.Object);
 			controller.ControllerContext = new ControllerContext()
 			{
 				HttpContext = new DefaultHttpContext()
