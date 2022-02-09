@@ -272,7 +272,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.GarmentI
 			}
 		}
 		[HttpGet("monitoring")]
-		public IActionResult Get([FromQuery] string invoiceNo, [FromQuery] string dispositionNo, [FromQuery] DateTimeOffset startDate, [FromQuery] DateTimeOffset endDate)
+		public IActionResult GetMonitoring([FromQuery] string invoiceNo, [FromQuery] string dispositionNo, [FromQuery] DateTimeOffset startDate, [FromQuery] DateTimeOffset endDate)
 		{
 			try
 			{
