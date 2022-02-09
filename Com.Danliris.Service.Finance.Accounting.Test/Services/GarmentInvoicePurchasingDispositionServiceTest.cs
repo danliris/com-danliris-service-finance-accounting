@@ -294,5 +294,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 			var result = service.DownloadReportXls("Test", null, DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now);
 			Assert.NotNull(result);
 		}
+
+		[Fact]
+		public void Should_Success_getLoader()
+		{
+			var serviceProviderMock = GetServiceProvider();
+			var dbContext = GetDbContext(GetCurrentMethod());
+
+			var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+			var model = new GarmentInvoicePurchasingDispositionModel() { InvoiceDate = DateTimeOffset.Now, InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, 1, "Test") } };
+
+			EntityExtension.FlagForCreate(model, "Test", "Test");
+			dbContext.GarmentInvoicePurchasingDispositions.Add(model);
+			dbContext.SaveChanges();
+
+			var result = service.GetLoader("Test", "{}");
+			Assert.NotNull(result);
+		}
 	}
 }
