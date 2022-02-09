@@ -389,7 +389,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 			throw new NotImplementedException();
 		}
 
-		ReadResponse<GarmentInvoicePurchasingDispositionNoVM> IGarmentInvoicePurchasingDispositionService.GetLoader(string keyword, string filter)
+		public ReadResponse<GarmentInvoicePurchasingDispositionNoVM> GetLoader(string keyword, string filter)
 		{
 			IQueryable<GarmentInvoicePurchasingDispositionNoVM> Query = (from a in DbContext.GarmentInvoicePurchasingDispositionItems
 																		 select new
