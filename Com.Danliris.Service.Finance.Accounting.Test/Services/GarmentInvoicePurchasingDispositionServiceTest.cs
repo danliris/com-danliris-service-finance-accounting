@@ -233,12 +233,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 
 			var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
 
-			var expedition = new GarmentDispositionExpeditionModel();
-			EntityExtension.FlagForCreate(expedition, "Test", "Test");
-			dbContext.GarmentDispositionExpeditions.Add(expedition);
+			var model = new GarmentInvoicePurchasingDispositionModel() { InvoiceDate=DateTimeOffset.Now,InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, 1, "Test") } };
+
+			EntityExtension.FlagForCreate(model, "Test", "Test");
+			dbContext.GarmentInvoicePurchasingDispositions.Add(model);
 			dbContext.SaveChanges();
 
-			var result = service.GetMonitoring(null,null,DateTimeOffset.Now,DateTimeOffset.Now,7);
+			var result = service.GetMonitoring("Test","Test",DateTimeOffset.Now.AddDays(-1),DateTimeOffset.Now,7);
 			Assert.NotNull(result);
 		}
 
@@ -250,12 +251,47 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 
 			var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
 
-			var expedition = new GarmentDispositionExpeditionModel();
-			EntityExtension.FlagForCreate(expedition, "Test", "Test");
-			dbContext.GarmentDispositionExpeditions.Add(expedition);
+			var model = new GarmentInvoicePurchasingDispositionModel() { InvoiceDate = DateTimeOffset.Now, InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, 1, "Test") } };
+
+			EntityExtension.FlagForCreate(model, "Test", "Test");
+			dbContext.GarmentInvoicePurchasingDispositions.Add(model);
 			dbContext.SaveChanges();
 
-			var result = service.DownloadReportXls(null, null, DateTimeOffset.Now, DateTimeOffset.Now);
+			var result = service.DownloadReportXls("Test", "Test", DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now);
+			Assert.NotNull(result);
+		}
+		[Fact]
+		public void Should_Success_getExcelInvoiceNull()
+		{
+			var serviceProviderMock = GetServiceProvider();
+			var dbContext = GetDbContext(GetCurrentMethod());
+
+			var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+			var model = new GarmentInvoicePurchasingDispositionModel() { InvoiceDate = DateTimeOffset.Now, InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, 1, "Test") } };
+
+			EntityExtension.FlagForCreate(model, "Test", "Test");
+			dbContext.GarmentInvoicePurchasingDispositions.Add(model);
+			dbContext.SaveChanges();
+
+			var result = service.DownloadReportXls( null, "Test", DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now);
+			Assert.NotNull(result);
+		}
+		[Fact]
+		public void Should_Success_getExcelDispoNull()
+		{
+			var serviceProviderMock = GetServiceProvider();
+			var dbContext = GetDbContext(GetCurrentMethod());
+
+			var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
+
+			var model = new GarmentInvoicePurchasingDispositionModel() { InvoiceDate = DateTimeOffset.Now, InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, 1, "Test") } };
+
+			EntityExtension.FlagForCreate(model, "Test", "Test");
+			dbContext.GarmentInvoicePurchasingDispositions.Add(model);
+			dbContext.SaveChanges();
+
+			var result = service.DownloadReportXls("Test", null, DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now);
 			Assert.NotNull(result);
 		}
 	}
