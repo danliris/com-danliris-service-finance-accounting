@@ -743,7 +743,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var creditItem = new JournalTransactionItemModel()
             {
                 COA = new COAModel() { Code = accountBankCOA },
-                Credit = journalTransactionModel.Items.Sum(item => item.Debit)
+                Credit = journalTransactionModel.Items.Sum(item => item.Debit),
+                Remark=model.Remark
             };
             journalTransactionModel.Items.Add(creditItem);
 
