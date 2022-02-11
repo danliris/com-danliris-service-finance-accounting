@@ -50,11 +50,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public Task<int> CashierReceipt(List<int> vbRealizationIds)
         {
             var models = _dbContext.VBRealizationDocumentExpeditions.Where(entity => vbRealizationIds.Contains(entity.VBRealizationId) && entity.Position == VBRealizationPosition.VerifiedToCashier).ToList();
-
+            var documents = _dbContext.VBRealizationDocuments.Where(a => vbRealizationIds.Contains(a.Id)).ToList();
             models.ForEach(model =>
-            {
+            {                   
                 model.CashierVerification(_identityService.Username);
                 EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
+            });
+
+            documents.ForEach(document =>
+            {
+                var journals = _dbContext.JournalTransactions.Include(a => a.Items).Where(entity => entity.ReferenceNo == document.ReferenceNo).ToList();
+                journals.ForEach(journal =>
+                {
+                    journal.Items.ToList().ForEach(journalItem =>
+                    {
+                        journalItem.Remark = document.Remark;
+                    });
+                });
             });
 
             _dbContext.VBRealizationDocumentExpeditions.UpdateRange(models);
