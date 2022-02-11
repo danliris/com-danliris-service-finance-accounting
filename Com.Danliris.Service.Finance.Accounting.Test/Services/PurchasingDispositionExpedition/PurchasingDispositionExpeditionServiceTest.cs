@@ -797,5 +797,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             var reportResponse = service.GenerateExcelAsync(1, 25, "{}", "{}", null, null,null,null,null,null,null, 7);
             Assert.NotNull(reportResponse);
         }
-    }
+
+		[Fact]
+		public async Task Should_Success_GetBankExpenditure_Data()
+		{
+			PurchasingDispositionExpeditionService service = new PurchasingDispositionExpeditionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+			var data = await _dataUtil(service).GetTestData();
+			var Response = service.ReadBankExpenditureNoteNo(1, 25, "{}", null, null, "{}");
+			Assert.NotEmpty(Response.Data);
+		}
+
+	}
 }
