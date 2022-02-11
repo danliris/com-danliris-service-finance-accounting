@@ -637,5 +637,36 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             }
         }
 
-    }
+
+		public ReadResponse<PurchasingDispositionExpeditionModel> ReadBankExpenditureNoteNo(int page, int size, string order, List<string> select, string keyword, string filter)
+		{
+
+			IQueryable<PurchasingDispositionExpeditionModel> Query = this.DbSet.Where(m=>m.BankExpenditureNoteNo !=null).Include(m => m.Items);
+			List<string> searchAttributes = new List<string>()
+			{
+				"BankExpenditureNoteNo"
+			};
+
+			Query = QueryHelper<PurchasingDispositionExpeditionModel>.Search(Query, searchAttributes, keyword);
+
+			if (filter.Contains("verificationFilter"))
+			{
+				filter = "{}";
+				List<ExpeditionPosition> positions = new List<ExpeditionPosition> { ExpeditionPosition.SEND_TO_PURCHASING_DIVISION, ExpeditionPosition.SEND_TO_ACCOUNTING_DIVISION, ExpeditionPosition.SEND_TO_CASHIER_DIVISION };
+				Query = Query.Where(p => positions.Contains(p.Position));
+			}
+
+			Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+			Query = QueryHelper<PurchasingDispositionExpeditionModel>.Filter(Query, FilterDictionary);
+
+			Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+			Query = QueryHelper<PurchasingDispositionExpeditionModel>.Order(Query, OrderDictionary);
+
+			Pageable<PurchasingDispositionExpeditionModel> pageable = new Pageable<PurchasingDispositionExpeditionModel>(Query, page - 1, size);
+			List<PurchasingDispositionExpeditionModel> Data = pageable.Data.ToList();
+			int TotalData = pageable.TotalCount;
+
+			return new ReadResponse<PurchasingDispositionExpeditionModel>(Data, TotalData, OrderDictionary, new List<string>());
+		}
+	}
 }
