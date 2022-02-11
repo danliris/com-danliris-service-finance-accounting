@@ -240,8 +240,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
 			var mocks = GetMocks();
 			mocks.Service.Setup(f => f.ReadBankExpenditureNoteNo(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
 
-			int statusCode = GetStatusCodeGet(mocks);
-			Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
+			mocks.Mapper.Setup(f => f.Map<List<PurchasingDispositionExpeditionViewModel>>(It.IsAny<List<PurchasingDispositionExpeditionModel>>())).Returns(new List<PurchasingDispositionExpeditionViewModel>());
+
+			var response = GetController(mocks).GetLoaderBankExpenditureNoteNo();
+			Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
 		}
 	}
 }
