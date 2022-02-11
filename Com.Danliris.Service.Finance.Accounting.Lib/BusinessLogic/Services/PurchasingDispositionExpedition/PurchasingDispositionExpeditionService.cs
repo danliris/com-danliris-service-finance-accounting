@@ -649,13 +649,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 
 			Query = QueryHelper<PurchasingDispositionExpeditionModel>.Search(Query, searchAttributes, keyword);
 
-			if (filter.Contains("verificationFilter"))
-			{
-				filter = "{}";
-				List<ExpeditionPosition> positions = new List<ExpeditionPosition> { ExpeditionPosition.SEND_TO_PURCHASING_DIVISION, ExpeditionPosition.SEND_TO_ACCOUNTING_DIVISION, ExpeditionPosition.SEND_TO_CASHIER_DIVISION };
-				Query = Query.Where(p => positions.Contains(p.Position));
-			}
-
 			Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
 			Query = QueryHelper<PurchasingDispositionExpeditionModel>.Filter(Query, FilterDictionary);
 
