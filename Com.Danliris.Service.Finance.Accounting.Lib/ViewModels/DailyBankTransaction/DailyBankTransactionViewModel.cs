@@ -29,6 +29,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransa
         public bool? IsPosted { get; set; }
         public string FinancingSourceReferenceNo { get; set; }
         public int? FinancingSourceReferenceId { get; set; }
+        public decimal? Rates { get; set; }
+        public decimal? BankCharges { get; set; }
         // public decimal? NominalOut { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

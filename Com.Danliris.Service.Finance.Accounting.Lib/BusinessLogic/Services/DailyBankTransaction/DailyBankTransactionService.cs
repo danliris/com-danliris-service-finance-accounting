@@ -31,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         protected IIdentityService _IdentityService;
         private readonly IServiceProvider _serviceProvider;
         public FinanceDbContext _DbContext;
+        private readonly IAutoJournalService _autoJournalService;
 
         public DailyBankTransactionService(IServiceProvider serviceProvider, FinanceDbContext dbContext)
         {
@@ -39,6 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
             _DbMonthlyBalanceSet = dbContext.Set<BankTransactionMonthlyBalanceModel>();
             _IdentityService = serviceProvider.GetService<IIdentityService>();
             _serviceProvider = serviceProvider;
+            _autoJournalService = serviceProvider.GetService<IAutoJournalService>();
         }
 
         //private async Task<GarmentCurrency> GetCurrencyByCurrencyCodeDate(string currencyCode, DateTimeOffset date)
@@ -1440,7 +1442,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         public async Task<int> Posting(List<int> ids)
         {
             var models = _DbContext.DailyBankTransactions.Where(entity => ids.Contains(entity.Id) || ids.Contains(entity.FinancingSourceReferenceId)).ToList();
+            var dataAccountBankDestinantion = new List<AccountBank>();
+            dataAccountBankDestinantion = GetAccountBanks(models.Select(s => s.DestinationBankId).Distinct().ToList()).GetAwaiter().GetResult();
+            var dataAccountBank = new List<AccountBank>();
+            dataAccountBank = GetAccountBanks(models.Select(s => s.AccountBankId).Distinct().ToList()).GetAwaiter().GetResult();
+            //var itemModels = _DbContext.Dail.Where(entity => ids.Contains(entity.OthersExpenditureProofDocumentId)).ToList();
+            foreach (var model in models)
+            {
+                if (model.SourceType == "Pendanaan" && model.SourceFundingType=="Internal")
+                {
+                    AccountBank AccountBankDestinantion = dataAccountBankDestinantion.Single(a => a.Id == model.DestinationBankId);
+                    AccountBank accountBank = dataAccountBank.Single(a => a.Id == model.AccountBankId);
 
+                    await _autoJournalService.AutoJournalFromDailyBankTransaction(model, accountBank, AccountBankDestinantion);
+                }
+                    
+                
+            }
             foreach (var model in models)
             {
                 model.IsPosted = true;
