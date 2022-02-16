@@ -1443,21 +1443,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
         {
             var models = _DbContext.DailyBankTransactions.Where(entity => ids.Contains(entity.Id) || ids.Contains(entity.FinancingSourceReferenceId)).ToList();
             var dataAccountBankDestinantion = new List<AccountBank>();
-            dataAccountBankDestinantion = GetAccountBanks(models.Select(s => s.DestinationBankId).Distinct().ToList()).GetAwaiter().GetResult();
+            dataAccountBankDestinantion = GetAccountBanks(models.Where(s => s.DestinationBankId>0).Select(s => s.DestinationBankId).Distinct().ToList()).GetAwaiter().GetResult();
             var dataAccountBank = new List<AccountBank>();
-            dataAccountBank = GetAccountBanks(models.Select(s => s.AccountBankId).Distinct().ToList()).GetAwaiter().GetResult();
+            dataAccountBank = GetAccountBanks(models.Where(s => s.AccountBankId > 0).Select(s => s.AccountBankId).Distinct().ToList()).GetAwaiter().GetResult();
             //var itemModels = _DbContext.Dail.Where(entity => ids.Contains(entity.OthersExpenditureProofDocumentId)).ToList();
             foreach (var model in models)
             {
-                if (model.SourceType == "Pendanaan" && model.SourceFundingType=="Internal")
+                if (model.SourceType == "Pendanaan" && model.SourceFundingType=="Internal" && model.DestinationBankId > 0)
                 {
                     AccountBank AccountBankDestinantion = dataAccountBankDestinantion.Single(a => a.Id == model.DestinationBankId);
                     AccountBank accountBank = dataAccountBank.Single(a => a.Id == model.AccountBankId);
 
                     await _autoJournalService.AutoJournalFromDailyBankTransaction(model, accountBank, AccountBankDestinantion);
                 }
-                    
-                
             }
             foreach (var model in models)
             {
