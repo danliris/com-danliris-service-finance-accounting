@@ -30,6 +30,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDoc
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransaction
 {
@@ -564,6 +565,108 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             //Act
             var result = await service.AutoJournalFromOthersExpenditureProof(viewModelOtherProof, viewModelOtherProofItems);
+
+            //Assert
+            Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_AutoJournalFromDailyBankTransaction()
+        {
+            //Setup
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            serviceProviderMock.Setup(s => s.GetService(typeof(FinanceDbContext))).Returns(dbContext);
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new JournalHttpClientTestService());
+
+            Mock<IJournalTransactionService> journalTransactionServiceMock = new Mock<IJournalTransactionService>();
+
+            journalTransactionServiceMock.Setup(s => s.CreateAsync(It.IsAny<JournalTransactionModel>())).ReturnsAsync(1);
+
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IJournalTransactionService)))
+                .Returns(journalTransactionServiceMock.Object);
+
+            var masterCOAServiceMock = new MasterCOAService(serviceProviderMock.Object);
+            serviceProviderMock
+               .Setup(x => x.GetService(typeof(IMasterCOAService)))
+               .Returns(masterCOAServiceMock);
+
+            var service = new AutoJournalService(dbContext, serviceProviderMock.Object);
+
+            AccountBank acc1 = new AccountBank()
+            {
+                AccountCOA = "AccountCOA",
+                AccountName = "AccountName",
+                AccountNumber = "AccountNumber",
+                BankCode = "BankCode",
+                BankName = "BankName",
+                Currency= new Currency()
+                {
+                    Code = "Rp",
+                    Symbol = "IDR"
+                },
+            };
+            AccountBank acc2 = new AccountBank()
+            {
+                AccountCOA = "AccountCOA",
+                AccountName = "AccountName",
+                AccountNumber = "AccountNumber",
+                BankCode = "BankCode",
+                BankName = "BankName",
+                Currency = new Currency()
+                {
+                    Code = "dolar",
+                    Symbol = "USD"
+                },
+            };
+
+            DailyBankTransactionModel dailySameCurrency = new DailyBankTransactionModel()
+            {
+                AccountBankAccountName = "AccountName",
+                AccountBankAccountNumber = "AccountNumber",
+                AccountBankCode = "BankCode",
+                AccountBankCurrencyCode = "CurrencyCode",
+                AccountBankCurrencyId = 1,
+                AccountBankCurrencySymbol = "CurrencySymbol",
+                AccountBankId = 1,
+                AccountBankName = "BankName",
+                AfterNominal = 0,
+                BeforeNominal = 0,
+                BuyerCode = "BuyerCode",
+                BuyerId = 1,
+                BuyerName = "BuyerName",
+                Date = DateTimeOffset.UtcNow,
+                Nominal = 1000,
+                ReferenceNo = "",
+                ReferenceType = "ReferenceType",
+                Remark = "Remark",
+                SourceType = "Operasional",
+                Status = "IN",
+                SupplierCode = "SupplierCode",
+                SupplierName = "SupplierName",
+                SupplierId = 1,
+                DestinationBankAccountName = "AccountName",
+                DestinationBankAccountNumber = "AccountNumber",
+                DestinationBankCode = "BankCode",
+                DestinationBankCurrencyCode = "CurrencyCode",
+                DestinationBankCurrencyId = 1,
+                DestinationBankCurrencySymbol = "CurrencySymbol",
+                DestinationBankId = 1,
+                DestinationBankName = "BankName",
+                IsPosted = true,
+                AfterNominalValas = 1,
+                BeforeNominalValas = 1,
+                TransactionNominal = 1,
+                NominalValas = 1,
+                Receiver = "Receiver",
+            };
+
+            //Act
+            var result = await service.AutoJournalFromDailyBankTransaction(dailySameCurrency, acc1,acc2);
 
             //Assert
             Assert.NotEqual(0, result);
