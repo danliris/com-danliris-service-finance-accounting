@@ -281,7 +281,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 		public async Task<List<MonitoringDispositionPayment>> GetMonitoring(string invoiceNo, string dispositionNo, DateTimeOffset startDate, DateTimeOffset endDate, int offset)
 		{
 			var data = await GetReportQuery(invoiceNo, dispositionNo, startDate, endDate);
-			return data;
+			return data ;
 		}
 
 		public async Task<List<MonitoringDispositionPayment>> GetReportQuery(string invoiceNo, string dispositionNo, DateTimeOffset startDate, DateTimeOffset endDate)
@@ -336,25 +336,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 
 			List<MonitoringDispositionPayment> data = new List<MonitoringDispositionPayment>();
 			double currentTotal = 0;
+			double currentTotalDiff = 0;
 			List<string> tempDispo = new List<string>();
+		 
 			int count = 0;
 			foreach (var item in query.OrderBy(s => s.DispositionNo))
 			{
 				tempDispo.Add(item.DispositionNo);
-
 				if (count < query.Count() && count > 0)
 				{
 					if (tempDispo[count] == tempDispo[count - 1])
 					{
 						currentTotal += item.Paid;
+						currentTotalDiff -= (item.Paid);
 					}
 					else
 					{
 						currentTotal = item.Paid;
+						currentTotalDiff = item.TotalAmount - item.Paid;
 					}
 				}
 				else if (count == 0)
-				{ currentTotal = item.Paid; }
+				{
+					currentTotal = item.Paid;
+					currentTotalDiff = item.TotalAmount - item.Paid;
+				}
 				count++;
 				MonitoringDispositionPayment payment = new MonitoringDispositionPayment
 				{
@@ -370,7 +376,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 					VatAmount = item.VatAmount,
 					TotalAmount = item.TotalAmount,
 					TotalPaidToSupplier = item.TotalPaidToSupplier,
-					TotalDifference = (item.TotalAmount - item.TotalPaid),
+					TotalDifference = Math.Round(currentTotalDiff,2),
 					Paid = item.TotalPaid,
 					PaymentType = item.PaymentType,
 					Category = item.Category,
@@ -455,7 +461,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 				}
 				else
 				{
-					invoicedate =   (item.InvoiceDate).ToString("dd-MMMM-yyyy");
+					invoicedate =   (item.InvoiceDate.AddHours(7)).ToString("dd-MMMM-yyyy");
 				}
 				if (item.DispositionDate == Convert.ToDateTime("0001-01-01 00:00:00.0000000 +00:00"))
 				{
@@ -463,7 +469,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 				}
 				else
 				{
-					dispositionDate =  (item.DispositionDate).ToString("dd-MMMM-yyyy");
+					dispositionDate =  (item.DispositionDate.AddHours(7)).ToString("dd-MMMM-yyyy");
 				}
 				if (item.DispositionDueDate == Convert.ToDateTime("0001-01-01 00:00:00.0000000 +00:00"))
 				{
@@ -471,7 +477,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 				}
 				else
 				{
-					dispositionDueDate = (item.DispositionDueDate).ToString("dd-MMMM-yyyy");
+					dispositionDueDate = (item.DispositionDueDate.AddHours(7)).ToString("dd-MMMM-yyyy");
 				}
 				result.Rows.Add(item.InvoiceNo,invoicedate, item.DispositionNo, dispositionDate, dispositionDueDate,
 				item.BankName, item.CurrencySymbol, item.SupplierName, item.ProformaNo, item.Category, item.VatAmount, item.TotalAmount, item.TotalPaidToSupplier, item.TotalDifference, item.TotalPaid, item.PaymentType);
@@ -492,12 +498,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 				worksheet.Cells["A" + 2 + ":P" + (counter + 2) + ""].Style.Border.Right.Style = ExcelBorderStyle.Thin;
 			 
 				worksheet.Cells["A" + 2 + ":P" + 2 + ""].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-				foreach (var cell in worksheet.Cells["K" + 3 + ":O" + (counter + 2) + ""])
+				if (data.Count > 0)
 				{
-					cell.Value = Convert.ToDecimal(cell.Value);
-					cell.Style.Numberformat.Format = "#,##0.00";
-					cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+					foreach (var cell in worksheet.Cells["K" + 3 + ":O" + (counter + 2) + ""])
+					{
+						cell.Value = Convert.ToDecimal(cell.Value);
+						cell.Style.Numberformat.Format = "#,##0.00";
+						cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+					}
 				}
 				worksheet.Cells["A" + 2 + ":P" + (counter + 2) + ""].AutoFitColumns();
 				worksheet.Cells["A" + (2) + ":P" + (2) + ""].Style.Font.Bold = true;

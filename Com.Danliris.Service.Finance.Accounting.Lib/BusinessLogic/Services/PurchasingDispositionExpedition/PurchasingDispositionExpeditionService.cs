@@ -338,8 +338,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 			DateTimeOffset dateToPaymentFilter = (dateToPayment == null ? DateTimeOffset.UtcNow.Date : dateToPayment.Value.Date);
 			DateTimeOffset dateFromFilter = (dateFrom == null ? new DateTime(1970, 1, 1) : dateFrom.Value.Date);
 			DateTimeOffset dateToFilter = (dateTo == null ? DateTimeOffset.UtcNow.Date : dateTo.Value.Date);
-			var expeditionData = DbSet.Where(x => x.BankExpenditureNoteDate.Value >= dateFromPaymentFilter
-						 && x.BankExpenditureNoteDate.Value <= dateToPaymentFilter).Include(entity => entity.Items).ToList();
+			var expeditionData = DbSet.Where(x => x.BankExpenditureNoteDate.Value.AddHours(offSet).Date >= dateFromPaymentFilter
+						 && x.BankExpenditureNoteDate.Value.AddHours(offSet).Date <= dateToPaymentFilter).Include(entity => entity.Items).ToList();
 			 
 			var purchasingDispositionResponse = await GetPurchasingDispositionAsync(1, int.MaxValue, order, filter);
              
