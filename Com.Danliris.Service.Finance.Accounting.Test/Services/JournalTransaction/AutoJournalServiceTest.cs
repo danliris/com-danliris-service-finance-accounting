@@ -624,7 +624,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
                 },
             };
 
-            DailyBankTransactionModel dailySameCurrency = new DailyBankTransactionModel()
+            DailyBankTransactionModel dailyModel = new DailyBankTransactionModel()
             {
                 AccountBankAccountName = "AccountName",
                 AccountBankAccountNumber = "AccountNumber",
@@ -644,7 +644,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
                 ReferenceNo = "",
                 ReferenceType = "ReferenceType",
                 Remark = "Remark",
-                SourceType = "Operasional",
+                SourceType = "Pendanaan",
+                SourceFundingType = "Internal",
                 Status = "IN",
                 SupplierCode = "SupplierCode",
                 SupplierName = "SupplierName",
@@ -663,13 +664,42 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
                 TransactionNominal = 1,
                 NominalValas = 1,
                 Receiver = "Receiver",
+                CurrencyRate=10
             };
 
             //Act
-            var result = await service.AutoJournalFromDailyBankTransaction(dailySameCurrency, acc1,acc2);
-
+            var result = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1,acc2);
             //Assert
             Assert.NotEqual(0, result);
+
+            dailyModel.BankCharges = 100;
+            var resultwithBankCharges = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
+            Assert.NotEqual(0, resultwithBankCharges);
+
+            dailyModel.DestinationBankCurrencyCode = "IDR";
+            dailyModel.BankCharges = 100;
+            dailyModel.Rates = 100;
+            var resultDiffCurrencyToIDR = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
+            Assert.NotEqual(0, resultDiffCurrencyToIDR);
+
+            dailyModel.DestinationBankCurrencyCode = "IDR";
+            dailyModel.BankCharges = 0;
+            dailyModel.Rates = 100;
+            var resultDiffCurrencyToIDRNoCharges = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
+            Assert.NotEqual(0, resultDiffCurrencyToIDR);
+
+            dailyModel.AccountBankCurrencyCode = "IDR";
+            dailyModel.BankCharges = 0;
+            dailyModel.Rates = 100;
+            var resultDiffCurrencyNoCharges = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
+            Assert.NotEqual(0, resultDiffCurrencyNoCharges);
+
+            dailyModel.AccountBankCurrencyCode = "IDR";
+            dailyModel.BankCharges = 100;
+            dailyModel.Rates = 100;
+            var resultDiffCurrency = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
+            Assert.NotEqual(0, resultDiffCurrency);
+
         }
     }
 
