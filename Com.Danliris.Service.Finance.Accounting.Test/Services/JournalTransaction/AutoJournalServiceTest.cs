@@ -689,12 +689,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             Assert.NotEqual(0, resultDiffCurrencyToIDR);
 
             dailyModel.AccountBankCurrencyCode = "IDR";
+            dailyModel.DestinationBankCurrencyCode = "USD";
             dailyModel.BankCharges = 0;
             dailyModel.Rates = 100;
             var resultDiffCurrencyNoCharges = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
             Assert.NotEqual(0, resultDiffCurrencyNoCharges);
 
             dailyModel.AccountBankCurrencyCode = "IDR";
+            dailyModel.DestinationBankCurrencyCode = "USD";
             dailyModel.BankCharges = 100;
             dailyModel.Rates = 100;
             var resultDiffCurrency = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
