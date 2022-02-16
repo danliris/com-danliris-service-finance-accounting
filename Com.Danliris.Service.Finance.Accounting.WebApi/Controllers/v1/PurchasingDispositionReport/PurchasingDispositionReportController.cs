@@ -43,7 +43,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Purchasi
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> GetReportAsync(string SPBStatus, string PaymentStatus, string bankExpenditureNoteNo,DateTime? dateFromPayment = null, DateTime? dateToPayment = null,DateTime ? dateFrom = null, DateTime? dateTo = null, int page = 1, int size = 25, string order = "{}", string filter = "{}")
+        public async Task<IActionResult> GetReportAsync(string SPBStatus, string PaymentStatus, string bankExpenditureNoteNo,DateTimeOffset? dateFromPayment = null, DateTimeOffset? dateToPayment = null,DateTime ? dateFrom = null, DateTime? dateTo = null, int page = 1, int size = 25, string order = "{}", string filter = "{}")
         {
             try
             {

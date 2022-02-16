@@ -234,12 +234,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 			var service = new GarmentInvoicePurchasingDispositionService(serviceProviderMock.Object, dbContext);
 
 			var model = new GarmentInvoicePurchasingDispositionModel() { InvoiceDate=DateTimeOffset.Now,InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, 1, "Test") } };
+			var model1 = new GarmentInvoicePurchasingDispositionModel() { InvoiceDate = DateTimeOffset.Now, InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, 1, "Test") } };
+			var model2 = new GarmentInvoicePurchasingDispositionModel() { InvoiceDate = DateTimeOffset.Now, InvoiceNo = "Test", SupplierName = "Test", CurrencyCode = "Code", BankName = "BankName", Items = new List<GarmentInvoicePurchasingDispositionItemModel>() { new GarmentInvoicePurchasingDispositionItemModel(0, 1, "Test1") } };
 
 			EntityExtension.FlagForCreate(model, "Test", "Test");
 			dbContext.GarmentInvoicePurchasingDispositions.Add(model);
+			EntityExtension.FlagForCreate(model1, "Test", "Test");
+			dbContext.GarmentInvoicePurchasingDispositions.Add(model1);
+			EntityExtension.FlagForCreate(model2, "Test", "Test");
+			dbContext.GarmentInvoicePurchasingDispositions.Add(model2);
 			dbContext.SaveChanges();
 
-			var result = service.GetMonitoring("Test","Test",DateTimeOffset.Now.AddDays(-1),DateTimeOffset.Now,7);
+
+			var result = service.GetMonitoring(null,null,DateTimeOffset.Now.AddDays(-1),DateTimeOffset.Now,7);
 			Assert.NotNull(result);
 		}
 
