@@ -874,7 +874,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         Debit = model.BankCharges,
                         Remark = model.Remark
                     };
-                    var diff = Math.Abs((model.NominalValas * model.Rates) - ((model.NominalValas * model.CurrencyRate) + model.BankCharges));
+                    var diff = Math.Abs((model.NominalValas * model.Rates) - (model.NominalValas * model.CurrencyRate));
                     var diffCOACode = accountBank.DivisionName == "T" ? "7031.00.1.00" : "7031.00.4.00";
                     diffCurrencyItemOut = new JournalTransactionItemModel()
                     {
@@ -1030,7 +1030,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         Debit = (model.NominalValas * model.CurrencyRate) + model.BankCharges,
                         Remark = model.Remark
                     };
-                    var diff = Math.Abs((model.NominalValas * model.Rates) - ((model.NominalValas * model.CurrencyRate) + model.BankCharges));
+                    var diff = Math.Abs((model.NominalValas * model.Rates) - (model.NominalValas * model.CurrencyRate));
                     var diffCOACode = accountBank.DivisionName == "T" ? "7031.00.1.00" : "7031.00.4.00";
                     diffCurrencyItem = new JournalTransactionItemModel()
                     {
