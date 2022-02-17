@@ -1027,7 +1027,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     debitItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBankDestination.AccountCOA },
-                        Debit = (model.Nominal * model.CurrencyRate) + model.BankCharges,
+                        Debit = (model.Nominal * model.CurrencyRate),
                         Remark = model.Remark
                     };
                     var diff = Math.Abs((model.Nominal * model.Rates) - (model.Nominal * model.CurrencyRate));
