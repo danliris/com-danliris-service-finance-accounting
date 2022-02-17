@@ -338,8 +338,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 			DateTimeOffset dateToPaymentFilter = (dateToPayment == null ? DateTimeOffset.UtcNow.Date : dateToPayment.Value.Date);
 			DateTimeOffset dateFromFilter = (dateFrom == null ? new DateTime(1970, 1, 1) : dateFrom.Value.Date);
 			DateTimeOffset dateToFilter = (dateTo == null ? DateTimeOffset.UtcNow.Date : dateTo.Value.Date);
-			var expeditionData = DbSet.Where(x => x.BankExpenditureNoteDate.Value.AddHours(offSet).Date >= dateFromPaymentFilter
-						 && x.BankExpenditureNoteDate.Value.AddHours(offSet).Date <= dateToPaymentFilter).Include(entity => entity.Items).ToList();
+			var expeditionData = DbSet.Include(entity => entity.Items).ToList();
 			 
 			var purchasingDispositionResponse = await GetPurchasingDispositionAsync(1, int.MaxValue, order, filter);
              
@@ -445,7 +444,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                 result.Add(vm);
 
             }
-			result = result.Where(a => a.BankExpenditureNoteDate >= dateFromPaymentFilter && a.BankExpenditureNoteDate.Value <= dateToPaymentFilter).ToList();
+
+			result = result.Where(a => a.BankExpenditureNoteDate.Value.AddHours(offSet).Date >= dateFromPaymentFilter.Date && a.BankExpenditureNoteDate.Value.AddHours(offSet).Date <= dateToPaymentFilter.Date).ToList();
 
 			if (PaymentStatus == "SUDAH DIBAYAR")
 			{
