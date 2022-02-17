@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220215090843_enhance_bankCharge_JournalTrnsactions")]
+    partial class enhance_bankCharge_JournalTrnsactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -856,9 +858,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("Remark")
                         .HasMaxLength(500);
-
-                    b.Property<string>("SourceFundingType")
-                        .HasMaxLength(50);
 
                     b.Property<string>("SourceType")
                         .HasMaxLength(50);
