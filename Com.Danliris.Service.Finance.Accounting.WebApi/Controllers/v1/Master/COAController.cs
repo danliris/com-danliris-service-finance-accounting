@@ -256,7 +256,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
         }
 
         [HttpGet("header")]
-        public IActionResult GetCOAHeaderSubheader(string keyword)
+        public IActionResult GetCOAHeaderSubheader(string keyword = null)
         {
             var read = Service.GetAll();
             var result = new List<CodeName>();
