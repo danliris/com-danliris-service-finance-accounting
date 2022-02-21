@@ -803,13 +803,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     debitItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBankDestination.AccountCOA },
-                        Debit = model.Nominal,
+                        Debit = model.TransactionNominal,
                         Remark = model.Remark
                     };
                     creditItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Credit = model.Nominal,
+                        Credit = model.TransactionNominal,
                         Remark = model.Remark
                     };
                     journalTransactionModelIn.Items.Add(creditItem);
@@ -821,7 +821,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     debitItemOut = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Debit = model.Nominal,
+                        Debit = model.TransactionNominal,
                         Remark = model.Remark
                     };
                     chargeItemOut = new JournalTransactionItemModel()
@@ -833,7 +833,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     creditItemOut = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBank.AccountCOA },
-                        Credit = model.Nominal + model.BankCharges,
+                        Credit = model.Nominal,
                         Remark = model.Remark
                     };
                     journalTransactionModelOut.Items.Add(debitItemOut);
@@ -844,13 +844,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     debitItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBankDestination.AccountCOA },
-                        Debit = model.Nominal,
+                        Debit = model.TransactionNominal,
                         Remark = model.Remark
                     };
                     creditItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Credit = model.Nominal,
+                        Credit = model.TransactionNominal,
                         Remark = model.Remark
                     };
                     journalTransactionModelIn.Items.Add(creditItem);
@@ -865,16 +865,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     debitItemOut = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Debit = model.NominalValas * model.Rates,
+                        Debit = model.TransactionNominal,
                         Remark = model.Remark
                     };
                     chargeItemOut = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "6010.00.0.00" },
-                        Debit = model.BankCharges,
+                        Debit = model.BankCharges*model.CurrencyRate,
                         Remark = model.Remark
                     };
-                    var diff = Math.Abs((model.NominalValas * model.Rates) - (model.NominalValas * model.CurrencyRate));
+                    var diff = Math.Abs((model.TransactionNominal) - (model.NominalValas * model.CurrencyRate));
                     var diffCOACode = accountBank.DivisionName == "T" ? "7031.00.1.00" : "7031.00.4.00";
                     diffCurrencyItemOut = new JournalTransactionItemModel()
                     {
@@ -886,7 +886,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     creditItemOut = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBank.AccountCOA },
-                        Credit = (model.NominalValas * model.CurrencyRate) + model.BankCharges,
+                        Credit = (model.NominalValas * model.CurrencyRate) + (model.BankCharges * model.CurrencyRate),
                         Remark = model.Remark
                     };
                     journalTransactionModelOut.Items.Add(debitItemOut);
@@ -898,13 +898,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     debitItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBankDestination.AccountCOA },
-                        Debit = model.NominalValas * model.Rates,
+                        Debit = model.TransactionNominal,
                         Remark = model.Remark
                     };
                     creditItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Credit = model.NominalValas * model.Rates,
+                        Credit = model.TransactionNominal,
                         Remark = model.Remark
                     };
                     journalTransactionModelIn.Items.Add(creditItem);
@@ -916,10 +916,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     debitItemOut = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Debit = model.NominalValas * model.Rates,
+                        Debit = model.TransactionNominal,
                         Remark = model.Remark
                     };
-                    var diff = Math.Abs((model.NominalValas * model.Rates) - (model.NominalValas * model.CurrencyRate));
+                    var diff = Math.Abs((model.TransactionNominal) - (model.NominalValas * model.CurrencyRate));
                     var diffCOACode = accountBank.DivisionName == "T" ? "7031.00.1.00" : "7031.00.4.00";
                     diffCurrencyItemOut = new JournalTransactionItemModel()
                     {
@@ -942,13 +942,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     debitItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBankDestination.AccountCOA },
-                        Debit = model.NominalValas * model.Rates,
+                        Debit = model.TransactionNominal,
                         Remark = model.Remark
                     };
                     creditItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Credit = model.NominalValas * model.Rates,
+                        Credit = model.TransactionNominal,
                         Remark = model.Remark
                     };
                     journalTransactionModelIn.Items.Add(creditItem);
@@ -960,38 +960,39 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     debitItemOut = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Debit = model.Nominal * model.Rates,
+                        Debit = model.Nominal,
                         Remark = model.Remark
                     };
                     creditItemOut = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBank.AccountCOA },
-                        Credit = (model.Nominal * model.Rates),
+                        Credit = (model.Nominal),
                         Remark = model.Remark
                     };
                     journalTransactionModelOut.Items.Add(debitItemOut);
                     journalTransactionModelOut.Items.Add(creditItemOut);
 
                     //IN
+                    var currency = await GetBICurrency(model.DestinationBankCurrencyCode, model.Date);
                     debitItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBankDestination.AccountCOA },
-                        Debit = model.Nominal * model.CurrencyRate,
+                        Debit = model.TransactionNominal * (decimal)currency.Rate,
                         Remark = model.Remark
                     };
-                    var diff = Math.Abs((model.Nominal * model.Rates) - (model.Nominal * model.CurrencyRate));
+                    var diff = Math.Abs((model.Nominal) - (model.TransactionNominal * (decimal)currency.Rate));
                     var diffCOACode = accountBank.DivisionName == "T" ? "7031.00.1.00" : "7031.00.4.00";
                     diffCurrencyItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = diffCOACode },
-                        Debit = model.CurrencyRate < model.Rates ? diff : 0,
-                        Credit = model.CurrencyRate > model.Rates ? diff : 0,
+                        Debit = (decimal)currency.Rate < model.Rates ? diff : 0,
+                        Credit = (decimal)currency.Rate > model.Rates ? diff : 0,
                         Remark = model.Remark
                     };
                     creditItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Credit = model.Nominal * model.Rates,
+                        Credit = model.Nominal,
                         Remark = model.Remark
                     };
                     journalTransactionModelIn.Items.Add(creditItem);
@@ -1001,10 +1002,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 else if (model.AccountBankCurrencyCode == "IDR" && model.BankCharges > 0)
                 {
                     //OUT
+                    var currency = await GetBICurrency(model.DestinationBankCurrencyCode, model.Date);
                     debitItemOut = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Debit = model.Nominal * model.Rates,
+                        Debit = model.Nominal,
                         Remark = model.Remark
                     };
                     chargeItemOut = new JournalTransactionItemModel()
@@ -1016,7 +1018,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     creditItemOut = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBank.AccountCOA },
-                        Credit = (model.Nominal * model.Rates)+ model.BankCharges,
+                        Credit = model.Nominal+ model.BankCharges,
                         Remark = model.Remark
                     };
                     journalTransactionModelOut.Items.Add(debitItemOut);
@@ -1027,22 +1029,22 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                     debitItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = accountBankDestination.AccountCOA },
-                        Debit = (model.Nominal * model.CurrencyRate),
+                        Debit = (model.TransactionNominal * (decimal)currency.Rate),
                         Remark = model.Remark
                     };
-                    var diff = Math.Abs((model.Nominal * model.Rates) - (model.Nominal * model.CurrencyRate));
+                    var diff = Math.Abs((model.Nominal) - (model.TransactionNominal * (decimal)currency.Rate));
                     var diffCOACode = accountBank.DivisionName == "T" ? "7031.00.1.00" : "7031.00.4.00";
                     diffCurrencyItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = diffCOACode },
-                        Debit = model.CurrencyRate < model.Rates ? diff : 0,
-                        Credit = model.CurrencyRate > model.Rates ? diff : 0,
+                        Debit = (decimal)currency.Rate < model.Rates ? diff : 0,
+                        Credit = (decimal)currency.Rate > model.Rates ? diff : 0,
                         Remark = model.Remark
                     };
                     creditItem = new JournalTransactionItemModel()
                     {
                         COA = new COAModel() { Code = "1070.00.0.00" },
-                        Credit = model.Nominal * model.Rates,
+                        Credit = model.Nominal,
                         Remark = model.Remark
                     };
                     journalTransactionModelIn.Items.Add(creditItem);
