@@ -125,7 +125,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
 
                 if (read.Count > 0 && !string.IsNullOrWhiteSpace(keyword))
                 {
-                    read = read.Where(element => element.Code.Contains(keyword) || element.Name.Contains(keyword)).ToList();
+                    read = read.Where(element => element.Code.Contains(keyword) || (!string.IsNullOrWhiteSpace(element.Name) && element.Name.Contains(keyword))).ToList();
                 }
 
                 List<COAViewModel> dataVM = Mapper.Map<List<COAViewModel>>(read);
@@ -256,17 +256,30 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
         }
 
         [HttpGet("header")]
-        public IActionResult GetCOAHeaderSubheader()
+        public IActionResult GetCOAHeaderSubheader(string keyword)
         {
-            List<object> result = new List<object>();
+            var read = Service.GetAll();
+            var result = new List<CodeName>();
             foreach (COACategoryEnum item in Enum.GetValues(typeof(COACategoryEnum)))
             {
-                result.Add(new
+                result.Add(new CodeName()
                 {
                     Name = item.ToDescriptionString(),
                     Code = ((int)item).ToString()
                 });
             }
+
+            if (read.Count > 0 && !string.IsNullOrWhiteSpace(keyword))
+            {
+                read = read.Where(element => element.Code.Contains(keyword) || (!string.IsNullOrWhiteSpace(element.Name) && element.Name.Contains(keyword))).ToList();
+
+                var headers = read.Select(element => element.Header).Distinct().ToList();
+                var subHeaders = read.Select(element => element.Subheader).Distinct().ToList();
+
+                result = result.Where(element => headers.Contains(element.Code) || subHeaders.Contains(element.Code)).ToList();
+
+            }
+
             return Ok(result);
         }
 
@@ -314,5 +327,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+    }
+
+    public class CodeName
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
     }
 }
