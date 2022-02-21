@@ -123,6 +123,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
             {
                 var read = Service.GetAll();
 
+                if (read.Count > 0 && !string.IsNullOrWhiteSpace(keyword))
+                {
+                    read = read.Where(element => element.Code.Contains(keyword) || element.Name.Contains(keyword)).ToList();
+                }
+
                 List<COAViewModel> dataVM = Mapper.Map<List<COAViewModel>>(read);
 
                 Dictionary<string, object> Result =
