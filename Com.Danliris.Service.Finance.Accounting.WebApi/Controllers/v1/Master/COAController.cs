@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Master.COAService;
 
@@ -125,7 +126,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
 
                 if (read.Count > 0 && !string.IsNullOrWhiteSpace(keyword))
                 {
-                    read = read.Where(element => element.Code.Contains(keyword) || (!string.IsNullOrWhiteSpace(element.Name) && element.Name.Contains(keyword))).ToList();
+                    read = read.Where(element => element.Code.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1 || (!string.IsNullOrWhiteSpace(element.Name) && element.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1)).ToList();
                 }
 
                 List<COAViewModel> dataVM = Mapper.Map<List<COAViewModel>>(read);
@@ -271,7 +272,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Master
 
             if (read.Count > 0 && !string.IsNullOrWhiteSpace(keyword))
             {
-                read = read.Where(element => element.Code.Contains(keyword) || (!string.IsNullOrWhiteSpace(element.Name) && element.Name.Contains(keyword))).ToList();
+                read = read.Where(element => element.Code.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1 || (!string.IsNullOrWhiteSpace(element.Name) && element.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1)).ToList();
 
                 var headers = read.Select(element => element.Header).Distinct().ToList();
                 var subHeaders = read.Select(element => element.Subheader).Distinct().ToList();
