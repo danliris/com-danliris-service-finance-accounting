@@ -31,6 +31,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentEx
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using System.Net.Http;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransaction
 {
@@ -595,6 +596,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
                .Setup(x => x.GetService(typeof(IMasterCOAService)))
                .Returns(masterCOAServiceMock);
 
+            var httpClientService = new Mock<IHttpClientService>();
+            HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            message.Content = new StringContent("{\"data\":{\"Id\":7,\"Code\":\"BB\",\"Rate\":13700.0,\"Date\":\"2018/10/20\"}}");
+
+            httpClientService
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .ReturnsAsync(message);
+
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
             var service = new AutoJournalService(dbContext, serviceProviderMock.Object);
 
             AccountBank acc1 = new AccountBank()
