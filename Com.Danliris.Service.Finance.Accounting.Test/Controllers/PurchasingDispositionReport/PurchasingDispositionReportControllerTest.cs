@@ -62,16 +62,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
             Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
         }
 
-        //[Fact]
-        //public async Task GetReport_ThrowException()
-        //{
-        //    var mocks = GetMocks();
-        //    mocks.Service.Setup(f => f.GetReportAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+        [Fact]
+        public async Task GetReport_ThrowException()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetReportAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).ThrowsAsync(new Exception());
 
-        //    var response = await GetController(mocks).GetReportAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(),It.IsAny<int>(), It.IsAny<int>(),"{}","{}");
-        //    Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
-        //}
-
+            var response = await GetController(mocks).GetReportAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, It.IsAny<int>(), It.IsAny<int>(),"{}","{}");
+            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+ 
         [Fact]
         public async Task GetReportExcel_ReturnFile()
         {
