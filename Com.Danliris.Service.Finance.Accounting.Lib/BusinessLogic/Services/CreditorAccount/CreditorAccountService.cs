@@ -634,15 +634,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.BankExpenditureNoteNo == null && x.SupplierCode == viewModel.SupplierCode && x.UnitPaymentCorrectionNo == null && x.MemoNo == viewModel.MemoNo);
 
-            decimal remaining = 0;
+            decimal remaining = viewModel.Mutation;
 
             if (creditorAccount.Count > 0)
             {
                 foreach (var item in creditorAccount)
                 {
-                    var finalBalance = item.FinalBalance;
-
-                    if (viewModel.Mutation >= finalBalance)
+                    if (remaining >= item.FinalBalance)
                     {
                         item.BankExpenditureNoteDate = viewModel.Date;
                         item.BankExpenditureNoteId = viewModel.Id;
@@ -652,7 +650,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                         UpdateModel(item.Id, item);
 
-                        remaining = viewModel.Mutation - finalBalance;
+                        remaining -= item.FinalBalance;
                     }
                     else
                     {
