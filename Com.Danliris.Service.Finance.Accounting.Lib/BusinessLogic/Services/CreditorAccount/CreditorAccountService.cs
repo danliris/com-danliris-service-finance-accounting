@@ -718,7 +718,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 if (model == null)
                 {
                     //do nothing
-
                     return 1;
                 }
                 else
