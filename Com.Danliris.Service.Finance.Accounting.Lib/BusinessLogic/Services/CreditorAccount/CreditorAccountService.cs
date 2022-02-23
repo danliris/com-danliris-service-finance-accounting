@@ -650,7 +650,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                         UpdateModel(item.Id, item);
 
-                        remaining -= item.FinalBalance;
+                        remaining -= item.BankExpenditureNoteMutation;
                     }
                     else
                     {
