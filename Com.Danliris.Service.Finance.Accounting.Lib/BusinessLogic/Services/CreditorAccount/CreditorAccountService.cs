@@ -678,55 +678,55 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         if (newModel == null)
                         {
                             var newCreditorAccount = new CreditorAccountModel(
-                                newModel.SupplierName,
-                                newModel.SupplierCode,
-                                newModel.SupplierIsImport,
-                                newModel.DivisionId,
-                                newModel.DivisionCode,
-                                newModel.DivisionName,
-                                newModel.UnitId,
-                                newModel.UnitCode,
-                                newModel.UnitName,
-                                newModel.UnitPaymentCorrectionId,
-                                newModel.UnitPaymentCorrectionNo,
-                                newModel.UnitPaymentCorrectionDPP,
-                                newModel.UnitPaymentCorrectionPPN,
-                                newModel.UnitPaymentCorrectionMutation,
-                                newModel.UnitPaymentCorrectionDate.GetValueOrDefault(),
-                                newModel.UnitReceiptNoteNo,
-                                newModel.Products,
-                                newModel.UnitReceiptNoteDate,
-                                newModel.UnitReceiptNoteDPP,
-                                newModel.UnitReceiptNotePPN,
-                                newModel.UnitReceiptMutation,
+                                item.SupplierName,
+                                item.SupplierCode,
+                                item.SupplierIsImport,
+                                item.DivisionId,
+                                item.DivisionCode,
+                                item.DivisionName,
+                                item.UnitId,
+                                item.UnitCode,
+                                item.UnitName,
+                                item.UnitPaymentCorrectionId,
+                                item.UnitPaymentCorrectionNo,
+                                item.UnitPaymentCorrectionDPP,
+                                item.UnitPaymentCorrectionPPN,
+                                item.UnitPaymentCorrectionMutation,
+                                item.UnitPaymentCorrectionDate.GetValueOrDefault(),
+                                item.UnitReceiptNoteNo,
+                                item.Products,
+                                item.UnitReceiptNoteDate,
+                                item.UnitReceiptNoteDPP,
+                                item.UnitReceiptNotePPN,
+                                item.UnitReceiptMutation,
                                 viewModel.Id,
                                 viewModel.Code,
                                 viewModel.Date,
-                                newModel.BankExpenditureNoteDPP,
-                                newModel.BankExpenditureNotePPN,
+                                item.BankExpenditureNoteDPP,
+                                item.BankExpenditureNotePPN,
                                 remaining,
-                                newModel.MemoNo,
-                                newModel.MemoDate,
-                                newModel.MemoDPP,
-                                newModel.MemoPPN,
-                                newModel.MemoMutation,
-                                newModel.PaymentDuration,
-                                newModel.InvoiceNo,
+                                item.MemoNo,
+                                item.MemoDate,
+                                item.MemoDPP,
+                                item.MemoPPN,
+                                item.MemoMutation,
+                                item.PaymentDuration,
+                                item.InvoiceNo,
                                 0,
-                                newModel.CurrencyCode,
-                                newModel.DPPCurrency,
-                                newModel.CurrencyRate,
-                                newModel.VATAmount,
-                                newModel.IncomeTaxAmount,
-                                newModel.ExternalPurchaseOrderNo
+                                item.CurrencyCode,
+                                item.DPPCurrency,
+                                item.CurrencyRate,
+                                item.VATAmount,
+                                item.IncomeTaxAmount,
+                                item.ExternalPurchaseOrderNo
                                 );
 
                             EntityExtension.FlagForCreate(newCreditorAccount, IdentityService.Username, UserAgent);
                             DbSet.Add(newCreditorAccount);
 
-                            newModel.UnitReceiptNoteDate = null;
-                            newModel.MemoDate = null;
-                            newModel.FinalBalance = (newModel.UnitReceiptMutation + (remaining * -1) + newModel.MemoMutation);
+                            item.UnitReceiptNoteDate = null;
+                            item.MemoDate = null;
+                            item.FinalBalance = (item.UnitReceiptMutation + (remaining * -1) + item.MemoMutation);
 
                             UpdateModel(item.Id, item);
                         }
