@@ -204,14 +204,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
-        [Fact]
-        public void Get_COA_Header_Enum()
-        {
-            var mocks = GetMocks();
+        //[Fact]
+        //public void Get_COA_Header_Enum()
+        //{
+        //    var mocks = GetMocks();
 
-            var response = GetController(mocks).GetCOAHeaderSubheader();
-            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
-        }
+        //    var response = GetController(mocks).GetCOAHeaderSubheader();
+        //    Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        //}
 
         [Fact]
         public async Task GetEmptyNameCoa_WithoutException_ReturnOK()
