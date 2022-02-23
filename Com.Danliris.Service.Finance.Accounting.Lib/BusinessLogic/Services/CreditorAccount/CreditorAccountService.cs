@@ -642,13 +642,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 {
                     if (remaining >= item.FinalBalance)
                     {
-                        item.BankExpenditureNoteDate = viewModel.Date;
-                        item.BankExpenditureNoteId = viewModel.Id;
-                        item.BankExpenditureNoteMutation = item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN - item.IncomeTaxAmount;
-                        item.BankExpenditureNoteNo = viewModel.Code;
-                        item.FinalBalance = item.UnitReceiptMutation + (item.BankExpenditureNoteMutation * -1) + item.MemoMutation;
+                        var newModel = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.UnitReceiptNoteNo == item.UnitReceiptNoteNo && entity.BankExpenditureNoteNo != null);
 
-                        UpdateModel(item.Id, item);
+                        if (newModel != null)
+                        {
+                            item.UnitReceiptNoteDate = newModel.UnitReceiptNoteDate;
+                            item.MemoDate = newModel.MemoDate;
+                            item.BankExpenditureNoteMutation = (item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN - item.IncomeTaxAmount) - newModel.BankExpenditureNoteMutation;
+                            item.UnitReceiptNoteDPP = 0;
+                            item.UnitReceiptNotePPN = 0;
+                            item.BankExpenditureNoteDate = viewModel.Date;
+                            item.BankExpenditureNoteId = viewModel.Id;
+                            item.BankExpenditureNoteNo = viewModel.Code;
+                            item.FinalBalance = item.UnitReceiptMutation + (item.BankExpenditureNoteMutation * -1) + item.MemoMutation + (newModel.BankExpenditureNoteMutation * -1);
+
+                            UpdateModel(item.Id, item);
+                        }
+                        else
+                        {
+                            item.BankExpenditureNoteDate = viewModel.Date;
+                            item.BankExpenditureNoteId = viewModel.Id;
+                            item.BankExpenditureNoteMutation = item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN - item.IncomeTaxAmount;
+                            item.BankExpenditureNoteNo = viewModel.Code;
+                            item.FinalBalance = item.UnitReceiptMutation + (item.BankExpenditureNoteMutation * -1) + item.MemoMutation;
+
+                            UpdateModel(item.Id, item);
+                        }
 
                         remaining -= item.BankExpenditureNoteMutation;
                     }
@@ -740,6 +759,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                 }
                 else
                 {
+                    decimal previousPayment = 0;
+
                     var newModel = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.UnitReceiptNoteNo == model.UnitReceiptNoteNo && entity.BankExpenditureNoteNo != null);
 
                     if (newModel != null)
@@ -748,13 +769,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         model.MemoDate = newModel.MemoDate;
                         model.UnitReceiptNoteDPP = 0;
                         model.UnitReceiptNotePPN = 0;
+                        previousPayment = newModel.BankExpenditureNoteMutation;
                     }
 
                     model.BankExpenditureNoteDate = viewModel.Date;
                     model.BankExpenditureNoteId = viewModel.Id;
                     model.BankExpenditureNoteMutation = viewModel.Mutation;
                     model.BankExpenditureNoteNo = viewModel.Code;
-                    model.FinalBalance = model.UnitReceiptMutation + (model.BankExpenditureNoteMutation * -1) + model.MemoMutation;
+                    model.FinalBalance = model.UnitReceiptMutation + (model.BankExpenditureNoteMutation * -1) + model.MemoMutation + (previousPayment * -1);
 
                     UpdateModel(model.Id, model);
                     return await DbContext.SaveChangesAsync();
