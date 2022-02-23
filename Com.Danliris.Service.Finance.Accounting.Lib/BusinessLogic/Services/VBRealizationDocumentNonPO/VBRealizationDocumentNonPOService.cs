@@ -105,6 +105,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                 string unitCode = GetDocumentUnitCode(vm.Unit.Division.Name.ToUpper(), vm.IsInklaring);
                 var existingData = _dbContext.VBRealizationDocuments
                     .Where(a => a.Date.AddHours(_identityService.TimezoneOffset).Month == vm.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Month
+                    && a.Date.AddHours(_identityService.TimezoneOffset).Year == vm.Date.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Year
                     && a.DocumentNo.StartsWith(unitCode))
                     .OrderByDescending(s => s.Index)
                     .FirstOrDefault();
