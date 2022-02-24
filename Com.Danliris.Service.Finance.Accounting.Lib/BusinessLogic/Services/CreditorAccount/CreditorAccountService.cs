@@ -754,7 +754,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                 if (model == null)
                 {
-                    var newModel = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.UnitReceiptNoteNo == model.UnitReceiptNoteNo && entity.BankExpenditureNoteNo != null);
+                    var newModel = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.MemoNo == viewModel.MemoNo && entity.BankExpenditureNoteNo != null);
 
                     var newCreditorAccount = new CreditorAccountModel(
                                 newModel.SupplierName,
@@ -775,8 +775,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                                 newModel.UnitReceiptNoteNo,
                                 newModel.Products,
                                 newModel.UnitReceiptNoteDate,
-                                newModel.UnitReceiptNoteDPP,
-                                newModel.UnitReceiptNotePPN,
+                                0,
+                                0,
                                 newModel.UnitReceiptMutation,
                                 viewModel.Id,
                                 viewModel.Code,
