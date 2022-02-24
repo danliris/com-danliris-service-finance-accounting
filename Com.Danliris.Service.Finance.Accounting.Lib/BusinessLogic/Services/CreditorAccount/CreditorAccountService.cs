@@ -636,7 +636,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             decimal remaining = viewModel.Mutation;
 
-            if (creditorAccount.Count > 0)
+            if (creditorAccount.Count > 1)
             {
                 foreach (var item in creditorAccount)
                 {
@@ -754,8 +754,54 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
                 if (model == null)
                 {
-                    //do nothing
-                    return 1;
+                    var newModel = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.UnitReceiptNoteNo == model.UnitReceiptNoteNo && entity.BankExpenditureNoteNo != null);
+
+                    var newCreditorAccount = new CreditorAccountModel(
+                                newModel.SupplierName,
+                                newModel.SupplierCode,
+                                newModel.SupplierIsImport,
+                                newModel.DivisionId,
+                                newModel.DivisionCode,
+                                newModel.DivisionName,
+                                newModel.UnitId,
+                                newModel.UnitCode,
+                                newModel.UnitName,
+                                newModel.UnitPaymentCorrectionId,
+                                newModel.UnitPaymentCorrectionNo,
+                                newModel.UnitPaymentCorrectionDPP,
+                                newModel.UnitPaymentCorrectionPPN,
+                                newModel.UnitPaymentCorrectionMutation,
+                                newModel.UnitPaymentCorrectionDate.GetValueOrDefault(),
+                                newModel.UnitReceiptNoteNo,
+                                newModel.Products,
+                                newModel.UnitReceiptNoteDate,
+                                newModel.UnitReceiptNoteDPP,
+                                newModel.UnitReceiptNotePPN,
+                                newModel.UnitReceiptMutation,
+                                viewModel.Id,
+                                viewModel.Code,
+                                viewModel.Date,
+                                newModel.BankExpenditureNoteDPP,
+                                newModel.BankExpenditureNotePPN,
+                                viewModel.Mutation,
+                                newModel.MemoNo,
+                                newModel.MemoDate,
+                                newModel.MemoDPP,
+                                newModel.MemoPPN,
+                                newModel.MemoMutation,
+                                newModel.PaymentDuration,
+                                newModel.InvoiceNo,
+                                newModel.UnitReceiptMutation + (viewModel.Mutation * -1) + newModel.MemoMutation,
+                                newModel.CurrencyCode,
+                                newModel.DPPCurrency,
+                                newModel.CurrencyRate,
+                                newModel.VATAmount,
+                                newModel.IncomeTaxAmount,
+                                newModel.ExternalPurchaseOrderNo
+                                );
+
+                    EntityExtension.FlagForCreate(newCreditorAccount, IdentityService.Username, UserAgent);
+                    DbSet.Add(newCreditorAccount);
                 }
                 else
                 {
@@ -779,8 +825,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     model.FinalBalance = model.UnitReceiptMutation + (model.BankExpenditureNoteMutation * -1) + model.MemoMutation + (previousPayment * -1);
 
                     UpdateModel(model.Id, model);
-                    return await DbContext.SaveChangesAsync();
                 }
+
+                return await DbContext.SaveChangesAsync();
             }
         }
 
