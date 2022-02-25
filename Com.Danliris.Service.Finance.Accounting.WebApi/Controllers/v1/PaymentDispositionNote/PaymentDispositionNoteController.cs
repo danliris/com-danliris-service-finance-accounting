@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -294,6 +296,35 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
                 var result = await Service.Post(form);
 
                 return Ok(result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("get-expedition/by-position")]
+        public IActionResult GetAllCashierPosition(int page = 1, int size = 25, string order = "{}", [Bind(Prefix = "Select[]")] List<string> select = null, string keyword = null, string filter = "{}")
+        {
+            try
+            {
+                ReadResponse<PurchasingDispositionExpeditionModel> read = Service.GetAllByPosition(page, size, order, select, keyword, filter);
+
+                List<PurchasingDispositionExpeditionViewModel> dataVM = Mapper.Map<List<PurchasingDispositionExpeditionViewModel>>(read.Data);
+
+                foreach (var item in dataVM)
+                {
+                    item.AmountPaid = Service.GetAmountPaidAndIsPosted(item.Id).AmountPaid;
+                    item.IsPosted = Service.GetAmountPaidAndIsPosted(item.Id).IsPosted;
+                }
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Mapper, dataVM, page, size, read.Count, dataVM.Count, read.Order, read.Selected);
+                return Ok(Result);
             }
             catch (Exception e)
             {
