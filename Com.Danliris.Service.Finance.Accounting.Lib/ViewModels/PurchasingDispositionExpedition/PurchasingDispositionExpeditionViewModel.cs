@@ -48,6 +48,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
         public double vatValue { get; set; }
         public double incomeTaxValue { get; set; }
         public double payToSupplier { get; set; }
+        public double AmountPaid { get; set; }
+        public bool IsPosted { get; set; }
         public List<PurchasingDispositionExpeditionItemViewModel> items { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

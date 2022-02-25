@@ -21,6 +21,7 @@ using System.Net.Http;
 using Com.Danliris.Service.Finance.Accounting.Lib.Helpers;
 using System.IO;
 using System.Data;
+using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.PaymentDispositionNote
 {
@@ -49,7 +50,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             {
                 PurchasingDispositionExpeditionModel expedition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(ex => ex.Id.Equals(item.PurchasingDispositionExpeditionId));
                 EntityExtension.FlagForCreate(item, IdentityService.Username, UserAgent);
-                expedition.IsPaid = true;
+                var paidFlag = true;
+                var query = DbContext.PaymentDispositionNoteItems.Where(x => x.DispositionNo == item.DispositionNo).ToList();
+
+                if (query.Count == 0)
+                {
+                    if (item.SupplierPayment != item.PayToSupplier)
+                    {
+                        paidFlag = false;
+                    }
+                }
+                else
+                {
+                    if ((query.Sum(x => x.SupplierPayment) + item.SupplierPayment) != item.PayToSupplier)
+                    {
+                        paidFlag = false;
+                    }
+                }
+
+                expedition.IsPaid = paidFlag;
                 expedition.BankExpenditureNoteNo = model.PaymentDispositionNo;
                 expedition.BankExpenditureNoteDate = model.PaymentDate;
                 foreach (var detail in item.Details)
@@ -233,6 +252,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
             exist.BGCheckNumber = model.BGCheckNumber;
             exist.PaymentDate = model.PaymentDate;
+            exist.Amount = model.Amount;
 
             foreach (var item in exist.Items)
             {
@@ -257,6 +277,32 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                 }
                 else
                 {
+                    PurchasingDispositionExpeditionModel expedition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(ex => ex.Id.Equals(item.PurchasingDispositionExpeditionId));
+
+                    var paidFlag = true;
+                    var query = DbContext.PaymentDispositionNoteItems.Where(x => x.PaymentDispositionNoteId == item.PaymentDispositionNoteId).ToList();
+
+                    if (query.Count == 0)
+                    {
+                        if (item.SupplierPayment != item.PayToSupplier)
+                        {
+                            paidFlag = false;
+                        }
+                    }
+                    else
+                    {
+                        if ((query.Sum(x => x.SupplierPayment) + item.SupplierPayment) != item.PayToSupplier)
+                        {
+                            paidFlag = false;
+                        }
+                    }
+
+                    item.SupplierPayment = itemModel.SupplierPayment;
+
+                    expedition.IsPaid = paidFlag;
+                    expedition.BankExpenditureNoteNo = model.PaymentDispositionNo;
+                    expedition.BankExpenditureNoteDate = model.PaymentDate;
+
                     EntityExtension.FlagForUpdate(item, IdentityService.Username, UserAgent);
 
                     foreach (var detail in DbContext.PaymentDispositionNoteDetails.AsNoTracking().Where(p => p.PaymentDispositionNoteItemId == item.Id))
@@ -442,5 +488,54 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
             return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Laporan Pembayaran Disposisi") }, true);
         }
+
+        public ReadResponse<PurchasingDispositionExpeditionModel> GetAllByPosition(int page, int size, string order, List<string> select, string keyword, string filter)
+        {
+
+            IQueryable<PurchasingDispositionExpeditionModel> Query = DbContext.PurchasingDispositionExpeditions.Include(m => m.Items);
+            List<string> searchAttributes = new List<string>()
+            {
+                "BankExpenditureNoteNo","DispositionId", "DispositionNo",  "SupplierName", "CurrencyCode"
+            };
+
+            Query = QueryHelper<PurchasingDispositionExpeditionModel>.Search(Query, searchAttributes, keyword);
+
+            if (filter.Contains("verificationFilter"))
+            {
+                filter = "{}";
+                List<ExpeditionPosition> positions = new List<ExpeditionPosition> { ExpeditionPosition.SEND_TO_PURCHASING_DIVISION, ExpeditionPosition.SEND_TO_ACCOUNTING_DIVISION, ExpeditionPosition.SEND_TO_CASHIER_DIVISION };
+                Query = Query.Where(p => positions.Contains(p.Position));
+            }
+
+            Dictionary<string, object> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(filter);
+            Query = QueryHelper<PurchasingDispositionExpeditionModel>.Filter(Query, FilterDictionary);
+
+            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            Query = QueryHelper<PurchasingDispositionExpeditionModel>.Order(Query, OrderDictionary);
+
+            Pageable<PurchasingDispositionExpeditionModel> pageable = new Pageable<PurchasingDispositionExpeditionModel>(Query, page - 1, size);
+            List<PurchasingDispositionExpeditionModel> Data = pageable.Data.ToList();
+            int TotalData = pageable.TotalCount;
+
+            return new ReadResponse<PurchasingDispositionExpeditionModel>(Data, TotalData, OrderDictionary, new List<string>());
+        }
+
+        public ResponseAmountPaidandIsPosted GetAmountPaidAndIsPosted(int Id)
+        {
+            var AmountPaid = (DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).ToList().Count == 0 ? 0 : DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).Sum(x => x.SupplierPayment));
+            var IsPosted = (DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).ToList().Count == 0 ? true : DbSet.Where(p => p.Id == (DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).LastOrDefault().PaymentDispositionNoteId)).LastOrDefault().IsPosted);
+
+            ResponseAmountPaidandIsPosted response = new ResponseAmountPaidandIsPosted();
+            response.AmountPaid = AmountPaid;
+            response.IsPosted = IsPosted;
+
+            return response;
+        }
+    }
+
+    public class ResponseAmountPaidandIsPosted
+    {
+        public double AmountPaid { get; set; }
+        public bool IsPosted { get; set; }
     }
 }
