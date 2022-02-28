@@ -18,6 +18,5 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         //Task<int> AutoJournalInklaring(List<int> vbRequestIds);
         Task<int> AutoJournalInklaring(List<int> vbRequestIds, AccountBankViewModel bank);
         string DocumentNoGenerator(AccountBankViewModel bank);
-        Task<int> AutoJournalFromDisposition(PaymentDispositionNoteModel model);
     }
 }
