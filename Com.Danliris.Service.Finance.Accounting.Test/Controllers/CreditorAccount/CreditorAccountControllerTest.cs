@@ -414,16 +414,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
         }
 
-        [Fact]
-        public async Task PostByBankExpenditureNoteList_ThrowException()
-        {
-            var mocks = GetMocks();
-            mocks.ValidateService.Setup(s => s.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
-            mocks.Service.Setup(s => s.CreateFromBankExpenditureNoteAsync(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Throws(new Exception());
+        //[Fact]
+        //public async Task PostByBankExpenditureNoteList_ThrowException()
+        //{
+        //    var mocks = GetMocks();
+        //    mocks.ValidateService.Setup(s => s.Validate(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Verifiable();
+        //    mocks.Service.Setup(s => s.CreateFromBankExpenditureNoteAsync(It.IsAny<CreditorAccountBankExpenditureNotePostedViewModel>())).Throws(new Exception());
 
-            var response = await GetController(mocks).BankExpenditureNoteListPost(new List<CreditorAccountBankExpenditureNotePostedViewModel>() { new CreditorAccountBankExpenditureNotePostedViewModel() });
-            Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
-        }
+        //    var response = await GetController(mocks).BankExpenditureNoteListPost(new List<CreditorAccountBankExpenditureNotePostedViewModel>() { new CreditorAccountBankExpenditureNotePostedViewModel() });
+        //    Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        //}
 
         [Fact]
         public async Task PutByBankExpenditureNote_ReturnNoContent()

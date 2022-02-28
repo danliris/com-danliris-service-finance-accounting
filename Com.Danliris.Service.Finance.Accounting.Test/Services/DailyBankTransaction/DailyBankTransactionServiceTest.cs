@@ -145,14 +145,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
         //    Assert.NotNull(Response);
         //}
 
-        [Fact]
-        public async Task Should_Success_Get_Report()
-        {
-            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = await _dataUtil(service).GetTestDataIn();
-            var Response = service.GetReport(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
-            Assert.NotEmpty(Response.Data);
-        }
+        //[Fact]
+        //public async Task Should_Success_Get_Report()
+        //{
+        //    DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+        //    var data = await _dataUtil(service).GetTestDataIn();
+        //    var Response = service.GetReport(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+        //    Assert.NotEmpty(Response.Data);
+        //}
 
         [Fact]
         public async Task Should_Success_Get_Data_Out()
@@ -628,14 +628,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             Assert.True(vm.Validate(null).Count() > 0);
         }
 
-        [Fact]
-        public async Task Should_Success_GeneratePdf()
-        {
-            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
-            var data = await _dataUtil(service).GetTestDataIn();
-            var response = service.GeneratePdf(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
-            Assert.NotEmpty(response);
-        }
+        //[Fact]
+        //public async Task Should_Success_GeneratePdf()
+        //{
+        //    DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+        //    var data = await _dataUtil(service).GetTestDataIn();
+        //    var response = service.GeneratePdf(data.AccountBankId, data.Date.Month, data.Date.Year, 1);
+        //    Assert.NotEmpty(response);
+        //}
 
         [Fact]
         public async Task Should_Success_GetBeforeBalance()
