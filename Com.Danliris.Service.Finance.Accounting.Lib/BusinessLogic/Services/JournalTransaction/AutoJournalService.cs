@@ -737,18 +737,325 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 {
                     Id = item.COAId,
                 },
-                Debit = item.Debit * (decimal)model.CurrencyRate
+                Debit = item.Debit * (decimal)model.CurrencyRate,
+                Remark = model.Remark
             }).ToList();
 
             var accountBankCOA = await GetAccountBankCOA(model.AccountBankId);
             var creditItem = new JournalTransactionItemModel()
             {
                 COA = new COAModel() { Code = accountBankCOA },
-                Credit = journalTransactionModel.Items.Sum(item => item.Debit)
+                Credit = journalTransactionModel.Items.Sum(item => item.Debit),
+                Remark=model.Remark
             };
             journalTransactionModel.Items.Add(creditItem);
 
             return await _journalTransactionService.CreateAsync(journalTransactionModel);
+        }
+
+        public async Task<int> AutoJournalFromDailyBankTransaction(DailyBankTransactionModel model, AccountBank accountBank, AccountBank accountBankDestination)
+        {
+            var journalTransactionModelOut = new JournalTransactionModel()
+            {
+                Date = model.Date,
+                Description = "Pendanaan Internal - Bank Keluar",
+                ReferenceNo = model.ReferenceNo,
+                Status = "POSTED",
+                DocumentNo=model.Code,
+                Items = new List<JournalTransactionItemModel>()
+            };
+            var journalTransactionModelIn = new JournalTransactionModel()
+            {
+                Date = model.Date,
+                Description = "Pendanaan Internal - Bank Masuk",
+                ReferenceNo = model.ReferenceNo,
+                Status = "POSTED",
+                DocumentNo = model.Code,
+                Items = new List<JournalTransactionItemModel>()
+            };
+            var debitItem = new JournalTransactionItemModel();
+            var creditItem = new JournalTransactionItemModel();
+            var diffCurrencyItem = new JournalTransactionItemModel();
+            var debitItemOut = new JournalTransactionItemModel();
+            var creditItemOut = new JournalTransactionItemModel();
+            var chargeItemOut = new JournalTransactionItemModel();
+            var diffCurrencyItemOut = new JournalTransactionItemModel();
+            if (model.DestinationBankCurrencyCode == model.AccountBankCurrencyCode)
+            {
+                if (model.BankCharges == 0)
+                {
+                    //OUT
+                    debitItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Debit = model.Nominal,
+                        Remark = model.Remark
+                    };
+                    creditItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBank.AccountCOA },
+                        Credit = model.Nominal,
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelOut.Items.Add(debitItemOut);
+                    journalTransactionModelOut.Items.Add(creditItemOut);
+
+                    //IN
+                    debitItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBankDestination.AccountCOA },
+                        Debit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    creditItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Credit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelIn.Items.Add(creditItem);
+                    journalTransactionModelIn.Items.Add(debitItem);
+                }
+                else
+                {
+                    //OUT
+                    debitItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Debit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    chargeItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "6010.00.0.00" },
+                        Debit = model.BankCharges,
+                        Remark = model.Remark
+                    };
+                    creditItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBank.AccountCOA },
+                        Credit = model.Nominal,
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelOut.Items.Add(debitItemOut);
+                    journalTransactionModelOut.Items.Add(creditItemOut);
+                    journalTransactionModelOut.Items.Add(chargeItemOut);
+
+                    //IN
+                    debitItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBankDestination.AccountCOA },
+                        Debit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    creditItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Credit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelIn.Items.Add(creditItem);
+                    journalTransactionModelIn.Items.Add(debitItem);
+                }
+            }
+            else
+            {
+                if (model.DestinationBankCurrencyCode == "IDR" && model.BankCharges > 0)
+                {
+                    //OUT
+                    debitItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Debit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    chargeItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "6010.00.0.00" },
+                        Debit = model.BankCharges*model.CurrencyRate,
+                        Remark = model.Remark
+                    };
+                    var diff = Math.Abs((model.TransactionNominal) - (model.NominalValas * model.CurrencyRate));
+                    var diffCOACode = accountBank.DivisionName == "T" ? "7031.00.1.00" : "7031.00.4.00";
+                    diffCurrencyItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = diffCOACode },
+                        Debit = model.CurrencyRate > model.Rates ? diff : 0,
+                        Credit = model.CurrencyRate < model.Rates ? diff : 0,
+                        Remark = model.Remark
+                    };
+                    creditItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBank.AccountCOA },
+                        Credit = (model.NominalValas * model.CurrencyRate) + (model.BankCharges * model.CurrencyRate),
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelOut.Items.Add(debitItemOut);
+                    journalTransactionModelOut.Items.Add(creditItemOut);
+                    journalTransactionModelOut.Items.Add(diffCurrencyItemOut);
+                    journalTransactionModelOut.Items.Add(chargeItemOut);
+
+                    //IN
+                    debitItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBankDestination.AccountCOA },
+                        Debit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    creditItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Credit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelIn.Items.Add(creditItem);
+                    journalTransactionModelIn.Items.Add(debitItem);
+                }
+                else if (model.DestinationBankCurrencyCode == "IDR" && model.BankCharges == 0)
+                {
+                    //OUT
+                    debitItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Debit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    var diff = Math.Abs((model.TransactionNominal) - (model.NominalValas * model.CurrencyRate));
+                    var diffCOACode = accountBank.DivisionName == "T" ? "7031.00.1.00" : "7031.00.4.00";
+                    diffCurrencyItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = diffCOACode },
+                        Debit = model.CurrencyRate > model.Rates ? diff : 0,
+                        Credit = model.CurrencyRate < model.Rates ? diff : 0,
+                        Remark = model.Remark
+                    };
+                    creditItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBank.AccountCOA },
+                        Credit = (model.NominalValas * model.CurrencyRate),
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelOut.Items.Add(debitItemOut);
+                    journalTransactionModelOut.Items.Add(creditItemOut);
+                    journalTransactionModelOut.Items.Add(diffCurrencyItemOut);
+
+                    //IN
+                    debitItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBankDestination.AccountCOA },
+                        Debit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    creditItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Credit = model.TransactionNominal,
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelIn.Items.Add(creditItem);
+                    journalTransactionModelIn.Items.Add(debitItem);
+                }
+                else if (model.AccountBankCurrencyCode == "IDR" && model.BankCharges == 0)
+                {
+                    //OUT
+                    debitItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Debit = model.Nominal,
+                        Remark = model.Remark
+                    };
+                    creditItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBank.AccountCOA },
+                        Credit = (model.Nominal),
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelOut.Items.Add(debitItemOut);
+                    journalTransactionModelOut.Items.Add(creditItemOut);
+
+                    //IN
+                    var currency = await GetBICurrency(model.DestinationBankCurrencyCode, model.Date);
+                    debitItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBankDestination.AccountCOA },
+                        Debit = model.TransactionNominal * (decimal)currency.Rate,
+                        Remark = model.Remark
+                    };
+                    var diff = Math.Abs((model.Nominal) - (model.TransactionNominal * (decimal)currency.Rate));
+                    var diffCOACode = accountBank.DivisionName == "T" ? "7031.00.1.00" : "7031.00.4.00";
+                    diffCurrencyItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = diffCOACode },
+                        Debit = (decimal)currency.Rate < model.Rates ? diff : 0,
+                        Credit = (decimal)currency.Rate > model.Rates ? diff : 0,
+                        Remark = model.Remark
+                    };
+                    creditItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Credit = model.Nominal,
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelIn.Items.Add(creditItem);
+                    journalTransactionModelIn.Items.Add(debitItem);
+                    journalTransactionModelIn.Items.Add(diffCurrencyItem);
+                }
+                else if (model.AccountBankCurrencyCode == "IDR" && model.BankCharges > 0)
+                {
+                    //OUT
+                    var currency = await GetBICurrency(model.DestinationBankCurrencyCode, model.Date);
+                    debitItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Debit = model.Nominal,
+                        Remark = model.Remark
+                    };
+                    chargeItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "6010.00.0.00" },
+                        Debit = model.BankCharges,
+                        Remark = model.Remark
+                    };
+                    creditItemOut = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBank.AccountCOA },
+                        Credit = model.Nominal+ model.BankCharges,
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelOut.Items.Add(debitItemOut);
+                    journalTransactionModelOut.Items.Add(creditItemOut);
+                    journalTransactionModelOut.Items.Add(chargeItemOut);
+
+                    //IN
+                    debitItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = accountBankDestination.AccountCOA },
+                        Debit = (model.TransactionNominal * (decimal)currency.Rate),
+                        Remark = model.Remark
+                    };
+                    var diff = Math.Abs((model.Nominal) - (model.TransactionNominal * (decimal)currency.Rate));
+                    var diffCOACode = accountBank.DivisionName == "T" ? "7031.00.1.00" : "7031.00.4.00";
+                    diffCurrencyItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = diffCOACode },
+                        Debit = (decimal)currency.Rate < model.Rates ? diff : 0,
+                        Credit = (decimal)currency.Rate > model.Rates ? diff : 0,
+                        Remark = model.Remark
+                    };
+                    creditItem = new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel() { Code = "1070.00.0.00" },
+                        Credit = model.Nominal,
+                        Remark = model.Remark
+                    };
+                    journalTransactionModelIn.Items.Add(creditItem);
+                    journalTransactionModelIn.Items.Add(debitItem);
+                    journalTransactionModelIn.Items.Add(diffCurrencyItem);
+                }
+            }
+
+            await _journalTransactionService.CreateAsync(journalTransactionModelIn);
+            return await _journalTransactionService.CreateAsync(journalTransactionModelOut);
         }
     }
 }
