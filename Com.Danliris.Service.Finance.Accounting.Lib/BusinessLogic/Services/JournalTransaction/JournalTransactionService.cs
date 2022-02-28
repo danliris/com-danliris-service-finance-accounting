@@ -436,7 +436,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         {
             _DbContext.ChartsOfAccounts.Load();
             IQueryable<JournalTransactionItemModel> query = _DbContext.JournalTransactionItems
-                .Include(x => x.JournalTransaction);
+                .Include(x => x.JournalTransaction)
+                .Where(x => x.JournalTransaction.Status == JournalTransactionStatus.Posted);
 
             if (dateFrom == null && dateTo == null)
             {

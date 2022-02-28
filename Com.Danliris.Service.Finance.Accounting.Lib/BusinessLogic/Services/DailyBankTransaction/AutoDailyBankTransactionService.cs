@@ -109,7 +109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Dai
 
         public Task<int> AutoCreateFromPaymentDisposition(PaymentDispositionNoteModel model)
         {
-            var nominal = model.Items.Sum(item => Math.Round((decimal)item.PayToSupplier, 2));
+            var nominal = model.Items.Sum(item => Math.Round((decimal)item.SupplierPayment, 2));
             var dailyBankTransactionModel = new DailyBankTransactionModel()
             {
                 AccountBankAccountName = model.BankAccountName,
