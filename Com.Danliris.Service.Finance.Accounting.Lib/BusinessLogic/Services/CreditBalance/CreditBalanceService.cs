@@ -269,6 +269,38 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
             //}).ToList();
 
+            if (result.Count > 0)
+            {
+                result = result
+                    .GroupBy(element => new { element.UnitReceiptNoteNo, element.Currency, element.DivisionId})
+                    .Select(element => new CreditBalanceDetailViewModel()
+                    {
+                        Currency = element.Key.Currency,
+                        CurrencyRate = element.FirstOrDefault().CurrencyRate,
+                        DivisionId = element.Key.DivisionId,
+                        DivisionName = element.FirstOrDefault().DivisionName,
+                        FinalBalance = element.Sum(sum => sum.StartBalance + sum.Purchase - sum.Payment),
+                        FinalBalanceCurrency = element.Sum(sum => sum.StartBalanceCurrency + sum.PurchaseCurrency - sum.PaymentCurrency),
+                        PaidAmount = element.Sum(sum => sum.PaidAmount),
+                        PaidAmountCurrency = element.Sum(sum => sum.PaidAmountCurrency),
+                        Payment = element.Sum(sum => sum.Payment),
+                        PaymentCurrency = element.Sum(sum => sum.PaymentCurrency),
+                        Products = string.Join('\n', element.Select(select => select.Products)),
+                        Purchase = element.Sum(sum => sum.Purchase),
+                        PurchaseCurrency = element.Sum(sum => sum.PurchaseCurrency),
+                        StartBalance = element.Sum(sum => sum.StartBalance),
+                        StartBalanceCurrency = element.Sum(sum => sum.StartBalanceCurrency),
+                        SupplierCode = element.FirstOrDefault().SupplierCode,
+                        SupplierName = element.FirstOrDefault().SupplierName,
+                        UnitReceiptNoteNo = element.Key.UnitReceiptNoteNo,
+                        Date = element.FirstOrDefault().Date,
+                        IncomeTaxNo = element.FirstOrDefault().IncomeTaxNo,
+                        UnitPaymentOrderNo = element.FirstOrDefault().UnitPaymentOrderNo,
+                        InvoiceNo = element.FirstOrDefault().InvoiceNo,
+                    })
+                    .ToList();
+            }
+
             return result.Where(element => element.Total != 0).OrderBy(x => x.Currency).ThenBy(x => x.Products).ThenBy(x => x.SupplierName).ToList();
         }
 

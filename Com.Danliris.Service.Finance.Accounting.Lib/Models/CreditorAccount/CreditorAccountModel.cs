@@ -12,7 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
 
         }
 
-        public CreditorAccountModel(string supplierName, string supplierCode, bool supplierIsImport, int divisionId, string divisionCode, string divisionName, int unitId, string unitCode, string unitName, int unitPaymentCorrectionId, string unitPaymentCorrectionNo, decimal unitPaymentCorrectionDPP, decimal unitPaymentCorrectionPPN, decimal unitPaymentCorrectionMutation, DateTimeOffset unitPaymentCorrectionDate, string unitReceiptNoteNo, string products, DateTimeOffset? unitReceiptNoteDate, decimal unitReceiptNoteDPP, decimal unitReceiptNotePPN, decimal unitReceiptMutation, int bankExpenditureNoteId, string bankExpenditureNoteNo, DateTimeOffset? bankExpenditureNoteDate, decimal bankExpenditureNoteDPP, decimal bankExpenditureNotePPN, decimal bankExpenditureNoteMutation, string memoNo, DateTimeOffset? memoDate, decimal memoDPP, decimal memoPPN, decimal memoMutation, string paymentDuration, string invoiceNo, decimal finalBalance, string currencyCode, decimal dPPCurrency, decimal currencyRate, decimal vatAmount, decimal incomeTaxAmount)
+        public CreditorAccountModel(string supplierName, string supplierCode, bool supplierIsImport, int divisionId, string divisionCode, string divisionName, int unitId, string unitCode, string unitName, int unitPaymentCorrectionId, string unitPaymentCorrectionNo, decimal unitPaymentCorrectionDPP, decimal unitPaymentCorrectionPPN, decimal unitPaymentCorrectionMutation, DateTimeOffset unitPaymentCorrectionDate, string unitReceiptNoteNo, string products, DateTimeOffset? unitReceiptNoteDate, decimal unitReceiptNoteDPP, decimal unitReceiptNotePPN, decimal unitReceiptMutation, int bankExpenditureNoteId, string bankExpenditureNoteNo, DateTimeOffset? bankExpenditureNoteDate, decimal bankExpenditureNoteDPP, decimal bankExpenditureNotePPN, decimal bankExpenditureNoteMutation, string memoNo, DateTimeOffset? memoDate, decimal memoDPP, decimal memoPPN, decimal memoMutation, string paymentDuration, string invoiceNo, decimal finalBalance, string currencyCode, decimal dPPCurrency, decimal currencyRate, decimal vatAmount, decimal incomeTaxAmount, string externalPurchaseOrderNo)
         {
             SupplierName = supplierName;
             SupplierCode = supplierCode;
@@ -54,6 +54,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.CreditorAccount
             CurrencyRate = currencyRate;
             VATAmount = vatAmount;
             IncomeTaxAmount = incomeTaxAmount;
+            ExternalPurchaseOrderNo = externalPurchaseOrderNo;
         }
         #region Supplier
         [MaxLength(512)]
