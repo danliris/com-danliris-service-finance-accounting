@@ -469,45 +469,45 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
-        [Fact]
-        public void Should_Success_Get_PDF_By_Id()
-        {
-            var mocks = GetMocks();
-            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new PaymentDispositionNoteModel());
-            mocks.Mapper.Setup(f => f.Map<PaymentDispositionNoteViewModel>(It.IsAny<PaymentDispositionNoteModel>())).Returns(ViewModel);
+        //[Fact]
+        //public void Should_Success_Get_PDF_By_Id()
+        //{
+        //    var mocks = GetMocks();
+        //    mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new PaymentDispositionNoteModel());
+        //    mocks.Mapper.Setup(f => f.Map<PaymentDispositionNoteViewModel>(It.IsAny<PaymentDispositionNoteModel>())).Returns(ViewModel);
 
-            PaymentDispositionNoteController controller = new PaymentDispositionNoteController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Mapper.Object, mocks.Service.Object);
-            controller.ControllerContext = new ControllerContext()
-            {
-                HttpContext = new DefaultHttpContext()
-            };
+        //    PaymentDispositionNoteController controller = new PaymentDispositionNoteController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Mapper.Object, mocks.Service.Object);
+        //    controller.ControllerContext = new ControllerContext()
+        //    {
+        //        HttpContext = new DefaultHttpContext()
+        //    };
 
-            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
-            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
+        //    controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+        //    controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
 
-            var response = controller.GetById(It.IsAny<int>()).Result;
-            Assert.NotNull(response.GetType().GetProperty("FileStream"));
-        }
+        //    var response = controller.GetById(It.IsAny<int>()).Result;
+        //    Assert.NotNull(response.GetType().GetProperty("FileStream"));
+        //}
 
-        [Fact]
-        public void Should_Success_Get_PDF_By_Id1()
-        {
-            var mocks = GetMocks();
-            mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new PaymentDispositionNoteModel());
-            mocks.Mapper.Setup(f => f.Map<PaymentDispositionNoteViewModel>(It.IsAny<PaymentDispositionNoteModel>())).Returns(ViewModel1);
+        //[Fact]
+        //public void Should_Success_Get_PDF_By_Id1()
+        //{
+        //    var mocks = GetMocks();
+        //    mocks.Service.Setup(f => f.ReadByIdAsync(It.IsAny<int>())).ReturnsAsync(new PaymentDispositionNoteModel());
+        //    mocks.Mapper.Setup(f => f.Map<PaymentDispositionNoteViewModel>(It.IsAny<PaymentDispositionNoteModel>())).Returns(ViewModel1);
 
-            PaymentDispositionNoteController controller = new PaymentDispositionNoteController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Mapper.Object, mocks.Service.Object);
-            controller.ControllerContext = new ControllerContext()
-            {
-                HttpContext = new DefaultHttpContext()
-            };
+        //    PaymentDispositionNoteController controller = new PaymentDispositionNoteController(mocks.IdentityService.Object, mocks.ValidateService.Object, mocks.Mapper.Object, mocks.Service.Object);
+        //    controller.ControllerContext = new ControllerContext()
+        //    {
+        //        HttpContext = new DefaultHttpContext()
+        //    };
 
-            controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
-            controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
+        //    controller.ControllerContext.HttpContext.Request.Headers["Accept"] = "application/pdf";
+        //    controller.ControllerContext.HttpContext.Request.Headers["x-timezone-offset"] = "0";
 
-            var response = controller.GetById(It.IsAny<int>()).Result;
-            Assert.NotNull(response.GetType().GetProperty("FileStream"));
-        }
+        //    var response = controller.GetById(It.IsAny<int>()).Result;
+        //    Assert.NotNull(response.GetType().GetProperty("FileStream"));
+        //}
 
         [Fact]
         public void GetByEPOId_WithoutException_ReturnOK()

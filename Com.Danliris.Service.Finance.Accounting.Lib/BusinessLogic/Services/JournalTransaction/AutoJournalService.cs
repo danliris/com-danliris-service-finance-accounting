@@ -1058,53 +1058,191 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             return await _journalTransactionService.CreateAsync(journalTransactionModelOut);
         }
 
-        public async Task<int> AutoJournalFromDisposition(PaymentDispositionNoteModel model)
+        public async Task<int> AutoJournalFromDisposition(PaymentDispositionNoteModel model, string Username, string UserAgent)
         {
-            var journalTransactionModel = new JournalTransactionModel()
-            {
-                Date = model.PaymentDate,
-                Description = "Bukti Pembayaran Disposisi",
-                ReferenceNo = model.PaymentDispositionNo,
-                Status = "POSTED",
-                Items = new List<JournalTransactionItemModel>()
-            };
+            var purchasingDispositionId = model.Items.Select(detail => detail.PurchasingDispositionExpeditionId).ToList();
+            var purchasingDispositions = _dbContext.PurchasingDispositionExpeditions.Where(x => purchasingDispositionId.Contains(x.Id)).ToList();
+            var currency = await GetBICurrency(model.CurrencyCode, model.PaymentDate);
 
+            if (currency == null)
+            {
+                currency = new GarmentCurrency() { Rate = model.CurrencyRate };
+            }
+
+            var items = new List<JournalTransactionItemModel>();
             foreach (var item in model.Items)
             {
-                var units = await _masterCOAService.GetCOAUnits();
-                var divisions = await _masterCOAService.GetCOADivisions();
+                var purchasingDisposition = purchasingDispositions.FirstOrDefault(element => element.Id == item.PurchasingDispositionExpeditionId);
 
-                var coaUnit = "00";
-                var unit = units.FirstOrDefault(element => item.Details.FirstOrDefault().UnitId == element.Id);
-                if (unit != null && !string.IsNullOrWhiteSpace(unit.COACode))
-                    coaUnit = unit.COACode;
-
-                var coaDivision = "0";
-                var division = divisions.FirstOrDefault(element => item.DivisionId == element.Id);
-                if (division != null && !string.IsNullOrWhiteSpace(division.COACode))
-                    coaDivision = division.COACode;
-
-                if (model.SupplierImport)
+                if (purchasingDisposition == null)
+                    purchasingDisposition = new Models.PurchasingDispositionExpedition.PurchasingDispositionExpeditionModel();
+                var unitSummaries = item.Details.GroupBy(g => g.UnitCode).Select(s => new
                 {
-                    journalTransactionModel.Items.Add(new JournalTransactionItemModel()
+                    UnitCode = s.Key
+                });
+
+                if (unitSummaries.Count() > 1)
+                {
+                    var nominal = (decimal)0;
+                    var Remaining = item.SupplierPayment;
+                    foreach (var unitSummary in item.Details)
                     {
-                        COA = new COAModel()
+                        var paidPrice = _dbContext.PaymentDispositionNoteDetails.Where(bank => bank.PaymentDispositionNoteItemId == unitSummary.PaymentDispositionNoteItemId && bank.Price == unitSummary.Price).Sum(x => x.PaidPrice);
+                        if (unitSummary.Price <= paidPrice)
                         {
-                            Code = $"1502.00.{coaDivision}.{coaUnit}",
-                        },
-                        Debit = (decimal)(item.SupplierPayment * model.CurrencyRate)
-                    });
+                            continue;
+                        }
+                        else
+                        {
+                            var vatAmount = purchasingDisposition.UseVat ? unitSummary.Price * 0.1 : 0;
+                            var incomeTaxAmount = purchasingDisposition.UseIncomeTax ? unitSummary.Price * purchasingDisposition.IncomeTaxRate / 100 : 0;
+                            var dpp = unitSummary.Price + vatAmount - incomeTaxAmount;
+
+                            if (Remaining >= dpp)
+                            {
+                                if (paidPrice != 0)
+                                {
+                                    dpp -= paidPrice;
+                                }
+
+                                var dispositionDetail = _dbContext.PaymentDispositionNoteDetails.Where(bank => bank.PaymentDispositionNoteItemId == unitSummary.PaymentDispositionNoteItemId && bank.Price == unitSummary.Price).ToList();
+
+                                foreach (var disposition in dispositionDetail)
+                                {
+                                    disposition.PaidPrice = dpp;
+
+                                    EntityExtension.FlagForUpdate(unitSummary, Username, UserAgent);
+                                    _dbContext.PaymentDispositionNoteDetails.Update(unitSummary);
+                                }
+                            }
+                            else
+                            {
+                                if (Remaining <= 0)
+                                {
+                                    continue;
+                                }
+
+                                dpp = Remaining;
+
+                                var dispositionDetail = _dbContext.PaymentDispositionNoteDetails.Where(bank => bank.PaymentDispositionNoteItemId == unitSummary.PaymentDispositionNoteItemId && bank.Price == unitSummary.Price).ToList();
+
+                                foreach (var disposition in dispositionDetail)
+                                {
+                                    disposition.PaidPrice = Remaining;
+
+                                    EntityExtension.FlagForUpdate(unitSummary, Username, UserAgent);
+                                    _dbContext.PaymentDispositionNoteDetails.Update(unitSummary);
+                                }
+                            }
+
+                            Remaining -= dpp;
+
+                            var debit = dpp;
+                            if (model.CurrencyCode != "IDR")
+                            {
+                                debit = (dpp) * model.CurrencyRate;
+                            }
+                            nominal = decimal.Add(nominal, Convert.ToDecimal(debit));
+
+                            var units = await _masterCOAService.GetCOAUnits();
+                            var divisions = await _masterCOAService.GetCOADivisions();
+
+                            var coaUnit = "00";
+                            var unit = units.FirstOrDefault(element => item.Details.FirstOrDefault().UnitId == element.Id);
+                            if (unit != null && !string.IsNullOrWhiteSpace(unit.COACode))
+                                coaUnit = unit.COACode;
+
+                            var coaDivision = "0";
+                            var division = divisions.FirstOrDefault(element => item.DivisionId == element.Id);
+                            if (division != null && !string.IsNullOrWhiteSpace(division.COACode))
+                                coaDivision = division.COACode;
+
+                            var journalItem = new JournalTransactionItemModel();
+
+                            if (model.SupplierImport)
+                            {
+                                journalItem = new JournalTransactionItemModel()
+                                {
+                                    COA = new COAModel()
+                                    {
+                                        Code = $"1502.00.{coaDivision}.{coaUnit}",
+                                    },
+                                    Debit = (decimal)(debit * model.CurrencyRate),
+                                    Remark = "Pembayaran Disposisi No " + model.PaymentDispositionNo + " " + model.CurrencyCode + " " + debit * model.CurrencyRate
+                                };
+                            }
+                            else
+                            {
+                                journalItem = new JournalTransactionItemModel()
+                                {
+                                    COA = new COAModel()
+                                    {
+                                        Code = $"1501.00.{coaDivision}.{coaUnit}",
+                                    },
+                                    Debit = (decimal)(debit),
+                                    Remark = "Pembayaran Disposisi No " + model.PaymentDispositionNo + " " + model.CurrencyCode + " " + debit
+                                };
+                            }
+
+                            items.Add(journalItem);
+                        }
+                    }
                 }
                 else
                 {
-                    journalTransactionModel.Items.Add(new JournalTransactionItemModel()
+                    var nominal = (decimal)0;
+                    foreach (var unitSummary in unitSummaries)
                     {
-                        COA = new COAModel()
+                        var dpp = item.SupplierPayment;
+                        var debit = dpp;
+                        if (model.CurrencyCode != "IDR")
                         {
-                            Code = $"1501.00.{coaDivision}.{coaUnit}",
-                        },
-                        Debit = (decimal)(item.SupplierPayment)
-                    });
+                            debit = (dpp) * model.CurrencyRate;
+                        }
+                        nominal = decimal.Add(nominal, Convert.ToDecimal(debit));
+
+                        var units = await _masterCOAService.GetCOAUnits();
+                        var divisions = await _masterCOAService.GetCOADivisions();
+
+                        var coaUnit = "00";
+                        var unit = units.FirstOrDefault(element => item.Details.FirstOrDefault().UnitId == element.Id);
+                        if (unit != null && !string.IsNullOrWhiteSpace(unit.COACode))
+                            coaUnit = unit.COACode;
+
+                        var coaDivision = "0";
+                        var division = divisions.FirstOrDefault(element => item.DivisionId == element.Id);
+                        if (division != null && !string.IsNullOrWhiteSpace(division.COACode))
+                            coaDivision = division.COACode;
+
+                        var journalItem = new JournalTransactionItemModel();
+
+                        if (model.SupplierImport)
+                        {
+                            journalItem = new JournalTransactionItemModel()
+                            {
+                                COA = new COAModel()
+                                {
+                                    Code = $"1502.00.{coaDivision}.{coaUnit}",
+                                },
+                                Debit = (decimal)(debit * model.CurrencyRate),
+                                Remark = "Pembayaran Disposisi No " + model.PaymentDispositionNo + " " + model.CurrencyCode + " " + debit * model.CurrencyRate
+                            };
+                        }
+                        else
+                        {
+                            journalItem = new JournalTransactionItemModel()
+                            {
+                                COA = new COAModel()
+                                {
+                                    Code = $"1501.00.{coaDivision}.{coaUnit}",
+                                },
+                                Debit = (decimal)(debit),
+                                Remark = "Pembayaran Disposisi No " + model.PaymentDispositionNo + " " + model.CurrencyCode + " " + debit
+                            };
+                        }
+
+                        items.Add(journalItem);
+                    }
                 }
             }
 
@@ -1114,10 +1252,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                 {
                     Code = model.BankAccountCOA
                 },
-                Credit = journalTransactionModel.Items.Sum(s => s.Debit)
+                Credit = items.Sum(s => s.Debit),
+                Remark = "Pembayaran Disposisi No " + model.PaymentDispositionNo + " " + model.CurrencyCode + " " + items.Sum(s => s.Debit)
             };
+            items.Add(bankJournalItem);
 
-            journalTransactionModel.Items.Add(bankJournalItem);
+            var journalTransactionModel = new JournalTransactionModel()
+            {
+                Date = model.PaymentDate,
+                Description = "Bukti Pembayaran Disposisi",
+                ReferenceNo = model.PaymentDispositionNo,
+                Status = "POSTED",
+                Items = items
+            };
 
             return await _journalTransactionService.CreateAsync(journalTransactionModel);
         }

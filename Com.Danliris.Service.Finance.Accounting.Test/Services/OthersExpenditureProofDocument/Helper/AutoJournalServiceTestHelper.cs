@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
             return await Task.FromResult(1);
         }
 
-        public async Task<int> AutoJournalFromDisposition(PaymentDispositionNoteModel model)
+        public async Task<int> AutoJournalFromDisposition(PaymentDispositionNoteModel model, string Username, string UserAgent)
         {
             await Task.Delay(1000);
             return await Task.FromResult(1);
