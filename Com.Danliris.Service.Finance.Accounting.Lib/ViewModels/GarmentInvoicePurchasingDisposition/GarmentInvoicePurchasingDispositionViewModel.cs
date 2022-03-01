@@ -24,8 +24,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentInvoiceP
         public int CurrencyId { get; set; }
         public double CurrencyRate { get; set; }
         public bool IsPosted { get; set; }
+		public string InvoiceNo { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (this.AccountBank == null || this.AccountBank.Id == 0)
             {
