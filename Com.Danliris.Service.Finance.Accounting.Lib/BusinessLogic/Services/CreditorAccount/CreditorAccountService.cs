@@ -896,8 +896,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                                     existingModel.CurrencyCode,
                                     existingModel.DPPCurrency,
                                     existingModel.CurrencyRate,
-                                    existingModel.VATAmount,
-                                    existingModel.IncomeTaxAmount,
+                                    0,
+                                    0,
                                     existingModel.ExternalPurchaseOrderNo
                                     );
 
