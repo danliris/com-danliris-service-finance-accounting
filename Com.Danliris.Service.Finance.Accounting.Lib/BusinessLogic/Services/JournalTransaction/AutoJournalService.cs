@@ -7,6 +7,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.MasterCOA;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
@@ -1055,6 +1056,70 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
 
             await _journalTransactionService.CreateAsync(journalTransactionModelIn);
             return await _journalTransactionService.CreateAsync(journalTransactionModelOut);
+        }
+
+        public async Task<int> AutoJournalFromDisposition(PaymentDispositionNoteModel model)
+        {
+            var journalTransactionModel = new JournalTransactionModel()
+            {
+                Date = model.PaymentDate,
+                Description = "Bukti Pembayaran Disposisi",
+                ReferenceNo = model.PaymentDispositionNo,
+                Status = "POSTED",
+                Items = new List<JournalTransactionItemModel>()
+            };
+
+            foreach (var item in model.Items)
+            {
+                var units = await _masterCOAService.GetCOAUnits();
+                var divisions = await _masterCOAService.GetCOADivisions();
+
+                var coaUnit = "00";
+                var unit = units.FirstOrDefault(element => item.Details.FirstOrDefault().UnitId == element.Id);
+                if (unit != null && !string.IsNullOrWhiteSpace(unit.COACode))
+                    coaUnit = unit.COACode;
+
+                var coaDivision = "0";
+                var division = divisions.FirstOrDefault(element => item.DivisionId == element.Id);
+                if (division != null && !string.IsNullOrWhiteSpace(division.COACode))
+                    coaDivision = division.COACode;
+
+                if (model.SupplierImport)
+                {
+                    journalTransactionModel.Items.Add(new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel()
+                        {
+                            Code = $"1502.00.{coaDivision}.{coaUnit}",
+                        },
+                        Debit = (decimal)(item.SupplierPayment * model.CurrencyRate)
+                    });
+                }
+                else
+                {
+                    journalTransactionModel.Items.Add(new JournalTransactionItemModel()
+                    {
+                        COA = new COAModel()
+                        {
+                            Code = $"1501.00.{coaDivision}.{coaUnit}",
+                        },
+                        Debit = (decimal)(item.SupplierPayment)
+                    });
+                }
+            }
+
+            var bankJournalItem = new JournalTransactionItemModel()
+            {
+                COA = new COAModel()
+                {
+                    Code = model.BankAccountCOA
+                },
+                Credit = journalTransactionModel.Items.Sum(s => s.Debit)
+            };
+
+            journalTransactionModel.Items.Add(bankJournalItem);
+
+            return await _journalTransactionService.CreateAsync(journalTransactionModel);
         }
     }
 }

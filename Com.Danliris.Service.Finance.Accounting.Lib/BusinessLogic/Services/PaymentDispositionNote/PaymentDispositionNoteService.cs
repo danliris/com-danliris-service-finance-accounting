@@ -31,6 +31,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
         protected DbSet<PaymentDispositionNoteModel> DbSet;
         public IIdentityService IdentityService;
         private readonly IAutoDailyBankTransactionService _autoDailyBankTransactionService;
+        private readonly IAutoJournalService _autoJournalService;
         public readonly IServiceProvider ServiceProvider;
         public FinanceDbContext DbContext;
 
@@ -375,6 +376,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     }
 
                     await _autoDailyBankTransactionService.AutoCreateFromPaymentDisposition(model);
+                    await _autoJournalService.AutoJournalFromDisposition(model);
                 }
             }
 

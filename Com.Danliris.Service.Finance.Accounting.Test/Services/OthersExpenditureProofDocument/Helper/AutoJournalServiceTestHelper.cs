@@ -1,6 +1,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.OthersExpenditureProofDocumentViewModels;
@@ -65,6 +66,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditur
         }
 
         public async Task<int> AutoJournalFromDailyBankTransaction(DailyBankTransactionModel model, AccountBank accountBank, AccountBank accountBankDestination)
+        {
+            await Task.Delay(1000);
+            return await Task.FromResult(1);
+        }
+
+        public async Task<int> AutoJournalFromDisposition(PaymentDispositionNoteModel model)
         {
             await Task.Delay(1000);
             return await Task.FromResult(1);
