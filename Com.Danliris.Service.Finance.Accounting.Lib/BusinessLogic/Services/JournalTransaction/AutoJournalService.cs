@@ -1167,7 +1167,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                     {
                                         Code = $"1502.00.{coaDivision}.{coaUnit}",
                                     },
-                                    Debit = (decimal)(debit * model.CurrencyRate),
+                                    Debit = (decimal)(debit),
                                     Remark = "Pembayaran Disposisi No " + model.PaymentDispositionNo + " " + model.CurrencyCode + " " + debit * model.CurrencyRate
                                 };
                             }
