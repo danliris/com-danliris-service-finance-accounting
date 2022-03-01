@@ -716,8 +716,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                                 item.CurrencyCode,
                                 item.DPPCurrency,
                                 item.CurrencyRate,
-                                item.VATAmount,
-                                item.IncomeTaxAmount,
+                                0,
+                                0,
                                 item.ExternalPurchaseOrderNo
                                 );
 
