@@ -20,5 +20,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
         MemoryStream GetXls(List<ReportDto> data);
         ReadResponse<PurchasingDispositionExpeditionModel> GetAllByPosition(int page, int size, string order, List<string> select, string keyword, string filter);
         ResponseAmountPaidandIsPosted GetAmountPaidAndIsPosted(int Id);
+        MemoryStream GeneratePdfTemplate(PaymentDispositionNoteViewModel viewModel, int clientTimeZoneOffset);
     }
 }

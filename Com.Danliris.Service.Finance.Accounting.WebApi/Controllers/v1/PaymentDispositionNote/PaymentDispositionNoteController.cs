@@ -134,8 +134,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
                 {
                     int clientTimeZoneOffset = int.Parse(Request.Headers["x-timezone-offset"].First());
 
-                    PaymentDispositionNotePDFTemplate PdfTemplate = new PaymentDispositionNotePDFTemplate();
-                    MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, clientTimeZoneOffset);
+                    //PaymentDispositionNotePDFTemplate PdfTemplate = new PaymentDispositionNotePDFTemplate();
+                    //MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, clientTimeZoneOffset);
+                    MemoryStream stream = Service.GeneratePdfTemplate(viewModel, clientTimeZoneOffset);
 
                     return new FileStreamResult(stream, "application/pdf")
                     {
