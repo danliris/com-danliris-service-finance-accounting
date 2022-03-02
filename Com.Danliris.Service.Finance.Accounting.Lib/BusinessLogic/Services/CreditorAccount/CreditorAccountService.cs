@@ -630,22 +630,205 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
 
         public async Task<int> CreateFromBankExpenditureNoteAsync(CreditorAccountBankExpenditureNotePostedViewModel viewModel)
         {
-            CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.BankExpenditureNoteNo == null && x.SupplierCode == viewModel.SupplierCode && x.UnitPaymentCorrectionNo == null && x.MemoNo == viewModel.MemoNo);
+            var creditorAccount = DbSet.Where(x => x.BankExpenditureNoteNo == null && x.SupplierCode == viewModel.SupplierCode && x.UnitPaymentCorrectionNo == null && x.MemoNo == viewModel.MemoNo && x.BankExpenditureNoteNo == null).ToList();
 
-            if (model == null)
+            CreditorAccountModel model = await DbSet.FirstOrDefaultAsync(x => x.BankExpenditureNoteNo == null && x.SupplierCode == viewModel.SupplierCode && x.UnitPaymentCorrectionNo == null && x.MemoNo == viewModel.MemoNo && x.BankExpenditureNoteNo == null);
 
-                //do nothing
+            decimal remaining = viewModel.Mutation;
 
-                return 1;
+            if (creditorAccount.Count > 1)
+            {
+                foreach (var item in creditorAccount)
+                {
+                    if (remaining >= item.FinalBalance)
+                    {
+                        var newModel = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.UnitReceiptNoteNo == item.UnitReceiptNoteNo && entity.BankExpenditureNoteNo != null);
 
-            model.BankExpenditureNoteDate = viewModel.Date;
-            model.BankExpenditureNoteId = viewModel.Id;
-            model.BankExpenditureNoteMutation = viewModel.Mutation;
-            model.BankExpenditureNoteNo = viewModel.Code;
-            model.FinalBalance = model.UnitReceiptMutation + (model.BankExpenditureNoteMutation * -1) + model.MemoMutation;
+                        if (newModel != null)
+                        {
+                            item.UnitReceiptNoteDate = newModel.UnitReceiptNoteDate;
+                            item.MemoDate = newModel.MemoDate;
+                            item.BankExpenditureNoteMutation = (item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN - item.IncomeTaxAmount) - newModel.BankExpenditureNoteMutation;
+                            item.UnitReceiptNoteDPP = 0;
+                            item.UnitReceiptNotePPN = 0;
+                            item.BankExpenditureNoteDate = viewModel.Date;
+                            item.BankExpenditureNoteId = viewModel.Id;
+                            item.BankExpenditureNoteNo = viewModel.Code;
+                            item.FinalBalance = item.UnitReceiptMutation + (item.BankExpenditureNoteMutation * -1) + item.MemoMutation + (newModel.BankExpenditureNoteMutation * -1);
 
-            UpdateModel(model.Id, model);
-            return await DbContext.SaveChangesAsync();
+                            UpdateModel(item.Id, item);
+                        }
+                        else
+                        {
+                            item.BankExpenditureNoteDate = viewModel.Date;
+                            item.BankExpenditureNoteId = viewModel.Id;
+                            item.BankExpenditureNoteMutation = item.UnitReceiptNoteDPP + item.UnitReceiptNotePPN - item.IncomeTaxAmount;
+                            item.BankExpenditureNoteNo = viewModel.Code;
+                            item.FinalBalance = item.UnitReceiptMutation + (item.BankExpenditureNoteMutation * -1) + item.MemoMutation;
+
+                            UpdateModel(item.Id, item);
+                        }
+
+                        remaining -= item.BankExpenditureNoteMutation;
+                    }
+                    else
+                    {
+                        var newModel = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.UnitReceiptNoteNo == item.UnitReceiptNoteNo && entity.BankExpenditureNoteNo != null);
+
+                        if (newModel == null)
+                        {
+                            var newCreditorAccount = new CreditorAccountModel(
+                                item.SupplierName,
+                                item.SupplierCode,
+                                item.SupplierIsImport,
+                                item.DivisionId,
+                                item.DivisionCode,
+                                item.DivisionName,
+                                item.UnitId,
+                                item.UnitCode,
+                                item.UnitName,
+                                item.UnitPaymentCorrectionId,
+                                item.UnitPaymentCorrectionNo,
+                                item.UnitPaymentCorrectionDPP,
+                                item.UnitPaymentCorrectionPPN,
+                                item.UnitPaymentCorrectionMutation,
+                                item.UnitPaymentCorrectionDate.GetValueOrDefault(),
+                                item.UnitReceiptNoteNo,
+                                item.Products,
+                                item.UnitReceiptNoteDate,
+                                item.UnitReceiptNoteDPP,
+                                item.UnitReceiptNotePPN,
+                                item.UnitReceiptMutation,
+                                viewModel.Id,
+                                viewModel.Code,
+                                viewModel.Date,
+                                item.BankExpenditureNoteDPP,
+                                item.BankExpenditureNotePPN,
+                                remaining,
+                                item.MemoNo,
+                                item.MemoDate,
+                                item.MemoDPP,
+                                item.MemoPPN,
+                                item.MemoMutation,
+                                item.PaymentDuration,
+                                item.InvoiceNo,
+                                0,
+                                item.CurrencyCode,
+                                item.DPPCurrency,
+                                item.CurrencyRate,
+                                item.VATAmount,
+                                item.IncomeTaxAmount,
+                                item.ExternalPurchaseOrderNo
+                                );
+
+                            EntityExtension.FlagForCreate(newCreditorAccount, IdentityService.Username, UserAgent);
+                            DbSet.Add(newCreditorAccount);
+
+                            item.UnitReceiptNoteDate = null;
+                            item.MemoDate = null;
+                            item.FinalBalance = (item.UnitReceiptMutation + (remaining * -1) + item.MemoMutation);
+
+                            UpdateModel(item.Id, item);
+                        }
+                        else
+                        {
+                            model.UnitReceiptNoteDate = newModel.UnitReceiptNoteDate;
+                            model.MemoDate = newModel.MemoDate;
+                            model.UnitReceiptNoteDPP = 0;
+                            model.UnitReceiptNotePPN = 0;
+                            model.BankExpenditureNoteDate = viewModel.Date;
+                            model.BankExpenditureNoteId = viewModel.Id;
+                            model.BankExpenditureNoteMutation = viewModel.Mutation;
+                            model.BankExpenditureNoteNo = viewModel.Code;
+                            model.FinalBalance = model.UnitReceiptMutation + (model.BankExpenditureNoteMutation * -1) + model.MemoMutation;
+
+                            UpdateModel(model.Id, model);
+                        }
+                    }
+                }
+
+                return await DbContext.SaveChangesAsync();
+            }
+            else
+            {
+
+                if (model == null)
+                {
+                    var newModel = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.MemoNo == viewModel.MemoNo && entity.BankExpenditureNoteNo != null);
+
+                    var newCreditorAccount = new CreditorAccountModel(
+                                newModel.SupplierName,
+                                newModel.SupplierCode,
+                                newModel.SupplierIsImport,
+                                newModel.DivisionId,
+                                newModel.DivisionCode,
+                                newModel.DivisionName,
+                                newModel.UnitId,
+                                newModel.UnitCode,
+                                newModel.UnitName,
+                                newModel.UnitPaymentCorrectionId,
+                                newModel.UnitPaymentCorrectionNo,
+                                newModel.UnitPaymentCorrectionDPP,
+                                newModel.UnitPaymentCorrectionPPN,
+                                newModel.UnitPaymentCorrectionMutation,
+                                newModel.UnitPaymentCorrectionDate.GetValueOrDefault(),
+                                newModel.UnitReceiptNoteNo,
+                                newModel.Products,
+                                newModel.UnitReceiptNoteDate,
+                                0,
+                                0,
+                                newModel.UnitReceiptMutation,
+                                viewModel.Id,
+                                viewModel.Code,
+                                viewModel.Date,
+                                newModel.BankExpenditureNoteDPP,
+                                newModel.BankExpenditureNotePPN,
+                                viewModel.Mutation,
+                                newModel.MemoNo,
+                                newModel.MemoDate,
+                                newModel.MemoDPP,
+                                newModel.MemoPPN,
+                                newModel.MemoMutation,
+                                newModel.PaymentDuration,
+                                newModel.InvoiceNo,
+                                newModel.UnitReceiptMutation + (viewModel.Mutation * -1) + newModel.MemoMutation,
+                                newModel.CurrencyCode,
+                                newModel.DPPCurrency,
+                                newModel.CurrencyRate,
+                                newModel.VATAmount,
+                                newModel.IncomeTaxAmount,
+                                newModel.ExternalPurchaseOrderNo
+                                );
+
+                    EntityExtension.FlagForCreate(newCreditorAccount, IdentityService.Username, UserAgent);
+                    DbSet.Add(newCreditorAccount);
+                }
+                else
+                {
+                    decimal previousPayment = 0;
+
+                    var newModel = await DbContext.CreditorAccounts.FirstOrDefaultAsync(entity => entity.UnitReceiptNoteNo == model.UnitReceiptNoteNo && entity.BankExpenditureNoteNo != null);
+
+                    if (newModel != null)
+                    {
+                        model.UnitReceiptNoteDate = newModel.UnitReceiptNoteDate;
+                        model.MemoDate = newModel.MemoDate;
+                        model.UnitReceiptNoteDPP = 0;
+                        model.UnitReceiptNotePPN = 0;
+                        previousPayment = newModel.BankExpenditureNoteMutation;
+                    }
+
+                    model.BankExpenditureNoteDate = viewModel.Date;
+                    model.BankExpenditureNoteId = viewModel.Id;
+                    model.BankExpenditureNoteMutation = viewModel.Mutation;
+                    model.BankExpenditureNoteNo = viewModel.Code;
+                    model.FinalBalance = model.UnitReceiptMutation + (model.BankExpenditureNoteMutation * -1) + model.MemoMutation + (previousPayment * -1);
+
+                    UpdateModel(model.Id, model);
+                }
+
+                return await DbContext.SaveChangesAsync();
+            }
         }
 
         public async Task<int> UpdateFromBankExpenditureNoteAsync(CreditorAccountBankExpenditureNotePostedViewModel viewModel)
@@ -876,7 +1059,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                     model.DPPCurrency,
                     model.CurrencyRate,
                     (viewModel.UnitPaymentCorrectionPPN / (model.CurrencyRate == 0 ? 1 : model.CurrencyRate)),
-                    ((viewModel.UnitPaymentCorrectionDPP + viewModel.UnitPaymentCorrectionPPN) - viewModel.UnitPaymentCorrectionMutation)
+                    ((viewModel.UnitPaymentCorrectionDPP + viewModel.UnitPaymentCorrectionPPN) - viewModel.UnitPaymentCorrectionMutation),
+                    model.ExternalPurchaseOrderNo
                     );
 
                 EntityExtension.FlagForCreate(correction, IdentityService.Username, UserAgent);

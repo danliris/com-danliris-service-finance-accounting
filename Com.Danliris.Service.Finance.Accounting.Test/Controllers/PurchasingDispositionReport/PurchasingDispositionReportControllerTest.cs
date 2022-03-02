@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
             var response = await GetController(mocks).GetReportAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, It.IsAny<int>(), It.IsAny<int>(),"{}","{}");
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
-
+ 
         [Fact]
         public async Task GetReportExcel_ReturnFile()
         {

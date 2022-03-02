@@ -30,6 +30,8 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDoc
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
+using System.Net.Http;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransaction
 {
@@ -567,6 +569,151 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
 
             //Assert
             Assert.NotEqual(0, result);
+        }
+
+        [Fact]
+        public async Task Should_Success_AutoJournalFromDailyBankTransaction()
+        {
+            //Setup
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            serviceProviderMock.Setup(s => s.GetService(typeof(FinanceDbContext))).Returns(dbContext);
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new JournalHttpClientTestService());
+
+            Mock<IJournalTransactionService> journalTransactionServiceMock = new Mock<IJournalTransactionService>();
+
+            journalTransactionServiceMock.Setup(s => s.CreateAsync(It.IsAny<JournalTransactionModel>())).ReturnsAsync(1);
+
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IJournalTransactionService)))
+                .Returns(journalTransactionServiceMock.Object);
+
+            var masterCOAServiceMock = new MasterCOAService(serviceProviderMock.Object);
+            serviceProviderMock
+               .Setup(x => x.GetService(typeof(IMasterCOAService)))
+               .Returns(masterCOAServiceMock);
+
+            var httpClientService = new Mock<IHttpClientService>();
+            HttpResponseMessage message = new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            message.Content = new StringContent("{\"data\":{\"Id\":7,\"Code\":\"BB\",\"Rate\":13700.0,\"Date\":\"2018/10/20\"}}");
+
+            httpClientService
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .ReturnsAsync(message);
+
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(httpClientService.Object);
+            var service = new AutoJournalService(dbContext, serviceProviderMock.Object);
+
+            AccountBank acc1 = new AccountBank()
+            {
+                AccountCOA = "AccountCOA",
+                AccountName = "AccountName",
+                AccountNumber = "AccountNumber",
+                BankCode = "BankCode",
+                BankName = "BankName",
+                Currency= new Currency()
+                {
+                    Code = "Rp",
+                    Symbol = "IDR"
+                },
+            };
+            AccountBank acc2 = new AccountBank()
+            {
+                AccountCOA = "AccountCOA",
+                AccountName = "AccountName",
+                AccountNumber = "AccountNumber",
+                BankCode = "BankCode",
+                BankName = "BankName",
+                Currency = new Currency()
+                {
+                    Code = "dolar",
+                    Symbol = "USD"
+                },
+            };
+
+            DailyBankTransactionModel dailyModel = new DailyBankTransactionModel()
+            {
+                AccountBankAccountName = "AccountName",
+                AccountBankAccountNumber = "AccountNumber",
+                AccountBankCode = "BankCode",
+                AccountBankCurrencyCode = "CurrencyCode",
+                AccountBankCurrencyId = 1,
+                AccountBankCurrencySymbol = "CurrencySymbol",
+                AccountBankId = 1,
+                AccountBankName = "BankName",
+                AfterNominal = 0,
+                BeforeNominal = 0,
+                BuyerCode = "BuyerCode",
+                BuyerId = 1,
+                BuyerName = "BuyerName",
+                Date = DateTimeOffset.UtcNow,
+                Nominal = 1000,
+                ReferenceNo = "",
+                ReferenceType = "ReferenceType",
+                Remark = "Remark",
+                SourceType = "Pendanaan",
+                SourceFundingType = "Internal",
+                Status = "IN",
+                SupplierCode = "SupplierCode",
+                SupplierName = "SupplierName",
+                SupplierId = 1,
+                DestinationBankAccountName = "AccountName",
+                DestinationBankAccountNumber = "AccountNumber",
+                DestinationBankCode = "BankCode",
+                DestinationBankCurrencyCode = "CurrencyCode",
+                DestinationBankCurrencyId = 1,
+                DestinationBankCurrencySymbol = "CurrencySymbol",
+                DestinationBankId = 1,
+                DestinationBankName = "BankName",
+                IsPosted = true,
+                AfterNominalValas = 1,
+                BeforeNominalValas = 1,
+                TransactionNominal = 1,
+                NominalValas = 1,
+                Receiver = "Receiver",
+                CurrencyRate=10
+            };
+
+            //Act
+            var result = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1,acc2);
+            //Assert
+            Assert.NotEqual(0, result);
+
+            dailyModel.BankCharges = 100;
+            var resultwithBankCharges = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
+            Assert.NotEqual(0, resultwithBankCharges);
+
+            dailyModel.DestinationBankCurrencyCode = "IDR";
+            dailyModel.BankCharges = 100;
+            dailyModel.Rates = 100;
+            var resultDiffCurrencyToIDR = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
+            Assert.NotEqual(0, resultDiffCurrencyToIDR);
+
+            dailyModel.DestinationBankCurrencyCode = "IDR";
+            dailyModel.BankCharges = 0;
+            dailyModel.Rates = 100;
+            var resultDiffCurrencyToIDRNoCharges = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
+            Assert.NotEqual(0, resultDiffCurrencyToIDR);
+
+            dailyModel.AccountBankCurrencyCode = "IDR";
+            dailyModel.DestinationBankCurrencyCode = "USD";
+            dailyModel.BankCharges = 0;
+            dailyModel.Rates = 100;
+            var resultDiffCurrencyNoCharges = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
+            Assert.NotEqual(0, resultDiffCurrencyNoCharges);
+
+            dailyModel.AccountBankCurrencyCode = "IDR";
+            dailyModel.DestinationBankCurrencyCode = "USD";
+            dailyModel.BankCharges = 100;
+            dailyModel.Rates = 100;
+            var resultDiffCurrency = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
+            Assert.NotEqual(0, resultDiffCurrency);
+
         }
     }
 
