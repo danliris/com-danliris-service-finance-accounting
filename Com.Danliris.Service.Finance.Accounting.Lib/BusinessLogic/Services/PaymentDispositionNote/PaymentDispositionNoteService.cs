@@ -73,9 +73,81 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     }
                 }
 
-                expedition.IsPaid = paidFlag;
-                expedition.BankExpenditureNoteNo = model.PaymentDispositionNo;
-                expedition.BankExpenditureNoteDate = model.PaymentDate;
+                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(entity => entity.DispositionNo == item.DispositionNo);
+
+                if (pdeDisposition != null && string.IsNullOrEmpty(pdeDisposition.BankExpenditureNoteNo))
+                {
+                    expedition.IsPaid = paidFlag;
+                    expedition.BankExpenditureNoteNo = model.PaymentDispositionNo;
+                    expedition.BankExpenditureNoteDate = model.PaymentDate;
+                    expedition.AmountPaid = item.AmountPaid;
+                    expedition.SupplierPayment = item.SupplierPayment;
+                }
+                else
+                {
+                    PurchasingDispositionExpeditionModel pde = new PurchasingDispositionExpeditionModel
+                    {
+                        Active = pdeDisposition.Active,
+                        AmountPaid = item.AmountPaid,
+                        CategoryId = pdeDisposition.CategoryId,
+                        CurrencyCode = pdeDisposition.CurrencyCode,
+                        CurrencyId = pdeDisposition.CurrencyId,
+                        CreatedAgent = pdeDisposition.CreatedAgent,
+                        BankExpenditureNoteDate = model.PaymentDate,
+                        BankExpenditureNoteNo = model.PaymentDispositionNo,
+                        BankExpenditureNotePPHDate = pdeDisposition.BankExpenditureNotePPHDate,
+                        BankExpenditureNotePPHNo = pdeDisposition.BankExpenditureNotePPHNo,
+                        CashierDivisionBy = pdeDisposition.CashierDivisionBy,
+                        CashierDivisionDate = pdeDisposition.CashierDivisionDate,
+                        CategoryCode = pdeDisposition.CategoryCode,
+                        CategoryName = pdeDisposition.CategoryName,
+                        CreatedBy = pdeDisposition.CreatedBy,
+                        CreatedUtc = model.CreatedUtc,
+                        DispositionDate = pdeDisposition.DispositionDate,
+                        DispositionId = pdeDisposition.DispositionId,
+                        DispositionNo = pdeDisposition.DispositionNo,
+                        DivisionId = pdeDisposition.DivisionId,
+                        DivisionCode = pdeDisposition.DivisionCode,
+                        DivisionName = pdeDisposition.DivisionName,
+                        DPP = pdeDisposition.DPP,
+                        IncomeTaxId = pdeDisposition.IncomeTaxId,
+                        IncomeTaxName = pdeDisposition.IncomeTaxName,
+                        IncomeTaxRate = pdeDisposition.IncomeTaxRate,
+                        IncomeTaxValue = pdeDisposition.IncomeTaxValue,
+                        IsDeleted = pdeDisposition.IsDeleted,
+                        IsPaid = true,
+                        IsPaidPPH = pdeDisposition.IsPaidPPH,
+                        Items = pdeDisposition.Items,
+                        NotVerifiedReason = pdeDisposition.NotVerifiedReason,
+                        PaymentDueDate = pdeDisposition.PaymentDueDate,
+                        PaymentMethod = pdeDisposition.PaymentMethod,
+                        PayToSupplier = pdeDisposition.PayToSupplier,
+                        Position = pdeDisposition.Position,
+                        ProformaNo = pdeDisposition.ProformaNo,
+                        SendToCashierDivisionBy = pdeDisposition.SendToCashierDivisionBy,
+                        SendToCashierDivisionDate = pdeDisposition.SendToCashierDivisionDate,
+                        SendToPurchasingDivisionBy = pdeDisposition.SendToPurchasingDivisionBy,
+                        SendToPurchasingDivisionDate = pdeDisposition.SendToPurchasingDivisionDate,
+                        SupplierCode = pdeDisposition.SupplierCode,
+                        SupplierId = pdeDisposition.SupplierId,
+                        SupplierName = pdeDisposition.SupplierName,
+                        SupplierPayment = item.SupplierPayment,
+                        TotalPaid = pdeDisposition.TotalPaid,
+                        UseIncomeTax = pdeDisposition.UseIncomeTax,
+                        UseVat = pdeDisposition.UseVat,
+                        VatValue = pdeDisposition.VatValue,
+                        VerificationDivisionBy = pdeDisposition.VerificationDivisionBy,
+                        VerificationDivisionDate = pdeDisposition.VerificationDivisionDate,
+                        VerifyDate = pdeDisposition.VerifyDate,
+                    };
+
+                    EntityExtension.FlagForCreate(pde, IdentityService.Username, UserAgent);
+
+                    DbContext.PurchasingDispositionExpeditions.Add(pde);
+                }
+                //expedition.IsPaid = paidFlag;
+                //expedition.BankExpenditureNoteNo = model.PaymentDispositionNo;
+                //expedition.BankExpenditureNoteDate = model.PaymentDate;
                 foreach (var detail in item.Details)
                 {
                     EntityExtension.FlagForCreate(detail, IdentityService.Username, UserAgent);
@@ -269,6 +341,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     expedition.IsPaid = false;
                     expedition.BankExpenditureNoteNo = null;
                     expedition.BankExpenditureNoteDate = DateTimeOffset.MinValue;
+                    expedition.AmountPaid = 0;
+                    expedition.SupplierPayment = 0;
 
                     EntityExtension.FlagForDelete(item, IdentityService.Username, UserAgent, true);
 
@@ -307,6 +381,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     expedition.IsPaid = paidFlag;
                     expedition.BankExpenditureNoteNo = model.PaymentDispositionNo;
                     expedition.BankExpenditureNoteDate = model.PaymentDate;
+                    expedition.AmountPaid = item.AmountPaid;
+                    expedition.SupplierPayment = item.SupplierPayment;
 
                     EntityExtension.FlagForUpdate(item, IdentityService.Username, UserAgent);
 
