@@ -1064,10 +1064,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
             var purchasingDispositions = _dbContext.PurchasingDispositionExpeditions.Where(x => purchasingDispositionId.Contains(x.Id)).ToList();
             var currency = await GetBICurrency(model.CurrencyCode, model.PaymentDate);
 
-            if (currency == null)
-            {
-                currency = new GarmentCurrency() { Rate = model.CurrencyRate };
-            }
+            //if (currency == null)
+            //{
+            //    currency = new GarmentCurrency() { Rate = model.CurrencyRate };
+            //}
 
             var items = new List<JournalTransactionItemModel>();
             foreach (var item in model.Items)
@@ -1168,7 +1168,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                         Code = $"1502.00.{coaDivision}.{coaUnit}",
                                     },
                                     Debit = (decimal)(debit),
-                                    Remark = "Pembayaran Disposisi No " + model.PaymentDispositionNo + " " + model.CurrencyCode + " " + debit * model.CurrencyRate
+                                    Remark = "Pembayaran Disposisi No " + model.PaymentDispositionNo + " " + model.CurrencyCode + " " + debit
                                 };
                             }
                             else
@@ -1224,8 +1224,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                                 {
                                     Code = $"1502.00.{coaDivision}.{coaUnit}",
                                 },
-                                Debit = (decimal)(debit * model.CurrencyRate),
-                                Remark = "Pembayaran Disposisi No " + model.PaymentDispositionNo + " " + model.CurrencyCode + " " + debit * model.CurrencyRate
+                                Debit = (decimal)(debit),
+                                Remark = "Pembayaran Disposisi No " + model.PaymentDispositionNo + " " + model.CurrencyCode + " " + debit
                             };
                         }
                         else
