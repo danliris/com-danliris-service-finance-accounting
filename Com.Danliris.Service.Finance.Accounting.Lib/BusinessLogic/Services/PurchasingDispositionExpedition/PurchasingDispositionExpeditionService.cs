@@ -401,8 +401,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         }
                     }
                 }
-                
-                
+
+
 
                 PurchasingDispositionReportViewModel vm = new PurchasingDispositionReportViewModel()
                 {
@@ -434,12 +434,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     ExternalPurchaseOrderNo = expedition != null ? string.Join(" & ", expedition.Items.Select(expeditionItem => $" {expeditionItem.EPONo}")) : "",
                     IncomeTax = expedition != null ? (decimal)expedition.IncomeTaxValue : 0,
                     VAT = expedition != null ? (decimal)expedition.VatValue : 0,
-                    Total = expedition != null ? (decimal)expedition.TotalPaid : 0,
+                    Total = expedition != null ? (decimal)expedition.SupplierPayment : 0,
                     VerifiedBy = expedition != null ? expedition.VerificationDivisionBy : "",
                     UnitPaymentOrderNo = dataupo != null ? string.Join(" & ", dataupo.Select(upono => $" {upono.no}").Distinct()) : "",
                     UnitPaymentOrderDate = dataupo != null ? string.Join(" & ", dataupo.Select(upodate => $" {upodate.date.Value.Date.ToString("dd MMM yyyy")}").Distinct()) : "",
                     DONo = dataupo != null ? string.Join(" & ", dono.Distinct()) : "",
                     UrnNo = dataupo != null ? string.Join(" & ", urnno.Distinct()) : "",
+                    DifferenceNominal = expedition != null ? expedition.TotalPaid - expedition.AmountPaid + expedition.SupplierPayment : 0
                 };
                 result.Add(vm);
 
@@ -515,6 +516,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Bayar Kasir", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No Bukti Pengeluaran Bank", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nominal yang dibayar", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Sisa yang Belum Dibayar", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "PO Eksternal", DataType = typeof(string) });
 			dt.Columns.Add(new DataColumn() { ColumnName = "No Surat Jalan", DataType = typeof(string) });
@@ -561,6 +563,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         string.IsNullOrEmpty(item.BankExpenditureNoteNo) ? "-" : item.BankExpenditureNoteNo,
                         //item.BankExpenditureNotePPHDate == null ? "-" : item.BankExpenditureNotePPHDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.BankExpenditureNotePPHNo) ? "-" : item.BankExpenditureNotePPHNo,
                         item.PayToSupplier.ToString("#,##0.#0"),
+                        item.DifferenceNominal.ToString("#,##0.#0"),
                         item.Currency,
                         item.ExternalPurchaseOrderNo,
 						item.DONo,
