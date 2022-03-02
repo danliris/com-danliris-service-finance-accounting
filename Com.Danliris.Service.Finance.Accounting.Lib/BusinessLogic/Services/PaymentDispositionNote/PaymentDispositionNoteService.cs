@@ -637,6 +637,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             int index = 1;
             double total = 0;
             double totalPay = 0;
+            bool sameCurrency = true;
 
             if (viewModel.AccountBank.Currency.Code != "IDR" || viewModel.CurrencyCode == "IDR")
             {
@@ -700,11 +701,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                             var incomeTaxAmount = purchasingDisposition.UseIncomeTax ? detail.price * purchasingDisposition.IncomeTaxRate / 100 : 0;
                             var dpp = detail.price + vatAmount - incomeTaxAmount;
 
-                            if ((remaining <= 0) || (previousPayment >= dpp))
+                            if (remaining <= 0)
                             {
-                                previousPayment -= dpp;
-
                                 continue;
+                            }
+
+                            if (previousPayment > 0)
+                            {
+                                if (previousPayment >= dpp)
+                                {
+                                    previousPayment -= dpp;
+
+                                    continue;
+                                }
+                                else
+                                {
+                                    dpp -= previousPayment;
+
+                                    previousPayment -= dpp;
+                                }
                             }
 
                             bodyNonIDRCell.HorizontalAlignment = Element.ALIGN_CENTER;
@@ -840,7 +855,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             else
             {
                 #region Body
-
+                sameCurrency = false;
                 PdfPTable bodyTable = new PdfPTable(7);
                 PdfPCell bodyCell = new PdfPCell();
 
@@ -902,11 +917,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                             var incomeTaxAmount = purchasingDisposition.UseIncomeTax ? detail.price * purchasingDisposition.IncomeTaxRate / 100 : 0;
                             var dpp = detail.price + vatAmount - incomeTaxAmount;
 
-                            if ((remaining <= 0) || (previousPayment >= dpp))
+                            if (remaining <= 0)
                             {
-                                previousPayment -= dpp;
-
                                 continue;
+                            }
+
+                            if (previousPayment > 0)
+                            {
+                                if (previousPayment >= dpp)
+                                {
+                                    previousPayment -= dpp;
+
+                                    continue;
+                                }
+                                else
+                                {
+                                    dpp -= previousPayment;
+
+                                    previousPayment -= dpp;
+                                }
                             }
 
                             bodyCell.HorizontalAlignment = Element.ALIGN_CENTER;
@@ -980,6 +1009,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     {
                         foreach (var detail in unitSummaries)
                         {
+                            bodyCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                            bodyCell.VerticalAlignment = Element.ALIGN_TOP;
+                            bodyCell.Phrase = new Phrase((index++).ToString(), normal_font);
+                            bodyTable.AddCell(bodyCell);
+
+                            bodyCell.HorizontalAlignment = Element.ALIGN_LEFT;
+                            bodyCell.Phrase = new Phrase(item.dispositionNo, normal_font);
+                            bodyTable.AddCell(bodyCell);
+
+                            bodyCell.Phrase = new Phrase(item.category.name, normal_font);
+                            bodyTable.AddCell(bodyCell);
+
+                            bodyCell.Phrase = new Phrase(item.division.name, normal_font);
+                            bodyTable.AddCell(bodyCell);
+
+                            bodyCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                            bodyCell.Phrase = new Phrase(viewModel.CurrencyCode, normal_font);
+                            bodyTable.AddCell(bodyCell);
+
                             bodyCell.HorizontalAlignment = Element.ALIGN_RIGHT;
                             bodyCell.Phrase = new Phrase(string.Format("{0:n4}", remaining), normal_font);
                             bodyTable.AddCell(bodyCell);
@@ -1061,7 +1109,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             bodyFooterCell.Phrase = new Phrase("");
             bodyFooterTable.AddCell(bodyFooterCell);
 
-            total = viewModel.CurrencyId > 0 ? total * viewModel.CurrencyRate : total;
+            total = viewModel.CurrencyId > 0 && sameCurrency == false ? total * viewModel.CurrencyRate : total;
 
             foreach (var unit in percentageUnits)
             {
