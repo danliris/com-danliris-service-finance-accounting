@@ -319,8 +319,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
 
                 foreach (var item in dataVM)
                 {
-                    item.AmountPaid = Service.GetAmountPaidAndIsPosted(item.Id).AmountPaid;
-                    item.IsPosted = Service.GetAmountPaidAndIsPosted(item.Id).IsPosted;
+                    var service = Service.GetAmountPaidAndIsPosted(item.Id);
+
+                    item.AmountPaid = service.AmountPaid;
+                    item.IsPosted = service.IsPosted;
                 }
 
                 Dictionary<string, object> Result =
