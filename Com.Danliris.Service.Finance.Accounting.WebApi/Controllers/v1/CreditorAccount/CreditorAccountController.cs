@@ -350,10 +350,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
                 foreach(var item in viewModel)
                 {
                     ValidateService.Validate(item);
-
-
-                    await Service.CreateFromBankExpenditureNoteAsync(item);
                 }
+
+                await Service.CreateFromListBankExpenditureNoteAsync(viewModel);
+
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
                     .Ok();
