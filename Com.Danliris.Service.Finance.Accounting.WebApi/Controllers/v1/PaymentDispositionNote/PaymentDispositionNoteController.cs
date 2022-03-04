@@ -319,7 +319,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
 
                 foreach (var item in dataVM)
                 {
-                    var service = Service.GetAmountPaidAndIsPosted(item.Id);
+                    var service = Service.GetAmountPaidAndIsPosted(item.dispositionNo);
 
                     item.AmountPaid = service.AmountPaid;
                     item.IsPosted = service.IsPosted;
