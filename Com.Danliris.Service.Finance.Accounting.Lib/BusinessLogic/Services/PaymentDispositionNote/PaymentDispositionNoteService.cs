@@ -117,7 +117,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         IncomeTaxRate = pdeDisposition.IncomeTaxRate,
                         IncomeTaxValue = pdeDisposition.IncomeTaxValue,
                         IsDeleted = pdeDisposition.IsDeleted,
-                        IsPaid = true,
+                        IsPaid = paidFlag,
                         IsPaidPPH = pdeDisposition.IsPaidPPH,
                         Items = pdeDisposition.Items,
                         NotVerifiedReason = pdeDisposition.NotVerifiedReason,
@@ -612,8 +612,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
         public ResponseAmountPaidandIsPosted GetAmountPaidAndIsPosted(int Id)
         {
-            var AmountPaid = (DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).ToList().Count == 0 ? 0 : DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).Sum(x => x.SupplierPayment));
-            var IsPosted = (DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).ToList().Count == 0 ? true : DbSet.Where(p => p.Id == (DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).LastOrDefault().PaymentDispositionNoteId)).LastOrDefault().IsPosted);
+            var paymentDispositionNote = DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).ToList();
+            double AmountPaid = 0;
+            bool IsPosted = true;
+
+            if (paymentDispositionNote.Count > 0)
+            {
+                AmountPaid = paymentDispositionNote.Sum(x => x.SupplierPayment);
+                IsPosted = DbSet.Where(p => p.Id == (paymentDispositionNote.LastOrDefault().PaymentDispositionNoteId)).LastOrDefault().IsPosted;
+            }
 
             ResponseAmountPaidandIsPosted response = new ResponseAmountPaidandIsPosted();
             response.AmountPaid = AmountPaid;
