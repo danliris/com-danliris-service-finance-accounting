@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220225084436_add_column_in_PaymentDispositionNoteItems")]
+    partial class add_column_in_PaymentDispositionNoteItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -757,8 +759,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("AfterNominalValas");
 
-                    b.Property<decimal>("BankCharges");
-
                     b.Property<decimal>("BeforeNominal");
 
                     b.Property<decimal>("BeforeNominalValas");
@@ -844,8 +844,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<decimal>("NominalValas");
 
-                    b.Property<decimal>("Rates");
-
                     b.Property<string>("Receiver");
 
                     b.Property<string>("ReferenceNo")
@@ -856,9 +854,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("Remark")
                         .HasMaxLength(500);
-
-                    b.Property<string>("SourceFundingType")
-                        .HasMaxLength(50);
 
                     b.Property<string>("SourceType")
                         .HasMaxLength(50);
@@ -4354,8 +4349,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<DateTime>("LastModifiedUtc");
 
-                    b.Property<double>("PaidPrice");
-
                     b.Property<int>("PaymentDispositionNoteItemId");
 
                     b.Property<double>("Price");
@@ -4676,8 +4669,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<double>("AmountPaid");
-
                     b.Property<DateTimeOffset?>("BankExpenditureNoteDate");
 
                     b.Property<string>("BankExpenditureNoteNo");
@@ -4794,8 +4785,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("SupplierName")
                         .HasMaxLength(255);
-
-                    b.Property<double>("SupplierPayment");
 
                     b.Property<double>("TotalPaid");
 

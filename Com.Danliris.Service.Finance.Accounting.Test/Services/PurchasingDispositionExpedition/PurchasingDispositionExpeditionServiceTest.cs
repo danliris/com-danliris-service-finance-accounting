@@ -618,7 +618,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PurchasingDispos
             await service.CreateAsync(postedModel);
             var model = await service.ReadByIdAsync(postedModel.Id);
             var reportResponse = await service.GenerateExcelAsync(1, 25, "{}", "{}", null, DateTimeOffset.UtcNow.AddDays(2),null,null,null, null, null, 7);
-
             Assert.NotNull(reportResponse);
         }
 		[Fact]
