@@ -78,6 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
                 VerifyUser();
                 
                 ValidateService.Validate(viewModel);
+                viewModel.BankAccountCOA = viewModel.AccountBank.AccountCOA;
                 PaymentDispositionNoteModel model = Mapper.Map<PaymentDispositionNoteModel>(viewModel);
                 model.FixFailAutoMapper(viewModel.AccountBank.BankCode);
                 await Service.CreateAsync(model);
