@@ -73,18 +73,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     }
                 }
 
-                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(entity => entity.DispositionNo == item.DispositionNo && entity.BankExpenditureNoteNo == model.PaymentDispositionNo);
+                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(entity => entity.DispositionNo == item.DispositionNo);
 
-                if (pdeDisposition != null && string.IsNullOrEmpty(pdeDisposition.BankExpenditureNoteNo))
+                if (pdeDisposition != null && string.IsNullOrWhiteSpace(pdeDisposition.BankExpenditureNoteNo))
                 {
-                    expedition.IsPaid = paidFlag;
-                    expedition.BankExpenditureNoteNo = model.PaymentDispositionNo;
-                    expedition.BankExpenditureNoteDate = model.PaymentDate;
-                    expedition.AmountPaid = item.AmountPaid;
-                    expedition.SupplierPayment = item.SupplierPayment;
+                    pdeDisposition.IsPaid = paidFlag;
+                    pdeDisposition.BankExpenditureNoteNo = model.PaymentDispositionNo;
+                    pdeDisposition.BankExpenditureNoteDate = model.PaymentDate;
+                    pdeDisposition.AmountPaid = item.AmountPaid;
+                    pdeDisposition.SupplierPayment = item.SupplierPayment;
                 }
                 else
                 {
+                    pdeDisposition.IsPaid = true;
+                    
                     PurchasingDispositionExpeditionModel pde = new PurchasingDispositionExpeditionModel
                     {
                         Active = pdeDisposition.Active,
