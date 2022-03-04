@@ -566,8 +566,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         item.CategoryName,
                         item.DivisionName,
                         item.VATAmount,
-                        item.DispositionNominal,
                         item.PaidAmount,
+                        item.DispositionNominal,
                         item.DifferenceAmount,
                         item.TransactionType
                         );
