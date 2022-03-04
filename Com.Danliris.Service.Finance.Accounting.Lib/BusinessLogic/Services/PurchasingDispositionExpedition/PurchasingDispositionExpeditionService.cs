@@ -422,7 +422,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     VerificationDivisionDate = expedition == null || expedition.VerificationDivisionDate == DateTimeOffset.MinValue ? null : expedition.VerificationDivisionDate,
                     VerifyDate = expedition == null || expedition.VerifyDate == DateTimeOffset.MinValue ? null : expedition.VerifyDate,
                     Staff = item == null ? "" : item.CreatedBy,
-                    PayToSupplier = expedition != null ? expedition.PayToSupplier : 0,
+                    PayToSupplier = expedition != null ? expedition.SupplierPayment : 0,
                     Currency = expedition != null ? expedition.CurrencyCode : "",
                     CurrencyRate = item.Currency.rate,
                     Category = expedition != null ? expedition.CategoryName : "",
@@ -439,7 +439,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                     UnitPaymentOrderDate = dataupo != null ? string.Join(" & ", dataupo.Select(upodate => $" {upodate.date.Value.Date.ToString("dd MMM yyyy")}").Distinct()) : "",
                     DONo = dataupo != null ? string.Join(" & ", dono.Distinct()) : "",
                     UrnNo = dataupo != null ? string.Join(" & ", urnno.Distinct()) : "",
-                    DifferenceNominal = expedition != null ? expedition.TotalPaid - expedition.AmountPaid + expedition.SupplierPayment : 0
+                    DifferenceNominal = expedition != null ? (expedition.DPP + expedition.VatValue - expedition.IncomeTaxValue) - (expedition.AmountPaid + expedition.SupplierPayment) : 0
                 };
                 result.Add(vm);
 
