@@ -4,7 +4,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
 {
     public class ReportDto
     {
-        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber, double currencyRate, string bankCurrencyCode, double amountPaid, double supplierPayment)
+        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber, double currencyRate, string bankCurrencyCode, double amountPaid, double supplierPayment, double dpp, double vatValue, double incomeTaxValue)
         {
             ExpenditureId = expenditureId;
             ExpenditureNo = expenditureNo;
@@ -28,16 +28,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             VATAmount = vATAmount;
             if (bankCurrencyCode != currencyCode)
             {
-                PaidAmount = Math.Round(Math.Round(paidAmount, 2) * (currencyRate == 0 ? 1 : currencyRate), 2);
+                PaidAmount = Math.Round(Math.Round(dpp + vatValue - incomeTaxValue, 2) * (currencyRate == 0 ? 1 : currencyRate), 2);
             }
             else
             {
-                PaidAmount = paidAmount;
+                PaidAmount = dpp + vatValue - incomeTaxValue;
             }
             TransactionType = transactionType;
             BankAccountNumber = bankAccountNumber;
             DispositionNominal = supplierPayment;
-            DifferenceAmount = PaidAmount = amountPaid + supplierPayment;
+            DifferenceAmount = (dpp + vatValue - incomeTaxValue) - (amountPaid + supplierPayment);
         }
 
         public int ExpenditureId { get; private set; }

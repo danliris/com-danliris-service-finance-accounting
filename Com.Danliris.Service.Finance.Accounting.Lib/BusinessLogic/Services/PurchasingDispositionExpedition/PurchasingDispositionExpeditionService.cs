@@ -339,7 +339,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 			DateTimeOffset dateFromFilter = (dateFrom == null ? new DateTime(1970, 1, 1) : dateFrom.Value.Date);
 			DateTimeOffset dateToFilter = (dateTo == null ? DateTimeOffset.UtcNow.Date : dateTo.Value.Date);
 			var expeditionData = DbSet.Include(entity => entity.Items).ToList();
-			 
 			var purchasingDispositionResponse = await GetPurchasingDispositionAsync(1, int.MaxValue, order, filter);
              
             List<PurchasingDispositionViewModel> data = purchasingDispositionResponse.data;
@@ -381,73 +380,77 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                 List<string> urnno = new List<string>();
 				//var expedition = DbContext.PurchasingDispositionExpeditions.Where(x => x.DispositionNo == item.DispositionNo).Include(x => x.Items).FirstOrDefault();
 			    
-				var expedition = expeditionData.OrderByDescending(a => a.LastModifiedUtc).FirstOrDefault(x => x.DispositionNo == item.DispositionNo);
+				var expeditions = expeditionData.OrderByDescending(a => a.LastModifiedUtc).Where(x => x.DispositionNo == item.DispositionNo).ToList();
 				
-				if (expedition != null) {
-                    foreach (var item2 in expedition.Items)
+				foreach (var expedition in expeditions)
+                {
+                    if (expedition != null)
                     {
-                        var epo = item2.EPOId != null ? GetExternalPurchaseOrderNo(item2.EPOId) : null;
-                        item2.EPONo = epo != null ? epo.no : "-";
-                        //var DO = epo != null ? GetDeliveryOrderNo(epo.no) : null;
-                        var upo = GetUnitPaymentOrder(item2.EPONo);
-                        foreach (var i in upo) {
-                            dataupo.Add(i);
-                            foreach(var t in i.items)
+                        foreach (var item2 in expedition.Items)
+                        {
+                            var epo = item2.EPOId != null ? GetExternalPurchaseOrderNo(item2.EPOId) : null;
+                            item2.EPONo = epo != null ? epo.no : "-";
+                            //var DO = epo != null ? GetDeliveryOrderNo(epo.no) : null;
+                            var upo = GetUnitPaymentOrder(item2.EPONo);
+                            foreach (var i in upo)
                             {
-                                dono.Add(t.unitReceiptNote.deliveryOrder.no);
-                                urnno.Add(t.unitReceiptNote.no);
+                                dataupo.Add(i);
+                                foreach (var t in i.items)
+                                {
+                                    dono.Add(t.unitReceiptNote.deliveryOrder.no);
+                                    urnno.Add(t.unitReceiptNote.no);
 
+                                }
                             }
                         }
                     }
+
+
+
+                    PurchasingDispositionReportViewModel vm = new PurchasingDispositionReportViewModel()
+                    {
+                        BankExpenditureNoteDate = expedition == null || expedition.BankExpenditureNoteDate == DateTimeOffset.MinValue ? DateTimeOffset.MinValue : expedition.BankExpenditureNoteDate,
+                        DispositionNo = item.DispositionNo,
+                        BankExpenditureNoteNo = expedition?.BankExpenditureNoteNo,
+                        BankExpenditureNotePPHDate = expedition == null || expedition.BankExpenditureNotePPHDate == DateTimeOffset.MinValue ? null : expedition.BankExpenditureNotePPHDate,
+                        BankExpenditureNotePPHNo = expedition?.BankExpenditureNotePPHNo,
+                        CashierDivisionDate = expedition == null || expedition.CashierDivisionDate == DateTimeOffset.MinValue ? null : expedition.CashierDivisionDate,
+                        CreatedUtc = item.CreatedUtc,
+                        InvoiceNo = item.ProformaNo,
+                        PaymentDueDate = item.PaymentDueDate,
+                        Position = item.Position,
+                        SentToVerificationDivisionDate = expedition == null ? null : new DateTimeOffset?(expedition.CreatedUtc),
+                        SendDate = expedition == null ? null : ((expedition.Position == ExpeditionPosition.CASHIER_DIVISION || expedition.Position == ExpeditionPosition.SEND_TO_CASHIER_DIVISION) && expedition.SendToCashierDivisionDate != DateTimeOffset.MinValue) ? expedition.SendToCashierDivisionDate :
+                         ((expedition.Position == ExpeditionPosition.SEND_TO_PURCHASING_DIVISION) && expedition.SendToPurchasingDivisionDate != DateTimeOffset.MinValue) ? expedition.SendToPurchasingDivisionDate : null,
+                        SupplierName = item.Supplier.name,
+                        VerificationDivisionDate = expedition == null || expedition.VerificationDivisionDate == DateTimeOffset.MinValue ? null : expedition.VerificationDivisionDate,
+                        VerifyDate = expedition == null || expedition.VerifyDate == DateTimeOffset.MinValue ? null : expedition.VerifyDate,
+                        Staff = item == null ? "" : item.CreatedBy,
+                        PayToSupplier = expedition != null ? expedition.SupplierPayment : 0,
+                        Currency = expedition != null ? expedition.CurrencyCode : "",
+                        CurrencyRate = item.Currency.rate,
+                        Category = expedition != null ? expedition.CategoryName : "",
+                        Division = expedition != null ? expedition.DivisionName : "",
+                        Unit = expedition != null ? string.Join("\n", expedition.Items.Select(expeditionItem => $"- {expeditionItem.UnitName}")) : "",
+                        DPP = expedition != null ? (decimal)expedition.DPP : 0,
+                        DueDateDays = 0,
+                        ExternalPurchaseOrderNo = expedition != null ? string.Join(" & ", expedition.Items.Select(expeditionItem => $" {expeditionItem.EPONo}")) : "",
+                        IncomeTax = expedition != null ? (decimal)expedition.IncomeTaxValue : 0,
+                        VAT = expedition != null ? (decimal)expedition.VatValue : 0,
+                        Total = expedition != null ? (decimal)expedition.SupplierPayment : 0,
+                        VerifiedBy = expedition != null ? expedition.VerificationDivisionBy : "",
+                        UnitPaymentOrderNo = dataupo != null ? string.Join(" & ", dataupo.Select(upono => $" {upono.no}").Distinct()) : "",
+                        UnitPaymentOrderDate = dataupo != null ? string.Join(" & ", dataupo.Select(upodate => $" {upodate.date.Value.Date.ToString("dd MMM yyyy")}").Distinct()) : "",
+                        DONo = dataupo != null ? string.Join(" & ", dono.Distinct()) : "",
+                        UrnNo = dataupo != null ? string.Join(" & ", urnno.Distinct()) : "",
+                        DifferenceNominal = expedition != null ? (expedition.DPP + expedition.VatValue - expedition.IncomeTaxValue) - (expedition.AmountPaid + expedition.SupplierPayment) : 0
+                    };
+                    result.Add(vm);
                 }
-
-
-
-                PurchasingDispositionReportViewModel vm = new PurchasingDispositionReportViewModel()
-                {
-                    BankExpenditureNoteDate = expedition == null || expedition.BankExpenditureNoteDate == DateTimeOffset.MinValue ? DateTimeOffset.MinValue : expedition.BankExpenditureNoteDate,
-                    DispositionNo = item.DispositionNo,
-                    BankExpenditureNoteNo = expedition?.BankExpenditureNoteNo,
-                    BankExpenditureNotePPHDate = expedition == null || expedition.BankExpenditureNotePPHDate == DateTimeOffset.MinValue ? null : expedition.BankExpenditureNotePPHDate,
-                    BankExpenditureNotePPHNo = expedition?.BankExpenditureNotePPHNo,
-                    CashierDivisionDate = expedition == null || expedition.CashierDivisionDate == DateTimeOffset.MinValue ? null : expedition.CashierDivisionDate,
-                    CreatedUtc = item.CreatedUtc,
-                    InvoiceNo = item.ProformaNo,
-                    PaymentDueDate = item.PaymentDueDate,
-                    Position = item.Position,
-                    SentToVerificationDivisionDate = expedition == null ? null : new DateTimeOffset?(expedition.CreatedUtc),
-                    SendDate = expedition == null ? null : ((expedition.Position == ExpeditionPosition.CASHIER_DIVISION || expedition.Position == ExpeditionPosition.SEND_TO_CASHIER_DIVISION) && expedition.SendToCashierDivisionDate != DateTimeOffset.MinValue) ? expedition.SendToCashierDivisionDate :
-                     ((expedition.Position == ExpeditionPosition.SEND_TO_PURCHASING_DIVISION) && expedition.SendToPurchasingDivisionDate != DateTimeOffset.MinValue) ? expedition.SendToPurchasingDivisionDate : null,
-                    SupplierName = item.Supplier.name,
-                    VerificationDivisionDate = expedition == null || expedition.VerificationDivisionDate == DateTimeOffset.MinValue ? null : expedition.VerificationDivisionDate,
-                    VerifyDate = expedition == null || expedition.VerifyDate == DateTimeOffset.MinValue ? null : expedition.VerifyDate,
-                    Staff = item == null ? "" : item.CreatedBy,
-                    PayToSupplier = expedition != null ? expedition.PayToSupplier : 0,
-                    Currency = expedition != null ? expedition.CurrencyCode : "",
-                    CurrencyRate = item.Currency.rate,
-                    Category = expedition != null ? expedition.CategoryName : "",
-                    Division = expedition != null ? expedition.DivisionName : "",
-                    Unit = expedition != null ? string.Join("\n", expedition.Items.Select(expeditionItem => $"- {expeditionItem.UnitName}")) : "",
-                    DPP = expedition != null ? (decimal)expedition.DPP : 0,
-                    DueDateDays = 0,
-                    ExternalPurchaseOrderNo = expedition != null ? string.Join(" & ", expedition.Items.Select(expeditionItem => $" {expeditionItem.EPONo}")) : "",
-                    IncomeTax = expedition != null ? (decimal)expedition.IncomeTaxValue : 0,
-                    VAT = expedition != null ? (decimal)expedition.VatValue : 0,
-                    Total = expedition != null ? (decimal)expedition.SupplierPayment : 0,
-                    VerifiedBy = expedition != null ? expedition.VerificationDivisionBy : "",
-                    UnitPaymentOrderNo = dataupo != null ? string.Join(" & ", dataupo.Select(upono => $" {upono.no}").Distinct()) : "",
-                    UnitPaymentOrderDate = dataupo != null ? string.Join(" & ", dataupo.Select(upodate => $" {upodate.date.Value.Date.ToString("dd MMM yyyy")}").Distinct()) : "",
-                    DONo = dataupo != null ? string.Join(" & ", dono.Distinct()) : "",
-                    UrnNo = dataupo != null ? string.Join(" & ", urnno.Distinct()) : "",
-                    DifferenceNominal = expedition != null ? expedition.TotalPaid - expedition.AmountPaid + expedition.SupplierPayment : 0
-                };
-                result.Add(vm);
 
             }
 
 			result = result.Where(a => a.BankExpenditureNoteDate.Value.AddHours(offSet).Date >= dateFromPaymentFilter.Date && a.BankExpenditureNoteDate.Value.AddHours(offSet).Date <= dateToPaymentFilter.Date).ToList();
-
 			if (PaymentStatus == "SUDAH DIBAYAR")
 			{
 				result = result.Where(s => s.BankExpenditureNoteNo != null).ToList();
