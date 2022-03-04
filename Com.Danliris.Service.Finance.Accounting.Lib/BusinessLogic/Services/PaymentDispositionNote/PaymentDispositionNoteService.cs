@@ -73,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     }
                 }
 
-                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(entity => entity.DispositionNo == item.DispositionNo);
+                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(entity => entity.DispositionNo == item.DispositionNo && entity.BankExpenditureNoteNo == model.PaymentDispositionNo);
 
                 if (pdeDisposition != null && string.IsNullOrEmpty(pdeDisposition.BankExpenditureNoteNo))
                 {
