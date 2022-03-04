@@ -73,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     }
                 }
 
-                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(entity => entity.DispositionNo == item.DispositionNo);
+                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.LastOrDefault(entity => entity.DispositionNo == item.DispositionNo);
 
                 if (pdeDisposition != null && string.IsNullOrWhiteSpace(pdeDisposition.BankExpenditureNoteNo))
                 {
@@ -610,9 +610,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return new ReadResponse<PurchasingDispositionExpeditionModel>(Data, TotalData, OrderDictionary, new List<string>());
         }
 
-        public ResponseAmountPaidandIsPosted GetAmountPaidAndIsPosted(int Id)
+        public ResponseAmountPaidandIsPosted GetAmountPaidAndIsPosted(string DispositionNo)
         {
-            var paymentDispositionNote = DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).ToList();
+            var paymentDispositionNote = DbContext.PaymentDispositionNoteItems.Where(x => x.DispositionNo == DispositionNo).ToList();
             double AmountPaid = 0;
             bool IsPosted = true;
 
