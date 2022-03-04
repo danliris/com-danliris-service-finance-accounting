@@ -437,7 +437,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         ExternalPurchaseOrderNo = expedition != null ? string.Join(" & ", expedition.Items.Select(expeditionItem => $" {expeditionItem.EPONo}")) : "",
                         IncomeTax = expedition != null ? (decimal)expedition.IncomeTaxValue : 0,
                         VAT = expedition != null ? (decimal)expedition.VatValue : 0,
-                        Total = expedition != null ? (decimal)expedition.SupplierPayment : 0,
+                        Total = expedition != null ? (decimal)(expedition.DPP + expedition.VatValue - expedition.IncomeTaxValue) : 0,
                         VerifiedBy = expedition != null ? expedition.VerificationDivisionBy : "",
                         UnitPaymentOrderNo = dataupo != null ? string.Join(" & ", dataupo.Select(upono => $" {upono.no}").Distinct()) : "",
                         UnitPaymentOrderDate = dataupo != null ? string.Join(" & ", dataupo.Select(upodate => $" {upodate.date.Value.Date.ToString("dd MMM yyyy")}").Distinct()) : "",
