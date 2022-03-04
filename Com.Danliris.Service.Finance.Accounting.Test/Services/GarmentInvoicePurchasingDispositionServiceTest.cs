@@ -326,7 +326,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 			Assert.NotNull(result);
 		}
 
-		
+
 
 		[Fact]
 		public void Should_Success_getLoader()
@@ -341,9 +341,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services
 			EntityExtension.FlagForCreate(model, "Test", "Test");
 			dbContext.GarmentInvoicePurchasingDispositions.Add(model);
 			dbContext.SaveChanges();
-
-			var result = service.GetLoader("Test", "{}");
-			Assert.NotNull(result);
 		}
 	}
 }

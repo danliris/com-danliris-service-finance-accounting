@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Net;
 using System.Security.Claims;
 
 using Xunit;
@@ -101,7 +102,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentInvoic
 			Assert.NotNull(response);
 
 		}
-
+		[Fact]
+		public void GetLoader()
+		{
+			var mock = GetMocks();
+			 
+			mock.Service
+			   .Setup(s => s.GetLoader(null,"{}"))
+			   .Returns(new ReadResponse<GarmentInvoicePurchasingDispositionNoVM>(new List<GarmentInvoicePurchasingDispositionNoVM>(), 1, new Dictionary<string, string>(), new List<string>()));
+			//Act
+			var response =   GetController(mock).GetLoader(null, "{}");
+			Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+		}
 
 	}
 }

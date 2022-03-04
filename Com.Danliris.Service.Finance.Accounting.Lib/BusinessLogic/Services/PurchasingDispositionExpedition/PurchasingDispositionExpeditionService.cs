@@ -339,7 +339,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
 			DateTimeOffset dateFromFilter = (dateFrom == null ? new DateTime(1970, 1, 1) : dateFrom.Value.Date);
 			DateTimeOffset dateToFilter = (dateTo == null ? DateTimeOffset.UtcNow.Date : dateTo.Value.Date);
 			var expeditionData = DbSet.Include(entity => entity.Items).ToList();
-			 
 			var purchasingDispositionResponse = await GetPurchasingDispositionAsync(1, int.MaxValue, order, filter);
              
             List<PurchasingDispositionViewModel> data = purchasingDispositionResponse.data;
@@ -447,7 +446,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             }
 
 			result = result.Where(a => a.BankExpenditureNoteDate.Value.AddHours(offSet).Date >= dateFromPaymentFilter.Date && a.BankExpenditureNoteDate.Value.AddHours(offSet).Date <= dateToPaymentFilter.Date).ToList();
-
 			if (PaymentStatus == "SUDAH DIBAYAR")
 			{
 				result = result.Where(s => s.BankExpenditureNoteNo != null).ToList();
