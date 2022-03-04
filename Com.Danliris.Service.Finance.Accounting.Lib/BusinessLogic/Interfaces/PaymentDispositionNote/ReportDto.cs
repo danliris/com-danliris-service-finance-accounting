@@ -37,7 +37,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             TransactionType = transactionType;
             BankAccountNumber = bankAccountNumber;
             DispositionNominal = supplierPayment;
-            DifferenceAmount = PaidAmount = amountPaid + supplierPayment;
+            DifferenceAmount = PaidAmount - (amountPaid + supplierPayment);
         }
 
         public int ExpenditureId { get; private set; }
