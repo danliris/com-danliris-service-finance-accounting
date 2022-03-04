@@ -297,7 +297,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 
 
 			var queryHeader = from aa in DbContext.GarmentInvoicePurchasingDispositions
-							  where (aa.InvoiceDate.AddHours(7).Date >= dateFrom.Date && aa.InvoiceDate.AddHours(7).Date <= dateTo.Date)
+							  where (aa.InvoiceDate >= dateFrom && aa.InvoiceDate <= dateTo)
 							  select new { aa.PaymentType, aa.CurrencyRate, aa.Id, aa.InvoiceNo, aa.InvoiceDate, aa.CurrencySymbol, aa.BankAccountName, aa.BankAccountNo, aa.BankCurrencyCode, aa.SupplierName };
 			var query = from a in queryHeader
 						join b in DbContext.GarmentInvoicePurchasingDispositionItems on a.Id equals b.GarmentInvoicePurchasingDispositionId
