@@ -73,7 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     }
                 }
 
-                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.LastOrDefault(entity => entity.DispositionNo == item.DispositionNo);
+                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.Include(entity => entity.Items).LastOrDefault(entity => entity.DispositionNo == item.DispositionNo);
 
                 if (pdeDisposition != null && string.IsNullOrWhiteSpace(pdeDisposition.BankExpenditureNoteNo))
                 {
@@ -119,7 +119,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         IsDeleted = pdeDisposition.IsDeleted,
                         IsPaid = paidFlag,
                         IsPaidPPH = pdeDisposition.IsPaidPPH,
-                        Items = pdeDisposition.Items,
                         NotVerifiedReason = pdeDisposition.NotVerifiedReason,
                         PaymentDueDate = pdeDisposition.PaymentDueDate,
                         PaymentMethod = pdeDisposition.PaymentMethod,
@@ -142,6 +141,44 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         VerificationDivisionDate = pdeDisposition.VerificationDivisionDate,
                         VerifyDate = pdeDisposition.VerifyDate,
                     };
+
+                    List<PurchasingDispositionExpeditionItemModel> pdeItems = new List<PurchasingDispositionExpeditionItemModel>();
+
+                    foreach (var element in pdeDisposition.Items)
+                    {
+                        PurchasingDispositionExpeditionItemModel expeditionItem = new PurchasingDispositionExpeditionItemModel
+                        {
+                            Active = element.Active,
+                            CreatedAgent = element.CreatedAgent,
+                            CreatedBy = element.CreatedBy,
+                            CreatedUtc = element.CreatedUtc,
+                            DeletedAgent = element.DeletedAgent,
+                            DeletedBy = element.DeletedBy,
+                            DeletedUtc = element.DeletedUtc,
+                            EPOId = element.EPOId,
+                            EPONo = element.EPONo,
+                            IsDeleted = element.IsDeleted,
+                            LastModifiedAgent = element.LastModifiedAgent,
+                            LastModifiedBy = element.LastModifiedBy,
+                            LastModifiedUtc = element.LastModifiedUtc,
+                            Price = element.Price,
+                            ProductCode = element.ProductCode,
+                            ProductId = element.ProductId,
+                            ProductName = element.ProductName,
+                            PurchasingDispositionExpedition = pde,
+                            PurchasingDispositionDetailId = element.PurchasingDispositionDetailId,
+                            Quantity = element.Quantity,
+                            UnitCode = element.UnitCode,
+                            UnitId = element.UnitId,
+                            UnitName = element.UnitName,
+                            UomId = element.UomId,
+                            UomUnit = element.UomUnit
+                        };
+
+                        pdeItems.Add(expeditionItem);
+                    }
+
+                    pde.Items = pdeItems;
 
                     EntityExtension.FlagForCreate(pde, IdentityService.Username, UserAgent);
 
