@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.PaymentDispositionNote;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDispositionNoteViewModel;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispositionExpedition;
 using Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentDispositionNote;
 using Com.Moonlay.NetCore.Lib.Service;
 using Microsoft.AspNetCore.Http;
@@ -261,6 +263,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
         {
             PaymentDispositionNoteController controller = GetController(mocks);
             IActionResult response = controller.Get();
+
+            return GetStatusCode(response);
+        }
+
+        private int GetStatusCodeGetAllCashierPosition((Mock<IIdentityService> IdentityService, Mock<IValidateService> ValidateService, Mock<IPaymentDispositionNoteService> Service, Mock<IMapper> Mapper) mocks)
+        {
+            PaymentDispositionNoteController controller = GetController(mocks);
+            IActionResult response = controller.GetAllCashierPosition();
 
             return GetStatusCode(response);
         }
@@ -642,6 +652,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PaymentDispos
 
             var response = GetController(mocks).GetReportXls(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetAllCashierPosition_WithoutException_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service
+                .Setup(f => f.GetAllByPosition(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(new ReadResponse<PurchasingDispositionExpeditionModel>(new List<PurchasingDispositionExpeditionModel>() { new PurchasingDispositionExpeditionModel() }, 0, new Dictionary<string, string>(), new List<string>()));
+            mocks.Mapper
+                .Setup(f => f.Map<List<PurchasingDispositionExpeditionViewModel>>(It.IsAny<List<PurchasingDispositionExpeditionModel>>()))
+                .Returns(new List<PurchasingDispositionExpeditionViewModel>());
+
+            var response = GetController(mocks).GetAllCashierPosition();
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
+
+        [Fact]
+        public void GetAllCashierPosition_ThrowException_ReturnInternalServerError()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetAllByPosition(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<string>>(), It.IsAny<string>(), It.IsAny<string>())).Throws(new Exception());
+
+            int statusCode = GetStatusCodeGetAllCashierPosition(mocks);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, statusCode);
         }
     }
 }

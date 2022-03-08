@@ -1062,12 +1062,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
         {
             var purchasingDispositionId = model.Items.Select(detail => detail.PurchasingDispositionExpeditionId).ToList();
             var purchasingDispositions = _dbContext.PurchasingDispositionExpeditions.Where(x => purchasingDispositionId.Contains(x.Id)).ToList();
-            var currency = await GetBICurrency(model.CurrencyCode, model.PaymentDate);
-
-            //if (currency == null)
-            //{
-            //    currency = new GarmentCurrency() { Rate = model.CurrencyRate };
-            //}
 
             var items = new List<JournalTransactionItemModel>();
             foreach (var item in model.Items)
