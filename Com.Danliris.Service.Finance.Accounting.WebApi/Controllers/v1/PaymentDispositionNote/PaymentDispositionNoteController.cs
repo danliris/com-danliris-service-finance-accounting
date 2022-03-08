@@ -317,17 +317,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
 
                 List<PurchasingDispositionExpeditionViewModel> dataVM = Mapper.Map<List<PurchasingDispositionExpeditionViewModel>>(read.Data);
 
-                if (dataVM.Count > 0)
+                foreach (var item in dataVM)
                 {
-                    foreach (var item in dataVM)
-                    {
-                        var service = Service.GetAmountPaidAndIsPosted(item.dispositionNo);
+                    var service = Service.GetAmountPaidAndIsPosted(item.dispositionNo);
 
-                        item.AmountPaid = service.AmountPaid;
-                        item.IsPosted = service.IsPosted;
-                    }
+                    item.AmountPaid = service.AmountPaid;
+                    item.IsPosted = service.IsPosted;
                 }
-                
+
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                     .Ok(Mapper, dataVM, page, size, read.Count, dataVM.Count, read.Order, read.Selected);
