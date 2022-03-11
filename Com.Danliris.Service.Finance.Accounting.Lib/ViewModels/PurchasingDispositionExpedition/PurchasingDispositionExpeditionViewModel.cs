@@ -23,6 +23,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
         public DateTimeOffset sendToPurchasingDivisionDate { get; set; }
         public SupplierViewModel supplier { get; set; }
         public double totalPaid { get; set; }
+        public double paymentCorrection { get; set; }
         public string dispositionId { get; set; }
         public DateTimeOffset dispositionDate { get; set; }
         public string dispositionNo { get; set; }
