@@ -426,7 +426,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         VerificationDivisionDate = expedition == null || expedition.VerificationDivisionDate == DateTimeOffset.MinValue ? null : expedition.VerificationDivisionDate,
                         VerifyDate = expedition == null || expedition.VerifyDate == DateTimeOffset.MinValue ? null : expedition.VerifyDate,
                         Staff = item == null ? "" : item.CreatedBy,
-                        PayToSupplier = expedition != null ? expedition.SupplierPayment : 0,
+                        PayToSupplier = expedition != null ? expedition.PayToSupplier : 0,
                         Currency = expedition != null ? expedition.CurrencyCode : "",
                         CurrencyRate = item.Currency.rate,
                         Category = expedition != null ? expedition.CategoryName : "",
@@ -443,7 +443,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         UnitPaymentOrderDate = dataupo != null ? string.Join(" & ", dataupo.Select(upodate => $" {upodate.date.Value.Date.ToString("dd MMM yyyy")}").Distinct()) : "",
                         DONo = dataupo != null ? string.Join(" & ", dono.Distinct()) : "",
                         UrnNo = dataupo != null ? string.Join(" & ", urnno.Distinct()) : "",
-                        DifferenceNominal = expedition != null ? (expedition.DPP + expedition.VatValue - expedition.IncomeTaxValue) - (expedition.AmountPaid + expedition.SupplierPayment) : 0
+                        DifferenceNominal = expedition != null ? expedition.PayToSupplier - (expedition.AmountPaid + expedition.SupplierPayment) : 0,
+                        PaymentCorrection = expedition != null ? expedition.PaymentCorrection : 0,
+                        SupplierPayment = expedition != null ? expedition.SupplierPayment : 0
                     };
                     result.Add(vm);
                 }
@@ -504,6 +506,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             dt.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "PPh", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Koreksi Pembayaran", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tempo", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Kategori", DataType = typeof(string) });
@@ -550,7 +553,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         item.DPP.ToString("#,##0.#0"),
                         item.VAT.ToString("#,##0.#0"),
                         item.IncomeTax.ToString("#,##0.#0"),
-                        item.Total.ToString("#,##0.#0"),
+                        item.PaymentCorrection.ToString("#,##0.#0"),
+                        item.PayToSupplier.ToString("#,##0.#0"),
                         item.DueDateDays,
                         item.Category,
                         item.Unit,
@@ -565,7 +569,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         item.BankExpenditureNoteDate == null ? "-" : item.BankExpenditureNoteDate.Value.AddHours(offSet).ToString("dd MMM yyyy"),
                         string.IsNullOrEmpty(item.BankExpenditureNoteNo) ? "-" : item.BankExpenditureNoteNo,
                         //item.BankExpenditureNotePPHDate == null ? "-" : item.BankExpenditureNotePPHDate.Value.AddHours(offSet).ToString("dd MMM yyyy"), string.IsNullOrEmpty(item.BankExpenditureNotePPHNo) ? "-" : item.BankExpenditureNotePPHNo,
-                        item.PayToSupplier.ToString("#,##0.#0"),
+                        item.SupplierPayment.ToString("#,##0.#0"),
                         item.DifferenceNominal.ToString("#,##0.#0"),
                         item.Currency,
                         item.ExternalPurchaseOrderNo,

@@ -28,16 +28,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             VATAmount = vATAmount;
             if (bankCurrencyCode != currencyCode)
             {
-                PaidAmount = Math.Round(Math.Round(dpp + vatValue - incomeTaxValue, 2) * (currencyRate == 0 ? 1 : currencyRate), 2);
+                PaidAmount = Math.Round(paidAmount, 2);
             }
             else
             {
-                PaidAmount = dpp + vatValue - incomeTaxValue;
+                PaidAmount = paidAmount;
             }
             TransactionType = transactionType;
             BankAccountNumber = bankAccountNumber;
             DispositionNominal = supplierPayment;
-            DifferenceAmount = (dpp + vatValue - incomeTaxValue) - (amountPaid + supplierPayment);
+            DifferenceAmount = paidAmount - (amountPaid + supplierPayment);
         }
 
         public int ExpenditureId { get; private set; }
