@@ -443,8 +443,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         UnitPaymentOrderDate = dataupo != null ? string.Join(" & ", dataupo.Select(upodate => $" {upodate.date.Value.Date.ToString("dd MMM yyyy")}").Distinct()) : "",
                         DONo = dataupo != null ? string.Join(" & ", dono.Distinct()) : "",
                         UrnNo = dataupo != null ? string.Join(" & ", urnno.Distinct()) : "",
-                        DifferenceNominal = expedition != null ? (expedition.DPP + expedition.VatValue - expedition.IncomeTaxValue) - (expedition.AmountPaid + expedition.SupplierPayment) : 0,
-                        PaymentCorrection = expedition != null ? expedition.PaymentCorrection : 0
+                        DifferenceNominal = expedition != null ? expedition.PayToSupplier - (expedition.AmountPaid + expedition.SupplierPayment) : 0,
+                        PaymentCorrection = expedition != null ? expedition.PaymentCorrection : 0,
+                        SupplierPayment = expedition != null ? expedition.SupplierPayment : 0
                     };
                     result.Add(vm);
                 }

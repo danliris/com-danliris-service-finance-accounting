@@ -55,5 +55,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PurchasingDispo
         public string UrnNo { get; set; }
         public double DifferenceNominal { get; set; }
         public double PaymentCorrection { get; internal set; }
+        public double SupplierPayment { get; internal set; }
     }
 }
