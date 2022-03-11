@@ -443,7 +443,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         UnitPaymentOrderDate = dataupo != null ? string.Join(" & ", dataupo.Select(upodate => $" {upodate.date.Value.Date.ToString("dd MMM yyyy")}").Distinct()) : "",
                         DONo = dataupo != null ? string.Join(" & ", dono.Distinct()) : "",
                         UrnNo = dataupo != null ? string.Join(" & ", urnno.Distinct()) : "",
-                        DifferenceNominal = expedition != null ? (expedition.DPP + expedition.VatValue - expedition.IncomeTaxValue) - (expedition.AmountPaid + expedition.SupplierPayment) : 0
+                        DifferenceNominal = expedition != null ? (expedition.DPP + expedition.VatValue - expedition.IncomeTaxValue) - (expedition.AmountPaid + expedition.SupplierPayment) : 0,
+                        PaymentCorrection = expedition != null ? expedition.PaymentCorrection : 0
                     };
                     result.Add(vm);
                 }
@@ -504,6 +505,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
             dt.Columns.Add(new DataColumn() { ColumnName = "DPP", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "PPN", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "PPh", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Koreksi Pembayaran", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tempo", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Kategori", DataType = typeof(string) });
@@ -550,6 +552,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         item.DPP.ToString("#,##0.#0"),
                         item.VAT.ToString("#,##0.#0"),
                         item.IncomeTax.ToString("#,##0.#0"),
+                        item.PaymentCorrection.ToString("#,##0.#0"),
                         item.Total.ToString("#,##0.#0"),
                         item.DueDateDays,
                         item.Category,

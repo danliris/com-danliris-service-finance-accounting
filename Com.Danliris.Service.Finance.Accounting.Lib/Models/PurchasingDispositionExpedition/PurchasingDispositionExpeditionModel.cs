@@ -68,6 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PurchasingDispositi
         public double PayToSupplier { get; set; }
         public double AmountPaid { get; set; }
         public double SupplierPayment { get; set; }
+        public double PaymentCorrection { get; set; }
 
 
         public virtual ICollection<PurchasingDispositionExpeditionItemModel> Items { get; set; }
