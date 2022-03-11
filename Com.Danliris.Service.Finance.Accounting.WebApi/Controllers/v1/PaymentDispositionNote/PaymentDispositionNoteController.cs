@@ -78,6 +78,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
                 VerifyUser();
                 
                 ValidateService.Validate(viewModel);
+                viewModel.BankAccountCOA = viewModel.AccountBank.AccountCOA;
                 PaymentDispositionNoteModel model = Mapper.Map<PaymentDispositionNoteModel>(viewModel);
                 model.FixFailAutoMapper(viewModel.AccountBank.BankCode);
                 await Service.CreateAsync(model);
@@ -318,8 +319,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.PaymentD
 
                 foreach (var item in dataVM)
                 {
-                    item.AmountPaid = Service.GetAmountPaidAndIsPosted(item.Id).AmountPaid;
-                    item.IsPosted = Service.GetAmountPaidAndIsPosted(item.Id).IsPosted;
+                    var service = Service.GetAmountPaidAndIsPosted(item.dispositionNo);
+
+                    item.AmountPaid = service.AmountPaid;
+                    item.IsPosted = service.IsPosted;
                 }
 
                 Dictionary<string, object> Result =

@@ -73,18 +73,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                     }
                 }
 
-                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.FirstOrDefault(entity => entity.DispositionNo == item.DispositionNo && entity.BankExpenditureNoteNo == model.PaymentDispositionNo);
+                var pdeDisposition = DbContext.PurchasingDispositionExpeditions.Include(entity => entity.Items).LastOrDefault(entity => entity.DispositionNo == item.DispositionNo);
 
-                if (pdeDisposition != null && string.IsNullOrEmpty(pdeDisposition.BankExpenditureNoteNo))
+                if (pdeDisposition != null && string.IsNullOrWhiteSpace(pdeDisposition.BankExpenditureNoteNo))
                 {
-                    expedition.IsPaid = paidFlag;
-                    expedition.BankExpenditureNoteNo = model.PaymentDispositionNo;
-                    expedition.BankExpenditureNoteDate = model.PaymentDate;
-                    expedition.AmountPaid = item.AmountPaid;
-                    expedition.SupplierPayment = item.SupplierPayment;
+                    pdeDisposition.IsPaid = paidFlag;
+                    pdeDisposition.BankExpenditureNoteNo = model.PaymentDispositionNo;
+                    pdeDisposition.BankExpenditureNoteDate = model.PaymentDate;
+                    pdeDisposition.AmountPaid = item.AmountPaid;
+                    pdeDisposition.SupplierPayment = item.SupplierPayment;
                 }
                 else
                 {
+                    pdeDisposition.IsPaid = true;
+                    
                     PurchasingDispositionExpeditionModel pde = new PurchasingDispositionExpeditionModel
                     {
                         Active = pdeDisposition.Active,
@@ -115,9 +117,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         IncomeTaxRate = pdeDisposition.IncomeTaxRate,
                         IncomeTaxValue = pdeDisposition.IncomeTaxValue,
                         IsDeleted = pdeDisposition.IsDeleted,
-                        IsPaid = true,
+                        IsPaid = paidFlag,
                         IsPaidPPH = pdeDisposition.IsPaidPPH,
-                        Items = pdeDisposition.Items,
                         NotVerifiedReason = pdeDisposition.NotVerifiedReason,
                         PaymentDueDate = pdeDisposition.PaymentDueDate,
                         PaymentMethod = pdeDisposition.PaymentMethod,
@@ -140,6 +141,44 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         VerificationDivisionDate = pdeDisposition.VerificationDivisionDate,
                         VerifyDate = pdeDisposition.VerifyDate,
                     };
+
+                    List<PurchasingDispositionExpeditionItemModel> pdeItems = new List<PurchasingDispositionExpeditionItemModel>();
+
+                    foreach (var element in pdeDisposition.Items)
+                    {
+                        PurchasingDispositionExpeditionItemModel expeditionItem = new PurchasingDispositionExpeditionItemModel
+                        {
+                            Active = element.Active,
+                            CreatedAgent = element.CreatedAgent,
+                            CreatedBy = element.CreatedBy,
+                            CreatedUtc = element.CreatedUtc,
+                            DeletedAgent = element.DeletedAgent,
+                            DeletedBy = element.DeletedBy,
+                            DeletedUtc = element.DeletedUtc,
+                            EPOId = element.EPOId,
+                            EPONo = element.EPONo,
+                            IsDeleted = element.IsDeleted,
+                            LastModifiedAgent = element.LastModifiedAgent,
+                            LastModifiedBy = element.LastModifiedBy,
+                            LastModifiedUtc = element.LastModifiedUtc,
+                            Price = element.Price,
+                            ProductCode = element.ProductCode,
+                            ProductId = element.ProductId,
+                            ProductName = element.ProductName,
+                            PurchasingDispositionExpedition = pde,
+                            PurchasingDispositionDetailId = element.PurchasingDispositionDetailId,
+                            Quantity = element.Quantity,
+                            UnitCode = element.UnitCode,
+                            UnitId = element.UnitId,
+                            UnitName = element.UnitName,
+                            UomId = element.UomId,
+                            UomUnit = element.UomUnit
+                        };
+
+                        pdeItems.Add(expeditionItem);
+                    }
+
+                    pde.Items = pdeItems;
 
                     EntityExtension.FlagForCreate(pde, IdentityService.Username, UserAgent);
 
@@ -608,10 +647,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             return new ReadResponse<PurchasingDispositionExpeditionModel>(Data, TotalData, OrderDictionary, new List<string>());
         }
 
-        public ResponseAmountPaidandIsPosted GetAmountPaidAndIsPosted(int Id)
+        public ResponseAmountPaidandIsPosted GetAmountPaidAndIsPosted(string DispositionNo)
         {
-            var AmountPaid = (DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).ToList().Count == 0 ? 0 : DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).Sum(x => x.SupplierPayment));
-            var IsPosted = (DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).ToList().Count == 0 ? true : DbSet.Where(p => p.Id == (DbContext.PaymentDispositionNoteItems.Where(x => x.PurchasingDispositionExpeditionId == Id).LastOrDefault().PaymentDispositionNoteId)).LastOrDefault().IsPosted);
+            var paymentDispositionNote = DbContext.PaymentDispositionNoteItems.Where(x => x.DispositionNo == DispositionNo).ToList();
+            double AmountPaid = 0;
+            bool IsPosted = true;
+
+            if (paymentDispositionNote.Count > 0)
+            {
+                AmountPaid = paymentDispositionNote.Sum(x => x.SupplierPayment);
+                IsPosted = DbSet.Where(p => p.Id == (paymentDispositionNote.LastOrDefault().PaymentDispositionNoteId)).LastOrDefault().IsPosted;
+            }
 
             ResponseAmountPaidandIsPosted response = new ResponseAmountPaidandIsPosted();
             response.AmountPaid = AmountPaid;

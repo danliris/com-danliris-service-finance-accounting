@@ -230,7 +230,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.PaymentDispositi
 
             var xls = service.GetXls(new List<ReportDto>() { new ReportDto(1, "", DateTimeOffset.Now, 1, "", DateTimeOffset.Now, DateTimeOffset.Now, 1, "", 1, "", 1, "", false, "", 1, "", 1, "", 1, 1, "", "", 1, "", 1, 1, 1, 1, 1) });
             var xls2 = service.GetXls(new List<ReportDto>() { new ReportDto(1, "", DateTimeOffset.Now, 1, "", DateTimeOffset.Now, DateTimeOffset.Now, 1, "", 1, "", 1, "", false, "", 1, "", 1, "", 1, 1, "", "", 0, "", 1, 1, 1, 1, 1) });
-            
+
             Assert.NotNull(xls);
             Assert.NotNull(xls2);
         }
