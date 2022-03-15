@@ -88,6 +88,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransactio
         public string FinancingSourceReferenceNo { get; set; }
         public int FinancingSourceReferenceId { get; set; }
         // public decimal NominalOut { get; set; }
+        public decimal Rates { get; set; }
+        public decimal BankCharges { get; set; }
+        [MaxLength(50)]
+        public string SourceFundingType { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

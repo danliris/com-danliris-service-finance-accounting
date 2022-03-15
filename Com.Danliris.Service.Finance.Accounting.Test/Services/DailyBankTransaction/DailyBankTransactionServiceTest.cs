@@ -2,6 +2,7 @@ using AutoMapper;
 using Com.Danliris.Service.Finance.Accounting.Lib;
 using Com.Danliris.Service.Finance.Accounting.Lib.AutoMapperProfiles.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
@@ -9,6 +10,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.DailyBankTransactio
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.NewIntegrationViewModel;
 using Com.Danliris.Service.Finance.Accounting.Test.DataUtils.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Test.Helpers;
+using Com.Danliris.Service.Finance.Accounting.Test.Services.OthersExpenditureProofDocument.Helper;
 using Com.Moonlay.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -66,6 +68,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
             serviceProvider
                 .Setup(x => x.GetService(typeof(IIdentityService)))
                 .Returns(new IdentityService() { Token = "Token", Username = "Test", TimezoneOffset = 7 });
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IAutoJournalService)))
+                .Returns(new AutoJournalServiceTestHelper());
 
 
             return serviceProvider;
@@ -734,6 +740,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.DailyBankTransac
 
             dbContext.BankTransactionMonthlyBalances.AddRange(monthlyBalance);
             dbContext.SaveChanges();
+        }
+
+        [Fact]
+        public async Task Should_Success_Posting_Pendanaan_Internal_Transaction()
+        {
+            DailyBankTransactionService service = new DailyBankTransactionService(GetServiceProvider().Object, _dbContext(GetCurrentMethod()));
+            var model = _dataUtil(service).GetNewData();
+            model.SourceType = "Pendanaan";
+            model.SourceFundingType = "Internal";
+            //model.BankCharges = 100;
+            
+            await service.CreateInOutTransactionAsync(model);
+            var response = await service.Posting(new List<int>() { model.Id });
+            Assert.True(response > 0);
         }
     }
 }

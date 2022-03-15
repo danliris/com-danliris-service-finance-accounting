@@ -4,7 +4,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
 {
     public class ReportDto
     {
-        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber, double currencyRate, string bankCurrencyCode)
+        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber, double currencyRate, string bankCurrencyCode, double amountPaid, double supplierPayment, double dpp, double vatValue, double incomeTaxValue)
         {
             ExpenditureId = expenditureId;
             ExpenditureNo = expenditureNo;
@@ -28,7 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             VATAmount = vATAmount;
             if (bankCurrencyCode != currencyCode)
             {
-                PaidAmount = Math.Round(Math.Round(paidAmount, 2) * (currencyRate == 0 ? 1 : currencyRate), 2);
+                PaidAmount = Math.Round(paidAmount, 2);
             }
             else
             {
@@ -36,6 +36,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
             }
             TransactionType = transactionType;
             BankAccountNumber = bankAccountNumber;
+            DispositionNominal = supplierPayment;
+            DifferenceAmount = paidAmount - (amountPaid + supplierPayment);
         }
 
         public int ExpenditureId { get; private set; }
@@ -61,5 +63,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
         public double VATAmount { get; private set; }
         public double PaidAmount { get; private set; }
         public string TransactionType { get; private set; }
+        public double DispositionNominal { get; private set; }
+        public double DifferenceAmount { get; private set; }
     }
 }
