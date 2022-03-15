@@ -32,6 +32,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.OthersExpenditureProofD
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.DailyBankTransaction;
 using System.Net.Http;
+using Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionNote;
 
 namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransaction
 {
@@ -714,6 +715,161 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.JournalTransacti
             var resultDiffCurrency = await service.AutoJournalFromDailyBankTransaction(dailyModel, acc1, acc2);
             Assert.NotEqual(0, resultDiffCurrency);
 
+        }
+
+        [Fact]
+        public async Task Should_Success_AutoJournalFromDisposition()
+        {
+            //Setup
+            var dbContext = GetDbContext(GetCurrentMethod());
+            var serviceProviderMock = GetServiceProvider();
+
+            serviceProviderMock.Setup(s => s.GetService(typeof(FinanceDbContext))).Returns(dbContext);
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IHttpClientService)))
+                .Returns(new JournalHttpClientTestService());
+            Mock<IJournalTransactionService> journalTransactionServiceMock = new Mock<IJournalTransactionService>();
+
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IJournalTransactionService)))
+                .Returns(journalTransactionServiceMock.Object);
+
+            var masterCOAServiceMock = new MasterCOAService(serviceProviderMock.Object);
+            serviceProviderMock
+               .Setup(x => x.GetService(typeof(IMasterCOAService)))
+               .Returns(masterCOAServiceMock);
+            var service = new AutoJournalService(dbContext, serviceProviderMock.Object);
+
+            long nowTicks = DateTimeOffset.Now.Ticks;
+            string nowTicksA = $"{nowTicks}a";
+            string nowTicksB = $"{nowTicks}b";
+            PaymentDispositionNoteModel dispositionNoteModel = new PaymentDispositionNoteModel()
+            {
+                SupplierImport = true,
+                SupplierCode = nowTicksA,
+                SupplierName = nowTicksA,
+                SupplierId = 1,
+                BankCurrencyCode = nowTicksA,
+                BankCurrencyId = 1,
+                BankCurrencyRate = 1,
+                BankAccountName = nowTicksA,
+                BankAccountNumber = nowTicksA,
+                BankCode = nowTicksA,
+                BankId = 1,
+                BankName = nowTicksA,
+                BankAccountCOA = nowTicksA,
+                TransactionType = "Any",
+                BGCheckNumber = nowTicksA,
+                Amount = 1000,
+                PaymentDate = DateTimeOffset.Now,
+
+                Items = new List<PaymentDispositionNoteItemModel>
+                {
+                    new PaymentDispositionNoteItemModel
+                    {
+                        PurchasingDispositionExpeditionId=1,
+                        CategoryCode="CategoryId",
+                        CategoryId=1,
+                        CategoryName="CategoryName",
+                        DispositionDate=DateTimeOffset.Now,
+                        DispositionId=1,
+                        DispositionNo="DispositionNo",
+                        DivisionCode="DivisionCode",
+                        DivisionId=1,
+                        DivisionName="DivisionName",
+                        DPP=1000,
+                        VatValue=100,
+                        IncomeTaxValue=0,
+                        ProformaNo="ProformaNo",
+                        TotalPaid=1100,
+                        Details= new List<PaymentDispositionNoteDetailModel>
+                        {
+                            new PaymentDispositionNoteDetailModel
+                            {
+                                ProductCode="ProductCode",
+                                Price=1000,
+                                ProductId=1,
+                                ProductName="ProductName",
+                                UnitCode="UnitCode",
+                                UnitId=1,
+                                UnitName="UnitName",
+                                UomId=1,
+                                UomUnit="UomUnit",
+                                Quantity=1,
+                                PurchasingDispositionDetailId=1,
+                                PurchasingDispositionExpeditionItemId=1,
+                                EPOId="EPOId"
+                            }
+                        }
+
+                    },
+                    new PaymentDispositionNoteItemModel
+                    {
+                        PurchasingDispositionExpeditionId=1,
+                        CategoryCode="CategoryId",
+                        CategoryId=1,
+                        CategoryName="CategoryName",
+                        DispositionDate=DateTimeOffset.Now,
+                        DispositionId=1,
+                        DispositionNo="DispositionNo",
+                        DivisionCode="DivisionCode",
+                        DivisionId=1,
+                        DivisionName="DivisionName",
+                        DPP=1000,
+                        VatValue=0,
+                        IncomeTaxValue=0,
+                        ProformaNo="ProformaNo",
+                        TotalPaid=1000,
+                        SupplierPayment = 500,
+                        Details= new List<PaymentDispositionNoteDetailModel>
+                        {
+                            new PaymentDispositionNoteDetailModel
+                            {
+                                ProductCode="ProductCode",
+                                Price=1000,
+                                ProductId=1,
+                                ProductName="ProductName",
+                                UnitCode="UnitCode",
+                                UnitId=1,
+                                UnitName="UnitName",
+                                UomId=1,
+                                UomUnit="UomUnit",
+                                Quantity=1,
+                                PurchasingDispositionDetailId=1,
+                                PurchasingDispositionExpeditionItemId=1,
+                                EPOId="EPOId"
+                            },
+                            new PaymentDispositionNoteDetailModel
+                            {
+                                ProductCode="ProductCode",
+                                Price=1000,
+                                ProductId=1,
+                                ProductName="ProductName",
+                                UnitCode="UnitCode2",
+                                UnitId=1,
+                                UnitName="UnitName",
+                                UomId=1,
+                                UomUnit="UomUnit",
+                                Quantity=1,
+                                PurchasingDispositionDetailId=1,
+                                PurchasingDispositionExpeditionItemId=1,
+                                EPOId="EPOId"
+                            }
+                        }
+
+                    }
+                }
+            };
+
+            //Act
+            var result = await service.AutoJournalFromDisposition(dispositionNoteModel, "Username", "UserAgent");
+
+            dispositionNoteModel.SupplierImport = false;
+            var result2 = await service.AutoJournalFromDisposition(dispositionNoteModel, "Username", "UserAgent");
+
+            //Assert
+            Assert.Equal(0, result);
+            Assert.Equal(0, result2);
         }
     }
 
