@@ -10,8 +10,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 {
     public interface IGarmentPurchasingExpeditionReportService
     {
-        List<GarmentPurchasingExpeditionModel> GetReport(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset startDate, DateTimeOffset endDate);
-        List<GarmentPurchasingExpeditionReportViewModel> GetReportViewModel(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset startDate, DateTimeOffset endDate);
-        MemoryStream GenerateExcel(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset startDate, DateTimeOffset endDate);
+        List<GarmentPurchasingExpeditionReportViewModel> GetReport(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset startDate, DateTimeOffset endDate, DateTimeOffset startDateAccounting, DateTimeOffset endDateAccounting);
+        List<GarmentPurchasingExpeditionReportViewModel> GetReportViewModel(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset startDate, DateTimeOffset endDate, DateTimeOffset startDateAccounting, DateTimeOffset endDateAccounting);
+        MemoryStream GenerateExcel(int internalNoteId, int supplierId, GarmentPurchasingExpeditionPosition position, DateTimeOffset startDate, DateTimeOffset endDate, DateTimeOffset startDateAccounting, DateTimeOffset endDateAccounting);
     }
 }
