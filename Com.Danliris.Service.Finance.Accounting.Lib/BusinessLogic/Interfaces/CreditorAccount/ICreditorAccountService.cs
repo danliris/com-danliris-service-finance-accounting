@@ -24,6 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.C
         Task<int> DeleteFromUnitReceiptNoteAsync(CreditorAccountUnitReceiptNotePostedViewModel viewModel);
         Task<int> DeleteFromUnitReceiptNoteAsync(int id);
         Task<int> CreateFromBankExpenditureNoteAsync(CreditorAccountBankExpenditureNotePostedViewModel viewModel);
+        Task<int> CreateFromListBankExpenditureNoteAsync(List<CreditorAccountBankExpenditureNotePostedViewModel> viewModel);
         Task<int> UpdateFromBankExpenditureNoteAsync(CreditorAccountBankExpenditureNotePostedViewModel viewModel);
         Task<int> DeleteFromBankExpenditureNoteAsync(int id);
         Task<int> DeleteFromBankExpenditureNoteListAsync(string code);
