@@ -307,5 +307,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.Masters
             int statusCode = GetStatusCode(response);
             Assert.Equal((int)HttpStatusCode.NoContent, statusCode);
         }
+
+        [Fact]
+        public void GetCOAHeaderSubheader_WithoutException_ReturnOK()
+        {
+            var mocks = GetMocks();
+            mocks.Service.Setup(f => f.GetAll()).Returns(new List<COAModel>());
+            mocks.Mapper.Setup(f => f.Map<List<COAViewModel>>(It.IsAny<List<COAModel>>())).Returns(ViewModels);
+
+            var response = GetController(mocks).GetCOAHeaderSubheader();
+            Assert.Equal((int)HttpStatusCode.OK, GetStatusCode(response));
+        }
     }
 }
