@@ -67,7 +67,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             IncomeTax = new IncomeTaxViewModel()
                             {
                                 Rate = 1
+                            },
+                             VatTax = new VatTaxViewModel()
+                            {
+                                Rate = "10"
                             }
+
                         },
                         new VBRealizationDocumentNonPOExpenditureItemViewModel()
                         {
@@ -342,6 +347,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             IncomeTax = new IncomeTaxViewModel()
                             {
                                 Rate = 1
+                            },
+                            VatTax = new VatTaxViewModel()
+                            {
+                                Rate = "10"
                             }
                         },
                         new VBRealizationDocumentNonPOExpenditureItemViewModel()
