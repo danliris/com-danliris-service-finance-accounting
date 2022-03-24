@@ -67,7 +67,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             IncomeTax = new IncomeTaxViewModel()
                             {
                                 Rate = 1
+                            },
+                             VatTax = new VatTaxViewModel()
+                            {
+                                Rate = "10"
                             }
+
                         },
                         new VBRealizationDocumentNonPOExpenditureItemViewModel()
                         {
@@ -210,7 +215,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         {
                             DateDetail = DateTimeOffset.Now,
                             BLAWBNumber = "1",
-                            IsGetPPn = true,
+                            IsGetPPn = false,
                             IsGetPPh = false,
                             IncomeTaxBy = "Supplier",
                             Remark = "Remark",
@@ -220,7 +225,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         {
                             DateDetail = DateTimeOffset.Now,
                             BLAWBNumber = "1",
-                            IsGetPPn = true,
+                            IsGetPPn = false,
                             IsGetPPh = false,
                             IncomeTaxBy = "Supplier",
                             Remark = "Remark",
@@ -342,6 +347,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             IncomeTax = new IncomeTaxViewModel()
                             {
                                 Rate = 1
+                            },
+                            VatTax = new VatTaxViewModel()
+                            {
+                                Rate = "10"
                             }
                         },
                         new VBRealizationDocumentNonPOExpenditureItemViewModel()

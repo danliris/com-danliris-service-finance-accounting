@@ -169,7 +169,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 if (itm.IsGetPPn)
                 {
-                    var temp = itm.Amount * 0.1m;
+                    var temp = itm.Amount * (Convert.ToDecimal(itm.VatTax.Rate)/100);
                     total_all = itm.Amount + temp;
                 }
                 else
