@@ -215,7 +215,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         {
                             DateDetail = DateTimeOffset.Now,
                             BLAWBNumber = "1",
-                            IsGetPPn = true,
+                            IsGetPPn = false,
                             IsGetPPh = false,
                             IncomeTaxBy = "Supplier",
                             Remark = "Remark",
@@ -225,7 +225,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                         {
                             DateDetail = DateTimeOffset.Now,
                             BLAWBNumber = "1",
-                            IsGetPPn = true,
+                            IsGetPPn = false,
                             IsGetPPh = false,
                             IncomeTaxBy = "Supplier",
                             Remark = "Remark",
