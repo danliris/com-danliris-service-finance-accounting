@@ -197,6 +197,72 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBRealizationD
         }
 
         [Fact]
+        public void ShouldHaveError_Validate_When_VatTax_NotExist()
+        {
+            VBRealizationDocumentNonPOViewModel dto = new VBRealizationDocumentNonPOViewModel()
+            {
+                Date = DateTimeOffset.Now,
+                VBNonPOType = "Dengan Nomor VB",
+                Currency = new CurrencyViewModel()
+                {
+                    Id = 1
+                },
+                VBDocument = new VBRequestDocumentNonPODto()
+                {
+                    Id = 1
+                },
+                Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
+                {
+                    new VBRealizationDocumentNonPOExpenditureItemViewModel()
+                    {
+                         IsGetPPn=true,
+                        DateDetail=DateTimeOffset.Now,
+                    }
+                },
+                UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
+            };
+
+            var result = dto.Validate(null);
+
+            Assert.True(0 < result.Count());
+        }
+
+        [Fact]
+        public void ShouldHaveError_Validate_When_VatTax_Equal_Zero()
+        {
+            VBRealizationDocumentNonPOViewModel dto = new VBRealizationDocumentNonPOViewModel()
+            {
+                Date = DateTimeOffset.Now,
+                VBNonPOType = "Dengan Nomor VB",
+                Currency = new CurrencyViewModel()
+                {
+                    Id = 1
+                },
+                VBDocument = new VBRequestDocumentNonPODto()
+                {
+                    Id = 1
+                },
+                Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
+                {
+                    new VBRealizationDocumentNonPOExpenditureItemViewModel()
+                    {
+                         IsGetPPn=true,
+                        VatTax=new VatTaxViewModel()
+                        {
+                            Id="0"
+                        },
+                        DateDetail=DateTimeOffset.Now,
+                    }
+                },
+                UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
+            };
+
+            var result = dto.Validate(null);
+
+            Assert.True(0 < result.Count());
+        }
+
+        [Fact]
         public void ShouldHaveError_Validate_When_IncomeTaxId_Equal_Zero()
         {
             VBRealizationDocumentNonPOViewModel dto = new VBRealizationDocumentNonPOViewModel()

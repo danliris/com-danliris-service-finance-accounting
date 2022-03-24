@@ -97,6 +97,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                                 Name="Name",
                                 Rate=1
                             },
+                            VatTax=new VatTaxViewModel()
+                            {
+                                Id="1",
+                                Rate="10"
+                            },
                             DateDetail=DateTimeOffset.Now,
                             IncomeTaxBy="Supplier",
                             IsGetPPh=true,
@@ -226,7 +231,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             },
                             DateDetail=DateTimeOffset.Now,
                             IncomeTaxBy="Name",
-                            IsGetPPh=true,
+                            IsGetPPh=false,
                             IsGetPPn=false,
                             Remark="Remark",
                             Total=1
@@ -349,6 +354,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             {
                                 Name="Name",
                                 Rate=1
+                            },
+                            VatTax=new VatTaxViewModel()
+                            {
+                                Id="1",
+                                Rate="10"
                             },
                             DateDetail=DateTimeOffset.Now,
                             IncomeTaxBy="Supplier",
@@ -475,6 +485,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             {
                                 Name="Name",
                                 Rate=1
+                            },
+                            VatTax=new VatTaxViewModel()
+                            {
+                                Id="1",
+                                Rate="10"
                             },
                             DateDetail=DateTimeOffset.Now,
                             IncomeTaxBy="Supplier",
@@ -618,6 +633,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.PDFTemplates
                             {
                                 Name="Name",
                                 Rate=1
+                            },
+                            VatTax=new VatTaxViewModel()
+                            {
+                                Id="1",
+                                Rate="10"
                             },
                             DateDetail=DateTimeOffset.Now,
                             IncomeTaxBy="Supplier",

@@ -50,6 +50,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Amount = (decimal)element.UnitPaymentOrder.Amount.GetValueOrDefault();
             Date = element.UnitPaymentOrder.Date.GetValueOrDefault();
             UseVat = element.UnitPaymentOrder.UseVat.GetValueOrDefault();
+            VatId = element.UnitPaymentOrder.VatTax.Id;
+            VatRate = element.UnitPaymentOrder.VatTax.Rate;
             UseIncomeTax = element.UnitPaymentOrder.UseIncomeTax.GetValueOrDefault();
             IncomeTaxId = element.UnitPaymentOrder.IncomeTax.Id.GetValueOrDefault();
             IncomeTaxBy = element.UnitPaymentOrder.IncomeTaxBy;
