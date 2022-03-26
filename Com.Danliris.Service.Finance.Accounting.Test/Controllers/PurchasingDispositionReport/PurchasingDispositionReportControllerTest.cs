@@ -68,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.PurchasingDis
             var mocks = GetMocks();
             mocks.Service.Setup(f => f.GetReportAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<DateTimeOffset?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>())).ThrowsAsync(new Exception());
 
-            var response = await GetController(mocks).GetReportAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(),It.IsAny<int>(), It.IsAny<int>(),"{}","{}");
+            var response = await GetController(mocks).GetReportAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(),It.IsAny<int>(), It.IsAny<int>(),"{}","{}");
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
  

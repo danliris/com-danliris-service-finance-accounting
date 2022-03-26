@@ -178,7 +178,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 if (itm.UseVat)
                 {
-                    var temp = itm.Amount * (decimal)0.1;
+                    var temp = itm.Amount * (Convert.ToDecimal(itm.VatRate) / 100);
                     total_all = itm.Amount + temp;
                 }
                 else
