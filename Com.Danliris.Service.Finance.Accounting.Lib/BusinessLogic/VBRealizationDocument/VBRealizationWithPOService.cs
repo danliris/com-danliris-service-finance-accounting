@@ -115,9 +115,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             {
                 var nominal = element.UnitPaymentOrder.Amount.GetValueOrDefault();
                 var vatNominal = (decimal)0.0;
-                var incomeTaxNominal = (decimal)0.0;
+                var incomeTaxNominal = (decimal)0.0; 
                 if (element.UnitPaymentOrder.UseVat.GetValueOrDefault())
-                    vatNominal = element.UnitPaymentOrder.Amount.GetValueOrDefault() * (decimal)0.1;
+                    vatNominal = element.UnitPaymentOrder.Amount.GetValueOrDefault() * (Convert.ToDecimal(element.UnitPaymentOrder.VatTax.Rate)/100);
 
 
                 if (element.UnitPaymentOrder.UseIncomeTax.GetValueOrDefault() && element.UnitPaymentOrder.IncomeTaxBy.ToUpper() == "SUPPLIER")
@@ -342,6 +342,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                                 IncomeTaxBy = item.IncomeTaxBy,
                                 UseIncomeTax = item.UseIncomeTax,
                                 UseVat = item.UseVat,
+                                VatTax = new VatTaxDto()
+                                {
+                                    Id = item.VatId,
+                                    Rate = item.VatRate
+                                },
                                 Division = new DivisionDto()
                                 {
                                     Id = item.DivisionId,

@@ -128,7 +128,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
                             }
                         }
 
-                            
+
+                    }
+
+                    if (item.IsGetPPn)
+                    {
+                        if (!IsInklaring)
+                        {
+                            if (item.VatTax == null || string.IsNullOrWhiteSpace(item.VatTax.Id))
+                            {
+                                CountItemsError++;
+                                ItemsError += "'VatTax': 'Rate PPn Harus DiIsi!', ";
+                            }
+                        }
                     }
 
                     if (item.Amount <= 0)
