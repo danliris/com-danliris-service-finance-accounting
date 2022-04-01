@@ -45,49 +45,51 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasi
         public DateTimeOffset? AccountingAcceptedDate { get; set; }
         public string AccountingAcceptedBy { get; set; }
         public DateTimeOffset? VerificationSendDate { get; set; }
-        public GarmentPurchasingExpeditionReportViewModel(GarmentPurchasingExpeditionModel model)
-        {
-            InternalNoteId = model.InternalNoteId;
-            InternalNoteNo = model.InternalNoteNo;
-            InternalNoteDate = model.InternalNoteDate;
-            InternalNoteDueDate = model.InternalNoteDueDate;
-            SupplierId = model.SupplierId;
-            SupplierName = model.SupplierName;
-            DPP = model.DPP;
-            VAT = model.VAT;
-            CorrectionAmount = model.CorrectionAmount;
-            IncomeTax = model.IncomeTax;
-            TotalPaid = model.TotalPaid;
-            CurrencyId = model.CurrencyId;
-            CurrencyCode = model.CurrencyCode;
-            PaymentType = model.PaymentType;
-            InvoicesNo = model.InvoicesNo;
-            PaymentMethod = model.PaymentMethod;
-            PaymentDueDays = model.PaymentDueDays;
-            Remark = model.Remark;
-            Position = model.Position;
-            SendToVerificationDate = model.SendToVerificationDate;
-            SendToVerificationBy = model.SendToVerificationBy;
-            VerificationAcceptedDate = model.VerificationAcceptedDate;
-            VerificationAcceptedBy = model.VerificationAcceptedBy;
-            SendToCashierDate = model.SendToCashierDate;
-            SendToCashierBy = model.SendToCashierBy;
-            CashierAcceptedDate = model.CashierAcceptedDate;
-            CashierAcceptedBy = model.CashierAcceptedBy;
-            SendToPurchasingDate = model.SendToPurchasingDate;
-            SendToPurchasingBy = model.SendToPurchasingBy;
-            SendToPurchasingRemark = model.SendToPurchasingRemark;
-            SendToAccountingDate = model.SendToAccountingDate;
-            SendToAccountingBy = model.SendToAccountingBy;
-            AccountingAcceptedDate = model.AccountingAcceptedDate;
-            AccountingAcceptedBy = model.AccountingAcceptedBy;
+        public string BankExpenditureNoteNo { get; set; }
+        public DateTimeOffset? BankExpenditureNoteDate { get; set; }
+        //public GarmentPurchasingExpeditionReportViewModel(GarmentPurchasingExpeditionModel model)
+        //{
+        //    InternalNoteId = model.InternalNoteId;
+        //    InternalNoteNo = model.InternalNoteNo;
+        //    InternalNoteDate = model.InternalNoteDate;
+        //    InternalNoteDueDate = model.InternalNoteDueDate;
+        //    SupplierId = model.SupplierId;
+        //    SupplierName = model.SupplierName;
+        //    DPP = model.DPP;
+        //    VAT = model.VAT;
+        //    CorrectionAmount = model.CorrectionAmount;
+        //    IncomeTax = model.IncomeTax;
+        //    TotalPaid = model.TotalPaid;
+        //    CurrencyId = model.CurrencyId;
+        //    CurrencyCode = model.CurrencyCode;
+        //    PaymentType = model.PaymentType;
+        //    InvoicesNo = model.InvoicesNo;
+        //    PaymentMethod = model.PaymentMethod;
+        //    PaymentDueDays = model.PaymentDueDays;
+        //    Remark = model.Remark;
+        //    Position = model.Position;
+        //    SendToVerificationDate = model.SendToVerificationDate;
+        //    SendToVerificationBy = model.SendToVerificationBy;
+        //    VerificationAcceptedDate = model.VerificationAcceptedDate;
+        //    VerificationAcceptedBy = model.VerificationAcceptedBy;
+        //    SendToCashierDate = model.SendToCashierDate;
+        //    SendToCashierBy = model.SendToCashierBy;
+        //    CashierAcceptedDate = model.CashierAcceptedDate;
+        //    CashierAcceptedBy = model.CashierAcceptedBy;
+        //    SendToPurchasingDate = model.SendToPurchasingDate;
+        //    SendToPurchasingBy = model.SendToPurchasingBy;
+        //    SendToPurchasingRemark = model.SendToPurchasingRemark;
+        //    SendToAccountingDate = model.SendToAccountingDate;
+        //    SendToAccountingBy = model.SendToAccountingBy;
+        //    AccountingAcceptedDate = model.AccountingAcceptedDate;
+        //    AccountingAcceptedBy = model.AccountingAcceptedBy;
 
-            if (Position == GarmentPurchasingExpeditionPosition.SendToCashier || Position == GarmentPurchasingExpeditionPosition.CashierAccepted || Position == GarmentPurchasingExpeditionPosition.DispositionPayment)
-                VerificationSendDate = model.SendToCashierDate;
-            else if (Position == GarmentPurchasingExpeditionPosition.SendToAccounting || Position == GarmentPurchasingExpeditionPosition.AccountingAccepted)
-                VerificationSendDate = model.SendToAccountingDate;
-            else if (Position == GarmentPurchasingExpeditionPosition.Purchasing || Position == GarmentPurchasingExpeditionPosition.SendToPurchasing)
-                VerificationSendDate = model.SendToPurchasingDate;
-        }
+        //    if (Position == GarmentPurchasingExpeditionPosition.SendToCashier || Position == GarmentPurchasingExpeditionPosition.CashierAccepted || Position == GarmentPurchasingExpeditionPosition.DispositionPayment)
+        //        VerificationSendDate = model.SendToCashierDate;
+        //    else if (Position == GarmentPurchasingExpeditionPosition.SendToAccounting || Position == GarmentPurchasingExpeditionPosition.AccountingAccepted)
+        //        VerificationSendDate = model.SendToAccountingDate;
+        //    else if (Position == GarmentPurchasingExpeditionPosition.Purchasing || Position == GarmentPurchasingExpeditionPosition.SendToPurchasing)
+        //        VerificationSendDate = model.SendToPurchasingDate;
+        //}
     }
 }
