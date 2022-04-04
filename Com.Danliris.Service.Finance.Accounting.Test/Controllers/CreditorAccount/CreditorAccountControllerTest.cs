@@ -156,7 +156,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             mocks.ValidateService.Setup(s => s.Validate(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Verifiable();
             mocks.Service.Setup(s => s.CreateFromUnitReceiptNoteAsync(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).ReturnsAsync(1);
 
-            var response = await GetController(mocks).UnitReceiptNotePost(new CreditorAccountUnitReceiptNotePostedViewModel());
+            var response = await GetController(mocks).UnitReceiptNotePost(new List<CreditorAccountUnitReceiptNotePostedViewModel>());
             Assert.Equal((int)HttpStatusCode.Created, GetStatusCode(response));
         }
 
@@ -166,7 +166,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             var mocks = GetMocks();
             mocks.ValidateService.Setup(s => s.Validate(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Throws(GetServiceValidationExeption());
 
-            var response = await GetController(mocks).UnitReceiptNotePost(new CreditorAccountUnitReceiptNotePostedViewModel());
+            var response = await GetController(mocks).UnitReceiptNotePost(new List<CreditorAccountUnitReceiptNotePostedViewModel>());
             Assert.Equal((int)HttpStatusCode.BadRequest, GetStatusCode(response));
         }
 
@@ -177,7 +177,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.CreditorAccou
             mocks.ValidateService.Setup(s => s.Validate(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Verifiable();
             mocks.Service.Setup(s => s.CreateFromUnitReceiptNoteAsync(It.IsAny<CreditorAccountUnitReceiptNotePostedViewModel>())).Throws(new Exception());
 
-            var response = await GetController(mocks).UnitReceiptNotePost(new CreditorAccountUnitReceiptNotePostedViewModel());
+            var response = await GetController(mocks).UnitReceiptNotePost(new List<CreditorAccountUnitReceiptNotePostedViewModel>());
             Assert.Equal((int)HttpStatusCode.InternalServerError, GetStatusCode(response));
         }
 
