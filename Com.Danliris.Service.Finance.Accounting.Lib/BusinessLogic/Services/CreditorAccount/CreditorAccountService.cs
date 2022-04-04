@@ -1023,7 +1023,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             {
                 foreach (var item in viewModel.CreditorAccounts)
                 {
-                    var creditorAccount = await DbContext.CreditorAccounts.FirstOrDefaultAsync(x => x.SupplierCode == item.SupplierCode && x.UnitReceiptNoteNo == item.Code && string.IsNullOrWhiteSpace(x.MemoNo));
+                    var creditorAccount = await DbContext.CreditorAccounts.FirstOrDefaultAsync(x => x.SupplierCode == item.SupplierCode && x.UnitReceiptNoteNo == item.Code && x.ExternalPurchaseOrderNo == item.ExternalPurchaseOrderNo);
 
                     if (creditorAccount != null)
                     {
@@ -1035,46 +1035,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
                         creditorAccount.MemoMutation = item.MemoMutation;
                         creditorAccount.MemoPPN = item.MemoPPN;
                         //creditorAccount.PaymentDuration = viewModel.PaymentDuration;
-                    }
-                    else
-                    {
-                        var existingCreditorAccount = await DbContext.CreditorAccounts.FirstOrDefaultAsync(x => x.SupplierCode == item.SupplierCode && x.UnitReceiptNoteNo == item.Code);
-
-                        var insertCreditorAccount = new CreditorAccountModel
-                        {
-                            InvoiceNo = viewModel.InvoiceNo,
-                            MemoNo = viewModel.MemoNo,
-                            MemoDate = viewModel.MemoDate,
-                            MemoDPP = item.MemoDPP,
-                            MemoMutation = item.MemoMutation,
-                            MemoPPN = item.MemoPPN,
-                            UnitReceiptNotePPN = existingCreditorAccount.UnitReceiptNotePPN,
-                            FinalBalance = existingCreditorAccount.UnitReceiptNoteDPP + existingCreditorAccount.UnitReceiptNotePPN,
-                            SupplierCode = item.SupplierCode,
-                            SupplierName = existingCreditorAccount.SupplierName,
-                            SupplierIsImport = existingCreditorAccount.SupplierIsImport,
-                            UnitReceiptMutation = existingCreditorAccount.UnitReceiptNoteDPP + existingCreditorAccount.UnitReceiptNotePPN,
-                            UnitReceiptNoteDate = existingCreditorAccount.UnitReceiptNoteDate,
-                            UnitReceiptNoteDPP = existingCreditorAccount.UnitReceiptNoteDPP,
-                            UnitReceiptNoteNo = item.Code,
-                            CurrencyCode = existingCreditorAccount.CurrencyCode,
-                            DPPCurrency = existingCreditorAccount.DPPCurrency,
-                            CurrencyRate = existingCreditorAccount.CurrencyRate,
-                            PaymentDuration = existingCreditorAccount.PaymentDuration,
-                            Products = existingCreditorAccount.Products,
-                            DivisionId = existingCreditorAccount.DivisionId,
-                            DivisionCode = existingCreditorAccount.DivisionCode,
-                            DivisionName = existingCreditorAccount.DivisionName,
-                            UnitId = existingCreditorAccount.UnitId,
-                            UnitCode = existingCreditorAccount.UnitCode,
-                            UnitName = existingCreditorAccount.UnitName,
-                            ExternalPurchaseOrderNo = existingCreditorAccount.ExternalPurchaseOrderNo,
-                            VATAmount = existingCreditorAccount.VATAmount,
-                            IncomeTaxAmount = existingCreditorAccount.IncomeTaxAmount,
-                            IncomeTaxNo = existingCreditorAccount.IncomeTaxNo
-                        };
-
-                        CreateModel(insertCreditorAccount);
                     }
 
                     //creditorAccount.InvoiceNo = viewModel.InvoiceNo;
