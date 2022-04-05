@@ -166,14 +166,17 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Creditor
         }
 
         [HttpPost("unit-receipt-note")]
-        public async Task<ActionResult> UnitReceiptNotePost([FromBody] CreditorAccountUnitReceiptNotePostedViewModel viewModel)
+        public async Task<ActionResult> UnitReceiptNotePost([FromBody] List<CreditorAccountUnitReceiptNotePostedViewModel> viewModel)
         {
             try
             {
                 VerifyUser();
                 ValidateService.Validate(viewModel);
 
-                await Service.CreateFromUnitReceiptNoteAsync(viewModel);
+                foreach (var model in viewModel)
+                {
+                    await Service.CreateFromUnitReceiptNoteAsync(model);
+                }
 
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)

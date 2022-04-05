@@ -28,6 +28,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CreditorAccount
         public string PaymentDuration { get; set; }
         public string MemoNo { get; set; }
         public string UnitReceiptNoteNo { get; set; }
+        public string ExternalPurchaseOrderNo { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
