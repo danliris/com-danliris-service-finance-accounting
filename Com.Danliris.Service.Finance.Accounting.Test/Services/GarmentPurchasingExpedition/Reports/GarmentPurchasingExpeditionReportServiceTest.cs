@@ -71,7 +71,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
 
             var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
 
-            var reportResponse = service.GenerateExcel(0, 0, GarmentPurchasingExpeditionPosition.SendToVerification, DateTimeOffset.Now.AddDays(-7), DateTimeOffset.Now.AddDays(7));
+            var reportResponse = service.GenerateExcel(0, 0, GarmentPurchasingExpeditionPosition.SendToVerification, DateTimeOffset.Now.AddDays(-7), DateTimeOffset.Now.AddDays(7), DateTimeOffset.Now.AddDays(-7), DateTimeOffset.Now.AddDays(7));
 
             Assert.NotNull(reportResponse);
         }
@@ -88,8 +88,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
 
             var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
 
-            var reportResponse = service.GenerateExcel(1, 1, GarmentPurchasingExpeditionPosition.VerificationAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
-            var reportResponse2 = service.GenerateExcel(1, 1, GarmentPurchasingExpeditionPosition.SendToCashier, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse = service.GenerateExcel(1, 1, GarmentPurchasingExpeditionPosition.VerificationAccepted, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse2 = service.GenerateExcel(1, 1, GarmentPurchasingExpeditionPosition.SendToCashier, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now);
             
             Assert.NotNull(reportResponse);
             Assert.NotNull(reportResponse2);
@@ -107,8 +107,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
 
             var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
 
-            var reportResponse = service.GetReport(1, 1, 0, DateTimeOffset.Now, DateTimeOffset.Now);
-            var reportResponse2 = service.GetReport(1, 1, GarmentPurchasingExpeditionPosition.CashierAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse = service.GetReport(1, 1, 0, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse2 = service.GetReport(1, 1, GarmentPurchasingExpeditionPosition.CashierAccepted, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now);
             
             Assert.NotNull(reportResponse);
             Assert.NotNull(reportResponse2);
@@ -126,8 +126,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.GarmentPurchasin
 
             var service = new GarmentPurchasingExpeditionReportService(serviceProviderMock.Object);
 
-            var reportResponse = service.GetReportViewModel(1, 1, GarmentPurchasingExpeditionPosition.Purchasing, DateTimeOffset.Now, DateTimeOffset.Now);
-            var reportResponse2 = service.GetReportViewModel(1, 1, GarmentPurchasingExpeditionPosition.AccountingAccepted, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse = service.GetReportViewModel(1, 1, GarmentPurchasingExpeditionPosition.Purchasing, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now);
+            var reportResponse2 = service.GetReportViewModel(1, 1, GarmentPurchasingExpeditionPosition.AccountingAccepted, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now);
 
             Assert.NotNull(reportResponse);
             Assert.NotNull(reportResponse2);

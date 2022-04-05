@@ -1023,7 +1023,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cre
             {
                 foreach (var item in viewModel.CreditorAccounts)
                 {
-                    var creditorAccount = await DbContext.CreditorAccounts.FirstOrDefaultAsync(x => x.SupplierCode == item.SupplierCode && x.UnitReceiptNoteNo == item.Code);
+                    var creditorAccount = await DbContext.CreditorAccounts.FirstOrDefaultAsync(x => x.SupplierCode == item.SupplierCode && x.UnitReceiptNoteNo == item.Code && x.ExternalPurchaseOrderNo == item.ExternalPurchaseOrderNo);
 
                     if (creditorAccount != null)
                     {
