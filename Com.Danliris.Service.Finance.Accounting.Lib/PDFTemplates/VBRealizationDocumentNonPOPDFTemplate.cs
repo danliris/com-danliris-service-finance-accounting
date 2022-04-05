@@ -149,7 +149,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             var currencyCode = viewModel.Currency.Code;
             var currencydescription = viewModel.Currency.Description;
 
-            foreach (var itm in viewModel.Items)
+            foreach (var itm in viewModel.Items.OrderBy(a => a.DateDetail))
             {
                 // No
                 cellHeaderBody1.Phrase = new Phrase(index.ToString(), normal_font);
