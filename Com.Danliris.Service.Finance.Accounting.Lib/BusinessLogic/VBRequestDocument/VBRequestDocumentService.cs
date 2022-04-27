@@ -297,7 +297,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     element.DealUOM.Unit,
                     element.Conversion.GetValueOrDefault(),
                     element.Price.GetValueOrDefault(),
-                    element.UseVat
+                    element.UseVat,
+                    element.VatTax.Id,
+                    element.VatTax.Rate
                     );
 
                 EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
@@ -569,6 +571,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                                     Id = entity.IncomeTaxId,
                                     Name = entity.IncomeTaxName,
                                     Rate = entity.IncomeTaxRate
+                                },
+                                VatTax = new VatTaxDto()
+                                { 
+                                
                                 },
                                 IncomeTaxBy = entity.IncomeTaxBy,
                                 Unit = new UnitDto()
