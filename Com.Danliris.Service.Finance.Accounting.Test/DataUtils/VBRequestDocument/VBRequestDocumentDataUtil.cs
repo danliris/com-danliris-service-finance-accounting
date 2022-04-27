@@ -387,7 +387,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRequestDocume
                                        },
                                        Code="code"
                                    },
-                                   UseVat=true
+                                   UseVat=true,
+                                   VatTax = new VatTaxDto()
+                                   { 
+                                        Id = "1",
+                                        Rate = "1"
+                                   }
                                }
                            },
 
