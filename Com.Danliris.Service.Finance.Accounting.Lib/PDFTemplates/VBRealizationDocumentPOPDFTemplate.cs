@@ -383,9 +383,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             document.Add(headerTable_B);
 
             // Beban Unit
-            cellHeaderBody.Colspan = 4;
+            cellHeaderBody.Colspan = 3;
             cellHeaderBody.HorizontalAlignment = Element.ALIGN_LEFT;
             cellHeaderBody.Phrase = new Phrase("Beban Unit:", bold_font);
+            headerTable3a.AddCell(cellHeaderBody);
+
+            cellHeaderBody.Colspan = 1;
+            cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
+            cellHeaderBody.Phrase = new Phrase("DPP", normal_font_8);
             headerTable3a.AddCell(cellHeaderBody);
 
             if ((GetPPhValueDanliris(viewModel)) != 0 || (GetPPhValue(viewModel)) != 0)
