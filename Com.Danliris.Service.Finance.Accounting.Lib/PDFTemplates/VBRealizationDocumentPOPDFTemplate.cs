@@ -453,7 +453,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
             #region NewCheckbox
             List<PdfFormField> annotations = new List<PdfFormField>();
-            var unitCosts = viewModel.UnitCosts.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
+
+            var itemsQuery = viewModel.Items;
+            var unitCostsQuery = viewModel.UnitCosts;
+
+            var joinQuery = (from a in itemsQuery
+                             join b in unitCostsQuery on a.Id equals b.VBRealizationDocumentExpenditureItemId
+                             select new
+                             {
+                                 UnitId = b.UnitId,
+                                 UnitName = b.UnitName,
+                                 UnitCode = b.UnitCode,
+                                 Amount = b.Amount,
+                                 AmountNom = a.UseVat == true ? (100 * b.Amount / (100 + Convert.ToDecimal(a.VatRate))) : b.Amount,
+
+
+                             }
+
+
+                );
+
+
+
+            //var unitCosts = viewModel.UnitCosts.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
+
+            var unitCosts = joinQuery.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
+            
+
             foreach (var item in unitCosts)
             {
                 PdfPCell cellform = new PdfPCell() { Border = Rectangle.NO_BORDER };
@@ -505,7 +531,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 }
                 else
                 {
-                    var nom = item.Sum(s => s.Amount).ToString("#,##0.00", new CultureInfo("id-ID"));
+                    //var nom = item.Sum(s => s.Amount).ToString("#,##0.00", new CultureInfo("id-ID"));
+                    var nom = item.Sum(s => s.AmountNom).ToString("#,##0.00", new CultureInfo("id-ID"));
 
                     // Beban Unit Item Mata Uang
                     cellHeaderBody.Colspan = 1;

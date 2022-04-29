@@ -147,18 +147,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             _dbContext.SaveChanges();
 
             AddItems(model.Id, form.Items, model.SuppliantDivisionName);
-
-            AddUnitCosts(model.Id, form.Items.SelectMany(element => element.UnitPaymentOrder.UnitCosts).ToList());
+            
+            //AddUnitCosts(model.Id, form.Items.SelectMany(element => element.UnitPaymentOrder.UnitCosts).ToList());
 
             _dbContext.SaveChanges();
             return model.Id;
         }
 
-        private void AddUnitCosts(int id, List<UnitCostDto> unitCosts)
+        private void AddUnitCosts(int id, List<UnitCostDto> unitCosts, int VBExpenditureId)
         {
             var models = unitCosts.Select(element =>
             {
-                var result = new VBRealizationDocumentUnitCostsItemModel(id, element);
+                var result = new VBRealizationDocumentUnitCostsItemModel(id, element, VBExpenditureId);
                 EntityExtension.FlagForCreate(result, _identityService.Username, UserAgent);
 
                 return result;
@@ -186,6 +186,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 _dbContext.VBRealizationDocumentExpenditureItems.Add(model);
                 _dbContext.SaveChanges();
                 var result = httpClientService.PutAsync($"{APIEndpoint.Purchasing}vb-request-po-external/spb/{item.UnitPaymentOrder.Id.GetValueOrDefault()}?division={suppliantDivisionName}", new StringContent("{}", Encoding.UTF8, General.JsonMediaType)).Result;
+
+
+
+                AddUnitCosts(id, item.UnitPaymentOrder.UnitCosts.ToList(), model.Id);
             }
 
         }
@@ -426,7 +430,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             _dbContext.VBRealizationDocumentUnitCostsItems.UpdateRange(details);
 
             AddItems(id, form.Items, form.SuppliantUnit.Division.Name);
-            AddUnitCosts(model.Id, form.Items.SelectMany(element => element.UnitPaymentOrder.UnitCosts).ToList());
+            //AddUnitCosts(model.Id, form.Items.SelectMany(element => element.UnitPaymentOrder.UnitCosts).ToList());
 
             return id;
         }
