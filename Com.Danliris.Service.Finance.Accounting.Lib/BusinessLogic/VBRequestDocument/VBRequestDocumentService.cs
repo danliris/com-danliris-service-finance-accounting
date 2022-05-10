@@ -574,7 +574,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                                 },
                                 VatTax = new VatTaxDto()
                                 { 
-                                
+                                    Id = entity.VatId,
+                                    Rate = entity.VatRate, 
                                 },
                                 IncomeTaxBy = entity.IncomeTaxBy,
                                 Unit = new UnitDto()
