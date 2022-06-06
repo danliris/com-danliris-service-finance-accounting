@@ -39,7 +39,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             return result;
         }
 
-        public async Task<List<GarmentDispositionPaymentReportDto>> GetReport(int dispositionId, int supplierId, GarmentPurchasingExpeditionPosition position, string purchasingStaff, DateTimeOffset startDate, DateTimeOffset endDate)
+        public async Task<List<GarmentDispositionPaymentReportDto>> GetReport(int dispositionId, int epoId, int supplierId, GarmentPurchasingExpeditionPosition position, string purchasingStaff, DateTimeOffset startDate, DateTimeOffset endDate)
         {
             var result = new List<GarmentDispositionPaymentReportDto>();
             if (position <= GarmentPurchasingExpeditionPosition.Purchasing)
@@ -49,6 +49,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                 if (dispositionId > 0)
                     dispositions = dispositions.Where(element => element.DispositionId == dispositionId).ToList();
 
+                if (epoId > 0)
+                    dispositions = dispositions.Where(entity => entity.ExternalPurchaseOrderId == epoId).ToList();
 
                 if (supplierId > 0)
                     dispositions = dispositions.Where(entity => entity.SupplierId == supplierId).ToList();
@@ -84,7 +86,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                                     paymentTotalPaid += $"- {paymentItem.TotalPaid:N2}\n";
                                 }
 
-                                result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, 0, disposition.CategoryCode, disposition.CategoryName, GarmentPurchasingExpeditionPosition.DispositionPayment, expedition.SendToPurchasingRemark, expedition.SendToVerificationDate, expedition.VerificationAcceptedDate, expedition.VerifiedBy, expedition.CashierAcceptedDate, invoicesDate, paymentInvoicesNo, paymentTotalPaid, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, expedition.SendToVerificationBy, expedition.VerifiedDate, expedition.Remark,disposition.DispositionCreatedBy));
+                                result.Add(new GarmentDispositionPaymentReportDto(dispositionId, disposition.DispositionNoteNo, disposition.DispositionNoteDate, disposition.DispositionNoteDueDate, disposition.ProformaNo, disposition.SupplierId, disposition.SupplierCode, disposition.SupplierName, disposition.CurrencyId, disposition.CurrencyCode, disposition.CurrencyRate, disposition.DPPAmount, 0, disposition.VATAmount, 0, disposition.IncomeTaxAmount, 0, disposition.OthersExpenditureAmount, disposition.TotalAmount, 0, disposition.CategoryCode, disposition.CategoryName, GarmentPurchasingExpeditionPosition.DispositionPayment, expedition.SendToPurchasingRemark, expedition.SendToVerificationDate, expedition.VerificationAcceptedDate, expedition.VerifiedBy, expedition.CashierAcceptedDate, invoicesDate, paymentInvoicesNo, paymentTotalPaid, disposition.ExternalPurchaseOrderId, disposition.ExternalPurchaseOrderNo, disposition.DispositionQuantity, disposition.DeliveryOrderId, disposition.DeliveryOrderNo, disposition.DeliveryOrderQuantity, disposition.PaymentBillsNo, disposition.BillsNo, disposition.CustomsNoteId, disposition.CustomsNoteNo, disposition.CustomsNoteDate, disposition.UnitReceiptNoteId, disposition.UnitReceiptNoteNo, disposition.InternalNoteId, disposition.InternalNoteNo, disposition.InternalNoteDate, expedition.SendToVerificationBy, expedition.VerifiedDate, expedition.Remark, disposition.DispositionCreatedBy));
                             }
                             else
                             {
@@ -136,6 +138,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                     if (dispositionId > 0)
                         dispositions = dispositions.Where(element => element.DispositionId == dispositionId).ToList();
 
+                    if (epoId > 0)
+                        dispositions = dispositions.Where(entity => entity.ExternalPurchaseOrderId == epoId).ToList();
 
                     if (supplierId > 0)
                         dispositions = dispositions.Where(entity => entity.SupplierId == supplierId).ToList();
@@ -182,6 +186,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
                     if (dispositionId > 0)
                         dispositions = dispositions.Where(element => element.DispositionId == dispositionId).ToList();
 
+                    if (epoId > 0)
+                        dispositions = dispositions.Where(entity => entity.ExternalPurchaseOrderId == epoId).ToList();
 
                     if (supplierId > 0)
                         dispositions = dispositions.Where(entity => entity.SupplierId == supplierId).ToList();
