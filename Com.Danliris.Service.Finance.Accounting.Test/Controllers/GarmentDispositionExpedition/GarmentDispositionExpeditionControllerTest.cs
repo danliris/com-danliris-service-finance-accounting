@@ -1012,7 +1012,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDispos
             var paymentService = new Mock<IGarmentDispositionPaymentReportService>();
 
             paymentService
-                .Setup(s => s.GetReport(It.IsAny<int>(), It.IsAny<int>(),It.IsAny<GarmentPurchasingExpeditionPosition>(),It.IsAny<string>(),It.IsAny<DateTimeOffset>(),It.IsAny<DateTimeOffset>()))
+                .Setup(s => s.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),It.IsAny<GarmentPurchasingExpeditionPosition>(),It.IsAny<string>(),It.IsAny<DateTimeOffset>(),It.IsAny<DateTimeOffset>()))
                 .ReturnsAsync(new List<GarmentDispositionPaymentReportDto> {  new GarmentDispositionPaymentReportDto(0,"test",DateTimeOffset.MinValue,DateTimeOffset.MinValue,null,0,null,null,0,null,0,0,0,0,0,0,0,0,0,0,null,null,GarmentPurchasingExpeditionPosition.AccountingAccepted,null,DateTimeOffset.MinValue,DateTimeOffset.MinValue,null,DateTimeOffset.MinValue,null,null,"0",0,null,0, 0, null, 0, null, null, 0, null, DateTimeOffset.MinValue, 0, null, 0, null, DateTimeOffset.MinValue, null, DateTimeOffset.MinValue, null, null) } );
 
             serviceProviderMock
@@ -1021,7 +1021,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDispos
 
             //Act
             RejectionForm form = new RejectionForm();
-            IActionResult response = await GetController(serviceProviderMock).GetReportXls(0,0,GarmentPurchasingExpeditionPosition.AccountingAccepted,string.Empty,null,null); 
+            IActionResult response = await GetController(serviceProviderMock).GetReportXls(0,0,0,GarmentPurchasingExpeditionPosition.AccountingAccepted,string.Empty,null,null); 
 
             //Assert
             //int statusCode = this.GetStatusCode(response);
@@ -1037,7 +1037,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDispos
             var paymentService = new Mock<IGarmentDispositionPaymentReportService>();
 
             paymentService
-                .Setup(s => s.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+                .Setup(s => s.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
                 .ThrowsAsync(new Exception("test failed"));
 
             serviceProviderMock
@@ -1046,7 +1046,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDispos
 
             //Act
             RejectionForm form = new RejectionForm();
-            IActionResult response = await GetController(serviceProviderMock).GetReportXls(0, 0, GarmentPurchasingExpeditionPosition.AccountingAccepted, string.Empty, null, null);
+            IActionResult response = await GetController(serviceProviderMock).GetReportXls(0, 0, 0, GarmentPurchasingExpeditionPosition.AccountingAccepted, string.Empty, null, null);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -1063,7 +1063,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDispos
             var paymentService = new Mock<IGarmentDispositionPaymentReportService>();
 
             paymentService
-                .Setup(s => s.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+                .Setup(s => s.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
                 .ReturnsAsync(new List<GarmentDispositionPaymentReportDto> { new GarmentDispositionPaymentReportDto(0, "test", DateTimeOffset.MinValue, DateTimeOffset.MinValue, null, 0, null, null, 0, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null, null, GarmentPurchasingExpeditionPosition.AccountingAccepted, null, DateTimeOffset.MinValue, DateTimeOffset.MinValue, null, DateTimeOffset.MinValue, null, null, "0", 0, null, 0, 0, null, 0, null, null, 0, null, DateTimeOffset.MinValue, 0, null, 0, null, DateTimeOffset.MinValue, null, DateTimeOffset.MinValue, null, null) });
 
             serviceProviderMock
@@ -1072,7 +1072,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDispos
 
             //Act
             RejectionForm form = new RejectionForm();
-            IActionResult response = await GetController(serviceProviderMock).GetReport(0, 0, GarmentPurchasingExpeditionPosition.AccountingAccepted, string.Empty, null, null);
+            IActionResult response = await GetController(serviceProviderMock).GetReport(0, 0, 0, GarmentPurchasingExpeditionPosition.AccountingAccepted, string.Empty, null, null);
 
             //Assert
             //int statusCode = this.GetStatusCode(response);
@@ -1089,7 +1089,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDispos
             var paymentService = new Mock<IGarmentDispositionPaymentReportService>();
 
             paymentService
-                .Setup(s => s.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+                .Setup(s => s.GetReport(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<GarmentPurchasingExpeditionPosition>(), It.IsAny<string>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
                 .ThrowsAsync(new Exception("test failed"));
 
             serviceProviderMock
@@ -1098,7 +1098,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.GarmentDispos
 
             //Act
             RejectionForm form = new RejectionForm();
-            IActionResult response = await GetController(serviceProviderMock).GetReport(0, 0, GarmentPurchasingExpeditionPosition.AccountingAccepted, string.Empty, null, null);
+            IActionResult response = await GetController(serviceProviderMock).GetReport(0, 0, 0, GarmentPurchasingExpeditionPosition.AccountingAccepted, string.Empty, null, null);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
