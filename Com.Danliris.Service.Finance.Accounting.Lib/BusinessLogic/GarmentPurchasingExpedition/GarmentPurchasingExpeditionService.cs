@@ -46,14 +46,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             if (!string.IsNullOrEmpty(currencyCode))
                 query = query.Where(entity => entity.CurrencyCode == currencyCode);
 
+            //var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == position && entity.InternalNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword)
+            //                                                                        && entity.InternalNoteId.Equals(internalNoteId) && entity.SupplierId.Equals(supplierId) && entity.CurrencyCode.Contains(currencyCode));
+
             if (position == GarmentPurchasingExpeditionPosition.Purchasing)
             {
                 var notPurchasingInternalNoteIds = _dbContext.GarmentPurchasingExpeditions
-                    .GroupBy(entity => new { entity.InternalNoteId, entity.Position })
-                    .Select(groupped => new { groupped.Key.InternalNoteId, groupped.Key.Position })
-                    .Where(entity => entity.Position > GarmentPurchasingExpeditionPosition.Purchasing)
-                    .Select(entity => entity.InternalNoteId)
-                    .ToList();
+                   .GroupBy(entity => new { entity.InternalNoteId, entity.Position })
+                   .Select(groupped => new { groupped.Key.InternalNoteId, groupped.Key.Position })
+                   .Where(entity => entity.Position > GarmentPurchasingExpeditionPosition.Purchasing)
+                   .Select(entity => entity.InternalNoteId)
+                   .ToList();
 
                 var firstInternalNoteIds = _dbContext.GarmentPurchasingExpeditions
                     .Where(entity => entity.Position == GarmentPurchasingExpeditionPosition.Purchasing && !string.IsNullOrEmpty(entity.SendToPurchasingRemark))
@@ -61,8 +64,52 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
                     .Select(groupped => new { groupped.OrderByDescending(entity => entity.CreatedUtc).FirstOrDefault().Id })
                     .Select(entity => entity.Id)
                     .ToList();
+
                 query = query.Where(entity => !notPurchasingInternalNoteIds.Contains(entity.InternalNoteId));
+
                 query = query.Where(entity => firstInternalNoteIds.Contains(entity.Id));
+            }
+
+            var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
+            query = QueryHelper<GarmentPurchasingExpeditionModel>.Order(query, orderDictionary);
+
+            var count = query.Count();
+
+            var data = query
+                .Skip((page - 1) * size)
+                .Take(size)
+                .Select(entity => new IndexDto(entity))
+                .ToList();
+
+            return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
+        }
+
+        public ReadResponse<IndexDto> GetByPositionRetur(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int internalNoteId, int supplierId, string currencyCode = null)
+        {
+            var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == position);
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+                query = query.Where(entity => entity.InternalNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
+
+            if (internalNoteId > 0)
+                query = query.Where(entity => entity.InternalNoteId == internalNoteId);
+
+            if (supplierId > 0)
+                query = query.Where(entity => entity.SupplierId == supplierId);
+
+            if (!string.IsNullOrEmpty(currencyCode))
+                query = query.Where(entity => entity.CurrencyCode == currencyCode);
+
+            if (position == GarmentPurchasingExpeditionPosition.Purchasing)
+            {
+                var notPurchasingInternalNoteIds = _dbContext.GarmentPurchasingExpeditions
+                   .GroupBy(entity => new { entity.InternalNoteId, entity.Position })
+                   .Select(groupped => new { groupped.Key.InternalNoteId, groupped.Key.Position })
+                   .Where(entity => entity.Position > GarmentPurchasingExpeditionPosition.Purchasing)
+                   .Select(entity => entity.InternalNoteId)
+                   .ToList();
+
+                query = query.Where(entity => !notPurchasingInternalNoteIds.Contains(entity.InternalNoteId));
             }
 
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);

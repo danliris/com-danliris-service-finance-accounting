@@ -132,20 +132,40 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         {
             try
             {
-                var result = _service.GetByPosition(keyword, page, size, order, position, internalNoteId, supplierId,currencyCode);
-                return Ok(new
+                if (position == GarmentPurchasingExpeditionPosition.Purchasing)
                 {
-                    apiVersion = ApiVersion,
-                    statusCode = General.OK_STATUS_CODE,
-                    message = General.OK_MESSAGE,
-                    data = result.Data,
-                    info = new
+                    var result_retur = _service.GetByPositionRetur(keyword, page, size, order, position, internalNoteId, supplierId, currencyCode);
+                    return Ok(new
                     {
-                        total = result.Count,
-                        page,
-                        size
-                    }
-                });
+                        apiVersion = ApiVersion,
+                        statusCode = General.OK_STATUS_CODE,
+                        message = General.OK_MESSAGE,
+                        data = result_retur.Data,
+                        info = new
+                        {
+                            total = result_retur.Count,
+                            page,
+                            size
+                        }
+                    });
+                }
+                else
+                {
+                    var result = _service.GetByPosition(keyword, page, size, order, position, internalNoteId, supplierId, currencyCode);
+                    return Ok(new
+                    {
+                        apiVersion = ApiVersion,
+                        statusCode = General.OK_STATUS_CODE,
+                        message = General.OK_MESSAGE,
+                        data = result.Data,
+                        info = new
+                        {
+                            total = result.Count,
+                            page,
+                            size
+                        }
+                    });
+                }
             }
             catch (Exception e)
             {
