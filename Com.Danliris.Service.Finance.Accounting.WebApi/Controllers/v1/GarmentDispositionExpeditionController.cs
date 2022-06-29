@@ -503,7 +503,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("report")]
-        public async Task<IActionResult> GetReport([FromQuery] int dispositionId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string purchasingStaff, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        public async Task<IActionResult> GetReport([FromQuery] int dispositionId, [FromQuery] int epoId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string purchasingStaff, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
         {
             try
             {
@@ -511,7 +511,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
                 startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
 
-                var result = await _reportService.GetReport(dispositionId, supplierId, position, purchasingStaff, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                var result = await _reportService.GetReport(dispositionId, epoId, supplierId, position, purchasingStaff, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
                 return Ok(new
                 {
                     apiVersion = ApiVersion,
@@ -549,7 +549,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("report/xls")]
-        public async Task<IActionResult> GetReportXls([FromQuery] int dispositionId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string purchasingStaff, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        public async Task<IActionResult> GetReportXls([FromQuery] int dispositionId, [FromQuery] int epoId, [FromQuery] int supplierId, [FromQuery] GarmentPurchasingExpeditionPosition position, [FromQuery] string purchasingStaff, [FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
         {
             try
             {
@@ -557,7 +557,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 endDate = !endDate.HasValue ? DateTimeOffset.Now : endDate.GetValueOrDefault().AddHours(_identityService.TimezoneOffset).Date.AddHours(17);
                 startDate = !startDate.HasValue ? DateTimeOffset.MinValue : startDate;
 
-                var result = await _reportService.GetReport(dispositionId, supplierId, position, purchasingStaff, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
+                var result = await _reportService.GetReport(dispositionId, epoId, supplierId, position, purchasingStaff, startDate.GetValueOrDefault(), endDate.GetValueOrDefault());
 
                 var stream = DispositionPaymentReportExcelGenerator.GenerateExcel(result, startDate.GetValueOrDefault(), endDate.GetValueOrDefault(), _identityService.TimezoneOffset, position);
 
