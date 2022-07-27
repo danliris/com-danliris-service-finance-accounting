@@ -41,6 +41,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
 
         public IEnumerable<VBRealizationDocumentNonPOExpenditureItemViewModel> Items { get; set; }
         public IEnumerable<VBRealizationDocumentNonPOUnitCostViewModel> UnitCosts { get; set; }
+        public string InvoiceNo { get; set; }
         public string Remark { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -209,7 +210,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
             if (UnitCosts.Sum(s => s.Amount) != Items.Sum(s => s.Total))
                 yield return new ValidationResult("Nominal beban unit dan total nota harus sama!", new List<string> { "CompareNominal" });
 
-
+            if (InvoiceNo == null)
+            {
+                yield return new ValidationResult("Invoice harus diisi", new List<string> { "InvoiceNo" });
+            }
+            else
+            {
+                FinanceDbContext financeDbContext = (FinanceDbContext)validationContext.GetService(typeof(FinanceDbContext));
+                if (financeDbContext.VBRealizationDocuments.Where(a => a.InvoiceNo.Equals(InvoiceNo)).Count() > 0)
+                {
+                    yield return new ValidationResult("Nomor Invoice sudah digunakan sebelumnya", new List<string> { "InvoiceNo" });
+                }
+            }
         }
     }
 }
