@@ -1,5 +1,8 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDocumentNonPO;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBRealizationD
 {
     public class VBRealizationDocumentNonPOViewModelTest
     {
+
         [Fact]
         public void ShouldSuccessInstantiate()
         {
@@ -462,63 +466,122 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBRealizationD
             Assert.True(0 < result.Count());
         }
 
-        //[Fact]
-        //public void ShouldHaveNoError_Validate_Data()
-        //{
-        //    VBRealizationDocumentNonPOViewModel dto = new VBRealizationDocumentNonPOViewModel()
-        //    {
-        //        Date = DateTimeOffset.Now,
-        //        VBNonPOType = "Dengan Nomor VB",
-        //        InvoiceNo = "Test123",
-        //        Currency = new CurrencyViewModel()
-        //        {
-        //            Id = 1
-        //        },
-                
-        //        Unit=new UnitViewModel()
-        //        {
-        //            Id=1,
-        //            Code= "Code",
-                    
-        //        },
-        //        VBDocument = new VBRequestDocumentNonPODto()
-        //        {
-        //            Id = 1
-        //        },
-        //        Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
-        //        {
+        [Fact]
+        public void ShouldHaveError_Validate_When_InvoiceNo_Null()
+        {
+            VBRealizationDocumentNonPOViewModel dto = new VBRealizationDocumentNonPOViewModel()
+            {
+                Date = DateTimeOffset.Now,
+                VBNonPOType = "Dengan Nomor VB",
+                InvoiceNo = null,
+                Currency = new CurrencyViewModel()
+                {
+                    Id = 1
+                },
 
-        //            new VBRealizationDocumentNonPOExpenditureItemViewModel()
-        //            {
-        //                Amount=1,
-        //                Remark="Remark",
-        //                Total=1,
-        //                IsGetPPh=true,
-        //                 IncomeTax=new IncomeTaxViewModel()
-        //                {
-        //                    Id=1
-        //                },
-        //                DateDetail=DateTimeOffset.Now.AddDays(-2),
-        //                IncomeTaxBy="Supplier"
-        //            }
-        //        },
-        //        UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
-        //        {
-        //            new VBRealizationDocumentNonPOUnitCostViewModel()
-        //            {
-        //                Amount=1,
-        //                IsSelected=true,
-        //                Unit=new UnitViewModel()
-        //                {
-        //                    Id=1,
+                Unit = new UnitViewModel()
+                {
+                    Id = 1,
+                    Code = "Code",
 
-        //                }
-        //            }
-        //        }
-        //    };
+                },
+                VBDocument = new VBRequestDocumentNonPODto()
+                {
+                    Id = 1
+                },
+                Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
+                {
 
-        //    var result = dto.Validate(null);
-        //    Assert.True(0 == result.Count());
-        //}
+                    new VBRealizationDocumentNonPOExpenditureItemViewModel()
+                    {
+                        Amount=1,
+                        Remark="Remark",
+                        Total=1,
+                        IsGetPPh=true,
+                        IncomeTax=new IncomeTaxViewModel()
+                        {
+                            Id=1
+                        },
+                        DateDetail=DateTimeOffset.Now.AddDays(-2),
+                        IncomeTaxBy="Supplier"
+                    }
+                },
+                UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
+                {
+                    new VBRealizationDocumentNonPOUnitCostViewModel()
+                    {
+                        Amount=1,
+                        IsSelected=true,
+                        Unit=new UnitViewModel()
+                        {
+                            Id=1,
+
+                        }
+                    }
+                }
+            };
+
+            var result = dto.Validate(null);
+            Assert.True(0 < result.Count());
+        }
+
+        [Fact]
+        public void ShouldHaveNoError_Validate_Data()
+        {
+            VBRealizationDocumentNonPOViewModel dto = new VBRealizationDocumentNonPOViewModel()
+            {
+                Date = DateTimeOffset.Now,
+                VBNonPOType = "Dengan Nomor VB",
+                InvoiceNo = "",
+                Currency = new CurrencyViewModel()
+                {
+                    Id = 1
+                },
+
+                Unit = new UnitViewModel()
+                {
+                    Id = 1,
+                    Code = "Code",
+
+                },
+                VBDocument = new VBRequestDocumentNonPODto()
+                {
+                    Id = 1
+                },
+                Items = new List<VBRealizationDocumentNonPOExpenditureItemViewModel>()
+                {
+
+                    new VBRealizationDocumentNonPOExpenditureItemViewModel()
+                    {
+                        Amount=1,
+                        Remark="Remark",
+                        Total=1,
+                        IsGetPPh=true,
+                         IncomeTax=new IncomeTaxViewModel()
+                        {
+                            Id=1
+                        },
+                        DateDetail=DateTimeOffset.Now.AddDays(-2),
+                        IncomeTaxBy="Supplier"
+                    }
+                },
+                UnitCosts = new List<VBRealizationDocumentNonPOUnitCostViewModel>()
+                {
+                    new VBRealizationDocumentNonPOUnitCostViewModel()
+                    {
+                        Amount=1,
+                        IsSelected=true,
+                        Unit=new UnitViewModel()
+                        {
+                            Id=1,
+
+                        }
+                    }
+                }
+            };
+
+            var result = dto.Validate(null);
+            Assert.True(0 == result.Count());
+        }
     }
 }

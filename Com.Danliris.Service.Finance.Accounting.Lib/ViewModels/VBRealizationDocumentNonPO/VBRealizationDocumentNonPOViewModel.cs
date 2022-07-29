@@ -216,10 +216,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
             }
             else
             {
-                FinanceDbContext financeDbContext = (FinanceDbContext)validationContext.GetService(typeof(FinanceDbContext));
-                if (financeDbContext.VBRealizationDocuments.Where(a => a.InvoiceNo.Equals(InvoiceNo)).Count() > 0)
+                if (InvoiceNo != "")
                 {
-                    yield return new ValidationResult("Nomor Invoice sudah digunakan sebelumnya", new List<string> { "InvoiceNo" });
+                    FinanceDbContext financeDbContext = (FinanceDbContext)validationContext.GetService(typeof(FinanceDbContext));
+                    if (financeDbContext.VBRealizationDocuments.Where(a => a.InvoiceNo.Equals(InvoiceNo)).Count() > 0)
+                    {
+                        yield return new ValidationResult("Nomor Invoice sudah digunakan sebelumnya", new List<string> { "InvoiceNo" });
+                    }
                 }
             }
         }
