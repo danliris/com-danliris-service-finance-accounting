@@ -2,6 +2,7 @@
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
+using MongoDB.Bson.IO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -216,13 +217,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
             }
             else
             {
-                if (InvoiceNo != "")
+                FinanceDbContext financeDbContext = (FinanceDbContext)validationContext.GetService(typeof(FinanceDbContext));
+                if (financeDbContext.VBRealizationDocuments.Where(a => a.InvoiceNo.Equals(InvoiceNo) && a.IsDeleted.Equals(0)).Count() > 0)
                 {
-                    FinanceDbContext financeDbContext = (FinanceDbContext)validationContext.GetService(typeof(FinanceDbContext));
-                    if (financeDbContext.VBRealizationDocuments.Where(a => a.InvoiceNo.Equals(InvoiceNo)).Count() > 0)
-                    {
-                        yield return new ValidationResult("Nomor Invoice sudah digunakan sebelumnya", new List<string> { "InvoiceNo" });
-                    }
+                    yield return new ValidationResult("Nomor Invoice sudah digunakan sebelumnya", new List<string> { "InvoiceNo" });
                 }
             }
         }
