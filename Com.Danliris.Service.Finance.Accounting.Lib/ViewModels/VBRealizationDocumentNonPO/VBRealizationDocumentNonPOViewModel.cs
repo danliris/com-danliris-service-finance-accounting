@@ -1,4 +1,6 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.VBRealizationDocumentNonPO;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBRealizationDocumentNonPO;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities.BaseClass;
@@ -217,8 +219,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBRealizationDo
             }
             else
             {
-                FinanceDbContext financeDbContext = (FinanceDbContext)validationContext.GetService(typeof(FinanceDbContext));
-                if (financeDbContext.VBRealizationDocuments.Where(a => a.InvoiceNo.Equals(InvoiceNo) && a.IsDeleted.Equals(0)).Count() > 0)
+                IVBRealizationDocumentNonPOService vbService = (IVBRealizationDocumentNonPOService)validationContext.GetService(typeof(IVBRealizationDocumentNonPOService));
+                var TotalInvoiceNo = vbService.CheckInvoiceNo(Id, InvoiceNo);
+                if (TotalInvoiceNo > 0)
                 {
                     yield return new ValidationResult("Nomor Invoice sudah digunakan sebelumnya", new List<string> { "InvoiceNo" });
                 }
