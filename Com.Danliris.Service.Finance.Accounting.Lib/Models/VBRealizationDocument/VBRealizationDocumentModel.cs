@@ -66,6 +66,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             DocumentType = viewModel.DocumentType;
             Position = VBRealizationPosition.Purchasing;
             Remark = viewModel.Remark;
+            InvoiceNo = viewModel.InvoiceNo;
         }
 
         public void UpdateVerified(VBRealizationPosition position, string reason, string username, string userAgent)
@@ -78,7 +79,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             this.FlagForUpdate(username, userAgent);
         }
 
-        public VBRealizationDocumentModel(CurrencyDto currency, DateTimeOffset? date, UnitDto suppliantUnit, Tuple<string, int> documentNo, decimal amount, string remark)
+        public VBRealizationDocumentModel(CurrencyDto currency, DateTimeOffset? date, UnitDto suppliantUnit, Tuple<string, int> documentNo, decimal amount, string invoiceNo, string remark)
         {
             CurrencyCode = currency.Code;
             CurrencyDescription = currency.Description;
@@ -98,10 +99,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Index = documentNo.Item2;
             Position = VBRealizationPosition.Purchasing;
             Amount = amount;
+            InvoiceNo = invoiceNo;
             Remark = remark;
         }
 
-        public VBRealizationDocumentModel(DateTimeOffset? date, VBRequestDocumentModel vbRequest, Tuple<string, int> documentNo, decimal amount, string remark)
+        public VBRealizationDocumentModel(DateTimeOffset? date, VBRequestDocumentModel vbRequest, Tuple<string, int> documentNo, decimal amount, string invoiceNo, string remark)
         {
             Date = date.GetValueOrDefault();
             Type = VBType.WithPO;
@@ -132,11 +134,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
 
             Position = VBRealizationPosition.Purchasing;
             Remark = remark;
+            InvoiceNo = invoiceNo;
         }
 
         
 
         public VBRealizationPosition Position { get; private set; }
+        public string InvoiceNo { get; private set; }
         public string Remark { get; private set; }
         public VBType Type { get; private set; }
         public RealizationDocumentType DocumentType { get; private set; }

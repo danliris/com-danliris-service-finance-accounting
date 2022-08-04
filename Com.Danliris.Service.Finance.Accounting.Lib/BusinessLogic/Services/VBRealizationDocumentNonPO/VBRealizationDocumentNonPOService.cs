@@ -308,6 +308,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                     Purpose = model.VBRequestDocumentPurpose
                 },
                 VBNonPOType = model.VBNonPoType,
+                InvoiceNo = model.InvoiceNo,
                 Remark = model.Remark,
                 Items = items.Select(s => new VBRealizationDocumentNonPOExpenditureItemViewModel()
                 {
@@ -513,6 +514,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
             _dbContext.VBRealizationDocumentUnitCostsItems.AddRange(models);
 
             //return _dbContext.SaveChangesAsync();
+        }
+
+        public double CheckInvoiceNo(int id, string invoiceNo)
+        {
+            var query = _dbContext.VBRealizationDocuments.Where(s => s.VBRequestDocumentId == id).ToList();
+
+            var GetInvoiceNo = query.Where(s => s.InvoiceNo == invoiceNo).ToList();
+
+            return GetInvoiceNo.Count();
         }
     }
 }
