@@ -63,6 +63,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VbWithPORequest
                             Rate = "11",
                         },
 
+                        vattax = new VatTaxDto()
+                        {
+                            Id = "2",
+                            Rate = "11",
+                        },
+
                         Details = new List<VbWithPORequestDetailItemsViewModel>()
                         {
                             new VbWithPORequestDetailItemsViewModel()
