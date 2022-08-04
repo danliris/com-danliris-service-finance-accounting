@@ -530,13 +530,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBRealizationD
         }
 
         [Fact]
-        public void ShouldHaveError_Validate_When_InvoiceNo_Exist()
+        public void ShouldHaveError_Validate_InvoiceNo_Exists()
         {
             VBRealizationDocumentNonPOViewModel dto = new VBRealizationDocumentNonPOViewModel()
             {
                 Date = DateTimeOffset.Now,
                 VBNonPOType = "Dengan Nomor VB",
-                InvoiceNo = null,
                 Currency = new CurrencyViewModel()
                 {
                     Id = 1
@@ -584,7 +583,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.ViewModels.VBRealizationD
                 }
             };
 
-            var result = dto.Validate(null);
+            Mock<IServiceProvider> serviceProvider = new Mock<IServiceProvider>();
+            Mock<IVBRealizationDocumentNonPOService> IService = new Mock<IVBRealizationDocumentNonPOService>();
+            IService.Setup(s => s.CheckInvoiceNo(1, "TestNo123"));
+            serviceProvider.Setup(s => s.GetService(typeof(IVBRealizationDocumentNonPOService))).Returns(IService.Object);
+
+            ValidationContext validationContext = new ValidationContext(dto, serviceProvider.Object, null);
+
+            var result = dto.Validate(validationContext);
             Assert.True(0 < result.Count());
         }
 
