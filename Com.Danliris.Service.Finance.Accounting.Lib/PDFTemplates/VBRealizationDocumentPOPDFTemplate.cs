@@ -585,7 +585,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 //PPn
                 if ((count_price - total_realization) != 0)
                 {
-                    decimal ppn_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (count_price - total_realization));
+                    //decimal ppn_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (count_price - total_realization));
+                    decimal ppn_unit_item = ((item.Sum(s => s.Amount) / total_realization) * (count_price - total_realization));
 
                     if ((GetPPhValueDanliris(viewModel)) == 0 && (GetPPhValue(viewModel)) == 0)
                     {
