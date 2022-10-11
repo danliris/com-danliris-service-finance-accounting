@@ -276,8 +276,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDebtB
 
         public List<GarmentDebtBalanceSummaryDto> GetDebtBalanceSummary(int supplierId, int month, int year, bool isForeignCurrency, bool supplierIsImport)
         {
-            var query = _dbContext.GarmentDebtBalances.Where(entity => (entity.DPPAmount + entity.CurrencyDPPAmount + entity.VATAmount - entity.IncomeTaxAmount) - entity.BankExpenditureNoteInvoiceAmount != 0);
-
+            //var query = _dbContext.GarmentDebtBalances.Where(entity => (entity.DPPAmount + entity.CurrencyDPPAmount + entity.VATAmount - entity.IncomeTaxAmount) - entity.BankExpenditureNoteInvoiceAmount != 0);
+            var query = _dbContext.GarmentDebtBalances.Select(x => x);
             var beginningOfMonth = new DateTimeOffset(year, month, 1, 0, 0, 0, 0, TimeSpan.Zero);
 
             query = query.Where(entity => entity.ArrivalDate != DateTimeOffset.MinValue && (entity.ArrivalDate.AddHours(_identityService.TimezoneOffset).Month == month && entity.ArrivalDate.AddHours(_identityService.TimezoneOffset).Year == year));
