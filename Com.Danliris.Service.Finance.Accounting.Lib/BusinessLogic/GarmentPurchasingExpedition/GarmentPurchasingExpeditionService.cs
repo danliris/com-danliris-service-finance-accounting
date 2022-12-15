@@ -87,7 +87,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
         public ReadResponse<IndexDto> GetByPositionRetur(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int internalNoteId, int supplierId, string currencyCode = null)
         {
-            var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == position && entity.IsDeleted == false );
+            var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == position && entity.IsDeleted == false && entity.SendToPurchasingRemark != null );
 
             if (!string.IsNullOrWhiteSpace(keyword))
                 query = query.Where(entity => entity.InternalNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
