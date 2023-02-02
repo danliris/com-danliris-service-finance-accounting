@@ -459,32 +459,28 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             #region NewCheckbox
             List<PdfFormField> annotations = new List<PdfFormField>();
 
-            //var itemsQuery = viewModel.Items;
-            //var unitCostsQuery = viewModel.UnitCosts;
+            var itemsQuery = viewModel.Items;
+            var unitCostsQuery = viewModel.UnitCosts;
 
-            //var joinQuery = (from a in itemsQuery
-            //                 join b in unitCostsQuery on a.Id equals b.VBRealizationDocumentExpenditureItemId
-            //                 select new
-            //                 {
-            //                     UnitId = b.UnitId,
-            //                     UnitName = b.UnitName,
-            //                     UnitCode = b.UnitCode,
-            //                     Amount = b.Amount,
-            //                     AmountNom = a.UseVat == true ? (100 * b.Amount / (100 + Convert.ToDecimal(a.VatRate))) : b.Amount,
-
-
-            //                 }
+            var joinQuery = (from a in itemsQuery
+                             join b in unitCostsQuery on a.Id equals b.VBRealizationDocumentExpenditureItemId
+                             select new
+                             {
+                                 UnitId = b.UnitId,
+                                 UnitName = b.UnitName,
+                                 UnitCode = b.UnitCode,
+                                 Amount = b.Amount,
+                                 AmountNom = a.UseVat == true ? (100 * b.Amount / (100 + Convert.ToDecimal(a.VatRate))) : b.Amount,
+                                 PPN = a.VatRate
 
 
-            //    );
+                             }
 
 
+                );
 
-            var unitCosts = viewModel.UnitCosts.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
-
-
-            //var unitCosts = joinQuery.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
-            
+            //var unitCosts = viewModel.UnitCosts.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
+            var unitCosts = joinQuery.GroupBy(s => s.UnitId).OrderBy(s => s.Key);
 
             foreach (var item in unitCosts)
             {
@@ -529,6 +525,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
 
                 cellHeaderBody.Phrase = new Phrase("", normal_font_8);
 
+                var nomExPPN = item.Sum(s => s.AmountNom);
+
                 if (!flag)
                 {
                     cellHeaderBody.Colspan = 2;
@@ -537,7 +535,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 }
                 else
                 {
-                    var nom = item.Sum(s => s.Amount).ToString("#,##0.00", new CultureInfo("id-ID"));
+                    var nom = nomExPPN.ToString("#,##0.00", new CultureInfo("id-ID"));
+                    
+                    //var nomGenerate = nomExPPN.ToString("#,##0.00", new CultureInfo("id-ID"));
+                    
                     //var nom = item.Sum(s => s.AmountNom).ToString("#,##0.00", new CultureInfo("id-ID"));
 
                     // Beban Unit Item Mata Uang
@@ -586,7 +587,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 if ((count_price - total_realization) != 0)
                 {
                     //decimal ppn_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (count_price - total_realization));
-                    decimal ppn_unit_item = ((item.Sum(s => s.Amount) / total_realization) * (count_price - total_realization));
+                    
+                    decimal ppn_unit_item = nomExPPN * (decimal.Parse(item.First().PPN)/100);
+
+                    //decimal ppn_unit_item = ((item.Sum(s => s.Amount) / total_realization) * (count_price - total_realization));
+
 
                     if ((GetPPhValueDanliris(viewModel)) == 0 && (GetPPhValue(viewModel)) == 0)
                     {
