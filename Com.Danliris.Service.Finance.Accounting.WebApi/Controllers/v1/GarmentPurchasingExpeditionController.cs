@@ -132,6 +132,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         {
             try
             {
+                VerifyUser();
                 if (position == GarmentPurchasingExpeditionPosition.Purchasing)
                 {
                     var result_retur = _service.GetByPositionRetur(keyword, page, size, order, position, internalNoteId, supplierId, currencyCode);

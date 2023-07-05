@@ -4,6 +4,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentPurchasingExpedi
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.HttpClientService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Utilities;
+using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentPurchasingExpedition;
 using Com.Moonlay.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -86,7 +87,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
 
         public ReadResponse<IndexDto> GetByPositionRetur(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int internalNoteId, int supplierId, string currencyCode = null)
         {
-            var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == position);
+            var query = _dbContext.GarmentPurchasingExpeditions.Where(entity => entity.Position == position && entity.IsDeleted == false && entity.SendToPurchasingRemark != null );
 
             if (!string.IsNullOrWhiteSpace(keyword))
                 query = query.Where(entity => entity.InternalNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
@@ -100,28 +101,40 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentPurch
             if (!string.IsNullOrEmpty(currencyCode))
                 query = query.Where(entity => entity.CurrencyCode == currencyCode);
 
-            if (position == GarmentPurchasingExpeditionPosition.Purchasing)
-            {
-                var notPurchasingInternalNoteIds = _dbContext.GarmentPurchasingExpeditions
-                   .GroupBy(entity => new { entity.InternalNoteId, entity.Position, entity.CreatedUtc })
-                   .Select(groupped => new { groupped.Key.InternalNoteId, groupped.Key.Position, groupped.OrderByDescending(entity => entity.CreatedUtc).FirstOrDefault().Id })
-                   .Where(entity => entity.Position > GarmentPurchasingExpeditionPosition.Purchasing)
-                   .Select(entity => entity.InternalNoteId)
-                   .ToList();
+            //if (position == GarmentPurchasingExpeditionPosition.Purchasing)
+            //{
+            //    //var notPurchasingInternalNoteIds = _dbContext.GarmentPurchasingExpeditions
+            //    //   .GroupBy(entity => new { entity.InternalNoteId, entity.Position, entity.CreatedUtc })
+            //    //   .Select(groupped => new { groupped.Key.InternalNoteId, groupped.Key.Position, groupped.OrderByDescending(entity => entity.CreatedUtc).FirstOrDefault().Id })
+            //    //   .Where(entity => entity.Position > GarmentPurchasingExpeditionPosition.Purchasing)
+            //    //   .Select(entity => entity.InternalNoteId)
+            //    //   .ToList();
 
-                query = query.Where(entity => !notPurchasingInternalNoteIds.Contains(entity.InternalNoteId));
-            }
-
-            var count = query.ToList().Count();
+            //    query = query.Where(entity => !notPurchasingInternalNoteIds.Contains(entity.InternalNoteId));
+            //}
 
             var orderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(order);
             query = QueryHelper<GarmentPurchasingExpeditionModel>.Order(query, orderDictionary);
+
+            var count = query.Count();
 
             var data = query
                 .Skip((page - 1) * size)
                 .Take(size)
                 .Select(entity => new IndexDto(entity))
                 .ToList();
+
+            ////var data = query.Select(x => new IndexDto(x)).ToList();
+            //var data = query.Select(x => new GarmentPurchasingExpeditionReturnViewModel
+            //{
+            //    InternalNoteDate = x.InternalNoteDate.ToString("dd MMM yyyy"),
+            //    InternalNoteNo = x.InternalNoteNo,
+            //    //VerificationAcceptedDate = x.VerificationAcceptedDate,
+            //    //SupplierName = x.SupplierName,
+            //    //Amount = x.TotalPaid,
+            //    //CurrencyCode = x.CurrencyCode,
+            //    //SendToPurchasingRemark = x.SendToPurchasingRemark
+            //}).ToList();
 
             return new ReadResponse<IndexDto>(data, count, orderDictionary, new List<string>());
         }

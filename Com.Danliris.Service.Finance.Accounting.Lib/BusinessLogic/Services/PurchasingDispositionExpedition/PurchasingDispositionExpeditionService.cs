@@ -418,7 +418,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pur
                         CreatedUtc = item.CreatedUtc,
                         InvoiceNo = item.ProformaNo,
                         PaymentDueDate = item.PaymentDueDate,
-                        Position = item.Position,
+                        //Position = expedition.Position == ExpeditionPosition.CASHIER_DIVISION ? 7 : 6,
+                        Position = (int)expedition.Position,
                         SentToVerificationDivisionDate = expedition == null ? null : new DateTimeOffset?(expedition.CreatedUtc),
                         SendDate = expedition == null ? null : ((expedition.Position == ExpeditionPosition.CASHIER_DIVISION || expedition.Position == ExpeditionPosition.SEND_TO_CASHIER_DIVISION) && expedition.SendToCashierDivisionDate != DateTimeOffset.MinValue) ? expedition.SendToCashierDivisionDate :
                          ((expedition.Position == ExpeditionPosition.SEND_TO_PURCHASING_DIVISION) && expedition.SendToPurchasingDivisionDate != DateTimeOffset.MinValue) ? expedition.SendToPurchasingDivisionDate : null,
