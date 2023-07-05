@@ -362,7 +362,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 
         public ReadResponse<IndexDto> GetByPosition(string keyword, int page, int size, string order, GarmentPurchasingExpeditionPosition position, int dispositionNoteId, int supplierId, string currencyCode = null, string filter ="{}")
         {
-            var query = _dbContext.GarmentDispositionExpeditions.Where(entity => entity.Position == position);
+            //var query = _dbContext.GarmentDispositionExpeditions.Where(entity => entity.Position == position);
+            var queryNoRetur = from exp in _dbContext.GarmentDispositionExpeditions
+                        where exp.Position == position && exp.SendToPurchasingRemark == null
+                        select exp;
+            var queryRetur = from exp in _dbContext.GarmentDispositionExpeditions
+                        where exp.Position == position && exp.SendToPurchasingRemark != null && exp.CreatedUtc.Year == DateTime.Now.Year
+                        select exp;
+            var query = queryNoRetur.Union(queryRetur);
 
             if (!string.IsNullOrWhiteSpace(keyword))
                 query = query.Where(entity => entity.DispositionNoteNo.Contains(keyword) || entity.SupplierName.Contains(keyword) || entity.CurrencyCode.Contains(keyword));
