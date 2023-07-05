@@ -62,7 +62,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     }
                 });
             }
-            catch (Exception e)
+          catch (Exception e)
             {
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
             }
