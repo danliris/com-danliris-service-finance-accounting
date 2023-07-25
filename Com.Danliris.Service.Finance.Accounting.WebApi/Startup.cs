@@ -104,6 +104,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Repor
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Reports.LocalSalesDebtorReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.LocalDebtorCard;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.LocalBankCashReceiptMonthlyRecap;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Adjustment;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -209,7 +210,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<ILocalSalesDebtorReportService, LocalSalesDebtorReportService>()
                 .AddTransient<IGarmentFinanceLocalDebtorCardReportService, GarmentFinanceLocalDebtorCardReportService>()
                 .AddTransient<IGarmentFinanceExportSalesOutstandingReportService, GarmentFinanceExportSalesOutstandingReportService>()
-                .AddTransient<IGarmentFinanceLocalBankCashReceiptMonthlyRecapService, GarmentFinanceLocalBankCashReceiptMonthlyRecapService>();
+                .AddTransient<IGarmentFinanceLocalBankCashReceiptMonthlyRecapService, GarmentFinanceLocalBankCashReceiptMonthlyRecapService>()
+                .AddTransient<IGarmentFinanceAdjustmentService, GarmentFinanceAdjustmentService>();
         }
 
 
