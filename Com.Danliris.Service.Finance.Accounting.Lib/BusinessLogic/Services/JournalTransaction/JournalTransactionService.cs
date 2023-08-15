@@ -702,7 +702,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Jou
                         result.Others.Add(data);
                 }
 
-
                 return result;
             }
             else
