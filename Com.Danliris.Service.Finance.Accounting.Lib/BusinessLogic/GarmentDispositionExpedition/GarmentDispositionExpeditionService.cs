@@ -364,7 +364,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         {
             //var query = _dbContext.GarmentDispositionExpeditions.Where(entity => entity.Position == position);
             var queryNoRetur = from exp in _dbContext.GarmentDispositionExpeditions
-                        where exp.Position == position && exp.SendToPurchasingRemark == null
+                        where exp.Position == position // && exp.SendToPurchasingRemark == null
                         select exp;
             var queryRetur = from exp in _dbContext.GarmentDispositionExpeditions
                         where exp.Position == position && exp.SendToPurchasingRemark != null && exp.CreatedUtc.Year == DateTime.Now.Year
