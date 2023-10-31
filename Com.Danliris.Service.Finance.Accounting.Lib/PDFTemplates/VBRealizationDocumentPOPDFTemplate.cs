@@ -518,7 +518,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 }
                 else
                 {
-                    cellHeaderBody.Phrase = new Phrase(item.First().UnitName, normal_font_8);
+                    string unitName = item.First().UnitName;
+                    if (item.First().UnitCode == "S2")
+                    {
+                        unitName = "SPINNING";
+                    }
+                    cellHeaderBody.Phrase = new Phrase(unitName, normal_font_8);
                 }
                 cellHeaderBody.HorizontalAlignment = Element.ALIGN_LEFT;
                 headerTable3a.AddCell(cellHeaderBody);

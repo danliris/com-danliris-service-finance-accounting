@@ -686,7 +686,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             #region NewCheckbox
             //List<PdfFormField> annotations = new List<PdfFormField>();
 
-            var units = data.Items.SelectMany(element => element.PurchaseOrderExternal.Items).Select(element => element.Unit.Name).Distinct().ToList();
+            var units = data.Items.SelectMany(element => element.PurchaseOrderExternal.Items).Select(element => new { unitName= element.Unit.Name, unitCode = element.Unit.Code }).Distinct().ToList();
 
             foreach (var unit in units)
             {
@@ -716,7 +716,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 //     = new BebanUnitEvent(_checkGroup, _radioField1, 1);
                 //headerTable3a.AddCell(cellform);
 
-                cellHeaderBody.Phrase = new Phrase("- " + unit, beban_unit_font);
+                var unitNames = unit.unitName;
+
+                if (unit.unitCode == "S2") {
+                    unitNames = "SPINNING";
+                }
+
+                cellHeaderBody.Phrase = new Phrase("- " + unitNames, beban_unit_font);
 
                 headerTable3b.AddCell(cellHeaderBody);
 
