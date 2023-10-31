@@ -276,7 +276,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 }
                 else
                 {
-                    cellHeaderBody.Phrase = new Phrase("- " + item.Unit.Name, beban_unit_font);
+
+                    string unitName = item.Unit.Name;
+                    if (item.Unit.Code == "S2")
+                    {
+                        unitName = "SPINNING";
+                    }
+                    cellHeaderBody.Phrase = new Phrase("- " + unitName, beban_unit_font);
                 }
 
                 headerTable3b.AddCell(cellHeaderBody);
