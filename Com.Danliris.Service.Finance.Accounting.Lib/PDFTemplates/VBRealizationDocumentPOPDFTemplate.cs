@@ -540,10 +540,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 }
                 else
                 {
-                    var nom = nomExPPN.ToString("#,##0.00", new CultureInfo("id-ID"));
-                    
+                    //var nom = nomExPPN.ToString("#,##0.00", new CultureInfo("id-ID"));
+
+                    decimal ppn_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (GetPPnValue(viewModel)));
+                    decimal pph_supplier_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (GetPPhValue(viewModel)));
+
+                    decimal totalNom = item.Sum(s => s.Amount) - ppn_unit_item + pph_supplier_unit_item;
+
+                    var nom = totalNom.ToString("#,##0.00", new CultureInfo("id-ID"));
                     //var nomGenerate = nomExPPN.ToString("#,##0.00", new CultureInfo("id-ID"));
-                    
+
                     //var nom = item.Sum(s => s.AmountNom).ToString("#,##0.00", new CultureInfo("id-ID"));
 
                     // Beban Unit Item Mata Uang
@@ -573,6 +579,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 {
                     decimal pph_supplier_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (GetPPhValue(viewModel)));
 
+                    var pph = (item.Sum(s => s.Amount) / grandTotal);
                     cellHeaderBody.Colspan = 1;
                     cellHeaderBody.Phrase = new Phrase(pph_supplier_unit_item.ToString("#,##0.00", new CultureInfo("id-ID")), normal_font_8);
                     cellHeaderBody.HorizontalAlignment = Element.ALIGN_CENTER;
@@ -593,7 +600,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
                 {
                     //decimal ppn_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (count_price - total_realization));
                     
-                    decimal ppn_unit_item = nomExPPN * (decimal.Parse(item.First().PPN)/100);
+                    //decimal ppn_unit_item = nomExPPN * (decimal.Parse(item.First().PPN)/100);
+
+                    decimal ppn_unit_item = ((item.Sum(s => s.Amount) / grandTotal) * (GetPPnValue(viewModel)));
 
                     //decimal ppn_unit_item = ((item.Sum(s => s.Amount) / total_realization) * (count_price - total_realization));
 
@@ -785,7 +794,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             return TotalPaidString + " " + CurrencySay;
         }
 
+        private decimal GetPPnValue(VBRealizationPdfDto viewModel)
+        {
+            decimal val = 0;
 
+            foreach (var itm in viewModel.Items)
+            {
+                if (itm.UseVat == true )
+                {
+                    val += itm.Amount * (Convert.ToDecimal(itm.VatRate) / 100);
+                }
+            }
+
+            return val;
+        }
         private decimal GetPPhValue(VBRealizationPdfDto viewModel)
         {
             decimal val = 0;
