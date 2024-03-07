@@ -44,7 +44,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                                 AccountNo = a.BankAccountingCode.Substring(0, 2),
                                 AccountName = a.BankName,
                                 Debit = 0,
-                                Credit = Convert.ToDecimal(a.Amount),
+                                Credit = Convert.ToDecimal(a.Amount * a.CurrencyRate),
                                 DebitIDR = 0,
                                 CreditIDR = Convert.ToDecimal(a.Amount * a.CurrencyRate)
                               });
@@ -269,7 +269,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                               {
                                   DocumentNo = a.DocumentNo,
                                   Date = a.Date,
-                                  CurrencyCode = a.CurrencyCode,
+                                  CurrencyCode = "IDR", //a.CurrencyCode,
                                   SupplierName = a.SupplierName,
 
                                   INNo = "-",
@@ -300,7 +300,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                           {
                               DocumentNo = a.DocumentNo,
                               Date = a.Date,
-                              CurrencyCode = a.CurrencyCode,
+                              CurrencyCode = "IDR", //a.CurrencyCode,
                               SupplierName = a.SupplierName,
                               INNo = b.InternalNoteNo,
                               INDate = b.InternalNoteDate,
@@ -362,7 +362,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                     DebitIDR = i.DebitIDR,
                     DocumentNo = i.DocumentNo,
                     Date = i.Date,
-                    CurrencyCode = i.CurrencyCode,
+                    CurrencyCode = "IDR", //i.CurrencyCode,
                     SupplierName = i.SupplierName,
                 };
                 data.Add(HdrData);
@@ -500,7 +500,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinan
                     string InDate = d.INDate == new DateTime(1970, 1, 1) ? "-" : d.INDate.ToOffset(new TimeSpan(offset, 0, 0)).ToString("MM/dd/yyyy", new CultureInfo("us-US"));
                     string InvDate = d.InvoiceDate == new DateTime(1970, 1, 1) ? "-" : d.InvoiceDate.ToOffset(new TimeSpan(offset, 0, 0)).ToString("MM/dd/yyyy", new CultureInfo("us-US"));
 
-                    result.Rows.Add(d.DocumentNo, DocDate, d.AccountNo, d.AccountName, d.SupplierName, d.ProductName, d.INNo, InDate, d.InvoiceNo, InvDate, d.BillNo, d.PaymentBill, d.CurrencyCode, d.Debit, d.Credit);
+                    result.Rows.Add(d.DocumentNo, DocDate, d.AccountNo, d.AccountName, d.SupplierName, d.ProductName, d.INNo, InDate, d.InvoiceNo, InvDate, d.BillNo, d.PaymentBill, d.CurrencyCode, d.DebitIDR, d.CreditIDR);
                 }
 
                 bool styling = true;
