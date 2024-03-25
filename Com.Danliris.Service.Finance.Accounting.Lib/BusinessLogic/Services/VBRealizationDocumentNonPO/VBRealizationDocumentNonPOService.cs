@@ -447,7 +447,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBR
                 {
                     item.SetAmount(formItem.Amount, _identityService.Username, UserAgent);
                     item.SetDate(formItem.DateDetail.GetValueOrDefault(), _identityService.Username, UserAgent);
-                    item.SetIncomeTax(formItem.IncomeTax.Id, formItem.IncomeTax.Rate.GetValueOrDefault(), formItem.IncomeTax.Name, _identityService.Username, UserAgent);
+                    if(formItem.IncomeTax != null)
+                    {
+                        item.SetIncomeTax(formItem.IncomeTax.Id, formItem.IncomeTax.Rate.GetValueOrDefault(), formItem.IncomeTax.Name, _identityService.Username, UserAgent);
+                    }
                     item.SetVatTax(formItem.VatTax.Id, formItem.VatTax.Rate, _identityService.Username, UserAgent);
                     item.SetIncomeTaxBy(formItem.IncomeTaxBy, _identityService.Username, UserAgent);
                     item.SetRemark(formItem.Remark, _identityService.Username, UserAgent);
