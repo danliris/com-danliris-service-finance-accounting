@@ -731,12 +731,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
             string CurrencySay;
             if (symbol == "Rp" || symbol.ToUpper() == "IDR")
             {
-                TotalPaidString = NumberToTextIDN.terbilang((double)total);
+                TotalPaidString = NumberToTextIDNVB.terbilang((double)total);
                 CurrencySay = "Rupiah";
             }
             else
             {
-                TotalPaidString = NumberToTextIDN.terbilang((double)total);
+                TotalPaidString = NumberToTextIDNVB.terbilang((double)total);
                 CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(description.ToLower());
             }
 
