@@ -1215,7 +1215,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.Realizat
         private string Nom(decimal total, RealizationVbWithPOViewModel viewModel)
         {
 
-            string TotalPaidString = NumberToTextIDN.terbilang((double)total);
+            string TotalPaidString = NumberToTextIDNVB.terbilang((double)total);
 
             return TotalPaidString + " Rupiah";
         }
