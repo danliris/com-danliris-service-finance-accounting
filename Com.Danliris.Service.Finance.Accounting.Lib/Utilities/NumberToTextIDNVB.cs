@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
@@ -11,7 +12,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
         static string[] puluhan = { "", "", "Dua Puluh", "Tiga Puluh", "Empat Puluh", "Lima Puluh", "Enam Puluh", "Tujuh Puluh", "Delapan Puluh", "Sembilan Puluh" };
         static string[] ribuan = { "", "ribu", "juta", "milyar", "triliyun", "kuadrilyun", "kuintiliun", "sekstiliun", "septiliun", "oktiliun", "noniliun", "desiliun" };
 
-        public static string terbilang(double d)
+        public static string terbilang(double d, string symbol, string description)
         {
             var strHasil = "";
             var isNegative = (d) < 0;
@@ -26,7 +27,15 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
                 var a = Convert.ToDouble((d.ToString().Substring(d.ToString().IndexOf(".") + 1)));
                 if (a != 0)
                 {
-                    strHasil = terbilangKoma(d);
+                    if (symbol == "Rp" || symbol.ToUpper() == "IDR")
+                    {
+                        strHasil = "rupiah " + terbilangKoma(d);
+                    }
+                    else
+                    {
+                        strHasil = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(description.ToLower())+ " " + terbilangKoma(d);
+                    }
+                       
                 }
                 d = Convert.ToDouble(d.ToString().Substring(0, d.ToString().IndexOf(".")));
             }
@@ -185,7 +194,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
 
 
 
-            return "koma " + strHasil;
+            return  strHasil + " sen ";
         }
     }
 }

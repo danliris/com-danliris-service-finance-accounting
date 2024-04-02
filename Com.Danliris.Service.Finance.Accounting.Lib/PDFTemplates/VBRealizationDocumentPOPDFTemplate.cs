@@ -780,18 +780,18 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.PDFTemplates
         {
             string TotalPaidString;
             string CurrencySay;
-            if (symbol == "Rp" || symbol.ToUpper() == "IDR")
-            {
-                TotalPaidString = NumberToTextIDN.terbilang((double)total);
-                CurrencySay = "Rupiah";
-            }
-            else
-            {
-                TotalPaidString = NumberToTextIDN.terbilang((double)total);
-                CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(description.ToLower());
-            }
+            //if (symbol == "Rp" || symbol.ToUpper() == "IDR")
+            //{
+            TotalPaidString = NumberToTextIDNVB.terbilang((double)total, symbol, description);
+            //CurrencySay = "Rupiah";
+            //}
+            //else
+            //{
+            //    TotalPaidString = NumberToTextIDNVB.terbilang((double)total);
+            //    CurrencySay = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(description.ToLower());
+            //}
 
-            return TotalPaidString + " " + CurrencySay;
+            return TotalPaidString;// + " " + CurrencySay;
         }
 
         private decimal GetPPnValue(VBRealizationPdfDto viewModel)
