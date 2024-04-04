@@ -39,6 +39,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
                 }
                 d = Convert.ToDouble(d.ToString().Substring(0, d.ToString().IndexOf(".")));
             }
+            else
+            {
+                if (symbol == "Rp" || symbol.ToUpper() == "IDR")
+                {
+                    strHasil = strHasil + "rupiah ";
+                }
+                else
+                {
+                    strHasil = strHasil +  CultureInfo.CurrentCulture.TextInfo.ToTitleCase(description.ToLower());
+                }
+            }
 
             var nDigit = 0;
             var nPosisi = 0;
@@ -191,8 +202,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Utilities
                 }
 
             }
-
-
 
             return  strHasil + " sen ";
         }
