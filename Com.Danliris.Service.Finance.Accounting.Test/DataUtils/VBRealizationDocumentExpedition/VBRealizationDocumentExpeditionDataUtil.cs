@@ -27,7 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
         public VBRealizationDocumentExpeditionModel GetTestData_VBRealizationDocumentExpedition()
         {
             var vbRealization = GetTestData_RealizationVbs();
-            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO);
+            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO, "aaa", "bbb", "123");
             dbContext.VBRealizationDocumentExpeditions.Add(data);
             dbContext.SaveChanges();
             return data;
@@ -36,7 +36,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
         public VBRealizationDocumentExpeditionModel GetTestDataReject_VBRealizationDocumentExpedition()
         {
             var vbRealization = GetTestData_RealizationVbs();
-            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO);
+            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO, "aaa", "bbb", "123");
             data.CashierDelete();
             dbContext.VBRealizationDocumentExpeditions.Add(data);
             dbContext.SaveChanges();
@@ -46,7 +46,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
         public VBRealizationDocumentExpeditionModel GetTestDataCashierDelete_VBRealizationDocumentExpedition()
         {
             var vbRealization = GetTestData_RealizationVbs();
-            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO);
+            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO, "aaa", "bbb", "123");
             data.CashierVerification("Test");
             dbContext.VBRealizationDocumentExpeditions.Add(data);
             dbContext.SaveChanges();
@@ -56,7 +56,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
         public VBRealizationDocumentExpeditionModel GetTestDataVerifiedToCashier_VBRealizationDocumentExpedition()
         {
             var vbRealization = GetTestData_RealizationVbs();
-            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO);
+            var data = new VBRealizationDocumentExpeditionModel(vbRealization.Id, 1, "vbNo", "vbRealizationNo", DateTimeOffset.Now, "vbRequestName", 1, "meter", 1, "divisionName", 1, 1, "IDR", 1, "purpose", VBType.WithPO, "aaa", "bbb", "123");
             data.VerificationRejected("Test", "Test");
             dbContext.VBRealizationDocumentExpeditions.Add(data);
             dbContext.SaveChanges();
@@ -103,7 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.DataUtils.VBRealizationDo
 
         public VBRequestDocumentModel GetTestData_VBRequestDocument()
         {
-            var data = new VBRequestDocumentModel("documentNo", DateTimeOffset.Now, DateTimeOffset.Now, 1, "suppliantUnitCode", "suppliantUnitName", 1, "suppliantDivisionCode", "suppliantDivisionName", 1, "currencyCode", "currencySymbol", "currencyDescription", 1, "purpose", 1, true, true, VBType.NonPO, true, "noBI", "noPo", "typePurchasing");
+            var data = new VBRequestDocumentModel("documentNo", DateTimeOffset.Now, DateTimeOffset.Now, 1, "suppliantUnitCode", "suppliantUnitName", 1, "suppliantDivisionCode", "suppliantDivisionName", 1, "currencyCode", "currencySymbol", "currencyDescription", 1, "purpose", 1, true, true, VBType.NonPO, true, "noBI", "noPo", "typePurchasing", "email", "takenBy" ,"phoneNumber");
             dbContext.VBRequestDocuments.Add(data);
             dbContext.SaveChanges();
             return data;
