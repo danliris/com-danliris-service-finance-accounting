@@ -45,5 +45,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.VBStatusReport
         public string CurrencyCode { get; set; }
         public bool IsInklaring { get; internal set; }
         public string NoBL { get; internal set; }
+
+        public string TakenBy { get; internal set; }
+        public string PhoneNumber { get; internal set; }
+        public string Email { get; internal set; }
+
     }
 }

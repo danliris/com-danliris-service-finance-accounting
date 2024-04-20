@@ -157,6 +157,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     form.IsInklaring,
                     form.NoBL,
                     form.NoPO,
+                    form.Email,
+                    form.TakenBy,
+                    form.PhoneNumber,
                     null
                     );
 
@@ -236,7 +239,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 form.IsInklaring,
                 null, // NoBL
                 null, // NoPO
-                form.TypePurchasing
+                form.TypePurchasing,
+                form.Email,
+                form.TakenBy,
+                form.PhoneNumber
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);

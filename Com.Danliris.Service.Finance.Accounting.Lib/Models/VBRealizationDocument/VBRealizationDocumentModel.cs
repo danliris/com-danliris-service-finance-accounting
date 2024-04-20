@@ -66,6 +66,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             DocumentType = viewModel.DocumentType;
             Position = VBRealizationPosition.Purchasing;
             Remark = viewModel.Remark;
+            Email = viewModel.Email;
+            TakenBy = viewModel.TakenBy;
+            PhoneNumber = viewModel.PhoneNumber;
         }
 
         public void UpdateVerified(VBRealizationPosition position, string reason, string username, string userAgent)
@@ -78,7 +81,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             this.FlagForUpdate(username, userAgent);
         }
 
-        public VBRealizationDocumentModel(CurrencyDto currency, DateTimeOffset? date, UnitDto suppliantUnit, Tuple<string, int> documentNo, decimal amount, string remark)
+        public VBRealizationDocumentModel(CurrencyDto currency, DateTimeOffset? date, UnitDto suppliantUnit, Tuple<string, int> documentNo, decimal amount, string remark, string email, string takenBy, string phoneNumber)
         {
             CurrencyCode = currency.Code;
             CurrencyDescription = currency.Description;
@@ -99,9 +102,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             Position = VBRealizationPosition.Purchasing;
             Amount = amount;
             Remark = remark;
+            Email = email;
+            TakenBy = takenBy;
+            PhoneNumber = phoneNumber;
         }
 
-        public VBRealizationDocumentModel(DateTimeOffset? date, VBRequestDocumentModel vbRequest, Tuple<string, int> documentNo, decimal amount, string remark)
+        public VBRealizationDocumentModel(DateTimeOffset? date, VBRequestDocumentModel vbRequest, Tuple<string, int> documentNo, decimal amount, string remark, string email, string takenBy, string phoneNumber)
         {
             Date = date.GetValueOrDefault();
             Type = VBType.WithPO;
@@ -132,9 +138,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
 
             Position = VBRealizationPosition.Purchasing;
             Remark = remark;
+            Email = email;
+            TakenBy = takenBy;
+            PhoneNumber = phoneNumber;
         }
-
-        
 
         public VBRealizationPosition Position { get; private set; }
         public string Remark { get; private set; }
@@ -146,6 +153,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public DateTimeOffset Date { get; private set; }
         [MaxLength(32)]
         public string VBNonPoType { get; private set; }
+
+        public string Email { get; private set; }
+        public string TakenBy { get; private set; }
+        public string PhoneNumber { get; private set; }
 
         public void SetIsCompleted(DateTimeOffset? completedDate, string username, string userAgent, string referenceNo)
         {
@@ -365,6 +376,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public void SetRemark(string remark)
         {
             Remark = remark;
+        }
+
+        public void SetEmail(string email, string user, string userAgent)
+        {
+            if (email != Email)
+            {
+                Email = email;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetTakenBy(string takenBy, string user, string userAgent)
+        {
+            if (takenBy != TakenBy)
+            {
+                TakenBy = takenBy;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetPhoneNumber(string phoneNumber, string user, string userAgent)
+        {
+            if (phoneNumber != PhoneNumber)
+            {
+                PhoneNumber = phoneNumber;
+                this.FlagForUpdate(user, userAgent);
+            }
         }
     }
 }

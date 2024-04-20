@@ -655,7 +655,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service
-                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<ReportDto>() { new ReportDto()},1,1,25));
 
             serviceProviderMock
@@ -663,7 +663,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).GetReport(1,1,"",1,1,null,null,null,25);
+            IActionResult response = await GetController(serviceProviderMock).GetReport(1,1,"",1,1,null,null,null, null, null, null, null, 25);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -678,7 +678,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service
-                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<ReportDto>() { new ReportDto() }, 1, 1, 25));
 
             serviceProviderMock
@@ -686,7 +686,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).GetReport(1, 1, "", 1, 1,DateTime.Now, DateTime.Now.AddDays(2), null, 25);
+            IActionResult response = await GetController(serviceProviderMock).GetReport(1, 1, "", 1, 1,DateTime.Now, DateTime.Now.AddDays(2), DateTime.Now, DateTime.Now.AddDays(2), DateTime.Now, DateTime.Now.AddDays(2), null, 25);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -700,14 +700,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             Mock<IServiceProvider> serviceProviderMock = GetServiceProvider();
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
-            service.Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).ThrowsAsync(new Exception());
+            service.Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).ThrowsAsync(new Exception());
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).GetReport(1, 1, "", 1, 1, null, null, null, 25);
+            IActionResult response = await GetController(serviceProviderMock).GetReport(1, 1, "", 1, 1, null, null, null, null, null, null, null, 25);
 
             //Assert
             int statusCode = this.GetStatusCode(response);
@@ -722,17 +722,17 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service
-                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<ReportDto>() { vBRealizationDocumentExpeditionModel }, 1, 1, 25));
 
             serviceProviderMock
                .Setup(serviceProvider => serviceProvider.GetService(typeof(IVBRealizationDocumentExpeditionService)))
                .Returns(service.Object);
 
-            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null,null);
+            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null, null, null, null, null, null);
             Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
 
-            IActionResult response2 = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, null);
+            IActionResult response2 = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, null);
             Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response2.GetType().GetProperty("ContentType").GetValue(response, null));
 
         }
@@ -745,7 +745,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service
-                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<ReportDto>(), 1, 1, 25));
 
             serviceProviderMock
@@ -753,7 +753,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                .Returns(service.Object);
             
             //Act
-            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null,null);
+            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null, null, null, null, null,null);
             
             //Assert
             Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
@@ -767,7 +767,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service
-                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(new VBRealizationDocumentExpeditionReportDto(new List<ReportDto>() { }, 1, 1, 25));
 
             serviceProviderMock
@@ -775,7 +775,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null,null);
+            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null, null, null, null, null, null);
 
             //Assert
             Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.GetType().GetProperty("ContentType").GetValue(response, null));
@@ -789,7 +789,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
             var service = new Mock<IVBRealizationDocumentExpeditionService>();
 
             service
-                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.GetReports(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new Exception());
 
             serviceProviderMock
@@ -797,7 +797,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Controllers.VBRealization
                .Returns(service.Object);
 
             //Act
-            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null,null);
+            IActionResult response = await GetController(serviceProviderMock).GetReportXls(1, 1, "", 1, 1, null, null, null, null, null, null, null);
             
             //Assert
             int statusCode = this.GetStatusCode(response);

@@ -34,7 +34,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             _IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
-        private List<VBStatusReportViewModel> NewGetReportQuery(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, int offSet)
+        private List<VBStatusReportViewModel> NewGetReportQuery(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, int offSet)
         {
             var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus > ApprovalStatus.Draft);
 
@@ -71,7 +71,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             {
                 requestQuery = requestQuery.Where(s => s.Date.AddHours(offSet).Date <= requestDateTo.Value.Date);
             }
-
+//
+            if (approvalDateFrom.HasValue && approvalDateTo.HasValue)
+            {
+                requestQuery = requestQuery.Where(s => approvalDateFrom.Value.Date <= s.ApprovalDate.GetValueOrDefault().AddHours(offSet).Date && s.ApprovalDate.GetValueOrDefault().AddHours(offSet).Date <= approvalDateTo.Value.Date);
+            }
+            else if (approvalDateFrom.HasValue && !approvalDateTo.HasValue)
+            {
+                requestQuery = requestQuery.Where(s => approvalDateFrom.Value.Date <= s.Date.AddHours(offSet).Date);
+            }
+            else if (!approvalDateFrom.HasValue && approvalDateTo.HasValue)
+            {
+                requestQuery = requestQuery.Where(s => s.Date.AddHours(offSet).Date <= approvalDateTo.Value.Date);
+            }
+//
             if (clearanceDateFrom.HasValue && clearanceDateTo.HasValue)
             {
                 requestQuery = requestQuery.Where(s => clearanceDateFrom.Value.Date <= s.CompletedDate.GetValueOrDefault().AddHours(offSet).Date && s.CompletedDate.GetValueOrDefault().AddHours(offSet).Date <= clearanceDateTo.Value.Date);
@@ -139,7 +152,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                                 : "-",
                               CurrencyCode = rqst.CurrencyCode,
                               IsInklaring = rqst.IsInklaring,
-                              NoBL = rqst.NoBL
+                              NoBL = rqst.NoBL,
+                              TakenBy = rqst.TakenBy,
+                              PhoneNumber = rqst.PhoneNumber,
+                              Email = rqst.Email
 
                           })
                               .OrderByDescending(s => s.LastModifiedUtc);
@@ -193,8 +209,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                               ClearenceDate = rqst.CompletedDate.HasValue ? rqst.CompletedDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"))
                                 : "-",
                               IsInklaring = rqst.IsInklaring,
-                              NoBL = rqst.NoBL
-
+                              NoBL = rqst.NoBL,
+                              TakenBy = rqst.TakenBy,
+                              PhoneNumber = rqst.PhoneNumber,
+                              Email = rqst.Email
                           })
                           .OrderByDescending(s => s.LastModifiedUtc);
             }
@@ -203,16 +221,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             return result.ToList();
         }
 
-        public List<VBStatusReportViewModel> GetReport(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, int offSet)
+        public List<VBStatusReportViewModel> GetReport(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, int offSet)
         {
-            var data = NewGetReportQuery(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, clearanceDateFrom, clearanceDateTo, offSet);
+            var data = NewGetReportQuery(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, clearanceDateFrom, clearanceDateTo, offSet);
 
             return data;
         }
 
-        public MemoryStream GenerateExcel(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, int offSet)
+        public MemoryStream GenerateExcel(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, int offSet)
         {
-            var data = NewGetReportQuery(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, clearanceDateFrom, clearanceDateTo, offSet);
+            var data = NewGetReportQuery(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, clearanceDateFrom, clearanceDateTo, offSet);
 
             var currencyGroup = data
                 .GroupBy(element => element.CurrencyCode)
@@ -237,9 +255,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Realisasi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Sisa (Kurang/Lebih)", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Clearance", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Realisasi Kasir", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nama Pengambil VB", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No Telepon", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Email Pembuat VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Status", DataType = typeof(string) });
-
+           
             var dtCurrency = new DataTable();
             dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
             dtCurrency.Columns.Add(new DataColumn() { ColumnName = "Total", DataType = typeof(string) });
@@ -248,7 +269,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             var realizationTotal = 0.0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
             }
             else
             {
@@ -257,7 +278,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
                 foreach (var item in data)
                 {
                     dt.Rows.Add(item.VBNo, item.Date, item.DateEstimate, item.Unit.Name, item.CreateBy, item.ApprovalDate, item.RealizationNo, item.RealizationDate, item.Usage, item.Aging, item.CurrencyCode,
-                        item.Amount.ToString("#,##0.###0"), item.RealizationAmount.ToString("#,##0.###0"), item.Difference.ToString("#,##0.###0"), item.ClearenceDate, item.Status);
+                        item.Amount.ToString("#,##0.###0"), item.RealizationAmount.ToString("#,##0.###0"), item.Difference.ToString("#,##0.###0"), item.ClearenceDate, item.TakenBy, item.PhoneNumber, item.Email, item.Status);
                 }
 
                 requestTotal = (double)data.Sum(element => element.Amount);
@@ -300,9 +321,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.VBS
             return data;
         }
 
-        public ReportViewModel GetReportWithCurrency(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, int offSet)
+        public ReportViewModel GetReportWithCurrency(int unitId, long vbRequestId, string applicantName, string clearanceStatus, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, int offSet)
         {
-            var data = NewGetReportQuery(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, clearanceDateFrom, clearanceDateTo, offSet);
+            var data = NewGetReportQuery(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, clearanceDateFrom, clearanceDateTo, offSet);
 
             var currencyGroup = data
                 .GroupBy(element => element.CurrencyCode)

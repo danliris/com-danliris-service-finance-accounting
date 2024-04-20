@@ -4,14 +4,16 @@ using Com.Danliris.Service.Finance.Accounting.Lib;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240318084631_enhance-vb-docs-and-vb-realization")]
+    partial class enhancevbdocsandvbrealization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5998,8 +6000,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                     b.Property<string>("DivisionName")
                         .HasMaxLength(64);
 
-                    b.Property<string>("Email");
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LastModifiedAgent")
@@ -6019,8 +6019,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
 
                     b.Property<string>("NotVerifiedReason");
 
-                    b.Property<string>("PhoneNumber");
-
                     b.Property<int>("Position");
 
                     b.Property<string>("Purpose");
@@ -6029,8 +6027,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Migrations
                         .HasMaxLength(256);
 
                     b.Property<DateTimeOffset?>("SendToVerificationDate");
-
-                    b.Property<string>("TakenBy");
 
                     b.Property<int>("UnitId");
 

@@ -30,7 +30,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             string currencyCode,
             double currencyRate,
             string purpose,
-            VBType vbType
+            VBType vbType,
+            string email,
+            string takenBy,
+            string phoneNumber
             )
         {
             VBRealizationId = vbRealizationId;
@@ -49,7 +52,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             CurrencyRate = currencyRate;
             VBType = vbType;
             Purpose = purpose;
-
+            Email = email;
+            TakenBy = takenBy;
+            PhoneNumber = phoneNumber;
             Position = VBRealizationPosition.PurchasingToVerification;
         }
 
@@ -92,6 +97,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         [MaxLength(64)]
         public VBType VBType { get; set; }
         public string Purpose { get; private set; }
+        public string Email { get; private set; }
+        public string TakenBy { get; private set; }
+        public string PhoneNumber { get; private set; }
 
         public void SubmitToVerification(string name)
         {
