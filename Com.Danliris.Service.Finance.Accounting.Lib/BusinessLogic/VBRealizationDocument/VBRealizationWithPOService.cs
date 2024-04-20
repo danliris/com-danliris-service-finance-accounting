@@ -128,7 +128,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             });
 
             if (form.Type == "Tanpa Nomor VB")
-                model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo, (decimal)amount, form.Remark);
+                model = new VBRealizationDocumentModel(form.Currency, form.Date, form.SuppliantUnit, documentNo, (decimal)amount, form.Remark, form.Email, form.TakenBy, form.PhoneNumber);
             else
             {
                 var vbRequest = _dbContext.VBRequestDocuments.FirstOrDefault(entity => entity.Id == form.VBRequestDocument.Id.GetValueOrDefault());
@@ -139,7 +139,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                     _dbContext.VBRequestDocuments.Update(vbRequest);
                 }
 
-                model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, (decimal)amount, form.Remark);
+                model = new VBRealizationDocumentModel(form.Date, vbRequest, documentNo, (decimal)amount, form.Remark, form.Email, form.TakenBy, form.PhoneNumber);
             }
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
