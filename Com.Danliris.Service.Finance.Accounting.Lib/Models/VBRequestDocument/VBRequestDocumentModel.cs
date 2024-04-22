@@ -21,9 +21,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         // New Ctor With Index
         public VBRequestDocumentModel(string documentNo, DateTimeOffset date, DateTimeOffset realizationEstimationDate, int suppliantUnitId, string suppliantUnitCode, string suppliantUnitName,
                 int suppliantDivisionId, string suppliantDivisionCode, string suppliantDivisionName, int currencyId, string currencyCode, string currencySymbol, string currencyDescription,
-                double currencyRate, string purpose, decimal amount, bool isPosted, bool isCompleted, VBType type, int index, bool isInklaring, string noBl, string noPo, string typePurchasing)
+                double currencyRate, string purpose, decimal amount, bool isPosted, bool isCompleted, VBType type, int index, bool isInklaring, string noBl, string noPo, string typePurchasing, string email, string takenBy, string phoneNumber)
             : this(documentNo, date, realizationEstimationDate, suppliantUnitId, suppliantUnitCode, suppliantUnitName, suppliantDivisionId, suppliantDivisionCode, suppliantDivisionName,
-                currencyId, currencyCode, currencySymbol, currencyDescription, currencyRate, purpose, amount, isPosted, isCompleted, type, isInklaring, noBl, noPo, typePurchasing)
+                currencyId, currencyCode, currencySymbol, currencyDescription, currencyRate, purpose, amount, isPosted, isCompleted, type, isInklaring, noBl, noPo, typePurchasing, email, takenBy, phoneNumber)
         {
             Index = index;
         }
@@ -51,7 +51,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             bool isInklaring,
             string noBl,
             string noPo,
-            string typePurchasing
+            string typePurchasing,
+            string email,
+            string takenBy,
+            string phoneNumber
             )
         {
             DocumentNo = documentNo;
@@ -79,6 +82,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             NoBL = noBl;
             NoPO = noPo;
             TypePurchasing = typePurchasing;
+            Email = email;
+            TakenBy = takenBy;
+            PhoneNumber = phoneNumber;
         }
 
         [MaxLength(64)]
@@ -116,6 +122,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public ApprovalStatus ApprovalStatus { get; private set; }
         public string CancellationReason { get; private set; }
         public DateTimeOffset? ApprovalDate { get; private set; }
+       
         [MaxLength(256)]
         public string ApprovedBy { get; private set; }
 
@@ -146,6 +153,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
         public string BankCurrencyDescription { get; private set; }
         public string BankDocumentNo { get; private set; }
 
+        public string Email { get; private set; }
+        public string TakenBy { get; private set; }
+        public string PhoneNumber { get; private set; }
 
         public void SetDate(DateTimeOffset newDate, string user, string userAgent)
         {
@@ -279,6 +289,33 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             }
         }
 
+        public void SetEmail(string email, string user, string userAgent)
+        {
+            if (email != Email)
+            {
+                Email = email;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetTakenBy(string takenBy, string user, string userAgent)
+        {
+            if (takenBy != TakenBy)
+            {
+                TakenBy = takenBy;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
+        public void SetPhoneNumber(string phoneNumber, string user, string userAgent)
+        {
+            if (phoneNumber != PhoneNumber)
+            {
+                PhoneNumber = phoneNumber;
+                this.FlagForUpdate(user, userAgent);
+            }
+        }
+
         public void UpdateFromForm(VBRequestDocumentWithPOFormDto form)
         {
             Date = form.Date.GetValueOrDefault();
@@ -297,6 +334,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRequestDocument
             SuppliantDivisionCode = form.SuppliantUnit.Division.Code;
             SuppliantDivisionName = form.SuppliantUnit.Division.Name;
             TypePurchasing = form.TypePurchasing;
+            Email = form.Email;
+            TakenBy = form.TakenBy;
+            PhoneNumber = form.PhoneNumber;
         }
 
         public void SetCancellation(string reason, string username, string userAgent)
