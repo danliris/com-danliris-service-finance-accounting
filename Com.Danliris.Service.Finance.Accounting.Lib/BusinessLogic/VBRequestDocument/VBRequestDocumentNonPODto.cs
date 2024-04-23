@@ -26,5 +26,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
         public bool IsInklaring { get; set; }
         public string NoBL { get; set; }
         public string NoPO { get; set; }
+        public string Email { get; set; }
+        public string TakenBy { get; set; }
+        public string PhoneNumber { get; set; }
+
     }
 }

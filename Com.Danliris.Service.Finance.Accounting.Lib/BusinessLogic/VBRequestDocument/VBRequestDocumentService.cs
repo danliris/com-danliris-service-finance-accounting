@@ -482,7 +482,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 },
                 IsInklaring = model.IsInklaring,
                 NoBL = model.NoBL,
-                NoPO = model.NoPO
+                NoPO = model.NoPO,
+                Email = model.Email,
+                TakenBy = model.TakenBy,
+                PhoneNumber = model.PhoneNumber
             };
         }
 
@@ -538,6 +541,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 IsInklaring = model.IsInklaring,
                 ApprovalStatus = model.ApprovalStatus.ToString(),
                 TypePurchasing = model.TypePurchasing,
+                Email = model.Email,
+                TakenBy = model.TakenBy,
+                PhoneNumber = model.PhoneNumber,
                 Items = epoDetails.Select(epoDetail =>
                 {
                     var details = _dbContext.VBRequestDocumentItems.Where(entity => entity.VBRequestDocumentEPODetailId == epoDetail.Id).ToList();
