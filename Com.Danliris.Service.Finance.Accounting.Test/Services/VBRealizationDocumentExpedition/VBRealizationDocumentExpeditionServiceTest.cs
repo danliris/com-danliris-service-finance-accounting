@@ -144,16 +144,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Test.Services.VBRealizationDoc
             VBRealizationDocumentExpeditionModel vbRealization = _dataUtil(service, dbContext).GetTestData_VBRealizationDocumentExpedition();
            
 
-             var  result1 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId,DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "UNIT", 1, 25);
+             var  result1 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId,DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "UNIT", 1, 25);
             Assert.NotNull(result1);
 
-            var result2 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId, DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "VERIFIKASI", 1, 25);
+            var result2 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId, DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "VERIFIKASI", 1, 25);
             Assert.NotNull(result2);
 
-            var result3 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId, DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "KASIR", 1, 25);
+            var result3 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId, DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "KASIR", 1, 25);
             Assert.NotNull(result3);
 
-            var result4 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId, DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "RETUR", 1, 25);
+            var result4 = await service.GetReports(vbRealization.Id, vbRealization.VBRealizationId, vbRealization.VBRequestName, vbRealization.UnitId, vbRealization.DivisionId, DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), DateTimeOffset.Now.AddDays(-2), DateTimeOffset.Now.AddDays(2), "RETUR", 1, 25);
             Assert.NotNull(result4);
 
         }

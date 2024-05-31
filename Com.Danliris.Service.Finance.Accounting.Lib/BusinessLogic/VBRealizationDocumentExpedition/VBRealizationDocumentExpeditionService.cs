@@ -99,7 +99,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             _dbContext.VBRealizationDocuments.UpdateRange(models);
         }
 
-        public async Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, int divisionId, DateTimeOffset dateStart, DateTimeOffset dateEnd, DateTimeOffset approvalStart, DateTimeOffset approvalEnd, DateTimeOffset clearanceStart, DateTimeOffset clearanceEnd, string status, int page = 1, int size = 25)
+        public async Task<VBRealizationDocumentExpeditionReportDto> GetReports(int vbId, int vbRealizationId, string vbRequestName, int unitId, int divisionId, DateTimeOffset dateStart, DateTimeOffset dateEnd, DateTimeOffset approvalStart, DateTimeOffset approvalEnd, string status, int page = 1, int size = 25)
         {
             var vbRealizationQuery = _dbContext.VBRealizationDocuments.AsQueryable();
             var expeditionQuery = _dbContext.VBRealizationDocumentExpeditions.AsQueryable();
@@ -155,10 +155,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 query = query.Where(entity => entity.VBRealizationDate.Date >= dateStart && entity.VBRealizationDate.Date <= dateEnd);
 
             if (approvalStart != null && approvalEnd != null)
-                query = query.Where(entity => entity.ApprovalDate.GetValueOrDefault().Date >= approvalStart && entity.ApprovalDate.GetValueOrDefault().Date <= approvalEnd);
-
-            if (clearanceStart != null && clearanceEnd != null)
-                query = query.Where(entity => entity.CashierReceiptDate.GetValueOrDefault().Date >= clearanceStart && entity.CashierReceiptDate.GetValueOrDefault().Date <= clearanceEnd);
+                query = query.Where(entity => entity.CashierReceiptDate.GetValueOrDefault().Date >= approvalStart && entity.CashierReceiptDate.GetValueOrDefault().Date <= approvalEnd);
 
             if (vbId > 0)
                 query = query.Where(entity => entity.VBId == vbId);
