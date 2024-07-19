@@ -67,14 +67,14 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
         }
 
         [HttpGet("reports")]
-        public IActionResult GetReportAll(int unitId, int vbRequestId, string applicantName, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, string clearanceStatus = "")
+        public IActionResult GetReportAll(int unitId, int vbRequestId, string applicantName, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, string clearanceStatus = "")
         {
             //int offset = Convert.ToInt32(timezone);
 
             try
             {
                 ValidateUser();
-                var data = Service.GetReportWithCurrency(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, clearanceDateFrom, clearanceDateTo, IdentityService.TimezoneOffset);
+                var data = Service.GetReportWithCurrency(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, clearanceDateFrom, clearanceDateTo, IdentityService.TimezoneOffset);
 
                 return Ok(new
                 {
@@ -94,7 +94,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
         }
 
         [HttpGet("reports/xls")]
-        public IActionResult GetXlsAll(int unitId, int vbRequestId, string applicantName, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, string clearanceStatus = "")
+        public IActionResult GetXlsAll(int unitId, int vbRequestId, string applicantName, DateTimeOffset? requestDateFrom, DateTimeOffset? requestDateTo, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, DateTimeOffset? clearanceDateFrom, DateTimeOffset? clearanceDateTo, string clearanceStatus = "")
         {
 
             try
@@ -103,7 +103,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.VBStatus
                 byte[] xlsInBytes;
                 //int offset = Convert.ToInt32(timezone);
 
-                var xls = Service.GenerateExcel(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, realizeDateFrom, realizeDateTo, clearanceDateFrom, clearanceDateTo, IdentityService.TimezoneOffset);
+                var xls = Service.GenerateExcel(unitId, vbRequestId, applicantName, clearanceStatus, requestDateFrom, requestDateTo, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, clearanceDateFrom, clearanceDateTo, IdentityService.TimezoneOffset);
 
                 string filename = "Laporan Status VB.xlsx";
 
