@@ -157,6 +157,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                     form.IsInklaring,
                     form.NoBL,
                     form.NoPO,
+                    form.Email,
+                    form.TakenBy,
+                    form.PhoneNumber,
                     null
                     );
 
@@ -236,7 +239,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 form.IsInklaring,
                 null, // NoBL
                 null, // NoPO
-                form.TypePurchasing
+                form.TypePurchasing,
+                form.Email,
+                form.TakenBy,
+                form.PhoneNumber
                 );
 
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
@@ -476,7 +482,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 },
                 IsInklaring = model.IsInklaring,
                 NoBL = model.NoBL,
-                NoPO = model.NoPO
+                NoPO = model.NoPO,
+                Email = model.Email,
+                TakenBy = model.TakenBy,
+                PhoneNumber = model.PhoneNumber
             };
         }
 
@@ -532,6 +541,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDoc
                 IsInklaring = model.IsInklaring,
                 ApprovalStatus = model.ApprovalStatus.ToString(),
                 TypePurchasing = model.TypePurchasing,
+                Email = model.Email,
+                TakenBy = model.TakenBy,
+                PhoneNumber = model.PhoneNumber,
                 Items = epoDetails.Select(epoDetail =>
                 {
                     var details = _dbContext.VBRequestDocumentItems.Where(entity => entity.VBRequestDocumentEPODetailId == epoDetail.Id).ToList();

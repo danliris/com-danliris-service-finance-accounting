@@ -300,7 +300,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("reports")]
-        public async Task<IActionResult> GetReport([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] string vbRequestName, [FromQuery] int unitId, [FromQuery] int divisionId, [FromQuery] DateTime? dateStart, [FromQuery] DateTime? dateEnd, [FromQuery] string status, [FromQuery] int page = 1, [FromQuery] int size = 25)
+        public async Task<IActionResult> GetReport([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] string vbRequestName, [FromQuery] int unitId, [FromQuery] int divisionId, [FromQuery] DateTime? dateStart, [FromQuery] DateTime? dateEnd, [FromQuery] DateTime? approvalStart, [FromQuery] DateTime? approvalEnd, [FromQuery] string status, [FromQuery] int page = 1, [FromQuery] int size = 25)
         {
             try
             {
@@ -316,7 +316,18 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 else
                     dateStart = dateStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
 
-                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault().ToUniversalTime(), dateEnd.GetValueOrDefault().ToUniversalTime(), status, page, size);
+                if (approvalEnd == null)
+                    approvalEnd = DateTime.MaxValue;
+                else
+                    approvalEnd = approvalEnd.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+
+                if (approvalStart == null)
+                    approvalStart = DateTime.MinValue;
+                else
+                    approvalStart = approvalStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+
+
+                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault().ToUniversalTime(), dateEnd.GetValueOrDefault().ToUniversalTime(), approvalStart.GetValueOrDefault().ToUniversalTime(), approvalEnd.GetValueOrDefault().ToUniversalTime(), status, page, size);
 
                 return Ok(new
                 {
@@ -342,7 +353,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
         }
 
         [HttpGet("reports/xls")]
-        public async Task<IActionResult> GetReportXls([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] string vbRequestName, [FromQuery] int unitId, [FromQuery] int divisionId, [FromQuery] DateTime? dateStart, [FromQuery] DateTime? dateEnd, string status)
+        public async Task<IActionResult> GetReportXls([FromQuery] int vbId, [FromQuery] int vbRealizationId, [FromQuery] string vbRequestName, [FromQuery] int unitId, [FromQuery] int divisionId, [FromQuery] DateTime? dateStart, [FromQuery] DateTime? dateEnd, [FromQuery] DateTime? approvalStart, [FromQuery] DateTime? approvalEnd, string status)
         {
             try
             {
@@ -359,10 +370,22 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 else
                     dateStart = dateStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
 
+
+                if (approvalEnd == null)
+                    approvalEnd = DateTime.MaxValue;
+                else
+                    approvalEnd = approvalEnd.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+
+                if (approvalStart == null)
+                    approvalStart = DateTime.MinValue;
+                else
+                    approvalStart = approvalStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+
                 //dateEndXls = (DateTime)dateEnd == DateTime.MaxValue ? "-" : dateEndXls;
                 //dateStartXls = (DateTime)dateStart == DateTime.MinValue ? "-" : dateStartXls;
 
-                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault().ToUniversalTime(), dateEnd.GetValueOrDefault().ToUniversalTime(), status, 1, int.MaxValue);
+                var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault().ToUniversalTime(), dateEnd.GetValueOrDefault().ToUniversalTime(), approvalStart.GetValueOrDefault().ToUniversalTime(), approvalEnd.GetValueOrDefault().ToUniversalTime(), status, 1, int.MaxValue);
+             
                 var stream = GenerateExcel(reportResult.Data, dateStart, dateEnd);
 
                 var xls = stream.ToArray();

@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public string VBNo { get;  set; }
         public string VBRealizationNo { get;  set; }
         public DateTimeOffset VBRealizationDate { get;  set; }
+        public DateTimeOffset? ApprovalDate { get;  set; }
         public string VBRequestName { get;  set; }
         public int UnitId { get;  set; }
         public string UnitName { get;  set; }
@@ -36,5 +37,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public string Purpose { get; set; }
         public DateTimeOffset? LastModifiedDate { get; set; }
         public string RemarkRealization { get; set; }
+        public string TakenBy { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
     }
 }
