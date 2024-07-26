@@ -107,6 +107,10 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.R
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Adjustment;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.LocalDPPVATBankExpenditureNoteMonthlyRecap;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentFinance.Reports.ValasDPPVATBankExpenditureNoteMonthlyRecap;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CashierReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierVBRealizationReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CashierVBRealizationReport;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -215,7 +219,9 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
                 .AddTransient<IGarmentFinanceLocalBankCashReceiptMonthlyRecapService, GarmentFinanceLocalBankCashReceiptMonthlyRecapService>()
                 .AddTransient<IGarmentFinanceAdjustmentService, GarmentFinanceAdjustmentService>()
                 .AddTransient<ILocalDPPVATBankExpenditureNoteMonthlyRecapService, LocalDPPVATBankExpenditureNoteMonthlyRecapService>()
-                .AddTransient<IValasDPPVATBankExpenditureNoteMonthlyRecapService, ValasDPPVATBankExpenditureNoteMonthlyRecapService>();
+                .AddTransient<IValasDPPVATBankExpenditureNoteMonthlyRecapService, ValasDPPVATBankExpenditureNoteMonthlyRecapService>()
+                .AddTransient<ICashierReportService, CashierReportService>()
+                .AddTransient<ICashierVBRealizationReportService, CashierVBRealizationReportService>();
         }
 
 

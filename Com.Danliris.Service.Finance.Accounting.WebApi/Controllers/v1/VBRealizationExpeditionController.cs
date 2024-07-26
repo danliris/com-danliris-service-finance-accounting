@@ -309,22 +309,22 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 if (dateEnd == null)
                     dateEnd = DateTime.MaxValue;
                 else
-                    dateEnd = dateEnd.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+                    dateEnd = dateEnd.GetValueOrDefault();
 
                 if (dateStart == null)
                     dateStart = DateTime.MinValue;
                 else
-                    dateStart = dateStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+                    dateStart = dateStart.GetValueOrDefault();
 
                 if (approvalEnd == null)
                     approvalEnd = DateTime.MaxValue;
                 else
-                    approvalEnd = approvalEnd.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+                    approvalEnd = approvalEnd.GetValueOrDefault();
 
                 if (approvalStart == null)
                     approvalStart = DateTime.MinValue;
                 else
-                    approvalStart = approvalStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+                    approvalStart = approvalStart.GetValueOrDefault();
 
 
                 var reportResult = await _service.GetReports(vbId, vbRealizationId, vbRequestName, unitId, divisionId, dateStart.GetValueOrDefault().ToUniversalTime(), dateEnd.GetValueOrDefault().ToUniversalTime(), approvalStart.GetValueOrDefault().ToUniversalTime(), approvalEnd.GetValueOrDefault().ToUniversalTime(), status, page, size);
@@ -363,23 +363,23 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 if (dateEnd == null)
                     dateEnd = DateTime.MaxValue;
                 else
-                    dateEnd = dateEnd.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+                    dateEnd = dateEnd.GetValueOrDefault();
 
                 if (dateStart == null)
                     dateStart = DateTime.MinValue;
                 else
-                    dateStart = dateStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+                    dateStart = dateStart.GetValueOrDefault();
 
 
                 if (approvalEnd == null)
                     approvalEnd = DateTime.MaxValue;
                 else
-                    approvalEnd = approvalEnd.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+                    approvalEnd = approvalEnd.GetValueOrDefault();
 
                 if (approvalStart == null)
                     approvalStart = DateTime.MinValue;
                 else
-                    approvalStart = approvalStart.GetValueOrDefault().AddHours(-1 * _identityService.TimezoneOffset);
+                    approvalStart = approvalStart.GetValueOrDefault();
 
                 //dateEndXls = (DateTime)dateEnd == DateTime.MaxValue ? "-" : dateEndXls;
                 //dateStartXls = (DateTime)dateStart == DateTime.MinValue ? "-" : dateStartXls;
@@ -450,11 +450,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             dt.Columns.Add(new DataColumn() { ColumnName = "Posisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan Retur", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Kasir Terima", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nama Pengambil VB", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No Telepon", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Email Pembuat VB", DataType = typeof(string) });
+
 
             int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "","", 0.ToString("#,##0.#0"), "", 0.ToString("#,##0.#0"), "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "","", 0.ToString("#,##0.#0"), "", 0.ToString("#,##0.#0"), "", "", "", "", "", "", "", "", "", "");
                 index++;
             }
             else
@@ -488,7 +492,11 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                         verifiedDate, 
                         datum.Position.GetDisplayName(), 
                         datum.NotVerifiedReason, 
-                        cashierReceiptDate);
+                        cashierReceiptDate,
+                        datum.TakenBy,
+                        datum.PhoneNumber,
+                        datum.Email
+                        );
                 }
                 index++;
             }
