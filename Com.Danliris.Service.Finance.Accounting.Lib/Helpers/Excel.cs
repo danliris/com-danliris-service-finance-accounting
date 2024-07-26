@@ -499,6 +499,68 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
+        public static MemoryStream CreateExcelCashierReport(KeyValuePair<DataTable, string> dataSource, DateTimeOffset approvalDateFrom, DateTimeOffset approvalDateTo, bool styling = false)
+        {
+            ExcelPackage package = new ExcelPackage();
+            //foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            //{
+            var sheet = package.Workbook.Worksheets.Add(dataSource.Value);
+
+            int totalRow = dataSource.Key.Rows.Count + 7;
+            int period = 3;
+            //int from = dataSource.Key.Columns.IndexOf("No VB") + 2;
+            //int to = dataSource.Key.Columns.IndexOf("Aging (Hari)") + 2;
+            //sheet.Cells[totalRow, from, totalRow, to].Merge = true;
+            //sheet.Cells[period, from, period, to].Merge = true;
+
+            sheet.Cells["L2"].Value = DateTimeOffset.Now.ToString("dd MMMM yyyy", new CultureInfo("id-ID"));
+            sheet.Cells["B1"].Value = "PT.DAN LIRIS";
+            sheet.Cells["B2"].Value = "LAPORAN KASIR PERMOHONAN VB";
+            sheet.Cells["B6"].LoadFromDataTable(dataSource.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+
+            //sheet.Cells[period, 2].Value = "PERIODE : " + item.Key.Compute("Min([Tanggal VB])", string.Empty) + " SAMPAI DENGAN " + item.Key.Compute("Max([Tanggal VB])", string.Empty);
+            sheet.Cells[period, 2].Value = $"PERIODE : { approvalDateFrom.Date.ToString("dd MMMM yyyy", new CultureInfo("id-ID"))} sampai dengan { approvalDateTo.Date.ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}";
+           
+            sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+            //}
+
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
+        public static MemoryStream CreateExcelCashierVBRealizationReport(KeyValuePair<DataTable, string> dataSource, DateTimeOffset approvalDateFrom, DateTimeOffset approvalDateTo, bool styling = false)
+        {
+            ExcelPackage package = new ExcelPackage();
+            //foreach (KeyValuePair<DataTable, string> item in dtSourceList)
+            //{
+            var sheet = package.Workbook.Worksheets.Add(dataSource.Value);
+
+            int totalRow = dataSource.Key.Rows.Count + 7;
+            int period = 3;
+            //int from = dataSource.Key.Columns.IndexOf("No VB") + 2;
+            //int to = dataSource.Key.Columns.IndexOf("Aging (Hari)") + 2;
+            //sheet.Cells[totalRow, from, totalRow, to].Merge = true;
+            //sheet.Cells[period, from, period, to].Merge = true;
+
+            sheet.Cells["L2"].Value = DateTimeOffset.Now.ToString("dd MMMM yyyy", new CultureInfo("id-ID"));
+            sheet.Cells["B1"].Value = "PT.DAN LIRIS";
+            sheet.Cells["B2"].Value = "LAPORAN KASIR REALISASI VB";
+            sheet.Cells["B6"].LoadFromDataTable(dataSource.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
+
+            //sheet.Cells[period, 2].Value = "PERIODE : " + item.Key.Compute("Min([Tanggal VB])", string.Empty) + " SAMPAI DENGAN " + item.Key.Compute("Max([Tanggal VB])", string.Empty);
+            sheet.Cells[period, 2].Value = $"PERIODE : { approvalDateFrom.Date.ToString("dd MMMM yyyy", new CultureInfo("id-ID"))} sampai dengan { approvalDateTo.Date.ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}";
+
+            sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+            //}
+
+            MemoryStream stream = new MemoryStream();
+            package.SaveAs(stream);
+            return stream;
+        }
+
         public static MemoryStream CreateExcelJournalTransaction(List<KeyValuePair<DataTable, string>> dtSourceList, DateTimeOffset dateFrom, DateTimeOffset dateTo, bool styling = false)
         {
             ExcelPackage package = new ExcelPackage();
