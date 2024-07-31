@@ -13,6 +13,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public decimal? Amount { get; set; }
         public bool? UseVat { get; set; }
         public bool? UseIncomeTax { get; set; }
+        public bool IsPayVat { get; set; }
+        public bool IsPayTax { get; set; }
         public IncomeTaxDto IncomeTax { get; set; }
         public VatTaxDto VatTax { get; set; }
         public string IncomeTaxBy { get; set; }
