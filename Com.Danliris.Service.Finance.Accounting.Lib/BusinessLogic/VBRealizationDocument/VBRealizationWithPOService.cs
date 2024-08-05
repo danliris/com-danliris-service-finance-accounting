@@ -119,12 +119,29 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                 if (element.UnitPaymentOrder.UseVat.GetValueOrDefault())
                     vatNominal = element.UnitPaymentOrder.Amount.GetValueOrDefault() * (Convert.ToDecimal(element.UnitPaymentOrder.VatTax.Rate)/100);
 
-
                 if (element.UnitPaymentOrder.UseIncomeTax.GetValueOrDefault() && element.UnitPaymentOrder.IncomeTaxBy.ToUpper() == "SUPPLIER")
                     incomeTaxNominal = element.UnitPaymentOrder.Amount.GetValueOrDefault() * (decimal)element.UnitPaymentOrder.IncomeTax.Rate.GetValueOrDefault() / 100;
 
+                //return nominal + vatNominal - incomeTaxNominal;
+                //----------------------------
 
-                return nominal + vatNominal - incomeTaxNominal;
+                if (element.UnitPaymentOrder.IsPayVat == true && element.UnitPaymentOrder.IsPayTax == true)
+                {
+                    return nominal + vatNominal - incomeTaxNominal;
+                }
+                else if (element.UnitPaymentOrder.IsPayVat == false && element.UnitPaymentOrder.IsPayTax == false)
+                {
+                    return nominal ;
+                }
+                else if (element.UnitPaymentOrder.IsPayVat == true && element.UnitPaymentOrder.IsPayTax == false)
+                {
+                    return nominal + vatNominal;
+                }
+                else
+                {
+                    return nominal - incomeTaxNominal;
+                }
+
             });
 
             if (form.Type == "Tanpa Nomor VB")
