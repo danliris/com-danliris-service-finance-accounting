@@ -530,7 +530,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             return stream;
         }
 
-        public static MemoryStream CreateExcelCashierVBRealizationReport(KeyValuePair<DataTable, string> dataSource, DateTimeOffset approvalDateFrom, DateTimeOffset approvalDateTo, bool styling = false)
+        public static MemoryStream CreateExcelCashierVBRealizationReport(KeyValuePair<DataTable, string> dataSource, DateTimeOffset realizeDateFrom, DateTimeOffset realizeDateTo, bool styling = false)
         {
             ExcelPackage package = new ExcelPackage();
             //foreach (KeyValuePair<DataTable, string> item in dtSourceList)
@@ -550,7 +550,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Helpers
             sheet.Cells["B6"].LoadFromDataTable(dataSource.Key, true, (styling == true) ? OfficeOpenXml.Table.TableStyles.Light16 : OfficeOpenXml.Table.TableStyles.None);
 
             //sheet.Cells[period, 2].Value = "PERIODE : " + item.Key.Compute("Min([Tanggal VB])", string.Empty) + " SAMPAI DENGAN " + item.Key.Compute("Max([Tanggal VB])", string.Empty);
-            sheet.Cells[period, 2].Value = $"PERIODE : { approvalDateFrom.Date.ToString("dd MMMM yyyy", new CultureInfo("id-ID"))} sampai dengan { approvalDateTo.Date.ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}";
+            sheet.Cells[period, 2].Value = $"PERIODE : { realizeDateFrom.Date.ToString("dd MMMM yyyy", new CultureInfo("id-ID"))} sampai dengan { realizeDateTo.Date.ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}";
 
             sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
 

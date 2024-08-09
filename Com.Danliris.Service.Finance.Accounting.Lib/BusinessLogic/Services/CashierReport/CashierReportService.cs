@@ -65,10 +65,12 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                       {
                           DocumentNo = rqst.DocumentNo,
                           ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "-",
+                          ApprovedBy = rqst.ApprovedBy == null ? "-" : rqst.ApprovedBy,
                           CreateBy = rqst.CreatedBy,
                           Purpose = rqst.Purpose,
                           CurrencyCode = rqst.CurrencyCode,
                           Amount = rqst.Amount,
+                          BankAccountName = rqst.BankAccountName,
                           TakenBy = rqst.TakenBy,
                           PhoneNumber = rqst.PhoneNumber,
                           Email = rqst.Email,
@@ -98,9 +100,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
         dt.Columns.Add(new DataColumn() { ColumnName = "No.", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Aging (Hari)", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Approval VB", DataType = typeof(string) });
+        dt.Columns.Add(new DataColumn() { ColumnName = "Nama Approve", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Nomor VB", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah VB", DataType = typeof(string) });
+        dt.Columns.Add(new DataColumn() { ColumnName = "Bank", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Nama Pembuat VB", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Nama Pengambil VB", DataType = typeof(string) });
@@ -111,7 +115,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
 
         if (data.Count == 0)
         {
-            dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "");
+            dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
         }
         else
         {
@@ -119,7 +123,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
             foreach (var item in data)
             {
                index++;
-               dt.Rows.Add(index, item.Aging, item.ApprovalDate, item.DocumentNo, item.CurrencyCode, item.Amount.ToString("#,##0.###0"), item.Purpose, item.CreateBy, item.TakenBy, item.PhoneNumber, item.Email, item.DivisioName, item.IsInklaring);
+               dt.Rows.Add(index, item.Aging, item.ApprovalDate, item.ApprovedBy, item.DocumentNo, item.CurrencyCode, item.Amount.ToString("#,##0.###0"), item.BankAccountName, item.Purpose, item.CreateBy, item.TakenBy, item.PhoneNumber, item.Email, item.DivisioName, item.IsInklaring);
             }
         }
 
