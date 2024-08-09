@@ -97,6 +97,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                           DivisioName = realization.DocumentNo.Substring(0, 3) == "R-G" ? "GARMENT" : "TEXTILE",
                           IsInklaring = rqst.IsInklaring == true ? "YA" : "TIDAK",
                           CreatedUTC = realization.CreatedUtc,
+                          CompletedBy = realization.CompletedBy,
+                          BankAccountName = rqst.BankAccountName,
 
                       }).OrderBy(s => s.CreatedUTC).ThenBy(s => s.DocumentNo);
 
@@ -119,8 +121,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
         dt.Columns.Add(new DataColumn() { ColumnName = "No.", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Approval Realisasi VB", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Realisasi VB", DataType = typeof(string) });
+        dt.Columns.Add(new DataColumn() { ColumnName = "Nama Approve", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah Realiasi VB", DataType = typeof(string) });
+        dt.Columns.Add(new DataColumn() { ColumnName = "Bank", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Nama Pembuat Realiasi VB", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Nama Pengambil Realisasi VB", DataType = typeof(string) });
@@ -131,7 +135,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
 
         if (data.Count == 0)
         {
-            dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "");
+            dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "");
         }
         else
         {
@@ -142,11 +146,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
 
                string RealizeDate = item.RealizationDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"));
                      
-               dt.Rows.Add(index, RealizeDate, item.DocumentNo, item.CurrencyCode, item.Amount.ToString("#,##0.###0"), item.Remark, item.CreateBy, item.TakenBy, item.PhoneNumber, item.Email, item.DivisioName, item.IsInklaring);
+               dt.Rows.Add(index, RealizeDate, item.DocumentNo, item.CompletedBy, item.CurrencyCode, item.Amount.ToString("#,##0.###0"), item.BankAccountName, item.Remark, item.CreateBy, item.TakenBy, item.PhoneNumber, item.Email, item.DivisioName, item.IsInklaring);
             }
         }
 
-        return Excel.CreateExcelCashierVBRealizationReport(new KeyValuePair<DataTable, string>(dt, "Laporan Kasir Realisasi VB"), approvalDateFrom.GetValueOrDefault(), approvalDateTo.GetValueOrDefault(), true);
+        return Excel.CreateExcelCashierVBRealizationReport(new KeyValuePair<DataTable, string>(dt, "Laporan Kasir Realisasi VB"), realizeDateFrom.GetValueOrDefault(), realizeDateTo.GetValueOrDefault(), true);
     }
 
    }
