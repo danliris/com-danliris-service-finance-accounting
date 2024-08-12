@@ -10,6 +10,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierVBRealiz
         public DateTimeOffset? RealizationDate { get; set; }
         public string CurrencyCode { get; set; }
         public decimal Amount { get; set; }
+        public string ApprovedBy { get; set; }
+        public string CompletedBy { get; set; }
+        public string BankAccountName { get; set; }
         public string CreateBy { get; set; }
         public string Remark { get; set; }
         public string TakenBy { get; internal set; }
