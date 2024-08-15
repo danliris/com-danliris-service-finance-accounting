@@ -55,12 +55,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                 requestQuery = requestQuery.Where(s => s.Date.AddHours(offSet).Date <= approvalDateTo.Value.Date);
             }
 
+            if (isInklaring == "YA")
+            {
+                requestQuery = requestQuery.Where(s => s.IsInklaring == true);
+            }
+            else if (isInklaring == "TIDAK")
+            {
+                requestQuery = requestQuery.Where(s => s.IsInklaring == false);
+            }
+            else
+            {
+                requestQuery = requestQuery.Where(s => s.IsInklaring == true || s.IsInklaring == false);
+            }
+
+
             IQueryable<CashierReportViewModel> result;
 
             result = (from rqst in requestQuery
                       where divisionName == "GARMENT" ? rqst.DocumentNo.Substring(0, 4) == "VB-G" : rqst.DocumentNo.Substring(0, 4) == "VB-T"
-                            && (string.IsNullOrWhiteSpace(isInklaring) ? true : (isInklaring == "YA" ? rqst.IsInklaring == true : rqst.IsInklaring == false))
-
+        
                       select new CashierReportViewModel()
                       {
                           DocumentNo = rqst.DocumentNo,
