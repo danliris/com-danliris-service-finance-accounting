@@ -571,5 +571,28 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
             }
         }
+
+        [HttpGet("report-disposition-purchase")]
+        public async Task<IActionResult> GetReportDispositionPurchase([FromQuery] int dispositionId, [FromQuery] int supplierId, [FromQuery] DateTime? dateFromSendCashier, [FromQuery] DateTime? dateToSendCashier, [FromQuery] DateTime? dateFromReceiptCashier, [FromQuery] DateTime? dateToReceiptCashier)
+        {
+            try
+            {
+                VerifyUser();
+
+
+                var result = await _service.GetReportDisposition(dispositionId, supplierId, dateFromSendCashier, dateToSendCashier, dateFromReceiptCashier, dateToReceiptCashier );
+                return Ok(new
+                {
+                    apiVersion = ApiVersion,
+                    statusCode = General.OK_STATUS_CODE,
+                    message = General.OK_MESSAGE,
+                    data = result
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, e.Message + " " + e.StackTrace);
+            }
+        }
     }
 }
