@@ -27,5 +27,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         Task<int> VoidCashierAccepted(int id);
         Task<int> VoidAccountingAccepted(int id);
         GarmentDispositionExpeditionModel GetById(int id);
+
+        Task<List<IndexDto>> GetReportDisposition(int dispositionId, int supplierId, DateTime? dateFromSendCashier, DateTime? dateToSendCashier, DateTime? dateFromReceiptCashier, DateTime? dateToReceiptCashier);
     }
 }
