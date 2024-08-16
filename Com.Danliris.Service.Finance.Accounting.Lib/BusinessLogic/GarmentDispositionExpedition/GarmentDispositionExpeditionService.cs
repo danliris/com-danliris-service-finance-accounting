@@ -471,5 +471,31 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
 
             return result.data;
         }
+
+        public async Task<List<IndexDto>> GetReportDisposition(int dispositionId, int supplierId, DateTime? dateFromSendCashier, DateTime? dateToSendCashier, DateTime? dateFromReceiptCashier, DateTime? dateToReceiptCashier)
+        {
+            var query = _dbContext.GarmentDispositionExpeditions.Where(entity => 
+                                    (entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier || 
+                                    entity.Position == GarmentPurchasingExpeditionPosition.CashierAccepted) &&
+                                    entity.SendToCashierDate >= dateFromSendCashier &&
+                                    entity.SendToCashierDate <= dateToSendCashier &&
+                                    entity.CashierAcceptedDate >= dateFromReceiptCashier &&
+                                    entity.CashierAcceptedDate <= dateToReceiptCashier
+                                    
+                                    );
+
+            if (dispositionId > 0)
+                query = query.Where(entity => entity.DispositionNoteId == dispositionId);
+
+         
+
+            var data = query    
+                .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteId, entity.SendToCashierDate, entity.CashierAcceptedDate))
+                .ToList();
+
+            
+
+            return data ;
+        }
     }
 }
