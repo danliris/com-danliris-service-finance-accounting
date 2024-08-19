@@ -74,15 +74,27 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                 expeditionQuery = expeditionQuery.Where(s => s.CreatedUtc.AddHours(offSet).Date <= realizeDateTo.Value.Date);
             }
 
+            if (isInklaring == "YA")
+            {
+                requestQuery = requestQuery.Where(s => s.IsInklaring == true);
+            }
+            else if (isInklaring == "TIDAK")
+            {
+                requestQuery = requestQuery.Where(s => s.IsInklaring == false);
+            }
+            else
+            {
+                requestQuery = requestQuery.Where(s => s.IsInklaring == true || s.IsInklaring == false);
+            }
+
             IQueryable<CashierVBRealizationViewModel> result;
 
             result = (from rqst in requestQuery
                       join realization in realizationQuery on rqst.Id equals realization.VBRequestDocumentId 
                       join expedition in expeditionQuery on realization.Id equals expedition.VBRealizationId
 
-                      where divisionName == "GARMENT" ? realization.DocumentNo.Substring(0, 3) == "R-G" : realization.DocumentNo.Substring(0, 4) == "R-T"
-                            && (string.IsNullOrWhiteSpace(isInklaring) ? true : (isInklaring == "YA" ? rqst.IsInklaring == true : rqst.IsInklaring == false))
-
+                      where divisionName == "GARMENT" ? realization.DocumentNo.Substring(0, 3) == "R-G" : realization.DocumentNo.Substring(0, 3) == "R-T"
+    
                       select new CashierVBRealizationViewModel()
                       {
                           DocumentNo = realization.DocumentNo,
