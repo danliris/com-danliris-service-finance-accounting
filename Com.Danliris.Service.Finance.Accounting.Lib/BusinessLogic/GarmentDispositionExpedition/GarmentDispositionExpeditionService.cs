@@ -477,10 +477,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             var query = _dbContext.GarmentDispositionExpeditions.Where(entity => 
                                     (entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier || 
                                     entity.Position == GarmentPurchasingExpeditionPosition.CashierAccepted) &&
-                                    entity.SendToCashierDate >= dateFromSendCashier &&
-                                    entity.SendToCashierDate <= dateToSendCashier &&
-                                    entity.CashierAcceptedDate >= dateFromReceiptCashier &&
-                                    entity.CashierAcceptedDate <= dateToReceiptCashier
+                                    entity.SendToCashierDate.Value.Date >= dateFromSendCashier.Value.Date &&
+                                    entity.SendToCashierDate.Value.Date <= dateToSendCashier.Value.Date &&
+                                    entity.CashierAcceptedDate.Value.Date >= dateFromReceiptCashier.Value.Date &&
+                                    entity.CashierAcceptedDate.Value.Date <= dateToReceiptCashier.Value.Date
                                     
                                     );
 
