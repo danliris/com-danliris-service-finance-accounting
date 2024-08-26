@@ -357,8 +357,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             if (supplierId > 0)
                 itemQuery = itemQuery.Where(entity => entity.SupplierId == supplierId); ;
 
-            query = query.Where(entity => entity.Date.ToOffset(offset) >= startDate.ToOffset(offset) && entity.Date.ToOffset(offset) <= endDate.ToOffset(offset));
-
+            //query = query.Where(entity => entity.Date.ToOffset(offset) >= startDate.ToOffset(offset) && entity.Date.ToOffset(offset) <= endDate.ToOffset(offset));
+            //query = query.Where(entity => entity.Date.ToOffset(offset).Date >= startDate.ToOffset(offset) && entity.Date.ToOffset(offset).Date <= endDate.ToOffset(offset));
+            query = query.Where(entity => entity.Date.AddHours(7).Date >= startDate.Date && entity.Date.AddHours(7).Date <= endDate.Date);
 
             var reportQuery = from detail in detailQuery 
                               join item in itemQuery on detail.DPPVATBankExpenditureNoteItemId equals item.Id into itemDetails

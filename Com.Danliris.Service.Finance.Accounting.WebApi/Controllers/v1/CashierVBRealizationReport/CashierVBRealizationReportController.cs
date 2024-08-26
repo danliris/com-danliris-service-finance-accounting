@@ -34,13 +34,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CashierV
         }
 
         [HttpGet("reports")]
-        public IActionResult GetReportAll(string divisionName, string isInklaring,  DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo)
+        public IActionResult GetReportAll(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo)
         {
             //int offset = Convert.ToInt32(timezone);
 
             try
             {
-                var data = Service.GetReport(divisionName, isInklaring, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, IdentityService.TimezoneOffset);
+                var data = Service.GetReport(divisionName, isInklaring, account, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, IdentityService.TimezoneOffset);
 
                 return Ok(new
                 {
@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CashierV
         }
 
         [HttpGet("reports/xls")]
-        public IActionResult GetXlsAll(string divisionName, string isInklaring, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo)
+        public IActionResult GetXlsAll(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo)
         {
 
             try
@@ -68,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CashierV
                 byte[] xlsInBytes;
                 //int offset = Convert.ToInt32(timezone);
 
-                var xls = Service.GenerateExcel(divisionName, isInklaring, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, IdentityService.TimezoneOffset);
+                var xls = Service.GenerateExcel(divisionName, isInklaring, account, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, IdentityService.TimezoneOffset);
 
                 string filename = "Laporan Kasir Realisasi VB.xlsx";
 
