@@ -7,6 +7,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierVBRealiz
     public class CashierVBRealizationViewModel
     {
         public string DocumentNo { get; set; }
+        public string NoVB { get; set; }
         public DateTimeOffset? RealizationDate { get; set; }
         public string CurrencyCode { get; set; }
         public decimal Amount { get; set; }

@@ -14,6 +14,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocumen
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CashierReport
 {
@@ -38,9 +39,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
             _IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
-        private List<CashierReportViewModel> NewGetReportQuery(string divisionName, string isInklaring, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, int offSet)
+        private List<CashierReportViewModel> NewGetReportQuery(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, int offSet)
         {
-            var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus > ApprovalStatus.Draft);
+            var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus == ApprovalStatus.Approved);
+            var realizationQuery = _DbContext.VBRealizationDocuments.AsNoTracking().Where(s => s.Position < VBRealizationPosition.Cashier);
 
             if (approvalDateFrom.HasValue && approvalDateTo.HasValue)
             {
@@ -68,17 +70,37 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                 requestQuery = requestQuery.Where(s => s.IsInklaring == true || s.IsInklaring == false);
             }
 
+            if (!string.IsNullOrWhiteSpace(account))
+            {
+                requestQuery = requestQuery.Where(w => w.ApprovedBy == account);
+            }
+
+            if (divisionName == "GARMENT")
+            {
+                requestQuery = requestQuery.Where(s => s.DocumentNo.Substring(0, 4) == "VB-G");
+            }
+            else if (divisionName == "TEXTILE")
+            {
+                requestQuery = requestQuery.Where(s => s.DocumentNo.Substring(0, 4) == "VB-T");
+            }
+            else
+            {
+                requestQuery = requestQuery.Where(s => s.DocumentNo.Substring(0, 4) == "VB-G" || s.DocumentNo.Substring(0, 4) == "VB-T");
+            }
 
             IQueryable<CashierReportViewModel> result;
 
             result = (from rqst in requestQuery
-                      where divisionName == "GARMENT" ? rqst.DocumentNo.Substring(0, 4) == "VB-G" : rqst.DocumentNo.Substring(0, 4) == "VB-T"
-        
+                      join rlzd in realizationQuery on rqst.Id equals rlzd.VBRequestDocumentId into vbrealizations
+                      from vbrealization in vbrealizations.DefaultIfEmpty()
+               
                       select new CashierReportViewModel()
                       {
                           DocumentNo = rqst.DocumentNo,
+                          RealizedNo = vbrealization == null ? "-": vbrealization.DocumentNo,
+                          Position = vbrealization == null ? "-" : (((int)vbrealization.Position) == 1 ? "PEMBELIAN" : (((int)vbrealization.Position) == 2 ? "PENYERAHAN KE VERIFIKASI" : (((int)vbrealization.Position) == 3 ? "VERIFIKASI" : (((int)vbrealization.Position) == 4 ? "VERIFIKASI KE KASIR" : (((int)vbrealization.Position) == 5 ? "KASIR" : "RETUR"))))),
                           ApprovalDate = rqst.ApprovalDate.HasValue ? rqst.ApprovalDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID")) : "-",
-                          ApprovedBy = rqst.ApprovedBy == null ? "-" : rqst.ApprovedBy,
+                          ApprovedBy = rqst.ApprovedBy,
                           CreateBy = rqst.CreatedBy,
                           Purpose = rqst.Purpose,
                           CurrencyCode = rqst.CurrencyCode,
@@ -97,16 +119,16 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
             return result.ToList();
         }
     
-    public List<CashierReportViewModel> GetReport(string divisionName, string isInklaring, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, int offSet)
+    public List<CashierReportViewModel> GetReport(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, int offSet)
     {
-        var data = NewGetReportQuery(divisionName, isInklaring, approvalDateFrom, approvalDateTo, offSet);
+        var data = NewGetReportQuery(divisionName, isInklaring, account, approvalDateFrom, approvalDateTo, offSet);
 
         return data;
     }
 
-    public MemoryStream GenerateExcel(string divisionName, string isInklaring, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, int offSet)
+    public MemoryStream GenerateExcel(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, int offSet)
     {
-        var data = NewGetReportQuery(divisionName, isInklaring, approvalDateFrom, approvalDateTo, offSet);
+        var data = NewGetReportQuery(divisionName, isInklaring, account, approvalDateFrom, approvalDateTo, offSet);
 
         var dt = new DataTable();
 
@@ -115,6 +137,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
         dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Approval VB", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Nama Approve", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Nomor VB", DataType = typeof(string) });
+        dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Realisasi VB", DataType = typeof(string) });
+        dt.Columns.Add(new DataColumn() { ColumnName = "Posisi", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah VB", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Bank", DataType = typeof(string) });
@@ -128,7 +152,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
 
         if (data.Count == 0)
         {
-            dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+            dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
         }
         else
         {
@@ -136,7 +160,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
             foreach (var item in data)
             {
                index++;
-               dt.Rows.Add(index, item.Aging, item.ApprovalDate, item.ApprovedBy, item.DocumentNo, item.CurrencyCode, item.Amount.ToString("#,##0.###0"), item.BankAccountName, item.Purpose, item.CreateBy, item.TakenBy, item.PhoneNumber, item.Email, item.DivisioName, item.IsInklaring);
+               dt.Rows.Add(index, item.Aging, item.ApprovalDate, item.ApprovedBy, item.DocumentNo, item.RealizedNo, item.Position, item.CurrencyCode, item.Amount.ToString("#,##0.#0"), item.BankAccountName, item.Purpose, item.CreateBy, item.TakenBy, item.PhoneNumber, item.Email, item.DivisioName, item.IsInklaring);
             }
         }
 

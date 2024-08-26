@@ -9,7 +9,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.C
 {
     public interface ICashierVBRealizationReportService
     {
-        List<CashierVBRealizationViewModel> GetReport(string divisionName, string isInklaring, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet);
-        MemoryStream GenerateExcel(string divisionName, string isInklaring, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet);   
+        List<CashierVBRealizationViewModel> GetReport(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet);
+        MemoryStream GenerateExcel(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet);   
     }
 }
