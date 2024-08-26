@@ -34,13 +34,13 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CashierR
         }
 
         [HttpGet("reports")]
-        public IActionResult GetReportAll(string divisionName, string isInklaring,  DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo)
+        public IActionResult GetReportAll(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo)
         {
             //int offset = Convert.ToInt32(timezone);
 
             try
             {
-                var data = Service.GetReport(divisionName, isInklaring, approvalDateFrom, approvalDateTo, IdentityService.TimezoneOffset);
+                var data = Service.GetReport(divisionName, isInklaring, account, approvalDateFrom, approvalDateTo, IdentityService.TimezoneOffset);
 
                 return Ok(new
                 {
@@ -60,7 +60,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CashierR
         }
 
         [HttpGet("reports/xls")]
-        public IActionResult GetXlsAll(string divisionName, string isInklaring, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo)
+        public IActionResult GetXlsAll(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo)
         {
 
             try
@@ -68,7 +68,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1.CashierR
                 byte[] xlsInBytes;
                 //int offset = Convert.ToInt32(timezone);
 
-                var xls = Service.GenerateExcel(divisionName, isInklaring, approvalDateFrom, approvalDateTo, IdentityService.TimezoneOffset);
+                var xls = Service.GenerateExcel(divisionName, isInklaring, account, approvalDateFrom, approvalDateTo, IdentityService.TimezoneOffset);
 
                 string filename = "Laporan Kasir VB.xlsx";
 

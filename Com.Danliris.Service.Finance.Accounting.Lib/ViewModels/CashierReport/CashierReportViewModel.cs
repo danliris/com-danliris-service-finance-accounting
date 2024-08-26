@@ -20,6 +20,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierReport
         public string IsInklaring { get;  set; }
         public string DivisioName { get; set; }
         public string BankAccountName { get; set; }
+        public string Position { get; set; }
+        public string RealizedNo { get; set; }
         public DateTimeOffset CreatedUTC { get; set; }
     }
 }

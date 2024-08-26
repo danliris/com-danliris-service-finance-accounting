@@ -14,6 +14,7 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocumen
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierVBRealizationReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierVBRealizationReport;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 
 namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CashierVBRealizationReport
 {
@@ -38,13 +39,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
             _IdentityService = serviceProvider.GetService<IIdentityService>();
         }
 
-        private List<CashierVBRealizationViewModel> NewGetReportQuery(string divisionName, string isInklaring, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
+        private List<CashierVBRealizationViewModel> NewGetReportQuery(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
         {
-            var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus > ApprovalStatus.Draft);
+            var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus == ApprovalStatus.Approved);
 
-            var realizationQuery = _DbContext.VBRealizationDocuments.AsNoTracking();
+            var realizationQuery = _DbContext.VBRealizationDocuments.AsNoTracking().Where(s => s.Position == VBRealizationPosition.Cashier);
 
-            var expeditionQuery = _DbContext.VBRealizationDocumentExpeditions.AsNoTracking().Where(entity => entity.Position == VBRealizationDocumentExpedition.VBRealizationPosition.Cashier);
+            var expeditionQuery = _DbContext.VBRealizationDocumentExpeditions.AsNoTracking().Where(entity => entity.Position == VBRealizationPosition.Cashier);
 
             //-------------------------------------------------------
 
@@ -87,17 +88,34 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                 requestQuery = requestQuery.Where(s => s.IsInklaring == true || s.IsInklaring == false);
             }
 
+            if (!string.IsNullOrWhiteSpace(account))
+            {
+                expeditionQuery = expeditionQuery.Where(w => w.CashierReceiptBy == account);
+            }
+
+            if (divisionName == "GARMENT")
+            {
+                realizationQuery = realizationQuery.Where(s => s.DocumentNo.Substring(0, 3) == "R-G");
+            }
+            else if (divisionName == "TEXTILE")
+            {
+                realizationQuery = realizationQuery.Where(s => s.DocumentNo.Substring(0, 3) == "R-T");
+            }
+            else
+            {
+                realizationQuery = realizationQuery.Where(s => s.DocumentNo.Substring(0, 3) == "R-G" || s.DocumentNo.Substring(0, 3) == "R-T");
+            }
+
             IQueryable<CashierVBRealizationViewModel> result;
 
             result = (from rqst in requestQuery
                       join realization in realizationQuery on rqst.Id equals realization.VBRequestDocumentId 
                       join expedition in expeditionQuery on realization.Id equals expedition.VBRealizationId
-
-                      where divisionName == "GARMENT" ? realization.DocumentNo.Substring(0, 3) == "R-G" : realization.DocumentNo.Substring(0, 3) == "R-T"
-    
+                   
                       select new CashierVBRealizationViewModel()
                       {
                           DocumentNo = realization.DocumentNo,
+                          NoVB = realization.VBRequestDocumentNo,
                           RealizationDate = expedition != null ? expedition.CashierReceiptDate : null,
                           CurrencyCode = rqst.CurrencyCode,
                           Amount = realization.Amount,
@@ -108,8 +126,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                           Email = realization.Email,
                           DivisioName = realization.DocumentNo.Substring(0, 3) == "R-G" ? "GARMENT" : "TEXTILE",
                           IsInklaring = rqst.IsInklaring == true ? "YA" : "TIDAK",
-                          CreatedUTC = realization.CreatedUtc,
-                          CompletedBy = realization.CompletedBy,
+                          CreatedUTC = expedition.CreatedUtc,
+                          CompletedBy = expedition.CashierReceiptBy,
                           BankAccountName = rqst.BankAccountName,
 
                       }).OrderBy(s => s.CreatedUTC).ThenBy(s => s.DocumentNo);
@@ -117,22 +135,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
             return result.ToList();
         }
     
-    public List<CashierVBRealizationViewModel> GetReport(string divisionName, string isInklaring, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
+    public List<CashierVBRealizationViewModel> GetReport(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
     {
-        var data = NewGetReportQuery(divisionName, isInklaring, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, offSet);
+        var data = NewGetReportQuery(divisionName, isInklaring, account, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, offSet);
 
         return data;
     }
 
-    public MemoryStream GenerateExcel(string divisionName, string isInklaring, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
+    public MemoryStream GenerateExcel(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, DateTimeOffset? realizeDateFrom, DateTimeOffset? realizeDateTo, int offSet)
     {
-        var data = NewGetReportQuery(divisionName, isInklaring, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, offSet);
+        var data = NewGetReportQuery(divisionName, isInklaring, account, approvalDateFrom, approvalDateTo, realizeDateFrom, realizeDateTo, offSet);
 
         var dt = new DataTable();
 
         dt.Columns.Add(new DataColumn() { ColumnName = "No.", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Approval Realisasi VB", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Nomor Realisasi VB", DataType = typeof(string) });
+        dt.Columns.Add(new DataColumn() { ColumnName = "Nomor VB", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Nama Approve", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
         dt.Columns.Add(new DataColumn() { ColumnName = "Jumlah Realiasi VB", DataType = typeof(string) });
@@ -147,7 +166,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
 
         if (data.Count == 0)
         {
-            dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "");
+            dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
         }
         else
         {
@@ -158,7 +177,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
 
                string RealizeDate = item.RealizationDate.Value.ToOffset(new TimeSpan(offSet, 0, 0)).ToString("dd MMMM yyyy", new CultureInfo("id-ID"));
                      
-               dt.Rows.Add(index, RealizeDate, item.DocumentNo, item.CompletedBy, item.CurrencyCode, item.Amount.ToString("#,##0.###0"), item.BankAccountName, item.Remark, item.CreateBy, item.TakenBy, item.PhoneNumber, item.Email, item.DivisioName, item.IsInklaring);
+               dt.Rows.Add(index, RealizeDate, item.DocumentNo, item.NoVB, item.CompletedBy, item.CurrencyCode, item.Amount.ToString("#,##0.#0"), item.BankAccountName, item.Remark, item.CreateBy, item.TakenBy, item.PhoneNumber, item.Email, item.DivisioName, item.IsInklaring);
             }
         }
 
