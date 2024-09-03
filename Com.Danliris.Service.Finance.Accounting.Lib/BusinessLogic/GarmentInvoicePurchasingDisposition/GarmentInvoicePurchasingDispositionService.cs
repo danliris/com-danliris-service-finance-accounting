@@ -280,24 +280,25 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 
 		public async Task<List<MonitoringDispositionPayment>> GetMonitoring(string invoiceNo, string dispositionNo, DateTimeOffset startDate, DateTimeOffset endDate, int offset)
 		{
-			var data = await GetReportQuery(invoiceNo, dispositionNo, startDate, endDate);
+			var data = await GetReportQuery(invoiceNo, dispositionNo, startDate, endDate, offset);
 			return data ;
 		}
 
-		public async Task<List<MonitoringDispositionPayment>> GetReportQuery(string invoiceNo, string dispositionNo, DateTimeOffset startDate, DateTimeOffset endDate)
+		public async Task<List<MonitoringDispositionPayment>> GetReportQuery(string invoiceNo, string dispositionNo, DateTimeOffset startDate, DateTimeOffset endDate, int offset)
 		{
 			DateTimeOffset dateFrom = startDate;
-			dateFrom.AddHours(7);
+			//dateFrom.AddHours(7);
 			DateTimeOffset dateTo = endDate;
-			dateTo.AddHours(7);
-			if (endDate == Convert.ToDateTime("0001-01-01 00:00:00.0000000 +00:00") && startDate == Convert.ToDateTime("0001-01-01 00:00:00.0000000 +00:00"))
-			{
-				endDate = DateTimeOffset.Now;
-			}
+			//dateTo.AddHours(7);
+			
+			//if (endDate == Convert.ToDateTime("0001-01-01 00:00:00.0000000 +00:00") && startDate == Convert.ToDateTime("0001-01-01 00:00:00.0000000 +00:00"))
+			//{
+			//	endDate = DateTimeOffset.Now;
+			//}
 
 
 			var queryHeader = from aa in DbContext.GarmentInvoicePurchasingDispositions
-							  where (aa.InvoiceDate >= dateFrom && aa.InvoiceDate <= dateTo)
+							  where (aa.InvoiceDate.AddHours(7).Date >= dateFrom.Date && aa.InvoiceDate.AddHours(7).Date <= dateTo.Date)
 							  select new { aa.PaymentType, aa.CurrencyRate, aa.Id, aa.InvoiceNo, aa.InvoiceDate, aa.CurrencySymbol, aa.BankAccountName, aa.BankAccountNo, aa.BankCurrencyCode, aa.SupplierName };
 			var query = from a in queryHeader
 						join b in DbContext.GarmentInvoicePurchasingDispositionItems on a.Id equals b.GarmentInvoicePurchasingDispositionId
