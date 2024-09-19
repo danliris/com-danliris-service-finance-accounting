@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
@@ -707,6 +708,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             //}
 
             return result;
+        }
+
+        public Task<int> ClearancePost(ClearancePosting form)
+        {
+            var vbRealization = _dbContext.VBRealizationDocumentExpeditions.Where(s => form.Ids.Contains(s.VBRealizationId));
+
+            foreach (var item in vbRealization)
+            {
+                item.SetClearance(form.ClearanceDate, _identityService.Username, UserAgent);
+
+               
+            }
+
+            return _dbContext.SaveChangesAsync();
         }
     }
 }

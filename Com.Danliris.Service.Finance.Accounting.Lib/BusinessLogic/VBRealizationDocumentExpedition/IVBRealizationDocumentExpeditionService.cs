@@ -33,5 +33,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         Task<VBRequestDocumentModel> ReadByIdAsync(long id); 
         Task<int> ClearanceVBPost(List<ClearancePostId> listId);
         Task<int> ClearanceVBPost(ClearanceFormDto form);
+        Task<int> ClearancePost(ClearancePosting form);
     }
 }
