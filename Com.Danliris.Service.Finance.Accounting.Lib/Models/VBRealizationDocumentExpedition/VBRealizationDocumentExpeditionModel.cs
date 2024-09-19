@@ -1,5 +1,6 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
+using Com.Danliris.Service.Finance.Accounting.Lib.Migrations;
 using Com.Moonlay.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -100,6 +101,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
         public string Email { get; private set; }
         public string TakenBy { get; private set; }
         public string PhoneNumber { get; private set; }
+        public bool IsPosted { get; private set; }
+        public DateTimeOffset? CleranceDate { get; private set; }
+        public string PostedBy { get; private set; }
 
         public void SubmitToVerification(string name)
         {
@@ -165,6 +169,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocume
             VBRealizationAmount = realizationVB.Amount;
             CurrencyCode = realizationVB.CurrencyCode;
             CurrencyRate = (double)realizationVB.CurrencyRate;
+        }
+
+        public void SetClearance(DateTimeOffset clearanceDate, string username, string userAgent)
+        {
+            IsPosted = true;
+            CleranceDate = clearanceDate;
+            PostedBy = username;
+            this.FlagForUpdate(username, userAgent);
         }
     }
 }

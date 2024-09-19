@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
@@ -504,7 +505,30 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             return Lib.Helpers.Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Reports") },
                 new List<KeyValuePair<string, int>>() { new KeyValuePair<string, int>("Reports", index) }, title, dateFrom, dateTo, true);
         }
-    
+
+        [HttpPost("clearance-post")]
+        public async Task<IActionResult> CanccellationDocuments([FromBody] ClearancePosting form)
+        {
+            try
+            {
+                VerifyUser();
+
+                var result = await _service.ClearancePost(form);
+
+
+                var response = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok(null, result);
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
 
     }
 }
