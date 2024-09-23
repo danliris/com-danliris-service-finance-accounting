@@ -42,7 +42,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
         private List<CashierReportViewModel> NewGetReportQuery(string divisionName, string isInklaring, string account, DateTimeOffset? approvalDateFrom, DateTimeOffset? approvalDateTo, int offSet)
         {
             var requestQuery = _DbContext.VBRequestDocuments.AsNoTracking().Where(s => s.ApprovalStatus == ApprovalStatus.Approved);
-            var realizationQuery = _DbContext.VBRealizationDocuments.AsNoTracking().Where(s => s.Position < VBRealizationPosition.Cashier);
+            var realizationQuery = _DbContext.VBRealizationDocuments.AsNoTracking();
 
             if (approvalDateFrom.HasValue && approvalDateTo.HasValue)
             {
@@ -93,7 +93,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
             result = (from rqst in requestQuery
                       join rlzd in realizationQuery on rqst.Id equals rlzd.VBRequestDocumentId into vbrealizations
                       from vbrealization in vbrealizations.DefaultIfEmpty()
-               
+
                       select new CashierReportViewModel()
                       {
                           DocumentNo = rqst.DocumentNo,
@@ -113,9 +113,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
                           IsInklaring = rqst.IsInklaring == true ? "YA" : "TIDAK",
                           Aging = (int)(DateTimeOffset.Now.ToOffset(new TimeSpan(offSet, 0, 0)).Date - rqst.ApprovalDate.GetValueOrDefault().ToOffset(new TimeSpan(offSet, 0, 0)).Date).TotalDays,
                           CreatedUTC = rqst.CreatedUtc,
+                          PositionVar  = vbrealization.Position
+                      }).Where(s => s.PositionVar < VBRealizationPosition.Cashier).OrderBy(s => s.CreatedUTC).ThenBy(s => s.DocumentNo);
 
-                      }).OrderBy(s => s.CreatedUTC).ThenBy(s => s.DocumentNo);
-
+                 
             return result.ToList();
         }
     

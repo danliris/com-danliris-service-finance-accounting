@@ -40,5 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
         public string TakenBy { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
+        public string ClearanceName { get; set; }
+        public DateTimeOffset? ClearanceDate { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -23,5 +24,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.CashierReport
         public string Position { get; set; }
         public string RealizedNo { get; set; }
         public DateTimeOffset CreatedUTC { get; set; }
+        public VBRealizationPosition PositionVar { get; set; }
+
     }
 }
