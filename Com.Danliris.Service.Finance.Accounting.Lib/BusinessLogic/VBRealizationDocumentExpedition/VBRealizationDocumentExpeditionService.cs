@@ -149,7 +149,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             RemarkRealization = realization.Remark,
                             TakenBy = realization.TakenBy,
                             PhoneNumber = realization.PhoneNumber,
-                            Email = realization.Email
+                            Email = realization.Email,
+                            ClearanceName = realizationExpedition != null ? realizationExpedition.PostedBy : null,
+                            ClearanceDate = realizationExpedition != null ? realizationExpedition.CleranceDate : null
+
                         };
            
             if (dateStart != null && dateEnd != null)

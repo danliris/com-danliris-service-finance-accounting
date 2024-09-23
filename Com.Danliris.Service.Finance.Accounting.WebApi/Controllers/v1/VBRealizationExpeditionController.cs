@@ -451,6 +451,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             dt.Columns.Add(new DataColumn() { ColumnName = "Posisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan Retur", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Kasir Terima", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nama Clearance", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Clearance", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nama Pengambil VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No Telepon", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Email Pembuat VB", DataType = typeof(string) });
@@ -459,7 +461,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "","", 0.ToString("#,##0.#0"), "", 0.ToString("#,##0.#0"), "", "", "", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "","", 0.ToString("#,##0.#0"), "", 0.ToString("#,##0.#0"), "", "", "", "", "", "","","", "", "", "", "");
                 index++;
             }
             else
@@ -470,6 +472,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     var sendToVerificationDate = datum.SendToVerificationDate.HasValue ? datum.SendToVerificationDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
                     var verifiedDate = datum.VerifiedToCashierDate.HasValue ? datum.VerifiedToCashierDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : datum.NotVerifiedDate.HasValue ? datum.NotVerifiedDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
                     var cashierReceiptDate = datum.CashierReceiptDate.HasValue ? datum.CashierReceiptDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
+                    var clearanceDate = datum.ClearanceDate.HasValue ? datum.ClearanceDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
                     //var vbRealizationDate = datum.VBRealizationDate.AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
                     var verifiedBy = !string.IsNullOrWhiteSpace(datum.VerifiedToCashierBy) ? datum.VerifiedToCashierBy : !string.IsNullOrWhiteSpace(datum.NotVerifiedBy) ? datum.NotVerifiedBy : "";
 
@@ -494,6 +497,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                         datum.Position.GetDisplayName(), 
                         datum.NotVerifiedReason, 
                         cashierReceiptDate,
+                        datum.ClearanceName,
+                        clearanceDate,
                         datum.TakenBy,
                         datum.PhoneNumber,
                         datum.Email
