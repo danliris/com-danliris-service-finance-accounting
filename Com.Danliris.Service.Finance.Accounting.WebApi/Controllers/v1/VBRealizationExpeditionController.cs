@@ -1,4 +1,5 @@
 ﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizationDocumentExpedition;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Models.VBRealizationDocumentExpedition;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.IdentityService;
 using Com.Danliris.Service.Finance.Accounting.Lib.Services.ValidateService;
@@ -450,6 +451,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             dt.Columns.Add(new DataColumn() { ColumnName = "Posisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Keterangan Retur", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl. Kasir Terima", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Nama Clearance", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Clearance", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Nama Pengambil VB", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "No Telepon", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Email Pembuat VB", DataType = typeof(string) });
@@ -458,7 +461,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             int index = 0;
             if (data.Count == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "","", 0.ToString("#,##0.#0"), "", 0.ToString("#,##0.#0"), "", "", "", "", "", "", "", "", "", "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "","", 0.ToString("#,##0.#0"), "", 0.ToString("#,##0.#0"), "", "", "", "", "", "","","", "", "", "", "");
                 index++;
             }
             else
@@ -469,6 +472,7 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                     var sendToVerificationDate = datum.SendToVerificationDate.HasValue ? datum.SendToVerificationDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
                     var verifiedDate = datum.VerifiedToCashierDate.HasValue ? datum.VerifiedToCashierDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : datum.NotVerifiedDate.HasValue ? datum.NotVerifiedDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
                     var cashierReceiptDate = datum.CashierReceiptDate.HasValue ? datum.CashierReceiptDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
+                    var clearanceDate = datum.ClearanceDate.HasValue ? datum.ClearanceDate.GetValueOrDefault().AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : "-";
                     //var vbRealizationDate = datum.VBRealizationDate.AddHours(timezoneoffset).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
                     var verifiedBy = !string.IsNullOrWhiteSpace(datum.VerifiedToCashierBy) ? datum.VerifiedToCashierBy : !string.IsNullOrWhiteSpace(datum.NotVerifiedBy) ? datum.NotVerifiedBy : "";
 
@@ -493,6 +497,8 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
                         datum.Position.GetDisplayName(), 
                         datum.NotVerifiedReason, 
                         cashierReceiptDate,
+                        datum.ClearanceName,
+                        clearanceDate,
                         datum.TakenBy,
                         datum.PhoneNumber,
                         datum.Email
@@ -504,7 +510,30 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi.Controllers.v1
             return Lib.Helpers.Excel.CreateExcelWithTitle(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(dt, "Reports") },
                 new List<KeyValuePair<string, int>>() { new KeyValuePair<string, int>("Reports", index) }, title, dateFrom, dateTo, true);
         }
-    
+
+        [HttpPost("clearance-post")]
+        public async Task<IActionResult> CanccellationDocuments([FromBody] ClearancePosting form)
+        {
+            try
+            {
+                VerifyUser();
+
+                var result = await _service.ClearancePost(form);
+
+
+                var response = new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE).Ok(null, result);
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                var result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, result);
+            }
+        }
+
 
     }
 }

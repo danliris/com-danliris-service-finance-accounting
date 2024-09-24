@@ -1,4 +1,5 @@
-﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
+﻿using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.JournalTransaction;
+using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.DailyBankTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.JournalTransaction;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRequestDocument;
 using Com.Danliris.Service.Finance.Accounting.Lib.Enums.Expedition;
@@ -148,7 +149,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
                             RemarkRealization = realization.Remark,
                             TakenBy = realization.TakenBy,
                             PhoneNumber = realization.PhoneNumber,
-                            Email = realization.Email
+                            Email = realization.Email,
+                            ClearanceName = realizationExpedition != null ? realizationExpedition.PostedBy : null,
+                            ClearanceDate = realizationExpedition != null ? realizationExpedition.CleranceDate : null
+
                         };
            
             if (dateStart != null && dateEnd != null)
@@ -707,6 +711,20 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.VBRealizatio
             //}
 
             return result;
+        }
+
+        public Task<int> ClearancePost(ClearancePosting form)
+        {
+            var vbRealization = _dbContext.VBRealizationDocumentExpeditions.Where(s => form.Ids.Contains(s.VBRealizationId));
+
+            foreach (var item in vbRealization)
+            {
+                item.SetClearance(form.ClearanceDate, _identityService.Username, UserAgent);
+
+               
+            }
+
+            return _dbContext.SaveChangesAsync();
         }
     }
 }

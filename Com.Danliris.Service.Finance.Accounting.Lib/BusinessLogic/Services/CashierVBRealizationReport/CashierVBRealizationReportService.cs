@@ -45,7 +45,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Cas
 
             var realizationQuery = _DbContext.VBRealizationDocuments.AsNoTracking().Where(s => s.Position == VBRealizationPosition.Cashier);
 
-            var expeditionQuery = _DbContext.VBRealizationDocumentExpeditions.AsNoTracking().Where(entity => entity.Position == VBRealizationPosition.Cashier);
+            var expeditionQuery = _DbContext.VBRealizationDocumentExpeditions.AsNoTracking().Where(entity => entity.Position == VBRealizationPosition.Cashier && !entity.IsPosted);
 
             //-------------------------------------------------------
 
