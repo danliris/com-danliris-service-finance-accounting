@@ -38,6 +38,14 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
             CreatedDate = createdDate;
         }
 
+        public IndexDto(int id, int dispositionNoteId, DateTimeOffset? sendToCashierDate, DateTimeOffset? receiptCashierDate)
+        {
+            Id = id;
+            DispositionNoteId = dispositionNoteId;
+            SendToCashierDate = sendToCashierDate;
+            ReceiptCashierDate = receiptCashierDate;
+        }
+
         public IndexDto(int id, string dispositionNoteNo,
             DateTimeOffset dispositionNoteDate,
             DateTimeOffset dispositionNoteDueDate,
@@ -159,5 +167,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         public double TotalPaidPaymentBefore { get; set; }
         public double DiffTotalPaidPayment { get; set; }
         public DateTimeOffset? VerifiedDate { get; set; }
+        public DateTimeOffset? SendToCashierDate { get; set; }
+        public DateTimeOffset? ReceiptCashierDate { get; set; }
     }
 }
