@@ -111,6 +111,9 @@ using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.Cashi
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CashierReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.CashierVBRealizationReport;
 using Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.CashierVBRealizationReport;
+using Azure.Security.KeyVault.Secrets;
+using System;
+using Azure.Identity;
 
 namespace Com.Danliris.Service.Finance.Accounting.WebApi
 {
@@ -229,9 +232,15 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = Configuration.GetConnectionString(Constant.DEFAULT_CONNECTION) ?? Configuration[Constant.DEFAULT_CONNECTION];
+            //string connectionString = Configuration.GetConnectionString(Constant.DEFAULT_CONNECTION) ?? Configuration[Constant.DEFAULT_CONNECTION];
             string env = Configuration.GetValue<string>(Constant.ASPNETCORE_ENVIRONMENT);
-            services.AddDbContext<FinanceDbContext>(options => options.UseSqlServer(connectionString, c => c.CommandTimeout(60)));
+            //services.AddDbContext<FinanceDbContext>(options => options.UseSqlServer(connectionString, c => c.CommandTimeout(60)));
+            var keyVaultEnpoint = new Uri(Configuration["VaultKey"]);
+            var secretClient = new SecretClient(keyVaultEnpoint, new DefaultAzureCredential());
+
+            KeyVaultSecret kvs = secretClient.GetSecret(Configuration["VaultKeySecret"]);
+
+            services.AddDbContext<FinanceDbContext>(option => option.UseSqlServer(kvs.Value));
 
             #region Register
             RegisterServices(services);
