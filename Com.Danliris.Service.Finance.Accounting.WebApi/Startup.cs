@@ -238,9 +238,10 @@ namespace Com.Danliris.Service.Finance.Accounting.WebApi
             var keyVaultEnpoint = new Uri(Configuration["VaultKey"]);
             var secretClient = new SecretClient(keyVaultEnpoint, new DefaultAzureCredential());
 
-            KeyVaultSecret kvs = secretClient.GetSecret(Configuration["VaultKeySecret"]);
+            KeyVaultSecret kvsDB = secretClient.GetSecret(Configuration["VaultKeyDbSecret"]);
+            KeyVaultSecret kvsServer = secretClient.GetSecret(Configuration["VaultKeyServerSecret"]);
 
-            services.AddDbContext<FinanceDbContext>(option => option.UseSqlServer(kvs.Value));
+            services.AddDbContext<FinanceDbContext>(option => option.UseSqlServer(string.Concat(kvsDB.Value, kvsServer.Value)));
 
             #region Register
             RegisterServices(services);
