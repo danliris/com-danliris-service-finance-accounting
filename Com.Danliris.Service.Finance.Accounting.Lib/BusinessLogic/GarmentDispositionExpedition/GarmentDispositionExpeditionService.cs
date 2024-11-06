@@ -476,24 +476,19 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentDispo
         {
             var query = _dbContext.GarmentDispositionExpeditions.Where(entity => 
                                     (entity.Position == GarmentPurchasingExpeditionPosition.SendToCashier || 
-                                    entity.Position == GarmentPurchasingExpeditionPosition.CashierAccepted) &&
-                                    entity.SendToCashierDate.Value.Date >= dateFromSendCashier.Value.Date &&
-                                    entity.SendToCashierDate.Value.Date <= dateToSendCashier.Value.Date &&
-                                    entity.CashierAcceptedDate.Value.Date >= dateFromReceiptCashier.Value.Date &&
-                                    entity.CashierAcceptedDate.Value.Date <= dateToReceiptCashier.Value.Date
-                                    
+                                     entity.Position == GarmentPurchasingExpeditionPosition.CashierAccepted) &&
+                                     entity.SendToCashierDate.Value.AddHours(7).Date >= dateFromSendCashier.Value.AddHours(7).Date &&
+                                     entity.SendToCashierDate.Value.AddHours(7).Date <= dateToSendCashier.Value.AddHours(7).Date &&
+                                     entity.CashierAcceptedDate.Value.AddHours(7).Date >= dateFromReceiptCashier.Value.AddHours(7).Date &&
+                                     entity.CashierAcceptedDate.Value.AddHours(7).Date <= dateToReceiptCashier.Value.AddHours(7).Date                                    
                                     );
 
             if (dispositionId > 0)
                 query = query.Where(entity => entity.DispositionNoteId == dispositionId);
 
-         
-
             var data = query    
                 .Select(entity => new IndexDto(entity.Id, entity.DispositionNoteId, entity.SendToCashierDate, entity.CashierAcceptedDate))
                 .ToList();
-
-            
 
             return data ;
         }
