@@ -11,6 +11,8 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.PaymentDispositionN
     {
         [MaxLength(255)]
         public string BGCheckNumber { get; set; }
+        [MaxLength(50)]
+        public string BankCashNo { get; set; }
         [MaxLength(1000)]
         public string BankAccountName { get; set; }
         [MaxLength(255)]

@@ -35,7 +35,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         {
             var timeOffset = new TimeSpan(_identityService.TimezoneOffset, 0, 0);
             var documentNo = await GetDocumentNo("K", form.Bank.BankCode, _identityService.Username, form.Date.GetValueOrDefault().ToOffset(timeOffset).Date);
-            var model = new DPPVATBankExpenditureNoteModel(documentNo, form.Bank.Id, form.Bank.AccountNumber, form.Bank.BankName, form.Bank.BankCode, form.Currency.Id, form.Currency.Code, form.Currency.Rate, form.Supplier.Id, form.Supplier.Name, form.Supplier.IsImport, form.BGCheckNo, form.Amount, form.Date.GetValueOrDefault(), form.Bank.Currency.Code, form.Bank.Currency.Id, form.Bank.Currency.Rate);
+            var model = new DPPVATBankExpenditureNoteModel(documentNo, form.Bank.Id, form.Bank.AccountNumber, form.Bank.BankName, form.Bank.BankCode, form.Currency.Id, form.Currency.Code, form.Currency.Rate, form.Supplier.Id, form.Supplier.Name, form.Supplier.IsImport, form.BGCheckNo, form.Amount, form.Date.GetValueOrDefault(), form.Bank.Currency.Code, form.Bank.Currency.Id, form.Bank.Currency.Rate, form.BankCashNo);
             EntityExtension.FlagForCreate(model, _identityService.Username, UserAgent);
             _dbContext.DPPVATBankExpenditureNotes.Add(model);
             _dbContext.SaveChanges();
@@ -214,7 +214,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             var model = _dbContext
                 .DPPVATBankExpenditureNotes
                 .FirstOrDefault(entity => entity.Id == id);
-            model.UpdateData(form.Amount, form.Supplier.Id, form.Supplier.IsImport, form.Supplier.Name, form.BGCheckNo, form.Date.GetValueOrDefault(), form.Currency.Rate);
+            model.UpdateData(form.Amount, form.Supplier.Id, form.Supplier.IsImport, form.Supplier.Name, form.BGCheckNo, form.Date.GetValueOrDefault(), form.Currency.Rate, form.BankCashNo);
             EntityExtension.FlagForUpdate(model, _identityService.Username, UserAgent);
             _dbContext.DPPVATBankExpenditureNotes.Update(model);
 
