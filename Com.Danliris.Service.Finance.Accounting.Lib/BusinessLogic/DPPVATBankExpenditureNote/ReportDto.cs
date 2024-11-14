@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         {
             ExpenditureId = documentItem.Id;
             ExpenditureNoteNo = documentItem.DocumentNo;
+            BankCashNo = documentItem.BankCashNo;
             ExpenditureDate = documentItem.Date;
             CategoryName = detail.CategoryName;
             PaymentMethod = detail.PaymentMethod;
@@ -39,6 +40,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public ReportDto(DPPVATBankExpenditureNoteDetailModel detail, DPPVATBankExpenditureNoteItemModel itemDetail, DPPVATBankExpenditureNoteModel documentItem,DPPVATBankExpenditureNoteDetailDoModel detailDo)
         {
             ExpenditureId = documentItem.Id;
+            BankCashNo = documentItem.BankCashNo;
             ExpenditureNoteNo = documentItem.DocumentNo;
             ExpenditureDate = documentItem.Date;
             CategoryName = detail.CategoryName;
@@ -72,6 +74,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         {
             ExpenditureId = documentItem.Id;
             ExpenditureNoteNo = documentItem.DocumentNo;
+            BankCashNo = documentItem.BankCashNo;
             ExpenditureDate = documentItem.Date;
             CategoryName = detail.CategoryName;
             PaymentMethod = detail.PaymentMethod;
@@ -102,6 +105,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
         public int ExpenditureId { get; private set; }
         public string ExpenditureNoteNo { get; private set; }
+        public string BankCashNo { get; private set; }
         public DateTimeOffset ExpenditureDate { get; private set; }
         public string CategoryName { get; private set; }
         public string PaymentMethod { get; private set; }

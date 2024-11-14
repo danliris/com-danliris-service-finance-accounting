@@ -367,6 +367,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
 
             exist.BGCheckNumber = model.BGCheckNumber;
+            exist.BankCashNo = model.BankCashNo;
             exist.PaymentDate = model.PaymentDate;
             exist.Amount = model.Amount;
 
@@ -516,6 +517,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         {
                             expenditure.Id,
                             expenditure.PaymentDispositionNo,
+                            expenditure.BankCashNo,
                             expenditure.PaymentDate,
                             item.DispositionId,
                             item.DispositionNo,
@@ -561,7 +563,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
             var result = query.OrderBy(entity => entity.PaymentDate).ToList();
 
-            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.PayToSupplier, element.TransactionType, element.BankAccountNumber, element.CurrencyRate, element.BankCurrencyCode, element.AmountPaid, element.SupplierPayment, element.DPP, element.VatValue, element.IncomeTaxValue)).ToList();
+            return result.Select(element => new ReportDto(element.Id, element.PaymentDispositionNo, element.BankCashNo, element.PaymentDate, element.DispositionId, element.DispositionNo, element.DispositionDate, element.PaymentDueDate, element.BankId, element.BankName, element.CurrencyId, element.CurrencyCode, element.SupplierId, element.SupplierName, element.SupplierImport, element.ProformaNo, element.CategoryId, element.CategoryName, element.DivisionId, element.DivisionName, element.VatValue, element.PayToSupplier, element.TransactionType, element.BankAccountNumber, element.CurrencyRate, element.BankCurrencyCode, element.AmountPaid, element.SupplierPayment, element.DPP, element.VatValue, element.IncomeTaxValue)).ToList();
         }
 
         public MemoryStream GetXls(List<ReportDto> data)
@@ -569,9 +571,10 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
             var dt = new DataTable();
             dt.Columns.Add(new DataColumn() { ColumnName = "No. Bukti Pembayaran Disposisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tanggal Bayar Disposisi", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "No. Disposisi", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No. Disposisi", DataType = typeof(string) });          
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Disposisi", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Tgl Jatuh Tempo", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "No. Kasbon", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Bank Bayar", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(string) });
             dt.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(string) });
@@ -586,7 +589,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
 
             if (data.Count() == 0)
             {
-                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", 0, 0, 0, 0, "");
+                dt.Rows.Add("", "", "", "", "", "", "", "", "", "", "", "", 0, 0, 0, 0, "");
             }
             else
             {
@@ -598,6 +601,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Services.Pay
                         item.DispositionNo,
                         item.DispositionDate.AddHours(IdentityService.TimezoneOffset).ToString("dd/MM/yyyy"),
                         item.DispositionDueDate.AddHours(IdentityService.TimezoneOffset).ToString("dd/MM/yyyy"),
+                        item.BankCashNo,
                         item.BankName,
                         item.CurrencyCode,
                         item.SupplierName,

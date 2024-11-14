@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.GarmentInvoicePurch
         /// as Expenditure No
         /// </summary>
         public string InvoiceNo { get; set; }
+        public string BankCashNo { get; set; }
         /// <summary>
         /// as Expenditure Date
         /// </summary>
