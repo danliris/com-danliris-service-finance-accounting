@@ -7,6 +7,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.GarmentInvoiceP
 	public class MonitoringDispositionPayment
 	{
 		public string InvoiceNo { get; set; }
+		public string BankCashNo { get; set; }
 		public DateTimeOffset InvoiceDate { get; set; }
 
 		public string DispositionNo { get; set; }

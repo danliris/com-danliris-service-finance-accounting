@@ -10,6 +10,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.ViewModels.PaymentDisposit
     public class PaymentDispositionNoteViewModel : BaseViewModel, IValidatableObject
     {
         public string BGCheckNumber { get; set; }
+        public string BankCashNo { get; set; }
 
         public AccountBankViewModel AccountBank { get; set; }
         public string PaymentDispositionNo { get; set; }

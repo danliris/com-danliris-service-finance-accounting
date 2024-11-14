@@ -172,6 +172,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 
 
 			exist.ChequeNo = model.ChequeNo;
+			exist.BankCashNo = model.BankCashNo;
 			exist.InvoiceDate = model.InvoiceDate;
 
 			foreach (var item in exist.Items)
@@ -299,12 +300,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 
 			var queryHeader = from aa in DbContext.GarmentInvoicePurchasingDispositions
 							  where (aa.InvoiceDate.AddHours(7).Date >= dateFrom.Date && aa.InvoiceDate.AddHours(7).Date <= dateTo.Date)
-							  select new { aa.PaymentType, aa.CurrencyRate, aa.Id, aa.InvoiceNo, aa.InvoiceDate, aa.CurrencySymbol, aa.BankAccountName, aa.BankAccountNo, aa.BankCurrencyCode, aa.SupplierName };
+							  select new { aa.PaymentType, aa.CurrencyRate, aa.Id, aa.InvoiceNo, aa.BankCashNo, aa.InvoiceDate, aa.CurrencySymbol, aa.BankAccountName, aa.BankAccountNo, aa.BankCurrencyCode, aa.SupplierName };
 			var query = from a in queryHeader
 						join b in DbContext.GarmentInvoicePurchasingDispositionItems on a.Id equals b.GarmentInvoicePurchasingDispositionId
 						select new MonitoringDispositionPayment
 						{
 							InvoiceNo = a.InvoiceNo,
+							BankCashNo = a.BankCashNo,
 							InvoiceDate = a.InvoiceDate,
 							DispositionNo = b.DispositionNo,
 							DispositionDate = b.DispositionDate,
@@ -434,6 +436,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 			result.Columns.Add(new DataColumn() { ColumnName = "No Disposisi", DataType = typeof(String) });
 			result.Columns.Add(new DataColumn() { ColumnName = "Tanggal Disposisi", DataType = typeof(String) });
 			result.Columns.Add(new DataColumn() { ColumnName = "Tanggal Jatuh Tempo", DataType = typeof(String) });
+			result.Columns.Add(new DataColumn() { ColumnName = "No Kasbon", DataType = typeof(String) });
 			result.Columns.Add(new DataColumn() { ColumnName = "Bank Bayar", DataType = typeof(String) });
 			result.Columns.Add(new DataColumn() { ColumnName = "Mata Uang", DataType = typeof(String) });
 			result.Columns.Add(new DataColumn() { ColumnName = "Supplier", DataType = typeof(String) });
@@ -480,7 +483,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 				{
 					dispositionDueDate = (item.DispositionDueDate.AddHours(7)).ToString("dd-MMMM-yyyy");
 				}
-				result.Rows.Add(item.InvoiceNo,invoicedate, item.DispositionNo, dispositionDate, dispositionDueDate,
+				result.Rows.Add(item.InvoiceNo,invoicedate, item.DispositionNo, dispositionDate, dispositionDueDate,item.BankCashNo,
 				item.BankName, item.CurrencySymbol, item.SupplierName, item.ProformaNo, item.Category, item.VatAmount, item.TotalAmount, item.TotalPaidToSupplier, item.TotalDifference, item.TotalPaid, item.PaymentType);
 			}
 
@@ -493,23 +496,23 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.GarmentInvoi
 				worksheet.Cells["A1"].Style.Font.Bold = true;
 				worksheet.Cells["A2"].LoadFromDataTable(result, true);
 
-				worksheet.Cells["A" + 2 + ":P" + (counter + 2) + ""].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-				worksheet.Cells["A" + 2 + ":P" + (counter + 2) + ""].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-				worksheet.Cells["A" + 2 + ":P" + (counter + 2) + ""].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-				worksheet.Cells["A" + 2 + ":P" + (counter + 2) + ""].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+				worksheet.Cells["A" + 2 + ":Q" + (counter + 2) + ""].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+				worksheet.Cells["A" + 2 + ":Q" + (counter + 2) + ""].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+				worksheet.Cells["A" + 2 + ":Q" + (counter + 2) + ""].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+				worksheet.Cells["A" + 2 + ":Q" + (counter + 2) + ""].Style.Border.Right.Style = ExcelBorderStyle.Thin;
 			 
-				worksheet.Cells["A" + 2 + ":P" + 2 + ""].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+				worksheet.Cells["A" + 2 + ":Q" + 2 + ""].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 				if (data.Count > 0)
 				{
-					foreach (var cell in worksheet.Cells["K" + 3 + ":O" + (counter + 2) + ""])
+					foreach (var cell in worksheet.Cells["L" + 3 + ":P" + (counter + 2) + ""])
 					{
 						cell.Value = Convert.ToDecimal(cell.Value);
 						cell.Style.Numberformat.Format = "#,##0.00";
 						cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
 					}
 				}
-				worksheet.Cells["A" + 2 + ":P" + (counter + 2) + ""].AutoFitColumns();
-				worksheet.Cells["A" + (2) + ":P" + (2) + ""].Style.Font.Bold = true;
+				worksheet.Cells["A" + 2 + ":Q" + (counter + 2) + ""].AutoFitColumns();
+				worksheet.Cells["A" + (2) + ":Q" + (2) + ""].Style.Font.Bold = true;
 
 
 				var stream = new MemoryStream();
