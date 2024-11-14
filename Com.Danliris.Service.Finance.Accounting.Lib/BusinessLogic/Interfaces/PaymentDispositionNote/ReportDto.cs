@@ -4,10 +4,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
 {
     public class ReportDto
     {
-        public ReportDto(int expenditureId, string expenditureNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber, double currencyRate, string bankCurrencyCode, double amountPaid, double supplierPayment, double dpp, double vatValue, double incomeTaxValue)
+        public ReportDto(int expenditureId, string expenditureNo, string bankCashNo, DateTimeOffset expenditureDate, int dispositionId, string dispositionNo, DateTimeOffset dispositionDate, DateTimeOffset dispositionDueDate, int bankId, string bankName, int currencyId, string currencyCode, int supplierId, string supplierName, bool supplierIsImport, string proformaNo, int categoryId, string categoryName, int divisionId, string divisionName, double vATAmount, double paidAmount, string transactionType, string bankAccountNumber, double currencyRate, string bankCurrencyCode, double amountPaid, double supplierPayment, double dpp, double vatValue, double incomeTaxValue)
         {
             ExpenditureId = expenditureId;
             ExpenditureNo = expenditureNo;
+            BankCashNo = bankCashNo;
             ExpenditureDate = expenditureDate;
             DispositionId = dispositionId;
             DispositionNo = dispositionNo;
@@ -45,6 +46,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.Interfaces.P
         public DateTimeOffset ExpenditureDate { get; private set; }
         public int DispositionId { get; private set; }
         public string DispositionNo { get; private set; }
+        public string BankCashNo { get; private set; }
         public DateTimeOffset DispositionDate { get; private set; }
         public DateTimeOffset DispositionDueDate { get; private set; }
         public int BankId { get; private set; }

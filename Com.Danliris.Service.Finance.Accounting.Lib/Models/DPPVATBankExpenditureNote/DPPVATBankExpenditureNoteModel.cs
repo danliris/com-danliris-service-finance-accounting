@@ -13,7 +13,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
 
         }
 
-        public DPPVATBankExpenditureNoteModel(string documentNo, int bankAccountId, string bankAccountNumber, string bankName, string bankAccountingCode, int currencyId, string currencyCode, double currencyRate, int supplierId, string supplierName, bool isImportSupplier, string bgCheckNo, double amount, DateTimeOffset date, string bankCurrencyCode, int bankCurrencyId, double bankCurrencyRate)
+        public DPPVATBankExpenditureNoteModel(string documentNo, int bankAccountId, string bankAccountNumber, string bankName, string bankAccountingCode, int currencyId, string currencyCode, double currencyRate, int supplierId, string supplierName, bool isImportSupplier, string bgCheckNo, double amount, DateTimeOffset date, string bankCurrencyCode, int bankCurrencyId, double bankCurrencyRate, string bankCashNo)
         {
             DocumentNo = documentNo;
             BankAccountId = bankAccountId;
@@ -32,10 +32,13 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
             BGCheckNo = bgCheckNo;
             Amount = amount;
             Date = date;
+            BankCashNo = bankCashNo;
         }
 
         [MaxLength(32)]
         public string DocumentNo { get; private set; }
+        [MaxLength(32)]
+        public string BankCashNo { get; private set; }
         public int BankAccountId { get; private set; }
         [MaxLength(64)]
         public string BankAccountNumber { get; private set; }
@@ -61,7 +64,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
         public DateTimeOffset Date { get; private set; }
         public bool IsPosted { get; private set; }
 
-        public void UpdateData(double amount, int supplierId, bool isImportSupplier, string supplierName, string bgCheckNo, DateTimeOffset date, double currencyRate)
+        public void UpdateData(double amount, int supplierId, bool isImportSupplier, string supplierName, string bgCheckNo, DateTimeOffset date, double currencyRate, string bankCashNo)
         {
             Amount = amount;
             SupplierId = supplierId;
@@ -70,6 +73,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.Models.DPPVATBankExpenditu
             BGCheckNo = bgCheckNo;
             Date = date;
             CurrencyRate = currencyRate;
+            BankCashNo = bankCashNo;
         }
 
         public void Posted()

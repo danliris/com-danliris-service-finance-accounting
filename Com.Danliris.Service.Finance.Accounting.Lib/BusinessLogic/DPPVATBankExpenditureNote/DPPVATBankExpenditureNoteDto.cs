@@ -19,6 +19,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             IsPosted = model.IsPosted;
             Items = items.Select(item => new DPPVATBankExpenditureNoteItemDto(item, details.Where(detail => detail.DPPVATBankExpenditureNoteItemId == item.Id).ToList())).ToList();
             DocumentNo = model.DocumentNo;
+            BankCashNo = model.BankCashNo;
         }
 
         public int Id { get; private set; }
@@ -31,5 +32,6 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public bool IsPosted { get; private set; }
         public List<DPPVATBankExpenditureNoteItemDto> Items { get; private set; }
         public string DocumentNo { get; private set; }
+        public string BankCashNo { get; private set; }
     }
 }

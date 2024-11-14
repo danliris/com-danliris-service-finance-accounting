@@ -11,6 +11,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
         public CurrencyDto Currency { get; set; }
         public SupplierDto Supplier { get; set; }
         public string BGCheckNo { get; set; }
+        public string BankCashNo { get; set; }
         public double Amount { get; set; }
         public DateTimeOffset? Date { get; set; }
         public List<FormItemDto> Items { get; set; }
