@@ -4,10 +4,11 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 {
     public class DPPVATBankExpenditureNoteIndexDto
     {
-        public DPPVATBankExpenditureNoteIndexDto(int id, string documentNo, DateTimeOffset date, string bankName, string bankAccountNumber, double totalAmount, string currencyCode, string documentNoInternalNotes, string supplierName, bool isPosted)
+        public DPPVATBankExpenditureNoteIndexDto(int id, string documentNo, string bankCashNo, DateTimeOffset date, string bankName, string bankAccountNumber, double totalAmount, string currencyCode, string documentNoInternalNotes, string supplierName, bool isPosted)
         {
             Id = id;
             DocumentNo = documentNo;
+            BankCashNo = bankCashNo;
             Date = date;
             BankName = bankName;
             BankAccountNumber = bankAccountNumber;
@@ -20,6 +21,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
 
         public int Id { get; }
         public string DocumentNo { get; }
+        public string BankCashNo { get; }
         public DateTimeOffset Date { get; }
         public string BankName { get; }
         public string BankAccountNumber { get; }

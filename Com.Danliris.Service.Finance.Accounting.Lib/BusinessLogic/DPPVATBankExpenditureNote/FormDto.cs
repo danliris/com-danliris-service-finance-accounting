@@ -30,6 +30,9 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
             if (string.IsNullOrWhiteSpace(BGCheckNo))
                 yield return new ValidationResult("No. BG/Check harus diisi", new List<string> { "BGCheckNo" });
 
+            if (string.IsNullOrWhiteSpace(BankCashNo))
+                yield return new ValidationResult("No. Kasbon harus diisi", new List<string> { "BankCashNo" });
+
             if (Date == null)
                 yield return new ValidationResult("Tanggal harus diisi", new List<string> { "Date" });
 

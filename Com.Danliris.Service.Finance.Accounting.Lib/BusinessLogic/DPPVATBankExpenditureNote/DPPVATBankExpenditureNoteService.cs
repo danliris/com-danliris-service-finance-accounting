@@ -203,7 +203,7 @@ namespace Com.Danliris.Service.Finance.Accounting.Lib.BusinessLogic.DPPVATBankEx
                 .Skip((page - 1) * size)
                 .Take(size)
                 .ToList()
-                .Select(entity => new DPPVATBankExpenditureNoteIndexDto(entity.Id, entity.DocumentNo, entity.Date, entity.BankName, entity.BankAccountNumber, itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Sum(item => item.TotalAmount), entity.CurrencyCode, string.Join("\n", itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Select(item => $"- {item.InternalNoteNo}").ToList()), entity.SupplierName, entity.IsPosted))
+                .Select(entity => new DPPVATBankExpenditureNoteIndexDto(entity.Id, entity.DocumentNo, entity.BankCashNo, entity.Date, entity.BankName, entity.BankAccountNumber, itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Sum(item => item.TotalAmount), entity.CurrencyCode, string.Join("\n", itemQuery.Where(item => item.DPPVATBankExpenditureNoteId == entity.Id).Select(item => $"- {item.InternalNoteNo}").ToList()), entity.SupplierName, entity.IsPosted))
                 .ToList();
 
             return new ReadResponse<DPPVATBankExpenditureNoteIndexDto>(data, count, orderDictionary, new List<string>());
